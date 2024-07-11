@@ -60,14 +60,14 @@ export function useDeployRewardsPool() {
         false,
       );
 
-      await contractRewardsModule.waitForDeployment();
+      await contractRewardsModule.deployTransaction.wait();
 
       setRewardPoolData(prevData => ({
         ...prevData,
         deploy: { ...prevData.deploy, success: true, loading: false, error: false },
       }));
 
-      return contractRewardsModule.getAddress();
+      return contractRewardsModule.address;
     } catch (e) {
       setRewardPoolData(prevData => ({
         ...prevData,

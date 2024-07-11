@@ -11,7 +11,8 @@ import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { useError } from "@hooks/useError";
 import { readContract, waitForTransactionReceipt } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
-import { ContractFactory, formatUnits } from "ethers";
+import { ContractFactory } from "ethers";
+import { formatUnits } from "ethers/lib/utils";
 import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
@@ -51,7 +52,7 @@ export function useDeployContest() {
 
   async function deployContest() {
     const signer = await getEthersSigner(config, { chainId: chain?.id });
-    const isSpoofingDetected = await checkForSpoofing(signer?.address);
+    const isSpoofingDetected = await checkForSpoofing(signer?._address);
 
     if (isSpoofingDetected) {
       stateContestDeployment.setIsLoading(false);
@@ -84,7 +85,7 @@ export function useDeployContest() {
       const creatorSplitDestination =
         charge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet ||
         charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit
-          ? signer.address
+          ? signer._address
           : charge.splitFeeDestination.address;
 
       // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
@@ -108,7 +109,7 @@ export function useDeployContest() {
         costToVote: parseEther(chargeType.costToVote.toString()),
         payPerVote: charge.voteType === VoteType.PerVote ? 1 : 0,
         creatorSplitDestination: creatorSplitDestination,
-      };
+      }; 
 
       const contractContest = await factoryCreateContest.deploy(
         title,
@@ -132,25 +133,23 @@ export function useDeployContest() {
         ],
       );
 
-      const transactionPromise = contractContest.waitForDeployment();
+      const transactionPromise = contractContest.deployTransaction.wait();
 
       // Wait for transaction to be executed
       await transactionPromise;
 
       const receiptDeployContest = await waitForTransactionReceipt(config, {
         chainId: chain?.id,
-        hash: contractContest.deploymentTransaction()?.hash as `0x${string}`,
+        hash: contractContest.deployTransaction.hash as `0x${string}`,
       });
 
-      const contractAddress = await contractContest.getAddress();
-
-      const sortingEnabled = await isSortingEnabled(contractAddress, chain?.id ?? 0);
+      const sortingEnabled = await isSortingEnabled(contractContest.address, chain?.id ?? 0);
 
       setDeployContestData(
         chain?.name ?? "",
         chain?.id ?? 0,
         receiptDeployContest.transactionHash,
-        contractAddress.toLowerCase(),
+        contractContest.address.toLowerCase(),
         advancedOptions.downvote,
         sortingEnabled,
       );
@@ -187,7 +186,7 @@ export function useDeployContest() {
         datetimeOpeningSubmissions: submissionOpen,
         datetimeOpeningVoting: votingOpen,
         datetimeClosingVoting: votingClose,
-        contractAddress: contractAddress.toLowerCase(),
+        contractAddress: contractContest.address.toLowerCase(),
         votingMerkleRoot: votingMerkle?.merkleRoot ?? EMPTY_ROOT,
         submissionMerkleRoot: submissionMerkle?.merkleRoot ?? EMPTY_ROOT,
         authorAddress: address,
