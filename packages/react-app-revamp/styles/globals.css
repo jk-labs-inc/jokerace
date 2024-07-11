@@ -337,6 +337,11 @@ li {
     color: inherit !important;
   }
 
+  .prose :where(img):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+  }
+
   .prose :where(hr):not(:where([class~="not-prose"] *)) {
     margin-top: 1.5em !important;
     margin-bottom: 1.5em !important;
