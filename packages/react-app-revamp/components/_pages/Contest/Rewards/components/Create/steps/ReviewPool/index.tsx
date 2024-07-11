@@ -59,7 +59,7 @@ const CreateRewardsReviewPool = () => {
           tokens={tokens}
         />
       </div>
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-6">
         {isUserOnCorrectChain ? (
           <CreateRewardsSubmitButton step={currentStep} onSubmit={handleCreateRewards} />
         ) : (
@@ -71,7 +71,7 @@ const CreateRewardsReviewPool = () => {
             switch network
           </ButtonV3>
         )}
-        <p className="text-[16px] text-neutral-14">
+        <p className="text-[14px] text-neutral-14">
           you cannot edit these rewards after confirming. <br /> you can always come back to fund more.
         </p>
       </div>
