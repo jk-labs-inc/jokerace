@@ -33,11 +33,14 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(true);
   const { contestStatus } = useContestStatusStore(state => state);
 
+  const isVotingOpenOrClosed =
+    contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
+
   useEffect(() => {
-    if (contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) {
+    if (isVotingOpenOrClosed) {
       setIsDescriptionOpen(false);
     }
-  }, [contestStatus]);
+  }, [contestStatus, isVotingOpenOrClosed]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -56,24 +59,27 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({
       {isDescriptionOpen ? (
         <div className="pl-5">
           <div className="border-l border-true-white">
-            <div className="overflow-hidden" style={{ maxHeight: "999em" }}>
+            <div
+              className="overflow-hidden"
+              style={{ maxHeight: isVotingOpenOrClosed ? "none" : isExpanded ? "none" : "150px" }}
+            >
               <div className="prose prose-invert pl-5 flex flex-col">
                 <Interweave content={summaryContent} matchers={[new UrlMatcher("url")]} />
-                {shouldDisplayEvaluate ? (
+                {shouldDisplayEvaluate && (
                   <>
                     <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
                     <Interweave content={evaluateContent} matchers={[new UrlMatcher("url")]} />
                   </>
-                ) : null}
-                {shouldDisplayContactDetails ? (
+                )}
+                {shouldDisplayContactDetails && (
                   <>
                     <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
                     <Interweave content={contactDetailsContent} matchers={[new UrlMatcher("url")]} />
                   </>
-                ) : null}
+                )}
               </div>
             </div>
-            {displayReadMore && (
+            {!isVotingOpenOrClosed && displayReadMore && (
               <div className="flex gap-1 items-center pl-5 mt-4 cursor-pointer" onClick={handleToggle}>
                 <p className="text-[16px] text-positive-11 font-bold">{isExpanded ? "Read Less" : "Read More"}</p>
                 <Image
