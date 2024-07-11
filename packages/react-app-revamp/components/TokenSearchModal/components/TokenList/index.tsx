@@ -1,7 +1,7 @@
 import { FilteredToken, useTokenList } from "@hooks/useTokenList";
 import { FC } from "react";
 import TokenSearchListToken from "./components/Token";
-import { ChevronUpIcon } from "@heroicons/react/outline";
+import { ChevronUpIcon } from "@heroicons/react/24/outline";
 
 interface TokenSearchTokenListProps {
   searchValue: string;

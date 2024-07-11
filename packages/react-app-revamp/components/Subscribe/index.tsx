@@ -1,5 +1,5 @@
 import { emailRegex } from "@helpers/regex";
-import { ChevronRightIcon } from "@heroicons/react/outline";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import useEmailSignup from "@hooks/useEmailSignup";
 import { useState } from "react";
 import { useAccount } from "wagmi";

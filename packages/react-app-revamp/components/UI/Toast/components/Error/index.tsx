@@ -1,5 +1,5 @@
 import { populateBugReportLink } from "@helpers/githubIssue";
-import { ClipboardIcon, FlagIcon } from "@heroicons/react/outline";
+import { ClipboardIcon, FlagIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { useUrl } from "nextjs-current-url";
 import { FC, useState } from "react";

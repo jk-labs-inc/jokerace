@@ -1,6 +1,6 @@
 import ButtonV3 from "@components/UI/ButtonV3";
 import { ordinalSuffix } from "@helpers/ordinalSuffix";
-import { TrashIcon } from "@heroicons/react/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import { Recipient, ValidationError, useCreateRewardsStore } from "../../../../store";
 

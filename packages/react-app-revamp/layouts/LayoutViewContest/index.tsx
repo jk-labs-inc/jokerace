@@ -17,7 +17,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { generateUrlContest } from "@helpers/share";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
-import { RefreshIcon } from "@heroicons/react/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
 import { useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
@@ -58,6 +58,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const bugReportLink = populateBugReportLink(url?.href ?? "", accountAddress ?? "", error ?? "");
+  const [fadeBg, setFadeBg] = useState(false);
 
   useAccountEffect({
     onConnect(data) {
@@ -224,22 +225,29 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                         <ContestRewardsInfo rewardsModuleAddress={rewardsModuleAddress} rewardsAbi={rewardsAbi} />
                       ) : null}
                       <div className="hidden md:flex">
-                        <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
+                        <ShareDropdown
+                          contestAddress={address}
+                          chain={chainName}
+                          contestName={contestName}
+                          onMenuStateChange={setFadeBg}
+                        />
                       </div>
                       <div
                         className="standalone-pwa w-8 h-8 items-center rounded-[10px] border border-neutral-11 cursor-pointer"
                         onClick={() => window.location.reload()}
                       >
-                        <RefreshIcon className="w-4 h-4 m-auto" />
+                        <ArrowPathIcon className="w-4 h-4 m-auto" />
                       </div>
                     </div>
                   </div>
-                  <div className="mt-8 mb-8 gap-3 flex flex-col">
-                    <ContestTabs tab={tab} onChange={tab => setTab(tab)} />
-                  </div>
-                  {renderTabs}
+                  <div className={`${fadeBg ? "opacity-30" : "opacity-100"}`}>
+                    <div className="mt-8 mb-8 gap-3 flex flex-col">
+                      <ContestTabs tab={tab} onChange={tab => setTab(tab)} />
+                    </div>
+                    {renderTabs}
 
-                  {children}
+                    {children}
+                  </div>
                 </div>
               </>
             )}

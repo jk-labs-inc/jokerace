@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Dialog } from "@headlessui/react";
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import Image from "next/image";
 import { FC, useCallback } from "react";
 
@@ -41,10 +41,10 @@ const DialogModalV3: FC<DialogModalProps> = ({
       <div className="fixed inset-0 pointer-events-none bg-neutral-8 bg-opacity-60" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center 2xs:p-4">
         <div className="flex min-h-full w-full items-center justify-center">
-          <Dialog.Panel
+          <DialogPanel
             className={`text-sm mx-auto min-h-screen max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full px-4 2xs:pt-4 bg-true-black 2xs:rounded-[10px] ${className}`}
           >
-            <Dialog.Title className="sr-only">{title}</Dialog.Title>
+            <DialogTitle className="sr-only">{title}</DialogTitle>
             <div className="p-2 relative">
               <button
                 onClick={handleClose}
@@ -63,7 +63,7 @@ const DialogModalV3: FC<DialogModalProps> = ({
               </button>
               <div className={`${isMobile ? "pt-0" : "pt-3 pb-6"} pie-3`}>{children}</div>
             </div>
-          </Dialog.Panel>
+          </DialogPanel>
         </div>
       </div>
     </Dialog>

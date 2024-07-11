@@ -13,7 +13,7 @@ import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
-import { parseUnits } from "ethers/lib/utils";
+import { parseUnits } from "ethers";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { usePathname } from "next/navigation";
 import { formatEther } from "viem";

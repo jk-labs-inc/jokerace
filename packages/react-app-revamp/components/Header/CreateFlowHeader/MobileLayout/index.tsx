@@ -9,7 +9,7 @@ import {
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_LIVE_CONTESTS,
 } from "@config/routes";
-import { HomeIcon, PencilAltIcon, SearchIcon } from "@heroicons/react/outline";
+import { HomeIcon, MagnifyingGlassIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
 import Image from "next/image";
 import Link from "next/link";
@@ -59,7 +59,7 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
         </Link>
 
         <Link href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
-          <SearchIcon width={26} />
+          <MagnifyingGlassIcon width={26} />
           <p className="text-[12px]">search</p>
         </Link>
 
@@ -72,7 +72,7 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
         </Link>
 
         <Link href={ROUTE_CREATE_CONTEST} className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}>
-          <PencilAltIcon width={26} />
+          <PencilSquareIcon width={26} />
           <p className="text-[12px]">create</p>
         </Link>
 

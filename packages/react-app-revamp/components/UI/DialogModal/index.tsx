@@ -1,6 +1,6 @@
 import { IconClose } from "@components/UI/Icons";
-import { Dialog } from "@headlessui/react";
-import { ArrowLeftIcon } from "@heroicons/react/outline";
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { FC, useCallback } from "react";
 
 interface DialogModalProps {
@@ -22,10 +22,10 @@ const DialogModal: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, children,
 
       <div className="fixed inset-0 flex items-center justify-center 2xs:p-4">
         <div className="flex min-h-full w-full items-center justify-center">
-          <Dialog.Panel
+          <DialogPanel
             className={`text-sm mx-auto max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full max-w-screen-2xs border px-4 pt-4 pb-6 border-primary-10 border-opacity-40 bg-neutral-0 2xs:rounded-lg ${className}`}
           >
-            <Dialog.Title className="sr-only">{title}</Dialog.Title>
+            <DialogTitle className="sr-only">{title}</DialogTitle>
             <div className="p-2 relative">
               <button
                 onClick={handleClose}
@@ -43,7 +43,7 @@ const DialogModal: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, children,
               </button>
               <div className="pt-20 2xs:pt-3 pie-2">{children}</div>
             </div>
-          </Dialog.Panel>
+          </DialogPanel>
         </div>
       </div>
     </Dialog>

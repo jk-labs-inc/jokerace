@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from "@heroicons/react/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { FC, useEffect, useRef, useState } from "react";
 import CreateTextInput from "../TextInput";
 

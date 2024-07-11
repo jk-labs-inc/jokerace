@@ -1,5 +1,5 @@
-import { Menu, Transition } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/outline";
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { FC, Fragment, useState } from "react";
 import { TemplateType } from "../../templates/types";
 
@@ -36,7 +36,7 @@ const CreateTemplateDropdown: FC<CreateTemplateDropdownProps> = ({
 
         return (
           <>
-            <Menu.Button className="flex items-center bg-transparent cursor-pointer w-full md:w-[240px] pb-2 border-b border-neutral-11">
+            <MenuButton className="flex items-center bg-transparent cursor-pointer w-full md:w-[240px] pb-2 border-b border-neutral-11">
               <p className={`text-[20px] font-bold ${selectedOption ? "text-neutral-11" : "text-neutral-10"}`}>
                 {selectedOption ? selectedOption.label : "Pick a template"}
               </p>
@@ -45,7 +45,7 @@ const CreateTemplateDropdown: FC<CreateTemplateDropdownProps> = ({
                   open ? "rotate-180" : "rotate-0"
                 }`}
               />
-            </Menu.Button>
+            </MenuButton>
 
             <Transition
               as={Fragment}
@@ -56,16 +56,16 @@ const CreateTemplateDropdown: FC<CreateTemplateDropdownProps> = ({
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Menu.Items
+              <MenuItems
                 className={`${className} flex flex-col absolute z-10 mt-4 bg-true-black border border-neutral-11 rounded-[10px] overflow-clip animate-appear`}
               >
                 {options.map(option => (
-                  <Menu.Item key={option.value}>
-                    {({ active }) => (
+                  <MenuItem key={option.value}>
+                    {({ focus }) => (
                       <button
                         className={`text-neutral-11 text-left pt-2 pl-4 pb-2 text-[20px] cursor-pointer
                         ${option.disabled ? "opacity-50 pointer-events-none" : ""}
-                        ${active ? "bg-neutral-3" : ""}
+                        ${focus ? "bg-neutral-3" : ""}
                         ${option.value === selectedOption?.value ? "font-bold" : ""}`}
                         disabled={option.disabled}
                         onClick={() => handleOptionChange(option)}
@@ -73,9 +73,9 @@ const CreateTemplateDropdown: FC<CreateTemplateDropdownProps> = ({
                         {option.label}
                       </button>
                     )}
-                  </Menu.Item>
+                  </MenuItem>
                 ))}
-              </Menu.Items>
+              </MenuItems>
             </Transition>
           </>
         );

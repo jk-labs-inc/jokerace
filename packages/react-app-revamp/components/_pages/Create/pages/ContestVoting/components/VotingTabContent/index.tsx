@@ -45,7 +45,10 @@ const CreateVotingTabContent = () => {
           {tabOptions.map((link, index) => (
             <div
               key={index}
-              ref={el => (tabRefs.current[index] = el)}
+              ref={(el: HTMLDivElement | null) => {
+                tabRefs.current[index] = el;
+                return;
+              }}
               className={`text-[20px] sm:text-[24px] font-bold cursor-pointer text-center transition-colors duration-200
                   ${index === tabOptions.length - 1 ? "w-[116px] md:w-[240px]" : "w-[116px] md:w-[224px]"}
                   ${votingTab === index ? "text-primary-10" : "text-neutral-10"}`}
