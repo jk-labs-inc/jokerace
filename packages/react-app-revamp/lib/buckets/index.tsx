@@ -71,14 +71,10 @@ export const saveFileToBucket = async ({ fileId, content }: SaveFileOptions): Pr
   }
 };
 
-/**
- * Uploads an image file to the specified S3 bucket.
- *
- * @param options - Contains fileId, type and content as a File,
- */
 export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions): Promise<string> => {
   toastLoading("Uploading image...", false);
   try {
+    // Upload original image
     const input = {
       Bucket: IMAGE_UPLOAD_BUCKET,
       Key: fileId,
@@ -88,9 +84,50 @@ export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions
 
     const command = new PutObjectCommand(input);
     await s3.send(command);
-    toastSuccess("Image uploaded successfully!");
 
-    return `${IMAGE_PUBLIC_URL}/${fileId}`;
+    const originalUrl = `${IMAGE_PUBLIC_URL}/${fileId}`;
+
+    console.log("About to fetch resize-image");
+
+    // Call server-side route to handle resizing
+    const resizeResponse = await fetch("/api/resize-image", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ originalUrl }),
+    });
+
+    console.log("Resize response received", {
+      status: resizeResponse.status,
+      statusText: resizeResponse.statusText,
+    });
+
+    if (!resizeResponse.ok) {
+      throw new Error(`Failed to resize image: ${resizeResponse.status} ${resizeResponse.statusText}`);
+    }
+
+    const resizeData = await resizeResponse.json();
+    console.log("Resize data", resizeData);
+
+    // Upload resized images
+    for (const [size, base64Image] of Object.entries(resizeData.resizedImages)) {
+      const resizedBuffer = Buffer.from(base64Image as string, "base64");
+      const resizedInput = {
+        Bucket: IMAGE_UPLOAD_BUCKET,
+        Key: `${fileId}-${size}`,
+        Body: resizedBuffer,
+        ContentType: resizeData.contentType,
+      };
+
+      console.log({ resizedInput });
+
+      const resizedCommand = new PutObjectCommand(resizedInput);
+      await s3.send(resizedCommand);
+    }
+
+    toastSuccess("Image uploaded successfully!");
+    return originalUrl;
   } catch (error: any) {
     toastError("Failed to upload an image, please try again.");
     throw new Error(`Failed to upload image with ID ${fileId} to bucket ${IMAGE_UPLOAD_BUCKET}`);

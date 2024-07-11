@@ -8,7 +8,6 @@ import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useUserStore } from "@hooks/useUser/store";
-import { load } from "cheerio";
 import { Interweave, Node } from "interweave";
 import moment from "moment";
 import Image from "next/image";
@@ -19,8 +18,8 @@ import { useMediaQuery } from "react-responsive";
 import { Tweet } from "react-tweet";
 import { useAccount } from "wagmi";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
+import ImageWithFallback from "./components/ImageWithFallback";
 import ProposalContentInfo from "./components/ProposalContentInfo";
-import MarkdownImage from "@components/UI/Markdown/components/MarkdownImage";
 
 export interface Proposal {
   id: string;
@@ -51,9 +50,10 @@ interface ProposalContentProps {
 
 const transform = (node: HTMLElement, children: Node[]): ReactNode => {
   const element = node.tagName.toLowerCase();
+  const src = node.getAttribute("src") ?? "";
 
   if (element === "img") {
-    return <MarkdownImage src={node.getAttribute("src") ?? ""} />;
+    return <ImageWithFallback src={`${src}-medium`} fallbackSrc={src} alt={node.getAttribute("alt") ?? ""} />;
   }
 
   if (element === "a") {
@@ -108,25 +108,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
     setIsContentHidden(hiddenProposals.includes(proposal.id));
   }, [contestAddress, proposal.id]);
-
-  let truncatedContent = "";
-
-  if (proposal.isContentImage) {
-    const cheerio = load(proposal.content);
-
-    const firstImageSrc = cheerio("img").first().attr("src");
-
-    const textContent = cheerio.text();
-    const textLength = isMobile ? 100 : 200;
-
-    if (textContent.length > textLength) {
-      truncatedContent = proposal.content;
-    } else {
-      truncatedContent = `<div><p>${textContent}</p><img src="${firstImageSrc}"/></div>`;
-    }
-  } else {
-    truncatedContent = proposal.content;
-  }
 
   const handleVotingModalOpen = () => {
     if (contestStatus === ContestStatus.VotingClosed) {
@@ -188,21 +169,28 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
       {!isContentHidden ? (
         <div className="md:mx-8 flex flex-col gap-4">
-          <Link
-            className="p-4 rounded-[8px] bg-primary-1 border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out overflow-hidden"
-            href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
-            shallow
-            scroll={false}
-            prefetch
-          >
-            {isProposalTweet ? (
-              <div className="dark not-prose">
-                <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
-              </div>
-            ) : (
-              <Interweave className="prose prose-invert" content={truncatedContent} transform={transform} />
-            )}
-          </Link>
+          <div className="flex">
+            <Link
+              className="p-4 rounded-[8px] bg-primary-1 border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out overflow-hidden"
+              href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
+              shallow
+              scroll={false}
+              prefetch
+            >
+              {isProposalTweet ? (
+                <div className="dark not-prose">
+                  <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
+                </div>
+              ) : (
+                <Interweave
+                  className="inline-block prose prose-invert"
+                  content={proposal.content}
+                  transform={transform}
+                />
+              )}
+            </Link>
+          </div>
+
           <div className="flex items-center justify-between">
             <div className="flex gap-2 items-center">
               {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
@@ -210,13 +198,8 @@ const ProposalContent: FC<ProposalContentProps> = ({
                   onClick={handleVotingModalOpen}
                   className="min-w-36 flex-shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-primary-1 rounded-[16px] cursor-pointer border border-transparent hover:border-positive-11 transition-colors duration-300 ease-in-out"
                 >
-                  <Image
-                    src="/contest/upvote.svg"
-                    width={21.56}
-                    height={20.44}
-                    alt="upvote"
-                    className="flex-shrink-0"
-                  />
+                  <Image src="/contest/upvote-2.svg" width={23} height={23} alt="upvote" className="flex-shrink-0" />
+
                   <p className="text-[16px] text-positive-11 font-bold flex-grow text-center">
                     {formatNumberAbbreviated(proposal.votes)} vote{proposal.votes !== 1 ? "s" : ""}
                   </p>

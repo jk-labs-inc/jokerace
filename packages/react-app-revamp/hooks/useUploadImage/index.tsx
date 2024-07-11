@@ -17,7 +17,6 @@ export const useUploadImageStore = create<UploadImageStore>((set, get) => ({
 
   uploadImage: async (file: File) => {
     const currentService = get().uploadService;
-    const base64 = await fileToBase64(file);
     const fileId = uuidv4();
 
     switch (currentService) {
@@ -34,25 +33,3 @@ export const useUploadImageStore = create<UploadImageStore>((set, get) => ({
     }
   },
 }));
-
-/**
- * Convert a file object to its base64 string representation.
- * @param file - The file object to convert.
- * @returns A promise resolving to the file's base64 string representation.
- */
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = function (e: ProgressEvent<FileReader>) {
-      if (e.target?.result) {
-        resolve(e.target.result as string);
-      } else {
-        reject(new Error("Failed to convert file to base64."));
-      }
-    };
-    reader.onerror = function (error) {
-      reject(error);
-    };
-    reader.readAsDataURL(file);
-  });
-}
