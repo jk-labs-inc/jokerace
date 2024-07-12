@@ -38,11 +38,14 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ src, fallbackSrc,
       <img src={imgSrc} alt={alt} className="rounded-[16px]" />
       {hasMediumVersion && (
         <div className="absolute top-0 right-0 p-1">
-          <button onClick={toggleExpand} className="bg-true-black  text-neutral-11 p-2 rounded-full z-10">
+          <button
+            onClick={toggleExpand}
+            className="bg-true-black opacity-75 p-2 rounded-full hover:opacity-100 transition-opacity z-10"
+          >
             {isExpanded ? (
-              <NextImage src="/contest/minimize.svg" width={20} height={20} alt="minimize" />
+              <NextImage src="/contest/minimize.svg" width={18} height={18} alt="minimize" />
             ) : (
-              <NextImage src="/contest/maximize.svg" width={20} height={20} alt="maximize" />
+              <NextImage src="/contest/maximize.svg" width={18} height={18} alt="maximize" />
             )}
           </button>
         </div>
