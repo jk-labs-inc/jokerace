@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from "@heroicons/react/24/outline";
+import NextImage from "next/image";
 import { useEffect, useState } from "react";
 
 interface ImageWithFallbackProps {
@@ -38,14 +38,11 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ src, fallbackSrc,
       <img src={imgSrc} alt={alt} className="rounded-[16px]" />
       {hasMediumVersion && (
         <div className="absolute top-0 right-0 p-1">
-          <button
-            onClick={toggleExpand}
-            className="bg-true-black bg-opacity-50 text-neutral-11 p-1 rounded-full hover:bg-opacity-75 transition-all z-10"
-          >
+          <button onClick={toggleExpand} className="bg-true-black  text-neutral-11 p-2 rounded-full z-10">
             {isExpanded ? (
-              <ArrowsPointingInIcon className="w-6 h-6 text-neutral-11" />
+              <NextImage src="/contest/minimize.svg" width={20} height={20} alt="minimize" />
             ) : (
-              <ArrowsPointingOutIcon className="w-6 h-6 text-neutral-11" />
+              <NextImage src="/contest/maximize.svg" width={20} height={20} alt="maximize" />
             )}
           </button>
         </div>
