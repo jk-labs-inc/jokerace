@@ -35,7 +35,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ src, fallbackSrc,
 
   return (
     <div className="relative inline-block">
-      <img src={imgSrc} alt={alt} />
+      <img src={imgSrc} alt={alt} className="rounded-[16px]" />
       {hasMediumVersion && (
         <div className="absolute top-0 right-0 p-1">
           <button

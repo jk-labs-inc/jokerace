@@ -87,8 +87,6 @@ export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions
 
     const originalUrl = `${IMAGE_PUBLIC_URL}/${fileId}`;
 
-    console.log("About to fetch resize-image");
-
     // Call server-side route to handle resizing
     const resizeResponse = await fetch("/api/resize-image", {
       method: "POST",
@@ -98,17 +96,11 @@ export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions
       body: JSON.stringify({ originalUrl }),
     });
 
-    console.log("Resize response received", {
-      status: resizeResponse.status,
-      statusText: resizeResponse.statusText,
-    });
-
     if (!resizeResponse.ok) {
       throw new Error(`Failed to resize image: ${resizeResponse.status} ${resizeResponse.statusText}`);
     }
 
     const resizeData = await resizeResponse.json();
-    console.log("Resize data", resizeData);
 
     // Upload resized images
     for (const [size, base64Image] of Object.entries(resizeData.resizedImages)) {
@@ -119,8 +111,6 @@ export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions
         Body: resizedBuffer,
         ContentType: resizeData.contentType,
       };
-
-      console.log({ resizedInput });
 
       const resizedCommand = new PutObjectCommand(resizedInput);
       await s3.send(resizedCommand);
