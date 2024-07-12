@@ -1,7 +1,8 @@
 import { Interweave, Node } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import Image from "next/image";
-import { FC, ReactNode, RefObject } from "react";
+import { FC, ReactNode } from "react";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 
 interface ContestPromptPageLegacyLayoutProps {
   prompt: string;
@@ -28,6 +29,10 @@ const ContestPromptPageLegacyLayout: FC<ContestPromptPageLegacyLayoutProps> = ({
   displayReadMore,
   handleToggle,
 }) => {
+  const { contestStatus } = useContestStatusStore(state => state);
+  const isVotingOpenOrClosed =
+    contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
@@ -35,10 +40,13 @@ const ContestPromptPageLegacyLayout: FC<ContestPromptPageLegacyLayoutProps> = ({
       </div>
       <div className="pl-5">
         <div className="border-l border-true-white">
-          <div className="prose prose-invert pl-5 overflow-hidden" style={{ maxHeight: "999em" }}>
+          <div
+            className="prose prose-invert pl-5 overflow-hidden"
+            style={{ maxHeight: isVotingOpenOrClosed ? "none" : isExpanded ? "none" : "150px" }}
+          >
             <Interweave content={prompt} matchers={[new UrlMatcher("url")]} transform={transform} />
           </div>
-          {displayReadMore && (
+          {!isVotingOpenOrClosed && displayReadMore && (
             <div className="flex gap-1 items-center pl-5 mt-4 cursor-pointer" onClick={handleToggle}>
               <p className="text-[16px] text-positive-11 font-bold">{isExpanded ? "Read Less" : "Read More"}</p>
               <Image

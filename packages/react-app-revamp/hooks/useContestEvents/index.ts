@@ -96,7 +96,7 @@ export function useContestEvents() {
 
   useEffect(() => {
     if (!canUpdateVotesInRealTime || ContestStatus.VotingOpen !== contestStatus) {
-      provider?.removeAllListeners("VoteCast");
+      provider.removeAllListeners("VoteCast");
       setDisplayReloadBanner(false);
     } else {
       if (ContestStatus.VotingOpen === contestStatus && canUpdateVotesInRealTime) {
@@ -112,14 +112,14 @@ export function useContestEvents() {
     }
 
     return () => {
-      provider?.removeAllListeners("VoteCast");
+      provider.removeAllListeners("VoteCast");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contestStatus, canUpdateVotesInRealTime]);
 
   function onVisibilityChangeHandler() {
     if (document.visibilityState === "hidden") {
-      provider?.removeAllListeners();
+      provider.removeAllListeners();
 
       if (contestStatusRef.current === ContestStatus.VotingOpen && canUpdateVotesInRealTime) {
         setDisplayReloadBanner(true);
@@ -127,7 +127,7 @@ export function useContestEvents() {
       return;
     } else {
       if (contestStatusRef.current === ContestStatus.VotingOpen && canUpdateVotesInRealTime) {
-        provider?.addListener("VoteCast", (...args) => {
+        provider.addListener("VoteCast", (...args) => {
           onVoteCast(args);
         });
       }

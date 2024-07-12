@@ -40,7 +40,6 @@ const getTokenSymbol = (
     : chainNativeCurrencySymbol;
 };
 
-//TODO: add logic for unsupported chains
 const AddTokenWidget: FC<AddTokenWidgetProps> = ({
   selectedToken,
   selectedChain,
@@ -150,6 +149,12 @@ const AddTokenWidget: FC<AddTokenWidgetProps> = ({
     return true;
   };
 
+  const isAmountExceedingBalance = (amount: string, balance: string): boolean => {
+    const amountNumber = parseFloat(amount);
+    const balanceNumber = parseFloat(balance);
+    return !isNaN(amountNumber) && !isNaN(balanceNumber) && amountNumber > balanceNumber;
+  };
+
   const handleRefreshBalance = () => {
     refetchBalance().then(() => {
       if (data) {
@@ -200,10 +205,15 @@ const AddTokenWidget: FC<AddTokenWidgetProps> = ({
                 <div className="flex items-center justify-between">
                   <input
                     type="number"
-                    className="text-[32px] w-2/3 text-neutral-11 placeholder-neutral-14 placeholder-bold bg-transparent border-none focus:outline-none"
+                    className={`text-[32px] w-2/3 placeholder-neutral-10 placeholder-bold bg-transparent border-none focus:outline-none ${
+                      isAmountExceedingBalance(selectedTokenAmount, selectedTokenBalance)
+                        ? "text-negative-11"
+                        : "text-neutral-11"
+                    }`}
                     placeholder="0"
                     onChange={onAmountChange}
                     value={isMaxPressed ? formatBalance(selectedTokenBalance) : selectedTokenAmount}
+                    autoFocus
                   />
                   <div
                     className="flex items-center gap-1 p-1 bg-primary-5 border border-neutral-10 rounded-[10px] cursor-pointer"

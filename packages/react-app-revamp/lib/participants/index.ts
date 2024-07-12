@@ -1,4 +1,4 @@
-import { formatUnits } from "ethers";
+import { formatUnits } from "ethers/lib/utils";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 
 export const indexContestParticipantsV3 = async (
