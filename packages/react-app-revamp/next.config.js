@@ -22,6 +22,11 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "images.jokerace.io",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "ik.imagekit.io",
         pathname: "/**",
       },
