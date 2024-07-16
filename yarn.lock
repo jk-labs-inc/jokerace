@@ -7402,10 +7402,10 @@
   resolved "https://registry.yarnpkg.com/@vercel/error-utils/-/error-utils-2.0.2.tgz#d75ccce100dbdfc9cb85700767b59d4257a91113"
   integrity sha512-Sj0LFafGpYr6pfCqrQ82X6ukRl5qpmVrHM/191kNYFqkkB9YkjlMAj6QcEsvCG259x4QZ7Tya++0AB85NDPbKQ==
 
-"@vercel/nft@0.27.2":
-  version "0.27.2"
-  resolved "https://registry.yarnpkg.com/@vercel/nft/-/nft-0.27.2.tgz#b5f7881a1c33b813fdc83e7112082411d2eb524b"
-  integrity sha512-7LeioS1yE5hwPpQfD3DdH04tuugKjo5KrJk3yK5kAI3Lh76iSsK/ezoFQfzuT08X3ZASQOd1y9ePjLNI9+TxTQ==
+"@vercel/nft@0.27.3":
+  version "0.27.3"
+  resolved "https://registry.yarnpkg.com/@vercel/nft/-/nft-0.27.3.tgz#03bc09fb0d7bd386c810ec0908a7c853ae73b999"
+  integrity sha512-oySTdDSzUAFDXpsSLk9Q943o+/Yu/+TCFxnehpFQEf/3khi2stMpTHPVNwFdvZq/Z4Ky93lE+MGHpXCRpMkSCA==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.5"
     "@rollup/pluginutils" "^4.0.0"
@@ -7420,10 +7420,10 @@
     node-gyp-build "^4.2.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@3.2.3":
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-3.2.3.tgz#a036497eade0757492c277a3f3ee03afef3f8864"
-  integrity sha512-M/trB1Cs5/aaZVpJJpylntoektXeShFkl8uSCehbh4wy/gGMXFsTRmQfGfUbcJq8K/rhPHrRv1lmJEU5S5zerg==
+"@vercel/node@3.2.4":
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-3.2.4.tgz#0830f4d136493d61c83bc719dc34cb0029c473be"
+  integrity sha512-6zmLRzKt8PG3wWMx1vA+A+Eg02AtRT/m9aP4fnFxH7k8fzaKqtT8E9QfQiDSGi4YG2A1/Dmtu3saPhV37ovtyw==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
@@ -7431,7 +7431,7 @@
     "@types/node" "16.18.11"
     "@vercel/build-utils" "8.3.2"
     "@vercel/error-utils" "2.0.2"
-    "@vercel/nft" "0.27.2"
+    "@vercel/nft" "0.27.3"
     "@vercel/static-config" "3.0.0"
     async-listen "3.0.0"
     cjs-module-lexer "1.2.3"
