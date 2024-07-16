@@ -78,7 +78,7 @@
     "react-tweet": "3.2.1",
     "react-use": "17.5.0",
     "react-window": "1.8.10",
-    "tailwindcss": "3.4.5",
+    "tailwindcss": "3.4.6",
     "ts-node": "10.9.2",
     "underscore": "1.13.6",
     "uuid": "10.0.0",
@@ -109,7 +109,7 @@
     "postcss": "8.4.39",
     "postcss-100vh-fix": "1.0.2",
     "safe-json-utils": "1.1.1",
-    "tailwindcss": "3.4.5",
+    "tailwindcss": "3.4.6",
     "tailwindcss-logical": "3.0.1",
     "typescript": "5.5.3",
     "webpack": "5.93.0"
