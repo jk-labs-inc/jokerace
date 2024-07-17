@@ -6775,17 +6775,17 @@
     lodash.merge "^4.6.2"
     postcss-selector-parser "6.0.10"
 
-"@tanstack/query-core@5.51.4":
-  version "5.51.4"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.51.4.tgz#550acd73fb50ccc8e7ba2802154635c818d3c4b0"
-  integrity sha512-KdXY86vf+1+rUaDkasEgZJx0uTaqJieAFUWECLoic2DNZrH7hqi6WvuTUE+OVRGj+u4PgMwOIv9blb3M5TEkwg==
+"@tanstack/query-core@5.51.5":
+  version "5.51.5"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.51.5.tgz#80adac6c8ad8e125d1f6fc99b24bc97ad27f3bd4"
+  integrity sha512-qovOto6hFet2zA4Pf3cDO+qkOqskO6xP39PlKnr6YKPtjRsePWyZnTaMf59+VnlOLY8gpku1I4WPC4dqBXo4FQ==
 
-"@tanstack/react-query@5.51.4":
-  version "5.51.4"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.51.4.tgz#96d445edaebcedb1dbf66b4c60e427a26e33b892"
-  integrity sha512-GkEZ/AfG+ExLhvTazZ0jTGRmKCGYCZOhVdXjpzjB+jGRfRPCuvQvKNZ3fod4Qa326Nc5E9KOepHXt56aKJTIxA==
+"@tanstack/react-query@5.51.5":
+  version "5.51.5"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.51.5.tgz#f4439ff91717869fef9e68eaf7075cb20352c8ca"
+  integrity sha512-jaYYPGF55HT3DSV2NxFHa7zGRUm6LiRENw1rspkzqNiOU93umP5YCdE/l4S61/ZdLnjzwYIM4FU96EQt+imq5Q==
   dependencies:
-    "@tanstack/query-core" "5.51.4"
+    "@tanstack/query-core" "5.51.5"
 
 "@tanstack/react-virtual@^3.8.1":
   version "3.8.1"
