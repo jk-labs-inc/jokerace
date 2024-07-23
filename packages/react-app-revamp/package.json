@@ -30,7 +30,7 @@
     "@tiptap/react": "2.4.0",
     "@tiptap/starter-kit": "2.4.0",
     "@types/lodash": "4.17.7",
-    "@types/node": "20.14.11",
+    "@types/node": "20.14.12",
     "@typescript-eslint/parser": "7.17.0",
     "@wagmi/connectors": "5.1.0",
     "@wagmi/core": "^2.12.2",
