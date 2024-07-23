@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const cyber: Chain = {
   id: 7560,
   name: "cyber",
-  iconUrl: "/contest/mona-lisa-moustache.png",
+  iconUrl: "/cyber.svg",
   nativeCurrency: {
     decimals: 18,
     name: "ETH",
