@@ -43,9 +43,9 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ src, fallbackSrc,
             className="bg-true-black opacity-75 p-2 rounded-full hover:opacity-100 transition-opacity z-10"
           >
             {isExpanded ? (
-              <NextImage src="/contest/minimize.svg" width={18} height={18} alt="minimize" />
+              <NextImage src="/contest/minimize.svg" width={14} height={14} alt="minimize" />
             ) : (
-              <NextImage src="/contest/maximize.svg" width={18} height={18} alt="maximize" />
+              <NextImage src="/contest/maximize.svg" width={14} height={14} alt="maximize" />
             )}
           </button>
         </div>

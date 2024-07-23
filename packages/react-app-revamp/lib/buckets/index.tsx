@@ -8,6 +8,16 @@ const IMAGE_UPLOAD_BUCKET = process.env.NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET as strin
 
 const IMAGE_PUBLIC_URL = "https://images.jokerace.io";
 
+export interface ResizedImage {
+  data: string;
+  contentType: string;
+}
+
+export interface ResizeResponse {
+  success: boolean;
+  resizedImages: Record<string, ResizedImage>;
+}
+
 interface LoadFileOptions {
   fileId: string;
 }
@@ -74,56 +84,45 @@ export const saveFileToBucket = async ({ fileId, content }: SaveFileOptions): Pr
 export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions): Promise<string> => {
   toastLoading("Uploading image...", false);
   try {
-    // Upload original image
-    const input = {
-      Bucket: IMAGE_UPLOAD_BUCKET,
-      Key: fileId,
-      Body: file,
-      ContentType: type,
-    };
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    const command = new PutObjectCommand(input);
-    await s3.send(command);
-
-    const originalUrl = `${IMAGE_PUBLIC_URL}/${fileId}`;
-
-    // Call server-side route to handle resizing
     const resizeResponse = await fetch("/api/resize-image", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ originalUrl }),
+      body: JSON.stringify({ buffer: buffer.toString("base64"), fileId, contentType: type }),
     });
 
     if (!resizeResponse.ok) {
       throw new Error(`Failed to resize image: ${resizeResponse.status} ${resizeResponse.statusText}`);
     }
 
-    const resizeData = await resizeResponse.json();
+    const resizeData: ResizeResponse = await resizeResponse.json();
 
-    // Upload resized images
-    for (const [size, base64Image] of Object.entries(resizeData.resizedImages)) {
-      const resizedBuffer = Buffer.from(base64Image as string, "base64");
-      const resizedInput = {
+    for (const [size, imageData] of Object.entries(resizeData.resizedImages)) {
+      const imageBuffer = Buffer.from(imageData.data, "base64");
+      const input = {
         Bucket: IMAGE_UPLOAD_BUCKET,
-        Key: `${fileId}-${size}`,
-        Body: resizedBuffer,
-        ContentType: resizeData.contentType,
+        Key: size === "original" ? fileId : `${fileId}-${size}`,
+        Body: imageBuffer,
+        ContentType: imageData.contentType,
       };
 
-      const resizedCommand = new PutObjectCommand(resizedInput);
-      await s3.send(resizedCommand);
+      const command = new PutObjectCommand(input);
+      await s3.send(command);
     }
 
+    const originalUrl = `${IMAGE_PUBLIC_URL}/${fileId}`;
     toastSuccess("Image uploaded successfully!");
     return originalUrl;
   } catch (error: any) {
     toastError("Failed to upload an image, please try again.");
+    console.error("Upload error:", error);
     throw new Error(`Failed to upload image with ID ${fileId} to bucket ${IMAGE_UPLOAD_BUCKET}`);
   }
 };
-
 /**
  * Fetches voter or submitter data from S3 bucket using web worker
  * @param fileId
