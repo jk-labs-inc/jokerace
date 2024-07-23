@@ -7636,6 +7636,15 @@
     mipd "0.0.5"
     zustand "4.4.1"
 
+"@wagmi/core@2.12.2":
+  version "2.12.2"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.12.2.tgz#009a475a14f44999082f2e4881853e49bc655fdf"
+  integrity sha512-V/KmuTOBHVdg5NG5EIzLyWuXJ3f8a8YwpXM7ywjuEnGkljxh+WROKKd+I/Qc5RHK59nEhFOYWQKXuyz1szmO9A==
+  dependencies:
+    eventemitter3 "5.0.1"
+    mipd "0.0.7"
+    zustand "4.4.1"
+
 "@walletconnect/core@2.11.2":
   version "2.11.2"
   resolved "https://registry.yarnpkg.com/@walletconnect/core/-/core-2.11.2.tgz#35286be92c645fa461fecc0dfe25de9f076fca8f"
@@ -12910,6 +12919,11 @@ mipd@0.0.5:
   integrity sha512-gbKA784D2WKb5H/GtqEv+Ofd1S9Zj+Z/PGDIl1u1QAbswkxD28BQ5bSXQxkeBzPBABg1iDSbiwGG1XqlOxRspA==
   dependencies:
     viem "^1.1.4"
+
+mipd@0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/mipd/-/mipd-0.0.7.tgz#bb5559e21fa18dc3d9fe1c08902ef14b7ce32fd9"
+  integrity sha512-aAPZPNDQ3uMTdKbuO2YmAw2TxLHO0moa4YKAyETM/DTj5FloZo+a+8tU+iv4GmW+sOxKLSRwcSFuczk+Cpt6fg==
 
 mkdirp@^0.5.1:
   version "0.5.6"
