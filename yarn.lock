@@ -3464,15 +3464,15 @@
   resolved "https://registry.yarnpkg.com/@heroicons/react/-/react-2.1.5.tgz#1e13f34976cc542deae92353c01c8b3d7942e9ba"
   integrity sha512-FuzFN+BsHa+7OxbvAERtgBTNeZpUjgM/MIizfVkSCL2/edriN0Hx/DWRCR//aPYwO5QX/YlgLGXk+E3PcfZwjA==
 
-"@hono/node-server@^1.8.2":
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/@hono/node-server/-/node-server-1.10.0.tgz#2ea8a1b744e368c5b9163ea795b678ce99a35bf6"
-  integrity sha512-XXFmIT4swUm3gG9yPU/HMAqHAHTP/Wr2mqgJakOFQhbbWipomaLu7ys0h9KrgF9032j18efBYk2aHz2SfgDbTA==
+"@hono/node-server@^1.11.2":
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/@hono/node-server/-/node-server-1.12.0.tgz#e0a8e93811c96e3bb9fc29ba23915989bd477995"
+  integrity sha512-e6oHjNiErRxsZRZBmc2KucuvY3btlO/XPncIpP2X75bRdTilF9GLjm3NHvKKunpJbbJJj31/FoPTksTf8djAVw==
 
-"@hono/valibot-validator@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@hono/valibot-validator/-/valibot-validator-0.2.2.tgz#d1c6bd45df2a9265e1097e26be5150ed7f9d7d8e"
-  integrity sha512-1IfIi4JDztOeL3ciVbDoN5uJS9nSRfJv2az8VIn/m7CcVca2uF48Hw7v5ZShO/ESTP2SxtT8ozMZkQE1hi+kiw==
+"@hono/valibot-validator@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@hono/valibot-validator/-/valibot-validator-0.3.0.tgz#8c4c3f4a1ba8d5df54c71ed97597075393e7d054"
+  integrity sha512-EcGJKzLt11SK4K11yKHrhI93ECtKeSHAnnENHw5tCL0ZhyDIx96avc3Ua8/ri4fwVvRPuOzFQ2OBRsVvwZuqeQ==
 
 "@humanwhocodes/module-importer@^1.0.1":
   version "1.0.1"
@@ -10745,14 +10745,14 @@ fresh@0.5.2:
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==
 
-frog@0.11.4:
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/frog/-/frog-0.11.4.tgz#e21ae37e618f1c32498021415586a71eb6277572"
-  integrity sha512-Nx1Ov7mK88+6Hcwo+aBNRNCmkM2bmVYf3F7hezNw8TEyW229uEQq1wH6JdFyL/x32obSTs7EOJGtJM1MWAbdKA==
+frog@0.15.2:
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/frog/-/frog-0.15.2.tgz#0f19d0936b70246a748cf041c5a85fdabe6c819c"
+  integrity sha512-YbDUQWpsigMv/Uwmkk2xLW/tKaC/UaGmdAUEs2WpYSfhHxTvp3U7Kktk+7Dn2UVzevvhAMB9uGy/r4GGZjF9DQ==
   dependencies:
     "@bufbuild/protobuf" "^1.7.2"
-    "@hono/node-server" "^1.8.2"
-    "@hono/valibot-validator" "^0.2.2"
+    "@hono/node-server" "^1.11.2"
+    "@hono/valibot-validator" "^0.3.0"
     "@noble/curves" "^1.3.0"
     "@noble/hashes" "^1.3.3"
     cac "^6.7.14"
@@ -10765,7 +10765,7 @@ frog@0.11.4:
     jose "^5.2.2"
     lz-string "^1.5.0"
     path-browserify "^1.0.1"
-    valibot "^0.30.0"
+    valibot "^0.31.0"
     viem "^2.7.10"
     vite "^5.1.3"
 
@@ -16299,10 +16299,10 @@ valibot@0.36.0:
   resolved "https://registry.yarnpkg.com/valibot/-/valibot-0.36.0.tgz#74e746694b1abcc1879e4393db551d4ce1e10578"
   integrity sha512-CjF1XN4sUce8sBK9TixrDqFM7RwNkuXdJu174/AwmQUB62QbCQADg5lLe8ldBalFgtj1uKj+pKwDJiNo4Mn+eQ==
 
-valibot@^0.30.0:
-  version "0.30.0"
-  resolved "https://registry.yarnpkg.com/valibot/-/valibot-0.30.0.tgz#6b90386a04d2c281cdc5dc6ad33bd3d2d7ea13b5"
-  integrity sha512-5POBdbSkM+3nvJ6ZlyQHsggisfRtyT4tVTo1EIIShs6qCdXJnyWU5TJ68vr8iTg5zpOLjXLRiBqNx+9zwZz/rA==
+valibot@^0.31.0:
+  version "0.31.1"
+  resolved "https://registry.yarnpkg.com/valibot/-/valibot-0.31.1.tgz#fa1481da7cf28a2fdb15e37b0b292023a30293cb"
+  integrity sha512-2YYIhPrnVSz/gfT2/iXVTrSj92HwchCt9Cga/6hX4B26iCz9zkIsGTS0HjDYTZfTi1Un0X6aRvhBi1cfqs/i0Q==
 
 valid-url@^1.0.9:
   version "1.0.9"

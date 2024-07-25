@@ -41,7 +41,7 @@
     "eslint": "9.7.0",
     "eslint-config-next": "14.2.5",
     "ethers": "5.7.2",
-    "frog": "0.11.4",
+    "frog": "0.15.2",
     "fuse.js": "7.0.0",
     "hono": "4.5.1",
     "i18next": "23.12.2",
