@@ -107,25 +107,29 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
   return (
     <Link
       href={getContestUrl(contestData.network_name ?? "", contestData.address ?? "")}
-      className="flex flex-col justify-between w-[320px] h-[216px] pt-4 pb-3 px-8 bg-gradient-radial rounded-[16px] border border-neutral-0 hover:border-neutral-10 transition-all duration-300 ease-in-out"
+      className="animate-reveal flex flex-col justify-between w-[320px] h-[216px] pt-4 pb-3 px-8 bg-gradient-radial rounded-[16px] border border-neutral-0 hover:border-neutral-10 transition-all duration-300 ease-in-out"
     >
       <div className="flex flex-col gap-8">
         <div className="flex items-center gap-2">
-          {rewardsData ? (
+          {isRewardsFetching ? (
+            <Skeleton
+              width={60}
+              height={24}
+              baseColor="#212121"
+              highlightColor="#100816"
+              className="border border-neutral-10"
+              borderRadius={8}
+              duration={1}
+            />
+          ) : rewardsData ? (
             <div className="flex items-center h-6 border border-neutral-10 rounded-[8px] px-2">
-              {isRewardsFetching ? (
-                <Skeleton />
-              ) : (
-                <>
-                  {rewardsData.token ? (
-                    <p className="text-positive-11 font-bold text-[12px]">
-                      {rewardsData.token.value} <span className="uppercase">${rewardsData.token.symbol}</span>
-                    </p>
-                  ) : rewardsData.rewardsPaidOut ? (
-                    <p className="font-bold text-positive-11 text-[12px]">rewards paid out!</p>
-                  ) : null}
-                </>
-              )}
+              {rewardsData.token ? (
+                <p className="text-positive-11 font-bold text-[12px]">
+                  {rewardsData.token.value} <span className="uppercase">${rewardsData.token.symbol}</span>
+                </p>
+              ) : rewardsData.rewardsPaidOut ? (
+                <p className="font-bold text-positive-11 text-[12px]">rewards paid out!</p>
+              ) : null}
             </div>
           ) : null}
 

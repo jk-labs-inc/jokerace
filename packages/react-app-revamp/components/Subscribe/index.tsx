@@ -1,5 +1,4 @@
 import { emailRegex } from "@helpers/regex";
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import useEmailSignup from "@hooks/useEmailSignup";
 import { useState } from "react";
 import { useAccount } from "wagmi";
@@ -43,21 +42,21 @@ const Subscribe = () => {
       <div className="flex w-full md:w-[500px]">
         <div className="relative w-full">
           <input
-            className="bg-true-black w-full pl-4 py-2 text-[14px] md:text-[16px] placeholder-neutral-10 placeholder-bold rounded-[40px] border border-neutral-11 transition-opacity focus:outline-none"
+            className="bg-true-black w-full pl-4 py-2 text-[14px] md:text-[18px] placeholder-neutral-10 placeholder-bold rounded-[8px] border border-true-white transition-opacity focus:outline-none"
             type="email"
             value={email}
             onChange={handleEmailChange}
-            placeholder="enter email to get updates on top contests..."
+            placeholder="email address..."
             required
           />
-          <div
-            className={`flex justify-center cursor-pointer items-center absolute right-0 w-[50px] border-r border-t border-b rounded-r-[40px] top-0 h-full bg-neutral-12 ${
+          <button
+            className={`flex justify-center cursor-pointer items-center absolute right-0 w-48 rounded-r-[8px] top-0 h-full bg-gradient-purple-white ${
               isLoading ? "opacity-50 pointer-events-none" : ""
             }`}
             onClick={handleSubscribe}
           >
-            <ChevronRightIcon className="w-7 h-7 text-true-black" />
-          </div>
+            <p className="text-[18px] font-bold text-true-black">get contest updates</p>
+          </button>
         </div>
       </div>
       {emailError ? (

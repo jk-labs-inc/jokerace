@@ -351,7 +351,9 @@ module.exports = {
         "gradient-purple": "linear-gradient(90deg, #BB65FF 0%, #E5E5E5 100%)",
         "gradient-green": "linear-gradient(90deg, #78FFC6 0%, #FFFFFF 100%)",
         "gradient-radial": "radial-gradient(50% 50% at 50% 50%, #391F4D 0%, #000000 100%)",
-        "gradient-black-purple": "linear-gradient(90deg, #000000 0%, #100816 100%)",
+        "gradient-fade-black-purple":
+          "linear-gradient(to bottom, #000000 0%, #050408 15%, #0a0610 25%, #100816 40%, #100816 60%, #0a0610 75%, #050408 85%, #000000 100%)",
+        "gradient-purple-white": "linear-gradient(90deg, #C293FF 0%, #FFFFFF 100%)",
       },
       boxShadow: {
         "create-header": "0 3px 4px 0 rgba(106, 106, 106, 1)",

@@ -32,7 +32,7 @@ const LandingHeader = () => {
     return (
       <>
         <Link href="/">
-          <div className="pl-4">
+          <div className="pl-4 md:pl-16 md:pr-16 3xl:pl-28">
             <h1 className="font-sabo text-neutral-11 normal-case text-[45px]">
               J<span className="text-[35px]">oke</span>R<span className="text-[35px]">ace</span>
             </h1>
@@ -85,7 +85,7 @@ const LandingHeader = () => {
   }
 
   return (
-    <header className="flex items-center justify-between pl-[120px] pr-[60px] mt-8">
+    <header className="flex items-center justify-between pl-28 pr-[60px] mt-8">
       <Link href="/">
         <div>
           <h1 className="font-sabo text-neutral-11 normal-case text-[80px]">
