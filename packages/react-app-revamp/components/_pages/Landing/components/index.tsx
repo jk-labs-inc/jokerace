@@ -1,4 +1,3 @@
-"use client";
 import FeaturedContests from "@components/_pages/FeaturedContests";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
@@ -11,18 +10,32 @@ import { TypeAnimation } from "react-type-animation";
 import { useAccount } from "wagmi";
 import LandingPageExplainer from "./Explainer";
 import LandingPageUsedBy from "./UsedBy";
+import { useMediaQuery } from "react-responsive";
 
-const words = [
-  "hackathons",
-  "grants rounds",
-  "awards",
-  "applications",
-  "demo days",
-  "talent communities",
-  "art contests",
-  "debates",
-  "reality tv shows",
-];
+const wordConfig = {
+  desktop: [
+    "hackathons",
+    "grants rounds",
+    "awards",
+    "applications",
+    "demo days",
+    "talent communities",
+    "art contests",
+    "debates",
+    "reality tv shows",
+  ],
+  mobile: [
+    "hackathons",
+    "grants",
+    "awards",
+    "applications",
+    "demo days",
+    "leaderboards",
+    "art contests",
+    "debates",
+    "game shows",
+  ],
+};
 
 function useFeaturedContests() {
   const [page] = useState(0);
@@ -57,6 +70,8 @@ function useFeaturedContests() {
 }
 
 const LandingPage = () => {
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const words = isMobile ? wordConfig.mobile : wordConfig.desktop;
   const { status, contestData, rewardsData, isRewardsFetching, isContestDataFetching } = useFeaturedContests();
 
   return (
