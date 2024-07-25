@@ -21,7 +21,7 @@ interface AvatarProps {
 const SIZES = {
   extraSmall: {
     avatarSizeClass: "w-6 h-6",
-    textSizeClass: "text-[14px]",
+    textSizeClass: "text-[12px]",
   },
   small: {
     avatarSizeClass: "w-8 h-8",

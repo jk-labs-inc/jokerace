@@ -1,24 +1,30 @@
 "use client";
-import Explainer from "@components/Explainer";
-import Subscribe from "@components/Subscribe";
-import BurgerMenu from "@components/UI/BurgerMenu";
-import Button from "@components/UI/Button";
-import { ConnectButtonCustom } from "@components/UI/ConnectButton";
-import UserProfileDisplay from "@components/UI/UserProfileDisplay";
-import ListContests from "@components/_pages/ListContests";
-import { FOOTER_LINKS } from "@config/links";
-import { ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_USER } from "@config/routes";
+import FeaturedContests from "@components/_pages/FeaturedContests";
+import UsedBy from "@components/_pages/UsedBy";
+import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
-import useContestSortOptions from "@hooks/useSortOptions";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
-import { ITEMS_PER_PAGE, getFeaturedContests, getLiveContests, getRewards, searchContests } from "lib/contests";
+import { getFeaturedContests, getRewards } from "lib/contests";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { TypeAnimation } from "react-type-animation";
 import { useAccount } from "wagmi";
 
-function useContests(searchValue: string, sortBy?: string) {
-  const [page, setPage] = useState(0);
+const words = [
+  "hackathons",
+  "grants rounds",
+  "awards",
+  "applications",
+  "demo days",
+  "talent communities",
+  "art contests",
+  "debates",
+  "reality tv shows",
+];
+
+function useFeaturedContests() {
+  const [page] = useState(0);
   const { address } = useAccount();
 
   const {
@@ -27,43 +33,17 @@ function useContests(searchValue: string, sortBy?: string) {
     error,
     isFetching: isContestDataFetching,
   } = useQuery({
-    queryKey: [searchValue || sortBy ? "searchedContests" : "featuredContests", page, address, searchValue, sortBy],
-    queryFn: () => {
-      if (searchValue) {
-        // Call searchContests if there is a searchValue
-        return searchContests(
-          {
-            searchString: searchValue,
-            pagination: {
-              currentPage: page,
-            },
-          },
-          address,
-          sortBy,
-        );
-      } else if (sortBy) {
-        return getLiveContests(page, 6, address, sortBy);
-      } else {
-        // Call getFeaturedContests otherwise
-        return getFeaturedContests(page, 6, address);
-      }
-    },
+    queryKey: ["featuredContests", page, address],
+    queryFn: () => getFeaturedContests(page, 6, address),
   });
 
-  const {
-    status: rewardsStatus,
-    data: rewardsData,
-    error: rewardsError,
-    isFetching: isRewardsFetching,
-  } = useQuery({
+  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({
     queryKey: ["rewards", contestData],
     queryFn: () => getRewards(contestData?.data ?? []),
     enabled: !!contestData,
   });
 
   return {
-    page,
-    setPage,
     status,
     contestData,
     rewardsData,
@@ -74,109 +54,54 @@ function useContests(searchValue: string, sortBy?: string) {
 }
 
 const Page = () => {
-  const router = useRouter();
-  const [searchValue, setSearchValue] = useState("");
-  const { address } = useAccount();
-  const [isClient, setIsClient] = useState(false);
-  const allowedLinks = ["Github", "Twitter", "Telegram", "Report a bug", "Terms", "Media Kit"];
-  const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
-  const [sortBy, setSortBy] = useState<string>("");
-  const sortOptions = useContestSortOptions("liveContests");
-  const { page, setPage, status, contestData, rewardsData, isRewardsFetching, error, isContestDataFetching } =
-    useContests(searchValue, sortBy);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  const onViewAll = () => {
-    if (searchValue) {
-      router.push(`/contests?title=${searchValue}&sortBy=${sortBy}`);
-    } else if (sortBy) {
-      router.push(`${ROUTE_VIEW_LIVE_CONTESTS}?sortBy=${sortBy}`);
-    } else {
-      router.push(ROUTE_VIEW_LIVE_CONTESTS);
-    }
-  };
+  const { status, contestData, rewardsData, isRewardsFetching, isContestDataFetching } = useFeaturedContests();
 
   return (
-    <>
-      <div className="pl-8 pr-8 md:pl-16 md:pr-16 mt-4 md:mt-14 lg:mt-6 max-w-[1350px] 3xl:pl-28 2xl:pr-0 ">
-        <div className="hidden lg:flex mb-8">
-          <p className="text-[18px] md:text-[20px] font-bold">contests for communities to run, grow, and monetize</p>
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 pl-4 pr-4 md:pl-16 md:pr-16 lg:mt-6 3xl:pl-28 2xl:pr-0 ">
+        <div className="flex flex-col md:gap-4">
+          <p className="text-[32px] md:text-[48px] font-bold">
+            contests for{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-purple inline-block">
+              <TypeAnimation
+                sequence={words.flatMap(word => [word, 3000, "", 100])}
+                wrapper="span"
+                speed={50}
+                style={{ display: "inline-block" }}
+                repeat={Infinity}
+              />
+            </span>
+          </p>
+          <p className="text-[16px] md:text-[24px] font-bold">for communities to grow, run, and monetize</p>
         </div>
 
-        <div className="flex items-center gap-2 lg:hidden">
-          {isClient && address ? (
-            <>
-              <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
-                <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />
-              </Link>
-              <ConnectButtonCustom displayOptions={{ onlyChainSwitcher: true, showChainName: false }} />
-            </>
-          ) : null}
-
-          <div>
-            <BurgerMenu>
-              <div className="flex flex-col gap-2">
-                {filteredLinks.map((link, key) => (
-                  <a
-                    className="font-sabo text-neutral-11 text-[24px] py-2 xs:px-2"
-                    key={`footer-link-${key}`}
-                    href={link.href}
-                    rel="nofollow noreferrer"
-                    target="_blank"
-                  >
-                    {link.label}
-                  </a>
-                ))}
-              </div>
-            </BurgerMenu>
-          </div>
-        </div>
-
-        <div className="hidden lg:full-width-grid-cols lg:gap-0">
-          <div>
-            <div className="text-[16px] font-bold  mb-1">stage one</div>
-            <div className="h-1 bg-secondary-11"></div>
-            <div className="text-[16px] font-bold mt-1 text-secondary-11">creator asks a prompt</div>
-          </div>
-          <div>
-            <div className="text-[16px] font-bold   mb-1">stage two</div>
-            <div className="h-1 bg-primary-10"></div>
-            <div className="text-[16px]  font-bold mt-1 text-primary-10">submitters respond</div>
-          </div>
-          <div>
-            <div className="text-[16px] font-bold  mb-1">stage three</div>
-            <div className="h-1 bg-positive-11"></div>
-            <div className="text-[16px] font-bold mt-1 text-positive-11">voters pick top submissions</div>
-          </div>
-        </div>
-
-        <div className="text-[16px] mt-14 -ml-[15px]">
+        <Link
+          href={ROUTE_CREATE_CONTEST}
+          className="bg-gradient-green w-[300px] md:w-[320px] h-10 md:h-12 rounded-[40px] text-[20px] font-bold text-true-black text-center flex items-center justify-center"
+        >
+          <span className="flex items-center normal-case">
+            Create a Contest in Seconds
+            <ChevronRightIcon className="w-6 h-6 ml-2 text-true-black font-bold" />
+          </span>
+        </Link>
+      </div>
+      <div className="flex flex-col mt-4">
+        <div className="bg-gradient-black-purple pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-28 2xl:pr-0 ">
           {isSupabaseConfigured ? (
-            <div className="flex flex-col">
-              <ListContests
-                isContestDataFetching={isContestDataFetching}
-                isRewardsFetching={isRewardsFetching}
-                itemsPerPage={ITEMS_PER_PAGE}
+            <div className="flex flex-col gap-8 w-full">
+              <FeaturedContests
                 status={status}
-                error={error}
-                page={page}
-                setPage={setPage}
                 contestData={contestData}
                 rewardsData={rewardsData}
-                compact={true}
-                onSearchChange={setSearchValue}
-                onSortChange={setSortBy}
-                sortOptions={sortOptions}
+                isContestDataFetching={isContestDataFetching}
+                isRewardsFetching={isRewardsFetching}
               />
-              <div className="flex flex-col md:flex-row gap-6 md:gap-0 justify-between mt-5">
-                <Subscribe />
-                <Button className="bg-primary-10 text-[18px] w-[146px] font-bold" onClick={onViewAll}>
-                  View all
-                </Button>
-              </div>
+              <Link href={ROUTE_VIEW_LIVE_CONTESTS} className="flex gap-1 items-center">
+                <p className="text-[16px] md:text-[18px] text-positive-11 font-bold hover:text-positive-10 transition-colors duration-300 ease-in-out">
+                  view all contests
+                </p>
+                <ChevronRightIcon className="w-4 h-4 text-positive-11 font-bold" />
+              </Link>
             </div>
           ) : (
             <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">
@@ -195,8 +120,9 @@ const Page = () => {
           )}
         </div>
       </div>
-      <Explainer />
-    </>
+
+      <UsedBy />
+    </div>
   );
 };
 

@@ -116,7 +116,7 @@ module.exports = {
       primary: {
         1: "#141414",
         2: "#242424",
-        3: "#2c2100",
+        3: "#100816",
         4: "#352800",
         5: "#3e3e3e",
         6: "#493c00",
@@ -178,7 +178,7 @@ module.exports = {
         4: "#28282c",
         5: "#2e2e32",
         6: "#34343a",
-        7: "#3d3d3d",
+        7: "#323232",
         8: "#5E707699",
         9: "#9D9D9D",
         10: "#6A6A6A",
@@ -348,6 +348,10 @@ module.exports = {
         "gradient-distribute": "linear-gradient(180deg, #B0FED4 0%, #78FFC6 50%, #4A9575 100%)",
         "gradient-withdraw": "linear-gradient(180deg, #FF78A9 0%, #f04f88 50%, #e93d82 100%)",
         "gradient-reward-recipients": "linear-gradient(90deg, #78FFC6 0%,#FFE25B 100%)",
+        "gradient-purple": "linear-gradient(90deg, #BB65FF 0%, #E5E5E5 100%)",
+        "gradient-green": "linear-gradient(90deg, #78FFC6 0%, #FFFFFF 100%)",
+        "gradient-radial": "radial-gradient(50% 50% at 50% 50%, #391F4D 0%, #000000 100%)",
+        "gradient-black-purple": "linear-gradient(90deg, #000000 0%, #100816 100%)",
       },
       boxShadow: {
         "create-header": "0 3px 4px 0 rgba(106, 106, 106, 1)",
@@ -395,5 +399,5 @@ module.exports = {
       transform: ["hover"],
     },
   },
-  plugins: [require("tailwindcss-logical"), require("@tailwindcss/typography")],
+  plugins: [require("tailwindcss-logical"), require("@tailwindcss/typography"), require("tailwind-scrollbar-hide")],
 };
