@@ -1,13 +1,16 @@
+"use client";
 import FeaturedContests from "@components/_pages/FeaturedContests";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
-import { Contest, ContestReward } from "lib/contests";
+import { useQuery } from "@tanstack/react-query";
+import { getFeaturedContests, getRewards } from "lib/contests";
 import Link from "next/link";
-import { FC } from "react";
+import { useState } from "react";
 import { TypeAnimation } from "react-type-animation";
-import LandingPageUsedBy from "./UsedBy";
+import { useAccount } from "wagmi";
 import LandingPageExplainer from "./Explainer";
+import LandingPageUsedBy from "./UsedBy";
 
 const words = [
   "hackathons",
@@ -21,24 +24,41 @@ const words = [
   "reality tv shows",
 ];
 
-interface LandingPageProps {
-  status: "error" | "pending" | "success";
-  isContestDataFetching: boolean;
-  isRewardsFetching: boolean;
-  contestData?: {
-    data: Contest[];
-    count: number | null;
+function useFeaturedContests() {
+  const [page] = useState(0);
+  const { address } = useAccount();
+
+  const {
+    status,
+    data: contestData,
+    error,
+    isFetching: isContestDataFetching,
+  } = useQuery({
+    queryKey: ["featuredContests", page, address],
+    queryFn: () => getFeaturedContests(page, 6, address),
+    refetchOnWindowFocus: false,
+  });
+
+  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({
+    queryKey: ["rewards", contestData],
+    queryFn: () => getRewards(contestData?.data ?? []),
+    enabled: !!contestData,
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    status,
+    contestData,
+    rewardsData,
+    isRewardsFetching,
+    error,
+    isContestDataFetching,
   };
-  rewardsData?: (ContestReward | null)[];
 }
 
-const LandingPage: FC<LandingPageProps> = ({
-  status,
-  contestData,
-  rewardsData,
-  isContestDataFetching,
-  isRewardsFetching,
-}) => {
+const LandingPage = () => {
+  const { status, contestData, rewardsData, isRewardsFetching, isContestDataFetching } = useFeaturedContests();
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-8 pl-4 pr-4 md:pl-16 md:pr-16 lg:mt-6 3xl:pl-28 2xl:pr-0 ">
