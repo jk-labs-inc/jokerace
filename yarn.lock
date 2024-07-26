@@ -16330,9 +16330,9 @@ vary@~1.1.2:
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
 viem@2.x, viem@^2.1.1:
-  version "2.18.0"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.18.0.tgz#ea0d037f0db356e6d71f1251243825345d6dc08f"
-  integrity sha512-HA4Dj+PCNWvvZDThWcUPg0sjiS8uwGRaxs3CMBOASL/j0p2pD4nR9vY/y/pAiRr491hGCnrSCVCmb/qqA57wIw==
+  version "2.18.2"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.18.2.tgz#7ea620804470d1d70f5d4dbb74c3753be5a1530d"
+  integrity sha512-kTji8L4wD7Yak9DicXOo7ksuipPvDUCkvJY6DXMCTvGEiJJPKwa4WydfKvzhOUFmT8A2uZTx2vL0n9/eb8S9Zw==
   dependencies:
     "@adraffy/ens-normalize" "1.10.0"
     "@noble/curves" "1.4.0"
