@@ -97,7 +97,7 @@ const LandingPage = () => {
         <div className="pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-28 2xl:pr-0 ">
           <Link
             href={ROUTE_CREATE_CONTEST}
-            className="bg-gradient-green w-[300px] md:w-[320px] h-10 md:h-12 rounded-[40px] text-[20px] font-bold text-true-black text-center flex items-center justify-center"
+            className="bg-gradient-green w-[300px] md:w-[320px] h-10 md:h-12 rounded-[40px] text-[20px] font-bold text-true-black text-center flex items-center justify-center transition-all duration-300 hover:opacity-90"
           >
             <span className="flex items-center normal-case">
               Create a Contest in Seconds

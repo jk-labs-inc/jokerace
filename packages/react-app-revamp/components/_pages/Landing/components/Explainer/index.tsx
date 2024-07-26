@@ -127,7 +127,7 @@ const LandingPageExplainer = () => {
         </p>
         <Link
           href={ROUTE_CREATE_CONTEST}
-          className="w-[218px] h-10 bg-gradient-purple-white rounded-[40px] normal-case text-[20px] font-bold text-true-black flex items-center justify-center relative"
+          className="w-[218px] h-10 bg-gradient-purple-white rounded-[40px] normal-case text-[20px] font-bold text-true-black flex items-center justify-center relative transition-all duration-300 hover:opacity-90"
         >
           <span className="mr-4 normal-case">Create a Contest</span>
           <ChevronRightIcon className="w-6 h-6 text-true-black font-bold absolute right-2" />
@@ -151,7 +151,7 @@ const LandingPageExplainer = () => {
         </ul>
         <Link
           href={ROUTE_VIEW_LIVE_CONTESTS}
-          className="w-[218px] h-10 bg-gradient-purple-white rounded-[40px] normal-case text-[20px] font-bold text-true-black flex items-center justify-center relative"
+          className="w-[218px] h-10 bg-gradient-purple-white rounded-[40px] normal-case text-[20px] font-bold text-true-black flex items-center justify-center relative transition-all duration-300 hover:opacity-90"
         >
           <span className="mr-4 normal-case">View Contests</span>
           <ChevronRightIcon className="w-6 h-6 text-true-black font-bold absolute right-2" />
@@ -192,7 +192,7 @@ const LandingPageExplainer = () => {
           href="https://docs.jokerace.io/"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-[218px] h-10 bg-gradient-purple-white rounded-[40px] normal-case text-[20px] font-bold text-true-black flex items-center justify-center relative"
+          className="w-[218px] h-10 bg-gradient-purple-white rounded-[40px] normal-case text-[20px] font-bold text-true-black flex items-center justify-center relative transition-all duration-300 hover:opacity-90"
         >
           <span className="mr-4 normal-case">Read Our Docs</span>
           <ChevronRightIcon className="w-6 h-6 text-true-black font-bold absolute right-2" />

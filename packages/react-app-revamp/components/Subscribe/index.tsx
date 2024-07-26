@@ -52,7 +52,7 @@ const Subscribe = () => {
           <button
             className={`flex justify-center cursor-pointer items-center absolute right-0 w-48 rounded-r-[8px] top-0 h-full bg-gradient-purple-white ${
               isLoading ? "opacity-50 pointer-events-none" : ""
-            }`}
+            } transition-all duration-300 hover:opacity-90`}
             onClick={handleSubscribe}
           >
             <p className="text-[16px] md:text-[18px] font-bold text-true-black">get contest updates</p>
