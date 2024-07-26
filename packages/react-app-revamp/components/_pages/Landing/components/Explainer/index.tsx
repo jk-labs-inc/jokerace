@@ -41,7 +41,7 @@ const LandingPageExplainer = () => {
     >
       <div className="flex flex-col gap-4 md:gap-6">
         <p className="text-neutral-11 text-[20px] md:text-[24px] font-bold">why jokerace?</p>
-        <ul className="flex flex-col pl-8">
+        <ul className="flex flex-col pl-8 gap-2">
           <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
             {isMobile
               ? "contest creators make money: we split earnings"
@@ -82,7 +82,7 @@ const LandingPageExplainer = () => {
         <p className="text-neutral-11 text-[20px] md:text-[24px] font-bold">how it works</p>
         <div className="flex flex-col gap-4 mdgap-6">
           <p className="text-neutral-11 text-[16px] md:text-[20px] font-bold">to create a contest:</p>
-          <ul className="flex flex-col pl-8">
+          <ul className="flex flex-col pl-8 gap-2">
             <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
               {isMobile
                 ? "let anyone submit and vote—or use allowlists"
@@ -136,7 +136,7 @@ const LandingPageExplainer = () => {
 
       <div className="flex flex-col gap-4 md:gap-6">
         <p className="text-neutral-11 text-[20px] md:text-[24px] font-bold">to play in a contest:</p>
-        <ul className="flex flex-col pl-8">
+        <ul className="flex flex-col pl-8 gap-2">
           <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
             submit entries during the submission period
           </li>
@@ -160,7 +160,7 @@ const LandingPageExplainer = () => {
 
       <div className="flex flex-col gap-4 md:gap-6">
         <p className="text-neutral-11 text-[20px] md:text-[24px] font-bold">to build on our protocol:</p>
-        <ul className="flex flex-col pl-8">
+        <ul className="flex flex-col pl-8 gap-2">
           <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
             {isMobile
               ? "it’s permissionless: we’re open source onchain"
