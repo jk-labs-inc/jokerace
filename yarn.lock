@@ -7533,10 +7533,10 @@
     "@walletconnect/modal" "2.6.2"
     cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
 
-"@wagmi/connectors@5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.1.0.tgz#2d5135a628cb992196cda8afd42a3aed23cece30"
-  integrity sha512-5ULOFUxPa9GE4zmROuhYCpeL01PDBG283Kn25IME0lcO/ptIizMs1uBafnpTzVDlLJ31MCdSP0RTpnmGt6omjg==
+"@wagmi/connectors@5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.1.1.tgz#25a9c3626ffa855dd739540c03947cea802cc873"
+  integrity sha512-jD+s3gMYhjsmFu9zROHCz4GoPHCMgNObnW5hCZGlWm8mx26zTE/eIe2fjg53n5LWI7nmMVJxuRAMP3m7oOC5Hw==
   dependencies:
     "@coinbase/wallet-sdk" "4.0.4"
     "@metamask/sdk" "0.26.5"
