@@ -47,7 +47,7 @@ import CleanUpConstructorsContract from "@contracts/bytecodeAndAbi/Contest.4.26.
 import AnyoneCanVoteContract from "@contracts/bytecodeAndAbi/Contest.4.27.anyoneCanVote.sol/Contest.json";
 import UpdateForgeLibsContract from "@contracts/bytecodeAndAbi/Contest.4.28.updateForgeLibs.sol/Contest.json";
 import SetSplitDestinationContract from "@contracts/bytecodeAndAbi/Contest.4.29.setSplitDestination.sol/Contest.json";
-import MakeJkLabsSplitConfigurableContract from "@contracts/bytecodeAndAbi/Contest.4.30.MakeJkLabsSplitConfigurableContract.sol/Contest.json";
+import MakeJkLabsSplitConfigurableContract from "@contracts/bytecodeAndAbi/Contest.4.30.makeJkLabsSplitConfigurable.sol/Contest.json";
 import NewValueAlreadyInArrayContract from "@contracts/bytecodeAndAbi/Contest.4.3.newValueAlreadyInArray.sol/Contest.json";
 import UseCustomErrorsContract from "@contracts/bytecodeAndAbi/Contest.4.4.useCustomErrors.sol/Contest.json";
 import CleanUpSortingContract from "@contracts/bytecodeAndAbi/Contest.4.5.cleanUpSorting.sol/Contest.json";

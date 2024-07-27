@@ -50,7 +50,7 @@ import CleanUpConstructorsRewards from "@contracts/bytecodeAndAbi/modules/Reward
 import AnyoneCanVoteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.27.anyoneCanVote.sol/RewardsModule.json";
 import UpdateForgeLibsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.28.updateForgeLibs.sol/RewardsModule.json";
 import SetSplitDestinationRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.29.setSplitDestination.sol/RewardsModule.json";
-import MakeJkLabsSplitConfigurableRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.30.makeJkLabsSplitConfigurableRewards.sol/RewardsModule.json";
+import MakeJkLabsSplitConfigurableRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.30.makeJkLabsSplitConfigurable.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
