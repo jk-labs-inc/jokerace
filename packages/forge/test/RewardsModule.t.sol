@@ -26,6 +26,7 @@ contract RewardsModuleTest is Test {
     uint256 public constant ZERO_COST_TO_VOTE = 0;
     uint256 public constant PAY_PER_VOTE_OFF = 0;
     address public constant CREATOR_SPLIT_DESTINATION = CREATOR_ADDRESS_1;
+    address public constant JK_LABS_SPLIT_DESTINATION = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
 
     // SORTING INT PARAMS
     uint256 public constant SORTING_ENABLED = 1;
@@ -45,7 +46,8 @@ contract RewardsModuleTest is Test {
         ZERO_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
         PAY_PER_VOTE_OFF,
-        CREATOR_SPLIT_DESTINATION
+        CREATOR_SPLIT_DESTINATION,
+        JK_LABS_SPLIT_DESTINATION
     );
 
     Governor.ConstructorArgs public zeroCostToProposeAndRankLimitOneNumParams = Governor.ConstructorArgs(
@@ -61,7 +63,8 @@ contract RewardsModuleTest is Test {
         ZERO_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
         PAY_PER_VOTE_OFF,
-        CREATOR_SPLIT_DESTINATION
+        CREATOR_SPLIT_DESTINATION,
+        JK_LABS_SPLIT_DESTINATION
     );
 
     /*

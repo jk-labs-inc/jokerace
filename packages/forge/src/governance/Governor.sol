@@ -45,6 +45,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 costToVote;
         uint256 payPerVote;
         address creatorSplitDestination;
+        address jkLabsSplitDestination;
     }
 
     struct TargetMetadata {
@@ -77,12 +78,13 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     event ProposalsDeleted(uint256[] proposalIds);
     event ContestCanceled();
     event VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 numVotes);
-    event PaymentReleased(address to, uint256 amount);
+    event CreatorPaymentReleased(address to, uint256 amount);
+    event JkLabsPaymentReleased(address to, uint256 amount);
 
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
-    string private constant _VERSION = "4.29"; // Private as to not clutter the ABI
+    string private constant VERSION = "4.30"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
     string public prompt;
@@ -98,6 +100,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public costToVote;
     uint256 public payPerVote; // If this contest is pay per vote (as opposed to pay per vote transaction).
     address public creatorSplitDestination; // Where the creator split of revenue goes.
+    address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
 
     uint256[] public proposalIds;
     uint256[] public deletedProposalIds;
@@ -160,9 +163,10 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         costToVote = constructorArgs_.costToVote;
         payPerVote = constructorArgs_.payPerVote;
         creatorSplitDestination = constructorArgs_.creatorSplitDestination;
+        jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
 
         emit JokeraceCreated(
-            _VERSION,
+            VERSION,
             name_,
             prompt_,
             msg.sender,
@@ -173,7 +177,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     function version() public pure returns (string memory) {
-        return _VERSION;
+        return VERSION;
     }
 
     function hashProposal(ProposalCore memory proposal) public pure returns (uint256) {
@@ -332,21 +336,21 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     /**
-     * @dev Distribute the costToPropose to jk labs and the creator based on _percentageToCreator.
+     * @dev Distribute the cost of an action to the creator and jk labs based on _percentageToCreator.
      */
     function _distributeCost(uint256 actionCost) internal {
         if (actionCost > 0) {
-            // Send proposal fee to jk labs address and creator
+            // Send cost to creator and jk labs split destinations
             uint256 sendingToJkLabs = (msg.value * (100 - percentageToCreator)) / 100;
             if (sendingToJkLabs > 0) {
-                Address.sendValue(payable(JK_LABS_ADDRESS), sendingToJkLabs);
-                emit PaymentReleased(JK_LABS_ADDRESS, sendingToJkLabs);
+                Address.sendValue(payable(jkLabsSplitDestination), sendingToJkLabs);
+                emit JkLabsPaymentReleased(jkLabsSplitDestination, sendingToJkLabs);
             }
 
             uint256 sendingToCreator = msg.value - sendingToJkLabs;
             if (sendingToCreator > 0) {
                 Address.sendValue(payable(creatorSplitDestination), sendingToCreator); // creator gets the extra wei in the case of rounding
-                emit PaymentReleased(creator, sendingToCreator);
+                emit CreatorPaymentReleased(creator, sendingToCreator);
             }
         }
     }
