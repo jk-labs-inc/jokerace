@@ -50,6 +50,7 @@ import CleanUpConstructorsRewards from "@contracts/bytecodeAndAbi/modules/Reward
 import AnyoneCanVoteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.27.anyoneCanVote.sol/RewardsModule.json";
 import UpdateForgeLibsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.28.updateForgeLibs.sol/RewardsModule.json";
 import SetSplitDestinationRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.29.setSplitDestination.sol/RewardsModule.json";
+import MakeJkLabsSplitConfigurableRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.30.makeJkLabsSplitConfigurableRewards.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -62,7 +63,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "4.29") {
+    if (version === "4.30") {
+      return MakeJkLabsSplitConfigurableRewards.abi;
+    } else if (version === "4.29") {
       return SetSplitDestinationRewards.abi;
     } else if (version === "4.28") {
       return UpdateForgeLibsRewards.abi;
