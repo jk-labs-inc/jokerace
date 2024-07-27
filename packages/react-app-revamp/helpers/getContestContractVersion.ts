@@ -75,7 +75,6 @@ export async function getContestContractVersion(address: string, chainId: number
       return { abi: MakeJkLabsSplitConfigurableContract.abi, version };
     } else if (version === "4.29") {
       return { abi: SetSplitDestinationContract.abi, version };
-      return { abi: SetSplitDestinationContract.abi, version };
     } else if (version === "4.28") {
       return { abi: UpdateForgeLibsContract.abi, version };
     } else if (version === "4.27") {
