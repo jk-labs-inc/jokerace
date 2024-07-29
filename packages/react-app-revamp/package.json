@@ -79,7 +79,7 @@
     "react-type-animation": "^3.2.0",
     "react-use": "17.5.1",
     "react-window": "1.8.10",
-    "tailwind-scrollbar-hide": "^1.1.7",
+    "tailwind-scrollbar-hide": "1.1.7",
     "tailwindcss": "3.4.7",
     "ts-node": "10.9.2",
     "underscore": "1.13.7",
