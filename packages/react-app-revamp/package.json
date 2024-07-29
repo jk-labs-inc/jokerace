@@ -33,7 +33,7 @@
     "@types/node": "20.14.12",
     "@typescript-eslint/parser": "7.17.0",
     "@wagmi/connectors": "5.1.1",
-    "@wagmi/core": "2.12.2",
+    "@wagmi/core": "2.13.1",
     "cheerio": "1.0.0-rc.12",
     "class-variance-authority": "0.7.0",
     "compare-versions": "6.1.1",
