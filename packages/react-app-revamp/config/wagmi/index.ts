@@ -77,6 +77,7 @@ import { merlinTestnet } from "./custom-chains/merlinTestnet";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
 import { morphTestnet } from "./custom-chains/morphTestnet";
+import { movementTestnet } from "./custom-chains/movementTestnet";
 import { metis } from "./custom-chains/metis";
 import { nautilusChain } from "./custom-chains/nautilusChain";
 import { near } from "./custom-chains/near";
@@ -115,7 +116,6 @@ import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
-import { movementTestnet } from "./custom-chains/movement";
 
 declare module "wagmi";
 
