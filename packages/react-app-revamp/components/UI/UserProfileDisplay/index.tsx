@@ -98,7 +98,7 @@ const UserProfileDisplay = ({
       {isLoading ? (
         <p className={`${textSizeClass} animate-flicker-infinite`}>Loading profile data</p>
       ) : (
-        <div className="flex flex-col gap-1">
+        <div className="animate-reveal flex flex-col gap-1">
           <a
             className={`no-underline ${textSizeClass} text-neutral-11 font-bold`}
             target="_blank"
