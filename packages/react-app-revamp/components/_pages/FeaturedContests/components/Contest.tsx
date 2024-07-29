@@ -121,7 +121,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
               borderRadius={8}
               duration={1}
             />
-          ) : rewardsData ? (
+          ) : rewardsData && (rewardsData.token || rewardsData.rewardsPaidOut) ? (
             <div className="flex items-center h-6 border border-neutral-10 rounded-[8px] px-2">
               {rewardsData.token ? (
                 <p className="text-positive-11 font-bold text-[12px]">

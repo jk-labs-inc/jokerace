@@ -41,67 +41,67 @@ const LandingHeader = () => {
             </h1>
           </div>
         </Link>
-        <header
-          className={`flex flex-col bottom-0 right-0 left-0 fixed border border-neutral-2 border-t-1 ${
-            isInPwaMode ? "pb-8" : "pb-2"
-          } bg-true-black z-50`}
-        >
-          <div className="text-neutral-10 flex justify-center items-center text-[12px] py-3">
-            <div className="flex justify-center gap-2 items-center w-full">
-              {filteredLinks.map((link, key) => (
-                <a
-                  className="font-bold"
-                  key={`footer-link-${key}`}
-                  href={link.href}
-                  rel="nofollow noreferrer"
-                  target="_blank"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
-          </div>
+        <header className="bg-true-black">
           <div
-            className={`flex flex-row items-center border-t-2 border-neutral-2 justify-between pt-2 px-8 bg-true-black z-50`}
+            className={`fixed bottom-0 left-0 right-0 flex flex-col border-t-2 border-neutral-2 bg-true-black z-50 ${
+              isInPwaMode ? "pb-8" : "pb-2"
+            }`}
           >
-            <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
-              <HomeIcon width={26} />
-              <p className="text-[12px]">home</p>
-            </Link>
+            <div className="text-neutral-10 flex justify-center items-center text-[12px] py-3 border-b border-neutral-2">
+              <div className="flex justify-center gap-2 items-center w-full">
+                {filteredLinks.map((link, key) => (
+                  <a
+                    className="font-bold"
+                    key={`footer-link-${key}`}
+                    href={link.href}
+                    rel="nofollow noreferrer"
+                    target="_blank"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-row items-center justify-between pt-2 px-8">
+              <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
+                <HomeIcon width={26} />
+                <p className="text-[12px]">home</p>
+              </Link>
 
-            <Link href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
-              <MagnifyingGlassIcon width={26} />
-              <p className="text-[12px]">search</p>
-            </Link>
+              <Link href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
+                <MagnifyingGlassIcon width={26} />
+                <p className="text-[12px]">search</p>
+              </Link>
 
-            <Link
-              href={ROUTE_VIEW_LIVE_CONTESTS}
-              className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
-            >
-              <IconTrophy width={26} height={26} />
-              <p className="text-[12px] text-center">play</p>
-            </Link>
+              <Link
+                href={ROUTE_VIEW_LIVE_CONTESTS}
+                className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
+              >
+                <IconTrophy width={26} height={26} />
+                <p className="text-[12px] text-center">play</p>
+              </Link>
 
-            <Link
-              href={ROUTE_CREATE_CONTEST}
-              className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}
-            >
-              <PencilSquareIcon width={26} />
-              <p className="text-[12px]">create</p>
-            </Link>
+              <Link
+                href={ROUTE_CREATE_CONTEST}
+                className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}
+              >
+                <PencilSquareIcon width={26} />
+                <p className="text-[12px]">create</p>
+              </Link>
 
-            <div onClick={isConnected ? openAccountModal : openConnectModal} className="transition-all duration-500">
-              {isConnected ? (
-                <div className="flex flex-col items-center">
-                  <Image width={26} height={26} src="/header/wallet-connected.svg" alt="wallet-connected" />
-                  <p className="text-[12px]">wallet</p>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center">
-                  <Image width={26} height={26} src="/header/wallet.svg" alt="wallet" />
-                  <p className="text-[12px]">wallet</p>
-                </div>
-              )}
+              <div onClick={isConnected ? openAccountModal : openConnectModal} className="transition-all duration-500">
+                {isConnected ? (
+                  <div className="flex flex-col items-center">
+                    <Image width={26} height={26} src="/header/wallet-connected.svg" alt="wallet-connected" />
+                    <p className="text-[12px]">wallet</p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center">
+                    <Image width={26} height={26} src="/header/wallet.svg" alt="wallet" />
+                    <p className="text-[12px]">wallet</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </header>
