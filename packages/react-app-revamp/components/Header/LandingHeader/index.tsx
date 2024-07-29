@@ -1,6 +1,7 @@
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import { IconTrophy } from "@components/UI/Icons";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
+import { FOOTER_LINKS } from "@config/links";
 import {
   ROUTE_CREATE_CONTEST,
   ROUTE_LANDING,
@@ -27,6 +28,8 @@ const LandingHeader = () => {
     routes.includes(pathname ?? "") ? "text-primary-10 transition-colors font-bold" : "";
   const { openConnectModal } = useConnectModal();
   const { openAccountModal } = useAccountModal();
+  const allowedLinks = ["Github", "Twitter", "Report a bug", "Terms", "Telegram", "Media Kit"];
+  const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
 
   if (isMobile) {
     return (
@@ -39,45 +42,67 @@ const LandingHeader = () => {
           </div>
         </Link>
         <header
-          className={`flex flex-row bottom-0 right-0 left-0 fixed items-center justify-between border-t-neutral-2 border-t-2 pt-2 ${
+          className={`flex flex-col bottom-0 right-0 left-0 fixed border border-neutral-2 border-t-1 ${
             isInPwaMode ? "pb-8" : "pb-2"
-          } px-8 mt-4 bg-true-black z-50`}
+          } bg-true-black z-50`}
         >
-          <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
-            <HomeIcon width={26} />
-            <p className="text-[12px]">home</p>
-          </Link>
-
-          <Link href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
-            <MagnifyingGlassIcon width={26} />
-            <p className="text-[12px]">search</p>
-          </Link>
-
-          <Link
-            href={ROUTE_VIEW_LIVE_CONTESTS}
-            className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
+          <div className="text-neutral-10 flex justify-center items-center text-[12px] py-3">
+            <div className="flex justify-center gap-2 items-center w-full">
+              {filteredLinks.map((link, key) => (
+                <a
+                  className="font-bold"
+                  key={`footer-link-${key}`}
+                  href={link.href}
+                  rel="nofollow noreferrer"
+                  target="_blank"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </div>
+          <div
+            className={`flex flex-row items-center border-t-2 border-neutral-2 justify-between pt-2 px-8 bg-true-black z-50`}
           >
-            <IconTrophy width={26} height={26} />
-            <p className="text-[12px] text-center">play</p>
-          </Link>
+            <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
+              <HomeIcon width={26} />
+              <p className="text-[12px]">home</p>
+            </Link>
 
-          <Link href={ROUTE_CREATE_CONTEST} className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}>
-            <PencilSquareIcon width={26} />
-            <p className="text-[12px]">create</p>
-          </Link>
+            <Link href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
+              <MagnifyingGlassIcon width={26} />
+              <p className="text-[12px]">search</p>
+            </Link>
 
-          <div onClick={isConnected ? openAccountModal : openConnectModal} className="transition-all duration-500">
-            {isConnected ? (
-              <div className="flex flex-col items-center">
-                <Image width={26} height={26} src="/header/wallet-connected.svg" alt="wallet-connected" />
-                <p className="text-[12px]">wallet</p>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center">
-                <Image width={26} height={26} src="/header/wallet.svg" alt="wallet" />
-                <p className="text-[12px]">wallet</p>
-              </div>
-            )}
+            <Link
+              href={ROUTE_VIEW_LIVE_CONTESTS}
+              className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
+            >
+              <IconTrophy width={26} height={26} />
+              <p className="text-[12px] text-center">play</p>
+            </Link>
+
+            <Link
+              href={ROUTE_CREATE_CONTEST}
+              className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}
+            >
+              <PencilSquareIcon width={26} />
+              <p className="text-[12px]">create</p>
+            </Link>
+
+            <div onClick={isConnected ? openAccountModal : openConnectModal} className="transition-all duration-500">
+              {isConnected ? (
+                <div className="flex flex-col items-center">
+                  <Image width={26} height={26} src="/header/wallet-connected.svg" alt="wallet-connected" />
+                  <p className="text-[12px]">wallet</p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center">
+                  <Image width={26} height={26} src="/header/wallet.svg" alt="wallet" />
+                  <p className="text-[12px]">wallet</p>
+                </div>
+              )}
+            </div>
           </div>
         </header>
       </>

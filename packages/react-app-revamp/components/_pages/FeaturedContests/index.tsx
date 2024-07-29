@@ -23,7 +23,7 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
 }) => {
   const SkeletonCard = () => (
     <div className="w-[320px] flex-shrink-0 lg:w-auto border border-neutral-0 rounded-2xl">
-      <div className="p-4 bg-[#100816] rounded-2xl">
+      <div className="p-4 bg-gradient-radial rounded-2xl">
         <Skeleton height={120} baseColor="#212121" highlightColor="#100816" duration={1} borderRadius={12} />
         <div className="mt-4 space-y-2">
           <Skeleton count={3} height={16} baseColor="#212121" highlightColor="#100816" duration={1} />

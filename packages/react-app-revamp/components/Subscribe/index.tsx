@@ -1,6 +1,7 @@
 import { emailRegex } from "@helpers/regex";
 import useEmailSignup from "@hooks/useEmailSignup";
 import { useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 
 const Subscribe = () => {
@@ -9,6 +10,7 @@ const Subscribe = () => {
   const [emailAlreadyExistsMessage, setEmailAlreadyExistsMessage] = useState("");
   const { subscribeUser, checkIfEmailExists, isLoading } = useEmailSignup();
   const { address } = useAccount();
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   const handleSubscribe = async () => {
     if (isLoading) return;
@@ -50,12 +52,14 @@ const Subscribe = () => {
             required
           />
           <button
-            className={`flex justify-center cursor-pointer items-center absolute right-0 w-48 rounded-r-[8px] top-0 h-full bg-gradient-purple-white ${
+            className={`flex justify-center cursor-pointer items-center absolute right-0 w-36 md:w-48 rounded-r-[8px] top-0 h-full bg-gradient-purple-white ${
               isLoading ? "opacity-50 pointer-events-none" : ""
             } transition-all duration-300 hover:opacity-90`}
             onClick={handleSubscribe}
           >
-            <p className="text-[16px] md:text-[18px] font-bold text-true-black">get contest updates</p>
+            <p className="text-[16px] md:text-[18px] font-bold text-true-black">
+              {isMobile ? "get updates" : "get contest updates"}
+            </p>
           </button>
         </div>
       </div>
