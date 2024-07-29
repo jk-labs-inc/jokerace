@@ -59,10 +59,11 @@ import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { merlin } from "./custom-chains/merlin";
 import { merlinTestnet } from "./custom-chains/merlinTestnet";
+import { metis } from "./custom-chains/metis";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
 import { morphTestnet } from "./custom-chains/morphTestnet";
-import { metis } from "./custom-chains/metis";
+import { movementTestnet } from "./custom-chains/movement";
 import { nautilusChain } from "./custom-chains/nautilusChain";
 import { near } from "./custom-chains/near";
 import { nearTestnet } from "./custom-chains/nearTestnet";
@@ -201,6 +202,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   fhenixTestnet,
   goerli,
   seiTestnet,
+  movementTestnet,
   mainnet,
 ];
 
