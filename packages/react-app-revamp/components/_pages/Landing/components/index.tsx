@@ -6,11 +6,10 @@ import { useQuery } from "@tanstack/react-query";
 import { getFeaturedContests, getRewards } from "lib/contests";
 import Link from "next/link";
 import { useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { TypeAnimation } from "react-type-animation";
-import { useAccount } from "wagmi";
 import LandingPageExplainer from "./Explainer";
 import LandingPageUsedBy from "./UsedBy";
-import { useMediaQuery } from "react-responsive";
 
 const wordConfig = {
   desktop: [
@@ -39,7 +38,6 @@ const wordConfig = {
 
 function useFeaturedContests() {
   const [page] = useState(0);
-  const { address } = useAccount();
 
   const {
     status,
@@ -47,8 +45,8 @@ function useFeaturedContests() {
     error,
     isFetching: isContestDataFetching,
   } = useQuery({
-    queryKey: ["featuredContests", page, address],
-    queryFn: () => getFeaturedContests(page, 6, address),
+    queryKey: ["featuredContests", page],
+    queryFn: () => getFeaturedContests(page, 6),
     refetchOnWindowFocus: false,
   });
 
