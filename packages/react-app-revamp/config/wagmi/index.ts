@@ -115,6 +115,7 @@ import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
+import { movementTestnet } from "./custom-chains/movement";
 
 declare module "wagmi";
 
@@ -179,7 +180,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   hedera,
   taiko,
   ham,
-  metis, 
+  metis,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
@@ -222,6 +223,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   fhenixTestnet,
   goerli,
   seiTestnet,
+  movementTestnet,
   mainnet,
 ];
 
