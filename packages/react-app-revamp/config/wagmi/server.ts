@@ -63,7 +63,7 @@ import { metis } from "./custom-chains/metis";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
 import { morphTestnet } from "./custom-chains/morphTestnet";
-import { movementTestnet } from "./custom-chains/movement";
+import { movementTestnet } from "./custom-chains/movementTestnet";
 import { nautilusChain } from "./custom-chains/nautilusChain";
 import { near } from "./custom-chains/near";
 import { nearTestnet } from "./custom-chains/nearTestnet";
@@ -84,6 +84,7 @@ import { quartz } from "./custom-chains/quartz";
 import { redstoneHolesky } from "./custom-chains/redstoneHolesky";
 import { ronin } from "./custom-chains/ronin";
 import { roninTestnet } from "./custom-chains/roninTestnet";
+import { sanko } from "./custom-chains/sanko";
 import { scroll } from "./custom-chains/scroll";
 import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
@@ -160,6 +161,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   taiko,
   ham,
   metis,
+  sanko,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,

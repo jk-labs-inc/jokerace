@@ -8,10 +8,10 @@
     "build": "next build"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.620.0",
-    "@aws-sdk/s3-request-presigner": "3.620.0",
-    "@babel/core": "7.24.9",
-    "@babel/preset-env": "7.25.0",
+    "@aws-sdk/client-s3": "3.620.1",
+    "@aws-sdk/s3-request-presigner": "3.620.1",
+    "@babel/core": "7.25.2",
+    "@babel/preset-env": "7.25.2",
     "@clustersxyz/sdk": "0.4.2",
     "@headlessui/react": "2.1.2",
     "@heroicons/react": "2.1.5",
@@ -83,7 +83,7 @@
     "underscore": "1.13.7",
     "uuid": "10.0.0",
     "valibot": "0.36.0",
-    "viem": "2.18.4",
+    "viem": "2.18.5",
     "wagmi": "2.12.1",
     "zod": "3.23.8",
     "zustand": "4.5.4"
