@@ -1,8 +1,8 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const avaxCChain: Chain = {
+export const avalanche: Chain = {
   id: 43114,
-  name: "Avalanche",
+  name: "avalanche",
   iconUrl: "/avalanche.png",
   nativeCurrency: {
     decimals: 18,
