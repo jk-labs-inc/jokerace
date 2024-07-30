@@ -10,9 +10,10 @@ interface DisplayOptions {
 
 interface ConnectButtonCustomProps {
   displayOptions?: DisplayOptions;
+  isConnectWalletPurple?: boolean;
 }
 
-export const ConnectButtonCustom: FC<ConnectButtonCustomProps> = ({ displayOptions = {} }) => {
+export const ConnectButtonCustom: FC<ConnectButtonCustomProps> = ({ displayOptions = {}, isConnectWalletPurple }) => {
   const { showChainName = true, onlyChainSwitcher = false } = displayOptions;
 
   return (
@@ -36,7 +37,7 @@ export const ConnectButtonCustom: FC<ConnectButtonCustomProps> = ({ displayOptio
                   <button
                     onClick={openConnectModal}
                     type="button"
-                    className="flex items-center gap-1 py-2 px-3 bg-primary-10 rounded-xl text-true-black font-bold text-[18px]"
+                    className={`w-40 h-10 text-center ${isConnectWalletPurple ? "bg-gradient-create" : "bg-primary-10"} rounded-2xl text-true-black font-bold text-[20px]`}
                   >
                     connect wallet
                   </button>
@@ -46,7 +47,7 @@ export const ConnectButtonCustom: FC<ConnectButtonCustomProps> = ({ displayOptio
                 <div className="flex gap-3">
                   <button
                     onClick={openChainModal}
-                    className="flex items-center gap-1 py-2 px-3 bg-neutral-2 rounded-xl text-[18px] font-bold"
+                    className="flex items-center gap-1 py-2 px-3 bg-neutral-2 rounded-2xl text-[18px] font-bold"
                     type="button"
                   >
                     {chain.hasIcon && (
@@ -69,7 +70,7 @@ export const ConnectButtonCustom: FC<ConnectButtonCustomProps> = ({ displayOptio
                     <button
                       onClick={openAccountModal}
                       type="button"
-                      className="flex items-center py-2 px-3 bg-neutral-2 rounded-xl font-bold text-[18px]"
+                      className="flex items-center py-2 px-3 bg-neutral-2 rounded-2xl font-bold text-[18px]"
                     >
                       {account.displayName}
                       <ChevronDownIcon className="w-6 ml-1" />

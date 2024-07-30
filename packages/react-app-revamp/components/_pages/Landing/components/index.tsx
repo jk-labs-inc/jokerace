@@ -80,7 +80,7 @@ const LandingPage = () => {
             contests for{" "}
             <span className="text-transparent bg-clip-text bg-gradient-purple inline-block">
               <TypeAnimation
-                sequence={words.flatMap(word => [word, 2000, "", 100])}
+                sequence={[...words.flatMap(word => [word, 500, "", 50])]}
                 wrapper="span"
                 speed={50}
                 style={{ display: "inline-block" }}

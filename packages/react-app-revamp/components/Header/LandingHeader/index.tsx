@@ -36,8 +36,13 @@ const LandingHeader = () => {
       <>
         <Link href="/">
           <div className="pl-4 md:pl-16 md:pr-16 3xl:pl-28">
-            <h1 className="font-sabo text-neutral-11 normal-case text-[45px]">
-              J<span className="text-[35px]">oke</span>R<span className="text-[35px]">ace</span>
+            <h1 className="font-sabo text-neutral-11 normal-case text-[45px] relative">
+              <span className="joke-3d" data-text="J">
+                J
+              </span>
+              <span className="text-[35px] joke-3d">oke</span>
+              <span className="joke-3d">R</span>
+              <span className="text-[35px] joke-3d">ace</span>
             </h1>
           </div>
         </Link>
@@ -114,7 +119,12 @@ const LandingHeader = () => {
       <Link href="/">
         <div>
           <h1 className="font-sabo text-neutral-11 normal-case text-[80px]">
-            J<span className="text-[55px]">oke</span>R<span className="text-[55px]">ace</span>
+            <span className="joke-3d" data-text="J">
+              J
+            </span>
+            <span className="text-[55px] joke-3d">oke</span>
+            <span className="joke-3d">R</span>
+            <span className="text-[55px] joke-3d">ace</span>
           </h1>
         </div>
       </Link>
@@ -125,7 +135,7 @@ const LandingHeader = () => {
             <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />
           </Link>
         ) : null}
-        <ConnectButtonCustom />
+        <ConnectButtonCustom isConnectWalletPurple />
       </div>
     </header>
   );

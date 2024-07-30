@@ -435,6 +435,26 @@ li {
   }
 }
 
+.joke-3d {
+  position: relative;
+  color: white;
+  text-shadow:
+    -5px 4px 0 #6a6a6a,
+    -5px -1px 0 #6a6a6a,
+    -1px 1px 0 #6a6a6a,
+    1px 1px 0 #6a6a6a;
+}
+
+@media (max-width: 768px) {
+  .joke-3d {
+    text-shadow:
+      -3px 2px 0 #6a6a6a,
+      -3px -1px 0 #6a6a6a,
+      -1px 1px 0 #6a6a6a,
+      1px 1px 0 #6a6a6a;
+  }
+}
+
 @layer components {
   .container {
     @apply px-5 lg:px-3 max-w-screen-lg;
