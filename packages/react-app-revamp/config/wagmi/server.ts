@@ -11,7 +11,7 @@ import { artheraTestnet } from "./custom-chains/artheraTestnet";
 import { astarZkevm } from "./custom-chains/astarZkevm";
 import { astarZkevmTestnet } from "./custom-chains/astarZkevmTestnet";
 import { astriaDusk2 } from "./custom-chains/astriaDusk2";
-import { avaxCChain } from "./custom-chains/avaxCChain";
+import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
 import { berachainBartioTestnet } from "./custom-chains/berachainBartioTestnet";
@@ -112,7 +112,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   polygonZk,
   base,
   evmos,
-  avaxCChain,
+  avalanche,
   zora,
   bnb,
   linea,
