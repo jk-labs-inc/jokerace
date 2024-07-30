@@ -84,6 +84,7 @@ import { quartz } from "./custom-chains/quartz";
 import { redstoneHolesky } from "./custom-chains/redstoneHolesky";
 import { ronin } from "./custom-chains/ronin";
 import { roninTestnet } from "./custom-chains/roninTestnet";
+import { sanko } from "./custom-chains/sanko";
 import { scroll } from "./custom-chains/scroll";
 import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
@@ -160,6 +161,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   taiko,
   ham,
   metis,
+  sanko,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
