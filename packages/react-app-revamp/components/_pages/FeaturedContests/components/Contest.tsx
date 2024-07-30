@@ -107,7 +107,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
   return (
     <Link
       href={getContestUrl(contestData.network_name ?? "", contestData.address ?? "")}
-      className="animate-reveal flex flex-col justify-between w-[320px] h-[216px] pt-4 pb-3 px-8 bg-gradient-radial rounded-[16px] border border-neutral-0 hover:border-neutral-10 transition-all duration-300 ease-in-out"
+      className="flex flex-col justify-between w-[320px] h-[216px] pt-4 pb-3 px-8 bg-gradient-radial rounded-[16px] border border-neutral-0 hover:border-neutral-10 transition-all duration-300 ease-in-out"
     >
       <div className="flex flex-col gap-8">
         <div className="flex items-center gap-2">
