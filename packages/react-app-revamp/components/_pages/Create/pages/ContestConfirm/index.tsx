@@ -53,6 +53,8 @@ const CreateContestConfirm = () => {
   useEffect(() => {
     if (!chain) return;
 
+    if (state.votingRequirementsOption.value !== "anyone" || state.votingTab !== 0) return;
+
     const fetchDetails = async () => {
       try {
         const { isError, minCostToPropose, minCostToVote } = await fetchChargeDetails(chain.name.toLowerCase());

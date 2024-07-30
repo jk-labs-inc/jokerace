@@ -30,9 +30,6 @@ const CreateContestMonetization = () => {
     if (!isConnected) {
       return <CreateContestChargeUnconnectedAccount />;
     } else if (unsupportedChain) {
-      if (votingRequirementsOption.value === "anyone") {
-        onPreviousStep();
-      }
       return <CreateContestChargeUnsupportedChain />;
     }
 
