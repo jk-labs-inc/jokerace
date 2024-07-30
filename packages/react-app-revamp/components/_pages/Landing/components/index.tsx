@@ -76,7 +76,7 @@ const LandingPage = () => {
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-8 pl-4 pr-4 md:pl-16 md:pr-16 lg:mt-6 3xl:pl-28 2xl:pr-0 ">
         <div className="flex flex-col">
-          <p className="text-[32px] md:text-[48px] font-bold">
+          <p className="text-[28px] md:text-[48px] font-bold">
             contests for{" "}
             <span className="text-transparent bg-clip-text bg-gradient-purple inline-block">
               <TypeAnimation

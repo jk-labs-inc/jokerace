@@ -230,7 +230,7 @@ const LandingPageExplainer = () => {
             if (el) sectionRefs.current[index] = el;
           }}
           className={`flex flex-col gap-4 md:gap-6 opacity-0 transition-all duration-1000 ${
-            visibleSections.includes(index) ? "animate-reveal opacity-100" : "translate-y-10"
+            visibleSections.includes(index) ? "opacity-100" : "translate-y-10"
           }`}
           style={{ transitionDelay: `${visibleSections.indexOf(index) * 200}ms` }}
         >
