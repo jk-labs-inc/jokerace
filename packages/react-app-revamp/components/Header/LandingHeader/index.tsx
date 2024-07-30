@@ -115,7 +115,7 @@ const LandingHeader = () => {
   }
 
   return (
-    <header className="flex items-center justify-between pl-28 pr-[60px] mt-8">
+    <header className="flex items-center justify-between pl-16 3xl:pl-28 pr-[60px] mt-8">
       <Link href="/">
         <div>
           <h1 className="font-sabo text-neutral-11 normal-case text-[80px]">
