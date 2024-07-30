@@ -135,7 +135,7 @@ const LandingHeader = () => {
             <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />
           </Link>
         ) : null}
-        <ConnectButtonCustom isConnectWalletPurple />
+        <ConnectButtonCustom />
       </div>
     </header>
   );

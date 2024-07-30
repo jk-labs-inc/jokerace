@@ -10,10 +10,9 @@ interface DisplayOptions {
 
 interface ConnectButtonCustomProps {
   displayOptions?: DisplayOptions;
-  isConnectWalletPurple?: boolean;
 }
 
-export const ConnectButtonCustom: FC<ConnectButtonCustomProps> = ({ displayOptions = {}, isConnectWalletPurple }) => {
+export const ConnectButtonCustom: FC<ConnectButtonCustomProps> = ({ displayOptions = {} }) => {
   const { showChainName = true, onlyChainSwitcher = false } = displayOptions;
 
   return (
@@ -37,7 +36,7 @@ export const ConnectButtonCustom: FC<ConnectButtonCustomProps> = ({ displayOptio
                   <button
                     onClick={openConnectModal}
                     type="button"
-                    className={`w-40 h-10 text-center ${isConnectWalletPurple ? "bg-gradient-create" : "bg-primary-10"} rounded-2xl text-true-black font-bold text-[20px]`}
+                    className="w-40 h-10 text-center bg-gradient-create rounded-2xl text-true-black font-bold text-[20px]"
                   >
                     connect wallet
                   </button>
