@@ -2852,10 +2852,10 @@
   resolved "https://registry.yarnpkg.com/@bufbuild/protobuf/-/protobuf-1.8.0.tgz#1c8651ea34adb8019b483e09de02aeeb1cd57d79"
   integrity sha512-qR9FwI8QKIveDnUYutvfzbC21UZJJryYrLuZGjeZ/VGz+vXelUkK+xgkOHsvPEdYEdxtgUUq4313N8QtOehJ1Q==
 
-"@clustersxyz/sdk@0.4.2":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@clustersxyz/sdk/-/sdk-0.4.2.tgz#4ab2d42c06e614191811438d305dc8385505337b"
-  integrity sha512-QDMNkwHmrT3SeHG2mrJPGtU7nEafsCT9rA33ATvsKmGtFFJ7IQKVOf2sSg+zUwkpaXcnBlW6aUm8ywCvywwueA==
+"@clustersxyz/sdk@0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@clustersxyz/sdk/-/sdk-0.4.3.tgz#2fc7692544ac57e5c6746153aa505ef1a7c9f009"
+  integrity sha512-zoXCLmTRB0etnXwetw0twaT3R6kcP/sl2dD7lX0Cz8ZP8d6PYwi+85Eo3WM7XJF/EhSnL/Dch6UesJlPxWUQYQ==
   dependencies:
     viem "^2.16.4"
 

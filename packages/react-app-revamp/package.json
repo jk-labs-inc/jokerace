@@ -12,7 +12,7 @@
     "@aws-sdk/s3-request-presigner": "3.620.1",
     "@babel/core": "7.25.2",
     "@babel/preset-env": "7.25.2",
-    "@clustersxyz/sdk": "0.4.2",
+    "@clustersxyz/sdk": "0.4.3",
     "@headlessui/react": "2.1.2",
     "@heroicons/react": "2.1.5",
     "@lens-protocol/client": "2.3.1",
