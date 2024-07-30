@@ -1,5 +1,5 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import { config } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { MAX_ROWS } from "@helpers/csvConstants";
 import { isSupabaseConfigured } from "@helpers/database";
@@ -24,6 +24,7 @@ import { SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle } fro
 export const MAX_SUBMISSIONS_LIMIT = 1000000;
 export const DEFAULT_SUBMISSIONS = 1000000;
 const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
+const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c6118e8a52fa738";
 
 export function useDeployContest() {
   const { indexContestV3 } = useV3ContestsIndex();
@@ -73,6 +74,7 @@ export function useDeployContest() {
         DeployedContestContract.bytecode,
         signer,
       );
+      let jkLabsSplitDestination = "";
       const combinedPrompt = `${prompt.summarize}|${prompt.evaluateVoters}|${prompt.contactDetails ?? ""}`;
       const contestInfo = type + "|" + summary + "|" + combinedPrompt;
       const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled || votingMerkleData.csv;
@@ -95,6 +97,18 @@ export function useDeployContest() {
           : MAX_SUBMISSIONS_LIMIT;
       const finalMaxSubmissions = !isNaN(maxSubmissions) && maxSubmissions > 0 ? maxSubmissions : MAX_SUBMISSIONS_LIMIT;
 
+      try {
+        jkLabsSplitDestination = await getJkLabsSplitDestinationAddress(chain?.id ?? 0, {
+          costToPropose: chargeType.costToPropose,
+          costToVote: chargeType.costToVote,
+        });
+      } catch (error) {
+        toastError("Failed to fetch JK Labs split destination. Please try again later.");
+        stateContestDeployment.setIsLoading(false);
+        setIsLoading(false);
+        return;
+      }
+
       const contestParametersObject = {
         contestStart: getUnixTime(submissionOpen),
         votingDelay: differenceInSeconds(votingOpen, submissionOpen),
@@ -109,7 +123,8 @@ export function useDeployContest() {
         costToVote: parseEther(chargeType.costToVote.toString()),
         payPerVote: charge.voteType === VoteType.PerVote ? 1 : 0,
         creatorSplitDestination: creatorSplitDestination,
-      }; 
+        jkLabsSplitDestination: jkLabsSplitDestination ? jkLabsSplitDestination : JK_LABS_SPLIT_DESTINATION_DEFAULT,
+      };
 
       const contractContest = await factoryCreateContest.deploy(
         title,
@@ -130,6 +145,7 @@ export function useDeployContest() {
           contestParametersObject.costToVote,
           contestParametersObject.payPerVote,
           contestParametersObject.creatorSplitDestination,
+          contestParametersObject.jkLabsSplitDestination,
         ],
       );
 
@@ -368,6 +384,46 @@ export function useDeployContest() {
       console.error("error in isSortingEnabled:", error);
       return false;
     }
+  }
+
+  async function getJkLabsSplitDestinationAddress(
+    chainId: number,
+    chargeType: { costToPropose: number; costToVote: number },
+  ): Promise<string> {
+    // check if either costToPropose or costToVote is 0 ( this means no monetization )
+    if (chargeType.costToPropose === 0 || chargeType.costToVote === 0) {
+      return "";
+    }
+
+    if (!isSupabaseConfigured) {
+      throw new Error("Supabase is not configured");
+    }
+
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+
+    const chain = chains.find(c => c.id === chainId);
+    if (!chain) {
+      throw new Error(`Chain with id ${chainId} not found`);
+    }
+
+    const chainName = chain.name;
+
+    const { data, error } = await supabase
+      .from("chain_params")
+      .select("jk_labs_split_destination")
+      .eq("network_name", chainName.toLowerCase())
+      .single();
+
+    if (error) {
+      throw new Error(`Error fetching data: ${error.message}`);
+    }
+
+    if (!data) {
+      throw new Error(`No data found for chain ${chainName}`);
+    }
+
+    return data.jk_labs_split_destination;
   }
 
   // Helper function to format recipients (either voters or submitters)
