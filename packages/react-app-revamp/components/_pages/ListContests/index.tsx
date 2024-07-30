@@ -20,7 +20,6 @@ interface ListContestsProps {
   includeFullSearch?: boolean;
   includeSearch?: boolean;
   customTitle?: string;
-  compact?: boolean;
   sortOptions?: SortOption[];
   onFullSearchChange?: (value: string) => void;
   onSearchChange?: (value: string) => void;
@@ -41,62 +40,14 @@ export const ListContests: FC<ListContestsProps> = ({
   itemsPerPage,
   allowToHide,
   isContestDataFetching,
-  compact = false,
   sortOptions,
   onSearchChange,
   onSortChange,
 }) => {
   const [fadeBg, setFadeBg] = useState(false);
   const loading = status === "pending" || isContestDataFetching;
-  const placeholderCount = compact ? 6 : 7;
+  const placeholderCount = 7;
   const placeholders = new Array(placeholderCount).fill(null);
-
-  if (compact) {
-    return (
-      <>
-        <div className="font-bold text-md grid-cols-1 grid gap-5 md:full-width-grid-cols items-center pie-1ex p-3">
-          <h2 className="text-[20px] font-bold font-sabo">Featured Contests</h2>
-          <Search onSearchChange={onSearchChange} />
-          {sortOptions ? (
-            <Sort sortOptions={sortOptions} onSortChange={onSortChange} onMenuStateChange={setFadeBg} />
-          ) : null}
-        </div>
-        {!isContestDataFetching && contestData?.count === 0 ? (
-          <div className="text-neutral-9 text-center italic mb-6 animate-appear mt-12">No contests found</div>
-        ) : (
-          <div
-            className={`grid ${
-              fadeBg ? "opacity-50" : "opacity-100"
-            } text-[16px] transition-opacity duration-300 ease-in-out`}
-          >
-            {loading
-              ? placeholders.map((_, index) => (
-                  <Contest
-                    key={`placeholder-contest-${index}`}
-                    contest={{}}
-                    compact={compact}
-                    loading={loading}
-                    rewards={rewardsData}
-                    rewardsLoading={isRewardsFetching}
-                  />
-                ))
-              : contestData?.data
-                  .slice(0, 6)
-                  .map((contest: any, index: number) => (
-                    <Contest
-                      key={`contest-${index}`}
-                      contest={contest}
-                      compact={compact}
-                      loading={loading}
-                      rewards={rewardsData}
-                      rewardsLoading={isRewardsFetching}
-                    />
-                  ))}
-          </div>
-        )}
-      </>
-    );
-  }
 
   return (
     <>
@@ -135,7 +86,6 @@ export const ListContests: FC<ListContestsProps> = ({
                 <Contest
                   key={`placeholder-contest-${index}`}
                   contest={{}}
-                  compact={compact}
                   loading={loading}
                   rewards={rewardsData}
                   rewardsLoading={isRewardsFetching}
@@ -151,7 +101,6 @@ export const ListContests: FC<ListContestsProps> = ({
                   <Contest
                     key={`contest-${index}`}
                     contest={contest}
-                    compact={compact}
                     allowToHide={allowToHide}
                     loading={loading}
                     rewards={rewardsData}
