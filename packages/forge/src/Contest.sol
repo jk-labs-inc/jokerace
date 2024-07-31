@@ -17,13 +17,13 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
         ConstructorArgs memory _constructorArgs
     )
         Governor(_name, _prompt, _constructorArgs)
-        GovernorSorting(_constructorArgs.sortingEnabled, _constructorArgs.rankLimit)
+        GovernorSorting(_constructorArgs.intConstructorArgs.sortingEnabled, _constructorArgs.intConstructorArgs.rankLimit)
         GovernorMerkleVotes(_submissionMerkleRoot, _votingMerkleRoot)
     {
-        if (_constructorArgs.sortingEnabled == 1 && _constructorArgs.downvotingAllowed == 1) {
+        if (_constructorArgs.intConstructorArgs.sortingEnabled == 1 && _constructorArgs.intConstructorArgs.downvotingAllowed == 1) {
             revert SortingAndDownvotingCannotBothBeEnabled();
         }
-        if (_votingMerkleRoot == 0 && _constructorArgs.payPerVote == 0) {
+        if (_votingMerkleRoot == 0 && _constructorArgs.intConstructorArgs.payPerVote == 0) {
             revert PayPerVoteMustBeEnabledForAnyoneCanVote();
         }
     }

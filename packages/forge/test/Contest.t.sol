@@ -34,7 +34,7 @@ contract ContestTest is Test {
     // METADATA CONSTRUCTOR PARAMS
     string public constant METADATA_FIELDS_SCHEMA = "{\'Test Address Field\': \'address\', \'Test String Field\': \'string\', \'Test Uint Field\': \'uint256\'}";
 
-    Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
+    Governor.IntConstructorArgs public zeroCostIntConstructorArgs = Governor.IntConstructorArgs(
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
@@ -46,13 +46,10 @@ contract ContestTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         ZERO_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
-        PAY_PER_VOTE_OFF,
-        CREATOR_SPLIT_DESTINATION,
-        JK_LABS_SPLIT_DESTINATION,
-        METADATA_FIELDS_SCHEMA 
+        PAY_PER_VOTE_OFF
     );
 
-    Governor.ConstructorArgs public oneEthToProposeNumParams = Governor.ConstructorArgs(
+    Governor.IntConstructorArgs public oneEthIntConstructorArgs = Governor.IntConstructorArgs(
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
@@ -64,7 +61,18 @@ contract ContestTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         ONE_ETH_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
-        PAY_PER_VOTE_OFF,
+        PAY_PER_VOTE_OFF
+    );
+ 
+    Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
+        zeroCostIntConstructorArgs,
+        CREATOR_SPLIT_DESTINATION,
+        JK_LABS_SPLIT_DESTINATION,
+        METADATA_FIELDS_SCHEMA 
+    );
+
+    Governor.ConstructorArgs public oneEthToProposeNumParams = Governor.ConstructorArgs(
+        oneEthIntConstructorArgs,
         CREATOR_SPLIT_DESTINATION,
         JK_LABS_SPLIT_DESTINATION,
         METADATA_FIELDS_SCHEMA 
@@ -216,7 +224,7 @@ contract ContestTest is Test {
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
 
-        assertEq(proposalId, 49056523107705728825615382688395286440062072247511095534135796452139198417529);
+        assertEq(proposalId, 113012308618275462188231871773661406017840369232388967339979650418749335396171);
     }
 
     function testProposeAnyone() public {
@@ -224,7 +232,7 @@ contract ContestTest is Test {
         vm.prank(UNPERMISSIONED_ADDRESS_1);
         uint256 proposalId = anyoneCanSubmitContest.propose(unpermissionedAuthorProposal1, proof0);
 
-        assertEq(proposalId, 98473096201093600303872109595179192229910158899541901113356700720980320499920);
+        assertEq(proposalId, 115165251560031427429607767944389537131137037929814060832786039738764740468274);
     }
 
     function testProposeWithoutProof() public {
@@ -234,8 +242,8 @@ contract ContestTest is Test {
         uint256 secondProposalId = contest.proposeWithoutProof(secondProposalPA1);
         vm.stopPrank();
 
-        assertEq(firstProposalId, 49056523107705728825615382688395286440062072247511095534135796452139198417529);
-        assertEq(secondProposalId, 54769785658820412218609810676735378376293272785081650547477539805570535635325);
+        assertEq(firstProposalId, 113012308618275462188231871773661406017840369232388967339979650418749335396171);
+        assertEq(secondProposalId, 100550081537902060961196880423907903647012929095765413382065790941904788206777);
     }
 
     function testProposeAnyoneWithoutProof() public {
@@ -243,7 +251,7 @@ contract ContestTest is Test {
         vm.prank(UNPERMISSIONED_ADDRESS_1);
         uint256 proposalId = anyoneCanSubmitContest.proposeWithoutProof(unpermissionedAuthorProposal1);
 
-        assertEq(proposalId, 98473096201093600303872109595179192229910158899541901113356700720980320499920);
+        assertEq(proposalId, 115165251560031427429607767944389537131137037929814060832786039738764740468274);
     }
 
     function testProposeAuthorIsntSender() public {
@@ -297,7 +305,7 @@ contract ContestTest is Test {
         uint256 proposalId =
             anyoneCanSubmitCostsAnEthContest.propose{value: 1 ether}(unpermissionedAuthorProposal1, proof0);
 
-        assertEq(proposalId, 98473096201093600303872109595179192229910158899541901113356700720980320499920);
+        assertEq(proposalId, 115165251560031427429607767944389537131137037929814060832786039738764740468274);
         assertEq(CREATOR_ADDRESS_1.balance, 0.5 ether);
         assertEq(JK_LABS_ADDRESS.balance, 0.5 ether);
     }

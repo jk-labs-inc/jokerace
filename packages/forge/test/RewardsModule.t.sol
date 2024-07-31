@@ -37,7 +37,7 @@ contract RewardsModuleTest is Test {
     string public constant METADATA_FIELDS_SCHEMA =
         "{\'Test Address Field\': \'address\', \'Test String Field\': \'string\', \'Test Uint Field\': \'uint256\'}";
 
-    Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
+    Governor.IntConstructorArgs public zeroCostIntConstructorArgs = Governor.IntConstructorArgs(
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
@@ -49,13 +49,10 @@ contract RewardsModuleTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         ZERO_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
-        PAY_PER_VOTE_OFF,
-        CREATOR_SPLIT_DESTINATION,
-        JK_LABS_SPLIT_DESTINATION,
-        METADATA_FIELDS_SCHEMA
-    );
+        PAY_PER_VOTE_OFF
+    ); 
 
-    Governor.ConstructorArgs public zeroCostToProposeAndRankLimitOneNumParams = Governor.ConstructorArgs(
+    Governor.IntConstructorArgs public zeroCostAndRankLimitIntConstructorArgs = Governor.IntConstructorArgs(
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
@@ -67,7 +64,18 @@ contract RewardsModuleTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         ZERO_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
-        PAY_PER_VOTE_OFF,
+        PAY_PER_VOTE_OFF
+    );
+
+    Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
+        zeroCostIntConstructorArgs, 
+        CREATOR_SPLIT_DESTINATION,
+        JK_LABS_SPLIT_DESTINATION,
+        METADATA_FIELDS_SCHEMA
+    );
+
+    Governor.ConstructorArgs public zeroCostToProposeAndRankLimitOneNumParams = Governor.ConstructorArgs(
+        zeroCostAndRankLimitIntConstructorArgs,
         CREATOR_SPLIT_DESTINATION,
         JK_LABS_SPLIT_DESTINATION,
         METADATA_FIELDS_SCHEMA

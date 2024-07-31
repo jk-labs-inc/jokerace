@@ -32,7 +32,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         Vote
     }
 
-    struct ConstructorArgs {
+    struct IntConstructorArgs {
         uint256 contestStart;
         uint256 votingDelay;
         uint256 votingPeriod;
@@ -45,6 +45,10 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 costToPropose;
         uint256 costToVote;
         uint256 payPerVote;
+    }
+
+    struct ConstructorArgs {
+        IntConstructorArgs intConstructorArgs;
         address creatorSplitDestination;
         address jkLabsSplitDestination;
         string metadataFieldsSchema;
@@ -166,16 +170,16 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         name = name_;
         prompt = prompt_;
         creator = msg.sender;
-        contestStart = constructorArgs_.contestStart;
-        votingDelay = constructorArgs_.votingDelay;
-        votingPeriod = constructorArgs_.votingPeriod;
-        numAllowedProposalSubmissions = constructorArgs_.numAllowedProposalSubmissions;
-        maxProposalCount = constructorArgs_.maxProposalCount;
-        downvotingAllowed = constructorArgs_.downvotingAllowed;
-        percentageToCreator = constructorArgs_.percentageToCreator;
-        costToPropose = constructorArgs_.costToPropose;
-        costToVote = constructorArgs_.costToVote;
-        payPerVote = constructorArgs_.payPerVote;
+        contestStart = constructorArgs_.intConstructorArgs.contestStart;
+        votingDelay = constructorArgs_.intConstructorArgs.votingDelay;
+        votingPeriod = constructorArgs_.intConstructorArgs.votingPeriod;
+        numAllowedProposalSubmissions = constructorArgs_.intConstructorArgs.numAllowedProposalSubmissions;
+        maxProposalCount = constructorArgs_.intConstructorArgs.maxProposalCount;
+        downvotingAllowed = constructorArgs_.intConstructorArgs.downvotingAllowed;
+        percentageToCreator = constructorArgs_.intConstructorArgs.percentageToCreator;
+        costToPropose = constructorArgs_.intConstructorArgs.costToPropose;
+        costToVote = constructorArgs_.intConstructorArgs.costToVote;
+        payPerVote = constructorArgs_.intConstructorArgs.payPerVote;
         creatorSplitDestination = constructorArgs_.creatorSplitDestination;
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
 
@@ -184,9 +188,9 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
             name_,
             prompt_,
             msg.sender,
-            constructorArgs_.contestStart,
-            constructorArgs_.votingDelay,
-            constructorArgs_.votingPeriod
+            constructorArgs_.intConstructorArgs.contestStart,
+            constructorArgs_.intConstructorArgs.votingDelay,
+            constructorArgs_.intConstructorArgs.votingPeriod
         ); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
