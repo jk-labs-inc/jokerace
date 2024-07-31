@@ -32,7 +32,7 @@ contract ContestTest is Test {
     uint256 public constant RANK_LIMIT_250 = 250;
 
     // METADATA CONSTRUCTOR PARAMS
-    string public constant METADATA_FIELDS_SCHEMA = "{\'Test Address Field\': \'address\', \'Test String Field\': \'string\', \'Test Uint Field\': \'uint256\'";
+    string public constant METADATA_FIELDS_SCHEMA = "{\'Test Address Field\': \'address\', \'Test String Field\': \'string\', \'Test Uint Field\': \'uint256\'}";
 
     Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
         CONTEST_START,
