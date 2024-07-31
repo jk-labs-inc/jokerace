@@ -32,7 +32,8 @@ contract ContestTest is Test {
     uint256 public constant RANK_LIMIT_250 = 250;
 
     // METADATA CONSTRUCTOR PARAMS
-    string public constant METADATA_FIELDS_SCHEMA = "{\'Test Address Field\': \'address\', \'Test String Field\': \'string\', \'Test Uint Field\': \'uint256\'}";
+    string public constant METADATA_FIELDS_SCHEMA =
+        "{\'Test Address Field\': \'address\', \'Test String Field\': \'string\', \'Test Uint Field\': \'uint256\'}";
 
     Governor.IntConstructorArgs public zeroCostIntConstructorArgs = Governor.IntConstructorArgs(
         CONTEST_START,
@@ -63,19 +64,13 @@ contract ContestTest is Test {
         ZERO_COST_TO_VOTE,
         PAY_PER_VOTE_OFF
     );
- 
+
     Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
-        zeroCostIntConstructorArgs,
-        CREATOR_SPLIT_DESTINATION,
-        JK_LABS_SPLIT_DESTINATION,
-        METADATA_FIELDS_SCHEMA 
+        zeroCostIntConstructorArgs, CREATOR_SPLIT_DESTINATION, JK_LABS_SPLIT_DESTINATION, METADATA_FIELDS_SCHEMA
     );
 
     Governor.ConstructorArgs public oneEthToProposeNumParams = Governor.ConstructorArgs(
-        oneEthIntConstructorArgs,
-        CREATOR_SPLIT_DESTINATION,
-        JK_LABS_SPLIT_DESTINATION,
-        METADATA_FIELDS_SCHEMA 
+        oneEthIntConstructorArgs, CREATOR_SPLIT_DESTINATION, JK_LABS_SPLIT_DESTINATION, METADATA_FIELDS_SCHEMA
     );
 
     // MERKLE TREE PARAMS
@@ -132,15 +127,23 @@ contract ContestTest is Test {
         exists: true,
         targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
         safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
-        fieldsMetadata: Governor.FieldsMetadata({addressArray: METADATA_FIELDS_ADDRESS_ARRAY, stringArray: METADATA_FIELDS_STRING_ARRAY, uintArray: METADATA_FIELDS_UINT_ARRAY})
+        fieldsMetadata: Governor.FieldsMetadata({
+            addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
+            stringArray: METADATA_FIELDS_STRING_ARRAY,
+            uintArray: METADATA_FIELDS_UINT_ARRAY
+        })
     });
     Governor.ProposalCore public secondProposalPA1 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
         description: "secondProposalPA1",
         exists: true,
-	targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
-	safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
-        fieldsMetadata: Governor.FieldsMetadata({addressArray: METADATA_FIELDS_ADDRESS_ARRAY, stringArray: METADATA_FIELDS_STRING_ARRAY, uintArray: METADATA_FIELDS_UINT_ARRAY})
+        targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
+        fieldsMetadata: Governor.FieldsMetadata({
+            addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
+            stringArray: METADATA_FIELDS_STRING_ARRAY,
+            uintArray: METADATA_FIELDS_UINT_ARRAY
+        })
     });
     Governor.ProposalCore public firstProposalPA2 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_2,
@@ -148,7 +151,11 @@ contract ContestTest is Test {
         exists: true,
         targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
         safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
-        fieldsMetadata: Governor.FieldsMetadata({addressArray: METADATA_FIELDS_ADDRESS_ARRAY, stringArray: METADATA_FIELDS_STRING_ARRAY, uintArray: METADATA_FIELDS_UINT_ARRAY})
+        fieldsMetadata: Governor.FieldsMetadata({
+            addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
+            stringArray: METADATA_FIELDS_STRING_ARRAY,
+            uintArray: METADATA_FIELDS_UINT_ARRAY
+        })
     });
     Governor.ProposalCore public unpermissionedAuthorProposal1 = Governor.ProposalCore({
         author: UNPERMISSIONED_ADDRESS_1,
@@ -156,7 +163,11 @@ contract ContestTest is Test {
         exists: true,
         targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
         safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
-        fieldsMetadata: Governor.FieldsMetadata({addressArray: METADATA_FIELDS_ADDRESS_ARRAY, stringArray: METADATA_FIELDS_STRING_ARRAY, uintArray: METADATA_FIELDS_UINT_ARRAY})
+        fieldsMetadata: Governor.FieldsMetadata({
+            addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
+            stringArray: METADATA_FIELDS_STRING_ARRAY,
+            uintArray: METADATA_FIELDS_UINT_ARRAY
+        })
     });
 
     /////////////////////////////

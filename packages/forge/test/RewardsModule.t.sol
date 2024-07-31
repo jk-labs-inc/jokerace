@@ -50,7 +50,7 @@ contract RewardsModuleTest is Test {
         ZERO_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
         PAY_PER_VOTE_OFF
-    ); 
+    );
 
     Governor.IntConstructorArgs public zeroCostAndRankLimitIntConstructorArgs = Governor.IntConstructorArgs(
         CONTEST_START,
@@ -68,10 +68,7 @@ contract RewardsModuleTest is Test {
     );
 
     Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
-        zeroCostIntConstructorArgs, 
-        CREATOR_SPLIT_DESTINATION,
-        JK_LABS_SPLIT_DESTINATION,
-        METADATA_FIELDS_SCHEMA
+        zeroCostIntConstructorArgs, CREATOR_SPLIT_DESTINATION, JK_LABS_SPLIT_DESTINATION, METADATA_FIELDS_SCHEMA
     );
 
     Governor.ConstructorArgs public zeroCostToProposeAndRankLimitOneNumParams = Governor.ConstructorArgs(
