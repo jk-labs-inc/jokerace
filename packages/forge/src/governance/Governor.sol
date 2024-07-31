@@ -23,7 +23,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
     enum Metadatas {
         Target,
-        Safe
+        Safe,
+        Fields
     }
 
     enum Actions {
@@ -46,6 +47,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 payPerVote;
         address creatorSplitDestination;
         address jkLabsSplitDestination;
+        string metadataFieldsSchema;
     }
 
     struct TargetMetadata {
@@ -57,12 +59,20 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 threshold;
     }
 
+    struct FieldsMetadata {
+        // all of these have max length of MAX_FIELDS_METADATA_LENGTH as enforced in validateProposalData()
+        address[] addressArray;
+        string[] stringArray;
+        uint256[] uintArray;
+    }
+
     struct ProposalCore {
         address author;
         bool exists;
         string description;
         TargetMetadata targetMetadata;
         SafeMetadata safeMetadata;
+        FieldsMetadata fieldsMetadata;
     }
 
     event JokeraceCreated(
@@ -82,6 +92,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     event JkLabsPaymentReleased(address to, uint256 amount);
 
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
+    uint256 public constant MAX_FIELDS_METADATA_LENGTH = 10;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // our hot wallet that we operate from if need be, and collect revenue to on most chains
     string private constant VERSION = "4.30"; // Private as to not clutter the ABI
@@ -118,6 +129,9 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error AuthorIsNotSender(address author, address sender);
     error ZeroSignersInSafeMetadata();
     error ZeroThresholdInSafeMetadata();
+    error AddressFieldMetadataArrayTooLong();
+    error StringFieldMetadataArrayTooLong();
+    error UintFieldMetadataArrayTooLong();
     error UnexpectedMetadata(Metadatas unexpectedMetadata);
     error EmptyProposalDescription();
 
@@ -302,10 +316,20 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         for (uint256 index = 0; index < METADATAS_COUNT; index++) {
             Metadatas currentMetadata = Metadatas(index);
             if (currentMetadata == Metadatas.Target) {
-                continue; // Nothing to check here since strictly typed to address
+                continue; // nothing to check here since strictly typed to address
             } else if (currentMetadata == Metadatas.Safe) {
                 if (proposal.safeMetadata.signers.length == 0) revert ZeroSignersInSafeMetadata();
                 if (proposal.safeMetadata.threshold == 0) revert ZeroThresholdInSafeMetadata();
+            } else if (currentMetadata == Metadatas.Fields) {
+                if (proposal.fieldsMetadata.addressArray.length > MAX_FIELDS_METADATA_LENGTH) {
+                    revert AddressFieldMetadataArrayTooLong();
+                }
+                if (proposal.fieldsMetadata.stringArray.length > MAX_FIELDS_METADATA_LENGTH) {
+                    revert StringFieldMetadataArrayTooLong();
+                }
+                if (proposal.fieldsMetadata.uintArray.length > MAX_FIELDS_METADATA_LENGTH) {
+                    revert UintFieldMetadataArrayTooLong();
+                }
             } else {
                 revert UnexpectedMetadata(currentMetadata);
             }
