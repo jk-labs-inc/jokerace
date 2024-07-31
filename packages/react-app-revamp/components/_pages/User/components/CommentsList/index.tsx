@@ -64,12 +64,14 @@ const UserComments: FC<UserCommentsProps> = ({ comments, page, itemsPerPage, set
 
   return (
     <div className="container mx-auto mt-3">
+      {totalCount !== null && totalCount > 0 && (
+        <div className="px-4 py-3 text-[20px] font-bold">
+          {totalCount} comment{totalCount > 1 ? "s" : ""}
+        </div>
+      )}
+
       {totalCount !== null && (
         <>
-          <div className="px-4 py-3 text-[20px] font-bold">
-            {totalCount} comment{totalCount > 1 ? "s" : ""}
-          </div>
-
           {totalCount === 0 ? (
             <div className="container mx-auto flex flex-col gap-2 animate-appear mt-6 p-0">
               <p className="text-[16px] font-bold text-neutral-11">user hasn't commented in any contests... yet 👀</p>
