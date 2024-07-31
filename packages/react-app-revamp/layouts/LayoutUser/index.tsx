@@ -67,7 +67,7 @@ const LayoutUser = (props: LayoutUserProps) => {
   return (
     <>
       <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
-        <div className="container mx-auto mt-12">
+        <div className="container mx-auto mt-4 md:mt-12">
           {!address ? (
             <div className="flex items-center gap-6">
               <Skeleton circle height={100} width={100} />
@@ -85,13 +85,13 @@ const LayoutUser = (props: LayoutUserProps) => {
           <div className="relative mt-12 flex-col gap-2">
             <div className="flex justify-between gap-4 lg:justify-start mb-4 sm:gap-8 sm:px-0">
               {navLinks.map((link, index) => (
-                <Link href={link.href.replace("[address]", address)} key={link.href}>
+                <Link href={link.href.replace("[address]", address)} key={link.href} prefetch={true}>
                   <div
                     ref={(el: HTMLDivElement | null) => {
                       tabRefs.current[index] = el;
                       return;
                     }}
-                    className={`font-sabo py-2 text-[16px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
+                    className={`font-sabo py-2 text-[14px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
                       isActiveLink(pathname ?? "", link.href, address) ? "text-primary-10" : "text-neutral-11"
                     }`}
                   >
