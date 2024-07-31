@@ -303,7 +303,7 @@ export async function getUserContests(
           "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, hidden, votingMerkleRoot, voting_requirements, submission_requirements",
           { count: "exact" },
         )
-        .eq("author_address", profileAddress)
+        .ilike("author_address", profileAddress)
         .order("created_at", { ascending: false });
 
       if (sortBy) {
@@ -351,8 +351,6 @@ export async function getFeaturedContests(
       )
       .is("featured", true)
       .range(from, to);
-
-    console.log({ data });
 
     if (error) throw new Error(error.message);
 

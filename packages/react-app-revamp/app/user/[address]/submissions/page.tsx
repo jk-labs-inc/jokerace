@@ -1,6 +1,12 @@
+import UserListSkeleton from "@components/_pages/User/components/Skeleton";
 import { getAddressProps } from "@helpers/getAddressProps";
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import UserSubmissionsLayout from "./submissions";
+import { Suspense } from "react";
+
+const UserSubmissionsLayout = dynamic(() => import("./submissions"), {
+  loading: () => <UserListSkeleton />,
+});
 
 type Props = {
   params: { address: string };
@@ -14,7 +20,11 @@ const Page = async (props: Props) => {
     return notFound();
   }
 
-  return <UserSubmissionsLayout address={addressProps.address ?? ""} />;
+  return (
+    <Suspense fallback={<UserListSkeleton />}>
+      <UserSubmissionsLayout address={addressProps.address ?? ""} />
+    </Suspense>
+  );
 };
 
 export default Page;

@@ -39,59 +39,85 @@ async function fetchSubmissions(
   range: { from: number; to: number },
 ): Promise<{ data: any[]; count: number }> {
   try {
-    let result;
+    let dataQuery;
+    let countQuery;
 
     if (criteria.vote_amount === null) {
-      result = await supabase
+      dataQuery = supabase
         .from("analytics_contest_participants_v3")
-        .select("network_name, contest_address, proposal_id, created_at", { count: "exact" })
-        .eq("user_address", criteria.user_address)
+        .select("network_name, contest_address, proposal_id, created_at")
+        .ilike("user_address", criteria.user_address)
         .is("vote_amount", criteria.vote_amount)
         .is("comment_id", null)
         .order("created_at", { ascending: false })
         .range(range.from, range.to);
+
+      countQuery = supabase
+        .from("analytics_contest_participants_v3")
+        .select("*", { count: "exact", head: true })
+        .ilike("user_address", criteria.user_address)
+        .is("vote_amount", criteria.vote_amount)
+        .is("comment_id", null);
     } else {
-      result = await supabase
+      dataQuery = supabase
         .from("analytics_contest_participants_v3")
         .select("network_name, contest_address, proposal_id, created_at, vote_amount")
-        .eq("user_address", criteria.user_address)
+        .ilike("user_address", criteria.user_address)
         .not("vote_amount", "is", null)
         .order("created_at", { ascending: false })
         .range(range.from, range.to);
+
+      countQuery = supabase
+        .from("analytics_contest_participants_v3")
+        .select("*", { count: "exact", head: true })
+        .ilike("user_address", criteria.user_address)
+        .not("vote_amount", "is", null);
     }
 
-    const { data, count, error } = result;
+    const [dataResult, countResult] = await Promise.all([dataQuery, countQuery]);
 
-    if (error) {
-      throw error;
-    }
+    if (dataResult.error) throw dataResult.error;
+    if (countResult.error) throw countResult.error;
 
-    return { data, count: count ?? data.length };
+    const data = dataResult.data;
+    const count = countResult.count;
+
+    return { data, count: count ?? 0 };
   } catch (error) {
     throw error;
   }
 }
 
-async function fetchComments(userAddress: string, range: { from: number; to: number }) {
+async function fetchComments(
+  userAddress: string,
+  range: { from: number; to: number },
+): Promise<{ data: any[]; count: number }> {
   try {
-    let result;
-
-    result = await supabase
+    const dataQuery = supabase
       .from("analytics_contest_participants_v3")
-      .select("network_name, contest_address, proposal_id, created_at, comment_id", { count: "exact" })
+      .select("network_name, contest_address, proposal_id, created_at, comment_id")
       .order("created_at", { ascending: false })
-      .eq("user_address", userAddress)
+      .ilike("user_address", userAddress)
       .not("comment_id", "is", null)
       .not("deleted", "is", true)
       .range(range.from, range.to);
 
-    const { data, count, error } = result;
+    const countQuery = supabase
+      .from("analytics_contest_participants_v3")
+      .select("*", { count: "exact", head: true })
+      .ilike("user_address", userAddress)
+      .not("comment_id", "is", null)
+      .not("deleted", "is", true);
 
-    if (error) {
-      throw error;
-    }
+    const [dataResult, countResult] = await Promise.all([dataQuery, countQuery]);
 
-    return { data, count: count ?? data.length };
+    if (dataResult.error) throw dataResult.error;
+    if (countResult.error) throw countResult.error;
+
+    const data = dataResult.data;
+    const count = countResult.count;
+
+    return { data, count: count ?? 0 };
   } catch (error) {
     throw error;
   }

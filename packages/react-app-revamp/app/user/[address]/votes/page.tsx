@@ -1,6 +1,12 @@
+import UserListSkeleton from "@components/_pages/User/components/Skeleton";
 import { getAddressProps } from "@helpers/getAddressProps";
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import UserVotesLayout from "./votes";
+import { Suspense } from "react";
+
+const UserVotesLayout = dynamic(() => import("./votes"), {
+  loading: () => <UserListSkeleton />,
+});
 
 type Props = {
   params: { address: string };
@@ -14,7 +20,11 @@ const Page = async (props: Props) => {
     return notFound();
   }
 
-  return <UserVotesLayout address={addressProps.address ?? ""} />;
+  return (
+    <Suspense fallback={<UserListSkeleton />}>
+      <UserVotesLayout address={addressProps.address ?? ""} />
+    </Suspense>
+  );
 };
 
 export default Page;
