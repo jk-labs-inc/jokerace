@@ -67,7 +67,7 @@ const LayoutUser = (props: LayoutUserProps) => {
   return (
     <>
       <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
-        <div className="container mx-auto mt-12">
+        <div className="container mx-auto mt-4 md:mt-12">
           {!address ? (
             <div className="flex items-center gap-6">
               <Skeleton circle height={100} width={100} />
@@ -91,7 +91,7 @@ const LayoutUser = (props: LayoutUserProps) => {
                       tabRefs.current[index] = el;
                       return;
                     }}
-                    className={`font-sabo py-2 text-[16px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
+                    className={`font-sabo py-2 text-[14px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
                       isActiveLink(pathname ?? "", link.href, address) ? "text-primary-10" : "text-neutral-11"
                     }`}
                   >
