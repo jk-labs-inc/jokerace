@@ -297,22 +297,35 @@ export async function getUserContests(
     const { from, to } = getPagination(currentPage, itemsPerPage);
 
     try {
-      let query = supabase
-        .from("contests_v3")
-        .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, hidden, votingMerkleRoot, voting_requirements, submission_requirements",
-          { count: "exact" },
-        )
-        .ilike("author_address", profileAddress)
-        .order("created_at", { ascending: false });
+      const executeQuery = async (useIlike: boolean) => {
+        let query = supabase
+          .from("contests_v3")
+          .select(
+            "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, hidden, votingMerkleRoot, voting_requirements, submission_requirements",
+            { count: "exact" },
+          );
 
-      if (sortBy) {
-        query = sortContests(query, sortBy);
+        if (useIlike) {
+          query = query.ilike("author_address", profileAddress);
+        } else {
+          query = query.eq("author_address", profileAddress);
+        }
+        query = query.order("created_at", { ascending: false });
+
+        if (sortBy) {
+          query = sortContests(query, sortBy);
+        }
+        return query.range(from, to);
+      };
+
+      // first attempt with eq
+      let result = await executeQuery(false);
+
+      // if no results, it could be that address is lowercase, try with ilike
+      if (result.data?.length === 0) {
+        result = await executeQuery(true);
       }
 
-      query = query.range(from, to);
-
-      const result = await query;
       const { data, count, error } = result;
       if (error) {
         throw new Error(error.message);
@@ -322,7 +335,7 @@ export async function getUserContests(
         data.map(contest => processContestQualifications(contest, currentUserAddress)),
       );
 
-      return { data: processedData, count };
+      return { data: processedData, count: count ?? 0 };
     } catch (e) {
       console.error(e);
       return { data: [], count: 0 };

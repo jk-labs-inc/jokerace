@@ -39,50 +39,66 @@ async function fetchSubmissions(
   range: { from: number; to: number },
 ): Promise<{ data: any[]; count: number }> {
   try {
-    let dataQuery;
-    let countQuery;
+    const executeQuery = async (useIlike: boolean) => {
+      let dataQuery;
+      let countQuery;
 
-    if (criteria.vote_amount === null) {
-      dataQuery = supabase
-        .from("analytics_contest_participants_v3")
-        .select("network_name, contest_address, proposal_id, created_at")
-        .ilike("user_address", criteria.user_address)
-        .is("vote_amount", criteria.vote_amount)
-        .is("comment_id", null)
-        .order("created_at", { ascending: false })
-        .range(range.from, range.to);
+      const addressFilter = useIlike
+        ? { user_address: { ilike: criteria.user_address } }
+        : { user_address: criteria.user_address };
 
-      countQuery = supabase
-        .from("analytics_contest_participants_v3")
-        .select("*", { count: "exact", head: true })
-        .ilike("user_address", criteria.user_address)
-        .is("vote_amount", criteria.vote_amount)
-        .is("comment_id", null);
-    } else {
-      dataQuery = supabase
-        .from("analytics_contest_participants_v3")
-        .select("network_name, contest_address, proposal_id, created_at, vote_amount")
-        .ilike("user_address", criteria.user_address)
-        .not("vote_amount", "is", null)
-        .order("created_at", { ascending: false })
-        .range(range.from, range.to);
+      if (criteria.vote_amount === null) {
+        dataQuery = supabase
+          .from("analytics_contest_participants_v3")
+          .select("network_name, contest_address, proposal_id, created_at")
+          .match(addressFilter)
+          .is("vote_amount", criteria.vote_amount)
+          .is("comment_id", null)
+          .order("created_at", { ascending: false })
+          .range(range.from, range.to);
 
-      countQuery = supabase
-        .from("analytics_contest_participants_v3")
-        .select("*", { count: "exact", head: true })
-        .ilike("user_address", criteria.user_address)
-        .not("vote_amount", "is", null);
+        countQuery = supabase
+          .from("analytics_contest_participants_v3")
+          .select("*", { count: "exact", head: true })
+          .match(addressFilter)
+          .is("vote_amount", criteria.vote_amount)
+          .is("comment_id", null);
+      } else {
+        dataQuery = supabase
+          .from("analytics_contest_participants_v3")
+          .select("network_name, contest_address, proposal_id, created_at, vote_amount")
+          .match(addressFilter)
+          .not("vote_amount", "is", null)
+          .order("created_at", { ascending: false })
+          .range(range.from, range.to);
+
+        countQuery = supabase
+          .from("analytics_contest_participants_v3")
+          .select("*", { count: "exact", head: true })
+          .match(addressFilter)
+          .not("vote_amount", "is", null);
+      }
+
+      const [dataResult, countResult] = await Promise.all([dataQuery, countQuery]);
+
+      return { dataResult, countResult };
+    };
+
+    // first attempt with eq
+    let { dataResult, countResult } = await executeQuery(false);
+
+    // if no results, it could be that address is lowercase, try with ilike
+    if (dataResult.data?.length === 0) {
+      ({ dataResult, countResult } = await executeQuery(true));
     }
-
-    const [dataResult, countResult] = await Promise.all([dataQuery, countQuery]);
 
     if (dataResult.error) throw dataResult.error;
     if (countResult.error) throw countResult.error;
 
-    const data = dataResult.data;
-    const count = countResult.count;
+    const data = dataResult.data || [];
+    const count = countResult.count ?? 0;
 
-    return { data, count: count ?? 0 };
+    return { data, count };
   } catch (error) {
     throw error;
   }
@@ -93,31 +109,45 @@ async function fetchComments(
   range: { from: number; to: number },
 ): Promise<{ data: any[]; count: number }> {
   try {
-    const dataQuery = supabase
-      .from("analytics_contest_participants_v3")
-      .select("network_name, contest_address, proposal_id, created_at, comment_id")
-      .order("created_at", { ascending: false })
-      .ilike("user_address", userAddress)
-      .not("comment_id", "is", null)
-      .not("deleted", "is", true)
-      .range(range.from, range.to);
+    const executeQuery = async (useIlike: boolean) => {
+      const addressFilter = useIlike ? { user_address: { ilike: userAddress } } : { user_address: userAddress };
 
-    const countQuery = supabase
-      .from("analytics_contest_participants_v3")
-      .select("*", { count: "exact", head: true })
-      .ilike("user_address", userAddress)
-      .not("comment_id", "is", null)
-      .not("deleted", "is", true);
+      const dataQuery = supabase
+        .from("analytics_contest_participants_v3")
+        .select("network_name, contest_address, proposal_id, created_at, comment_id")
+        .order("created_at", { ascending: false })
+        .match(addressFilter)
+        .not("comment_id", "is", null)
+        .not("deleted", "is", true)
+        .range(range.from, range.to);
 
-    const [dataResult, countResult] = await Promise.all([dataQuery, countQuery]);
+      const countQuery = supabase
+        .from("analytics_contest_participants_v3")
+        .select("*", { count: "exact", head: true })
+        .match(addressFilter)
+        .not("comment_id", "is", null)
+        .not("deleted", "is", true);
+
+      const [dataResult, countResult] = await Promise.all([dataQuery, countQuery]);
+
+      return { dataResult, countResult };
+    };
+
+    // first attempt with eq
+    let { dataResult, countResult } = await executeQuery(false);
+
+    // if no results, it could be that address is lowercase, try with ilike
+    if (dataResult.data?.length === 0) {
+      ({ dataResult, countResult } = await executeQuery(true));
+    }
 
     if (dataResult.error) throw dataResult.error;
     if (countResult.error) throw countResult.error;
 
-    const data = dataResult.data;
-    const count = countResult.count;
+    const data = dataResult.data || [];
+    const count = countResult.count ?? 0;
 
-    return { data, count: count ?? 0 };
+    return { data, count };
   } catch (error) {
     throw error;
   }
