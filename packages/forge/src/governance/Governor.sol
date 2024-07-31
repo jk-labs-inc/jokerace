@@ -99,7 +99,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant MAX_FIELDS_METADATA_LENGTH = 10;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // our hot wallet that we operate from if need be, and collect revenue to on most chains
-    string private constant VERSION = "4.30"; // Private as to not clutter the ABI
+    string private constant VERSION = "4.31"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
     string public prompt;
