@@ -1,12 +1,8 @@
 import UserListSkeleton from "@components/_pages/User/components/Skeleton";
 import { getAddressProps } from "@helpers/getAddressProps";
-import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-
-const UserSubmissionsLayout = dynamic(() => import("./submissions"), {
-  loading: () => <UserListSkeleton />,
-});
+import UserSubmissionsLayout from "./submissions";
 
 type Props = {
   params: { address: string };

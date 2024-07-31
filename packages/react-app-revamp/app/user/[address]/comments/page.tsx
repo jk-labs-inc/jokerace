@@ -1,12 +1,8 @@
 import UserListSkeleton from "@components/_pages/User/components/Skeleton";
 import { getAddressProps } from "@helpers/getAddressProps";
-import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-
-const UserCommentsLayout = dynamic(() => import("./comments"), {
-  loading: () => <UserListSkeleton />,
-});
+import UserCommentsLayout from "./comments";
 
 type Props = {
   params: { address: string };
