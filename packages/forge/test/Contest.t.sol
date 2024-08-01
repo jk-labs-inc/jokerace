@@ -31,7 +31,11 @@ contract ContestTest is Test {
     uint256 public constant SORTING_ENABLED = 1;
     uint256 public constant RANK_LIMIT_250 = 250;
 
-    Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
+    // METADATA CONSTRUCTOR PARAMS
+    string public constant METADATA_FIELDS_SCHEMA =
+        "{\'Test Address Field\': \'address\', \'Test String Field\': \'string\', \'Test Uint Field\': \'uint256\'}";
+
+    Governor.IntConstructorArgs public zeroCostIntConstructorArgs = Governor.IntConstructorArgs(
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
@@ -43,12 +47,10 @@ contract ContestTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         ZERO_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
-        PAY_PER_VOTE_OFF,
-        CREATOR_SPLIT_DESTINATION,
-        JK_LABS_SPLIT_DESTINATION
+        PAY_PER_VOTE_OFF
     );
 
-    Governor.ConstructorArgs public oneEthToProposeNumParams = Governor.ConstructorArgs(
+    Governor.IntConstructorArgs public oneEthIntConstructorArgs = Governor.IntConstructorArgs(
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
@@ -60,9 +62,15 @@ contract ContestTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         ONE_ETH_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
-        PAY_PER_VOTE_OFF,
-        CREATOR_SPLIT_DESTINATION,
-        JK_LABS_SPLIT_DESTINATION
+        PAY_PER_VOTE_OFF
+    );
+
+    Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
+        zeroCostIntConstructorArgs, CREATOR_SPLIT_DESTINATION, JK_LABS_SPLIT_DESTINATION, METADATA_FIELDS_SCHEMA
+    );
+
+    Governor.ConstructorArgs public oneEthToProposeNumParams = Governor.ConstructorArgs(
+        oneEthIntConstructorArgs, CREATOR_SPLIT_DESTINATION, JK_LABS_SPLIT_DESTINATION, METADATA_FIELDS_SCHEMA
     );
 
     // MERKLE TREE PARAMS
@@ -106,6 +114,9 @@ contract ContestTest is Test {
     // METADATA PARAMS
     address[] public safeSigners = [address(0)];
     uint8 public constant SAFE_THRESHOLD = 1;
+    address[] public METADATA_FIELDS_ADDRESS_ARRAY = [CREATOR_ADDRESS_1]; // placeholder value
+    string[] public METADATA_FIELDS_STRING_ARRAY = [METADATA_FIELDS_SCHEMA]; // placeholder value
+    uint256[] public METADATA_FIELDS_UINT_ARRAY = [SAFE_THRESHOLD]; // placeholder value
 
     // PROPOSALS PARAMS
     uint256[] public proposalsToDelete;
@@ -115,28 +126,48 @@ contract ContestTest is Test {
         description: "firstProposalPA1",
         exists: true,
         targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
+        fieldsMetadata: Governor.FieldsMetadata({
+            addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
+            stringArray: METADATA_FIELDS_STRING_ARRAY,
+            uintArray: METADATA_FIELDS_UINT_ARRAY
+        })
     });
     Governor.ProposalCore public secondProposalPA1 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
         description: "secondProposalPA1",
         exists: true,
         targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
+        fieldsMetadata: Governor.FieldsMetadata({
+            addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
+            stringArray: METADATA_FIELDS_STRING_ARRAY,
+            uintArray: METADATA_FIELDS_UINT_ARRAY
+        })
     });
     Governor.ProposalCore public firstProposalPA2 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_2,
         description: "firstProposalPA2",
         exists: true,
         targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
+        fieldsMetadata: Governor.FieldsMetadata({
+            addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
+            stringArray: METADATA_FIELDS_STRING_ARRAY,
+            uintArray: METADATA_FIELDS_UINT_ARRAY
+        })
     });
     Governor.ProposalCore public unpermissionedAuthorProposal1 = Governor.ProposalCore({
         author: UNPERMISSIONED_ADDRESS_1,
         description: "unpermissionedAuthorProposal1",
         exists: true,
         targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
+        fieldsMetadata: Governor.FieldsMetadata({
+            addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
+            stringArray: METADATA_FIELDS_STRING_ARRAY,
+            uintArray: METADATA_FIELDS_UINT_ARRAY
+        })
     });
 
     /////////////////////////////
@@ -204,7 +235,7 @@ contract ContestTest is Test {
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
 
-        assertEq(proposalId, 49056523107705728825615382688395286440062072247511095534135796452139198417529);
+        assertEq(proposalId, 113012308618275462188231871773661406017840369232388967339979650418749335396171);
     }
 
     function testProposeAnyone() public {
@@ -212,7 +243,7 @@ contract ContestTest is Test {
         vm.prank(UNPERMISSIONED_ADDRESS_1);
         uint256 proposalId = anyoneCanSubmitContest.propose(unpermissionedAuthorProposal1, proof0);
 
-        assertEq(proposalId, 98473096201093600303872109595179192229910158899541901113356700720980320499920);
+        assertEq(proposalId, 115165251560031427429607767944389537131137037929814060832786039738764740468274);
     }
 
     function testProposeWithoutProof() public {
@@ -222,8 +253,8 @@ contract ContestTest is Test {
         uint256 secondProposalId = contest.proposeWithoutProof(secondProposalPA1);
         vm.stopPrank();
 
-        assertEq(firstProposalId, 49056523107705728825615382688395286440062072247511095534135796452139198417529);
-        assertEq(secondProposalId, 54769785658820412218609810676735378376293272785081650547477539805570535635325);
+        assertEq(firstProposalId, 113012308618275462188231871773661406017840369232388967339979650418749335396171);
+        assertEq(secondProposalId, 100550081537902060961196880423907903647012929095765413382065790941904788206777);
     }
 
     function testProposeAnyoneWithoutProof() public {
@@ -231,7 +262,7 @@ contract ContestTest is Test {
         vm.prank(UNPERMISSIONED_ADDRESS_1);
         uint256 proposalId = anyoneCanSubmitContest.proposeWithoutProof(unpermissionedAuthorProposal1);
 
-        assertEq(proposalId, 98473096201093600303872109595179192229910158899541901113356700720980320499920);
+        assertEq(proposalId, 115165251560031427429607767944389537131137037929814060832786039738764740468274);
     }
 
     function testProposeAuthorIsntSender() public {
@@ -285,7 +316,7 @@ contract ContestTest is Test {
         uint256 proposalId =
             anyoneCanSubmitCostsAnEthContest.propose{value: 1 ether}(unpermissionedAuthorProposal1, proof0);
 
-        assertEq(proposalId, 98473096201093600303872109595179192229910158899541901113356700720980320499920);
+        assertEq(proposalId, 115165251560031427429607767944389537131137037929814060832786039738764740468274);
         assertEq(CREATOR_ADDRESS_1.balance, 0.5 ether);
         assertEq(JK_LABS_ADDRESS.balance, 0.5 ether);
     }
