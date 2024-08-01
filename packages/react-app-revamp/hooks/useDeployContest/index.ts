@@ -18,7 +18,7 @@ import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
 import { Abi, parseEther } from "viem";
 import { useAccount } from "wagmi";
-import { ContestVisibility, useDeployContestStore } from "./store";
+import { ContestVisibility, MetadataField, useDeployContestStore } from "./store";
 import { SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle } from "./types";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000000;
@@ -44,6 +44,7 @@ export function useDeployContest() {
     setDeployContestData,
     votingRequirements,
     submissionRequirements,
+    metadataFields,
     charge,
     setIsLoading,
     setIsSuccess,
@@ -424,6 +425,29 @@ export function useDeployContest() {
     }
 
     return data.jk_labs_split_destination;
+  }
+
+  function createMetadataFieldsSchema(metadataFields: MetadataField[]): string {
+    const schema = metadataFields
+      .filter(field => field.prompt.trim() !== "")
+      .reduce<Record<string, string | string[]>>((acc, field) => {
+        const label = field.label;
+        const prompt = field.prompt.trim();
+
+        if (acc[label]) {
+          if (Array.isArray(acc[label])) {
+            (acc[label] as string[]).push(prompt);
+          } else {
+            acc[label] = [acc[label] as string, prompt];
+          }
+        } else {
+          acc[label] = prompt;
+        }
+
+        return acc;
+      }, {});
+
+    return JSON.stringify(schema);
   }
 
   // Helper function to format recipients (either voters or submitters)
