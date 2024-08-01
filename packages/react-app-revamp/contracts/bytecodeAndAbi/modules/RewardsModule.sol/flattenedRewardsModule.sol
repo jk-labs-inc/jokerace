@@ -2223,6 +2223,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public payPerVote; // If this contest is pay per vote (as opposed to pay per vote transaction).
     address public creatorSplitDestination; // Where the creator split of revenue goes.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
+    string public metadataFieldsSchema; // JSON Schema of what the metadata fields are
 
     uint256[] public proposalIds;
     uint256[] public deletedProposalIds;
@@ -2289,6 +2290,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         payPerVote = constructorArgs_.intConstructorArgs.payPerVote;
         creatorSplitDestination = constructorArgs_.creatorSplitDestination;
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
+        metadataFieldsSchema = constructorArgs_.metadataFieldsSchema;
 
         emit JokeraceCreated(
             VERSION,
