@@ -102,7 +102,7 @@
     "@types/react-window": "1.8.8",
     "@types/underscore": "1.11.15",
     "@types/uuid": "10.0.0",
-    "@vercel/node": "3.2.7",
+    "@vercel/node": "3.2.8",
     "autoprefixer": "10.4.19",
     "eslint-config-next": "14.2.5",
     "interweave-ssr": "2.0.0",
