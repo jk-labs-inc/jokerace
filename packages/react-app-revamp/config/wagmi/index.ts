@@ -13,6 +13,7 @@ import {
   tahoWallet,
   trustWallet,
   walletConnectWallet,
+  bitgetWallet
 } from "@rainbow-me/rainbowkit/wallets";
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
@@ -252,6 +253,7 @@ const connectors = connectorsForWallets(
         rabbyWallet,
         phantomWallet,
         safeWallet,
+        bitgetWallet,
       ],
     },
   ],
