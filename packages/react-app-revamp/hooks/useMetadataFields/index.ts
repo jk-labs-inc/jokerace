@@ -56,6 +56,7 @@ const useMetadataFields = () => {
   } = useReadContract({
     abi: contractData?.abi as Abi,
     address: contestAddress as `0x${string}`,
+    chainId: contestChainId,
     functionName: "metadataFieldsSchema",
     query: {
       enabled: Boolean(contractData && compareVersions(contractData.version, METADATA_FIELDS_VERSION) >= 0),
