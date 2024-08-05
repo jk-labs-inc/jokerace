@@ -11,8 +11,8 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useEffect } from "react";
-import DialogModalSendProposalMobileLayoutConfirm from "./components/ConfirmDialog";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
+import DialogModalSendProposalMobileLayoutConfirm from "./components/ConfirmDialog";
 
 interface DialogModalSendProposalMobileLayoutProps {
   chainName: string;
@@ -70,6 +70,14 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
     return metadataFields.some(field => field.inputValue === "");
   };
 
+  const isSubmitButtonDisabled = () => {
+    if (metadataFields.length > 0) {
+      return isAnyMetadataFieldEmpty();
+    } else {
+      return !proposal.length || editorProposal?.isEmpty;
+    }
+  };
+
   return (
     <DialogModalV3 isOpen={isOpen} title="sendProposalMobile" isMobile>
       <div
@@ -92,7 +100,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
               colorClass="bg-gradient-vote rounded-[40px]"
               size={ButtonSize.SMALL}
               onClick={resetStatesAndProceed}
-              isDisabled={isLoading || !proposal.length || editorProposal?.isEmpty || isAnyMetadataFieldEmpty()}
+              isDisabled={isLoading || isSubmitButtonDisabled()}
             >
               submit!
             </ButtonV3>

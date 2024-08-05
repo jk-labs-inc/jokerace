@@ -27,7 +27,7 @@ export function processFieldInputs(fieldInputs: MetadataFieldWithInput[]) {
   return fieldsMetadata;
 }
 
-export function generateFieldInputsHTML(fieldInputs: MetadataFieldWithInput[]): string {
+export function generateFieldInputsHTML(proposalContent: string, fieldInputs: MetadataFieldWithInput[]): string {
   if (fieldInputs.length === 0) return "";
 
   const fieldHTMLs = fieldInputs
@@ -41,8 +41,13 @@ export function generateFieldInputsHTML(fieldInputs: MetadataFieldWithInput[]): 
     )
     .join("");
 
+  const divider =
+    proposalContent.trim().length > 0
+      ? '<div class="bg-gradient-to-r from-neutral-7 w-full h-[1px] mt-6 mb-2"></div>'
+      : "";
+
   return `
-        <div class="bg-gradient-to-r from-neutral-7 w-full h-[1px] mt-6 mb-2"></div>
+        ${divider}
         <div class="flex flex-col gap-6">
           ${fieldHTMLs}
         </div>

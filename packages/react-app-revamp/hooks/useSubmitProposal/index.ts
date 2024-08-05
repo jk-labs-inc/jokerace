@@ -58,7 +58,7 @@ export function useSubmitProposal() {
     setTransactionData(null);
 
     // generate the HTML for field inputs
-    const fieldInputsHTML = generateFieldInputsHTML(metadataFields);
+    const fieldInputsHTML = generateFieldInputsHTML(proposalContent, metadataFields);
 
     // combine the original proposalContent with the generated HTML
     const fullProposalContent = `${proposalContent}\n\n${fieldInputsHTML}`;

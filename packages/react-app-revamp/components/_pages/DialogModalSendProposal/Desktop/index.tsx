@@ -93,18 +93,20 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const handleConfirm = () => {
     setError(null);
 
-    if (!proposal.length || editorProposal?.isEmpty) {
-      setError("Please fill in your proposal.");
-      return;
+    if (metadataFields.length > 0) {
+      if (isAnyMetadataFieldEmpty()) {
+        setError("Please fill in all additional fields before submitting.");
+        return;
+      }
+    } else {
+      if (!proposal.length || editorProposal?.isEmpty) {
+        setError("Please fill in your proposal.");
+        return;
+      }
     }
 
     if (insufficientBalance) {
       setError("Insufficient balance to submit a proposal.");
-      return;
-    }
-
-    if (isAnyMetadataFieldEmpty()) {
-      setError("Please fill in all additional fields before submitting.");
       return;
     }
 
