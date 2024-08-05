@@ -39,21 +39,37 @@ const DialogModalSendProposalMetadataField: FC<DialogModalSendProposalMetadataFi
   const validateAddress = (address: string) => {
     if (!address) {
       setError(null);
-      return true;
+      return;
     }
     if (!REGEX_ETHEREUM_ADDRESS.test(address)) {
-      setError("Invalid address");
-      return false;
+      setError("Invalid address.");
+    } else {
+      setError(null);
     }
-    setError(null);
-    return true;
+  };
+
+  const validateNumber = (value: string) => {
+    if (value === "") {
+      setError(null);
+      return;
+    }
+    const num = Number(value);
+    if (isNaN(num)) {
+      setError("Please enter a valid number.");
+    } else if (num < 0) {
+      setError("Number must be 0 or positive.");
+    } else {
+      setError(null);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setInputValue(index, newValue);
 
-    if (metadataField.metadataType === "address") {
+    if (metadataField.metadataType === "uint256") {
+      validateNumber(newValue);
+    } else if (metadataField.metadataType === "address") {
       validateAddress(newValue);
     }
   };
@@ -61,6 +77,8 @@ const DialogModalSendProposalMetadataField: FC<DialogModalSendProposalMetadataFi
   useEffect(() => {
     if (metadataField.metadataType === "address" && metadataField.inputValue) {
       validateAddress(metadataField.inputValue);
+    } else if (metadataField.metadataType === "uint256" && metadataField.inputValue) {
+      validateNumber(metadataField.inputValue);
     }
   }, [metadataField.inputValue, metadataField.metadataType]);
 
@@ -82,7 +100,6 @@ const DialogModalSendProposalMetadataField: FC<DialogModalSendProposalMetadataFi
           className={`${getInputClassName(metadataField.metadataType)} ${error ? "border-negative-11" : ""}`}
           placeholder={getPlaceholder(metadataField.metadataType)}
           type={getInputType(metadataField.metadataType)}
-          min={0}
           onChange={handleInputChange}
           value={metadataField.inputValue}
         />

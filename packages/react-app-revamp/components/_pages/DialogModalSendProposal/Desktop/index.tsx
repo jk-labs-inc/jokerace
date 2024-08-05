@@ -97,7 +97,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
     setError(null);
 
     if (!proposal.length || editorProposal?.isEmpty) {
-      setError("Please fill in your proposal");
+      setError("Please fill in your proposal.");
       return;
     }
 
