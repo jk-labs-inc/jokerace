@@ -41,6 +41,7 @@ const CreateContestConfirm = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const title = isMobile ? "let’s confirm" : "finally, let’s confirm";
   const [isEthereumDeploymentModalOpen, setIsEthereumDeploymentModalOpen] = useState(false);
+  const [isChainDetailsLoading, setIsChainDetailsLoading] = useState(false);
 
   const onDeployHandler = useCallback(() => {
     if (chainId === ETHEREUM_MAINNET_CHAIN_ID) {
@@ -50,37 +51,38 @@ const CreateContestConfirm = () => {
     }
   }, [chainId, deployContest]);
 
-  useEffect(() => {
+  const fetchAndValidateChainDetails = useCallback(async () => {
     if (!chain) return;
 
-    const fetchAndValidateChainDetails = async () => {
-      try {
-        const { isError, minCostToPropose, minCostToVote } = await fetchChargeDetails(chain.name.toLowerCase());
+    setIsChainDetailsLoading(true);
+    try {
+      const { isError, minCostToPropose, minCostToVote } = await fetchChargeDetails(chain.name.toLowerCase());
 
-        const allMerkleRootsNull =
-          state.votingMerkle.csv === null &&
-          state.votingMerkle.manual === null &&
-          state.votingMerkle.prefilled === null;
+      const allMerkleRootsNull =
+        state.votingMerkle.csv === null && state.votingMerkle.manual === null && state.votingMerkle.prefilled === null;
 
-        if (allMerkleRootsNull && (!minCostToPropose || !minCostToVote)) {
-          toastError(`${chain.name} chain is not supported for for anyone to vote.`);
-          state.setStep(VOTING_STEP);
-          return;
-        }
+      if (allMerkleRootsNull && (!minCostToPropose || !minCostToVote)) {
+        toastError(`${chain.name} chain is not supported for anyone to vote.`);
+        state.setStep(VOTING_STEP);
+        return;
+      }
 
-        if (isError) {
-          toastError(`Error fetching charge details for ${chain.name} chain.`);
-          state.setStep(VOTING_STEP);
-        }
-      } catch (error) {
-        console.error("Error fetching chain details:", error);
-        toastError(`Error occurred while fetching chain details.`);
+      if (isError) {
+        toastError(`Error fetching charge details for ${chain.name} chain.`);
         state.setStep(VOTING_STEP);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching chain details:", error);
+      toastError(`Error occurred while fetching chain details.`);
+      state.setStep(VOTING_STEP);
+    } finally {
+      setIsChainDetailsLoading(false);
+    }
+  }, [chain, state.votingMerkle, state.setStep]);
 
+  useEffect(() => {
     fetchAndValidateChainDetails();
-  }, [chain, state]);
+  }, [fetchAndValidateChainDetails]);
 
   const onNavigateToStep = (step: Steps) => {
     state.setStep(step);
@@ -147,7 +149,7 @@ const CreateContestConfirm = () => {
             onClick={step => onNavigateToStep(step)}
           />
           <div className="mt-12">
-            <CreateContestButton step={state.step} onClick={onDeployHandler} />
+            <CreateContestButton step={state.step} onClick={onDeployHandler} isDisabled={isChainDetailsLoading} />
           </div>
         </div>
         <EthereumDeploymentModal
