@@ -1,6 +1,6 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { MetadataField, useDeployContestStore } from "@hooks/useDeployContest/store";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import ContestParamsMetadataFieldsDropdown from "../../../Dropdown";
 import { fieldsDropdownOptions, metadataFields } from "../../utils";
@@ -13,6 +13,7 @@ interface ContestParamsMetadataFieldProps {
 const ContestParamsMetadataField: FC<ContestParamsMetadataFieldProps> = ({ index, field }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { setMetadataFields } = useDeployContestStore();
+  const [fadeBg, setFadeBg] = useState(false);
 
   const handleDropdownChange = (option: string) => {
     const selectedField = metadataFields.find(f => f.metadataType === option);
@@ -56,9 +57,12 @@ const ContestParamsMetadataField: FC<ContestParamsMetadataFieldProps> = ({ index
             options={fieldsDropdownOptions}
             defaultOption={fieldsDropdownOptions.find(o => o.value === field.metadataType)!}
             onChange={handleDropdownChange}
+            onMenuStateChange={setFadeBg}
           />
         </div>
-        {isMobile ? field.description.mobile : field.description.desktop}
+        <div className={`${fadeBg ? "opacity-30" : "opacity-100"}`}>
+          {isMobile ? field.description.mobile : field.description.desktop}
+        </div>
       </div>
       <div className="flex flex-col gap-2">
         <p className="text-[16px] text-neutral-11 font-bold uppercase">field prompt</p>
