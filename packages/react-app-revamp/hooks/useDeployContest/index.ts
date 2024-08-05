@@ -110,7 +110,7 @@ export function useDeployContest() {
         return;
       }
 
-      const contestParametersObject = {
+      const intConstructorArgs = {
         contestStart: getUnixTime(submissionOpen),
         votingDelay: differenceInSeconds(votingOpen, submissionOpen),
         votingPeriod: differenceInSeconds(votingClose, votingOpen),
@@ -123,8 +123,13 @@ export function useDeployContest() {
         costToPropose: parseEther(chargeType.costToPropose.toString()),
         costToVote: parseEther(chargeType.costToVote.toString()),
         payPerVote: charge.voteType === VoteType.PerVote ? 1 : 0,
-        creatorSplitDestination: creatorSplitDestination,
-        jkLabsSplitDestination: jkLabsSplitDestination ? jkLabsSplitDestination : JK_LABS_SPLIT_DESTINATION_DEFAULT,
+      };
+
+      const constructorArgs = {
+        intConstructorArgs,
+        creatorSplitDestination,
+        jkLabsSplitDestination: jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT,
+        metadataFieldsSchema: createMetadataFieldsSchema(metadataFields),
       };
 
       const contractContest = await factoryCreateContest.deploy(
@@ -132,22 +137,7 @@ export function useDeployContest() {
         contestInfo,
         submissionMerkleRoot,
         votingMerkleRoot,
-        [
-          contestParametersObject.contestStart,
-          contestParametersObject.votingDelay,
-          contestParametersObject.votingPeriod,
-          contestParametersObject.numAllowedProposalSubmissions,
-          contestParametersObject.maxProposalCount,
-          contestParametersObject.downvotingAllowed,
-          contestParametersObject.sortingEnabled,
-          contestParametersObject.rankLimit,
-          contestParametersObject.percentageToCreator,
-          contestParametersObject.costToPropose,
-          contestParametersObject.costToVote,
-          contestParametersObject.payPerVote,
-          contestParametersObject.creatorSplitDestination,
-          contestParametersObject.jkLabsSplitDestination,
-        ],
+        constructorArgs,
       );
 
       const transactionPromise = contractContest.deployTransaction.wait();
@@ -431,17 +421,17 @@ export function useDeployContest() {
     const schema = metadataFields
       .filter(field => field.prompt.trim() !== "")
       .reduce<Record<string, string | string[]>>((acc, field) => {
-        const label = field.label;
+        const metadataType = field.metadataType;
         const prompt = field.prompt.trim();
 
-        if (acc[label]) {
-          if (Array.isArray(acc[label])) {
-            (acc[label] as string[]).push(prompt);
+        if (acc[metadataType]) {
+          if (Array.isArray(acc[metadataType])) {
+            (acc[metadataType] as string[]).push(prompt);
           } else {
-            acc[label] = [acc[label] as string, prompt];
+            acc[metadataType] = [acc[metadataType] as string, prompt];
           }
         } else {
-          acc[label] = prompt;
+          acc[metadataType] = prompt;
         }
 
         return acc;

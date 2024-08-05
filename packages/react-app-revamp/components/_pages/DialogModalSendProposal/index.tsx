@@ -12,6 +12,8 @@ import {
 import { useContestStore } from "@hooks/useContest/store";
 import { useEditorStore } from "@hooks/useEditor/store";
 import useEmailSignup from "@hooks/useEmailSignup";
+import useMetadataFields from "@hooks/useMetadataFields";
+import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUploadImageStore } from "@hooks/useUploadImage";
@@ -69,6 +71,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const isCorrectNetwork = chainId === chain?.id;
   const [isDragging, setIsDragging] = useState(false);
   const { uploadImage } = useUploadImageStore(state => state);
+  const { isLoading } = useMetadataFields();
   const placeholderText = isMobile ? "this is my submission..." : "this is my submission and here’s why...";
 
   const editorProposal = useEditor({

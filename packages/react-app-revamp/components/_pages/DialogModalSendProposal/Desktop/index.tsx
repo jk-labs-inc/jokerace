@@ -8,13 +8,15 @@ import { FOOTER_LINKS } from "@config/links";
 import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
 import { Charge } from "@hooks/useDeployContest/types";
+import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useState } from "react";
-import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
 import { useAccount } from "wagmi";
+import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
+import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -72,6 +74,8 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const onCorrectNetwork = chain?.name.toLowerCase() === chainName.toLowerCase();
   const showEntryCharge = charge && charge.type.costToPropose && accountData && onCorrectNetwork;
+  const { fields: metadataFields } = useMetadataStore(state => state);
+  const [error, setError] = useState<string | null>(null);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWantsSubscription(event.target.checked);
@@ -90,6 +94,23 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   };
 
   const handleConfirm = () => {
+    setError(null);
+
+    if (!proposal.length || editorProposal?.isEmpty) {
+      setError("Please enter a proposal before submitting.");
+      return;
+    }
+
+    if (insufficientBalance) {
+      setError("Insufficient balance to submit a proposal.");
+      return;
+    }
+
+    if (isAnyMetadataFieldEmpty()) {
+      setError("Please fill in all additional fields before submitting.");
+      return;
+    }
+
     if (wantsSubscription && !emailForSubscription) {
       setEmailError("Please enter an email address.");
       return;
@@ -107,6 +128,11 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
 
     setEmailError(null);
     onSubmitProposal?.();
+  };
+
+  const isAnyMetadataFieldEmpty = () => {
+    if (metadataFields.length === 0) return false;
+    return metadataFields.some(field => field.inputValue === "");
   };
 
   return (
@@ -130,20 +156,23 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
               <UserProfileDisplay ethereumAddress={address ?? ""} shortenOnFallback={true} />
               <p className="text-[16px] font-bold text-neutral-10">{formattedDate}</p>
             </div>
-            <div className="flex flex-col rounded-md md:w-[650px]">
-              <div className="flex bg-true-black z-10 justify-start w-full px-1 py-2 border-y border-neutral-10">
-                <TipTapEditorControls editor={editorProposal} />
-              </div>
+            <div className="flex flex-col gap-8 rounded-md md:w-[650px]">
+              <div className="flex flex-col">
+                <div className="flex bg-true-black z-10 justify-start w-full px-1 py-2 border-y border-neutral-10">
+                  <TipTapEditorControls editor={editorProposal} />
+                </div>
 
-              <EditorContent
-                editor={editorProposal}
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                className={`md:border-b border-primary-2 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto h-auto max-h-[300px] pb-2 ${
-                  isDragging ? "backdrop-blur-md opacity-70" : ""
-                }`}
-              />
+                <EditorContent
+                  editor={editorProposal}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  className={`md:border-b border-primary-2 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto h-auto max-h-[300px] pb-2 ${
+                    isDragging ? "backdrop-blur-md opacity-70" : ""
+                  }`}
+                />
+              </div>
+              {metadataFields.length ? <DialogModalSendProposalMetadataFields /> : null}
             </div>
             <div className="flex flex-col gap-11 mt-11">
               {showEntryCharge ? <ChargeLayout charge={charge} accountData={accountData} type="propose" /> : null}
@@ -191,14 +220,17 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
               ) : null}
 
               {isCorrectNetwork ? (
-                <ButtonV3
-                  colorClass="bg-gradient-vote rounded-[40px]"
-                  size={ButtonSize.EXTRA_LARGE_LONG}
-                  onClick={handleConfirm}
-                  isDisabled={isLoading || !proposal.length || editorProposal?.isEmpty || insufficientBalance}
-                >
-                  submit!
-                </ButtonV3>
+                <div className="flex flex-col gap-2">
+                  <ButtonV3
+                    colorClass="bg-gradient-vote rounded-[40px]"
+                    size={ButtonSize.EXTRA_LARGE_LONG}
+                    onClick={handleConfirm}
+                    isDisabled={isLoading}
+                  >
+                    submit!
+                  </ButtonV3>
+                  {error && <p className="text-negative-11 text-[14px] font-bold">{error}</p>}
+                </div>
               ) : (
                 <ButtonV3
                   colorClass="bg-gradient-create rounded-[40px]"

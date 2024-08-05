@@ -1,9 +1,9 @@
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { MetadataField, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 import ContestParamsMetadataFieldsDropdown from "../../../Dropdown";
 import { fieldsDropdownOptions, metadataFields } from "../../utils";
-import { TrashIcon } from "@heroicons/react/24/outline";
 
 interface ContestParamsMetadataFieldProps {
   index: number;
@@ -15,7 +15,7 @@ const ContestParamsMetadataField: FC<ContestParamsMetadataFieldProps> = ({ index
   const { setMetadataFields } = useDeployContestStore();
 
   const handleDropdownChange = (option: string) => {
-    const selectedField = metadataFields.find(f => f.label === option);
+    const selectedField = metadataFields.find(f => f.metadataType === option);
     if (selectedField) {
       setMetadataFields(prevFields => {
         const newFields = [...prevFields];
@@ -54,7 +54,7 @@ const ContestParamsMetadataField: FC<ContestParamsMetadataFieldProps> = ({ index
           <p className="text-[16px] text-neutral-11 font-bold uppercase">field type</p>
           <ContestParamsMetadataFieldsDropdown
             options={fieldsDropdownOptions}
-            defaultOption={fieldsDropdownOptions.find(o => o.value === field.label)!}
+            defaultOption={fieldsDropdownOptions.find(o => o.value === field.metadataType)!}
             onChange={handleDropdownChange}
           />
         </div>
@@ -63,7 +63,6 @@ const ContestParamsMetadataField: FC<ContestParamsMetadataFieldProps> = ({ index
       <div className="flex flex-col gap-2">
         <p className="text-[16px] text-neutral-11 font-bold uppercase">field prompt</p>
         <input
-          type="text"
           value={field.prompt}
           onChange={handlePromptChange}
           className="text-[16px] md:text-[20px] w-full md:w-[502px] border-b border-neutral-11 placeholder-neutral-10 placeholder-bold bg-transparent focus:outline-none"

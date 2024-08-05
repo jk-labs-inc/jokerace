@@ -17,7 +17,7 @@ const ContestParamsMetadataFields = () => {
 
       // count existing fields
       currentFields.forEach(field => {
-        counts[field.type as keyof typeof counts]++;
+        counts[field.elementType as keyof typeof counts]++;
       });
 
       // determine which field type to add

@@ -60,8 +60,8 @@ export interface SubmissionTypeOption {
 export type MerkleKey = "manual" | "prefilled" | "csv";
 
 export interface MetadataField {
-  type: "string" | "number";
-  label: "string" | "integer" | "address";
+  elementType: "string" | "number";
+  metadataType: "string" | "uint256" | "address";
   promptLabel: string;
   prompt: string;
   description: {

@@ -6,6 +6,7 @@ import { getProposalId } from "@helpers/getProposalId";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
+import { MetadataFieldWithInput, useMetadataStore } from "@hooks/useMetadataFields/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
@@ -13,9 +14,10 @@ import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { usePathname } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
-import { formatEther } from "viem";
+import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useSubmitProposalStore } from "./store";
+import { generateFieldInputsHTML, processFieldInputs } from "@helpers/metadata";
 
 const targetMetadata = {
   targetAddress: "0x0000000000000000000000000000000000000000",
@@ -40,6 +42,7 @@ export function useSubmitProposal() {
   const { getProofs } = useGenerateProof();
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
+  const { fields: metadataFields } = useMetadataStore(state => state);
 
   const calculateChargeAmount = () => {
     if (!charge) return undefined;
@@ -54,6 +57,12 @@ export function useSubmitProposal() {
     setError("");
     setTransactionData(null);
 
+    // generate the HTML for field inputs
+    const fieldInputsHTML = generateFieldInputsHTML(metadataFields);
+
+    // combine the original proposalContent with the generated HTML
+    const fullProposalContent = `${proposalContent}\n\n${fieldInputsHTML}`;
+
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
       const costToPropose = calculateChargeAmount();
 
@@ -67,13 +76,15 @@ export function useSubmitProposal() {
         };
 
         let txSendProposal: TransactionResponse = {} as TransactionResponse;
+        const fieldsMetadata = processFieldInputs(metadataFields);
 
         let proposalCore = {
           author: userAddress,
           exists: true,
-          description: proposalContent,
+          description: fullProposalContent,
           targetMetadata: targetMetadata,
           safeMetadata: safeMetadata,
+          fieldsMetadata: fieldsMetadata,
         };
 
         let hash: `0x${string}`;

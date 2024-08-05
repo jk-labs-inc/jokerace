@@ -3,14 +3,14 @@ import { MetadataField } from "@hooks/useDeployContest/store";
 
 export const fieldsDropdownOptions: Option[] = [
   { value: "string", label: "string" },
-  { value: "integer", label: "integer" },
+  { value: "uint256", label: "integer" },
   { value: "address", label: "token address" },
 ];
 
 export const metadataFields: MetadataField[] = [
   {
-    type: "string",
-    label: "string",
+    elementType: "string",
+    metadataType: "string",
     promptLabel: "eg. what's your best contact info on telegram?",
     prompt: "",
     description: {
@@ -28,8 +28,8 @@ export const metadataFields: MetadataField[] = [
     },
   },
   {
-    type: "number",
-    label: "integer",
+    elementType: "number",
+    metadataType: "uint256",
     promptLabel: "eg. how much eth should we donate to this cause?",
     prompt: "",
     description: {
@@ -47,8 +47,8 @@ export const metadataFields: MetadataField[] = [
     },
   },
   {
-    type: "string",
-    label: "address",
+    elementType: "string",
+    metadataType: "address",
     promptLabel: "eg. who should receive the rewards?",
     prompt: "",
     description: {
