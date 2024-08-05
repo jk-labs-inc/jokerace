@@ -1,6 +1,6 @@
 import { REGEX_ETHEREUM_ADDRESS } from "@helpers/getAddressProps";
 import { MetadataFieldWithInput, useMetadataStore } from "@hooks/useMetadataFields/store";
-import { FC, useState, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 
 interface DialogModalSendProposalMetadataFieldProps {
   metadataField: MetadataFieldWithInput;
@@ -84,7 +84,7 @@ const DialogModalSendProposalMetadataField: FC<DialogModalSendProposalMetadataFi
 
   const getInputClassName = (metadataType: string) => {
     if (metadataType === "uint256") {
-      return "text-[16px] w-[216px] rounded-[8px] bg-true-black px-2 py-1 focus:outline-none text-center border border-neutral-10 text-true-white placeholder-neutral-9";
+      return "text-[16px] w-[216px] rounded-[8px] bg-transparent px-2 py-1 focus:outline-none text-center border border-neutral-10 text-true-white placeholder-neutral-10";
     }
 
     return "text-[16px] w-full md:w-[502px] border-b border-primary-2 placeholder-neutral-10 bg-transparent focus:outline-none";

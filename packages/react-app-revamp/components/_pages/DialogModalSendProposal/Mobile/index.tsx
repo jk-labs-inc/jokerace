@@ -65,6 +65,11 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
     setIsMobileConfirmModalOpen(true);
   };
 
+  const isAnyMetadataFieldEmpty = () => {
+    if (metadataFields.length === 0) return false;
+    return metadataFields.some(field => field.inputValue === "");
+  };
+
   return (
     <DialogModalV3 isOpen={isOpen} title="sendProposalMobile" isMobile>
       <div
@@ -87,7 +92,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
               colorClass="bg-gradient-vote rounded-[40px]"
               size={ButtonSize.SMALL}
               onClick={resetStatesAndProceed}
-              isDisabled={isLoading || !proposal.length || editorProposal?.isEmpty}
+              isDisabled={isLoading || !proposal.length || editorProposal?.isEmpty || isAnyMetadataFieldEmpty()}
             >
               submit!
             </ButtonV3>
