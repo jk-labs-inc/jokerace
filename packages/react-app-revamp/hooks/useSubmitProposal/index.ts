@@ -42,7 +42,7 @@ export function useSubmitProposal() {
   const { getProofs } = useGenerateProof();
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
-  const { fields: metadataFields } = useMetadataStore(state => state);
+  const { fields: metadataFields, setFields: setMetadataFields } = useMetadataStore(state => state);
 
   const calculateChargeAmount = () => {
     if (!charge) return undefined;
@@ -138,6 +138,15 @@ export function useSubmitProposal() {
         increaseCurrentUserProposalCount();
         setSubmissionsCount(submissionsCount + 1);
         fetchSingleProposal(proposalId);
+
+        if (metadataFields.length > 0) {
+          const clearedFields = metadataFields.map(field => ({
+            ...field,
+            inputValue: "",
+          }));
+          setMetadataFields(clearedFields);
+        }
+
         resolve({ tx: txSendProposal, proposalId });
       } catch (e) {
         handleError(e, `Something went wrong while submitting your proposal.`);
