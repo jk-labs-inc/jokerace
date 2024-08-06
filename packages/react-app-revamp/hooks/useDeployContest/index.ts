@@ -18,7 +18,7 @@ import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
 import { Abi, parseEther } from "viem";
 import { useAccount } from "wagmi";
-import { ContestVisibility, useDeployContestStore } from "./store";
+import { ContestVisibility, MetadataField, useDeployContestStore } from "./store";
 import { SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle } from "./types";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000000;
@@ -44,6 +44,7 @@ export function useDeployContest() {
     setDeployContestData,
     votingRequirements,
     submissionRequirements,
+    metadataFields,
     charge,
     setIsLoading,
     setIsSuccess,
@@ -109,7 +110,7 @@ export function useDeployContest() {
         return;
       }
 
-      const contestParametersObject = {
+      const intConstructorArgs = {
         contestStart: getUnixTime(submissionOpen),
         votingDelay: differenceInSeconds(votingOpen, submissionOpen),
         votingPeriod: differenceInSeconds(votingClose, votingOpen),
@@ -122,8 +123,13 @@ export function useDeployContest() {
         costToPropose: parseEther(chargeType.costToPropose.toString()),
         costToVote: parseEther(chargeType.costToVote.toString()),
         payPerVote: charge.voteType === VoteType.PerVote ? 1 : 0,
-        creatorSplitDestination: creatorSplitDestination,
-        jkLabsSplitDestination: jkLabsSplitDestination ? jkLabsSplitDestination : JK_LABS_SPLIT_DESTINATION_DEFAULT,
+      };
+
+      const constructorArgs = {
+        intConstructorArgs,
+        creatorSplitDestination,
+        jkLabsSplitDestination: jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT,
+        metadataFieldsSchema: createMetadataFieldsSchema(metadataFields),
       };
 
       const contractContest = await factoryCreateContest.deploy(
@@ -131,22 +137,7 @@ export function useDeployContest() {
         contestInfo,
         submissionMerkleRoot,
         votingMerkleRoot,
-        [
-          contestParametersObject.contestStart,
-          contestParametersObject.votingDelay,
-          contestParametersObject.votingPeriod,
-          contestParametersObject.numAllowedProposalSubmissions,
-          contestParametersObject.maxProposalCount,
-          contestParametersObject.downvotingAllowed,
-          contestParametersObject.sortingEnabled,
-          contestParametersObject.rankLimit,
-          contestParametersObject.percentageToCreator,
-          contestParametersObject.costToPropose,
-          contestParametersObject.costToVote,
-          contestParametersObject.payPerVote,
-          contestParametersObject.creatorSplitDestination,
-          contestParametersObject.jkLabsSplitDestination,
-        ],
+        constructorArgs,
       );
 
       const transactionPromise = contractContest.deployTransaction.wait();
@@ -424,6 +415,29 @@ export function useDeployContest() {
     }
 
     return data.jk_labs_split_destination;
+  }
+
+  function createMetadataFieldsSchema(metadataFields: MetadataField[]): string {
+    const schema = metadataFields
+      .filter(field => field.prompt.trim() !== "")
+      .reduce<Record<string, string | string[]>>((acc, field) => {
+        const metadataType = field.metadataType;
+        const prompt = field.prompt.trim();
+
+        if (acc[metadataType]) {
+          if (Array.isArray(acc[metadataType])) {
+            (acc[metadataType] as string[]).push(prompt);
+          } else {
+            acc[metadataType] = [acc[metadataType] as string, prompt];
+          }
+        } else {
+          acc[metadataType] = prompt;
+        }
+
+        return acc;
+      }, {});
+
+    return JSON.stringify(schema);
   }
 
   // Helper function to format recipients (either voters or submitters)

@@ -11,13 +11,21 @@ import ContestParamsVisibility from "./components/ContestVisibility";
 import ContestParamsDownvote from "./components/Downvote";
 import ContestParamsSubmissionsPerContest from "./components/SubmissionsPerContest";
 import ContestParamsSubmissionsPerPlayer from "./components/SubmissionsPerPlayer";
+import { ChevronUpIcon } from "@heroicons/react/24/outline";
+import ContestParamsMetadata from "./components/Metadata";
 
 export const VOTING_STEP = 6;
 
 const CreateContestParams = () => {
-  const { customization, setCustomization, advancedOptions, setAdvancedOptions, step } = useDeployContestStore(
-    state => state,
-  );
+  const {
+    customization,
+    setCustomization,
+    advancedOptions,
+    setAdvancedOptions,
+    step,
+    metadataToggle,
+    setMetadataToggle,
+  } = useDeployContestStore(state => state);
   const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
   const [maxSubmissionsError, setMaxSubmissionsError] = useState<string>("");
   const onNextStep = useNextStep();
@@ -77,6 +85,10 @@ const CreateContestParams = () => {
     }
   };
 
+  const toggleMetadata = () => {
+    setMetadataToggle(!metadataToggle);
+  };
+
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
@@ -106,6 +118,17 @@ const CreateContestParams = () => {
               contestVisibility={advancedOptions.contestVisibility}
               onChange={handleContestVisibilityChange}
             />
+            <div className="mt-4">
+              <button className="flex gap-4 items-center" onClick={toggleMetadata}>
+                <p className="text-[20px] text-positive-11">add additional fields</p>
+                <ChevronUpIcon
+                  className={`w-6 h-6 text-positive-11 transition-transform duration-300 ${
+                    metadataToggle ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+            </div>
+            {metadataToggle ? <ContestParamsMetadata /> : null}
           </div>
 
           <CreateNextButton step={step} onClick={() => onNextStep()} isDisabled={disableNextStep} />
