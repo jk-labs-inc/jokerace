@@ -48,6 +48,7 @@ import AnyoneCanVoteContract from "@contracts/bytecodeAndAbi/Contest.4.27.anyone
 import UpdateForgeLibsContract from "@contracts/bytecodeAndAbi/Contest.4.28.updateForgeLibs.sol/Contest.json";
 import SetSplitDestinationContract from "@contracts/bytecodeAndAbi/Contest.4.29.setSplitDestination.sol/Contest.json";
 import MakeJkLabsSplitConfigurableContract from "@contracts/bytecodeAndAbi/Contest.4.30.makeJkLabsSplitConfigurable.sol/Contest.json";
+import AddMetadataFieldsContract from "@contracts/bytecodeAndAbi/Contest.4.31.addMetadataFields.sol/Contest.json";
 import NewValueAlreadyInArrayContract from "@contracts/bytecodeAndAbi/Contest.4.3.newValueAlreadyInArray.sol/Contest.json";
 import UseCustomErrorsContract from "@contracts/bytecodeAndAbi/Contest.4.4.useCustomErrors.sol/Contest.json";
 import CleanUpSortingContract from "@contracts/bytecodeAndAbi/Contest.4.5.cleanUpSorting.sol/Contest.json";
@@ -70,8 +71,9 @@ export async function getContestContractVersion(address: string, chainId: number
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
     const defaultReturn = { abi: null, version: "unknown" };
-
-    if (version === "4.30") {
+    if (version === "4.31") {
+      return { abi: AddMetadataFieldsContract.abi, version };
+    } else if (version === "4.30") {
       return { abi: MakeJkLabsSplitConfigurableContract.abi, version };
     } else if (version === "4.29") {
       return { abi: SetSplitDestinationContract.abi, version };

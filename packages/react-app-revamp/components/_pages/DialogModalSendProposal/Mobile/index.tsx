@@ -5,11 +5,14 @@ import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { useContestStore } from "@hooks/useContest/store";
 import { Charge } from "@hooks/useDeployContest/types";
+import useMetadataFields from "@hooks/useMetadataFields";
+import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useEffect } from "react";
+import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import DialogModalSendProposalMobileLayoutConfirm from "./components/ConfirmDialog";
 
 interface DialogModalSendProposalMobileLayoutProps {
@@ -48,6 +51,8 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
     useSubmitProposalStore(state => state);
   const { contestPrompt } = useContestStore(state => state);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
+  const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields();
+  const { fields: metadataFields } = useMetadataStore(state => state);
 
   useEffect(() => {
     if (error) {
@@ -60,6 +65,19 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
     setIsSuccess(false);
     setProposalId("");
     setIsMobileConfirmModalOpen(true);
+  };
+
+  const isAnyMetadataFieldEmpty = () => {
+    if (metadataFields.length === 0) return false;
+    return metadataFields.some(field => field.inputValue === "");
+  };
+
+  const isSubmitButtonDisabled = () => {
+    if (metadataFields.length > 0) {
+      return isAnyMetadataFieldEmpty();
+    } else {
+      return !proposal.length || editorProposal?.isEmpty;
+    }
   };
 
   return (
@@ -84,7 +102,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
               colorClass="bg-gradient-vote rounded-[40px]"
               size={ButtonSize.SMALL}
               onClick={resetStatesAndProceed}
-              isDisabled={isLoading || !proposal.length || editorProposal?.isEmpty}
+              isDisabled={isLoading || isSubmitButtonDisabled()}
             >
               submit!
             </ButtonV3>
@@ -109,10 +127,19 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
               <TipTapEditorControls editor={editorProposal} />
             </div>
 
-            <EditorContent
-              editor={editorProposal}
-              className={`md:border-b border-primary-2 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto h-auto max-h-[300px] pb-2 `}
-            />
+            <div className="flex flex-col gap-8">
+              <EditorContent
+                editor={editorProposal}
+                className={`md:border-b border-primary-2 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto h-auto max-h-[300px] pb-2 `}
+              />
+              {isMetadataFieldsLoading ? (
+                <p className="loadingDots font-sabo text-[16px] text-neutral-14">loading metadata fields</p>
+              ) : isMetadataFieldsError ? (
+                <p className="text-negative-11">Error while loading metadata fields. Please reload the page.</p>
+              ) : metadataFields.length > 0 ? (
+                <DialogModalSendProposalMetadataFields />
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
