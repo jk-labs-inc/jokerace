@@ -43,7 +43,11 @@ const useMetadataFields = () => {
   const { address: contestAddress, chainName: contestChainName } = extractPathSegments(pathname ?? "");
   const contestChainId = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.id;
 
-  const { data: contractData, isLoading: isContractDataLoading } = useQuery({
+  const {
+    data: contractData,
+    isLoading: isContractDataLoading,
+    isError: isContractDataError,
+  } = useQuery({
     queryKey: ["contestContract", contestAddress, contestChainId],
     queryFn: () => getContestContractVersion(contestAddress, contestChainId!),
     enabled: Boolean(contestAddress && contestChainId),
@@ -51,7 +55,7 @@ const useMetadataFields = () => {
 
   const {
     data: metadataSchema,
-    isError,
+    isError: isMetadataError,
     isLoading: isMetadataLoading,
   } = useReadContract({
     abi: contractData?.abi as Abi,
@@ -67,14 +71,15 @@ const useMetadataFields = () => {
     if (typeof metadataSchema === "string") {
       const parsedFields = parseMetadataFieldsSchema(metadataSchema);
       setFields(parsedFields);
-    } else if (metadataSchema !== undefined || isError) {
+    } else if (metadataSchema !== undefined || isMetadataError) {
       console.error("Unexpected data type or error from metadataFieldsSchema");
       setFields([]);
     }
-  }, [metadataSchema, isError, setFields]);
+  }, [metadataSchema, isMetadataError, setFields]);
 
   return {
     isLoading: isContractDataLoading || isMetadataLoading,
+    isError: isContractDataError || isMetadataError,
   };
 };
 

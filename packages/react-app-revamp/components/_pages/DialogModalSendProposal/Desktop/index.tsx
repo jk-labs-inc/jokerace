@@ -8,6 +8,7 @@ import { FOOTER_LINKS } from "@config/links";
 import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
 import { Charge } from "@hooks/useDeployContest/types";
+import useMetadataFields from "@hooks/useMetadataFields";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
@@ -71,6 +72,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const insufficientBalance = (accountData?.value ?? 0) < (charge?.type.costToPropose ?? 0);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const showEntryCharge = charge && charge.type.costToPropose && accountData && isCorrectNetwork;
+  const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields();
   const { fields: metadataFields } = useMetadataStore(state => state);
   const [error, setError] = useState<string | null>(null);
 
@@ -171,7 +173,13 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                   }`}
                 />
               </div>
-              {metadataFields.length ? <DialogModalSendProposalMetadataFields /> : null}
+              {isMetadataFieldsLoading ? (
+                <p className="loadingDots font-sabo text-[16px] text-neutral-14">loading metadata fields</p>
+              ) : isMetadataFieldsError ? (
+                <p className="text-negative-11">Error while loading metadata fields. Please reload the page.</p>
+              ) : metadataFields.length > 0 ? (
+                <DialogModalSendProposalMetadataFields />
+              ) : null}
             </div>
             <div className="flex flex-col gap-11 mt-11">
               {showEntryCharge ? <ChargeLayout charge={charge} accountData={accountData} type="propose" /> : null}

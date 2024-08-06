@@ -5,6 +5,7 @@ import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { useContestStore } from "@hooks/useContest/store";
 import { Charge } from "@hooks/useDeployContest/types";
+import useMetadataFields from "@hooks/useMetadataFields";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
@@ -50,6 +51,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
     useSubmitProposalStore(state => state);
   const { contestPrompt } = useContestStore(state => state);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
+  const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields();
   const { fields: metadataFields } = useMetadataStore(state => state);
 
   useEffect(() => {
@@ -130,7 +132,13 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
                 editor={editorProposal}
                 className={`md:border-b border-primary-2 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto h-auto max-h-[300px] pb-2 `}
               />
-              {metadataFields.length ? <DialogModalSendProposalMetadataFields /> : null}
+              {isMetadataFieldsLoading ? (
+                <p className="loadingDots font-sabo text-[16px] text-neutral-14">loading metadata fields</p>
+              ) : isMetadataFieldsError ? (
+                <p className="text-negative-11">Error while loading metadata fields. Please reload the page.</p>
+              ) : metadataFields.length > 0 ? (
+                <DialogModalSendProposalMetadataFields />
+              ) : null}
             </div>
           </div>
         </div>
