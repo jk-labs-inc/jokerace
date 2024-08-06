@@ -11,6 +11,7 @@ interface TokenSearchListTokenProps {
 
 const TokenSearchListToken: FC<TokenSearchListTokenProps> = ({ token, isChainDropdownOpen, onSelectToken }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [imgSrc, setImgSrc] = useState(token.logoURI);
 
   const truncateTokenName = (name: string, maxLength: number = 20): string => {
     if (name.length > maxLength) {
@@ -35,6 +36,10 @@ const TokenSearchListToken: FC<TokenSearchListTokenProps> = ({ token, isChainDro
     }
   };
 
+  const handleImageError = () => {
+    setImgSrc("/contest/mona-lisa-moustache.png");
+  };
+
   return (
     <div
       onMouseEnter={() => setIsHovered(true)}
@@ -54,7 +59,12 @@ const TokenSearchListToken: FC<TokenSearchListTokenProps> = ({ token, isChainDro
             isHovered ? "animate-spin" : ""
           }`}
         >
-          <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={token.logoURI} alt="avatar" />
+          <img
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            src={imgSrc}
+            alt="tokenLogo"
+            onError={handleImageError}
+          />
         </div>
         <div className="flex flex-col gap-1">
           <p
