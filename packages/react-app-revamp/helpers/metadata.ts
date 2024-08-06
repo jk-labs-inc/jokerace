@@ -43,7 +43,7 @@ export function generateFieldInputsHTML(proposalContent: string, fieldInputs: Me
 
   const divider =
     proposalContent.trim().length > 0
-      ? '<div class="bg-gradient-to-r from-neutral-7 w-full h-[1px] mt-6 mb-2"></div>'
+      ? '<div class="bg-gradient-to-r from-neutral-7 w-full h-[1px] mt-6 mb-4"></div>'
       : "";
 
   return `
