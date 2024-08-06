@@ -43,7 +43,7 @@
     "ethers": "5.7.2",
     "frog": "0.11.4",
     "fuse.js": "7.0.0",
-    "hono": "4.5.3",
+    "hono": "4.5.4",
     "i18next": "23.12.2",
     "interweave": "13.1.0",
     "interweave-autolink": "5.1.1",
