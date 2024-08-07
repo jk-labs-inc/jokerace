@@ -9,6 +9,7 @@ export enum TemplateType {
   grantsRound = "grants round",
   memeContest = "meme contest",
   artContest = "art contest",
+  karaokeChallenge = "karaoke challenge",
 }
 
 interface ContestData {

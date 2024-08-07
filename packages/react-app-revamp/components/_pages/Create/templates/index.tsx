@@ -9,6 +9,8 @@ import CreateContestGrantsRoundTemplate from "./grants-round";
 import { grantsRoundConfig } from "./grants-round/config";
 import CreateContestHackathonTemplate from "./hackathon";
 import { hackathonConfig } from "./hackathon/config";
+import CreateContestKaraokeChallengeTemplate from "./karaoke-challenge";
+import { karaokeChallengeConfig } from "./karaoke-challenge/config";
 import CreateContestMemeTemplate from "./meme";
 import { memeConfig } from "./meme/config";
 import { displayValueToKeyMapping } from "./templates";
@@ -45,6 +47,10 @@ export const templateMapping: TemplateMapping = {
   "art contest": {
     component: CreateContestArtTemplate,
     config: artConfig,
+  },
+  "karaoke challenge": {
+    component: CreateContestKaraokeChallengeTemplate,
+    config: karaokeChallengeConfig,
   },
 };
 
