@@ -19,7 +19,7 @@ const DialogModalSendProposalMetadataField: FC<DialogModalSendProposalMetadataFi
       case "string":
         return "enter text...";
       case "uint256":
-        return "1";
+        return "enter number...";
       case "address":
         return "0x...";
       default:
@@ -82,22 +82,12 @@ const DialogModalSendProposalMetadataField: FC<DialogModalSendProposalMetadataFi
     }
   }, [metadataField.inputValue, metadataField.metadataType]);
 
-  const getInputClassName = (metadataType: string) => {
-    if (metadataType === "uint256") {
-      return "text-[16px] w-[216px] rounded-[8px] bg-transparent px-2 py-1 focus:outline-none text-center border border-neutral-10 text-true-white placeholder-neutral-10";
-    }
-
-    return "text-[16px] w-full md:w-[502px] border-b border-primary-2 placeholder-neutral-10 bg-transparent focus:outline-none";
-  };
-
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-[16px] text-neutral-11">
-        {index + 1}) {metadataField.prompt}
-      </p>
+      <p className="text-[16px] text-neutral-11">{metadataField.prompt}</p>
       <div className="flex flex-col">
         <input
-          className={`${getInputClassName(metadataField.metadataType)} ${error ? "border-negative-11" : ""}`}
+          className={`text-[16px] w-full md:w-[502px] border-b border-primary-2 placeholder-neutral-10 bg-transparent focus:outline-none ${error ? "border-negative-11" : ""}`}
           placeholder={getPlaceholder(metadataField.metadataType)}
           type={getInputType(metadataField.metadataType)}
           onChange={handleInputChange}

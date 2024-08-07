@@ -296,7 +296,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     step: 0,
     submissionTab: 0,
     votingTab: 0,
-    metadataFields: metadataFields,
+    metadataFields: metadataFields.slice(0, 1),
     metadataToggle: false,
   };
 
