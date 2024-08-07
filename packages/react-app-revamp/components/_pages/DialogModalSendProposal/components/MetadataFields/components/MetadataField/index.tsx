@@ -84,7 +84,7 @@ const DialogModalSendProposalMetadataField: FC<DialogModalSendProposalMetadataFi
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-[16px] text-neutral-11">{metadataField.prompt}</p>
+      <p className="text-[16px] text-neutral-11 italic">{metadataField.prompt}</p>
       <div className="flex flex-col">
         <input
           className={`text-[16px] w-full md:w-[502px] border-b border-primary-2 placeholder-neutral-10 bg-transparent focus:outline-none ${error ? "border-negative-11" : ""}`}
