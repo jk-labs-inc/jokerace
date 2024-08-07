@@ -65,8 +65,8 @@ import { modeTestnet } from "./custom-chains/modeTestnet";
 import { morphTestnet } from "./custom-chains/morphTestnet";
 import { movementTestnet } from "./custom-chains/movementTestnet";
 import { nautilusChain } from "./custom-chains/nautilusChain";
-import { near } from "./custom-chains/near";
-import { nearTestnet } from "./custom-chains/nearTestnet";
+import { aurora } from "./custom-chains/aurora";
+import { auroraTestnet } from "./custom-chains/auroraTestnet";
 import { neon } from "./custom-chains/neon";
 import { neonDevnet } from "./custom-chains/neonDevnet";
 import { optimism } from "./custom-chains/optimism";
@@ -118,7 +118,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   linea,
   celo,
   lootChain,
-  near,
+  aurora,
   gnosis,
   mantle,
   lukso,
@@ -174,7 +174,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   celoTestnet,
   optimismTestnet,
   lootChainTestnet,
-  nearTestnet,
+  auroraTestnet,
   gnosisTestnet,
   mantleTestnet,
   luksoTestnet,
