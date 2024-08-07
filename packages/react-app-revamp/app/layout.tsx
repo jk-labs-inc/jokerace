@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 import "react-tooltip/dist/react-tooltip.css";
 import Portal from "./portal";
 import Providers from "./providers";
+import NextTopLoader from "nextjs-toploader";
 
 polyfill();
 
@@ -77,6 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${lato.variable} ${sabo.variable}`}>
       <body>
         <div id="__next">
+          <NextTopLoader />
           <Providers cookie={cookie}>
             <LayoutBase>{children}</LayoutBase>
             <Portal />
