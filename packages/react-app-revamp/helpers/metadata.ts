@@ -33,18 +33,15 @@ export function generateFieldInputsHTML(proposalContent: string, fieldInputs: Me
   const fieldHTMLs = fieldInputs
     .map(
       field => `
-        <div class="flex flex-col gap-2">
-          <p class="text-neutral-11 font-bold m-0">${field.prompt}</p>
+        <div class="flex flex-col gap-4">
+          <p class="text-neutral-11 italic m-0">${field.prompt}</p>
           <p class="text-neutral-11 m-0">${field.inputValue}</p>
         </div>
     `,
     )
     .join("");
 
-  const divider =
-    proposalContent.trim().length > 0
-      ? '<div class="bg-gradient-to-r from-neutral-7 w-full h-[1px] mt-6 mb-4"></div>'
-      : "";
+  const divider = proposalContent.trim().length > 0 ? '<hr class="border-neutral-11 bg-neutral-11 mt-6 mb-6">' : "";
 
   return `
         ${divider}

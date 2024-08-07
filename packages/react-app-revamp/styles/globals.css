@@ -449,7 +449,7 @@ li {
   .joke-3d {
     text-shadow:
       -3px 2px 0 #6a6a6a,
-      -3px -1px 0 #6a6a6a,
+      -3px 0px 0 #6a6a6a,
       -1px 1px 0 #6a6a6a,
       1px 1px 0 #6a6a6a;
   }

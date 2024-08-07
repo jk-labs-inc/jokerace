@@ -130,7 +130,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
             <div className="flex flex-col gap-8">
               <EditorContent
                 editor={editorProposal}
-                className={`md:border-b border-primary-2 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto h-auto max-h-[300px] pb-2 `}
+                className={`md:border-b border-primary-2 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto h-auto max-h-[300px]`}
               />
               {isMetadataFieldsLoading ? (
                 <p className="loadingDots font-sabo text-[16px] text-neutral-14">loading metadata fields</p>
