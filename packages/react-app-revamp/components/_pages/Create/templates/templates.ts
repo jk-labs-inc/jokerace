@@ -3,6 +3,7 @@ import { debateConfig } from "./debate/config";
 import { demoDayConfig } from "./demo-day/config";
 import { grantsRoundConfig } from "./grants-round/config";
 import { hackathonConfig } from "./hackathon/config";
+import { karaokeChallengeConfig } from "./karaoke-challenge/config";
 import { memeConfig } from "./meme/config";
 import { TemplateConfig, TemplateType } from "./types";
 
@@ -13,6 +14,7 @@ export const templateConfigs: { [key in TemplateType]: TemplateConfig } = {
   [TemplateType.grantsRound]: grantsRoundConfig,
   [TemplateType.memeContest]: memeConfig,
   [TemplateType.artContest]: artConfig,
+  [TemplateType.karaokeChallenge]: karaokeChallengeConfig,
 };
 
 export const displayValueToKeyMapping: { [key: string]: TemplateType } = {
@@ -22,6 +24,7 @@ export const displayValueToKeyMapping: { [key: string]: TemplateType } = {
   "grants round": TemplateType.grantsRound,
   "meme contest": TemplateType.memeContest,
   "art contest": TemplateType.artContest,
+  "karaoke challenge": TemplateType.karaokeChallenge,
 };
 
 export const getTemplateConfigByType = (type: TemplateType) => {
