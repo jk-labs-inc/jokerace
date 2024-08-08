@@ -1,15 +1,27 @@
+import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import ButtonV3 from "@components/UI/ButtonV3";
-import { ordinalSuffix } from "@helpers/ordinalSuffix";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import { Recipient, ValidationError, useCreateRewardsStore } from "../../../../store";
+import CreateRewardsPoolRecipientsDropdown from "../Dropdown";
 
 const RANK_LIMIT = 50;
+
+const generateRankOptions = (limit: number): Option[] => {
+  return Array.from({ length: limit }, (_, i) => {
+    const rank = i + 1;
+    return {
+      value: rank.toString(),
+      label: rank.toString(),
+    };
+  });
+};
 
 const CreateRewardsPoolRecipients: React.FC = () => {
   const [recipientsExceedLimit, setRecipientsExceedLimit] = useState("");
   const [nextId, setNextId] = useState(1);
   const { setRewardPoolData, rewardPoolData } = useCreateRewardsStore(state => state);
+  const rankOptions = generateRankOptions(RANK_LIMIT);
 
   const validateRecipients = (recipients: Recipient[]) => {
     const totalProportion = recipients.reduce(
@@ -77,8 +89,8 @@ const CreateRewardsPoolRecipients: React.FC = () => {
     validateRecipients(newRecipients);
   };
 
-  const handlePlaceChange = (event: React.ChangeEvent<HTMLSelectElement>, id: number) => {
-    const newPlace = parseInt(event.target.value);
+  const handlePlaceChange = (value: string, id: number) => {
+    const newPlace = parseInt(value);
 
     const newRecipients = rewardPoolData.recipients.map(recipient =>
       recipient.id === id ? { ...recipient, place: newPlace } : recipient,
@@ -119,17 +131,12 @@ const CreateRewardsPoolRecipients: React.FC = () => {
             <div className="group relative" key={recipient.id}>
               <div className="grid grid-cols-2 justify-between items-center border-t border-primary-2 py-3">
                 <div className="flex gap-4">
-                  <select
-                    className="w-20 h-8 pb-1 bg-neutral-9  text-true-black font-bold rounded-[8px]"
-                    value={recipient.place}
-                    onChange={event => handlePlaceChange(event, recipient.id)}
-                  >
-                    {[...Array(50)].map((_, i) => (
-                      <option key={i} value={i + 1}>
-                        {ordinalSuffix(i + 1)}
-                      </option>
-                    ))}
-                  </select>
+                  <CreateRewardsPoolRecipientsDropdown
+                    options={rankOptions}
+                    defaultOption={rankOptions[recipient.place - 1]}
+                    onChange={value => handlePlaceChange(value, recipient.id)}
+                  />
+
                   <span className="text-[16px] text-neutral-14">place</span>
                 </div>
                 <div className="flex justify-end gap-2">

@@ -3,6 +3,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { twitterRegex } from "@helpers/regex";
 import {
   generateFacebookShareUrlForSubmission,
+  generateFarcasterShareUrlForSubmission,
   generateLensShareUrlForSubmission,
   generateLinkedInShareUrlForSubmission,
   generateTwitterShareUrlForSubmission,
@@ -70,7 +71,7 @@ const transform = (node: HTMLElement): ReactNode => {
 const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, contestStatus, displaySocials }) => {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
-  const votesOpen = useContestStore(state => state.votesOpen);
+  const { votesOpen, contestName } = useContestStore(state => state);
   const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
 
   return (
@@ -91,8 +92,8 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
             <Image
               width={32}
               height={32}
-              className="object-cover grayscale"
-              src="/socials/lens-leaf.svg"
+              className="object-cover m-auto grayscale"
+              src="/socials/lens-light.svg"
               alt="avatar"
             />
           </a>
@@ -106,6 +107,19 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
               height={28}
               className="object-cover m-auto"
               src="/socials/twitter-light.svg"
+              alt="avatar"
+            />
+          </a>
+          <a
+            className={`flex items-center  bg-neutral-13 rounded-full overflow-hidden w-8 h-8`}
+            href={generateFarcasterShareUrlForSubmission(contestName, address, chainName, proposalId)}
+            target="_blank"
+          >
+            <Image
+              width={28}
+              height={28}
+              className="object-cover m-auto"
+              src="/socials/farcaster-light.svg"
               alt="avatar"
             />
           </a>

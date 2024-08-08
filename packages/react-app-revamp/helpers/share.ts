@@ -1,5 +1,3 @@
-import { copyToClipboard } from "./copyToClipboard";
-
 interface UrlParams {
   [key: string]: string;
 }
@@ -9,6 +7,9 @@ const BASE_JOKERACE_URL = "https://jokerace.io/contest/";
 const BASE_TWITTER_URL = "https://twitter.com/intent/tweet?";
 const BASE_LINKEDIN_URL = "https://www.linkedin.com/sharing/share-offsite/?";
 const BASE_FACEBOOK_URL = "https://www.facebook.com/sharer/sharer.php?";
+const BASE_FARCASTER_URL = "https://warpcast.com/~/compose?";
+const FARCASTER_CHANNEL_NAME = "jokerace";
+const FARCASTER_CHANNEL_KEY = "jokerace";
 
 const buildUrl = (baseUrl: string, params: UrlParams): string => {
   const query = Object.entries(params)
@@ -19,6 +20,10 @@ const buildUrl = (baseUrl: string, params: UrlParams): string => {
 
 const contestShareText = (contestName: string) => {
   return `Come play ${contestName} on @jokerace_io with me!\n`;
+};
+
+const farcasterContestShareText = (contestName: string) => {
+  return `Come play ${contestName} on /${FARCASTER_CHANNEL_NAME} with me!\n`;
 };
 
 export const generateLensShareUrlForContest = (contestName: string, contestAddress: string, chain: string) => {
@@ -35,6 +40,29 @@ export const generateTwitterShareUrlForContest = (contestName: string, contestAd
     url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}`,
   };
   return buildUrl(BASE_TWITTER_URL, params);
+};
+
+export const generateFarcasterShareUrlForContest = (contestName: string, contestAddress: string, chain: string) => {
+  const params = {
+    text: farcasterContestShareText(contestName),
+    "embeds[]": `${BASE_JOKERACE_URL}${chain}/${contestAddress}`,
+    channelKey: FARCASTER_CHANNEL_KEY,
+  };
+  return buildUrl(BASE_FARCASTER_URL, params);
+};
+
+export const generateFarcasterShareUrlForSubmission = (
+  contestName: string,
+  contestAddress: string,
+  chain: string,
+  submissionId: string,
+) => {
+  const params = {
+    text: `Check out my submission for ${contestName} on ${FARCASTER_CHANNEL_NAME}!`,
+    "embeds[]": `${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${submissionId}`,
+    channelKey: FARCASTER_CHANNEL_KEY,
+  };
+  return buildUrl(BASE_FARCASTER_URL, params);
 };
 
 export const generateLensShareUrlForSubmission = (contestAddress: string, chain: string, submissionId: string) => {
@@ -66,9 +94,9 @@ export const generateFacebookShareUrlForSubmission = (contestAddress: string, ch
   return buildUrl(BASE_FACEBOOK_URL, params);
 };
 
-export const generateUrlToCopy = (contestAddress: string, chain: string) => {
+export const generateUrlToCopy = async (contestAddress: string, chain: string) => {
   const url = `${BASE_JOKERACE_URL}${chain}/${contestAddress}`;
-  copyToClipboard(url, "Contest url copied to clipboard!");
+  await navigator.clipboard.writeText(url);
 };
 
 export const generateUrlSubmissions = (contestAddress: string, chain: string, proposalId: string) => {
