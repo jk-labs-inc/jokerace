@@ -97,25 +97,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
     setIsContentHidden(hiddenProposals.includes(proposal.id));
   }, [contestAddress, proposal.id]);
 
-  let truncatedContent = "";
-
-  if (proposal.isContentImage) {
-    const cheerio = load(proposal.content);
-
-    const firstImageSrc = cheerio("img").first().attr("src");
-
-    const textContent = cheerio.text();
-    const textLength = isMobile ? 100 : 200;
-
-    if (textContent.length > textLength) {
-      truncatedContent = proposal.content;
-    } else {
-      truncatedContent = `<div><p>${textContent}</p><img src="${firstImageSrc}"/></div>`;
-    }
-  } else {
-    truncatedContent = proposal.content;
-  }
-
   const handleVotingModalOpen = () => {
     if (contestStatus === ContestStatus.VotingClosed) {
       alert("Voting is closed for this contest.");
@@ -188,7 +169,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
                 <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
               </div>
             ) : (
-              <Interweave className="prose prose-invert" content={truncatedContent} transform={transform} />
+              <Interweave className="prose prose-invert" content={proposal.content} transform={transform} />
             )}
           </Link>
           <div className="flex items-center justify-between">
