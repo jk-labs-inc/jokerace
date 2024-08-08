@@ -410,6 +410,19 @@ li {
   width: 0px;
 }
 
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 10s linear infinite;
+}
+
 @keyframes ellipsis {
   to {
     width: 40px;
@@ -419,6 +432,26 @@ li {
 @-webkit-keyframes ellipsis {
   to {
     width: 40px;
+  }
+}
+
+.joke-3d {
+  position: relative;
+  color: white;
+  text-shadow:
+    -5px 4px 0 #6a6a6a,
+    -5px -1px 0 #6a6a6a,
+    -1px 1px 0 #6a6a6a,
+    1px 1px 0 #6a6a6a;
+}
+
+@media (max-width: 768px) {
+  .joke-3d {
+    text-shadow:
+      -3px 2px 0 #6a6a6a,
+      -3px 0px 0 #6a6a6a,
+      -1px 1px 0 #6a6a6a,
+      1px 1px 0 #6a6a6a;
   }
 }
 
@@ -451,6 +484,11 @@ li {
   .rewards-review-table-grid {
     @apply grid;
     grid-template-columns: 0.2fr 0.3fr 1fr;
+  }
+
+  .featured-contests-grid {
+    @apply grid;
+    grid-template-columns: repeat(3, minmax(0, 320px));
   }
 
   @media (max-width: 768px) {

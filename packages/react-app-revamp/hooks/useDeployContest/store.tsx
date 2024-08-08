@@ -1,8 +1,10 @@
 import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { EMPTY_FIELDS_SUBMISSION, EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
+import { metadataFields } from "@components/_pages/Create/pages/ContestParams/components/Metadata/components/Fields/utils";
 import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSubmission/components/SubmissionAllowlist/components/CSVEditor";
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
 import { StateKey } from "@components/_pages/Create/utils/validation";
+import { ReactNode } from "react";
 import { create } from "zustand";
 import { DEFAULT_SUBMISSIONS } from ".";
 import {
@@ -14,6 +16,8 @@ import {
   VotingMerkle,
   VotingRequirements,
 } from "./types";
+
+type ReactStyleStateSetter<T> = T | ((prev: T) => T);
 
 type ContestDeployError = {
   step: number;
@@ -54,6 +58,17 @@ export interface SubmissionTypeOption {
 }
 
 export type MerkleKey = "manual" | "prefilled" | "csv";
+
+export interface MetadataField {
+  elementType: "string" | "number";
+  metadataType: "string" | "uint256" | "address";
+  promptLabel: string;
+  prompt: string;
+  description: {
+    desktop: ReactNode;
+    mobile: ReactNode;
+  };
+}
 
 type StepConfig = {
   key: string;
@@ -118,6 +133,8 @@ export interface DeployContestState {
   };
   prevChainRefInCharge: string;
   stepConfig: StepConfig[];
+  metadataToggle: boolean;
+  metadataFields: MetadataField[];
   setDeployContestData: (
     chain: string,
     chainId: number,
@@ -157,6 +174,8 @@ export interface DeployContestState {
   setPrevChainRefInCharge: (chain: string) => void;
   reset: () => void;
   setStepConfig: (stepConfig: StepConfig[]) => void;
+  setMetadataToggle: (toggle: boolean) => void;
+  setMetadataFields: (data: ReactStyleStateSetter<MetadataField[]>) => void;
 }
 export const useDeployContestStore = create<DeployContestState>((set, get) => {
   const initialSubmissionOpen: Date = new Date();
@@ -277,6 +296,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     step: 0,
     submissionTab: 0,
     votingTab: 0,
+    metadataFields: metadataFields.slice(0, 1),
+    metadataToggle: false,
   };
 
   return {
@@ -370,5 +391,10 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setPrevChainRefInCharge: (chain: string) => set({ prevChainRefInCharge: chain }),
     reset: () => set({ ...initialState }),
     setStepConfig: (stepConfig: StepConfig[]) => set({ stepConfig }),
+    setMetadataFields: (data: ReactStyleStateSetter<MetadataField[]>) =>
+      set(state => ({
+        metadataFields: typeof data === "function" ? data(state.metadataFields) : data,
+      })),
+    setMetadataToggle: (toggle: boolean) => set({ metadataToggle: toggle }),
   };
 });

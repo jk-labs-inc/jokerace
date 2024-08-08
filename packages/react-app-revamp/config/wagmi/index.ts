@@ -13,6 +13,7 @@ import {
   tahoWallet,
   trustWallet,
   walletConnectWallet,
+  bitgetWallet
 } from "@rainbow-me/rainbowkit/wallets";
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
@@ -26,7 +27,7 @@ import { artheraTestnet } from "./custom-chains/artheraTestnet";
 import { astarZkevm } from "./custom-chains/astarZkevm";
 import { astarZkevmTestnet } from "./custom-chains/astarZkevmTestnet";
 import { astriaDusk2 } from "./custom-chains/astriaDusk2";
-import { avaxCChain } from "./custom-chains/avaxCChain";
+import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
 import { berachainBartioTestnet } from "./custom-chains/berachainBartioTestnet";
@@ -77,10 +78,11 @@ import { merlinTestnet } from "./custom-chains/merlinTestnet";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
 import { morphTestnet } from "./custom-chains/morphTestnet";
+import { movementTestnet } from "./custom-chains/movementTestnet";
 import { metis } from "./custom-chains/metis";
 import { nautilusChain } from "./custom-chains/nautilusChain";
-import { near } from "./custom-chains/near";
-import { nearTestnet } from "./custom-chains/nearTestnet";
+import { aurora } from "./custom-chains/aurora";
+import { auroraTestnet } from "./custom-chains/auroraTestnet";
 import { neon } from "./custom-chains/neon";
 import { neonDevnet } from "./custom-chains/neonDevnet";
 import { optimism } from "./custom-chains/optimism";
@@ -115,6 +117,7 @@ import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
+import { sanko } from "./custom-chains/sanko";
 
 declare module "wagmi";
 
@@ -131,13 +134,13 @@ export const chains: readonly [Chain, ...Chain[]] = [
   polygonZk,
   base,
   evmos,
-  avaxCChain,
+  avalanche,
   zora,
   bnb,
   linea,
   celo,
   lootChain,
-  near,
+  aurora,
   gnosis,
   mantle,
   lukso,
@@ -179,7 +182,8 @@ export const chains: readonly [Chain, ...Chain[]] = [
   hedera,
   taiko,
   ham,
-  metis, 
+  metis,
+  sanko,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
@@ -192,7 +196,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   celoTestnet,
   optimismTestnet,
   lootChainTestnet,
-  nearTestnet,
+  auroraTestnet,
   gnosisTestnet,
   mantleTestnet,
   luksoTestnet,
@@ -222,6 +226,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   fhenixTestnet,
   goerli,
   seiTestnet,
+  movementTestnet,
   mainnet,
 ];
 
@@ -248,6 +253,7 @@ const connectors = connectorsForWallets(
         rabbyWallet,
         phantomWallet,
         safeWallet,
+        bitgetWallet,
       ],
     },
   ],

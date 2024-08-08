@@ -11,7 +11,7 @@ import { artheraTestnet } from "./custom-chains/artheraTestnet";
 import { astarZkevm } from "./custom-chains/astarZkevm";
 import { astarZkevmTestnet } from "./custom-chains/astarZkevmTestnet";
 import { astriaDusk2 } from "./custom-chains/astriaDusk2";
-import { avaxCChain } from "./custom-chains/avaxCChain";
+import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
 import { berachainBartioTestnet } from "./custom-chains/berachainBartioTestnet";
@@ -59,13 +59,14 @@ import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { merlin } from "./custom-chains/merlin";
 import { merlinTestnet } from "./custom-chains/merlinTestnet";
+import { metis } from "./custom-chains/metis";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
 import { morphTestnet } from "./custom-chains/morphTestnet";
-import { metis } from "./custom-chains/metis";
+import { movementTestnet } from "./custom-chains/movementTestnet";
 import { nautilusChain } from "./custom-chains/nautilusChain";
-import { near } from "./custom-chains/near";
-import { nearTestnet } from "./custom-chains/nearTestnet";
+import { aurora } from "./custom-chains/aurora";
+import { auroraTestnet } from "./custom-chains/auroraTestnet";
 import { neon } from "./custom-chains/neon";
 import { neonDevnet } from "./custom-chains/neonDevnet";
 import { optimism } from "./custom-chains/optimism";
@@ -83,6 +84,7 @@ import { quartz } from "./custom-chains/quartz";
 import { redstoneHolesky } from "./custom-chains/redstoneHolesky";
 import { ronin } from "./custom-chains/ronin";
 import { roninTestnet } from "./custom-chains/roninTestnet";
+import { sanko } from "./custom-chains/sanko";
 import { scroll } from "./custom-chains/scroll";
 import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
@@ -110,13 +112,13 @@ export const chains: readonly [Chain, ...Chain[]] = [
   polygonZk,
   base,
   evmos,
-  avaxCChain,
+  avalanche,
   zora,
   bnb,
   linea,
   celo,
   lootChain,
-  near,
+  aurora,
   gnosis,
   mantle,
   lukso,
@@ -159,6 +161,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   taiko,
   ham,
   metis,
+  sanko,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
@@ -171,7 +174,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   celoTestnet,
   optimismTestnet,
   lootChainTestnet,
-  nearTestnet,
+  auroraTestnet,
   gnosisTestnet,
   mantleTestnet,
   luksoTestnet,
@@ -201,6 +204,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   fhenixTestnet,
   goerli,
   seiTestnet,
+  movementTestnet,
   mainnet,
 ];
 

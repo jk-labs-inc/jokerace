@@ -1,8 +1,8 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const near: Chain = {
+export const aurora: Chain = {
   id: 1313161554,
-  name: "near",
+  name: "aurora",
   iconUrl: "/aurora.svg",
   nativeCurrency: {
     decimals: 18,
