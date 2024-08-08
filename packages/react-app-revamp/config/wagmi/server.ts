@@ -11,6 +11,8 @@ import { artheraTestnet } from "./custom-chains/artheraTestnet";
 import { astarZkevm } from "./custom-chains/astarZkevm";
 import { astarZkevmTestnet } from "./custom-chains/astarZkevmTestnet";
 import { astriaDusk2 } from "./custom-chains/astriaDusk2";
+import { aurora } from "./custom-chains/aurora";
+import { auroraTestnet } from "./custom-chains/auroraTestnet";
 import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
@@ -44,6 +46,7 @@ import { hedera } from "./custom-chains/hedera";
 import { holesky } from "./custom-chains/holesky";
 import { inEvm } from "./custom-chains/inEvm";
 import { inEvmTestnet } from "./custom-chains/inEvmTestnet";
+import { kaiaTestnet } from "./custom-chains/kaiaTestnet";
 import { kroma } from "./custom-chains/kroma";
 import { linea } from "./custom-chains/linea";
 import { lineaTestnet } from "./custom-chains/lineaTestnet";
@@ -65,8 +68,6 @@ import { modeTestnet } from "./custom-chains/modeTestnet";
 import { morphTestnet } from "./custom-chains/morphTestnet";
 import { movementTestnet } from "./custom-chains/movementTestnet";
 import { nautilusChain } from "./custom-chains/nautilusChain";
-import { aurora } from "./custom-chains/aurora";
-import { auroraTestnet } from "./custom-chains/auroraTestnet";
 import { neon } from "./custom-chains/neon";
 import { neonDevnet } from "./custom-chains/neonDevnet";
 import { optimism } from "./custom-chains/optimism";
@@ -205,6 +206,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   goerli,
   seiTestnet,
   movementTestnet,
+  kaiaTestnet,
   mainnet,
 ];
 
