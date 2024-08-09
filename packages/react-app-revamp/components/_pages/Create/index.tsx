@@ -13,6 +13,7 @@ import CreateContestTitle from "./pages/ContestTitle";
 import CreateContestType from "./pages/ContestType";
 import CreateContestTemplate from "./pages/ContestUseTemplate";
 import CreateContestVoting from "./pages/ContestVoting";
+import { useEffect } from "react";
 
 export enum StepTitle {
   Title = "title",
@@ -44,6 +45,12 @@ const CreateFlow = () => {
   const { startContest, startContestWithTemplate, setStartContest, setStartContestWithTemplate } =
     useCreateContestStartStore(state => state);
   const { reset } = useDeployContestStore(state => state);
+
+  useEffect(() => {
+    setStartContest(false);
+    setStartContestWithTemplate(false);
+    reset();
+  }, []);
 
   const handleStartCreating = (withTemplate: boolean) => {
     reset();
