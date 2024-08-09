@@ -118,6 +118,7 @@ import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
+import { weavevmTestnet } from "./custom-chains/weavevmTestnet";
 
 declare module "wagmi";
 
@@ -228,6 +229,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   seiTestnet,
   movementTestnet,
   kaiaTestnet,
+  weavevmTestnet,
   mainnet,
 ];
 

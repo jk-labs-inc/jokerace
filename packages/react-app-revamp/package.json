@@ -8,8 +8,8 @@
     "build": "next build"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.626.0",
-    "@aws-sdk/s3-request-presigner": "3.626.0",
+    "@aws-sdk/client-s3": "3.627.0",
+    "@aws-sdk/s3-request-presigner": "3.627.0",
     "@babel/core": "7.25.2",
     "@babel/preset-env": "7.25.3",
     "@clustersxyz/sdk": "0.4.3",
@@ -32,8 +32,8 @@
     "@types/lodash": "4.17.7",
     "@types/node": "20.14.14",
     "@typescript-eslint/parser": "7.18.0",
-    "@wagmi/connectors": "5.1.4",
-    "@wagmi/core": "2.13.3",
+    "@wagmi/connectors": "5.1.5",
+    "@wagmi/core": "2.13.4",
     "cheerio": "1.0.0-rc.12",
     "class-variance-authority": "0.7.0",
     "compare-versions": "6.1.1",
@@ -86,8 +86,8 @@
     "underscore": "1.13.7",
     "uuid": "10.0.0",
     "valibot": "0.37.0",
-    "viem": "2.19.2",
-    "wagmi": "2.12.4",
+    "viem": "2.19.3",
+    "wagmi": "2.12.5",
     "zod": "3.23.8",
     "zustand": "4.5.4"
   },
