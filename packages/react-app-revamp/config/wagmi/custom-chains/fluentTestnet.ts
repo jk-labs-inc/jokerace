@@ -2,7 +2,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 
 export const fluentTestnet: Chain = {
   id: 20993,
-  name: "fluentTestnet  ",
+  name: "fluentTestnet",
   iconUrl: "/contest/mona-lisa-moustache.png",
   nativeCurrency: {
     decimals: 18,
