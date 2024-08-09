@@ -33,6 +33,7 @@ import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { fantom } from "./custom-chains/fantom";
 import { fantomTestnet } from "./custom-chains/fantomTestnet";
 import { fhenixTestnet } from "./custom-chains/fhenix";
+import { fluentTestnet } from "./custom-chains/fluentTestnet";
 import { frameTestnet } from "./custom-chains/frameTestnet";
 import { fraxtal } from "./custom-chains/fraxtal";
 import { fraxtalTestnet } from "./custom-chains/fraxtalTestnet";
@@ -207,6 +208,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   seiTestnet,
   movementTestnet,
   kaiaTestnet,
+  fluentTestnet,
   mainnet,
 ];
 
