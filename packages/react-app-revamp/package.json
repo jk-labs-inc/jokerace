@@ -34,7 +34,7 @@
     "@typescript-eslint/parser": "7.18.0",
     "@wagmi/connectors": "5.1.5",
     "@wagmi/core": "2.13.4",
-    "cheerio": "1.0.0-rc.12",
+    "cheerio": "1.0.0",
     "class-variance-authority": "0.7.0",
     "compare-versions": "6.1.1",
     "date-fns": "3.6.0",
