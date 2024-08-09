@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+import { chains } from "@config/wagmi";
 import { formatBalance } from "@helpers/formatBalance";
 import { formatNumber } from "@helpers/formatNumber";
 import { ContestStatus } from "@hooks/useContestStatus/store";
@@ -62,6 +63,7 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
   const votingOpen = contestStatus === ContestStatus.VotingOpen;
   const outOfVotes = currentUserTotalVotesAmount > 0 && !canVote;
   const zeroVotesOnAnyoneCanVote = currentUserTotalVotesAmount === 0 && anyoneCanVote;
+  const chainName = chains.find(chain => chain.id === chainId)?.name;
   const { data: userBalance, isLoading: isUserBalanceLoading } = useBalance({
     address: userAddress as `0x${string}`,
     chainId,
@@ -110,7 +112,11 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
   }
 
   if (zeroVotesOnAnyoneCanVote) {
-    return <p className="text-[16px] md:text-[24px] text-neutral-11 font-bold">add eth to get votes </p>;
+    return (
+      <p className="text-[16px] md:text-[20px] text-negative-11 font-bold leading-loose">
+        add eth to {chainName} get votes{" "}
+      </p>
+    );
   }
 
   if (outOfVotes) return <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">you're out of votes :(</p>;

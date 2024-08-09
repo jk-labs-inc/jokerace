@@ -34,7 +34,7 @@ const VotingContestQualifier = () => {
   const chainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
 
   return (
-    <div className="w-full flex flex-col gap-2 md:gap-4  md:pl-8">
+    <div className="w-full flex flex-col gap-2 md:gap-4 md:pl-8">
       <div className="flex items-center gap-2">
         <Image src="/contest/ballot.svg" width={16} height={16} alt="timer" />
         {anyoneCanVote ? (
