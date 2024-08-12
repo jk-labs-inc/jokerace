@@ -202,9 +202,9 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                 <div className="animate-reveal pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
                     <div className="flex items-center justify-between">
-                      <p className="text-[24px] md:text-[31px] font-sabo break-words text-transparent bg-clip-text bg-gradient-purple inline-block min-w-0 flex-grow">
+                      <div className="text-[24px] md:text-[31px] font-sabo break-words bg-gradient-purple text-transparent bg-clip-text inline-block">
                         {contestName}
-                      </p>
+                      </div>
                       <div
                         className="w-8 h-8 flex-shrink-0 flex md:hidden items-center justify-center rounded-[10px] border border-neutral-11 cursor-pointer"
                         onClick={() =>
