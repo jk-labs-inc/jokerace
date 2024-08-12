@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+import { useContestStore } from "@hooks/useContest/store";
 import useVoters from "@hooks/useVoters";
 import { FC } from "react";
 import { CSVLink } from "react-csv";
@@ -9,7 +10,12 @@ interface ContestParamatersCSVVotersProps {
 }
 
 const ContestParamatersCSVVoters: FC<ContestParamatersCSVVotersProps> = ({ votingMerkleRoot }) => {
-  const { voters, isLoading, isError, retry } = useVoters(votingMerkleRoot);
+  const { isV3 } = useContestStore(state => state);
+  const { voters, isLoading, isError, retry } = useVoters(votingMerkleRoot, isV3);
+
+  if (!isV3) {
+    return null;
+  }
 
   if (isLoading) {
     return (
@@ -24,7 +30,7 @@ const ContestParamatersCSVVoters: FC<ContestParamatersCSVVotersProps> = ({ votin
       <li className="list-disc text-negative-11">
         <p className="text-negative-11 font-bold">
           ruh roh! we couldn't load the voters,{" "}
-          <span className="underline cursor-pointer" onClick={retry}>
+          <span className="underline cursor-pointer" onClick={() => retry()}>
             try again!
           </span>
         </p>

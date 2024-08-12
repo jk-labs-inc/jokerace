@@ -1,39 +1,37 @@
+import { useQuery } from "@tanstack/react-query";
 import { getSubmitters } from "lib/buckets/submitters";
-import { useCallback, useEffect, useState } from "react";
 
 type Submitter = {
   address: string;
 };
 
-const useSubmitters = (submissionMerkleRoot: string) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [submitters, setSubmitters] = useState<Submitter[]>([]);
-
-  const fetchSubmitters = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const { submitters } = await getSubmitters(submissionMerkleRoot);
-      const processedSubmitters = submitters.map(submitter => ({
-        address: submitter.address,
-      }));
-      setSubmitters(processedSubmitters);
-    } catch (e) {
-      setIsError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [submissionMerkleRoot]);
-
-  const retry = () => {
-    fetchSubmitters();
+const useSubmitters = (submissionMerkleRoot: string, isV3: boolean) => {
+  const fetchSubmitters = async () => {
+    const { submitters } = await getSubmitters(submissionMerkleRoot);
+    return submitters.map(submitter => ({
+      address: submitter.address,
+    }));
   };
 
-  useEffect(() => {
-    fetchSubmitters();
-  }, [fetchSubmitters]);
+  const {
+    data: submitters,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery<Submitter[], Error>({
+    queryKey: ["submitters", submissionMerkleRoot],
+    queryFn: fetchSubmitters,
+    enabled: isV3 && !!submissionMerkleRoot,
+  });
 
-  return { isLoading, isError, submitters, retry };
+  return {
+    submitters: submitters ?? [],
+    isLoading,
+    isError,
+    error,
+    retry: refetch,
+  };
 };
 
 export default useSubmitters;
