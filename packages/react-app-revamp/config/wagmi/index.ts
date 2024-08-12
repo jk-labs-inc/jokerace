@@ -48,6 +48,7 @@ import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { fantom } from "./custom-chains/fantom";
 import { fantomTestnet } from "./custom-chains/fantomTestnet";
 import { fhenixTestnet } from "./custom-chains/fhenix";
+import { fluentTestnet } from "./custom-chains/fluentTestnet";
 import { frameTestnet } from "./custom-chains/frameTestnet";
 import { fraxtal } from "./custom-chains/fraxtal";
 import { fraxtalTestnet } from "./custom-chains/fraxtalTestnet";
@@ -112,13 +113,13 @@ import { taiko } from "./custom-chains/taiko";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
+import { weavevmTestnet } from "./custom-chains/weavevmTestnet";
 import { xLayer } from "./custom-chains/xLayer";
 import { xLayerTestnet } from "./custom-chains/xLayerTestnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
-import { fluentTestnet } from "./custom-chains/fluentTestnet";
 
 declare module "wagmi";
 
@@ -230,6 +231,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   movementTestnet,
   kaiaTestnet,
   fluentTestnet,
+  weavevmTestnet,
   mainnet,
 ];
 
