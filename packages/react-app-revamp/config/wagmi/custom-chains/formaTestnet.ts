@@ -2,7 +2,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 
 export const formaTestnet: Chain = {
   id: 984123,
-  name: "Forma Testnet",
+  name: "formaTestnet",
   iconUrl: "/contest/mona-lisa-moustache.png",
   nativeCurrency: {
     decimals: 18,
