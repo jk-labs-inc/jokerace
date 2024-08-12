@@ -21,5 +21,4 @@ export const forma: Chain = {
     etherscan: { name: "Forma Block Explorer", url: "https://explorer.forma.art" },
     default: { name: "Forma Block Explorer", url: "https://explorer.forma.art" },
   },
-  testnet: false,
 };
