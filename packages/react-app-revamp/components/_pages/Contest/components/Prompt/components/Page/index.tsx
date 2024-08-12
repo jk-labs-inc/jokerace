@@ -1,5 +1,5 @@
+import { truncateText } from "@helpers/truncate";
 import { useContestStore } from "@hooks/useContest/store";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { FC, useState } from "react";
 import ContestPromptPageLegacyLayout from "./components/Layout/Legacy";
 import ContestPromptPageV3Layout from "./components/Layout/V3";
@@ -12,52 +12,48 @@ const MAX_LENGTH = 200;
 
 const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
   const { isV3 } = useContestStore(state => state);
-  const { contestStatus } = useContestStatusStore(state => state);
   const [isExpanded, setIsExpanded] = useState(false);
   const [contestType, contestTitle, contestSummary, contestEvaluate, contestContactDetails] = prompt.split("|");
 
-  const isVotingOpenOrClosed =
-    contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
-
   const shouldDisplayReadMore = () => {
-    if (isVotingOpenOrClosed) return false;
+    if (!isV3) {
+      return prompt.length > MAX_LENGTH;
+    }
 
-    const totalLength = contestSummary.length + (contestEvaluate?.length || 0) + (contestContactDetails?.length || 0);
-    return totalLength > MAX_LENGTH;
+    const combinedContentLength =
+      contestSummary.length + (contestEvaluate?.length || 0) + (contestContactDetails?.length || 0);
+    return combinedContentLength > MAX_LENGTH;
   };
 
-  const getContent = () => {
-    if (isVotingOpenOrClosed || isExpanded) {
-      return {
-        summaryContent: contestSummary,
-        evaluateContent: contestEvaluate || "",
-        contactDetailsContent: contestContactDetails || "",
-      };
+  const getSummaryContent = () => {
+    return isExpanded ? contestSummary : truncateText(contestSummary, MAX_LENGTH);
+  };
+
+  const getEvaluateContent = () => {
+    if (!contestEvaluate) {
+      return "";
     }
 
-    let remainingLength = MAX_LENGTH;
-    let summaryContent = contestSummary.slice(0, remainingLength);
-    remainingLength -= summaryContent.length;
+    return shouldDisplayEvaluate() ? contestEvaluate : "";
+  };
 
-    let evaluateContent = "";
-    if (remainingLength > 0 && contestEvaluate) {
-      evaluateContent = contestEvaluate.slice(0, remainingLength);
-      remainingLength -= evaluateContent.length;
-    }
+  const shouldDisplayEvaluate = () => {
+    return !!contestEvaluate && (isExpanded || contestSummary.length <= MAX_LENGTH);
+  };
 
-    let contactDetailsContent = "";
-    if (remainingLength > 0 && contestContactDetails) {
-      contactDetailsContent = contestContactDetails.slice(0, remainingLength);
-    }
+  const getContactDetails = () => {
+    return contestContactDetails || "";
+  };
 
-    return { summaryContent, evaluateContent, contactDetailsContent };
+  const shouldDisplayContactDetails = () => {
+    return (
+      !!contestContactDetails && (isExpanded || contestSummary.length + (contestEvaluate?.length || 0) <= MAX_LENGTH)
+    );
   };
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
-
-  const { summaryContent, evaluateContent, contactDetailsContent } = getContent();
 
   return (
     <>
@@ -65,18 +61,18 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
         <ContestPromptPageV3Layout
           contestTitle={contestTitle}
           contestType={contestType}
-          summaryContent={summaryContent}
-          evaluateContent={evaluateContent}
-          contactDetailsContent={contactDetailsContent}
+          summaryContent={getSummaryContent()}
+          evaluateContent={getEvaluateContent()}
+          contactDetailsContent={getContactDetails()}
           isExpanded={isExpanded}
           displayReadMore={shouldDisplayReadMore()}
-          shouldDisplayEvaluate={!!evaluateContent}
-          shouldDisplayContactDetails={!!contactDetailsContent}
+          shouldDisplayEvaluate={shouldDisplayEvaluate()}
+          shouldDisplayContactDetails={shouldDisplayContactDetails()}
           handleToggle={toggleExpand}
         />
       ) : (
         <ContestPromptPageLegacyLayout
-          prompt={isVotingOpenOrClosed || isExpanded ? prompt : summaryContent}
+          prompt={prompt}
           isExpanded={isExpanded}
           displayReadMore={shouldDisplayReadMore()}
           handleToggle={toggleExpand}

@@ -44,7 +44,12 @@ export function useUser() {
   const checkIfCurrentUserQualifyToSubmit = async () => {
     setIsCurrentUserSubmitQualificationLoading(true);
 
-    const { abi } = await getContestContractVersion(address, chainId);
+    const { abi, version } = await getContestContractVersion(address, chainId);
+
+    if (compareVersions(version, "3.0") == -1) {
+      setIsCurrentUserSubmitQualificationLoading(false);
+      return;
+    }
 
     if (!abi) {
       setIsCurrentUserSubmitQualificationError(true);
@@ -158,6 +163,11 @@ export function useUser() {
 
     const { abi, version } = await getContestContractVersion(address, chainId);
 
+    if (compareVersions(version, "3.0") == -1) {
+      setIsCurrentUserVoteQualificationLoading(false);
+      return;
+    }
+
     if (!abi) {
       setIsCurrentUserVoteQualificationError(true);
       setIsCurrentUserVoteQualificationSuccess(false);
@@ -249,7 +259,13 @@ export function useUser() {
     if (!userAddress) return;
 
     try {
-      const { abi } = await getContestContractVersion(address, chainId);
+      const { abi, version } = await getContestContractVersion(address, chainId);
+
+      if (compareVersions(version, ANYONE_CAN_VOTE_VERSION) == -1) {
+        setIsCurrentUserVoteQualificationSuccess(false);
+        setIsCurrentUserVoteQualificationLoading(false);
+        return;
+      }
 
       if (!abi) {
         setIsCurrentUserVoteQualificationError(true);
