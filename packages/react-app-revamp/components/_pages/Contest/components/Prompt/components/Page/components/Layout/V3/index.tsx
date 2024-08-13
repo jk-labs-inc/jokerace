@@ -1,4 +1,5 @@
 import { ChevronUpIcon } from "@heroicons/react/24/outline";
+import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
@@ -6,41 +7,68 @@ import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 
 interface ContestPromptPageV3LayoutProps {
-  contestTitle: string;
-  contestType: string;
-  summaryContent: string;
-  evaluateContent: string;
-  contactDetailsContent: string;
-  isExpanded: boolean;
-  displayReadMore: boolean;
-  shouldDisplayEvaluate: boolean;
-  shouldDisplayContactDetails: boolean;
-  handleToggle: () => void;
+  prompt: string;
 }
 
-const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({
-  contestTitle,
-  contestType,
-  summaryContent,
-  evaluateContent,
-  contactDetailsContent,
-  isExpanded,
-  displayReadMore,
-  shouldDisplayEvaluate,
-  shouldDisplayContactDetails,
-  handleToggle,
-}) => {
-  const [isDescriptionOpen, setIsDescriptionOpen] = useState(true);
-  const { contestStatus } = useContestStatusStore(state => state);
+const MAX_LENGTH = 200;
 
+const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt }) => {
+  const [isDescriptionOpen, setIsDescriptionOpen] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const { contestStatus } = useContestStatusStore(state => state);
+  const [contestType, contestTitle, contestSummary, contestEvaluate, contestContactDetails] = prompt.split("|");
   const isVotingOpenOrClosed =
     contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
+  const { isLoading } = useContestStore(state => state);
+
+  const shouldDisplayReadMore = () => {
+    if (isVotingOpenOrClosed) return false;
+
+    const totalLength = contestSummary.length + (contestEvaluate?.length || 0) + (contestContactDetails?.length || 0);
+    return totalLength > MAX_LENGTH;
+  };
+
+  const getContent = () => {
+    if (isVotingOpenOrClosed || isExpanded) {
+      return {
+        summaryContent: contestSummary,
+        evaluateContent: contestEvaluate || "",
+        contactDetailsContent: contestContactDetails || "",
+      };
+    }
+
+    let remainingLength = MAX_LENGTH;
+    let summaryContent = contestSummary.slice(0, remainingLength);
+    remainingLength -= summaryContent.length;
+
+    let evaluateContent = "";
+    if (remainingLength > 0 && contestEvaluate) {
+      evaluateContent = contestEvaluate.slice(0, remainingLength);
+      remainingLength -= evaluateContent.length;
+    }
+
+    let contactDetailsContent = "";
+    if (remainingLength > 0 && contestContactDetails) {
+      contactDetailsContent = contestContactDetails.slice(0, remainingLength);
+    }
+
+    return { summaryContent, evaluateContent, contactDetailsContent };
+  };
+
+  const { summaryContent, evaluateContent, contactDetailsContent } = getContent();
+
+  const shouldDisplayEvaluate = !!evaluateContent;
+  const shouldDisplayContactDetails = !!contactDetailsContent;
 
   useEffect(() => {
-    if (isVotingOpenOrClosed) {
+    if (contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) {
       setIsDescriptionOpen(false);
     }
-  }, [contestStatus, isVotingOpenOrClosed]);
+  }, [contestStatus, isLoading]);
+
+  const handleToggle = () => {
+    setIsExpanded(!isExpanded);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -79,7 +107,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({
                 )}
               </div>
             </div>
-            {!isVotingOpenOrClosed && displayReadMore && (
+            {!isVotingOpenOrClosed && shouldDisplayReadMore() && (
               <div className="flex gap-1 items-center pl-5 mt-4 cursor-pointer" onClick={handleToggle}>
                 <p className="text-[16px] text-positive-11 font-bold">{isExpanded ? "Read Less" : "Read More"}</p>
                 <Image
