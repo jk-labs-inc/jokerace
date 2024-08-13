@@ -8,6 +8,7 @@ import ContestTab from "@components/_pages/Contest/Contest";
 import ContestExtensions from "@components/_pages/Contest/Extensions";
 import ContestParameters from "@components/_pages/Contest/Parameters";
 import ContestRewards from "@components/_pages/Contest/Rewards";
+import ContestName from "@components/_pages/Contest/components/ContestName";
 import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
@@ -15,7 +16,6 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { extractPathSegments } from "@helpers/extractPath";
 import { populateBugReportLink } from "@helpers/githubIssue";
-import { generateUrlContest } from "@helpers/share";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
@@ -25,7 +25,6 @@ import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useUser from "@hooks/useUser";
 import moment from "moment";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useUrl } from "nextjs-current-url";
 import { ReactNode, useEffect, useMemo, useState } from "react";
@@ -201,21 +200,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                 )}
                 <div className="animate-reveal pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
-                    <div className="flex items-center justify-between">
-                      <div className="text-[24px] md:text-[31px] font-sabo break-words bg-gradient-purple text-transparent bg-clip-text inline-block">
-                        {contestName}
-                      </div>
-                      <div
-                        className="w-8 h-8 flex-shrink-0 flex md:hidden items-center justify-center rounded-[10px] border border-neutral-11 cursor-pointer"
-                        onClick={() =>
-                          navigator.share({
-                            url: generateUrlContest(address, chainName),
-                          })
-                        }
-                      >
-                        <Image src="/forward.svg" alt="share" width={15} height={13} />
-                      </div>
-                    </div>
+                    <ContestName contestName={contestName} address={address} chainName={chainName} />
 
                     <div className="flex flex-row gap-3 md:gap-4 items-center">
                       <UserProfileDisplay

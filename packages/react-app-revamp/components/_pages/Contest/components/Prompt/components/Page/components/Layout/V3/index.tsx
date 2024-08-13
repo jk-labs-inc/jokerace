@@ -1,5 +1,6 @@
 import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
@@ -16,6 +17,8 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt 
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
   const { contestStatus } = useContestStatusStore(state => state);
+  const { contestState } = useContestStateStore(state => state);
+  const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const [contestType, contestTitle, contestSummary, contestEvaluate, contestContactDetails] = prompt.split("|");
   const isVotingOpenOrClosed =
     contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
@@ -86,7 +89,11 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-4 items-center">
-        <p className="text-[20px] md:text-[24px] text-neutral-11 font-bold">{contestTitle}</p>
+        <p
+          className={`text-[20px] md:text-[24px] text-neutral-11 font-bold ${isContestCanceled ? "line-through" : ""}`}
+        >
+          {contestTitle}
+        </p>
         <div className="hidden md:flex items-center px-4 leading-tight py-[1px] bg-neutral-10 rounded-[5px] text-true-black text-[16px] font-bold">
           {contestType}
         </div>
@@ -101,7 +108,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt 
         <div className="pl-5">
           <div className="border-l border-true-white">
             <div
-              className="overflow-hidden"
+              className={`overflow-hidden ${isContestCanceled ? "line-through" : ""}`}
               style={{ maxHeight: isVotingOpenOrClosed ? "none" : isExpanded ? "none" : "150px" }}
             >
               <div className="prose prose-invert pl-5 flex flex-col">
