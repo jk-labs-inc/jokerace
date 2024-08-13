@@ -1,14 +1,9 @@
 import { Interweave, Node } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
-import Image from "next/image";
 import { FC, ReactNode } from "react";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 
 interface ContestPromptPageLegacyLayoutProps {
   prompt: string;
-  isExpanded: boolean;
-  displayReadMore: boolean;
-  handleToggle: () => void;
 }
 
 const transform = (node: HTMLElement, children: Node[]): ReactNode => {
@@ -23,16 +18,7 @@ const transform = (node: HTMLElement, children: Node[]): ReactNode => {
   }
 };
 
-const ContestPromptPageLegacyLayout: FC<ContestPromptPageLegacyLayoutProps> = ({
-  prompt,
-  isExpanded,
-  displayReadMore,
-  handleToggle,
-}) => {
-  const { contestStatus } = useContestStatusStore(state => state);
-  const isVotingOpenOrClosed =
-    contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
-
+const ContestPromptPageLegacyLayout: FC<ContestPromptPageLegacyLayoutProps> = ({ prompt }) => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
@@ -40,24 +26,9 @@ const ContestPromptPageLegacyLayout: FC<ContestPromptPageLegacyLayoutProps> = ({
       </div>
       <div className="pl-5">
         <div className="border-l border-true-white">
-          <div
-            className="prose prose-invert pl-5 overflow-hidden"
-            style={{ maxHeight: isVotingOpenOrClosed ? "none" : isExpanded ? "none" : "150px" }}
-          >
+          <div className="prose prose-invert pl-5 overflow-hidden">
             <Interweave content={prompt} matchers={[new UrlMatcher("url")]} transform={transform} />
           </div>
-          {!isVotingOpenOrClosed && displayReadMore && (
-            <div className="flex gap-1 items-center pl-5 mt-4 cursor-pointer" onClick={handleToggle}>
-              <p className="text-[16px] text-positive-11 font-bold">{isExpanded ? "Read Less" : "Read More"}</p>
-              <Image
-                src="/contest/chevron.svg"
-                width={24}
-                height={24}
-                alt="toggleRead"
-                className={`transition-transform duration-300 ${isExpanded ? "transform rotate-180" : ""}`}
-              />
-            </div>
-          )}
         </div>
       </div>
     </div>
