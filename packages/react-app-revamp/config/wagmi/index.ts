@@ -49,6 +49,8 @@ import { fantom } from "./custom-chains/fantom";
 import { fantomTestnet } from "./custom-chains/fantomTestnet";
 import { fhenixTestnet } from "./custom-chains/fhenix";
 import { fluentTestnet } from "./custom-chains/fluentTestnet";
+import { forma } from "./custom-chains/forma";
+import { formaTestnet } from "./custom-chains/formaTestnet";
 import { frameTestnet } from "./custom-chains/frameTestnet";
 import { fraxtal } from "./custom-chains/fraxtal";
 import { fraxtalTestnet } from "./custom-chains/fraxtalTestnet";
@@ -186,6 +188,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   ham,
   metis,
   sanko,
+  forma,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
@@ -232,6 +235,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   kaiaTestnet,
   fluentTestnet,
   weavevmTestnet,
+  formaTestnet,
   mainnet,
 ];
 
