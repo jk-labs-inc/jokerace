@@ -52,6 +52,19 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt 
       contactDetailsContent = contestContactDetails.slice(0, remainingLength);
     }
 
+    const isContentTruncated =
+      contestSummary.length + (contestEvaluate?.length || 0) + (contactDetailsContent?.length || 0) > MAX_LENGTH;
+
+    if (isContentTruncated) {
+      if (contactDetailsContent) {
+        contactDetailsContent = contactDetailsContent.trim() + "...";
+      } else if (evaluateContent) {
+        evaluateContent = evaluateContent.trim() + "...";
+      } else {
+        summaryContent = summaryContent.trim() + "...";
+      }
+    }
+
     return { summaryContent, evaluateContent, contactDetailsContent };
   };
 
