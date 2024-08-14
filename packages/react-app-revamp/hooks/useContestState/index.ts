@@ -49,7 +49,7 @@ export function useContestState(): CancelContestResult {
         handleError("An error occurred while cancelling the contest");
       }
     } catch (err: any) {
-      handleError(err.message || "An error occurred while cancelling the contest");
+      handleError(err);
     } finally {
       setIsLoading(false);
     }

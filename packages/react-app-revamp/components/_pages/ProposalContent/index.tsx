@@ -219,13 +219,13 @@ const ProposalContent: FC<ProposalContentProps> = ({
                 <CheckIcon
                   className={`absolute top-0 left-0 transform transition-all ease-in-out duration-300 
         ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
-        h-8 w-8 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
+        h-6 w-6 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
         shadow-md hover:shadow-lg rounded-md`}
                 />
                 <TrashIcon
                   className={`absolute top-0 left-0 transition-opacity duration-300 
         ${selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"}
-        h-8 w-8 text-negative-11 bg-true-black hover:text-negative-10 transition-colors duration-300 ease-in-out`}
+        h-6 w-6 text-negative-11 bg-true-black hover:text-negative-10 transition-colors duration-300 ease-in-out`}
                 />
               </div>
             )}
