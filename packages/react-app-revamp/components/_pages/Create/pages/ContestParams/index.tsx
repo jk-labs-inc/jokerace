@@ -85,10 +85,6 @@ const CreateContestParams = () => {
     }
   };
 
-  const toggleMetadata = () => {
-    setMetadataToggle(!metadataToggle);
-  };
-
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
@@ -118,17 +114,6 @@ const CreateContestParams = () => {
               contestVisibility={advancedOptions.contestVisibility}
               onChange={handleContestVisibilityChange}
             />
-            <div className="mt-4">
-              <button className="flex gap-4 items-center" onClick={toggleMetadata}>
-                <p className="text-[20px] text-positive-11">add additional fields</p>
-                <ChevronUpIcon
-                  className={`w-6 h-6 text-positive-11 transition-transform duration-300 ${
-                    metadataToggle ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-            </div>
-            {metadataToggle ? <ContestParamsMetadata /> : null}
           </div>
 
           <CreateNextButton step={step} onClick={() => onNextStep()} isDisabled={disableNextStep} />
