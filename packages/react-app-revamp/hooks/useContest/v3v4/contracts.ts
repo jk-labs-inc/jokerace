@@ -11,6 +11,7 @@ export function getContracts(contractConfig: any, version: string) {
     "voteStart",
     "prompt",
     "downvotingAllowed",
+    "state",
   ];
 
   const v4FunctionNames = ["percentageToCreator", "costToPropose"];

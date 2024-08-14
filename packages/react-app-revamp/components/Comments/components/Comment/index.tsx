@@ -37,7 +37,7 @@ const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentS
               <TrashIcon
                 className={`
                     ${isSelected ? "hidden" : "block"}
-                    h-7 w-7 text-negative-11 bg-true-black hover:text-negative-10`}
+                    h-7 w-7 text-negative-11 bg-true-black hover:text-negative-10 transition-colors duration-300 ease-in-out`}
               />
             </div>
           )}

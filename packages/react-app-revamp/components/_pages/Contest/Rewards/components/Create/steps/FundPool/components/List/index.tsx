@@ -34,7 +34,7 @@ const FundPoolTokenList: FC<FundPoolTokenListProps> = ({ tokens, onRemoveToken }
           <TrashIcon
             width={26}
             height={26}
-            className="text-negative-11 cursor-pointer hover:text-negative-10 transition-colors duration-300"
+            className="text-negative-11 cursor-pointer hover:text-negative-10 transition-colors duration-300 ease-in-out"
             onClick={() => handleRemoveToken(token.address)}
           />
         </div>
