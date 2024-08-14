@@ -1,5 +1,6 @@
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import Iframe from "@components/tiptap/Iframe";
+import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Image as TipTapImage } from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
@@ -14,6 +15,7 @@ import ErrorMessage from "../../components/Error";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
+import ContestParamsMetadata from "../ContestParams/components/Metadata";
 
 interface CreateEditorConfigArgs {
   content: string;
@@ -42,7 +44,7 @@ const createEditorConfig = ({ content, placeholderText, onUpdate }: CreateEditor
 });
 
 const CreateContestPrompt = () => {
-  const { step, prompt, setPrompt, errors } = useDeployContestStore(state => state);
+  const { step, prompt, setPrompt, errors, metadataToggle, setMetadataToggle } = useDeployContestStore(state => state);
   const currentStepError = errors.find(error => error.step === step);
   const onNextStep = useNextStep();
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
@@ -102,6 +104,10 @@ const CreateContestPrompt = () => {
     }),
     onFocus: () => setActiveEditor(editorContactDetails),
   });
+
+  const toggleMetadata = () => {
+    setMetadataToggle(!metadataToggle);
+  };
 
   return (
     <div className="flex flex-col">
@@ -166,6 +172,15 @@ const CreateContestPrompt = () => {
               />
             </div>
           </div>
+          <button className="flex gap-4 items-center" onClick={toggleMetadata}>
+            <p className="text-[20px] text-positive-11">add additional fields</p>
+            <ChevronUpIcon
+              className={`w-6 h-6 text-positive-11 transition-transform duration-300 ${
+                metadataToggle ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+          {metadataToggle ? <ContestParamsMetadata /> : null}
           <div className="mt-4">
             <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
           </div>
