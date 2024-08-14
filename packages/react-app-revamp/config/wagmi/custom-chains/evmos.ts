@@ -11,10 +11,10 @@ export const evmos: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://evmos-evm.publicnode.com"],
+      http: ["https://evmos.lava.build"],
     },
     default: {
-      http: ["https://evmos-evm.publicnode.com"],
+      http: ["https://evmos.lava.build"],
     },
   },
   blockExplorers: {
