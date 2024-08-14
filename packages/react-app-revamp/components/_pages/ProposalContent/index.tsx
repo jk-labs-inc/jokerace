@@ -225,7 +225,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
                 <TrashIcon
                   className={`absolute top-0 left-0 transition-opacity duration-300 
         ${selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"}
-        h-8 w-8 text-negative-11 bg-true-black hover:text-negative-10`}
+        h-8 w-8 text-negative-11 bg-true-black hover:text-negative-10 transition-colors duration-300 ease-in-out`}
                 />
               </div>
             )}

@@ -42,7 +42,7 @@ const CancelContest = () => {
   return (
     <>
       <button disabled={isLoading} onClick={handleOpenModal}>
-        <TrashIcon className="w-6 h-6 text-negative-11" />
+        <TrashIcon className="w-6 h-6 text-negative-11 hover:text-negative-10 transition-colors duration-300 ease-in-out" />
       </button>
 
       <CancelContestModal
