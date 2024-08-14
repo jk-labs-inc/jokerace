@@ -1,17 +1,17 @@
-import { chains } from "@config/wagmi";
+import { toastDismiss, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
+import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
-import { BaseError, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { useState } from "react";
+import { handleError } from "utils/error";
 import { ContestStateEnum, useContestStateStore } from "./store";
 
 interface CancelContestResult {
-  cancelContest: () => void;
+  cancelContest: () => Promise<void>;
   isLoading: boolean;
   isConfirmed: boolean;
-  error: BaseError | null;
-  hash: `0x${string}` | undefined;
 }
 
 export function useContestState(): CancelContestResult {
@@ -19,34 +19,45 @@ export function useContestState(): CancelContestResult {
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const chainId = chains.find(chain => chain.name === chainName)?.id;
   const { contestAbi: abi } = useContestStore(state => state);
-  const { data: hash, error, isPending, writeContract } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash,
-  });
   const { setContestState } = useContestStateStore(state => state);
 
-  const cancelContest = () => {
-    writeContract({
-      address: address as `0x${string}`,
-      abi,
-      chainId,
-      functionName: "cancel",
-    });
-  };
+  const [isLoading, setIsLoading] = useState(false);
+  const [isConfirmed, setIsConfirmed] = useState(false);
 
-  const isLoading = isPending || isConfirming;
+  const cancelContest = async (): Promise<void> => {
+    setIsLoading(true);
+    setIsConfirmed(false);
+    toastLoading("Cancelling contest...");
 
-  useEffect(() => {
-    if (isConfirmed && !error) {
-      setContestState(ContestStateEnum.Canceled);
+    try {
+      const { request } = await simulateContract(config, {
+        chainId,
+        abi,
+        address: address as `0x${string}`,
+        functionName: "cancel",
+      });
+
+      const txHash = await writeContract(config, request);
+
+      const receipt = await waitForTransactionReceipt(config, { hash: txHash });
+
+      if (receipt.status === "success") {
+        setIsConfirmed(true);
+        toastSuccess("Contest cancelled successfully");
+        setContestState(ContestStateEnum.Canceled);
+      } else {
+        handleError("An error occurred while cancelling the contest");
+      }
+    } catch (err: any) {
+      handleError(err.message || "An error occurred while cancelling the contest");
+    } finally {
+      setIsLoading(false);
     }
-  }, [isConfirmed, error, setContestState]);
+  };
 
   return {
     cancelContest,
     isLoading,
     isConfirmed,
-    error: error as BaseError | null,
-    hash,
   };
 }

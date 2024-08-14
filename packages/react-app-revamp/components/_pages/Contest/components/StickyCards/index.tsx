@@ -10,14 +10,13 @@ const ContestStickyCards = () => {
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const { displayReloadBanner } = useContestEvents();
 
-  if (contestStatus === ContestStatus.VotingClosed) return null;
-
-  if (isContestCanceled)
+  if (isContestCanceled || contestStatus === ContestStatus.VotingClosed) {
     return (
       <div className="mt-8">
         <hr className="border-primary-2 border" />
       </div>
     );
+  }
 
   return (
     <div

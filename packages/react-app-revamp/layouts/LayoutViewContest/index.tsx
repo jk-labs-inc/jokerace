@@ -16,6 +16,7 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { extractPathSegments } from "@helpers/extractPath";
 import { populateBugReportLink } from "@helpers/githubIssue";
+import { generateUrlContest } from "@helpers/share";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
@@ -25,6 +26,7 @@ import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useUser from "@hooks/useUser";
 import moment from "moment";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useUrl } from "nextjs-current-url";
 import { ReactNode, useEffect, useMemo, useState } from "react";
@@ -202,7 +204,9 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
                     <ContestName contestName={contestName} address={address} chainName={chainName} />
 
-                    <div className="flex flex-row gap-3 md:gap-4 items-center">
+                    <div
+                      className={`flex flex-row ${rewardsModuleAddress && rewardsAbi ? "justify-between" : "gap-3"} md:justify-normal md:gap-4 items-center`}
+                    >
                       <UserProfileDisplay
                         ethereumAddress={contestAuthorEthereumAddress}
                         shortenOnFallback
@@ -211,14 +215,26 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                       {rewardsModuleAddress && rewardsAbi ? (
                         <ContestRewardsInfo rewardsModuleAddress={rewardsModuleAddress} rewardsAbi={rewardsAbi} />
                       ) : null}
-                      <div className="hidden md:flex">
+                      {isMobile ? (
+                        <div
+                          className="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-[10px] border border-neutral-11 cursor-pointer"
+                          onClick={() =>
+                            navigator.share({
+                              url: generateUrlContest(address, chainName),
+                            })
+                          }
+                        >
+                          <Image src="/forward.svg" alt="share" width={15} height={13} />
+                        </div>
+                      ) : (
                         <ShareDropdown
                           contestAddress={address}
                           chain={chainName}
                           contestName={contestName}
                           onMenuStateChange={setFadeBg}
                         />
-                      </div>
+                      )}
+
                       <div
                         className="standalone-pwa w-8 h-8 items-center rounded-[10px] border border-neutral-11 cursor-pointer"
                         onClick={() => window.location.reload()}
