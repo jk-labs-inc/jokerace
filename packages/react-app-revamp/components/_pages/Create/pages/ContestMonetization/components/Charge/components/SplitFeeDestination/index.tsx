@@ -9,6 +9,8 @@ interface ContestParamsSplitFeeDestinationProps {
   splitFeeDestinationError: string;
   onSplitFeeDestinationTypeChange?: (value: SplitFeeDestinationType) => void;
   onSplitFeeDestinationAddressChange?: (value: string) => void;
+  includeRewardsInfo?: boolean;
+  includeRewardsPool?: boolean;
 }
 
 const PLACEHOLDER_ADDRESS = "0x7B15427393A98A041D00b50254A0C7a6fDC79F4E";
@@ -18,6 +20,8 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
   splitFeeDestinationError,
   onSplitFeeDestinationTypeChange,
   onSplitFeeDestinationAddressChange,
+  includeRewardsInfo,
+  includeRewardsPool,
 }) => {
   const [selected, setSelected] = useState<SplitFeeDestinationType>(splitFeeDestination.type);
   const [address, setAddress] = useState(splitFeeDestination.address);
@@ -37,63 +41,98 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <p className="text-[20px] md:text-[20px] text-neutral-11 font-bold">{percentageTitle}</p>
-      <RadioGroup value={selected} onChange={handleSplitFeeDestinationTypeChange}>
-        <div className="flex flex-col gap-2">
-          <Radio value={SplitFeeDestinationType.CreatorWallet}>
-            {({ checked }) => (
-              <div className="flex gap-4 items-start cursor-pointer">
-                <div
-                  className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-[10px] transition-colors ${
-                    checked ? "bg-primary-10  border-0" : ""
-                  }`}
-                ></div>
-                <div className="flex flex-col gap-4">
-                  <p className="text-[20px] text-neutral-9">my wallet (recommended)</p>
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-4">
+        <p className="text-[20px] md:text-[20px] text-neutral-11 font-bold">{percentageTitle}</p>
+        <RadioGroup value={selected} onChange={handleSplitFeeDestinationTypeChange}>
+          <div className="flex flex-col gap-2">
+            <Radio value={SplitFeeDestinationType.CreatorWallet}>
+              {({ checked }) => (
+                <div className="flex gap-4 items-start cursor-pointer">
+                  <div
+                    className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-[10px] transition-colors ${
+                      checked ? "bg-secondary-11  border-0" : ""
+                    }`}
+                  ></div>
+                  <div className="flex flex-col gap-4">
+                    <p className="text-[20px] text-neutral-9">my wallet (recommended)</p>
+                  </div>
                 </div>
-              </div>
-            )}
-          </Radio>
-          <Radio value={SplitFeeDestinationType.AnotherWallet}>
-            {({ checked }) => (
-              <div className="flex gap-4 items-start cursor-pointer">
-                <div
-                  className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-[10px] transition-colors ${
-                    checked ? "bg-primary-10 border-0" : ""
-                  } `}
-                ></div>
-                <div className="flex flex-col gap-2">
-                  <p className={`text-[20px] text-neutral-9`}>another wallet</p>
-                  {checked ? (
-                    <input
-                      type="text"
-                      value={address}
-                      onChange={e => handleSplitFeeDestinationAddressChange(e.target.value)}
-                      placeholder={isMobile ? shortenEthereumAddress(PLACEHOLDER_ADDRESS, "long") : PLACEHOLDER_ADDRESS}
-                      className="w-full md:w-[536px] h-10 bg-neutral-14 rounded-[10px] text-[20px] text-true-black placeholder-neutral-10 placeholder:font-bold p-4 focus:outline-none"
-                    />
-                  ) : null}
+              )}
+            </Radio>
+            <Radio value={SplitFeeDestinationType.AnotherWallet}>
+              {({ checked }) => (
+                <div className="flex gap-4 items-start cursor-pointer">
+                  <div
+                    className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-[10px] transition-colors ${
+                      checked ? "bg-secondary-11 border-0" : ""
+                    } `}
+                  ></div>
+                  <div className="flex flex-col gap-2">
+                    <p className={`text-[20px] text-neutral-9`}>another wallet</p>
+                    {checked ? (
+                      <input
+                        type="text"
+                        autoFocus
+                        value={address}
+                        onChange={e => handleSplitFeeDestinationAddressChange(e.target.value)}
+                        placeholder={
+                          isMobile ? shortenEthereumAddress(PLACEHOLDER_ADDRESS, "long") : PLACEHOLDER_ADDRESS
+                        }
+                        className="w-full md:w-[536px] h-10 bg-true-black border border-secondary-11 rounded-[10px] text-[20px] text-neutral-11 placeholder-neutral-10 placeholder:font-bold p-4 focus:outline-none"
+                      />
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            )}
-          </Radio>
-          <Radio value={SplitFeeDestinationType.NoSplit}>
-            {({ checked }) => (
-              <div className="flex gap-4 items-start cursor-pointer">
-                <div
-                  className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-[10px] transition-colors ${
-                    checked ? "bg-primary-10  border-0" : ""
-                  }`}
-                ></div>
-                <div className="flex flex-col gap-4">
-                  <p className="text-[20px] text-neutral-9">i prefer to take 0% of earnings</p>
+              )}
+            </Radio>
+            <Radio value={SplitFeeDestinationType.NoSplit}>
+              {({ checked }) => (
+                <div className="flex gap-4 items-start cursor-pointer">
+                  <div
+                    className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-[10px] transition-colors ${
+                      checked ? "bg-secondary-11  border-0" : ""
+                    }`}
+                  ></div>
+                  <div className="flex flex-col gap-4">
+                    <p className="text-[20px] text-neutral-9">i prefer to take 0% of earnings</p>
+                  </div>
                 </div>
-              </div>
-            )}
-          </Radio>
-        </div>
-      </RadioGroup>
+              )}
+            </Radio>
+            {includeRewardsPool ? (
+              <Radio value={SplitFeeDestinationType.RewardsPool}>
+                {({ checked }) => (
+                  <div className="flex gap-4 items-start cursor-pointer">
+                    <div
+                      className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-[10px] transition-colors ${
+                        checked ? "bg-secondary-11  border-0" : ""
+                      }`}
+                    ></div>
+                    <div className="flex flex-col gap-4">
+                      <p className="text-[20px] text-neutral-9">
+                        the rewards pool <span className="text-secondary-11">(new)</span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </Radio>
+            ) : null}
+          </div>
+        </RadioGroup>
+      </div>
+      {includeRewardsInfo ? (
+        <p className="text-[16px] text-neutral-11">
+          {isMobile ? (
+            "create a rewards pool after creating this contest to set your earnings to go to rewards."
+          ) : (
+            <>
+              want your earnings to go towards rewards? finish creating this contest, then create a <br />
+              rewards pool, and then you’ll have the option.
+            </>
+          )}
+        </p>
+      ) : null}
     </div>
   );
 };

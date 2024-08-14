@@ -79,8 +79,8 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
   );
 
   return (
-    <div className="flex flex-col gap-12">
-      <p className="text-[20px] font-bold text-neutral-11">voting</p>
+    <div className="flex flex-col gap-8">
+      <p className="text-[20px] font-bold text-neutral-14">voting</p>
       <ul className="pl-4 text-[16px] font-bold">
         <li className="list-disc">{address ? qualifyToVoteMessage : walletNotConnected}</li>
         {anyoneCanVote ? (

@@ -1,0 +1,110 @@
+import ContestParamsSplitFeeDestination from "@components/_pages/Create/pages/ContestMonetization/components/Charge/components/SplitFeeDestination";
+import DialogModalV4 from "@components/UI/DialogModalV4";
+import { addressRegex } from "@helpers/regex";
+import { useContestStore } from "@hooks/useContest/store";
+import { useCreatorSplitDestination } from "@hooks/useCreatorSplitDestination";
+import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
+import { Charge, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
+import Image from "next/image";
+import { FC, useState } from "react";
+import { useAccount } from "wagmi";
+
+interface ContestParamsEarningsModalProps {
+  charge: Charge;
+  isOpen: boolean;
+  onClose: (value: boolean) => void;
+}
+
+const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charge, isOpen, onClose }) => {
+  const { address: userAddress } = useAccount();
+  const { rewardsModuleAddress, setCharge } = useContestStore(state => state);
+  const [splitFeeDestinationError, setSplitFeeDestinationError] = useState("");
+  const { setCreatorSplitDestination, isLoading, isConfirmed } = useCreatorSplitDestination();
+  const [localCharge, setLocalCharge] = useState<Charge>(charge);
+
+  const handleSplitFeeDestinationTypeChange = (type: SplitFeeDestinationType) => {
+    let newAddress = charge.splitFeeDestination.address;
+
+    switch (type) {
+      case SplitFeeDestinationType.RewardsPool:
+        newAddress = rewardsModuleAddress;
+        break;
+      case SplitFeeDestinationType.AnotherWallet:
+        newAddress = "";
+        break;
+      case SplitFeeDestinationType.NoSplit:
+        newAddress = JK_LABS_SPLIT_DESTINATION_DEFAULT;
+        break;
+      case SplitFeeDestinationType.CreatorWallet:
+        newAddress = userAddress;
+    }
+
+    const newSplitFeeDestination = {
+      ...charge.splitFeeDestination,
+      type,
+      address: newAddress,
+    };
+
+    const isValidAddress = addressRegex.test(newAddress ?? "");
+    const error = type === SplitFeeDestinationType.AnotherWallet && !isValidAddress;
+
+    setLocalCharge?.({
+      ...charge,
+      splitFeeDestination: newSplitFeeDestination,
+      error,
+    });
+  };
+
+  const handleSplitFeeDestinationAddressChange = (address: string) => {
+    const isValidAddress = addressRegex.test(address);
+    const newSplitFeeDestination = { ...charge.splitFeeDestination, address };
+
+    setSplitFeeDestinationError(isValidAddress ? "" : "invalid address");
+
+    setCharge?.({
+      ...charge,
+      splitFeeDestination: newSplitFeeDestination,
+      error: !isValidAddress,
+    });
+  };
+
+  const onSaveHandler = () => {
+    if (!localCharge.splitFeeDestination.address) return;
+
+    setCreatorSplitDestination(localCharge.splitFeeDestination);
+  };
+
+  return (
+    <DialogModalV4 isOpen={isOpen} onClose={onClose}>
+      <div className="flex flex-col gap-20 py-6 md:py-16 pl-8 md:pl-32 pr-4 md:pr-16">
+        <div className="flex justify-between items-center">
+          <p className="text-[24px] text-neutral-11 font-bold">edit earnings</p>
+          <Image
+            src="/modal/modal_close.svg"
+            width={39}
+            height={33}
+            alt="close"
+            className="hidden md:block cursor-pointer"
+            onClick={() => onClose(true)}
+          />
+        </div>
+        <ContestParamsSplitFeeDestination
+          splitFeeDestination={charge.splitFeeDestination}
+          splitFeeDestinationError={splitFeeDestinationError}
+          includeRewardsPool={rewardsModuleAddress !== ""}
+          onSplitFeeDestinationTypeChange={handleSplitFeeDestinationTypeChange}
+          onSplitFeeDestinationAddressChange={handleSplitFeeDestinationAddressChange}
+        />
+        <button
+          disabled={isLoading && !isConfirmed}
+          className="mt-4 bg-gradient-purple rounded-[40px] w-80 h-10 text-center text-true-black text-[16px] font-bold hover:opacity-80 transition-opacity duration-300 ease-in-out"
+          onClick={onSaveHandler}
+        >
+          save
+        </button>
+      </div>
+    </DialogModalV4>
+  );
+};
+
+export default ContestParamsEarningsModal;
