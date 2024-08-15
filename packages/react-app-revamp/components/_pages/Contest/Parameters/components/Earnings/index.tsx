@@ -22,7 +22,8 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge,
   const blockExplorerAddressUrl = blockExplorerUrl ? `${blockExplorerUrl}/address/${creatorSplitDestination}` : "";
   const [isEditEarningsModalOpen, setIsEditEarningsModalOpen] = useState(false);
   const { contestState } = useContestStateStore(state => state);
-  const isContestFinished = contestState === ContestStateEnum.Completed;
+  const isContestFinishedOrCanceled =
+    contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
 
   const percentageToCreatorMessage = () => {
     if (charge.percentageToCreator === 50) {
@@ -55,7 +56,7 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge,
     <div className="flex flex-col gap-8">
       <div className="flex gap-4 items-center">
         <p className="text-[20px] font-bold text-neutral-14">earnings</p>
-        {isConnectedWalletAuthor && !isContestFinished && (
+        {isConnectedWalletAuthor && !isContestFinishedOrCanceled && (
           <button onClick={() => setIsEditEarningsModalOpen(true)}>
             <PencilSquareIcon className="w-6 h-6 text-neutral-9 hover:text-neutral-11 transition-colors duration-300 ease-in-out" />
           </button>
