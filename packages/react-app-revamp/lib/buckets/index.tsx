@@ -87,35 +87,18 @@ export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const resizeResponse = await fetch("/api/resize-image", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ buffer: buffer.toString("base64"), fileId, contentType: type }),
-    });
+    const input = {
+      Bucket: IMAGE_UPLOAD_BUCKET,
+      Key: fileId,
+      Body: buffer,
+      ContentType: type,
+    };
 
-    if (!resizeResponse.ok) {
-      throw new Error(`Failed to resize image: ${resizeResponse.status} ${resizeResponse.statusText}`);
-    }
-
-    const resizeData: ResizeResponse = await resizeResponse.json();
-
-    for (const [size, imageData] of Object.entries(resizeData.resizedImages)) {
-      const imageBuffer = Buffer.from(imageData.data, "base64");
-      const input = {
-        Bucket: IMAGE_UPLOAD_BUCKET,
-        Key: size === "original" ? fileId : `${fileId}-${size}`,
-        Body: imageBuffer,
-        ContentType: imageData.contentType,
-      };
-
-      const command = new PutObjectCommand(input);
-      await s3.send(command);
-    }
+    const command = new PutObjectCommand(input);
+    await s3.send(command);
 
     const originalUrl = `${IMAGE_PUBLIC_URL}/${fileId}`;
-    toastSuccess("Image uploaded successfully!");
+    toastSuccess("Image uploaded successfully! Resized versions will be available shortly.");
     return originalUrl;
   } catch (error: any) {
     toastError("Failed to upload an image, please try again.");
@@ -123,6 +106,7 @@ export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions
     throw new Error(`Failed to upload image with ID ${fileId} to bucket ${IMAGE_UPLOAD_BUCKET}`);
   }
 };
+
 /**
  * Fetches voter or submitter data from S3 bucket using web worker
  * @param fileId
