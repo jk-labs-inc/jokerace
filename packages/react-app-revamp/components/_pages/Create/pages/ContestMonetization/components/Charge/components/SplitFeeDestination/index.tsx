@@ -74,7 +74,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                     }`}
                   ></div>
                   <div className="flex flex-col gap-4">
-                    <p className="text-[20px] text-neutral-9">my wallet (recommended)</p>
+                    <p className="text-[20px] text-neutral-9">my wallet</p>
                   </div>
                 </div>
               )}

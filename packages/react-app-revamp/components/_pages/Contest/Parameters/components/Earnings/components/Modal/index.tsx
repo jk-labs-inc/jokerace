@@ -78,7 +78,7 @@ const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charg
 
   return (
     <DialogModalV4 isOpen={isOpen} onClose={onClose}>
-      <div className="flex flex-col gap-20 py-6 md:py-16 pl-8 md:pl-32 pr-4 md:pr-16">
+      <div className="flex flex-col gap-8 md:gap-20 py-6 md:py-16 pl-8 md:pl-32 pr-4 md:pr-16">
         <div className="flex justify-between items-center">
           <p className="text-[24px] text-neutral-11 font-bold">edit earnings</p>
           <Image
@@ -99,7 +99,7 @@ const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charg
           onSplitFeeDestinationAddressChange={handleSplitFeeDestinationAddressChange}
         />
         <button
-          disabled={isLoading && !isConfirmed}
+          disabled={(isLoading && !isConfirmed) || localCharge.error}
           className="mt-4 bg-gradient-purple rounded-[40px] w-80 h-10 text-center text-true-black text-[16px] font-bold hover:opacity-80 transition-opacity duration-300 ease-in-out"
           onClick={onSaveHandler}
         >
