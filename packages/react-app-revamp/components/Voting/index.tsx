@@ -7,6 +7,7 @@ import { formatNumber } from "@helpers/formatNumber";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
@@ -41,6 +42,8 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
   const isCorrectNetwork = chainId === accountChainId;
   const showVoteCharge = charge && charge.type.costToVote && accountData && isCorrectNetwork;
   const { currentUserVotesOnProposal } = useFetchUserVotesOnProposal(contestAddress, proposalId);
+  const { contestState } = useContestStateStore(state => state);
+  const isContestCanceled = contestState === ContestStateEnum.Canceled;
 
   const handleClick = (value: boolean) => {
     setIsUpvote(value);
@@ -112,6 +115,8 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
   const onSwitchNetwork = async () => {
     await switchChain(config, { chainId });
   };
+
+  if (isContestCanceled) return null;
 
   return (
     <div className="flex flex-col gap-6 md:w-60">

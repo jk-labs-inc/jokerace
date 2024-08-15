@@ -20,6 +20,7 @@ import { Tweet } from "react-tweet";
 import { useAccount } from "wagmi";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 import ProposalContentInfo from "./components/ProposalContentInfo";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 
 export interface Proposal {
   id: string;
@@ -80,6 +81,8 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const canVote = currentUserAvailableVotesAmount > 0;
   const isProposalTweet = proposal.tweet.isTweet;
   const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const { contestState } = useContestStateStore(state => state);
+  const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
   const [isContentHidden, setIsContentHidden] = useState(false);
   const formattedVotingOpen = moment(votesOpen);
@@ -98,6 +101,11 @@ const ProposalContent: FC<ProposalContentProps> = ({
   }, [contestAddress, proposal.id]);
 
   const handleVotingModalOpen = () => {
+    if (isContestCanceled) {
+      alert("This contest has been canceled and voting is terminated.");
+      return;
+    }
+
     if (contestStatus === ContestStatus.VotingClosed) {
       alert("Voting is closed for this contest.");
       return;
@@ -211,13 +219,13 @@ const ProposalContent: FC<ProposalContentProps> = ({
                 <CheckIcon
                   className={`absolute top-0 left-0 transform transition-all ease-in-out duration-300 
         ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
-        h-8 w-8 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
+        h-6 w-6 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
         shadow-md hover:shadow-lg rounded-md`}
                 />
                 <TrashIcon
                   className={`absolute top-0 left-0 transition-opacity duration-300 
         ${selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"}
-        h-8 w-8 text-negative-11 bg-true-black hover:text-negative-10`}
+        h-6 w-6 text-negative-11 bg-true-black hover:text-negative-10 transition-colors duration-300 ease-in-out`}
                 />
               </div>
             )}

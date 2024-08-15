@@ -4,6 +4,7 @@ import { SortOptions, useProposalStore } from "@hooks/useProposal/store";
 import { FC, useMemo } from "react";
 import ProposalStatisticsPanel from "./components/Panel";
 import SortProposalsDropdown from "./components/SortDropdown";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 
 interface ProposalStatisticsProps {
   contestStatus: ContestStatus;
@@ -15,6 +16,8 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus, onMenu
   const { sortProposalData } = useProposal();
   const isSubmissionOrVotingOpen =
     contestStatus === ContestStatus.SubmissionOpen || contestStatus === ContestStatus.VotingOpen;
+  const { contestState } = useContestStateStore(state => state);
+  const isContestCanceled = contestState === ContestStateEnum.Canceled;
 
   const handleSortTypeChange = (value: string) => {
     sortProposalData(value as SortOptions);
@@ -37,15 +40,17 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus, onMenu
 
   return (
     <div className="flex flex-col">
-      <div className="flex gap-2 items-center">
-        {isSubmissionOrVotingOpen ? (
-          <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-positive-10 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-positive-11"></span>
-          </span>
-        ) : null}
-        <p className="text-[24px] text-neutral-11 font-bold normal-case">{contestStatusTitle}</p>
-      </div>
+      {!isContestCanceled ? (
+        <div className="flex gap-2 items-center">
+          {isSubmissionOrVotingOpen ? (
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-positive-10 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-positive-11"></span>
+            </span>
+          ) : null}
+          <p className="text-[24px] text-neutral-11 font-bold normal-case">{contestStatusTitle}</p>
+        </div>
+      ) : null}
       <div className="flex flex-col md:flex-row gap-4 md:justify-between md:items-center border-b border-primary-2 pb-4">
         <ProposalStatisticsPanel submissionsCount={submissionsCount} contestStatus={contestStatus} />
         {submissionsCount > 1 ? (

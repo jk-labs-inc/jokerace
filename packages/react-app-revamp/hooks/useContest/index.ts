@@ -5,6 +5,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
@@ -80,6 +81,7 @@ export function useContest() {
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList } = useProposal();
   const { contestStatus } = useContestStatusStore(state => state);
+  const { setContestState } = useContestStateStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const alchemyRpc = chains
     .filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
@@ -150,29 +152,30 @@ export function useContest() {
     const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
     const contestPrompt = results[7].result as string;
     const isDownvotingAllowed = Number(results[8].result) === 1;
+    const contestState = results[9].result as ContestStateEnum;
 
     if (compareVersions(version, "4.0") >= 0) {
-      const percentageToCreator = Number(results[9].result);
-      const costToPropose = Number(results[10].result);
+      const percentageToCreator = Number(results[10].result);
+      const costToPropose = Number(results[11].result);
       let costToVote = 0;
       let payPerVote = 0;
       let creatorSplitDestination = "";
 
       if (compareVersions(version, "4.2") >= 0) {
-        const sortingEnabled = Number(results[11].result) === 1;
+        const sortingEnabled = Number(results[12].result) === 1;
 
         setSortingEnabled(sortingEnabled);
       }
 
       if (compareVersions(version, "4.23") >= 0) {
         if (compareVersions(version, "4.25") >= 0) {
-          payPerVote = Number(results[13].result);
+          payPerVote = Number(results[14].result);
         }
-        costToVote = Number(results[12].result);
+        costToVote = Number(results[13].result);
       }
 
       if (compareVersions(version, "4.29") >= 0) {
-        creatorSplitDestination = results[14].result as string;
+        creatorSplitDestination = results[15].result as string;
       }
 
       setCharge({
@@ -200,6 +203,7 @@ export function useContest() {
     setVotesOpen(votesOpenDate);
     setContestPrompt(contestPrompt);
     setDownvotingAllowed(isDownvotingAllowed);
+    setContestState(contestState);
 
     // We want to track VoteCast event only 2H before the end of the contest, and only if alchemy support is enabled and if alchemy is configured
     if (isBefore(new Date(), closingVoteDate) && alchemyRpc && isAlchemyConfigured) {
