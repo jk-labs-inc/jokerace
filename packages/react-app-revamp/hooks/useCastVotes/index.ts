@@ -3,25 +3,56 @@ import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
-import { VoteType } from "@hooks/useDeployContest/types";
+import { Charge, VoteType } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
 import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
+import useRewardsModule from "@hooks/useRewards";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
+import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
 
+interface UserAnalyticsParams {
+  contestAddress: string;
+  userAddress: `0x${string}` | undefined;
+  chainName: string;
+  pickedProposal: string | null;
+  amountOfVotes: number;
+  costToVote: bigint | undefined;
+  charge: Charge | null;
+}
+
+interface RewardsAnalyticsParams {
+  isEarningsTowardsRewards: boolean;
+  address: string;
+  rewardsModuleAddress: string;
+  charge: Charge | null;
+  chainName: string;
+  costToVote: bigint | undefined;
+  operation: "deposit" | "withdraw";
+  token_address: string | null;
+}
+
+interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsParams {}
+
 export function useCastVotes() {
-  const { canUpdateVotesInRealTime, charge, contestAbi: abi, anyoneCanVote } = useContestStore(state => state);
+  const {
+    canUpdateVotesInRealTime,
+    charge,
+    contestAbi: abi,
+    anyoneCanVote,
+    rewardsModuleAddress,
+  } = useContestStore(state => state);
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
   const {
@@ -50,6 +81,8 @@ export function useCastVotes() {
     contestAddress,
     pickedProposal ?? "",
   );
+  const isEarningsTowardsRewards = rewardsModuleAddress === charge?.splitFeeDestination.address;
+  const { handleRefetchBalanceRewardsModule } = useRewardsModule();
 
   const calculateChargeAmount = (amountOfVotes: number) => {
     if (!charge) return undefined;
@@ -106,20 +139,20 @@ export function useCastVotes() {
         hash: hash,
       });
 
-      try {
-        await addUserActionForAnalytics({
-          contest_address: contestAddress,
-          user_address: userAddress,
-          network_name: chainName,
-          proposal_id: pickedProposal !== null ? pickedProposal : undefined,
-          vote_amount: amountOfVotes,
-          created_at: Math.floor(Date.now() / 1000),
-          amount_sent: costToVote ? formatChargeAmount(parseFloat(costToVote.toString())) : null,
-          percentage_to_creator: charge ? charge.percentageToCreator : null,
-        });
-      } catch (error) {
-        console.error("Error in addUserActionForAnalytics:", error);
-      }
+      await performAnalytics({
+        contestAddress,
+        userAddress,
+        chainName,
+        pickedProposal,
+        amountOfVotes,
+        costToVote,
+        charge,
+        isEarningsTowardsRewards,
+        address: contestAddress,
+        rewardsModuleAddress,
+        operation: "deposit",
+        token_address: null,
+      });
 
       setTransactionData({
         hash: receipt.transactionHash,
@@ -163,6 +196,47 @@ export function useCastVotes() {
       setIsLoading(false);
       throw e;
     }
+  }
+
+  async function addUserActionAnalytics(params: UserAnalyticsParams) {
+    try {
+      await addUserActionForAnalytics({
+        contest_address: params.contestAddress,
+        user_address: params.userAddress,
+        network_name: params.chainName,
+        proposal_id: params.pickedProposal !== null ? params.pickedProposal : undefined,
+        vote_amount: params.amountOfVotes,
+        created_at: Math.floor(Date.now() / 1000),
+        amount_sent: params.costToVote ? formatChargeAmount(parseFloat(params.costToVote.toString())) : null,
+        percentage_to_creator: params.charge ? params.charge.percentageToCreator : null,
+      });
+    } catch (error) {
+      console.error("Error in addUserActionForAnalytics:", error);
+    }
+  }
+
+  async function updateRewardAnalyticsIfNeeded(params: RewardsAnalyticsParams) {
+    if (params.isEarningsTowardsRewards && params.costToVote) {
+      try {
+        await updateRewardAnalytics({
+          contest_address: params.address,
+          rewards_module_address: params.rewardsModuleAddress,
+          network_name: params.chainName,
+          amount: formatChargeAmount(parseFloat(params.costToVote.toString())) / 2,
+          operation: "deposit",
+          token_address: null,
+          created_at: Math.floor(Date.now() / 1000),
+        });
+
+        handleRefetchBalanceRewardsModule();
+      } catch (error) {
+        console.error("Error while updating reward analytics", error);
+      }
+    }
+  }
+
+  async function performAnalytics(params: CombinedAnalyticsParams) {
+    await Promise.all([addUserActionAnalytics(params), updateRewardAnalyticsIfNeeded(params)]);
   }
 
   return {

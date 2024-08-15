@@ -9,8 +9,8 @@ interface ContestParametersTimelineProps {
 
 const ContestParametersTimeline: FC<ContestParametersTimelineProps> = ({ submissionsOpen, votesOpen, votesClose }) => {
   return (
-    <div className="flex flex-col gap-12">
-      <p className="text-[20px] font-bold text-neutral-11">timeline</p>
+    <div className="flex flex-col gap-8">
+      <p className="text-[20px] font-bold text-neutral-14">timeline</p>
       <ContestTimeline />
       <div className="flex flex-col lg:hidden gap-4">
         <div className="flex justify-between items-end text-[16px] font-bold border-b border-neutral-10 pb-3">
