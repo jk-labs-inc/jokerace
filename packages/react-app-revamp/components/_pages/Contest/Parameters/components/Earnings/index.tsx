@@ -1,5 +1,6 @@
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { Charge, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
@@ -20,6 +21,8 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge,
     : contestAuthor;
   const blockExplorerAddressUrl = blockExplorerUrl ? `${blockExplorerUrl}/address/${creatorSplitDestination}` : "";
   const [isEditEarningsModalOpen, setIsEditEarningsModalOpen] = useState(false);
+  const { contestState } = useContestStateStore(state => state);
+  const isContestFinished = contestState === ContestStateEnum.Completed;
 
   const percentageToCreatorMessage = () => {
     if (charge.percentageToCreator === 50) {
@@ -52,7 +55,7 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge,
     <div className="flex flex-col gap-8">
       <div className="flex gap-4 items-center">
         <p className="text-[20px] font-bold text-neutral-14">earnings</p>
-        {isConnectedWalletAuthor && (
+        {isConnectedWalletAuthor && !isContestFinished && (
           <button onClick={() => setIsEditEarningsModalOpen(true)}>
             <PencilSquareIcon className="w-6 h-6 text-neutral-9 hover:text-neutral-11 transition-colors duration-300 ease-in-out" />
           </button>
