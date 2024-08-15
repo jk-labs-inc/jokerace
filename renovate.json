@@ -7,6 +7,7 @@
   "major": {
     "dependencyDashboardApproval": true
   },
+  "ignoreDeps": ["react-native"],
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch"],
