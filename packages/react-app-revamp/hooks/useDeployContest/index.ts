@@ -23,8 +23,9 @@ import { SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle } fro
 
 export const MAX_SUBMISSIONS_LIMIT = 1000000;
 export const DEFAULT_SUBMISSIONS = 1000000;
+export const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c6118e8a52fa738";
+
 const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
-const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c6118e8a52fa738";
 
 export function useDeployContest() {
   const { indexContestV3 } = useV3ContestsIndex();

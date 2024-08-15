@@ -303,7 +303,7 @@ li {
   }
   body {
     @apply text-base flex flex-col min-h-screen;
-    caret-color: #ffe25b !important;
+    caret-color: #bb65ff !important;
   }
 
   #__next,

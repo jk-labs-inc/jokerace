@@ -8,8 +8,8 @@
     "build": "next build"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.629.0",
-    "@aws-sdk/s3-request-presigner": "3.629.0",
+    "@aws-sdk/client-s3": "3.631.0",
+    "@aws-sdk/s3-request-presigner": "3.631.0",
     "@babel/core": "7.25.2",
     "@babel/preset-env": "7.25.3",
     "@clustersxyz/sdk": "0.4.3",
@@ -54,7 +54,7 @@
     "next": "14.2.5",
     "next-pwa": "5.6.0",
     "nextjs-current-url": "1.0.3",
-    "nextjs-toploader": "^1.6.12",
+    "nextjs-toploader": "1.6.12",
     "node-html-parser": "6.1.13",
     "papaparse": "5.4.1",
     "rc-slider": "11.1.5",
@@ -89,7 +89,7 @@
     "viem": "2.19.4",
     "wagmi": "2.12.5",
     "zod": "3.23.8",
-    "zustand": "4.5.4"
+    "zustand": "4.5.5"
   },
   "devDependencies": {
     "@tailwindcss/typography": "0.5.14",
