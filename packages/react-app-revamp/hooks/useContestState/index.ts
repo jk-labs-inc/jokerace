@@ -1,11 +1,11 @@
-import { toastDismiss, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
+import { useError } from "@hooks/useError";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { handleError } from "utils/error";
 import { ContestStateEnum, useContestStateStore } from "./store";
 
 interface CancelContestResult {
@@ -20,9 +20,9 @@ export function useContestState(): CancelContestResult {
   const chainId = chains.find(chain => chain.name === chainName)?.id;
   const { contestAbi: abi } = useContestStore(state => state);
   const { setContestState } = useContestStateStore(state => state);
-
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const { handleError } = useError();
 
   const cancelContest = async (): Promise<void> => {
     setIsLoading(true);
@@ -45,11 +45,9 @@ export function useContestState(): CancelContestResult {
         setIsConfirmed(true);
         toastSuccess("Contest cancelled successfully");
         setContestState(ContestStateEnum.Canceled);
-      } else {
-        handleError("An error occurred while cancelling the contest");
       }
     } catch (err: any) {
-      handleError(err);
+      handleError(err, "An error occurred while cancelling contest");
     } finally {
       setIsLoading(false);
     }

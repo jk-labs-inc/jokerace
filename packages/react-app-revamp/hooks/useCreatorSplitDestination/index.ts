@@ -3,10 +3,10 @@ import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { SplitFeeDestination } from "@hooks/useDeployContest/types";
+import { useError } from "@hooks/useError";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { handleError } from "utils/error";
 
 interface SetCreatorSplitDestinationResult {
   setCreatorSplitDestination: (splitFeeDestination: SplitFeeDestination) => Promise<void>;
@@ -21,6 +21,7 @@ export function useCreatorSplitDestination(): SetCreatorSplitDestinationResult {
   const { contestAbi: abi, setCharge, charge } = useContestStore(state => state);
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const { handleError } = useError();
 
   const setCreatorSplitDestination = async (splitFeeDestination: SplitFeeDestination): Promise<void> => {
     if (!splitFeeDestination.address || !charge) return;
@@ -47,11 +48,9 @@ export function useCreatorSplitDestination(): SetCreatorSplitDestinationResult {
           ...charge,
           splitFeeDestination,
         });
-      } else {
-        handleError("An error occurred while setting creator split destination");
       }
     } catch (err: any) {
-      handleError(err.message || "An error occurred while setting creator split destination");
+      handleError(err, "An error occurred while setting creator split destination");
     } finally {
       setIsLoading(false);
     }

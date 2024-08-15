@@ -1,11 +1,15 @@
 import ContestParamsSplitFeeDestination from "@components/_pages/Create/pages/ContestMonetization/components/Charge/components/SplitFeeDestination";
 import DialogModalV4 from "@components/UI/DialogModalV4";
+import { chains, config } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import { addressRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
 import { useCreatorSplitDestination } from "@hooks/useCreatorSplitDestination";
 import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 import { Charge, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
+import { switchChain } from "@wagmi/core";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
 
@@ -16,7 +20,11 @@ interface ContestParamsEarningsModalProps {
 }
 
 const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charge, isOpen, onClose }) => {
-  const { address: userAddress } = useAccount();
+  const pathname = usePathname();
+  const { chainName: contestChainName } = extractPathSegments(pathname);
+  const contestChainId = chains.find(chain => chain.name.toLowerCase() === contestChainName.toLowerCase())?.id;
+  const { address: userAddress, chainId } = useAccount();
+  const isUserOnCorrectChain = contestChainId === chainId;
   const { rewardsModuleAddress } = useContestStore(state => state);
   const [splitFeeDestinationError, setSplitFeeDestinationError] = useState("");
   const { setCreatorSplitDestination, isLoading, isConfirmed } = useCreatorSplitDestination();
@@ -72,7 +80,13 @@ const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charg
     });
   };
 
-  const onSaveHandler = () => {
+  const onSaveHandler = async () => {
+    if (!contestChainId) return;
+
+    if (!isUserOnCorrectChain) {
+      await switchChain(config, { chainId: contestChainId });
+    }
+
     setCreatorSplitDestination(localCharge.splitFeeDestination);
   };
 
