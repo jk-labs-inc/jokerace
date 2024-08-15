@@ -1,7 +1,7 @@
 import { Radio, RadioGroup } from "@headlessui/react";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { SplitFeeDestination, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
 interface ContestParamsSplitFeeDestinationProps {
@@ -11,6 +11,7 @@ interface ContestParamsSplitFeeDestinationProps {
   onSplitFeeDestinationAddressChange?: (value: string) => void;
   includeRewardsInfo?: boolean;
   includeRewardsPool?: boolean;
+  rewardsModuleAddress?: string;
 }
 
 const PLACEHOLDER_ADDRESS = "0x7B15427393A98A041D00b50254A0C7a6fDC79F4E";
@@ -22,13 +23,26 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
   onSplitFeeDestinationAddressChange,
   includeRewardsInfo,
   includeRewardsPool,
+  rewardsModuleAddress,
 }) => {
   const [selected, setSelected] = useState<SplitFeeDestinationType>(splitFeeDestination.type);
   const [address, setAddress] = useState(splitFeeDestination.address);
+  const [isRewardsModuleAddress, setIsRewardsModuleAddress] = useState(false);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const percentageTitle = isMobile
     ? "who should we split earnings with?"
     : "we split all earnings 50/50. who should receive these?";
+
+  useEffect(() => {
+    setSelected(splitFeeDestination.type);
+    setAddress(splitFeeDestination.address);
+
+    if (splitFeeDestination.address === rewardsModuleAddress) {
+      setIsRewardsModuleAddress(true);
+    } else {
+      setIsRewardsModuleAddress(false);
+    }
+  }, [splitFeeDestination, rewardsModuleAddress]);
 
   const handleSplitFeeDestinationTypeChange = (value: SplitFeeDestinationType) => {
     setSelected(value);
@@ -36,6 +50,11 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
   };
 
   const handleSplitFeeDestinationAddressChange = (value: string) => {
+    if (value === rewardsModuleAddress) {
+      setIsRewardsModuleAddress(true);
+    } else {
+      setIsRewardsModuleAddress(false);
+    }
     setAddress(value);
     onSplitFeeDestinationAddressChange?.(value);
   };
@@ -71,16 +90,23 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                   <div className="flex flex-col gap-2">
                     <p className={`text-[20px] text-neutral-9`}>another wallet</p>
                     {checked ? (
-                      <input
-                        type="text"
-                        autoFocus
-                        value={address}
-                        onChange={e => handleSplitFeeDestinationAddressChange(e.target.value)}
-                        placeholder={
-                          isMobile ? shortenEthereumAddress(PLACEHOLDER_ADDRESS, "long") : PLACEHOLDER_ADDRESS
-                        }
-                        className="w-full md:w-[536px] h-10 bg-true-black border border-secondary-11 rounded-[10px] text-[20px] text-neutral-11 placeholder-neutral-10 placeholder:font-bold p-4 focus:outline-none"
-                      />
+                      <>
+                        <input
+                          type="text"
+                          autoFocus
+                          value={address}
+                          onChange={e => handleSplitFeeDestinationAddressChange(e.target.value)}
+                          placeholder={
+                            isMobile ? shortenEthereumAddress(PLACEHOLDER_ADDRESS, "long") : PLACEHOLDER_ADDRESS
+                          }
+                          className="w-full md:w-[536px] h-10 bg-true-black border border-secondary-11 rounded-[10px] text-[20px] text-neutral-11 placeholder-neutral-10 placeholder:font-bold p-4 focus:outline-none"
+                        />
+                        {isRewardsModuleAddress && (
+                          <p className="text-[16px] font-bold text-secondary-11">
+                            looks like this is the rewards pool! we’ll send all your earnings to the rewards.
+                          </p>
+                        )}
+                      </>
                     ) : null}
                   </div>
                 </div>

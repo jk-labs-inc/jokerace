@@ -17,7 +17,7 @@ interface ContestParamsEarningsModalProps {
 
 const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charge, isOpen, onClose }) => {
   const { address: userAddress } = useAccount();
-  const { rewardsModuleAddress, setCharge } = useContestStore(state => state);
+  const { rewardsModuleAddress } = useContestStore(state => state);
   const [splitFeeDestinationError, setSplitFeeDestinationError] = useState("");
   const { setCreatorSplitDestination, isLoading, isConfirmed } = useCreatorSplitDestination();
   const [localCharge, setLocalCharge] = useState<Charge>(charge);
@@ -57,11 +57,15 @@ const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charg
 
   const handleSplitFeeDestinationAddressChange = (address: string) => {
     const isValidAddress = addressRegex.test(address);
-    const newSplitFeeDestination = { ...charge.splitFeeDestination, address };
+    const newSplitFeeDestination = {
+      ...charge.splitFeeDestination,
+      type: SplitFeeDestinationType.AnotherWallet,
+      address,
+    };
 
     setSplitFeeDestinationError(isValidAddress ? "" : "invalid address");
 
-    setCharge?.({
+    setLocalCharge?.({
       ...charge,
       splitFeeDestination: newSplitFeeDestination,
       error: !isValidAddress,
@@ -69,8 +73,6 @@ const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charg
   };
 
   const onSaveHandler = () => {
-    if (!localCharge.splitFeeDestination.address) return;
-
     setCreatorSplitDestination(localCharge.splitFeeDestination);
   };
 
@@ -89,9 +91,10 @@ const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charg
           />
         </div>
         <ContestParamsSplitFeeDestination
-          splitFeeDestination={charge.splitFeeDestination}
+          splitFeeDestination={localCharge.splitFeeDestination}
           splitFeeDestinationError={splitFeeDestinationError}
           includeRewardsPool={rewardsModuleAddress !== ""}
+          rewardsModuleAddress={rewardsModuleAddress}
           onSplitFeeDestinationTypeChange={handleSplitFeeDestinationTypeChange}
           onSplitFeeDestinationAddressChange={handleSplitFeeDestinationAddressChange}
         />
