@@ -5,6 +5,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
@@ -71,6 +72,7 @@ export function useContest() {
     setSortingEnabled,
     setVersion,
     setRewardsModuleAddress,
+    rewardsModuleAddress,
     setRewardsAbi,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
@@ -80,6 +82,7 @@ export function useContest() {
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList } = useProposal();
   const { contestStatus } = useContestStatusStore(state => state);
+  const { setContestState } = useContestStateStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const alchemyRpc = chains
     .filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
@@ -119,23 +122,11 @@ export function useContest() {
     }
   }
 
-  function determineSplitFeeDestination(
-    splitFeeDestination: string,
-    creatorWalletAddress: string,
-    percentageToCreator: number,
-  ): SplitFeeDestinationType {
-    if (percentageToCreator === 0) {
-      return SplitFeeDestinationType.NoSplit;
-    }
-
-    if (!splitFeeDestination || splitFeeDestination === creatorWalletAddress) {
-      return SplitFeeDestinationType.CreatorWallet;
-    }
-
-    return SplitFeeDestinationType.AnotherWallet;
-  }
-
-  async function fetchContestContractData(contractConfig: ContractConfig, version: string) {
+  async function fetchContestContractData(
+    contractConfig: ContractConfig,
+    version: string,
+    rewardsModuleAddress?: string,
+  ) {
     const contracts = getContracts(contractConfig, version);
     const results = await readContracts(config, { contracts });
 
@@ -150,36 +141,42 @@ export function useContest() {
     const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
     const contestPrompt = results[7].result as string;
     const isDownvotingAllowed = Number(results[8].result) === 1;
+    const contestState = results[9].result as ContestStateEnum;
 
     if (compareVersions(version, "4.0") >= 0) {
-      const percentageToCreator = Number(results[9].result);
-      const costToPropose = Number(results[10].result);
+      const percentageToCreator = Number(results[10].result);
+      const costToPropose = Number(results[11].result);
       let costToVote = 0;
       let payPerVote = 0;
       let creatorSplitDestination = "";
 
       if (compareVersions(version, "4.2") >= 0) {
-        const sortingEnabled = Number(results[11].result) === 1;
+        const sortingEnabled = Number(results[12].result) === 1;
 
         setSortingEnabled(sortingEnabled);
       }
 
       if (compareVersions(version, "4.23") >= 0) {
         if (compareVersions(version, "4.25") >= 0) {
-          payPerVote = Number(results[13].result);
+          payPerVote = Number(results[14].result);
         }
-        costToVote = Number(results[12].result);
+        costToVote = Number(results[13].result);
       }
 
       if (compareVersions(version, "4.29") >= 0) {
-        creatorSplitDestination = results[14].result as string;
+        creatorSplitDestination = results[15].result as string;
       }
 
       setCharge({
         percentageToCreator,
         voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
         splitFeeDestination: {
-          type: determineSplitFeeDestination(creatorSplitDestination, contestAuthor, percentageToCreator),
+          type: determineSplitFeeDestination(
+            creatorSplitDestination,
+            contestAuthor,
+            percentageToCreator,
+            rewardsModuleAddress,
+          ),
           address: creatorSplitDestination,
         },
         type: {
@@ -200,6 +197,7 @@ export function useContest() {
     setVotesOpen(votesOpenDate);
     setContestPrompt(contestPrompt);
     setDownvotingAllowed(isDownvotingAllowed);
+    setContestState(contestState);
 
     // We want to track VoteCast event only 2H before the end of the contest, and only if alchemy support is enabled and if alchemy is configured
     if (isBefore(new Date(), closingVoteDate) && alchemyRpc && isAlchemyConfigured) {
@@ -232,12 +230,12 @@ export function useContest() {
     });
   }
 
-  async function fetchV3ContestInfo(contractConfig: ContractConfig, version: string) {
+  async function fetchV3ContestInfo(contractConfig: ContractConfig, version: string, rewardsModuleAddress?: string) {
     try {
       setIsListProposalsLoading(false);
 
       await Promise.all([
-        fetchContestContractData(contractConfig, version),
+        fetchContestContractData(contractConfig, version, rewardsModuleAddress),
         processUserQualifications(),
         processRequirementsData(),
       ]);
@@ -326,41 +324,47 @@ export function useContest() {
 
       const { contractConfig, version } = abiResult;
 
-      let contestRewardModuleAddress = "";
-
-      if (contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0) {
-        contestRewardModuleAddress = (await readContract(config, {
-          ...contractConfig,
-          functionName: "officialRewardsModule",
-          args: [],
-        })) as string;
-        if (contestRewardModuleAddress === "0x0000000000000000000000000000000000000000") {
-          setSupportsRewardsModule(false);
-          contestRewardModuleAddress = "";
-        } else {
-          setSupportsRewardsModule(true);
-        }
-      } else {
-        setSupportsRewardsModule(false);
-        contestRewardModuleAddress = "";
-      }
-
-      setRewardsModuleAddress(contestRewardModuleAddress);
-
-      if (contestRewardModuleAddress) {
-        const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainId);
-        //@ts-ignore
-        setRewardsAbi(abiRewardsModule);
-      }
+      const rewardsModuleAddress = await fetchRewardsModuleData(contractConfig);
 
       if (compareVersions(version, "3.0") == -1) {
         await fetchV1ContestInfo(contractConfig, version);
       } else {
-        await fetchV3ContestInfo(contractConfig, version);
+        await fetchV3ContestInfo(contractConfig, version, rewardsModuleAddress);
       }
     } catch (error) {
       console.error("An error occurred while fetching data:", error);
     }
+  }
+
+  async function fetchRewardsModuleData(contractConfig: ContractConfig) {
+    let contestRewardModuleAddress = "";
+
+    if (contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0) {
+      contestRewardModuleAddress = (await readContract(config, {
+        ...contractConfig,
+        functionName: "officialRewardsModule",
+        args: [],
+      })) as string;
+      if (contestRewardModuleAddress === "0x0000000000000000000000000000000000000000") {
+        setSupportsRewardsModule(false);
+        contestRewardModuleAddress = "";
+      } else {
+        setSupportsRewardsModule(true);
+      }
+    } else {
+      setSupportsRewardsModule(false);
+      contestRewardModuleAddress = "";
+    }
+
+    setRewardsModuleAddress(contestRewardModuleAddress);
+
+    if (contestRewardModuleAddress) {
+      const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainId);
+      //@ts-ignore
+      setRewardsAbi(abiRewardsModule);
+    }
+
+    return contestRewardModuleAddress;
   }
 
   /**
@@ -410,6 +414,27 @@ export function useContest() {
       setVotingRequirements(null);
       setSubmissionRequirements(null);
     }
+  }
+
+  function determineSplitFeeDestination(
+    splitFeeDestination: string,
+    creatorWalletAddress: string,
+    percentageToCreator: number,
+    rewardsModuleAddress?: string,
+  ): SplitFeeDestinationType {
+    if (percentageToCreator === 0) {
+      return SplitFeeDestinationType.NoSplit;
+    }
+
+    if (!splitFeeDestination || splitFeeDestination === creatorWalletAddress) {
+      return SplitFeeDestinationType.CreatorWallet;
+    }
+
+    if (rewardsModuleAddress && splitFeeDestination === rewardsModuleAddress) {
+      return SplitFeeDestinationType.RewardsPool;
+    }
+
+    return SplitFeeDestinationType.AnotherWallet;
   }
 
   return {

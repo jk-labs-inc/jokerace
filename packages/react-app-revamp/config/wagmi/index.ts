@@ -1,6 +1,7 @@
 import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
+  bitgetWallet,
   coinbaseWallet,
   imTokenWallet,
   metaMaskWallet,
@@ -16,7 +17,6 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
-
 import { aevo } from "./custom-chains/aevo";
 import { ancient8 } from "./custom-chains/ancient8";
 import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
@@ -26,7 +26,9 @@ import { artheraTestnet } from "./custom-chains/artheraTestnet";
 import { astarZkevm } from "./custom-chains/astarZkevm";
 import { astarZkevmTestnet } from "./custom-chains/astarZkevmTestnet";
 import { astriaDusk2 } from "./custom-chains/astriaDusk2";
-import { avaxCChain } from "./custom-chains/avaxCChain";
+import { aurora } from "./custom-chains/aurora";
+import { auroraTestnet } from "./custom-chains/auroraTestnet";
+import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
 import { berachainBartioTestnet } from "./custom-chains/berachainBartioTestnet";
@@ -46,6 +48,9 @@ import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { fantom } from "./custom-chains/fantom";
 import { fantomTestnet } from "./custom-chains/fantomTestnet";
 import { fhenixTestnet } from "./custom-chains/fhenix";
+import { fluentTestnet } from "./custom-chains/fluentTestnet";
+import { forma } from "./custom-chains/forma";
+import { formaTestnet } from "./custom-chains/formaTestnet";
 import { frameTestnet } from "./custom-chains/frameTestnet";
 import { fraxtal } from "./custom-chains/fraxtal";
 import { fraxtalTestnet } from "./custom-chains/fraxtalTestnet";
@@ -59,6 +64,7 @@ import { hedera } from "./custom-chains/hedera";
 import { holesky } from "./custom-chains/holesky";
 import { inEvm } from "./custom-chains/inEvm";
 import { inEvmTestnet } from "./custom-chains/inEvmTestnet";
+import { kaiaTestnet } from "./custom-chains/kaiaTestnet";
 import { kroma } from "./custom-chains/kroma";
 import { linea } from "./custom-chains/linea";
 import { lineaTestnet } from "./custom-chains/lineaTestnet";
@@ -74,13 +80,12 @@ import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { merlin } from "./custom-chains/merlin";
 import { merlinTestnet } from "./custom-chains/merlinTestnet";
+import { metis } from "./custom-chains/metis";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
 import { morphTestnet } from "./custom-chains/morphTestnet";
-import { metis } from "./custom-chains/metis";
+import { movementTestnet } from "./custom-chains/movementTestnet";
 import { nautilusChain } from "./custom-chains/nautilusChain";
-import { near } from "./custom-chains/near";
-import { nearTestnet } from "./custom-chains/nearTestnet";
 import { neon } from "./custom-chains/neon";
 import { neonDevnet } from "./custom-chains/neonDevnet";
 import { optimism } from "./custom-chains/optimism";
@@ -98,6 +103,7 @@ import { quartz } from "./custom-chains/quartz";
 import { redstoneHolesky } from "./custom-chains/redstoneHolesky";
 import { ronin } from "./custom-chains/ronin";
 import { roninTestnet } from "./custom-chains/roninTestnet";
+import { sanko } from "./custom-chains/sanko";
 import { scroll } from "./custom-chains/scroll";
 import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
@@ -109,6 +115,7 @@ import { taiko } from "./custom-chains/taiko";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
+import { weavevmTestnet } from "./custom-chains/weavevmTestnet";
 import { xLayer } from "./custom-chains/xLayer";
 import { xLayerTestnet } from "./custom-chains/xLayerTestnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
@@ -131,13 +138,13 @@ export const chains: readonly [Chain, ...Chain[]] = [
   polygonZk,
   base,
   evmos,
-  avaxCChain,
+  avalanche,
   zora,
   bnb,
   linea,
   celo,
   lootChain,
-  near,
+  aurora,
   gnosis,
   mantle,
   lukso,
@@ -179,7 +186,9 @@ export const chains: readonly [Chain, ...Chain[]] = [
   hedera,
   taiko,
   ham,
-  metis, 
+  metis,
+  sanko,
+  forma,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
@@ -192,7 +201,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   celoTestnet,
   optimismTestnet,
   lootChainTestnet,
-  nearTestnet,
+  auroraTestnet,
   gnosisTestnet,
   mantleTestnet,
   luksoTestnet,
@@ -222,6 +231,11 @@ export const chains: readonly [Chain, ...Chain[]] = [
   fhenixTestnet,
   goerli,
   seiTestnet,
+  movementTestnet,
+  kaiaTestnet,
+  fluentTestnet,
+  weavevmTestnet,
+  formaTestnet,
   mainnet,
 ];
 
@@ -248,6 +262,7 @@ const connectors = connectorsForWallets(
         rabbyWallet,
         phantomWallet,
         safeWallet,
+        bitgetWallet,
       ],
     },
   ],

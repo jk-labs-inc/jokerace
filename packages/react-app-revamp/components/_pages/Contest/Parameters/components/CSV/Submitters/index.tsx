@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+import { useContestStore } from "@hooks/useContest/store";
 import useSubmitters from "@hooks/useSubmitters";
 import { FC } from "react";
 import { CSVLink } from "react-csv";
@@ -9,7 +10,12 @@ interface ContestParamatersCSVSubmittersProps {
 }
 
 const ContestParamatersCSVSubmitters: FC<ContestParamatersCSVSubmittersProps> = ({ submissionMerkleRoot }) => {
-  const { submitters, isLoading, isError, retry } = useSubmitters(submissionMerkleRoot);
+  const { isV3 } = useContestStore(state => state);
+  const { submitters, isLoading, isError, retry } = useSubmitters(submissionMerkleRoot, isV3);
+
+  if (!isV3) {
+    return null;
+  }
 
   if (isLoading) {
     return (
@@ -24,7 +30,7 @@ const ContestParamatersCSVSubmitters: FC<ContestParamatersCSVSubmittersProps> = 
       <li className="list-disc text-negative-11">
         <p className="text-negative-11 font-bold">
           ruh roh! we couldn't load the submitters,{" "}
-          <span className="underline cursor-pointer" onClick={retry}>
+          <span className="underline cursor-pointer" onClick={() => retry()}>
             try again!
           </span>
         </p>

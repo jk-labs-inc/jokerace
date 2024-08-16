@@ -48,8 +48,8 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
   );
 
   return (
-    <div className="flex flex-col gap-12">
-      <p className="text-[20px] font-bold text-neutral-11">submissions</p>
+    <div className="flex flex-col gap-8">
+      <p className="text-[20px] font-bold text-neutral-14">submissions</p>
       <ul className="pl-4 text-[16px] font-bold">
         <li className="list-disc">
           qualified wallets can enter{" "}

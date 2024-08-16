@@ -1,10 +1,8 @@
-import { toastError } from "@components/UI/Toast";
 import { MAX_SUBMISSIONS_LIMIT } from "@hooks/useDeployContest";
 import { ContestVisibility, useDeployContestStore } from "@hooks/useDeployContest/store";
-import { fetchChargeDetails } from "lib/monetization";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useAccount } from "wagmi";
+import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
@@ -13,20 +11,20 @@ import ContestParamsVisibility from "./components/ContestVisibility";
 import ContestParamsDownvote from "./components/Downvote";
 import ContestParamsSubmissionsPerContest from "./components/SubmissionsPerContest";
 import ContestParamsSubmissionsPerPlayer from "./components/SubmissionsPerPlayer";
-import { steps } from "../..";
+import { ChevronUpIcon } from "@heroicons/react/24/outline";
+import ContestParamsMetadata from "./components/Metadata";
 
 export const VOTING_STEP = 6;
 
 const CreateContestParams = () => {
-  const { chain } = useAccount();
   const {
     customization,
     setCustomization,
     advancedOptions,
     setAdvancedOptions,
     step,
-
-    setStep,
+    metadataToggle,
+    setMetadataToggle,
   } = useDeployContestStore(state => state);
   const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
   const [maxSubmissionsError, setMaxSubmissionsError] = useState<string>("");
@@ -34,26 +32,6 @@ const CreateContestParams = () => {
   const disableNextStep = Boolean(submissionsPerUserError) || Boolean(maxSubmissionsError);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const customizeTitle = isMobile ? "finally, we customize" : "finally, we do a little customizing";
-
-  useEffect(() => {
-    if (!chain) return;
-
-    const fetchDetails = async () => {
-      try {
-        const { isError, minCostToPropose, minCostToVote } = await fetchChargeDetails(chain.name.toLowerCase());
-
-        if (isError || !minCostToPropose || !minCostToVote) {
-          toastError(`${chain.name} chain is not supported for anyone to vote.`);
-          setStep(VOTING_STEP);
-        }
-      } catch (error) {
-        toastError(`${chain.name} chain is not supported for anyone to vote.`);
-        setStep(VOTING_STEP);
-      }
-    };
-
-    fetchDetails();
-  }, [chain, setStep]);
 
   useEffect(() => {
     validateMaxSubmissions(customization.maxSubmissions);

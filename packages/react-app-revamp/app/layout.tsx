@@ -7,6 +7,7 @@ import { GA_TRACKING_ID } from "lib/gtag";
 import { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { headers } from "next/headers";
+import NextTopLoader from "nextjs-toploader";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "react-toastify/dist/ReactToastify.min.css";
@@ -77,6 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${lato.variable} ${sabo.variable}`}>
       <body>
         <div id="__next">
+          <NextTopLoader color="#BB65FF" shadow="0 0 10px #BB65FF, 0 0 5px #78FFC6" showSpinner={false} />
           <Providers cookie={cookie}>
             <LayoutBase>{children}</LayoutBase>
             <Portal />

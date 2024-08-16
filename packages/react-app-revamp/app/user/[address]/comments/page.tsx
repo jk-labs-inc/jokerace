@@ -1,5 +1,7 @@
+import UserListSkeleton from "@components/_pages/User/components/Skeleton";
 import { getAddressProps } from "@helpers/getAddressProps";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import UserCommentsLayout from "./comments";
 
 type Props = {
@@ -14,7 +16,11 @@ const Page = async (props: Props) => {
     return notFound();
   }
 
-  return <UserCommentsLayout address={addressProps.address ?? ""} />;
+  return (
+    <Suspense fallback={<UserListSkeleton />}>
+      <UserCommentsLayout address={addressProps.address ?? ""} />
+    </Suspense>
+  );
 };
 
 export default Page;

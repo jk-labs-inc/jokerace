@@ -1,5 +1,6 @@
 import { chains, config } from "@config/wagmi";
 import { isSupabaseConfigured } from "@helpers/database";
+import { formatBalance } from "@helpers/formatBalance";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
@@ -9,12 +10,11 @@ import moment from "moment";
 import { SearchOptions } from "types/search";
 import { formatUnits } from "viem";
 import { sortContests } from "./utils/sortContests";
-import { formatBalance } from "@helpers/formatBalance";
 
 export const ITEMS_PER_PAGE = 7;
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
-interface ContestReward {
+export interface ContestReward {
   contestAddress: string;
   chain: string;
   token: {
@@ -24,6 +24,29 @@ interface ContestReward {
   winners: number;
   numberOfTokens: number;
   rewardsPaidOut: boolean;
+}
+
+export interface Contest {
+  created_at: string;
+  start_at: string | null;
+  end_at: string | null;
+  address: string | null;
+  author_address: string | null;
+  network_name: string | null;
+  vote_start_at: string | null;
+  featured: boolean | null;
+  title: string | null;
+  type: string | null;
+  summary: string | null;
+  prompt: string | null;
+  votingMerkleRoot: string | null;
+  submissionMerkleRoot: string | null;
+  hidden: boolean;
+  voting_requirements: Record<string, any> | null;
+  submission_requirements: Record<string, any> | null;
+  cost_to_propose: number | null;
+  percentage_to_propose: number | null;
+  cost_to_vote: number | null;
 }
 
 async function getContractConfig(address: string, chainId: number) {
@@ -274,22 +297,35 @@ export async function getUserContests(
     const { from, to } = getPagination(currentPage, itemsPerPage);
 
     try {
-      let query = supabase
-        .from("contests_v3")
-        .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, hidden, votingMerkleRoot, voting_requirements, submission_requirements",
-          { count: "exact" },
-        )
-        .eq("author_address", profileAddress)
-        .order("created_at", { ascending: false });
+      const executeQuery = async (useIlike: boolean) => {
+        let query = supabase
+          .from("contests_v3")
+          .select(
+            "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, hidden, votingMerkleRoot, voting_requirements, submission_requirements",
+            { count: "exact" },
+          );
 
-      if (sortBy) {
-        query = sortContests(query, sortBy);
+        if (useIlike) {
+          query = query.ilike("author_address", profileAddress);
+        } else {
+          query = query.eq("author_address", profileAddress);
+        }
+        query = query.order("created_at", { ascending: false });
+
+        if (sortBy) {
+          query = sortContests(query, sortBy);
+        }
+        return query.range(from, to);
+      };
+
+      // first attempt with eq
+      let result = await executeQuery(false);
+
+      // if no results, it could be that address is lowercase, try with ilike
+      if (result.data?.length === 0) {
+        result = await executeQuery(true);
       }
 
-      query = query.range(from, to);
-
-      const result = await query;
       const { data, count, error } = result;
       if (error) {
         throw new Error(error.message);
@@ -299,7 +335,7 @@ export async function getUserContests(
         data.map(contest => processContestQualifications(contest, currentUserAddress)),
       );
 
-      return { data: processedData, count };
+      return { data: processedData, count: count ?? 0 };
     } catch (e) {
       console.error(e);
       return { data: [], count: 0 };
@@ -308,7 +344,11 @@ export async function getUserContests(
   return { data: [], count: 0 };
 }
 
-export async function getFeaturedContests(currentPage: number, itemsPerPage: number, userAddress?: string) {
+export async function getFeaturedContests(
+  currentPage: number,
+  itemsPerPage: number,
+  userAddress?: string,
+): Promise<{ data: Contest[]; count: number | null }> {
   if (!isSupabaseConfigured) return { data: [], count: 0 };
 
   const config = await import("@config/supabase");

@@ -20,7 +20,6 @@ import { useAccount } from "wagmi";
 interface ContestProps {
   contest: any;
   rewards: any;
-  compact: boolean;
   loading: boolean;
   rewardsLoading: boolean;
   allowToHide?: boolean;
@@ -31,7 +30,7 @@ export type TimeLeft = {
   type: "days" | "hours" | "minutes";
 };
 
-const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowToHide, rewardsLoading }) => {
+const Contest: FC<ContestProps> = ({ contest, loading, rewards, allowToHide, rewardsLoading }) => {
   const { address } = useAccount();
   const pathname = usePathname();
   const [contestReward, setContestReward] = useState<any>(null);

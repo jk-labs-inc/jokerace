@@ -26,13 +26,18 @@ contract RewardsModuleTest is Test {
     uint256 public constant ZERO_COST_TO_VOTE = 0;
     uint256 public constant PAY_PER_VOTE_OFF = 0;
     address public constant CREATOR_SPLIT_DESTINATION = CREATOR_ADDRESS_1;
+    address public constant JK_LABS_SPLIT_DESTINATION = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
 
     // SORTING INT PARAMS
     uint256 public constant SORTING_ENABLED = 1;
     uint256 public constant RANK_LIMIT_250 = 250;
     uint256 public constant RANK_LIMIT_1 = 1;
 
-    Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
+    // METADATA CONSTRUCTOR PARAMS
+    string public constant METADATA_FIELDS_SCHEMA =
+        "{\'Test Address Field\': \'address\', \'Test String Field\': \'string\', \'Test Uint Field\': \'uint256\'}";
+
+    Governor.IntConstructorArgs public zeroCostIntConstructorArgs = Governor.IntConstructorArgs(
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
@@ -44,11 +49,10 @@ contract RewardsModuleTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         ZERO_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
-        PAY_PER_VOTE_OFF,
-        CREATOR_SPLIT_DESTINATION
+        PAY_PER_VOTE_OFF
     );
 
-    Governor.ConstructorArgs public zeroCostToProposeAndRankLimitOneNumParams = Governor.ConstructorArgs(
+    Governor.IntConstructorArgs public zeroCostAndRankLimitIntConstructorArgs = Governor.IntConstructorArgs(
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
@@ -60,8 +64,18 @@ contract RewardsModuleTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         ZERO_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
-        PAY_PER_VOTE_OFF,
-        CREATOR_SPLIT_DESTINATION
+        PAY_PER_VOTE_OFF
+    );
+
+    Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
+        zeroCostIntConstructorArgs, CREATOR_SPLIT_DESTINATION, JK_LABS_SPLIT_DESTINATION, METADATA_FIELDS_SCHEMA
+    );
+
+    Governor.ConstructorArgs public zeroCostToProposeAndRankLimitOneNumParams = Governor.ConstructorArgs(
+        zeroCostAndRankLimitIntConstructorArgs,
+        CREATOR_SPLIT_DESTINATION,
+        JK_LABS_SPLIT_DESTINATION,
+        METADATA_FIELDS_SCHEMA
     );
 
     /*
@@ -96,36 +110,60 @@ contract RewardsModuleTest is Test {
     bytes32[] public submissionProof1 = [bytes32(0x3525e2aa1b921658191cfccf7e63bf6bcac64a0315ca9eb04f2bcc08975d431f)];
     bytes32[] public submissionProof2 = [bytes32(0x3704b461c09457df5491016097977d5364e607b59049ca6d36dfb9c16d03a2bf)];
 
+    // METADATA PARAMS
     address[] public safeSigners = [address(0)];
     uint8 public constant SAFE_THRESHOLD = 1;
+    address[] public METADATA_FIELDS_ADDRESS_ARRAY = [CREATOR_ADDRESS_1]; // placeholder value
+    string[] public METADATA_FIELDS_STRING_ARRAY = [METADATA_FIELDS_SCHEMA]; // placeholder value
+    uint256[] public METADATA_FIELDS_UINT_ARRAY = [SAFE_THRESHOLD]; // placeholder value
 
     Governor.ProposalCore public firstProposalPA1 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
         description: "firstProposalPA1",
         exists: true,
         targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
+        fieldsMetadata: Governor.FieldsMetadata({
+            addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
+            stringArray: METADATA_FIELDS_STRING_ARRAY,
+            uintArray: METADATA_FIELDS_UINT_ARRAY
+        })
     });
     Governor.ProposalCore public secondProposalPA1 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
         description: "secondProposalPA1",
         exists: true,
         targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
+        fieldsMetadata: Governor.FieldsMetadata({
+            addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
+            stringArray: METADATA_FIELDS_STRING_ARRAY,
+            uintArray: METADATA_FIELDS_UINT_ARRAY
+        })
     });
     Governor.ProposalCore public thirdProposalPA1 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
         description: "thirdProposalPA1",
         exists: true,
         targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
+        fieldsMetadata: Governor.FieldsMetadata({
+            addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
+            stringArray: METADATA_FIELDS_STRING_ARRAY,
+            uintArray: METADATA_FIELDS_UINT_ARRAY
+        })
     });
     Governor.ProposalCore public firstProposalPA2 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_2,
         description: "firstProposalPA2",
         exists: true,
         targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
+        fieldsMetadata: Governor.FieldsMetadata({
+            addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
+            stringArray: METADATA_FIELDS_STRING_ARRAY,
+            uintArray: METADATA_FIELDS_UINT_ARRAY
+        })
     });
 
     // DELETION VARS
