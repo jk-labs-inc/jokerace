@@ -6,8 +6,6 @@ packages/react-app-revamp/public/sw.js
 packages/react-app-revamp/public/workbox-*.js
 packages/react-app-revamp/public/worker-*.js
 
-# Cloudfare workers
-packages/react-app-revamp/image-processing-worker
 
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.

@@ -43,5 +43,4 @@ yarn-error.log*
 **/public/workbox-*.js.map
 **/public/worker-*.js.map
 
-# cloudfare worker
-/image-processing-worker/
+
