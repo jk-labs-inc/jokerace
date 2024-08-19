@@ -6,6 +6,7 @@ import { loadFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { Interweave, Node } from "interweave";
@@ -20,7 +21,6 @@ import { useAccount } from "wagmi";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 import ImageWithFallback from "./components/ImageWithFallback";
 import ProposalContentInfo from "./components/ProposalContentInfo";
-import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 
 export interface Proposal {
   id: string;
@@ -164,6 +164,16 @@ const ProposalContent: FC<ProposalContentProps> = ({
     saveToLocalStorage(HIDDEN_PROPOSALS_STORAGE_KEY, visibilityState);
   };
 
+  const preprocessContent = (content: string) => {
+    // Remove trailing newlines and spaces
+    let processed = content.trim();
+    // Remove consecutive newlines (replace with a single newline)
+    processed = processed.replace(/\n\s*\n/g, "\n");
+    // Remove empty paragraphs
+    processed = processed.replace(/<p>\s*<\/p>/g, "");
+    return processed;
+  };
+
   return (
     <div className="flex flex-col gap-4 pb-4 border-b border-primary-2 animate-reveal">
       <ProposalContentInfo
@@ -191,7 +201,12 @@ const ProposalContent: FC<ProposalContentProps> = ({
                     <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
                   </div>
                 ) : (
-                  <Interweave className="prose prose-invert" content={proposal.content} transform={transform} />
+                  <Interweave
+                    className="prose prose-invert interweave-container"
+                    content={proposal.content}
+                    transform={transform}
+                    tagName="div"
+                  />
                 )}
               </Link>
             </div>

@@ -235,6 +235,10 @@ li {
   height: 32px !important;
 }
 
+.interweave-container {
+  line-height: 0 !important;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
