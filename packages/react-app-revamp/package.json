@@ -32,7 +32,7 @@
     "@types/lodash": "4.17.7",
     "@types/node": "20.16.1",
     "@typescript-eslint/parser": "7.18.0",
-    "@wagmi/connectors": "5.1.5",
+    "@wagmi/connectors": "5.1.6",
     "@wagmi/core": "2.13.4",
     "cheerio": "1.0.0",
     "class-variance-authority": "0.7.0",
