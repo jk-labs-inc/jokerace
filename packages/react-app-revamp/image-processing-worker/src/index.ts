@@ -1,4 +1,7 @@
-import Jimp from 'jimp';
+import * as _Jimp from 'jimp';
+
+// @ts-ignore
+const Jimp = typeof self !== 'undefined' ? self.Jimp || _Jimp : _Jimp;
 
 interface Sizes {
 	[key: string]: { width: number; height: number };
@@ -14,30 +17,80 @@ export interface Env {
 	IMAGE_QUEUE: Queue;
 }
 
-interface QueueMessage {
+interface R2ObjectInfo {
 	key: string;
+	size: number;
+	eTag: string;
 }
 
-async function resizeImage(imageData: ArrayBuffer, width: number, height: number): Promise<ArrayBuffer> {
-	const image = await Jimp.read(imageData);
-	image.resize(width, height, Jimp.RESIZE_BEZIER);
-	const quality = 80;
-	return await image.quality(quality).getBufferAsync(Jimp.MIME_JPEG);
+interface R2Event {
+	account: string;
+	bucket: string;
+	object: R2ObjectInfo;
+	action: string;
+	eventTime: string;
+}
+
+async function resizeImage(imageData: ArrayBuffer, maxWidth: number, maxHeight: number): Promise<ArrayBuffer> {
+	try {
+		const image = await Jimp.read(imageData);
+		const originalWidth = image.getWidth();
+		const originalHeight = image.getHeight();
+
+		// Calculate aspect ratio
+		const aspectRatio = originalWidth / originalHeight;
+
+		// Calculate new dimensions
+		let newWidth = maxWidth;
+		let newHeight = maxHeight;
+
+		if (aspectRatio > 1) {
+			// Image is wider than it is tall
+			newHeight = Math.round(newWidth / aspectRatio);
+			if (newHeight > maxHeight) {
+				newHeight = maxHeight;
+				newWidth = Math.round(newHeight * aspectRatio);
+			}
+		} else {
+			// Image is taller than it is wide
+			newWidth = Math.round(newHeight * aspectRatio);
+			if (newWidth > maxWidth) {
+				newWidth = maxWidth;
+				newHeight = Math.round(newWidth / aspectRatio);
+			}
+		}
+
+		image.resize(newWidth, newHeight, Jimp.RESIZE_BEZIER);
+		const quality = 80;
+		return await image.quality(quality).getBufferAsync(Jimp.MIME_JPEG);
+	} catch (error) {
+		console.error('Error resizing image:', error);
+		throw error;
+	}
 }
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		if (request.method === 'POST') {
-			const { key } = (await request.json()) as QueueMessage;
-			await env.IMAGE_QUEUE.send(JSON.stringify({ key }));
-			return new Response('Image queued for processing', { status: 202 });
+			try {
+				const body = await request.json();
+				await env.IMAGE_QUEUE.send(body);
+				return new Response('Event queued for processing', { status: 202 });
+			} catch (error) {
+				return new Response('Error processing request', { status: 500 });
+			}
 		}
-		return new Response('Send a POST request with a key to process an image');
+		return new Response('Send a POST request with R2 event data to process an image');
 	},
 
-	async queue(batch: MessageBatch<string>, env: Env, ctx: ExecutionContext): Promise<void> {
+	async queue(batch: MessageBatch<R2Event>, env: Env, ctx: ExecutionContext): Promise<void> {
 		for (const message of batch.messages) {
-			const { key } = JSON.parse(message.body) as QueueMessage;
+			const event: R2Event = message.body;
+			const key = event.object.key;
+
+			if (Object.keys(SIZES).some((size) => key.includes(`-${size}`))) {
+				continue;
+			}
 
 			try {
 				const r2Object = await env.MY_BUCKET.get(key);
@@ -48,21 +101,20 @@ export default {
 
 				const imageData = await r2Object.arrayBuffer();
 
-				for (const [size, dimensions] of Object.entries(SIZES)) {
-					const { width, height } = dimensions;
-
-					const resizedImageData = await resizeImage(imageData, width, height);
-
-					await env.MY_BUCKET.put(`${key}-${size}`, resizedImageData, {
-						httpMetadata: {
-							contentType: 'image/jpeg',
-						},
-					});
-				}
-
-				console.log('Image processed successfully:', key);
+				await Promise.all(
+					Object.entries(SIZES).map(async ([size, dimensions]) => {
+						const { height, width } = dimensions;
+						const resizedImageData = await resizeImage(imageData, width, height);
+						const newKey = `${key.replace(/\.[^/.]+$/, '')}-${size}`;
+						await env.MY_BUCKET.put(newKey, resizedImageData, {
+							httpMetadata: {
+								contentType: 'image/jpeg',
+							},
+						});
+					}),
+				);
 			} catch (error) {
-				console.error('Error processing message:', error);
+				console.error('Error processing image:', error);
 			}
 		}
 	},

@@ -177,21 +177,25 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
       {!isContentHidden ? (
         <div className="md:mx-8 flex flex-col gap-4">
-          <Link
-            className="p-4 rounded-[8px] bg-primary-1 border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out overflow-hidden"
-            href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
-            shallow
-            scroll={false}
-            prefetch
-          >
-            {isProposalTweet ? (
-              <div className="dark not-prose">
-                <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
-              </div>
-            ) : (
-              <Interweave className="prose prose-invert" content={proposal.content} transform={transform} />
-            )}
-          </Link>
+          <div className="flex w-full">
+            <div className="max-w-full">
+              <Link
+                className="inline-block p-4 rounded-[8px] bg-primary-1 border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out overflow-hidden"
+                href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
+                shallow
+                scroll={false}
+                prefetch
+              >
+                {isProposalTweet ? (
+                  <div className="dark not-prose">
+                    <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
+                  </div>
+                ) : (
+                  <Interweave className="prose prose-invert" content={proposal.content} transform={transform} />
+                )}
+              </Link>
+            </div>
+          </div>
           <div className="flex items-center justify-between">
             <div className="flex gap-2 items-center">
               {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
