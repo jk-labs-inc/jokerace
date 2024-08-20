@@ -43,7 +43,7 @@
     "@types/uuid": "10.0.0",
     "@typescript-eslint/parser": "7.18.0",
     "@vercel/node": "3.2.8",
-    "@wagmi/connectors": "5.1.6",
+    "@wagmi/connectors": "5.1.7",
     "@wagmi/core": "2.13.4",
     "autoprefixer": "10.4.20",
     "cheerio": "1.0.0",
