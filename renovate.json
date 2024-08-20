@@ -10,6 +10,14 @@
   "ignoreDeps": ["react-native"],
   "packageRules": [
     {
+      "packagePatterns": ["*"],
+      "enabled": false
+    },
+    {
+      "paths": ["packages/react-app-revamp/package.json"],
+      "enabled": true
+    },
+    {
       "matchUpdateTypes": ["minor", "patch"],
       "matchCurrentVersion": "!/^0/",
       "automerge": true,
