@@ -8,16 +8,6 @@ const IMAGE_UPLOAD_BUCKET = process.env.NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET as strin
 
 const IMAGE_PUBLIC_URL = "https://images.jokerace.io";
 
-export interface ResizedImage {
-  data: string;
-  contentType: string;
-}
-
-export interface ResizeResponse {
-  success: boolean;
-  resizedImages: Record<string, ResizedImage>;
-}
-
 interface LoadFileOptions {
   fileId: string;
 }
