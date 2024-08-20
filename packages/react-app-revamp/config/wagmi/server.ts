@@ -1,7 +1,6 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
-
 import { aevo } from "./custom-chains/aevo";
 import { ancient8 } from "./custom-chains/ancient8";
 import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
@@ -50,6 +49,7 @@ import { holesky } from "./custom-chains/holesky";
 import { inEvm } from "./custom-chains/inEvm";
 import { inEvmTestnet } from "./custom-chains/inEvmTestnet";
 import { kaiaTestnet } from "./custom-chains/kaiaTestnet";
+import { kakarotTestnet } from "./custom-chains/kakarotTestnet";
 import { kroma } from "./custom-chains/kroma";
 import { linea } from "./custom-chains/linea";
 import { lineaTestnet } from "./custom-chains/lineaTestnet";
@@ -100,7 +100,6 @@ import { taiko } from "./custom-chains/taiko";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
-import { weavevmTestnet } from "./custom-chains/weavevmTestnet";
 import { xLayer } from "./custom-chains/xLayer";
 import { xLayerTestnet } from "./custom-chains/xLayerTestnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
@@ -214,6 +213,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   kaiaTestnet,
   fluentTestnet,
   formaTestnet,
+  kakarotTestnet,
   mainnet,
 ];
 
