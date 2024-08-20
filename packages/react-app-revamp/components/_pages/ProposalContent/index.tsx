@@ -162,8 +162,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
     const element = node.tagName.toLowerCase();
     const src = node.getAttribute("src") ?? "";
 
-    console.log({ containerWidth });
-
     if (element === "img") {
       return (
         <ImageWithFallback
@@ -224,7 +222,13 @@ const ProposalContent: FC<ProposalContentProps> = ({
                   onClick={handleVotingModalOpen}
                   className="min-w-36 flex-shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-primary-1 rounded-[16px] cursor-pointer border border-transparent hover:border-positive-11 transition-colors duration-300 ease-in-out"
                 >
-                  <Image src="/contest/upvote-2.svg" width={23} height={23} alt="upvote" className="flex-shrink-0" />
+                  <Image
+                    src="/contest/upvote.svg"
+                    width={21.56}
+                    height={20.44}
+                    alt="upvote"
+                    className="flex-shrink-0"
+                  />
 
                   <p className="text-[16px] text-positive-11 font-bold flex-grow text-center">
                     {formatNumberAbbreviated(proposal.votes)} vote{proposal.votes !== 1 ? "s" : ""}
