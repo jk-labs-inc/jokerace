@@ -6,9 +6,6 @@
   "devDependencies": {
     "copyfiles": "2.4.1"
   },
-  "dependencies": {
-    "copyfiles": "2.4.1"
-  },
   "scripts": {
     "forgeformat": "forge fmt",
     "forgetest": "forge test",

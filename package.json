@@ -2,13 +2,6 @@
   "name": "@scaffold-eth/monorepo",
   "packageManager": "yarn@1.22.22",
   "version": "1.0.0",
-  "keywords": [
-    "ethereum",
-    "react",
-    "uniswap",
-    "workspaces",
-    "yarn"
-  ],
   "private": true,
   "scripts": {
     "dev": "yarn workspace @scaffold-eth/react-app-revamp dev",
