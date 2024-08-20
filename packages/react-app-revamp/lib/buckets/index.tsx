@@ -71,28 +71,28 @@ export const saveFileToBucket = async ({ fileId, content }: SaveFileOptions): Pr
   }
 };
 
-/**
- * Uploads an image file to the specified S3 bucket.
- *
- * @param options - Contains fileId, type and content as a File,
- */
 export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions): Promise<string> => {
   toastLoading("Uploading image...", false);
   try {
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
     const input = {
       Bucket: IMAGE_UPLOAD_BUCKET,
       Key: fileId,
-      Body: file,
+      Body: buffer,
       ContentType: type,
     };
 
     const command = new PutObjectCommand(input);
     await s3.send(command);
-    toastSuccess("Image uploaded successfully!");
 
-    return `${IMAGE_PUBLIC_URL}/${fileId}`;
+    const originalUrl = `${IMAGE_PUBLIC_URL}/${fileId}`;
+    toastSuccess("Image uploaded successfully! Resized versions will be available shortly.");
+    return originalUrl;
   } catch (error: any) {
     toastError("Failed to upload an image, please try again.");
+    console.error("Upload error:", error);
     throw new Error(`Failed to upload image with ID ${fileId} to bucket ${IMAGE_UPLOAD_BUCKET}`);
   }
 };

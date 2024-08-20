@@ -137,8 +137,8 @@ const ContestRewards = () => {
                   <div className="flex flex-col gap-1">
                     <p className="text-[24px] text-neutral-11 font-bold">rewards to distribute</p>
                     <p className="text-neutral-11 text-[12px]">
-                      <b>in case of ties, funds will be reverted to you to distribute manually.</b> please be aware of
-                      any obligations you might
+                      <b>in case of ties, funds will be reverted to creator to distribute manually.</b> please be aware
+                      of any obligations you might
                       <br /> face for receiving funds.
                     </p>
                   </div>

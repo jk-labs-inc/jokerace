@@ -235,6 +235,12 @@ li {
   height: 32px !important;
 }
 
+.interweave-container {
+  line-height: 0 !important;
+  width: 100%;
+  max-width: 100%;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -335,6 +341,11 @@ li {
 
   .prose :where(a):not(:where([class~="not-prose"] *)) {
     color: inherit !important;
+  }
+
+  .prose :where(img):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
   }
 
   .prose :where(hr):not(:where([class~="not-prose"] *)) {

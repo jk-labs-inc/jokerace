@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const weavevmTestnet: Chain = {
   id: 9496,
   name: "WeaveVM",
-  iconUrl: "/wvm.svg",
+  iconUrl: "/wvm.png",
   nativeCurrency: {
     decimals: 18,
     name: "tWVM",

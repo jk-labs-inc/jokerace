@@ -6,21 +6,21 @@ import { loadFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useUserStore } from "@hooks/useUser/store";
-import { load } from "cheerio";
 import { Interweave, Node } from "interweave";
 import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Tweet } from "react-tweet";
 import { useAccount } from "wagmi";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
+import ImageWithFallback from "./components/ImageWithFallback";
 import ProposalContentInfo from "./components/ProposalContentInfo";
-import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 
 export interface Proposal {
   id: string;
@@ -48,14 +48,6 @@ interface ProposalContentProps {
   selectedProposalIds: string[];
   toggleProposalSelection?: (proposalId: string) => void;
 }
-
-const transform = (node: HTMLElement, children: Node[]): ReactNode => {
-  const element = node.tagName.toLowerCase();
-
-  if (element === "img") {
-    return <img src={node.getAttribute("src") ?? ""} alt={"image"} className="rounded-[16px]" />;
-  }
-};
 
 const clearStorageIfNeeded = () => {
   let session = sessionStorage.getItem(BROWSER_SESSION_CHECK_KEY);
@@ -90,6 +82,20 @@ const ProposalContent: FC<ProposalContentProps> = ({
     pathname: `/contest/${chainName}/${contestAddress}/submission/${proposal.id}`,
     query: { comments: "comments" },
   };
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    };
+
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
 
   useEffect(() => {
     clearStorageIfNeeded();
@@ -152,6 +158,24 @@ const ProposalContent: FC<ProposalContentProps> = ({
     saveToLocalStorage(HIDDEN_PROPOSALS_STORAGE_KEY, visibilityState);
   };
 
+  const transform = (node: HTMLElement, children: Node[]): ReactNode => {
+    const element = node.tagName.toLowerCase();
+    const src = node.getAttribute("src") ?? "";
+
+    if (element === "img") {
+      return (
+        <ImageWithFallback
+          src={`${src}-medium`}
+          fallbackSrc={src}
+          alt={node.getAttribute("alt") ?? ""}
+          containerWidth={containerWidth}
+        />
+      );
+    }
+
+    return undefined;
+  };
+
   return (
     <div className="flex flex-col gap-4 pb-4 border-b border-primary-2 animate-reveal">
       <ProposalContentInfo
@@ -165,21 +189,32 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
       {!isContentHidden ? (
         <div className="md:mx-8 flex flex-col gap-4">
-          <Link
-            className="p-4 rounded-[8px] bg-primary-1 border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out overflow-hidden"
-            href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
-            shallow
-            scroll={false}
-            prefetch
-          >
-            {isProposalTweet ? (
-              <div className="dark not-prose">
-                <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
-              </div>
-            ) : (
-              <Interweave className="prose prose-invert" content={proposal.content} transform={transform} />
-            )}
-          </Link>
+          <div className="flex w-full" ref={containerRef}>
+            <div className="max-w-full">
+              <Link
+                className="inline-block p-4 rounded-[8px] bg-primary-1 border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out overflow-hidden"
+                href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
+                shallow
+                scroll={false}
+                prefetch
+              >
+                {isProposalTweet ? (
+                  <div className="dark not-prose">
+                    <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
+                  </div>
+                ) : (
+                  <div className="max-w-full overflow-hidden interweave-container">
+                    <Interweave
+                      className="prose prose-invert interweave-container inline-block w-full"
+                      content={proposal.content}
+                      transform={transform}
+                      tagName="div"
+                    />
+                  </div>
+                )}
+              </Link>
+            </div>
+          </div>
           <div className="flex items-center justify-between">
             <div className="flex gap-2 items-center">
               {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
@@ -194,6 +229,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
                     alt="upvote"
                     className="flex-shrink-0"
                   />
+
                   <p className="text-[16px] text-positive-11 font-bold flex-grow text-center">
                     {formatNumberAbbreviated(proposal.votes)} vote{proposal.votes !== 1 ? "s" : ""}
                   </p>
