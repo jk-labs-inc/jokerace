@@ -113,6 +113,7 @@
     "safe-json-utils": "1.1.1",
     "tailwindcss": "3.4.10",
     "tailwindcss-logical": "3.0.1",
+    "wrangler": "^3.71.0",
     "typescript": "5.5.4",
     "webpack": "5.93.0"
   }
