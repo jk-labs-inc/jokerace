@@ -91,6 +91,14 @@
     "viem": "2.19.8",
     "wagmi": "2.12.6",
     "zod": "3.23.8",
+    "eslint-config-next": "14.2.5",
+    "interweave-ssr": "2.0.0",
+    "lokijs": "1.5.12",
+    "postcss": "8.4.41",
+    "safe-json-utils": "1.1.1",
+    "tailwindcss": "3.4.10",
+    "tailwindcss-logical": "3.0.1",
+    "typescript": "5.5.4",
     "zustand": "4.5.5"
   },
   "devDependencies": {
@@ -106,14 +114,6 @@
     "@types/underscore": "1.11.15",
     "@types/uuid": "10.0.0",
     "@vercel/node": "3.2.8",
-    "eslint-config-next": "14.2.5",
-    "interweave-ssr": "2.0.0",
-    "lokijs": "1.5.12",
-    "postcss": "8.4.41",
-    "safe-json-utils": "1.1.1",
-    "tailwindcss": "3.4.10",
-    "tailwindcss-logical": "3.0.1",
-    "typescript": "5.5.4",
     "webpack": "5.93.0"
   }
 }
