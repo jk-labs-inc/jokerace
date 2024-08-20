@@ -57,16 +57,7 @@ const transform = (node: HTMLElement, children: Node[]): ReactNode => {
     return <ImageWithFallback src={`${src}-medium`} fallbackSrc={src} alt={node.getAttribute("alt") ?? ""} />;
   }
 
-  if (element === "a") {
-    const content = node.textContent || "";
-    const truncatedContent = content.length > 70 ? content.substring(0, 67) + "..." : content;
-
-    return (
-      <a href={node.getAttribute("href") ?? "#"} target="_blank" rel="noopener noreferrer">
-        {truncatedContent}
-      </a>
-    );
-  }
+  return undefined;
 };
 
 const clearStorageIfNeeded = () => {
@@ -164,16 +155,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
     saveToLocalStorage(HIDDEN_PROPOSALS_STORAGE_KEY, visibilityState);
   };
 
-  const preprocessContent = (content: string) => {
-    // Remove trailing newlines and spaces
-    let processed = content.trim();
-    // Remove consecutive newlines (replace with a single newline)
-    processed = processed.replace(/\n\s*\n/g, "\n");
-    // Remove empty paragraphs
-    processed = processed.replace(/<p>\s*<\/p>/g, "");
-    return processed;
-  };
-
   return (
     <div className="flex flex-col gap-4 pb-4 border-b border-primary-2 animate-reveal">
       <ProposalContentInfo
@@ -201,12 +182,14 @@ const ProposalContent: FC<ProposalContentProps> = ({
                     <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
                   </div>
                 ) : (
-                  <Interweave
-                    className="prose prose-invert interweave-container"
-                    content={proposal.content}
-                    transform={transform}
-                    tagName="div"
-                  />
+                  <div className="max-w-full overflow-hidden">
+                    <Interweave
+                      className="prose prose-invert interweave-container inline-block w-full"
+                      content={proposal.content}
+                      transform={transform}
+                      tagName="div"
+                    />
+                  </div>
                 )}
               </Link>
             </div>
