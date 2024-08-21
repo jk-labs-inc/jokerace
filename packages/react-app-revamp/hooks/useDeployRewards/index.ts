@@ -6,6 +6,8 @@ import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModu
 import { getEthersSigner } from "@helpers/ethers";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
+import { useCreatorSplitDestination } from "@hooks/useCreatorSplitDestination";
+import { SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { estimateGas, sendTransaction, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { ContractFactory } from "ethers";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
@@ -19,8 +21,9 @@ export function useDeployRewardsPool() {
   const asPath = usePathname();
   const { address: contestAddress } = extractPathSegments(asPath ?? "");
   const setSupportsRewardsModule = useContestStore(state => state.setSupportsRewardsModule);
-  const { rewardPoolData, setRewardPoolData, setStep } = useCreateRewardsStore(state => state);
+  const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards } = useCreateRewardsStore(state => state);
   const { tokens, setTokens } = useFundPoolStore(state => state);
+  const { setCreatorSplitDestination } = useCreatorSplitDestination();
 
   async function deployRewardsPool() {
     let contractRewardsModuleAddress: string;
@@ -29,6 +32,11 @@ export function useDeployRewardsPool() {
       contractRewardsModuleAddress = await deployRewardsModule();
       await attachRewardsModule(contractRewardsModuleAddress);
       await fundPoolTokens(contractRewardsModuleAddress);
+
+      if (addEarningsToRewards) {
+        await setCreatorSplitDestinationToRewardsPool(contractRewardsModuleAddress);
+      }
+
       setSupportsRewardsModule(true);
       setTokens([]);
     } catch (e: any) {
@@ -186,6 +194,31 @@ export function useDeployRewardsPool() {
           [transactionKey]: { loading: false, error: true, success: false },
         }));
       }
+    }
+  }
+
+  async function setCreatorSplitDestinationToRewardsPool(contractRewardsModuleAddress: string) {
+    setRewardPoolData(prevData => ({
+      ...prevData,
+      setCreatorSplitDestination: { loading: true, error: false, success: false },
+    }));
+
+    try {
+      await setCreatorSplitDestination({
+        type: SplitFeeDestinationType.RewardsPool,
+        address: contractRewardsModuleAddress,
+      });
+
+      setRewardPoolData(prevData => ({
+        ...prevData,
+        setCreatorSplitDestination: { loading: false, error: false, success: true },
+      }));
+    } catch (e) {
+      setRewardPoolData(prevData => ({
+        ...prevData,
+        setCreatorSplitDestination: { loading: false, success: false, error: true },
+      }));
+      throw e;
     }
   }
 
