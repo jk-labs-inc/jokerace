@@ -1,11 +1,11 @@
-import { formatBalance } from "@helpers/formatBalance";
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import React from "react";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import ClipLoader from "react-spinners/ClipLoader";
+import { formatBalance } from "@helpers/formatBalance";
 import { useCreateRewardsStore } from "../../store";
 import { useFundPoolStore } from "../FundPool/store";
 
-type TransactionKey = "deploy" | "attach" | `fund_${string}`;
+type TransactionKey = "deploy" | "attach" | `fund_${string}` | "setCreatorSplitDestination";
 
 interface Transaction {
   key: TransactionKey;
@@ -18,8 +18,9 @@ const baseTransactions: Transaction[] = [
 ];
 
 const CreateRewardsDeploymentStatus: React.FC = () => {
-  const { rewardPoolData } = useCreateRewardsStore(state => ({
+  const { rewardPoolData, addEarningsToRewards } = useCreateRewardsStore(state => ({
     rewardPoolData: state.rewardPoolData,
+    addEarningsToRewards: state.addEarningsToRewards,
   }));
   const { tokens } = useFundPoolStore(state => state);
 
@@ -32,7 +33,16 @@ const CreateRewardsDeploymentStatus: React.FC = () => {
     ),
   }));
 
-  const transactions: Transaction[] = [...baseTransactions, ...tokenTransactions];
+  const creatorSplitTransaction: Transaction = {
+    key: "setCreatorSplitDestination",
+    label: "setting your earnings to go to rewards pool...",
+  };
+
+  const transactions: Transaction[] = [
+    ...baseTransactions,
+    ...tokenTransactions,
+    ...(addEarningsToRewards ? [creatorSplitTransaction] : []),
+  ];
 
   const getTransactionClass = (index: number): string => {
     const prevTransaction = transactions[index - 1];
@@ -46,19 +56,38 @@ const CreateRewardsDeploymentStatus: React.FC = () => {
     return "opacity-40";
   };
 
+  const getBorderClass = (transactionKey: TransactionKey): string => {
+    const state = rewardPoolData[transactionKey];
+    if (state?.loading) return "border-primary-2";
+    if (state?.success) return "border-positive-11";
+    if (state?.error) return "border-negative-11";
+    return "border-primary-2";
+  };
+
+  const renderTransactionStatus = (transactionKey: TransactionKey) => {
+    const state = rewardPoolData[transactionKey];
+    if (state?.loading) return <ClipLoader size={24} color="#E5E5E5" />;
+    if (state?.success) return <CheckCircleIcon className="text-positive-11 w-6 h-6" />;
+    if (state?.error) return <XCircleIcon className="text-negative-11 w-6 h-6" />;
+    return null;
+  };
+
   return (
     <div className="flex flex-col gap-11">
-      <p className="text-[24px] text-true-white font-bold">Let’s Deploy</p>
+      <p className="text-[24px] text-true-white font-bold">Let's Deploy</p>
       <div className="flex flex-col gap-4 w-full md:w-2/3">
         {transactions.map((transaction, index) => (
           <div
             key={transaction.key}
-            className={`flex items-center justify-between border-b pb-2 ${rewardPoolData[transaction.key]?.loading ? "border-primary-2" : rewardPoolData[transaction.key]?.success ? "border-positive-11" : rewardPoolData[transaction.key]?.success ? "border-negative-11" : "border-primary-2"} transition-colors duration-300 ${getTransactionClass(index)}`}
+            className={`
+              flex items-center justify-between border-b pb-2
+              ${getBorderClass(transaction.key)}
+              transition-colors duration-300
+              ${getTransactionClass(index)}
+            `}
           >
             <p className="text-[16px] text-neutral-11">{transaction.label}</p>
-            {rewardPoolData[transaction.key]?.loading && <ClipLoader size={24} color="#E5E5E5" />}
-            {rewardPoolData[transaction.key]?.success && <CheckCircleIcon className="text-positive-11 w-6 h-6" />}
-            {rewardPoolData[transaction.key]?.error && <XCircleIcon className="text-negative-11 w-6 h-6" />}
+            {renderTransactionStatus(transaction.key)}
           </div>
         ))}
       </div>
