@@ -1,4 +1,4 @@
-export const MAX_TIME_TO_WAIT_FOR_RPC = 60000;
+export const MAX_TIME_TO_WAIT_FOR_RPC = 3000;
 
 // https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value
 export const MAX_MS_TIMEOUT = 2147483647;
