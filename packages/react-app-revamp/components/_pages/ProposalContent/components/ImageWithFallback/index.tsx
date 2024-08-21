@@ -27,6 +27,7 @@ const preloadImage = async (src: string): Promise<ImageData> => {
 const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ mediumSrc, fullSrc, alt, containerWidth }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showResizeButton, setShowResizeButton] = useState(false);
+  const [useMediumImage, setUseMediumImage] = useState(true);
 
   const { data: mediumImage, isLoading: isMediumLoading } = useQuery({
     queryKey: ["image", mediumSrc, "medium"],
@@ -41,13 +42,20 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ mediumSrc, fullSr
   });
 
   useEffect(() => {
-    if (mediumImage && containerWidth > 0) {
-      const widthDifference = Math.abs(mediumImage.width - containerWidth);
-      const threshold = 0.1; // 10% difference
-      const significantDifference = widthDifference / containerWidth > threshold;
-      setShowResizeButton(significantDifference);
+    if (mediumImage && fullImage) {
+      const isMediumLarger = mediumImage.width > fullImage.width || mediumImage.height > fullImage.height;
+      setUseMediumImage(!isMediumLarger);
+
+      if (!isMediumLarger && containerWidth > 0) {
+        const widthDifference = Math.abs(mediumImage.width - containerWidth);
+        const threshold = 0.1; // 10% difference
+        const significantDifference = widthDifference / containerWidth > threshold;
+        setShowResizeButton(significantDifference);
+      } else {
+        setShowResizeButton(false);
+      }
     }
-  }, [mediumImage, containerWidth]);
+  }, [mediumImage, fullImage, containerWidth]);
 
   const toggleExpand = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -55,8 +63,8 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ mediumSrc, fullSr
     setIsExpanded(!isExpanded);
   };
 
-  const currentImage = isExpanded ? fullImage : mediumImage;
-  const isLoading = isExpanded ? isFullLoading : isMediumLoading;
+  const currentImage = isExpanded || !useMediumImage ? fullImage : mediumImage;
+  const isLoading = isExpanded || !useMediumImage ? isFullLoading : isMediumLoading;
 
   return (
     <div className="relative inline-block">
