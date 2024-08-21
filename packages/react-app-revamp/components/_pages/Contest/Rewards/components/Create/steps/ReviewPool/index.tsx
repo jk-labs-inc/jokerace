@@ -2,6 +2,7 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { toastError } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { useContestStore } from "@hooks/useContest/store";
 import { useDeployRewardsPool } from "@hooks/useDeployRewards";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
@@ -9,7 +10,9 @@ import { useAccount } from "wagmi";
 import CreateRewardsSubmitButton from "../../components/Buttons/Submit";
 import { useCreateRewardsStore } from "../../store";
 import { useFundPoolStore } from "../FundPool/store";
+import CreateRewardsAddEarningsToggle from "./components/AddEarnings";
 import CreateRewardsReviewTable from "./components/Table";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 
 const CreateRewardsReviewPool = () => {
   const pathname = usePathname();
@@ -21,7 +24,12 @@ const CreateRewardsReviewPool = () => {
   const { deployRewardsPool } = useDeployRewardsPool();
   const { rewardPoolData, currentStep, setStep } = useCreateRewardsStore(state => state);
   const { tokens } = useFundPoolStore(state => state);
+  const { charge } = useContestStore(state => state);
+  const { contestState } = useContestStateStore(state => state);
   const isUserOnCorrectChain = contestChainId === userChainId;
+  const isContestFinishedOrCanceled =
+    contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
+  const enableEarningsToggle = charge && !isContestFinishedOrCanceled;
 
   const handleSwitchNetwork = async () => {
     if (!contestChainId) return;
@@ -58,6 +66,7 @@ const CreateRewardsReviewPool = () => {
           shareAllocations={rewardPoolData.shareAllocations}
           tokens={tokens}
         />
+        {enableEarningsToggle ? <CreateRewardsAddEarningsToggle /> : null}
       </div>
       <div className="flex flex-col gap-6">
         {isUserOnCorrectChain ? (
