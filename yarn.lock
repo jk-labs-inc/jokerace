@@ -12384,10 +12384,10 @@ hono-og@0.0.27:
     "@vercel/og" "~0.6.2"
     workers-og "~0.0.23"
 
-hono@4.5.6:
-  version "4.5.6"
-  resolved "https://registry.yarnpkg.com/hono/-/hono-4.5.6.tgz#21967fa7fca449a03dac64c0e3be2eece094481c"
-  integrity sha512-9SuUC/zLQv8YAcnIxJko0KCeLI0Q6menPsDWuJ9jaH+r8ZkVXeLqeLs1QJXCPKKbURAWj9x0SJBSFh803EnAUw==
+hono@4.5.7:
+  version "4.5.7"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-4.5.7.tgz#f8b3162bb13288a7af4626dc82dc54542f483c82"
+  integrity sha512-7GeBa+zuZ6rXQEcsYvoAafLNgDr3IMxoMlU1JUc23Buy99FaUpjB0viKIFOsfnzMdEp7RhPL6uLYsVuddjdMvw==
 
 htmlparser2@^9.1.0:
   version "9.1.0"
