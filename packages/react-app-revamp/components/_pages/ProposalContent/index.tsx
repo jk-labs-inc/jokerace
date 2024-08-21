@@ -165,8 +165,8 @@ const ProposalContent: FC<ProposalContentProps> = ({
     if (element === "img") {
       return (
         <ImageWithFallback
-          src={`${src}-medium`}
-          fallbackSrc={src}
+          mediumSrc={`${src}-medium`}
+          fullSrc={src}
           alt={node.getAttribute("alt") ?? ""}
           containerWidth={containerWidth}
         />
