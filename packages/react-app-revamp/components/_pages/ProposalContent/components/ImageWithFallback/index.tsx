@@ -1,57 +1,72 @@
 import NextImage from "next/image";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 interface ImageWithFallbackProps {
-  src: string;
-  fallbackSrc: string;
+  mediumSrc: string;
+  fullSrc: string;
   alt: string;
   containerWidth: number;
 }
 
-const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ src, fallbackSrc, alt, containerWidth }) => {
+interface ImageData {
+  img: HTMLImageElement;
+  width: number;
+  height: number;
+}
+
+const preloadImage = async (src: string): Promise<ImageData> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => resolve({ img, width: img.width, height: img.height });
+    img.onerror = reject;
+  });
+};
+
+const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ mediumSrc, fullSrc, alt, containerWidth }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [imgSrc, setImgSrc] = useState(src);
   const [showResizeButton, setShowResizeButton] = useState(false);
 
+  const { data: mediumImage, isLoading: isMediumLoading } = useQuery({
+    queryKey: ["image", mediumSrc, "medium"],
+    queryFn: () => preloadImage(mediumSrc),
+    staleTime: Infinity,
+  });
+
+  const { data: fullImage, isLoading: isFullLoading } = useQuery({
+    queryKey: ["image", fullSrc, "full"],
+    queryFn: () => preloadImage(fullSrc),
+    staleTime: Infinity,
+  });
+
   useEffect(() => {
-    const mediumImg = new Image();
-    mediumImg.src = src;
-
-    const checkSize = () => {
-      if (containerWidth > 0) {
-        // compare medium image width to container width
-        const widthDifference = Math.abs(mediumImg.width - containerWidth);
-
-        // Uue a percentage threshold for comparison
-        const threshold = 0.1; // 10% difference
-        const significantDifference = widthDifference / containerWidth > threshold;
-
-        setShowResizeButton(significantDifference);
-        setImgSrc(mediumImg.complete ? src : fallbackSrc);
-      }
-    };
-
-    if (mediumImg.complete) {
-      checkSize();
-    } else {
-      mediumImg.onload = checkSize;
-      mediumImg.onerror = () => {
-        setImgSrc(fallbackSrc);
-        setShowResizeButton(false);
-      };
+    if (mediumImage && containerWidth > 0) {
+      const widthDifference = Math.abs(mediumImage.width - containerWidth);
+      const threshold = 0.1; // 10% difference
+      const significantDifference = widthDifference / containerWidth > threshold;
+      setShowResizeButton(significantDifference);
     }
-  }, [src, fallbackSrc, containerWidth]);
+  }, [mediumImage, containerWidth]);
 
   const toggleExpand = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsExpanded(!isExpanded);
-    setImgSrc(isExpanded ? src : fallbackSrc);
   };
+
+  const currentImage = isExpanded ? fullImage : mediumImage;
+  const isLoading = isExpanded ? isFullLoading : isMediumLoading;
 
   return (
     <div className="relative inline-block">
-      <img src={imgSrc} alt={alt} className="rounded-[16px] max-w-full" />
+      <img
+        src={isLoading ? fullSrc : currentImage?.img.src || fullSrc}
+        alt={alt}
+        className={`rounded-[16px] max-w-full ${isExpanded ? "w-full" : ""}`}
+        width={currentImage?.width}
+        height={currentImage?.height}
+      />
       {showResizeButton && (
         <div className="absolute top-0 right-0 p-1">
           <button
