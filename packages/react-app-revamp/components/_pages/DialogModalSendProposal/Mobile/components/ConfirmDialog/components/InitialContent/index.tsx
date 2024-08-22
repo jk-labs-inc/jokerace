@@ -1,4 +1,4 @@
-import ChargeLayout from "@components/ChargeLayout";
+import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { FOOTER_LINKS } from "@config/links";
 import { emailRegex } from "@helpers/regex";
@@ -62,7 +62,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   return (
     <>
       {charge && charge.type.costToPropose && accountData ? (
-        <ChargeLayout charge={charge} accountData={accountData} type="propose" />
+        <ChargeLayoutSubmission charge={charge} accountData={accountData} />
       ) : null}
       <div className="flex flex-col gap-4 mt-4">
         {!insufficientBalance ? (

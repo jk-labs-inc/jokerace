@@ -24,9 +24,12 @@ const ContestPromptModalV3Layout: FC<ContestPromptModalV3LayoutProps> = ({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-1 md:gap-4 items-center">
-        <p className="text-[24px] text-neutral-11 font-bold">{contestTitle}</p>
-        <div className="hidden md:flex items-center px-4 leading-tight py-[1px] bg-neutral-10 rounded-[5px] text-true-black text-[16px] font-bold">
-          {contestType}
+        <div className="relative inline-block">
+          <span className="text-[24px] font-bold inline-block">
+            <span className="relative z-10 bg-gradient-purple text-transparent bg-clip-text inline-block">
+              {contestTitle}
+            </span>
+          </span>
         </div>
         <button
           onClick={() => setIsPromptOpen(!isPromptOpen)}
