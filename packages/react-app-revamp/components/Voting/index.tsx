@@ -17,10 +17,17 @@ interface VotingWidgetProps {
   proposalId: string;
   amountOfVotes: number;
   downvoteAllowed?: boolean;
+  isWidgetInModal?: boolean;
   onVote?: (amount: number, isUpvote: boolean) => void;
 }
 
-const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvoteAllowed, onVote }) => {
+const VotingWidget: FC<VotingWidgetProps> = ({
+  proposalId,
+  amountOfVotes,
+  downvoteAllowed,
+  isWidgetInModal,
+  onVote,
+}) => {
   const { charge } = useContestStore(state => state);
   const asPath = usePathname();
   const { chainId: accountChainId } = useAccount();
@@ -121,7 +128,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
 
   return (
     <div className="flex flex-col gap-4 md:w-80">
-      <hr className="hidden md:block border border-neutral-9" />
+      <hr className={`${isWidgetInModal ? "hidden" : "block"} md:block border border-neutral-9`} />
       <div className="flex flex-col gap-8">
         <p className="text-neutral-11 font-bold text-[20px]">add votes</p>
         <div className="flex flex-col -mt-[16px] md:-mt-0 gap-4">

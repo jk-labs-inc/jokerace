@@ -1,18 +1,17 @@
-import DialogModalV3 from "@components/UI/DialogModalV3";
+import DialogModalV4 from "@components/UI/DialogModalV4";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
-import { formatNumber, formatNumberAbbreviated } from "@helpers/formatNumber";
+import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import ordinalize from "@helpers/ordinalize";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
+import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import { Proposal } from "../ProposalContent";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import DialogModalV4 from "@components/UI/DialogModalV4";
-import Image from "next/image";
 
 interface DialogModalVoteForProposalProps {
   isOpen: boolean;
@@ -29,6 +28,8 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
     castVotes(amount, isUpvote);
   };
+
+  const toggleReadFullEntry = () => setReadFullEntry(!readFullEntry);
 
   useEffect(() => {
     if (isSuccess) setIsOpen(false);
@@ -65,24 +66,35 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
         </div>
         <div className="flex flex-col gap-4">
           <div className="hidden md:flex flex-col gap-2">
-            <button
-              className="text-positive-11 text-[16px] bg-transparent flex items-center gap-2"
-              onClick={() => setReadFullEntry(!readFullEntry)}
-            >
-              <p>{readFullEntry ? "read less" : "read full entry"}</p>
-              <ChevronDownIcon
-                className={`w-6 h-6 text-positive-11 transition-transform duration-200 ${
-                  readFullEntry ? "rotate-180" : "rotate-0"
-                }`}
-              />
-            </button>
-            {readFullEntry ? <ContestProposal proposal={proposal} /> : null}
+            {!readFullEntry && (
+              <button
+                className="text-positive-11 text-[16px] bg-transparent flex items-center gap-2 self-start"
+                onClick={toggleReadFullEntry}
+              >
+                <p>read full entry</p>
+                <ChevronDownIcon className="w-6 h-6 text-positive-11" />
+              </button>
+            )}
+
+            {readFullEntry && (
+              <>
+                <ContestProposal proposal={proposal} />
+                <button
+                  className="text-positive-11 text-[16px] bg-transparent flex items-center gap-2 self-start"
+                  onClick={toggleReadFullEntry}
+                >
+                  <p>hide full entry</p>
+                  <ChevronUpIcon className="w-6 h-6 text-positive-11" />
+                </button>
+              </>
+            )}
           </div>
           <VotingWidget
             proposalId={proposal.id}
             amountOfVotes={currentUserAvailableVotesAmount}
             downvoteAllowed={downvotingAllowed}
             onVote={onSubmitCastVotes}
+            isWidgetInModal
           />
         </div>
       </div>
