@@ -1,4 +1,4 @@
-import ChargeLayout from "@components/ChargeLayout";
+import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
@@ -182,7 +182,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
               ) : null}
             </div>
             <div className="flex flex-col gap-11 mt-11">
-              {showEntryCharge ? <ChargeLayout charge={charge} accountData={accountData} type="propose" /> : null}
+              {showEntryCharge ? <ChargeLayoutSubmission charge={charge} accountData={accountData} /> : null}
 
               {!insufficientBalance ? (
                 <div className="flex flex-col gap-4">

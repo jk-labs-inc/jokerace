@@ -77,7 +77,7 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
   return (
     <div className="flex flex-col gap-4">
       <Interweave
-        className="prose prose-invert overflow-hidden"
+        className="prose prose-invert overflow-hidden interweave-container"
         content={proposal.content}
         matchers={[new UrlMatcher("url")]}
         transform={transform}

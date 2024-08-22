@@ -45,7 +45,7 @@ const DialogModalV3: FC<DialogModalProps> = ({
             className={`text-sm mx-auto min-h-screen max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full px-4 2xs:pt-4 bg-true-black 2xs:rounded-[10px] ${className}`}
           >
             <DialogTitle className="sr-only">{title}</DialogTitle>
-            <div className="p-2 relative">
+            <div className="p-0 md:p-2 relative">
               <button
                 onClick={handleClose}
                 title="Close this"
