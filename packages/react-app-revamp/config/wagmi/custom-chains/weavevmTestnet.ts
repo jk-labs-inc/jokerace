@@ -21,4 +21,5 @@ export const weavevmTestnet: Chain = {
     etherscan: { name: "WeaveVM Block Explorer", url: "https://explorer.wvm.dev" },
     default: { name: "WeaveVM Block Explorer", url: "https://explorer.wvm.dev" },
   },
+  testnet: true,
 };
