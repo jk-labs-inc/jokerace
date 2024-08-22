@@ -2,7 +2,7 @@
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
-import { loadFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from "@helpers/localStorage";
+import { removeFromLocalStorage } from "@helpers/localStorage";
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
@@ -84,6 +84,8 @@ const ProposalContent: FC<ProposalContentProps> = ({
   };
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
+  const [isImageExpanded, setIsImageExpanded] = useState(false);
+  const [showResizeButton, setShowResizeButton] = useState(false);
 
   useEffect(() => {
     const updateWidth = () => {
@@ -96,15 +98,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
     window.addEventListener("resize", updateWidth);
     return () => window.removeEventListener("resize", updateWidth);
   }, []);
-
-  useEffect(() => {
-    clearStorageIfNeeded();
-
-    const visibilityState = loadFromLocalStorage<ContestVisibilities>(HIDDEN_PROPOSALS_STORAGE_KEY, {});
-    const hiddenProposals = visibilityState[contestAddress] || [];
-
-    setIsContentHidden(hiddenProposals.includes(proposal.id));
-  }, [contestAddress, proposal.id]);
 
   const handleVotingModalOpen = () => {
     if (isContestCanceled) {
@@ -132,30 +125,17 @@ const ProposalContent: FC<ProposalContentProps> = ({
   };
 
   const toggleContentVisibility = () => {
-    const newVisibility = !isContentHidden;
-    setIsContentHidden(newVisibility);
+    setIsContentHidden(!isContentHidden);
+  };
 
-    const visibilityState = loadFromLocalStorage<ContestVisibilities>(HIDDEN_PROPOSALS_STORAGE_KEY, {});
-    let hiddenProposals = visibilityState[contestAddress] || [];
+  const handleImageLoad = (canResize: boolean) => {
+    setShowResizeButton(canResize);
+  };
 
-    if (newVisibility) {
-      // addd proposal id to hidden list if not already there
-      if (!hiddenProposals.includes(proposal.id)) {
-        hiddenProposals = [...hiddenProposals, proposal.id];
-      }
-    } else {
-      // remove proposal id from hidden list
-      hiddenProposals = hiddenProposals.filter(id => id !== proposal.id);
-    }
-
-    if (hiddenProposals.length > 0) {
-      visibilityState[contestAddress] = hiddenProposals;
-    } else {
-      // if there are no hidden proposals, remove the contest from the visibility state
-      delete visibilityState[contestAddress];
-    }
-
-    saveToLocalStorage(HIDDEN_PROPOSALS_STORAGE_KEY, visibilityState);
+  const toggleImageExpand = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsImageExpanded(!isImageExpanded);
   };
 
   const transform = (node: HTMLElement, children: Node[]): ReactNode => {
@@ -169,6 +149,8 @@ const ProposalContent: FC<ProposalContentProps> = ({
           fullSrc={src}
           alt={node.getAttribute("alt") ?? ""}
           containerWidth={containerWidth}
+          isExpanded={isImageExpanded}
+          onImageLoad={handleImageLoad}
         />
       );
     }
@@ -178,16 +160,28 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
   return (
     <div className="flex flex-col gap-4 pb-4 border-b border-primary-2 animate-reveal">
-      <ProposalContentInfo
-        authorAddress={proposal.authorEthereumAddress}
-        rank={proposal.rank}
-        isTied={proposal.isTied}
-        isMobile={isMobile}
-        isContentHidden={isContentHidden}
-        toggleContentVisibility={toggleContentVisibility}
-      />
+      <div className="flex justify-between items-center">
+        <ProposalContentInfo
+          authorAddress={proposal.authorEthereumAddress}
+          rank={proposal.rank}
+          isTied={proposal.isTied}
+          isMobile={isMobile}
+          isContentHidden={isContentHidden}
+          toggleContentVisibility={toggleContentVisibility}
+        />
+        {showResizeButton && !isContentHidden && (
+          <button onClick={toggleImageExpand} className="hidden md:block">
+            <Image
+              src={isImageExpanded ? "/contest/minimize.svg" : "/contest/maximize.svg"}
+              width={16}
+              height={16}
+              alt={isImageExpanded ? "minimize" : "maximize"}
+            />
+          </button>
+        )}
+      </div>
 
-      {!isContentHidden ? (
+      {!isContentHidden && (
         <div className="md:mx-8 flex flex-col gap-4">
           <div className="flex w-full" ref={containerRef}>
             <div className="max-w-full">
@@ -229,7 +223,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
                     alt="upvote"
                     className="flex-shrink-0"
                   />
-
                   <p className="text-[16px] text-positive-11 font-bold flex-grow text-center">
                     {formatNumberAbbreviated(proposal.votes)} vote{proposal.votes !== 1 ? "s" : ""}
                   </p>
@@ -239,7 +232,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
                   voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
                 </p>
               )}
-
               <Link
                 href={commentLink}
                 className="min-w-16 flex-shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-primary-1 rounded-[16px] cursor-pointer border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out"
@@ -254,20 +246,20 @@ const ProposalContent: FC<ProposalContentProps> = ({
               <div className="h-8 w-8 relative cursor-pointer" onClick={() => toggleProposalSelection?.(proposal.id)}>
                 <CheckIcon
                   className={`absolute top-0 left-0 transform transition-all ease-in-out duration-300 
-        ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
-        h-6 w-6 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
-        shadow-md hover:shadow-lg rounded-md`}
+                    ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
+                    h-6 w-6 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
+                    shadow-md hover:shadow-lg rounded-md`}
                 />
                 <TrashIcon
                   className={`absolute top-0 left-0 transition-opacity duration-300 
-        ${selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"}
-        h-6 w-6 text-negative-11 bg-true-black hover:text-negative-10 transition-colors duration-300 ease-in-out`}
+                    ${selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"}
+                    h-6 w-6 text-negative-11 bg-true-black hover:text-negative-10 transition-colors duration-300 ease-in-out`}
                 />
               </div>
             )}
           </div>
         </div>
-      ) : null}
+      )}
 
       <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={setIsVotingModalOpen} proposal={proposal} />
     </div>
