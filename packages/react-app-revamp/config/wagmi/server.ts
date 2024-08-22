@@ -100,6 +100,7 @@ import { taiko } from "./custom-chains/taiko";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
+import { weavevmTestnet } from "./custom-chains/weavevmTestnet";
 import { xLayer } from "./custom-chains/xLayer";
 import { xLayerTestnet } from "./custom-chains/xLayerTestnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
@@ -212,6 +213,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   movementTestnet,
   kaiaTestnet,
   fluentTestnet,
+  weavevmTestnet,
   formaTestnet,
   kakarotTestnet,
   mainnet,
