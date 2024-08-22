@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import { chains } from "@config/wagmi";
 import { formatBalance } from "@helpers/formatBalance";
-import { formatNumber } from "@helpers/formatNumber";
+import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -88,7 +88,8 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
           nativeCurrencySymbol={nativeCurrencySymbol}
         />
         <span className="text-neutral-11 ml-1">
-          {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount === 1 ? "" : "s"}
+          {formatNumberAbbreviated(currentUserAvailableVotesAmount)} vote
+          {currentUserAvailableVotesAmount === 1 ? "" : "s"}
         </span>
       </p>
     );
@@ -97,7 +98,8 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
   if (canVote && votingOpen) {
     return (
       <p className="text-[16px] md:text-[24px] text-neutral-11 font-bold">
-        {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"} left
+        {formatNumberAbbreviated(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"}{" "}
+        left
       </p>
     );
   }
@@ -105,7 +107,7 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
   if (canVote) {
     return (
       <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">
-        {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"}{" "}
+        {formatNumberAbbreviated(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"}{" "}
         {isMobile ? "to use" : "to deploy"}
       </p>
     );

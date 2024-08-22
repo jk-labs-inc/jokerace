@@ -5,7 +5,7 @@ import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
-import { formatNumber } from "@helpers/formatNumber";
+import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import ordinalize from "@helpers/ordinalize";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
@@ -141,23 +141,25 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
         ) : (
           <div className="animate-reveal flex flex-col gap-12">
             {proposalData?.proposal ? (
-              <div className="flex flex-col gap-4">
+              <div className="flex gap-2 items-center">
+                <UserProfileDisplay
+                  ethereumAddress={proposalData.proposal.authorEthereumAddress}
+                  shortenOnFallback={true}
+                />
                 {proposalData.proposal.rank > 0 && (
                   <div className="flex gap-2 items-center">
-                    <p className="text-[16px] font-bold text-neutral-11">
-                      {formatNumber(proposalData.proposal.votes)} vote{proposalData.proposal.votes > 1 ? "s" : ""}
-                    </p>
                     <span className="text-neutral-11">&#8226;</span>{" "}
                     <p className="text-[16px] font-bold text-neutral-11">
+                      {formatNumberAbbreviated(proposalData.proposal.votes)} vote
+                      {proposalData.proposal.votes > 1 ? "s" : ""}
+                    </p>
+                    <span className="text-neutral-9">&#8226;</span>{" "}
+                    <p className="text-[16px] font-bold text-neutral-9">
                       {ordinalize(proposalData.proposal.rank).label} place{" "}
                       {proposalData.proposal.isTied ? "(tied)" : ""}
                     </p>
                   </div>
                 )}
-                <UserProfileDisplay
-                  ethereumAddress={proposalData.proposal.authorEthereumAddress}
-                  shortenOnFallback={true}
-                />
               </div>
             ) : null}
 

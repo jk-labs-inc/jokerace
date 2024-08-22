@@ -32,7 +32,7 @@ const AddToHomeScreenPopup = () => {
             className="text-sm mx-auto w-[350px] overflow-y-auto rounded-[10px] 
              px-4 pt-4 pb-6 bg-true-black"
           >
-            <div className="p-2 relative">
+            <div className="p-0 md:p-2 relative">
               <div className={`2xs:pt-3 pie-3`}>
                 {isSupportedBrowser ? (
                   <AddToHomeScreenSupportedBrowser onClose={handleClose} />

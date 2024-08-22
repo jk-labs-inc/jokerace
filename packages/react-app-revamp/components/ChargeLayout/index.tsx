@@ -1,13 +1,12 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { Charge, VoteType } from "@hooks/useDeployContest/types";
+import { Charge } from "@hooks/useDeployContest/types";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { FC } from "react";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import ChargeLayoutSubmission from "./components/Submission";
-import ChargeLayoutVote from "./components/Vote";
 
 interface DialogModalSendProposalEntryChargeLayoutProps {
   charge: Charge;
@@ -29,10 +28,6 @@ const ChargeLayout: FC<DialogModalSendProposalEntryChargeLayoutProps> = ({
     ?.nativeCurrency.symbol;
   const chargeAmount = type === "propose" ? charge.type.costToPropose : charge.type.costToVote;
   const insufficientBalance = accountData.value < chargeAmount;
-  const insufficientBalanceForVotes =
-    charge.voteType === VoteType.PerVote
-      ? accountData.value < chargeAmount * (amountOfVotes ?? 1)
-      : accountData.value < chargeAmount;
   const entryChargeFormatted = formatEther(BigInt(chargeAmount));
   const entryChargeHalfFormatted = formatEther(BigInt(chargeAmount / 2));
   const commissionValue = charge.percentageToCreator > 0 ? entryChargeHalfFormatted : entryChargeFormatted;
@@ -52,18 +47,6 @@ const ChargeLayout: FC<DialogModalSendProposalEntryChargeLayoutProps> = ({
       />
     );
   }
-
-  return (
-    <ChargeLayoutVote
-      chargeType={charge.voteType}
-      amountOfVotes={amountOfVotes}
-      balance={accountBalance}
-      entryChargeFormatted={entryChargeFormatted}
-      insufficientBalance={insufficientBalanceForVotes}
-      nativeCurrencySymbol={accountData.symbol}
-      userAddress={address ?? ""}
-    />
-  );
 };
 
 export default ChargeLayout;
