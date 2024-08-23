@@ -13,7 +13,7 @@ import { HomeIcon, MagnifyingGlassIcon, PencilSquareIcon } from "@heroicons/reac
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
 interface MainHeaderMobileLayoutProps {
   isConnected: boolean;
@@ -31,7 +31,8 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
   openAccountModal,
 }) => {
   const pathname = usePathname();
-  const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
+  const [isClient, setIsClient] = useState(false);
+  const [isInPwaMode, setIsInPwaMode] = useState(false);
   const displayProfile = showProfile && !pathname?.includes("user");
   const isActive = (route: string) => (pathname === route ? "text-primary-10 transition-colors font-bold" : "");
   const isOneOfActive = (routes: string[]) =>
@@ -39,10 +40,15 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
   const allowedLinks = ["Github", "Twitter", "Telegram", "Report a bug", "Terms", "Media Kit"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
 
+  useEffect(() => {
+    setIsClient(true);
+    setIsInPwaMode(window.matchMedia("(display-mode: standalone)").matches);
+  }, []);
+
   return (
     <>
       <div className="flex justify-between items-center px-4 mt-4">
-        {address && displayProfile ? (
+        {address && displayProfile && isClient ? (
           <div className="top-0 right-0 left-0 ">
             <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />
           </div>
@@ -69,7 +75,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
 
       <header
         className={`flex flex-row bottom-0 right-0 left-0 fixed items-center justify-between border-t-neutral-2 border-t-2 pt-2 ${
-          isInPwaMode ? "pb-8" : "pb-2"
+          isClient && isInPwaMode ? "pb-8" : "pb-2"
         } px-8 mt-4 bg-true-black z-50`}
       >
         <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>

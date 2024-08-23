@@ -8,13 +8,13 @@ import {
   ROUTE_VIEW_CONTEST,
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_LIVE_CONTESTS,
-  ROUTE_VIEW_USER,
 } from "@config/routes";
 import { HomeIcon, MagnifyingGlassIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 
@@ -22,7 +22,8 @@ const LandingHeader = () => {
   const { isConnected, address } = useAccount();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const pathname = usePathname();
-  const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
+  const [isInPwaMode, setIsInPwaMode] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const isActive = (route: string) => (pathname === route ? "text-primary-10 transition-colors font-bold" : "");
   const isOneOfActive = (routes: string[]) =>
     routes.includes(pathname ?? "") ? "text-primary-10 transition-colors font-bold" : "";
@@ -30,6 +31,11 @@ const LandingHeader = () => {
   const { openAccountModal } = useAccountModal();
   const allowedLinks = ["Github", "Twitter", "Report a bug", "Terms", "Telegram", "Media Kit"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
+
+  useEffect(() => {
+    setIsClient(true);
+    setIsInPwaMode(window.matchMedia("(display-mode: standalone)").matches);
+  }, []);
 
   if (isMobile) {
     return (
@@ -49,7 +55,7 @@ const LandingHeader = () => {
         <header className="bg-true-black">
           <div
             className={`fixed bottom-0 left-0 right-0 flex flex-col border-t-2 border-neutral-2 bg-true-black z-50 ${
-              isInPwaMode ? "pb-8" : "pb-2"
+              isClient && isInPwaMode ? "pb-8" : "pb-2"
             }`}
           >
             <div className="text-neutral-10 flex justify-center items-center text-[12px] py-3 border-b border-neutral-2">
@@ -115,26 +121,22 @@ const LandingHeader = () => {
   }
 
   return (
-    <header className="flex items-center justify-between pl-16 3xl:pl-28 pr-[60px] mt-8">
+    <header className="flex items-center pl-16 3xl:pl-28 pr-[60px] mt-4 max-w-[1850px]">
       <Link href="/">
         <div>
-          <h1 className="font-sabo text-neutral-11 normal-case text-[80px]">
+          <h1 className="font-sabo text-neutral-11 normal-case text-[60px]">
             <span className="joke-3d" data-text="J">
               J
             </span>
-            <span className="text-[55px] joke-3d">oke</span>
+            <span className="text-[45px] joke-3d">oke</span>
             <span className="joke-3d">R</span>
-            <span className="text-[55px] joke-3d">ace</span>
+            <span className="text-[45px] joke-3d">ace</span>
           </h1>
         </div>
       </Link>
 
-      <div className="flex gap-3 items-center">
-        {address ? (
-          <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
-            <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />
-          </Link>
-        ) : null}
+      <div className="flex gap-3 items-center ml-auto">
+        {isClient && address ? <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion /> : null}
         <ConnectButtonCustom />
       </div>
     </header>
