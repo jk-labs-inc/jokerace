@@ -8,7 +8,6 @@ import {
   ROUTE_VIEW_CONTEST,
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_LIVE_CONTESTS,
-  ROUTE_VIEW_USER,
 } from "@config/routes";
 import { HomeIcon, MagnifyingGlassIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
@@ -122,21 +121,21 @@ const LandingHeader = () => {
   }
 
   return (
-    <header className="flex items-center justify-between pl-16 3xl:pl-28 pr-[60px] mt-8">
+    <header className="flex items-center pl-16 3xl:pl-28 pr-[60px] mt-4 max-w-[1850px]">
       <Link href="/">
         <div>
-          <h1 className="font-sabo text-neutral-11 normal-case text-[80px]">
+          <h1 className="font-sabo text-neutral-11 normal-case text-[60px]">
             <span className="joke-3d" data-text="J">
               J
             </span>
-            <span className="text-[55px] joke-3d">oke</span>
+            <span className="text-[45px] joke-3d">oke</span>
             <span className="joke-3d">R</span>
-            <span className="text-[55px] joke-3d">ace</span>
+            <span className="text-[45px] joke-3d">ace</span>
           </h1>
         </div>
       </Link>
 
-      <div className="flex gap-3 items-center">
+      <div className="flex gap-3 items-center ml-auto">
         {isClient && address ? <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion /> : null}
         <ConnectButtonCustom />
       </div>
