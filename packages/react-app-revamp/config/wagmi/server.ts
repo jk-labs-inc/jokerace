@@ -1,5 +1,6 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 import { Transport } from "viem";
+import { rolluxTestnet } from "viem/chains";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
 import { aevo } from "./custom-chains/aevo";
 import { ancient8 } from "./custom-chains/ancient8";
@@ -86,6 +87,7 @@ import { qChain } from "./custom-chains/qChain";
 import { qChainTestnet } from "./custom-chains/qChainTestnet";
 import { quartz } from "./custom-chains/quartz";
 import { redstoneHolesky } from "./custom-chains/redstoneHolesky";
+import { rollux } from "./custom-chains/rollux";
 import { ronin } from "./custom-chains/ronin";
 import { roninTestnet } from "./custom-chains/roninTestnet";
 import { sanko } from "./custom-chains/sanko";
@@ -168,6 +170,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   metis,
   sanko,
   forma,
+  rollux,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
@@ -216,6 +219,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   weavevmTestnet,
   formaTestnet,
   kakarotTestnet,
+  rolluxTestnet,
   mainnet,
 ];
 
