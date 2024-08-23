@@ -11,13 +11,14 @@ import {
 } from "../../utils";
 
 const CreateSubmissionPeriod = () => {
-  const { submissionOpen, setSubmissionOpen, votingOpen, setVotingOpen, setVotingClose, errors, step } =
+  const { submissionOpen, setSubmissionOpen, votingOpen, setVotingOpen, votingClose, setVotingClose, errors, step } =
     useDeployContestStore(state => state);
   const currentStepError = errors.find(error => error.step === step);
   const currentVotesOpenError = currentStepError?.message.startsWith("Voting open") ? currentStepError.message : "";
   const { timingOption: submissionPeriodTimingOption, setTimingOption: setSubmissionPeriodTimingOption } =
     useTimingOptionForSubmissionPeriod(state => state);
-  const { timingOption: votingPeriodTimingOption } = useTimingOptionForVotingPeriod(state => state);
+  const { timingOption: votingPeriodTimingOption, setTimingOption: setVotingPeriodTimingOption } =
+    useTimingOptionForVotingPeriod(state => state);
   const [hideDatePickers, setHideDatePickers] = useState<boolean>(false);
 
   const onSubmissionDateChange = (value: Date) => {
@@ -26,14 +27,53 @@ const CreateSubmissionPeriod = () => {
       label: "custom",
       value: "custom",
     });
+
+    // only adjust votingOpen if the new submissionOpen is after the current votingOpen
+    if (value > votingOpen) {
+      // set voting open to 1 hour after the new voting open time
+      const newVotingOpen = new Date(value.getTime() + 60 * 60 * 1000);
+      setVotingOpen(newVotingOpen);
+
+      if (votingPeriodTimingOption.value !== TimingPeriod.Custom) {
+        const votingCloseDate = addTimeBasedOnPeriod(newVotingOpen, votingPeriodTimingOption.value as TimingPeriod);
+        setVotingClose(votingCloseDate);
+      }
+    }
   };
 
   const onVotesOpenChange = (value: Date) => {
-    setVotingOpen(value);
-    setSubmissionPeriodTimingOption({
-      label: "custom",
-      value: "custom",
-    });
+    if (value > submissionOpen) {
+      setVotingOpen(value);
+      setSubmissionPeriodTimingOption({
+        label: "custom",
+        value: "custom",
+      });
+
+      // check if the new voting open time is after the current voting close time
+      if (value >= votingClose) {
+        // Set voting close to 1 hour after the new voting open time
+        const newVotingClose = new Date(value.getTime() + 60 * 60 * 1000);
+        setVotingClose(newVotingClose);
+        setVotingPeriodTimingOption({
+          label: "custom",
+          value: "custom",
+        });
+      }
+    } else {
+      const newVotingOpen = new Date(submissionOpen.getTime() + 60000);
+      setVotingOpen(newVotingOpen);
+
+      // check if the adjusted voting open time is after the current voting close time
+      if (newVotingOpen >= votingClose) {
+        // set voting close to 1 hour after the new voting open time
+        const newVotingClose = new Date(newVotingOpen.getTime() + 60 * 60 * 1000);
+        setVotingClose(newVotingClose);
+        setVotingPeriodTimingOption({
+          label: "custom",
+          value: "custom",
+        });
+      }
+    }
   };
 
   const onTimingPeriodChange = (option: string) => {
