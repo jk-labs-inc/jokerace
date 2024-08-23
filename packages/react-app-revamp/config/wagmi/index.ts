@@ -65,6 +65,7 @@ import { holesky } from "./custom-chains/holesky";
 import { inEvm } from "./custom-chains/inEvm";
 import { inEvmTestnet } from "./custom-chains/inEvmTestnet";
 import { kaiaTestnet } from "./custom-chains/kaiaTestnet";
+import { kakarotTestnet } from "./custom-chains/kakarotTestnet";
 import { kroma } from "./custom-chains/kroma";
 import { linea } from "./custom-chains/linea";
 import { lineaTestnet } from "./custom-chains/lineaTestnet";
@@ -101,6 +102,8 @@ import { qChain } from "./custom-chains/qChain";
 import { qChainTestnet } from "./custom-chains/qChainTestnet";
 import { quartz } from "./custom-chains/quartz";
 import { redstoneHolesky } from "./custom-chains/redstoneHolesky";
+import { rollux } from "./custom-chains/rollux";
+import { rolluxTestnet } from "./custom-chains/rolluxTestnet";
 import { ronin } from "./custom-chains/ronin";
 import { roninTestnet } from "./custom-chains/roninTestnet";
 import { sanko } from "./custom-chains/sanko";
@@ -122,7 +125,6 @@ import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
-import { kakarotTestnet } from "./custom-chains/kakarotTestnet";
 
 declare module "wagmi";
 
@@ -190,6 +192,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   metis,
   sanko,
   forma,
+  rollux,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
@@ -238,6 +241,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   weavevmTestnet,
   formaTestnet,
   kakarotTestnet,
+  rolluxTestnet,
   mainnet,
 ];
 
