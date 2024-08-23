@@ -65,7 +65,6 @@ import { holesky } from "./custom-chains/holesky";
 import { inEvm } from "./custom-chains/inEvm";
 import { inEvmTestnet } from "./custom-chains/inEvmTestnet";
 import { kaiaTestnet } from "./custom-chains/kaiaTestnet";
-import { kakarotTestnet } from "./custom-chains/kakarotTestnet";
 import { kroma } from "./custom-chains/kroma";
 import { linea } from "./custom-chains/linea";
 import { lineaTestnet } from "./custom-chains/lineaTestnet";
