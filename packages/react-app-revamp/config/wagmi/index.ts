@@ -125,6 +125,9 @@ import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
+import { kakarotTestnet } from "./custom-chains/kakarotTestnet";
+import { syscoin } from "./custom-chains/syscoin";
+import { syscoinTestnet } from "./custom-chains/syscoinTestnet";
 
 declare module "wagmi";
 
@@ -193,6 +196,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   sanko,
   forma,
   rollux,
+  syscoin,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
@@ -242,6 +246,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   formaTestnet,
   kakarotTestnet,
   rolluxTestnet,
+  syscoinTestnet,
   mainnet,
 ];
 
