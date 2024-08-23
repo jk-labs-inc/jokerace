@@ -14,7 +14,7 @@ import { PageAction } from "@hooks/useCreateFlowAction/store";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 interface CreateFlowHeaderMobileLayoutProps {
   address: string;
@@ -37,10 +37,16 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const pathname = usePathname();
-  const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
+  const [isClient, setIsClient] = useState(false);
+  const [isInPwaMode, setIsInPwaMode] = useState(false);
   const isActive = (route: string) => (pathname === route ? "text-primary-10 transition-colors font-bold" : "");
   const isOneOfActive = (routes: string[]) =>
     routes.includes(pathname ?? "") ? "text-primary-10 transition-colors font-bold" : "";
+
+  useEffect(() => {
+    setIsClient(true);
+    setIsInPwaMode(window.matchMedia("(display-mode: standalone)").matches);
+  }, []);
 
   const onWalletClick = () => {
     if (isConnected) return;
@@ -50,7 +56,7 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
 
   return (
     <header
-      className={`flex flex-col ${isBurgerMenuOpen ? "hidden" : "fixed"} mt-4 bottom-0 right-0 left-0 ${isInPwaMode ? "pb-8" : "pb-2"} bg-true-black z-50`}
+      className={`flex flex-col ${isBurgerMenuOpen ? "hidden" : "fixed"} mt-4 bottom-0 right-0 left-0 ${isClient && isInPwaMode ? "pb-8" : "pb-2"} bg-true-black z-50`}
     >
       <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2 pt-2 px-8`}>
         <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
