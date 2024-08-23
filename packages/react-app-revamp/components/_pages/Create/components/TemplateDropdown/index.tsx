@@ -1,6 +1,6 @@
-import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
+import React, { FC, useState } from "react";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { FC, Fragment, useState } from "react";
 import { TemplateType } from "../../templates/types";
 
 export interface TemplateOption {
@@ -30,13 +30,13 @@ const CreateTemplateDropdown: FC<CreateTemplateDropdownProps> = ({
   };
 
   return (
-    <Menu as="div" className="relative inline-block">
+    <Menu as="div" className="relative inline-block w-full md:w-[240px]">
       {({ open }) => {
         onMenuStateChange?.(open);
 
         return (
           <>
-            <MenuButton className="flex items-center bg-transparent cursor-pointer w-full md:w-[240px] pb-2 border-b border-neutral-11">
+            <MenuButton className="flex items-center bg-transparent cursor-pointer w-full pb-2 border-b border-neutral-11">
               <p className={`text-[20px] font-bold ${selectedOption ? "text-neutral-11" : "text-neutral-10"}`}>
                 {selectedOption ? selectedOption.label : "Pick a template"}
               </p>
@@ -47,36 +47,33 @@ const CreateTemplateDropdown: FC<CreateTemplateDropdownProps> = ({
               />
             </MenuButton>
 
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
+            <MenuItems
+              className={`
+                ${className}
+                flex flex-col absolute z-10 w-full top-full mt-4
+                bg-true-black border border-neutral-11 rounded-[10px]
+                overflow-y-auto max-h-[150px] md:max-h-96 animate-appear
+              `}
             >
-              <MenuItems
-                className={`${className} flex flex-col absolute z-10 mt-4 bg-true-black border border-neutral-11 rounded-[10px] overflow-clip animate-appear`}
-              >
-                {options.map(option => (
-                  <MenuItem key={option.value}>
-                    {({ focus }) => (
-                      <button
-                        className={`text-neutral-11 text-left pt-2 pl-4 pb-2 text-[20px] cursor-pointer
+              {options.map(option => (
+                <MenuItem key={option.value}>
+                  {({ focus }) => (
+                    <button
+                      className={`
+                        text-neutral-11 text-left py-3 px-4 text-[20px] cursor-pointer
                         ${option.disabled ? "opacity-50 pointer-events-none" : ""}
                         ${focus ? "bg-neutral-3" : ""}
-                        ${option.value === selectedOption?.value ? "font-bold" : ""}`}
-                        disabled={option.disabled}
-                        onClick={() => handleOptionChange(option)}
-                      >
-                        {option.label}
-                      </button>
-                    )}
-                  </MenuItem>
-                ))}
-              </MenuItems>
-            </Transition>
+                        ${option.value === selectedOption?.value ? "font-bold" : ""}
+                      `}
+                      disabled={option.disabled}
+                      onClick={() => handleOptionChange(option)}
+                    >
+                      {option.label}
+                    </button>
+                  )}
+                </MenuItem>
+              ))}
+            </MenuItems>
           </>
         );
       }}
