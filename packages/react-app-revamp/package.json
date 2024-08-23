@@ -42,7 +42,7 @@
     "@types/underscore": "1.11.15",
     "@types/uuid": "10.0.0",
     "@typescript-eslint/parser": "7.18.0",
-    "@vercel/node": "3.2.8",
+    "@vercel/node": "3.2.9",
     "@wagmi/connectors": "5.1.7",
     "@wagmi/core": "2.13.4",
     "autoprefixer": "10.4.20",
