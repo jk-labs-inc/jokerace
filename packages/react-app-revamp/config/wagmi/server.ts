@@ -1,5 +1,6 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 import { Transport } from "viem";
+import { syscoinTestnet } from "viem/chains";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
 import { aevo } from "./custom-chains/aevo";
 import { ancient8 } from "./custom-chains/ancient8";
@@ -96,6 +97,7 @@ import { sei } from "./custom-chains/sei";
 import { seiTestnet } from "./custom-chains/seiTestnet";
 import { sepolia } from "./custom-chains/sepolia";
 import { syndicateFrame } from "./custom-chains/syndicateFrame";
+import { syscoin } from "./custom-chains/syscoin";
 import { taiko } from "./custom-chains/taiko";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
@@ -168,6 +170,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   metis,
   sanko,
   forma,
+  syscoin,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
@@ -216,6 +219,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   weavevmTestnet,
   formaTestnet,
   kakarotTestnet,
+  syscoinTestnet,
   mainnet,
 ];
 
