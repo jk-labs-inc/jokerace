@@ -202,17 +202,22 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                 )}
                 <div className="animate-reveal pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
-                    <ContestName contestName={contestName} address={address} chainName={chainName} />
+                    <div className="flex flex-col gap-2">
+                      {isMobile && rewardsModuleAddress && rewardsAbi ? (
+                        <div className="w-2/3">
+                          <ContestRewardsInfo rewardsModuleAddress={rewardsModuleAddress} rewardsAbi={rewardsAbi} />
+                        </div>
+                      ) : null}
+                      <ContestName contestName={contestName} address={address} chainName={chainName} />
+                    </div>
 
-                    <div
-                      className={`flex flex-row ${rewardsModuleAddress && rewardsAbi ? "justify-between" : "gap-3"} md:justify-normal md:gap-4 items-center`}
-                    >
+                    <div className={`flex flex-row gap-3 md:gap-4 items-center`}>
                       <UserProfileDisplay
                         ethereumAddress={contestAuthorEthereumAddress}
                         shortenOnFallback
                         textualVersion={isMobile}
                       />
-                      {rewardsModuleAddress && rewardsAbi ? (
+                      {!isMobile && rewardsModuleAddress && rewardsAbi ? (
                         <ContestRewardsInfo rewardsModuleAddress={rewardsModuleAddress} rewardsAbi={rewardsAbi} />
                       ) : null}
                       {isMobile ? (

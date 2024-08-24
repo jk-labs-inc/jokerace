@@ -142,12 +142,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
               {formatBalance(currentUnpaidToken.tokenBalance)} $
               <span className="uppercase mr-1 truncate inline-block overflow-hidden">{currentUnpaidSymbol}</span>
             </div>
-
-            {!isMobile ? (
-              <>
-                to {payees.length} {payees.length > 1 ? "winners" : "winner"}
-              </>
-            ) : null}
+            to {payees.length} {payees.length > 1 ? "winners" : "winner"}
           </span>
         </div>
       ) : currentPaidToken ? (
