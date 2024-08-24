@@ -8,7 +8,7 @@ import "./utils/GovernorMerkleVotes.sol";
 import "./utils/GovernorSorting.sol";
 
 /**
- * @dev Core of the governance system, designed to be extended though various modules.
+ * @dev Core of the governance system, designed to be extended through various modules.
  */
 abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     using SafeCast for uint256;
