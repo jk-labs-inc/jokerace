@@ -18,10 +18,10 @@ abstract contract GovernorSorting {
     //          or an index that wasn't garbage collected because it went to either one of last three cases or an index that also wasn't garbage
     //          collected because of the same recursive logic, from a ranking that was in the tracked rankings at the time that vote was cast.
     //
-    // The equation to calcluate how many rankings this contract will actually be able to track is:
+    // The equation to calculate how many rankings this contract will actually be able to track is:
     // # of rankings GovernorSorting can track for a given contest = RANK_LIMIT - WBs - TTDs
     //
-    // With this in mind, it is strongly reccomended to set RANK_LIMIT sufficiently high to create a buffer for
+    // With this in mind, it is strongly recommended to set RANK_LIMIT sufficiently high to create a buffer for
     // WBs and TTDs that may occur in your contest. The thing to consider with regard to making it too high is just
     // that it is more gas for users on average the higher that RANK_LIMIT is set.
 
