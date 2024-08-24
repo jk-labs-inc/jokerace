@@ -61,7 +61,7 @@ You will also need to do two more things if the ABI is changed:
   
 [Here](https://github.com/jk-labs-inc/jokerace/pull/111/commits/79072b212e603bcca0418dd5057557379444194f) is an example PR that does all of these steps.
 
-*Make sure to do all of these steps before committing any changes to the contract code to make sure that the bytecode that the site is deploying is the same as what you have written in the `forge` package! And also so that the site is able to correctly version a given deployed contract's ABI when reading from it.*
+*Make sure to do all of these steps before committing any changes to the contract code to make sure that the bytecode that the site is deploying is the same as what you have written in the `forge` package! It is also important that the site is able to correctly version a given deployed contract's ABI when reading from it.*
 
 ## Audits
 
