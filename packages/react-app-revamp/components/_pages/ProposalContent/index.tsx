@@ -184,30 +184,28 @@ const ProposalContent: FC<ProposalContentProps> = ({
       {!isContentHidden && (
         <div className="md:mx-8 flex flex-col gap-4">
           <div className="flex w-full" ref={containerRef}>
-            <div className="max-w-full">
-              <Link
-                className="inline-block p-4 rounded-[8px] bg-primary-1 border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out overflow-hidden"
-                href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
-                shallow
-                scroll={false}
-                prefetch
-              >
-                {isProposalTweet ? (
-                  <div className="dark not-prose">
-                    <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
-                  </div>
-                ) : (
-                  <div className="max-w-full overflow-hidden interweave-container">
-                    <Interweave
-                      className="prose prose-invert interweave-container inline-block w-full"
-                      content={proposal.content}
-                      transform={transform}
-                      tagName="div"
-                    />
-                  </div>
-                )}
-              </Link>
-            </div>
+            <Link
+              className="inline-block p-4 rounded-[8px] bg-primary-1 border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out overflow-hidden"
+              href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
+              shallow
+              scroll={false}
+              prefetch
+            >
+              {isProposalTweet ? (
+                <div className="dark not-prose">
+                  <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
+                </div>
+              ) : (
+                <div className="max-w-full overflow-hidden interweave-container">
+                  <Interweave
+                    className="prose prose-invert interweave-container inline-block w-full"
+                    content={proposal.content}
+                    transform={transform}
+                    tagName="div"
+                  />
+                </div>
+              )}
+            </Link>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex gap-2 items-center">
