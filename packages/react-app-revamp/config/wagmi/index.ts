@@ -112,6 +112,7 @@ import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sei } from "./custom-chains/sei";
 import { seiTestnet } from "./custom-chains/seiTestnet";
 import { sepolia } from "./custom-chains/sepolia";
+import { storyTestnet } from "./custom-chains/storyTestnet";
 import { syndicateFrame } from "./custom-chains/syndicateFrame";
 import { taiko } from "./custom-chains/taiko";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
@@ -246,6 +247,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   kakarotTestnet,
   rolluxTestnet,
   syscoinTestnet,
+  storyTestnet,
   mainnet,
 ];
 
