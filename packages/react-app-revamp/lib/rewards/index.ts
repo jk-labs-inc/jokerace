@@ -83,6 +83,7 @@ export const getNetBalances = async (
             acc[tokenAddress].balance -= transaction.amount_withdrawn;
           }
         }
+        acc[tokenAddress].balance = parseFloat(acc[tokenAddress].balance.toFixed(10));
         return acc;
       },
       {} as { [key: string]: RewardToken },
