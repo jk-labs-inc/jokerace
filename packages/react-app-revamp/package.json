@@ -21,7 +21,7 @@
     "@rainbow-me/rainbowkit": "2.1.5",
     "@supabase/supabase-js": "2.45.2",
     "@tailwindcss/line-clamp": "0.4.4",
-    "@tailwindcss/typography": "0.5.14",
+    "@tailwindcss/typography": "0.5.15",
     "@tanstack/react-query": "5.52.2",
     "@tiptap/core": "2.4.0",
     "@tiptap/extension-image": "2.4.0",
