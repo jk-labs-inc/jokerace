@@ -116,7 +116,7 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
   if (zeroVotesOnAnyoneCanVote) {
     return (
       <p className="text-[16px] md:text-[20px] text-negative-11 font-bold leading-loose">
-        add eth to {chainName} get votes{" "}
+        add eth to {chainName} to get votes{" "}
       </p>
     );
   }
