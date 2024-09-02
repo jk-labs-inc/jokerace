@@ -104,7 +104,7 @@ export const useDistributeRewards = (
           network_name: chainName,
           amount: amountReleasableFormatted,
           operation: "distribute",
-          token_address: tokenAddress ? tokenAddress : null,
+          token_address: tokenAddress === "native" ? null : tokenAddress,
           created_at: Math.floor(Date.now() / 1000),
         });
 
