@@ -17927,10 +17927,10 @@ v8-compile-cache-lib@^3.0.1:
   resolved "https://registry.yarnpkg.com/v8-compile-cache-lib/-/v8-compile-cache-lib-3.0.1.tgz#6336e8d71965cb3d35a1bbb7868445a7c05264bf"
   integrity sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==
 
-valibot@0.39.0:
-  version "0.39.0"
-  resolved "https://registry.yarnpkg.com/valibot/-/valibot-0.39.0.tgz#b6c42566fa362ca406339d8b24e4e3051ae4bc86"
-  integrity sha512-d+vE8SDRNy9zKg6No5MHz2tdz8H6CW8X3OdqYdmlhnoqQmEoM6Hu0hJUrZv3tPSVrzZkIIMCtdCQtMzcM6NCWw==
+valibot@0.41.0:
+  version "0.41.0"
+  resolved "https://registry.yarnpkg.com/valibot/-/valibot-0.41.0.tgz#5c2efd49c078e455f7862379365f6036f3cd9f96"
+  integrity sha512-igDBb8CTYr8YTQlOKgaN9nSS0Be7z+WRuaeYqGf3Cjz3aKmSnqEmYnkfVjzIuumGqfHpa3fLIvMEAfhrpqN8ng==
 
 valibot@^0.30.0:
   version "0.30.0"
