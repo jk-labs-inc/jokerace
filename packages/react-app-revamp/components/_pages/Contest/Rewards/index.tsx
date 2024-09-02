@@ -7,6 +7,7 @@ import { RewardsTableShare } from "@components/_pages/RewardsTable";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { LinkIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
@@ -21,8 +22,11 @@ const ContestRewards = () => {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
+  const chainExplorer = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
+  )?.[0]?.blockExplorers?.default.url;
   const {
     isSuccess,
     isLoading,
@@ -99,7 +103,16 @@ const ContestRewards = () => {
           {rewardsStore.isSuccess && (
             <div className="flex flex-col gap-16">
               <div className="flex flex-col gap-8">
-                <p className="text-[24px] text-true-white font-bold">live rewards pools</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-[24px] text-true-white font-bold">live rewards pools</p>
+                  <a
+                    href={`${chainExplorer}/address/${rewardsStore.rewards.contractAddress}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <LinkIcon className="h-6 w-6 text-neutral-14 hover:text-true-white transition-colors duration-300 ease-in-out" />
+                  </a>
+                </div>
                 <div className="flex flex-col gap-6">
                   <p className="text-[20px] text-neutral-11 font-bold">for winners</p>
                   {rewardsStore?.rewards?.payees?.map((payee: number) => (
