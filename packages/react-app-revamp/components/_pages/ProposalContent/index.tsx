@@ -2,7 +2,7 @@
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
-import { removeFromLocalStorage } from "@helpers/localStorage";
+import { loadFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from "@helpers/localStorage";
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
@@ -88,6 +88,15 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const [showResizeButton, setShowResizeButton] = useState(false);
 
   useEffect(() => {
+    clearStorageIfNeeded();
+
+    const visibilityState = loadFromLocalStorage<ContestVisibilities>(HIDDEN_PROPOSALS_STORAGE_KEY, {});
+    const hiddenProposals = visibilityState[contestAddress] || [];
+
+    setIsContentHidden(hiddenProposals.includes(proposal.id));
+  }, [contestAddress, proposal.id]);
+
+  useEffect(() => {
     const updateWidth = () => {
       if (containerRef.current) {
         setContainerWidth(containerRef.current.offsetWidth);
@@ -125,7 +134,30 @@ const ProposalContent: FC<ProposalContentProps> = ({
   };
 
   const toggleContentVisibility = () => {
-    setIsContentHidden(!isContentHidden);
+    const newVisibility = !isContentHidden;
+    setIsContentHidden(newVisibility);
+
+    const visibilityState = loadFromLocalStorage<ContestVisibilities>(HIDDEN_PROPOSALS_STORAGE_KEY, {});
+    let hiddenProposals = visibilityState[contestAddress] || [];
+
+    if (newVisibility) {
+      // addd proposal id to hidden list if not already there
+      if (!hiddenProposals.includes(proposal.id)) {
+        hiddenProposals = [...hiddenProposals, proposal.id];
+      }
+    } else {
+      // remove proposal id from hidden list
+      hiddenProposals = hiddenProposals.filter(id => id !== proposal.id);
+    }
+
+    if (hiddenProposals.length > 0) {
+      visibilityState[contestAddress] = hiddenProposals;
+    } else {
+      // if there are no hidden proposals, remove the contest from the visibility state
+      delete visibilityState[contestAddress];
+    }
+
+    saveToLocalStorage(HIDDEN_PROPOSALS_STORAGE_KEY, visibilityState);
   };
 
   const handleImageLoad = (canResize: boolean) => {
@@ -192,7 +224,13 @@ const ProposalContent: FC<ProposalContentProps> = ({
               prefetch
             >
               {isProposalTweet ? (
-                <div className="dark not-prose">
+                <div className="dark interweave-container inline-block w-full">
+                  <Interweave
+                    className="prose prose-invert"
+                    content={proposal.content}
+                    transform={transform}
+                    tagName="div"
+                  />
                   <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
                 </div>
               ) : (

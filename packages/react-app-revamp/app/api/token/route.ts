@@ -40,8 +40,7 @@ interface FilteredToken {
   logoURI: string;
 }
 
-const DEFILLAMA_TOKEN_LIST_URL =
-  "https://raw.githubusercontent.com/Migratooor/tokenLists/main/lists/tokenlistooor.json";
+const DEFILLAMA_TOKEN_LIST_URL = "https://raw.githubusercontent.com/SmolDapp/tokenLists/main/lists/tokenlistooor.json";
 
 const fetchTokenList = async (): Promise<TokenList | null> => {
   const response = await fetch(DEFILLAMA_TOKEN_LIST_URL);
@@ -58,21 +57,22 @@ async function fetchAndFilterToken(
   tokenIdentifier: string,
   page: number = 0,
   limit: number = 20,
-): Promise<{
-  tokens: FilteredToken[];
-  pagination: {
-    totalLength: number;
-    hasMore: boolean;
-    pageParam: number;
-  };
-}> {
+): Promise<TokenResult> {
   try {
     const data = await fetchTokenList();
     if (!data) return { tokens: [], pagination: { totalLength: 0, hasMore: false, pageParam: 0 } };
 
     const tokensForChain = data.tokens.filter(token => token.chainId === chainId);
 
-    const fuseOptions = { includeScore: true, keys: ["name", "address"], threshold: 0.2 };
+    const fuseOptions = {
+      includeScore: true,
+      keys: [
+        { name: "symbol", weight: 0.7 },
+        { name: "name", weight: 0.2 },
+        { name: "address", weight: 0.1 },
+      ],
+      threshold: 0.3,
+    };
     const fuse = new Fuse(tokensForChain, fuseOptions);
     const fuseResults = fuse.search(tokenIdentifier);
 
@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
 
   const chainId = searchParams.get("chainId");
-  const tokenIdentifier = searchParams.get("tokenIdentifier") ?? "";
+  const tokenIdentifier = searchParams.get("tokenIdentifier")?.trim() ?? "";
   const page = searchParams.get("page") ?? "0";
   const limit = searchParams.get("limit") ?? "10";
 
@@ -110,13 +110,13 @@ export async function GET(request: NextRequest) {
   const parsedPage = parseInt(page, 10);
   const parsedLimit = parseInt(limit, 10);
 
-  if (isNaN(parsedChainId) || isNaN(parsedPage) || isNaN(parsedLimit)) {
+  if (isNaN(parsedChainId) || isNaN(parsedPage) || isNaN(parsedLimit) || !tokenIdentifier) {
     return NextResponse.json({ error: "Invalid parameters." }, { status: 400 });
   }
 
   try {
     const response = await fetchAndFilterToken(parsedChainId, tokenIdentifier, parsedPage, parsedLimit);
-    return NextResponse.json(response ?? null, { status: response ? 200 : 404 });
+    return NextResponse.json(response, { status: 200 });
   } catch (error: any) {
     console.error(error);
     return NextResponse.json({ error: error.message ?? "Internal server error." }, { status: 500 });

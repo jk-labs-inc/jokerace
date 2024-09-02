@@ -190,12 +190,12 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
             {isSuccess && !error && !isLoading && (
               <>
                 {displayReloadBanner && (
-                  <div className="w-full bg-true-black text-[16px] text-center flex flex-col sticky top-0 gap-1 z-10 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
+                  <div className="w-full bg-true-black text-[16px] text-center flex flex-col sticky top-0 gap-1 z-50 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
                     <div className="flex flex-col">
                       <span>Let&apos;s refresh!</span>
                       <p className="font-normal">Looks like live updates were frozen.</p>
                     </div>
-                    <ButtonV3 colorClass="bg-gradient-create" onClick={() => refresh()}>
+                    <ButtonV3 colorClass="bg-gradient-create" onClick={() => window.location.reload()}>
                       Refresh
                     </ButtonV3>
                   </div>
