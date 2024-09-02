@@ -192,7 +192,13 @@ const ProposalContent: FC<ProposalContentProps> = ({
               prefetch
             >
               {isProposalTweet ? (
-                <div className="dark not-prose">
+                <div className="dark interweave-container inline-block w-full">
+                  <Interweave
+                    className="prose prose-invert"
+                    content={proposal.content}
+                    transform={transform}
+                    tagName="div"
+                  />
                   <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
                 </div>
               ) : (
