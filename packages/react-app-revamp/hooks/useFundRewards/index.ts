@@ -18,6 +18,8 @@ import { useEffect } from "react";
 import { erc20Abi, parseUnits } from "viem";
 import { useAccount } from "wagmi";
 import { useFundRewardsStore } from "./store";
+import { useRewardsStore } from "@hooks/useRewards/store";
+import { useReleasableRewards } from "@hooks/useReleasableRewards";
 
 export interface RewardData {
   currentUserAddress: string;
@@ -30,7 +32,7 @@ export interface RewardData {
 export function useFundRewardsModule() {
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const { rewardsModuleAddress } = useContestStore(state => state);
+  const { rewardsModuleAddress, rewardsAbi } = useContestStore(state => state);
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
@@ -48,6 +50,13 @@ export function useFundRewardsModule() {
   } = useFundRewardsStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const { handleRefetchBalanceRewardsModule } = useRewardsModule();
+  const rewardsStore = useRewardsStore(state => state);
+  const { refetch: refetchReleasableRewards } = useReleasableRewards({
+    contractAddress: rewardsModuleAddress,
+    chainId,
+    abi: rewardsAbi,
+    rankings: rewardsStore.rewards.payees,
+  });
 
   const sendFundsToRewardsModuleV3 = (rewards: FundPoolToken[]) => {
     const promises = rewards.map((reward: FundPoolToken) => {
@@ -130,12 +139,11 @@ export function useFundRewardsModule() {
         token_address: tokenAddress === "native" ? null : tokenAddress,
         created_at: Math.floor(Date.now() / 1000),
       });
-
-      handleRefetchBalanceRewardsModule();
     } catch (error) {
       console.error("Error while updating reward analytics", error);
     }
 
+    refetchReleasableRewards();
     setIsLoading(false);
     setIsSuccess(true);
 

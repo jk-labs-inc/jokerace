@@ -5,8 +5,6 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
-import useAllRewardsTokens from "@hooks/useRewardsTokens/useAllRewardsTokens";
-import useUnpaidRewardTokens from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
 import { readContract, readContracts } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { Abi } from "viem";
@@ -21,12 +19,9 @@ export function useRewardsModule() {
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
   )?.[0]?.id;
-  const { refetchUnpaidTokens } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewards?.contractAddress, true);
-  const { refetchAllBalances } = useAllRewardsTokens("allRewardsTokens", rewards?.contractAddress);
 
   const handleRefetchBalanceRewardsModule = () => {
-    refetchUnpaidTokens();
-    refetchAllBalances();
+    // TODO: Implement refetch balance rewards module
   };
 
   const fetchRewardsModuleAbi = async (address: string) => {

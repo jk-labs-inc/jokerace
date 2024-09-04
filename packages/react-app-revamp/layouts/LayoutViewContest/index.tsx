@@ -204,7 +204,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
                     <div className="flex flex-col gap-2">
                       {isMobile && rewardsModuleAddress && rewardsAbi ? (
-                        <div className="w-2/3">
+                        <div className="w-3/4">
                           <ContestRewardsInfo rewardsModuleAddress={rewardsModuleAddress} rewardsAbi={rewardsAbi} />
                         </div>
                       ) : null}

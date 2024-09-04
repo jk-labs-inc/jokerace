@@ -4,17 +4,15 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useDistributeRewardStore } from "@hooks/useDistributeRewards";
-import { useAccountModal } from "@rainbow-me/rainbowkit";
+import { TokenInfo } from "@hooks/useReleasableRewards";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
-import Skeleton from "react-loading-skeleton";
 import { Tooltip } from "react-tooltip";
 import { formatUnits } from "viem";
 import { useAccount } from "wagmi";
 
 interface DistributableRewardProps {
-  queryTokenBalance: any;
-  queryRankRewardsReleasable: any;
+  token: TokenInfo;
   handleDistributeRewards?: () => Promise<void>;
 }
 
@@ -28,26 +26,7 @@ export const DistributableReward = (props: DistributableRewardProps) => {
   const isConnectedOnCorrectChain = chainId === userChainId;
   const { contestStatus } = useContestStatusStore(state => state);
   const { isLoading: isDistributeRewardsLoading } = useDistributeRewardStore(state => state);
-  const { queryTokenBalance, handleDistributeRewards, queryRankRewardsReleasable } = props;
-
-  if (queryTokenBalance.isLoading)
-    return (
-      <li className="flex items-center">
-        <Skeleton width={200} height={16} />
-      </li>
-    );
-
-  if (!queryRankRewardsReleasable.data || queryTokenBalance.data.value === 0 || queryRankRewardsReleasable.data === 0) {
-    return (
-      <li>
-        <span className="uppercase">${queryTokenBalance?.data?.symbol}</span> — no funds to distribute
-      </li>
-    );
-  }
-
-  if (queryRankRewardsReleasable.isLoading) {
-    return <p className="loadingDots font-sabo text-[14px] text-neutral-14">loading distributable rewards</p>;
-  }
+  const { handleDistributeRewards, token } = props;
 
   const onDistributeRewards = async () => {
     if (!isConnectedOnCorrectChain) {
@@ -58,33 +37,27 @@ export const DistributableReward = (props: DistributableRewardProps) => {
   };
 
   return (
-    <li className="flex items-center">
-      <section className="flex justify-between w-full">
-        <p>
-          {formatBalance(formatUnits(queryRankRewardsReleasable.data, queryTokenBalance.data?.decimals ?? 18))}{" "}
-          <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
-        </p>
+    <div className="flex items-center justify-between w-full">
+      <p>
+        {formatBalance(formatUnits(token.amount ?? 0n, token.decimals ?? 18))}{" "}
+        <span className="uppercase">${token.symbol}</span>
+      </p>
 
-        {queryRankRewardsReleasable.isSuccess ? (
-          <div data-tooltip-id={`tooltip-${queryTokenBalance?.data?.symbol}`}>
-            {queryRankRewardsReleasable.data > 0 && (
-              <ButtonV3
-                isDisabled={contestStatus !== ContestStatus.VotingClosed || isDistributeRewardsLoading}
-                size={ButtonSize.EXTRA_SMALL}
-                colorClass="bg-gradient-distribute"
-                onClick={onDistributeRewards}
-              >
-                distribute
-              </ButtonV3>
-            )}
-          </div>
-        ) : null}
-        {contestStatus !== ContestStatus.VotingClosed && (
-          <Tooltip id={`tooltip-${queryTokenBalance?.data?.symbol}`}>
-            <p className="text-[16px]">funds cannot be distributed until voting has ended!</p>
-          </Tooltip>
-        )}
-      </section>
-    </li>
+      <div data-tooltip-id={`tooltip-${token.symbol}`}>
+        <ButtonV3
+          isDisabled={contestStatus !== ContestStatus.VotingClosed || isDistributeRewardsLoading}
+          size={ButtonSize.EXTRA_SMALL}
+          colorClass="bg-gradient-purple"
+          onClick={onDistributeRewards}
+        >
+          distribute
+        </ButtonV3>
+      </div>
+      {contestStatus !== ContestStatus.VotingClosed && (
+        <Tooltip id={`tooltip-${token.symbol}`}>
+          <span className="text-[16px]">funds cannot be distributed until voting has ended!</span>
+        </Tooltip>
+      )}
+    </div>
   );
 };

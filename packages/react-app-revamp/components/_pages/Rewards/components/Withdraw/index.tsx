@@ -1,26 +1,43 @@
 import ButtonWithdraw from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdraw";
+import { ProcessedReleasableRewards, TokenInfo } from "@hooks/useReleasableRewards";
 import { RewardModuleInfo } from "@hooks/useRewards/store";
-import useUnpaidRewardTokens from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
 interface ContestWithdrawRewardsProps {
+  releasableRewards: ProcessedReleasableRewards[];
   rewardsStore: RewardModuleInfo;
+  isReleasableRewardsLoading: boolean;
 }
 
-const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore }) => {
-  const { unpaidTokens, isLoading } = useUnpaidRewardTokens(
-    "rewards-module-unpaid-tokens",
-    rewardsStore.contractAddress,
-    true,
-  );
+const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({
+  releasableRewards,
+  rewardsStore,
+  isReleasableRewardsLoading,
+}) => {
+  const aggregatedRewards = useMemo(() => {
+    const rewardMap = new Map<string, TokenInfo>();
+
+    releasableRewards.forEach(reward => {
+      reward.tokens.forEach(token => {
+        const existingToken = rewardMap.get(token.address);
+        if (existingToken) {
+          existingToken.amount = (existingToken.amount || 0n) + (token.amount || 0n);
+        } else {
+          rewardMap.set(token.address, { ...token });
+        }
+      });
+    });
+
+    return Array.from(rewardMap.values()).filter(token => token.amount && token.amount > 0n);
+  }, [releasableRewards]);
 
   return (
     <div className="w-full md:w-[600px] mt-14">
-      {isLoading ? (
+      {isReleasableRewardsLoading ? (
         <p className="loadingDots font-sabo text-[14px] text-neutral-14">Loading rewards</p>
-      ) : unpaidTokens && unpaidTokens.length > 0 ? (
+      ) : aggregatedRewards.length > 0 ? (
         <ul className="flex flex-col gap-3 text-[16px] font-bold list-explainer">
-          {unpaidTokens.map((token, index) => (
+          {aggregatedRewards.map((token, index) => (
             <ButtonWithdraw
               key={index}
               token={token}
