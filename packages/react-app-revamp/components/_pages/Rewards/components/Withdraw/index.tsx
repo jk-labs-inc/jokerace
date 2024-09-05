@@ -2,16 +2,19 @@ import ButtonWithdraw from "@components/_pages/DialogWithdrawFundsFromRewardsMod
 import { ProcessedReleasableRewards, TokenInfo } from "@hooks/useReleasableRewards";
 import { RewardModuleInfo } from "@hooks/useRewards/store";
 import { FC, useMemo } from "react";
+import { Abi } from "viem";
 
 interface ContestWithdrawRewardsProps {
   releasableRewards: ProcessedReleasableRewards[];
-  rewardsStore: RewardModuleInfo;
+  rewardsModuleAddress: string;
+  rewardsAbi: Abi;
   isReleasableRewardsLoading: boolean;
 }
 
 const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({
   releasableRewards,
-  rewardsStore,
+  rewardsModuleAddress,
+  rewardsAbi,
   isReleasableRewardsLoading,
 }) => {
   const aggregatedRewards = useMemo(() => {
@@ -41,8 +44,8 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({
             <ButtonWithdraw
               key={index}
               token={token}
-              rewardsModuleAddress={rewardsStore.contractAddress}
-              rewardsAbi={rewardsStore.abi}
+              rewardsModuleAddress={rewardsModuleAddress}
+              rewardsAbi={rewardsAbi}
             />
           ))}
         </ul>

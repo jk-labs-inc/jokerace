@@ -14,7 +14,7 @@ export function useRewardsModule() {
   const asPath = usePathname();
   const { rewardsModuleAddress, rewardsAbi, setRewardsModuleAddress, setRewardsAbi } = useContestStore(state => state);
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
+  const { setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
   const { error, handleError } = useError();
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),

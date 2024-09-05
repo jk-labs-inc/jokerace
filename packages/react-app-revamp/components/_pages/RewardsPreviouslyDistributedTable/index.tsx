@@ -20,9 +20,7 @@ interface RewardsPreviouslyDistributedTableProps {
 
 const RewardsPreviouslyDistributedTable: FC<RewardsPreviouslyDistributedTableProps> = ({ ...props }) => {
   const { payee, releasedRewards, contractRewardsModuleAddress, abiRewardsModule, chainId } = props;
-  const { isLoading: isFundingRewardsLoading } = useFundRewardsModule();
   const { isLoading: isDistributeRewardsLoading } = useDistributeRewardStore(state => state);
-  const { isLoading: isWithdrawRewardsLoading } = useWithdrawRewardStore(state => state);
   const {
     data: share,
     isError,
@@ -41,7 +39,7 @@ const RewardsPreviouslyDistributedTable: FC<RewardsPreviouslyDistributedTablePro
   });
   const payeeRewardInfo = releasedRewards.find(reward => reward.ranking === payee);
 
-  const isLoading = isSharesLoading || isFundingRewardsLoading || isWithdrawRewardsLoading;
+  const isLoading = isSharesLoading || isDistributeRewardsLoading;
 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>

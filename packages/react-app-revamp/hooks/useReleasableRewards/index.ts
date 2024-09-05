@@ -1,5 +1,7 @@
+import ContestPromptModalLegacyLayout from "@components/_pages/Contest/components/Prompt/components/Modal/components/Layout/Legacy";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { getNativeTokenInfo } from "@helpers/getNativeTokenInfo";
 import { getTokenDecimalsBatch, getTokenSymbolBatch } from "@helpers/getTokenDecimals";
 import { useRewardTokens } from "@hooks/useRewardsTokens";
 import { useQuery } from "@tanstack/react-query";
@@ -33,20 +35,13 @@ export interface ReleasableRewardsResult {
   refetch: () => void;
 }
 
-const getNativeTokenInfo = (chainId: number) => {
-  const { nativeCurrency } = chains.filter(chain => chain.id === chainId)[0];
-  return {
-    symbol: nativeCurrency?.symbol,
-    decimals: nativeCurrency?.decimals,
-  };
-};
-
 export function useReleasableRewards({
   contractAddress,
   chainId,
   abi,
   rankings,
 }: ReleasableRewardsParams): ReleasableRewardsResult {
+  console.log({ rankings, contractAddress, chainId, abi });
   const asPath = usePathname();
   const { chainName: contestChainName } = extractPathSegments(asPath ?? "");
   const { data: erc20Addresses, isError: isRewardTokensError } = useRewardTokens(contractAddress, contestChainName);

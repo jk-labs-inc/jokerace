@@ -1,5 +1,6 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { getNativeTokenInfo } from "@helpers/getNativeTokenInfo";
 import { getTokenDecimalsBatch, getTokenSymbolBatch } from "@helpers/getTokenDecimals";
 import { TokenInfo } from "@hooks/useReleasableRewards";
 import { useRewardTokens } from "@hooks/useRewardsTokens";
@@ -26,14 +27,6 @@ export interface ReleasedRewardsResult {
   isLoading: boolean;
   refetch: () => void;
 }
-
-const getNativeTokenInfo = (chainId: number) => {
-  const { nativeCurrency } = chains.filter(chain => chain.id === chainId)[0];
-  return {
-    symbol: nativeCurrency?.symbol,
-    decimals: nativeCurrency?.decimals,
-  };
-};
 
 export function useReleasedRewards({
   contractAddress,
