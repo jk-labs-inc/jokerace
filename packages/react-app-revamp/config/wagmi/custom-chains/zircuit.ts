@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const zircuit: Chain = {
   id: 48900,
   name: "zircuit",
-  iconUrl: "/contest/mona-lisa-moustache.png",
+  iconUrl: "/zircuit.png",
   nativeCurrency: {
     decimals: 18,
     name: "ZRC",
