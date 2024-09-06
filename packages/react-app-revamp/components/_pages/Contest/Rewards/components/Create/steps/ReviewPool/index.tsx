@@ -29,7 +29,7 @@ const CreateRewardsReviewPool = () => {
   const isUserOnCorrectChain = contestChainId === userChainId;
   const isContestFinishedOrCanceled =
     contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
-  const enableEarningsToggle = charge && !isContestFinishedOrCanceled;
+  const enableEarningsToggle = charge && charge.percentageToCreator > 0 && !isContestFinishedOrCanceled;
 
   const handleSwitchNetwork = async () => {
     if (!contestChainId) return;
