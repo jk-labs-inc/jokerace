@@ -40,7 +40,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const url = useUrl();
   const { address: accountAddress } = useAccount();
   const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(pathname ?? "");
-  const chainId = chains.find(chain => chain.name === chainNameFromUrl)?.id;
+  const chainId = chains.filter(chain => chain.name.toLowerCase() === chainNameFromUrl.toLowerCase())[0]?.id;
   const showRewards = useShowRewardsStore(state => state.showRewards);
   const { isLoading, address, fetchContestInfo, isSuccess, error, chainName } = useContest();
   const {
@@ -118,7 +118,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
         const contractConfig: ContractConfig = {
           address: address as `0x${string}`,
           abi: contestAbi,
-          chainId: chainId ?? 1,
+          chainId: chainId,
         };
         await Promise.all([
           checkIfCurrentUserQualifyToSubmit(contractConfig, version),

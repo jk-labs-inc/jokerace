@@ -56,7 +56,7 @@ export function useSubmitProposal() {
   const { address: userAddress, chain } = useAccount();
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
-  const chainId = chains.find(chain => chain.name === chainName)?.id;
+  const chainId = chains.filter(chain => chain.name.toLowerCase() === chainName.toLowerCase())[0]?.id;
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
   const { charge, contestAbi: abi, rewardsModuleAddress } = useContestStore(state => state);
@@ -81,7 +81,7 @@ export function useSubmitProposal() {
     return {
       address: address as `0x${string}`,
       abi: abi,
-      chainId: chainId ?? 1,
+      chainId: chainId,
     };
   };
 

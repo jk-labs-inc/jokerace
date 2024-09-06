@@ -18,7 +18,7 @@ interface ProposalStatisticsProps {
 const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus, onMenuStateChange }) => {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
-  const chainId = chains.find(chain => chain.name === chainName)?.id;
+  const chainId = chains.filter(chain => chain.name.toLowerCase() === chainName.toLowerCase())[0]?.id;
   const { sortBy, submissionsCount } = useProposalStore(state => state);
   const { sortProposalData } = useProposal();
   const { contestAbi: abi, version } = useContestStore(state => state);
@@ -28,7 +28,7 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus, onMenu
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
 
   const handleSortTypeChange = (value: string) => {
-    sortProposalData({ address: address as `0x${string}`, abi, chainId: chainId ?? 1 }, version, value as SortOptions);
+    sortProposalData({ address: address as `0x${string}`, abi, chainId }, version, value as SortOptions);
   };
 
   const contestStatusTitle = useMemo<string>(() => {
