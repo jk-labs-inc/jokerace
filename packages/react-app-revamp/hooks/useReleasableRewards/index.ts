@@ -41,7 +41,6 @@ export function useReleasableRewards({
   abi,
   rankings,
 }: ReleasableRewardsParams): ReleasableRewardsResult {
-  console.log({ rankings, contractAddress, chainId, abi });
   const asPath = usePathname();
   const { chainName: contestChainName } = extractPathSegments(asPath ?? "");
   const { data: erc20Addresses, isError: isRewardTokensError } = useRewardTokens(contractAddress, contestChainName);

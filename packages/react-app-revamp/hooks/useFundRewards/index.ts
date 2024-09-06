@@ -49,7 +49,6 @@ export function useFundRewardsModule() {
     setTransactionData,
   } = useFundRewardsStore(state => state);
   const { error: errorMessage, handleError } = useError();
-  const { handleRefetchBalanceRewardsModule } = useRewardsModule();
   const rewardsStore = useRewardsStore(state => state);
   const { refetch: refetchReleasableRewards } = useReleasableRewards({
     contractAddress: rewardsModuleAddress,

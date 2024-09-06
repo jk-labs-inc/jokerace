@@ -150,7 +150,6 @@ export function useRewardsModule() {
   return {
     getContestRewardsModule,
     fetchRewardsModuleAddress,
-    handleRefetchBalanceRewardsModule,
   };
 }
 

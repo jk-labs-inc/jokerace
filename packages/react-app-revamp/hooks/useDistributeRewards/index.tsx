@@ -3,6 +3,7 @@ import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
+import { useReleasedRewards } from "@hooks/useReleasedRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
@@ -45,6 +46,12 @@ export const useDistributeRewards = (
     abi: abiRewardsModule,
     rankings: rewardsStore.rewards.payees,
   });
+  const { refetch: refetchReleasedRewards } = useReleasedRewards({
+    contractAddress: contractRewardsModuleAddress,
+    chainId,
+    abi: abiRewardsModule,
+    rankings: rewardsStore.rewards.payees,
+  });
 
   const handleDistributeRewards = async () => {
     setIsLoading(true);
@@ -79,6 +86,7 @@ export const useDistributeRewards = (
         console.error("Error while updating reward analytics", error);
       }
       refetchReleasableRewards();
+      refetchReleasedRewards();
     } catch (error) {
       handleError(error, "Error while releasing token");
       setIsLoading(false);

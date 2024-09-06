@@ -22,7 +22,6 @@ const RewardsReleasable: FC<RewardsReleasableProps> = ({
   isWithdrawRewardsOpen,
   setIsWithdrawRewardsOpen,
 }) => {
-  console.log({ rankings, rewardsModuleAddress, chainId, rewardsAbi });
   const {
     data: releasableRewards,
     isLoading: isReleasableRewardsLoading,
