@@ -177,6 +177,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   forma,
   rollux,
   syscoin,
+  zircuit,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
