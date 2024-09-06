@@ -1,10 +1,11 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { config } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { extractPathSegments } from "@helpers/extractPath";
 import { getProposalId } from "@helpers/getProposalId";
 import { generateFieldInputsHTML, processFieldInputs } from "@helpers/metadata";
 import { useContestStore } from "@hooks/useContest/store";
+import { Charge } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
@@ -20,7 +21,6 @@ import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useSubmitProposalStore } from "./store";
-import { Charge } from "@hooks/useDeployContest/types";
 
 const targetMetadata = {
   targetAddress: "0x0000000000000000000000000000000000000000",
@@ -56,6 +56,7 @@ export function useSubmitProposal() {
   const { address: userAddress, chain } = useAccount();
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
+  const chainId = chains.find(chain => chain.name === chainName)?.id;
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
   const { charge, contestAbi: abi, rewardsModuleAddress } = useContestStore(state => state);
@@ -74,6 +75,14 @@ export function useSubmitProposal() {
     if (!charge) return undefined;
 
     return BigInt(charge.type.costToPropose);
+  };
+
+  const getContractConfig = () => {
+    return {
+      address: address as `0x${string}`,
+      abi: abi,
+      chainId: chainId ?? 1,
+    };
   };
 
   async function sendProposal(proposalContent: string): Promise<{ tx: TransactionResponse; proposalId: string }> {
@@ -162,7 +171,7 @@ export function useSubmitProposal() {
         if (showToast) toastSuccess("proposal submitted successfully!");
         increaseCurrentUserProposalCount();
         setSubmissionsCount(submissionsCount + 1);
-        fetchSingleProposal(proposalId);
+        fetchSingleProposal(getContractConfig(), proposalId);
 
         if (metadataFields.length > 0) {
           const clearedFields = metadataFields.map(field => ({

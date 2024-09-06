@@ -1,6 +1,6 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import useContractVersion from "@hooks/useContractVersion";
+import { useContestStore } from "@hooks/useContest/store";
 import { compareVersions } from "compare-versions";
 import { usePathname } from "next/navigation";
 import { FC } from "react";
@@ -15,12 +15,12 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
   submissionsCount,
 }) => {
   const asPath = usePathname();
+  const { version } = useContestStore(state => state);
   const { address, chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
-  const { version, isLoading, isError } = useContractVersion(address, chainId);
-  const isV3OrHigher = !isLoading && !isError && version && compareVersions(version, "3.0") >= 0;
+  const isV3OrHigher = compareVersions(version, "3.0") >= 0;
 
   return (
     <div className="flex flex-col md:flex-row gap-1 md:items-center">

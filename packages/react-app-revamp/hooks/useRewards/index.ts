@@ -1,7 +1,6 @@
 import { toastError } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
@@ -14,7 +13,9 @@ import { useRewardsStore } from "./store";
 
 export function useRewardsModule() {
   const asPath = usePathname();
-  const { rewardsModuleAddress, rewardsAbi, setRewardsModuleAddress, setRewardsAbi } = useContestStore(state => state);
+  const { rewardsModuleAddress, rewardsAbi, setRewardsModuleAddress, setRewardsAbi, contestAbi } = useContestStore(
+    state => state,
+  );
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
   const { error, handleError } = useError();
@@ -41,9 +42,7 @@ export function useRewardsModule() {
 
   const fetchRewardsModuleAddress = async (): Promise<string | null> => {
     try {
-      const { abi: abiContest } = await getContestContractVersion(contestAddress, chainId);
-
-      if (abiContest === null) {
+      if (!contestAbi) {
         setIsLoading(false);
         setIsSuccess(false);
         toastError(`This contract doesn't exist on ${contestChainName}.`);
@@ -52,7 +51,7 @@ export function useRewardsModule() {
 
       const contestRewardModuleAddress = (await readContract(config, {
         address: contestAddress as `0x${string}`,
-        abi: abiContest as Abi,
+        abi: contestAbi,
         chainId,
         functionName: "officialRewardsModule",
       })) as string;
