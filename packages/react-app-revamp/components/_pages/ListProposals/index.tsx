@@ -1,10 +1,13 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
+import { chains } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import useProposal, { PROPOSALS_PER_PAGE } from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
@@ -22,6 +25,12 @@ const ProposalSkeleton = ({ count, highlightColor }: { count?: number; highlight
 
 export const ListProposals = () => {
   const { address } = useAccount();
+  const asPath = usePathname();
+  const { address: contestAddress, chainName: contestChainName } = extractPathSegments(asPath);
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase() === contestChainName.toLowerCase(),
+  )?.[0]?.id;
+
   const { fetchProposalsPage } = useProposal();
   const { deleteProposal, isLoading: isDeleteInProcess, isSuccess: isDeleteSuccess } = useDeleteProposal();
   const {
@@ -34,7 +43,7 @@ export const ListProposals = () => {
     totalPagesPaginationProposals,
     listProposalsData,
   } = useProposalStore(state => state);
-  const { contestAuthorEthereumAddress } = useContestStore(state => state);
+  const { contestAuthorEthereumAddress, contestAbi: abi, version } = useContestStore(state => state);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const allowDelete =
     (contestStatus === ContestStatus.SubmissionOpen || contestStatus === ContestStatus.VotingOpen) &&
@@ -83,6 +92,12 @@ export const ListProposals = () => {
       dataLength={listProposalsData.length}
       next={() =>
         fetchProposalsPage(
+          {
+            chainId,
+            address: contestAddress as `0x${string}`,
+            abi,
+          },
+          version,
           currentPagePaginationProposals + 1,
           indexPaginationProposals[currentPagePaginationProposals + 1],
           totalPagesPaginationProposals,
