@@ -25,7 +25,8 @@ const RewardsReleasable: FC<RewardsReleasableProps> = ({
   const {
     data: releasableRewards,
     isLoading: isReleasableRewardsLoading,
-    isError: isReleasableRewardsError,
+    isContractError: isReleasableRewardsContractError,
+    isErc20AddressesError: isReleasableRewardsErc20AddressesError,
   } = useReleasableRewards({
     contractAddress: rewardsModuleAddress,
     chainId,
@@ -35,15 +36,20 @@ const RewardsReleasable: FC<RewardsReleasableProps> = ({
 
   if (isReleasableRewardsLoading)
     return <p className="loadingDots font-sabo text-[14px] text-neutral-14">loading rewards to distribute</p>;
-  if (isReleasableRewardsError || !releasableRewards)
+  if (isReleasableRewardsContractError || !releasableRewards)
     return (
       <p className="text-[16px] text-negative-11 font-bold">
-        error while loading rewards to distribute, please try again
+        error while loading rewards to distribute, please reload the page.
       </p>
     );
 
   return (
     <>
+      {isReleasableRewardsErc20AddressesError && (
+        <div className="text-[16px] text-negative-11 font-bold">
+          Error while loading ERC20 tokens for rewards distribution, please reload the page.
+        </div>
+      )}
       {rankings.map((payee, index) => (
         <RewardsDistributionTable
           key={index}

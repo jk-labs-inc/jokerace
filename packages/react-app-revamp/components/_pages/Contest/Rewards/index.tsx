@@ -80,9 +80,9 @@ const ContestRewards = () => {
           {rewardsStore.isSuccess && (
             <div className="flex flex-col gap-12">
               <div className={`flex flex-col gap-8 border-b border-primary-2 ${creator ? "pb-8" : ""}`}>
-                <p className="text-[24px] text-true-white font-bold">rewards pool configuration</p>
+                <p className="text-[24px] text-neutral-9 font-bold">rewards pool configuration</p>
                 <div className="flex flex-col gap-3">
-                  <p className="text-neutral-9">rewards pool address:</p>
+                  <p className="text-[16px] text-neutral-11 font-bold">rewards pool address:</p>
                   <a
                     href={`${chainExplorer}/address/${rewardsStore.rewards.contractAddress}`}
                     target="_blank"
@@ -101,7 +101,7 @@ const ContestRewards = () => {
                 </div>
                 <div className="flex flex-col gap-6">
                   <div className="flex flex-col gap-8">
-                    <p className="text-[16px] text-neutral-9 font-bold">distribution of rewards in pool:</p>
+                    <p className="text-[16px] text-neutral-11 font-bold">distribution of rewards in pool:</p>
                     <div className="flex flex-col gap-2">
                       {rewardsStore.rewards.payees.map((payee: number) => (
                         <RewardsTableShare
@@ -137,25 +137,33 @@ const ContestRewards = () => {
               </div>
 
               <div className="flex flex-col gap-8 border-b border-primary-2 pb-8">
-                <p className="text-[24px] text-neutral-11 font-bold">rewards to distribute</p>
-                <RewardsReleasable
-                  rewardsModuleAddress={rewardsStore.rewards.contractAddress}
-                  chainId={chainId}
-                  rewardsAbi={rewardsStore.rewards.abi}
-                  rankings={rewardsStore.rewards.payees}
-                  isWithdrawRewardsOpen={isWithdrawRewardsOpen}
-                  setIsWithdrawRewardsOpen={setIsWithdrawRewardsOpen}
-                />
+                <p className="text-[24px] text-neutral-9 font-bold">rewards to distribute</p>
+                {rewardsStore.rewards.contractAddress &&
+                  rewardsStore.rewards.abi &&
+                  rewardsStore.rewards.payees.length > 0 && (
+                    <RewardsReleasable
+                      rewardsModuleAddress={rewardsStore.rewards.contractAddress}
+                      chainId={chainId}
+                      rewardsAbi={rewardsStore.rewards.abi}
+                      rankings={rewardsStore.rewards.payees}
+                      isWithdrawRewardsOpen={isWithdrawRewardsOpen}
+                      setIsWithdrawRewardsOpen={setIsWithdrawRewardsOpen}
+                    />
+                  )}
               </div>
 
               <div className="flex flex-col gap-8">
-                <p className="text-[24px] text-neutral-11 font-bold">previously distributed rewards</p>
-                <RewardsReleased
-                  rewardsModuleAddress={rewardsStore.rewards.contractAddress}
-                  chainId={chainId}
-                  rewardsAbi={rewardsStore.rewards.abi}
-                  rankings={rewardsStore.rewards.payees}
-                />
+                <p className="text-[24px] text-neutral-9 font-bold">previously distributed rewards</p>
+                {rewardsStore.rewards.contractAddress &&
+                  rewardsStore.rewards.abi &&
+                  rewardsStore.rewards.payees.length > 0 && (
+                    <RewardsReleased
+                      rewardsModuleAddress={rewardsStore.rewards.contractAddress}
+                      chainId={chainId}
+                      rewardsAbi={rewardsStore.rewards.abi}
+                      rankings={rewardsStore.rewards.payees}
+                    />
+                  )}
               </div>
             </div>
           )}

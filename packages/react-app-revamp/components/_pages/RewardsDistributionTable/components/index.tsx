@@ -58,7 +58,7 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
       {share && (
         <div className="flex flex-col gap-8 max-w-[500px]">
           <div className="flex flex-col gap-3">
-            <p className="text-[16px] font-bold text-neutral-9">
+            <p className="text-[16px] font-bold text-neutral-11">
               {payee}
               <sup>{returnOnlySuffix(payee)}</sup> <span className="ml-1">place</span>
             </p>

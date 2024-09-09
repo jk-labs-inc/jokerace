@@ -1,18 +1,17 @@
-import ContestPromptModalLegacyLayout from "@components/_pages/Contest/components/Prompt/components/Modal/components/Layout/Legacy";
-import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { getNativeTokenInfo } from "@helpers/getNativeTokenInfo";
 import { getTokenDecimalsBatch, getTokenSymbolBatch } from "@helpers/getTokenDecimals";
 import { useRewardTokens } from "@hooks/useRewardsTokens";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
+import { useMemo } from "react";
 import { Abi } from "viem";
 import { useReadContracts } from "wagmi";
 
 export interface ReleasableRewardsParams {
   contractAddress: string;
   chainId: number;
-  abi: Abi | null;
+  abi: Abi;
   rankings: number[];
 }
 
@@ -30,7 +29,8 @@ export interface ProcessedReleasableRewards {
 
 export interface ReleasableRewardsResult {
   data: ProcessedReleasableRewards[] | null;
-  isError: boolean;
+  isContractError: boolean;
+  isErc20AddressesError: boolean;
   isLoading: boolean;
   refetch: () => void;
 }
@@ -43,13 +43,9 @@ export function useReleasableRewards({
 }: ReleasableRewardsParams): ReleasableRewardsResult {
   const asPath = usePathname();
   const { chainName: contestChainName } = extractPathSegments(asPath ?? "");
-  const { data: erc20Addresses, isError: isRewardTokensError } = useRewardTokens(contractAddress, contestChainName);
+  const { data: erc20Addresses, isError: isErc20AddressesError } = useRewardTokens(contractAddress, contestChainName);
   const nativeTokenInfo = getNativeTokenInfo(chainId);
-  const {
-    data: tokenInfo,
-    isLoading: isTokenInfoLoading,
-    isError: isTokenInfoError,
-  } = useQuery({
+  const { data: tokenInfo, isLoading: isTokenInfoLoading } = useQuery({
     queryKey: ["tokenInfo", erc20Addresses, chainId],
     queryFn: async () => {
       const symbols = await getTokenSymbolBatch(erc20Addresses ?? [], chainId);
@@ -60,31 +56,36 @@ export function useReleasableRewards({
     retry: 3,
   });
 
-  if (!abi) return { data: null, isError: false, isLoading: false, refetch: () => {} };
+  const calls = useMemo(() => {
+    return rankings.flatMap(ranking => [
+      {
+        address: contractAddress as `0x${string}`,
+        chainId,
+        abi,
+        functionName: "releasable",
+        args: [BigInt(ranking)],
+      },
+      ...(erc20Addresses?.map(tokenAddress => ({
+        address: contractAddress as `0x${string}`,
+        chainId,
+        abi,
+        functionName: "releasable",
+        args: [tokenAddress, BigInt(ranking)],
+      })) ?? []),
+    ]);
+  }, [abi, contractAddress, chainId, rankings, erc20Addresses]);
 
-  const calls = rankings.flatMap(ranking => [
-    {
-      address: contractAddress as `0x${string}`,
-      chainId,
-      abi,
-      functionName: "releasable",
-      args: [BigInt(ranking)],
-    },
-    ...(erc20Addresses ?? []).map(tokenAddress => ({
-      address: contractAddress as `0x${string}`,
-      chainId,
-      abi,
-      functionName: "releasable",
-      args: [tokenAddress, BigInt(ranking)],
-    })),
-  ]);
-
-  const { data, isError, isLoading, refetch } = useReadContracts({
+  const {
+    data,
+    isError: isContractError,
+    isLoading,
+    refetch,
+  } = useReadContracts({
     contracts: calls,
     query: {
       select(data): ProcessedReleasableRewards[] {
         const processedData = rankings.map((ranking, rankIndex) => {
-          const startIndex = rankIndex * (1 + (erc20Addresses ?? []).length);
+          const startIndex = rankIndex * (1 + (erc20Addresses?.length ?? 0));
           const nativeAmount = data[startIndex]?.result as bigint | undefined;
 
           const result: ProcessedReleasableRewards = {
@@ -101,7 +102,7 @@ export function useReleasableRewards({
             });
           }
 
-          (erc20Addresses ?? []).forEach((address, index) => {
+          erc20Addresses?.forEach((address, index) => {
             const amount = data[startIndex + index + 1]?.result as bigint | undefined;
             if (amount && amount > 0n) {
               result.tokens.push({
@@ -118,12 +119,14 @@ export function useReleasableRewards({
 
         return processedData.filter(entry => entry.tokens.length > 0);
       },
+      enabled: calls.length > 0,
     },
   });
 
   return {
     data: data && data.length > 0 ? data : [],
-    isError: isError || isRewardTokensError || isTokenInfoError,
+    isContractError,
+    isErc20AddressesError,
     isLoading: isLoading || isTokenInfoLoading,
     refetch,
   };

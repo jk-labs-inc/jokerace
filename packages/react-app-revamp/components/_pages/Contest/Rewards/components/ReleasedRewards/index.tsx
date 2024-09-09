@@ -14,7 +14,8 @@ const RewardsReleased: FC<RewardsReleasedProps> = ({ rewardsModuleAddress, chain
   const {
     data: releasedRewards,
     isLoading: isReleasedRewardsLoading,
-    isError: isReleasedRewardsError,
+    isContractError: isReleasedRewardsContractError,
+    isErc20AddressesError: isReleasedRewardsErc20AddressesError,
   } = useReleasedRewards({
     contractAddress: rewardsModuleAddress,
     chainId,
@@ -24,15 +25,20 @@ const RewardsReleased: FC<RewardsReleasedProps> = ({ rewardsModuleAddress, chain
 
   if (isReleasedRewardsLoading)
     return <p className="loadingDots font-sabo text-[14px] text-neutral-14">loading previously distributed rewards</p>;
-  if (isReleasedRewardsError || !releasedRewards)
+  if (isReleasedRewardsContractError || !releasedRewards)
     return (
       <p className="text-[16px] text-negative-11 font-bold">
-        error while loading previously distributed rewards, please try again
+        error while loading previously distributed rewards, please reload the page.
       </p>
     );
 
   return (
     <>
+      {isReleasedRewardsErc20AddressesError && (
+        <div className="text-[16px] text-negative-11 font-bold">
+          Error while loading ERC20 tokens for previously distributed rewards, please reload the page.
+        </div>
+      )}
       {rankings.map((payee, index) => (
         <RewardsPreviouslyDistributedTable
           key={index}
