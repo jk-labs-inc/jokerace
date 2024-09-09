@@ -225,7 +225,7 @@ export function useProposal() {
       ];
 
       //@ts-ignore
-      const results = await readContracts(config, { contracts });
+      const results = await readContracts(serverConfig, { contracts });
 
       structureAndRankProposals(results, [proposalId], initialMappedProposalIds);
     } catch (e) {
