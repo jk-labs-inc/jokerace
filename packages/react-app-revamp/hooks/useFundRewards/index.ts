@@ -3,7 +3,8 @@ import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
-import useRewardsModule from "@hooks/useRewards";
+import { useReleasableRewards } from "@hooks/useReleasableRewards";
+import { useRewardsStore } from "@hooks/useRewards/store";
 import {
   estimateGas,
   sendTransaction,
@@ -18,8 +19,6 @@ import { useEffect } from "react";
 import { erc20Abi, parseUnits } from "viem";
 import { useAccount } from "wagmi";
 import { useFundRewardsStore } from "./store";
-import { useRewardsStore } from "@hooks/useRewards/store";
-import { useReleasableRewards } from "@hooks/useReleasableRewards";
 
 export interface RewardData {
   currentUserAddress: string;
@@ -53,7 +52,7 @@ export function useFundRewardsModule() {
   const { refetch: refetchReleasableRewards } = useReleasableRewards({
     contractAddress: rewardsModuleAddress,
     chainId,
-    abi: rewardsAbi,
+    abi: rewardsAbi ?? [],
     rankings: rewardsStore.rewards.payees,
   });
 

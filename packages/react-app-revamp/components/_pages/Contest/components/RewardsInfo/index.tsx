@@ -40,14 +40,12 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
     data: releasableRewards,
     isLoading: isReleasableLoading,
     isContractError: isReleasableError,
-    refetch: refetchReleasable,
   } = useReleasableRewards({ contractAddress: rewardsModuleAddress, chainId, abi: rewardsAbi, rankings: payees ?? [] });
 
   const {
     data: releasedRewards,
     isLoading: isReleasedLoading,
     isContractError: isReleasedError,
-    refetch: refetchReleased,
   } = useReleasedRewards({ contractAddress: rewardsModuleAddress, chainId, abi: rewardsAbi, rankings: payees ?? [] });
 
   const [currentIndex, setCurrentIndex] = useState(0);

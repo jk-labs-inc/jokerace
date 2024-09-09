@@ -88,7 +88,7 @@ export function useCastVotes() {
   const { refetch: refetchReleasableRewards } = useReleasableRewards({
     contractAddress: rewardsModuleAddress,
     chainId,
-    abi: rewardsAbi,
+    abi: rewardsAbi ?? [],
     rankings: rewardsStore.rewards.payees,
   });
 
