@@ -3,7 +3,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useQuery } from "@tanstack/react-query";
 import { readContract } from "@wagmi/core";
 import { fetchDataFromBucket } from "lib/buckets";
-import { EMPTY_ROOT } from "lib/contests";
+import { EMPTY_HASH } from "lib/contests";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { Abi } from "viem";
 
@@ -43,7 +43,7 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
       throw new Error("Voting merkle root could not be fetched");
     }
 
-    if (votingMerkleRoot === EMPTY_ROOT) {
+    if (votingMerkleRoot === EMPTY_HASH) {
       return 0;
     }
 

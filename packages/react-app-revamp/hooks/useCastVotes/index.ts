@@ -9,7 +9,8 @@ import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal"
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import useRewardsModule from "@hooks/useRewards";
+import { useReleasableRewards } from "@hooks/useReleasableRewards";
+import { useRewardsStore } from "@hooks/useRewards/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
@@ -53,7 +54,9 @@ export function useCastVotes() {
     version,
     anyoneCanVote,
     rewardsModuleAddress,
+    rewardsAbi,
   } = useContestStore(state => state);
+  const rewardsStore = useRewardsStore(state => state);
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
   const {
@@ -83,7 +86,12 @@ export function useCastVotes() {
     pickedProposal ?? "",
   );
   const isEarningsTowardsRewards = rewardsModuleAddress === charge?.splitFeeDestination.address;
-  const { handleRefetchBalanceRewardsModule } = useRewardsModule();
+  const { refetch: refetchReleasableRewards } = useReleasableRewards({
+    contractAddress: rewardsModuleAddress,
+    chainId,
+    abi: rewardsAbi ?? [],
+    rankings: rewardsStore.rewards.payees,
+  });
 
   const calculateChargeAmount = (amountOfVotes: number) => {
     if (!charge) return undefined;
@@ -119,6 +127,7 @@ export function useCastVotes() {
         hash = await writeContract(config, {
           address: contestAddress as `0x${string}`,
           abi: abi ? abi : DeployedContestContract.abi,
+          chainId,
           functionName: "castVote",
           args: [pickedProposal, isPositive ? 0 : 1, totalVoteAmount, parseUnits(amountOfVotes.toString()), proofs],
           //@ts-ignore
@@ -128,6 +137,7 @@ export function useCastVotes() {
         hash = await writeContract(config, {
           address: contestAddress as `0x${string}`,
           abi: abi ? abi : DeployedContestContract.abi,
+          chainId,
           functionName: "castVoteWithoutProof",
           args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amountOfVotes}`)],
           //@ts-ignore
@@ -136,7 +146,7 @@ export function useCastVotes() {
       }
 
       const receipt = await waitForTransactionReceipt(config, {
-        chainId: chain?.id,
+        chainId,
         hash: hash,
       });
 
@@ -228,11 +238,10 @@ export function useCastVotes() {
           token_address: null,
           created_at: Math.floor(Date.now() / 1000),
         });
-
-        handleRefetchBalanceRewardsModule();
       } catch (error) {
         console.error("Error while updating reward analytics", error);
       }
+      refetchReleasableRewards();
     }
   }
 

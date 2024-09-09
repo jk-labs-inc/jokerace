@@ -1,9 +1,10 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { config } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { transform } from "@hooks/useDistributeRewards";
 import { useError } from "@hooks/useError";
-import useAllRewardsTokens from "@hooks/useRewardsTokens/useAllRewardsTokens";
-import useUnpaidRewardTokens from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
+import { useReleasableRewards } from "@hooks/useReleasableRewards";
+import { useRewardsStore } from "@hooks/useRewards/store";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
@@ -24,18 +25,21 @@ export const useWithdrawReward = (
   contractRewardsModuleAddress: string,
   abiRewardsModule: Abi,
   tokenAddress: string,
-  tokenBalance: string,
+  tokenBalance: bigint,
+  tokenDecimals: number,
 ) => {
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase());
   const { setIsLoading } = useWithdrawRewardStore(state => state);
+  const rewardsStore = useRewardsStore(state => state);
   const { handleError } = useError();
-  const { refetchUnpaidTokens } = useUnpaidRewardTokens(
-    "rewards-module-unpaid-tokens",
-    contractRewardsModuleAddress,
-    true,
-  );
-  const { refetchAllBalances } = useAllRewardsTokens("allRewardsTokens", contractRewardsModuleAddress);
+  const { refetch: refetchReleasableRewards } = useReleasableRewards({
+    contractAddress: contractRewardsModuleAddress,
+    chainId: chainId[0].id,
+    abi: abiRewardsModule,
+    rankings: rewardsStore.rewards.payees,
+  });
 
   const handleWithdraw = async () => {
     setIsLoading(true);
@@ -59,17 +63,15 @@ export const useWithdrawReward = (
           contest_address: contestAddress,
           rewards_module_address: contractRewardsModuleAddress,
           network_name: chainName,
-          amount: Number(tokenBalance),
+          amount: transform(tokenBalance, tokenAddress, tokenDecimals),
           operation: "withdraw",
           token_address: tokenAddress === "native" ? null : tokenAddress,
           created_at: Math.floor(Date.now() / 1000),
         });
-
-        refetchUnpaidTokens();
-        refetchAllBalances();
       } catch (error) {
         console.error("error updating reward analytics", error);
       }
+      refetchReleasableRewards();
     } catch (error: any) {
       handleError(error, `something went wrong and the funds couldn't be withdrawn`);
       setIsLoading(false);
