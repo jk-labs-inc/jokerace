@@ -11,9 +11,10 @@ export const isContentTweet = (htmlContent: string): Tweet => {
   let foundTweet = false;
   let tweetId = "";
 
-  $("a").each(function () {
-    const href = $(this).attr("href");
-    const tweetUrlMatch = href && href.match(twitterRegex);
+  $("a, p").each(function () {
+    const element = this.tagName.toLowerCase();
+    const content = element === "a" ? $(this).attr("href") : $(this).text();
+    const tweetUrlMatch = content && content.match(twitterRegex);
 
     const isInsideList = $(this).parents("li,ul,ol").length > 0;
 
