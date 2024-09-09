@@ -1,5 +1,5 @@
 import { config } from "@config/wagmi";
-import getContestContractVersion from "@helpers/getContestContractVersion";
+import { useContestStore } from "@hooks/useContest/store";
 import { useQuery } from "@tanstack/react-query";
 import { readContract } from "@wagmi/core";
 import { fetchDataFromBucket } from "lib/buckets";
@@ -8,32 +8,22 @@ import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { Abi } from "viem";
 
 const useTotalVotesOnContest = (address: string, chainId: number) => {
+  const { contestAbi: abi } = useContestStore(state => state);
   const calculateTotalVotes = (data: Recipient[]) => {
     return data.reduce((sum, vote) => sum + Number(vote.numVotes), 0);
   };
 
-  async function getContractConfig() {
-    try {
-      const { abi } = await getContestContractVersion(address, chainId);
-      if (!abi) {
-        return null;
-      }
-
-      return {
-        address: address as `0x${string}`,
-        abi: abi as Abi,
-        chainId: chainId,
-      };
-    } catch (e) {
-      return null;
-    }
+  function getContractConfig() {
+    return {
+      address: address as `0x${string}`,
+      abi: abi as Abi,
+      chainId: chainId,
+    };
   }
 
   async function getVotingMerkleRoot() {
     try {
-      const contractConfig = await getContractConfig();
-
-      if (!contractConfig) return null;
+      const contractConfig = getContractConfig();
 
       const votingMerkleRoot = (await readContract(config, {
         ...contractConfig,
@@ -47,12 +37,6 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
   }
 
   const fetchTotalVotes = async () => {
-    const contractConfig = await getContractConfig();
-
-    if (!contractConfig) {
-      throw new Error("Contract configuration could not be fetched");
-    }
-
     const votingMerkleRoot = await getVotingMerkleRoot();
 
     if (!votingMerkleRoot) {

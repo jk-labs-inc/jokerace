@@ -5,6 +5,7 @@ import { readContract, readContracts } from "@wagmi/core";
 import { shuffle } from "lodash";
 import { formatEther } from "viem";
 import { MappedProposalIds, ProposalCore, SortOptions } from "./store";
+import { ContractConfig } from "@hooks/useContest";
 
 interface RankDictionary {
   [key: string]: number;
@@ -169,7 +170,7 @@ export function transformProposalData(
  * @param contractConfig
  * @param isLegacy
  */
-export async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean) {
+export async function getProposalIdsRaw(contractConfig: ContractConfig, isLegacy: boolean) {
   if (isLegacy) {
     return (await readContract(serverConfig, {
       ...contractConfig,
