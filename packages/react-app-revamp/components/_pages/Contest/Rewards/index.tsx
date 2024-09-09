@@ -97,6 +97,7 @@ const ContestRewards = () => {
                     <a href={githubLink?.href} target="_blank" rel="noreferrer" className="underline">
                       {githubLink?.label}
                     </a>
+                    .
                   </p>
                 </div>
                 <div className="flex flex-col gap-6">
