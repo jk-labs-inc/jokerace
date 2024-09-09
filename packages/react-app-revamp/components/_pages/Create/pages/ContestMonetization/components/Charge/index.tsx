@@ -5,6 +5,7 @@ import useChargeDetails from "@hooks/useChargeDetails";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import ContestParamsSplitFeeDestination from "./components/SplitFeeDestination";
 import ContestParamsChargeSubmission from "./components/Submission";
 import ContestParamsChargeVote from "./components/Vote";
@@ -19,7 +20,14 @@ interface CreateContestChargeProps {
 const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain, onError, onUnsupportedChain }) => {
   const chainUnitLabel = chains.find(c => c.name.toLowerCase() === chain.toLowerCase())?.nativeCurrency.symbol;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain);
-  const { charge, minCharge, setCharge, votingMerkle } = useDeployContestStore(state => state);
+  const { charge, minCharge, setCharge, votingMerkle } = useDeployContestStore(
+    useShallow(state => ({
+      charge: state.charge,
+      minCharge: state.minCharge,
+      setCharge: state.setCharge,
+      votingMerkle: state.votingMerkle,
+    })),
+  );
   const { minCostToPropose, minCostToVote } = minCharge;
   const [costToProposeError, setCostToProposeError] = useState("");
   const [costToVoteError, setCostToVoteError] = useState("");

@@ -5,6 +5,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { getProposalId } from "@helpers/getProposalId";
 import { generateFieldInputsHTML, processFieldInputs } from "@helpers/metadata";
 import { useContestStore } from "@hooks/useContest/store";
+import { Charge } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
@@ -19,8 +20,8 @@ import { usePathname } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import { useSubmitProposalStore } from "./store";
-import { Charge } from "@hooks/useDeployContest/types";
 
 const targetMetadata = {
   targetAddress: "0x0000000000000000000000000000000000000000",
@@ -58,7 +59,17 @@ export function useSubmitProposal() {
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
-  const { charge, contestAbi: abi, rewardsModuleAddress } = useContestStore(state => state);
+  const {
+    charge,
+    contestAbi: abi,
+    rewardsModuleAddress,
+  } = useContestStore(
+    useShallow(state => ({
+      charge: state.charge,
+      contestAbi: state.contestAbi,
+      rewardsModuleAddress: state.rewardsModuleAddress,
+    })),
+  );
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
   const { setSubmissionsCount, submissionsCount } = useProposalStore(state => state);
@@ -66,7 +77,12 @@ export function useSubmitProposal() {
   const { getProofs } = useGenerateProof();
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
-  const { fields: metadataFields, setFields: setMetadataFields } = useMetadataStore(state => state);
+  const { fields: metadataFields, setFields: setMetadataFields } = useMetadataStore(
+    useShallow(state => ({
+      fields: state.fields,
+      setFields: state.setFields,
+    })),
+  );
   const isEarningsTowardsRewards = rewardsModuleAddress === charge?.splitFeeDestination.address;
   const { handleRefetchBalanceRewardsModule } = useRewardsModule();
 

@@ -16,7 +16,11 @@ export const EMPTY_ROOT = "0x000000000000000000000000000000000000000000000000000
 const ANYONE_CAN_VOTE_VERSION = "4.27";
 
 export function useUser() {
-  const { setVotingMerkleRoot, setSubmissionsMerkleRoot, setAnyoneCanVote } = useContestStore(state => state);
+  const { setVotingMerkleRoot, setSubmissionsMerkleRoot, setAnyoneCanVote } = useContestStore(state => ({
+    setVotingMerkleRoot: state.setVotingMerkleRoot,
+    setSubmissionsMerkleRoot: state.setSubmissionsMerkleRoot,
+    setAnyoneCanVote: state.setAnyoneCanVote,
+  }));
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();

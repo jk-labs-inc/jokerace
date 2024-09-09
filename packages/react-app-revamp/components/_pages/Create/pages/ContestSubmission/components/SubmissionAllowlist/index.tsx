@@ -5,6 +5,7 @@ import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store"
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import CSVEditorSubmission, { SubmissionFieldObject } from "./components/CSVEditor";
+import { useShallow } from "zustand/react/shallow";
 
 type WorkerMessageData = {
   merkleRoot: string;
@@ -13,7 +14,16 @@ type WorkerMessageData = {
 
 const CreateSubmissionAllowlist = () => {
   const { step, setSubmissionMerkle, setError, submissionAllowlist, setSubmissionAllowlist, submissionTab } =
-    useDeployContestStore(state => state);
+    useDeployContestStore(
+      useShallow(state => ({
+        step: state.step,
+        setSubmissionMerkle: state.setSubmissionMerkle,
+        setError: state.setError,
+        submissionAllowlist: state.submissionAllowlist,
+        setSubmissionAllowlist: state.setSubmissionAllowlist,
+        submissionTab: state.submissionTab,
+      })),
+    );
   const onNextStep = useNextStep();
 
   const onAllowListChange = (fields: Array<SubmissionFieldObject>) => {

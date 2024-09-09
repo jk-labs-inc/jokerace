@@ -12,7 +12,7 @@ interface ContestParamsMetadataFieldProps {
 
 const ContestParamsMetadataField: FC<ContestParamsMetadataFieldProps> = ({ index, field }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const { setMetadataFields } = useDeployContestStore();
+  const setMetadataFields = useDeployContestStore(state => state.setMetadataFields);
   const [fadeBg, setFadeBg] = useState(false);
 
   const handleDropdownChange = (option: string) => {

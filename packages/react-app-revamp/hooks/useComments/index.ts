@@ -18,7 +18,7 @@ export const COMMENTS_PER_PAGE = 12;
  */
 const useComments = (address: string, chainId: number, proposalId: string) => {
   const { address: accountAddress } = useAccount();
-  const { contestAbi: abi } = useContestStore(state => state);
+  const contestAbi = useContestStore(state => state.contestAbi);
   const {
     setIsLoading,
     setIsSuccess,
@@ -44,7 +44,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
 
   function getContractConfig() {
     try {
-      if (!abi) {
+      if (!contestAbi) {
         const errorMessage = `RPC call failed`;
         handleError(errorMessage, "Error fetching contract config");
         setIsError(true);
@@ -55,7 +55,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
 
       return {
         address: address as `0x${string}`,
-        abi: abi as Abi,
+        abi: contestAbi as Abi,
         chainId: chainId,
       };
     } catch (error: any) {

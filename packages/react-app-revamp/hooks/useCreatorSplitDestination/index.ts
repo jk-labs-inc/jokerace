@@ -7,6 +7,7 @@ import { useError } from "@hooks/useError";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 interface SetCreatorSplitDestinationResult {
   setCreatorSplitDestination: (splitFeeDestination: SplitFeeDestination) => Promise<void>;
@@ -18,7 +19,17 @@ export function useCreatorSplitDestination(): SetCreatorSplitDestinationResult {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const chainId = chains.find(chain => chain.name === chainName)?.id;
-  const { contestAbi: abi, setCharge, charge } = useContestStore(state => state);
+  const {
+    contestAbi: abi,
+    setCharge,
+    charge,
+  } = useContestStore(
+    useShallow(state => ({
+      contestAbi: state.contestAbi,
+      setCharge: state.setCharge,
+      charge: state.charge,
+    })),
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const { handleError } = useError();

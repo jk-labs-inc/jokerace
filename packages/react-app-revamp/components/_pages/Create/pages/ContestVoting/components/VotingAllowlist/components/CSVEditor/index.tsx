@@ -5,8 +5,9 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { cloneDeep } from "lodash";
 import Image from "next/image";
 import React, { FC, useEffect, useState } from "react";
-import ScrollableTableBody from "./TableBody";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/react/shallow";
+import ScrollableTableBody from "./TableBody";
 
 export type VotingFieldObject = {
   address: string;
@@ -25,8 +26,15 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
     setVotingMerkle,
     setError,
     step,
-    errors,
-  } = useDeployContestStore(state => state);
+  } = useDeployContestStore(
+    useShallow(state => ({
+      votingAllowlistFields: state.votingAllowlistFields,
+      setVotingAllowlistFields: state.setVotingAllowlistFields,
+      setVotingMerkle: state.setVotingMerkle,
+      setError: state.setError,
+      step: state.step,
+    })),
+  );
   const currentStep = step + 1;
   const [allEntries, setAllEntries] = useState<Array<VotingFieldObject>>([]);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });

@@ -6,6 +6,7 @@ import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import useFundRewardsModule from "@hooks/useFundRewards";
+import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { FilteredToken } from "@hooks/useTokenList";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
@@ -14,7 +15,6 @@ import { toast } from "react-toastify";
 import { useAccount } from "wagmi";
 import AddTokenWidget from "../Contest/Rewards/components/Create/steps/FundPool/components/AddTokenWidget";
 import { useFundPoolStore } from "../Contest/Rewards/components/Create/steps/FundPool/store";
-import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 
 interface DialogAddFundsToRewardsModuleProps {
   isOpen: boolean;
@@ -26,7 +26,7 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
   const pathname = usePathname();
   const { chainName } = extractPathSegments(pathname);
   const { chainId: userChainId } = useAccount();
-  const { rewardsModuleAddress } = useContestStore(state => state);
+  const rewardsModuleAddress = useContestStore(state => state.rewardsModuleAddress);
   const selectedChain = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase());
   const isConnectedOnCorrectChain = selectedChain?.id === userChainId;
   const chainNativeCurrencySymbol = selectedChain?.nativeCurrency.symbol;
@@ -34,7 +34,7 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
   const [selectedToken, setSelectedToken] = useState<FilteredToken | null>(null);
   const { tokens, setTokens } = useFundPoolStore(state => state);
   const { sendFundsToRewardsModuleV3 } = useFundRewardsModule();
-  const { isLoading: isFundRewardsLoading } = useFundRewardsStore(state => state);
+  const isFundRewardsLoading = useFundRewardsStore(state => state.isLoading);
   const toastIdRef = useRef<string | number | null>(null);
 
   const handleSelectedToken = (token: FilteredToken) => {

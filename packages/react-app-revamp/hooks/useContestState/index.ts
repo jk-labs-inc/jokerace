@@ -18,8 +18,8 @@ export function useContestState(): CancelContestResult {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const chainId = chains.find(chain => chain.name === chainName)?.id;
-  const { contestAbi: abi } = useContestStore(state => state);
-  const { setContestState } = useContestStateStore(state => state);
+  const abi = useContestStore(state => state.contestAbi);
+  const setContestState = useContestStateStore(state => state.setContestState);
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const { handleError } = useError();

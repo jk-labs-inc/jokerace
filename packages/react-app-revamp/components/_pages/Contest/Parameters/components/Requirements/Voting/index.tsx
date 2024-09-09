@@ -4,7 +4,7 @@ import useTokenDetails from "@hooks/useTokenDetails";
 import moment from "moment";
 
 const ContestParametersVotingRequirements = () => {
-  const { votingRequirements } = useContestStore(state => state);
+  const votingRequirements = useContestStore(state => state.votingRequirements);
   const { tokenSymbol: votingRequirementsToken } = useTokenDetails(
     votingRequirements?.type ?? "",
     votingRequirements?.tokenAddress ?? "",

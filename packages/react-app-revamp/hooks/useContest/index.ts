@@ -75,14 +75,16 @@ export function useContest() {
     rewardsModuleAddress,
     setRewardsAbi,
   } = useContestStore(state => state);
-  const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
-    state => state,
-  );
-  const { setContestMaxNumberSubmissionsPerUser } = useUserStore(state => state);
+  const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(state => ({
+    setIsListProposalsSuccess: state.setIsListProposalsSuccess,
+    setIsListProposalsLoading: state.setIsListProposalsLoading,
+    setListProposalsIds: state.setListProposalsIds,
+  }));
+  const setContestMaxNumberSubmissionsPerUser = useUserStore(state => state.setContestMaxNumberSubmissionsPerUser);
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList } = useProposal();
-  const { contestStatus } = useContestStatusStore(state => state);
-  const { setContestState } = useContestStateStore(state => state);
+  const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const setContestState = useContestStateStore(state => state.setContestState);
   const { error: errorMessage, handleError } = useError();
   const alchemyRpc = chains
     .filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]

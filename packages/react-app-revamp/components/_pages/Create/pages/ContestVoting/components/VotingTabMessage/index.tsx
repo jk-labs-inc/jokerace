@@ -3,7 +3,7 @@ import { useMediaQuery } from "react-responsive";
 
 const CreateVotingTabMessage = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const { votingTab } = useDeployContestStore(state => state);
+  const votingTab = useDeployContestStore(state => state.votingTab);
 
   return (
     <div className="flex flex-col gap-4">

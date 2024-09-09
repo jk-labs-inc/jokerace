@@ -1,6 +1,7 @@
 import CreateRequirementsSettings, { TokenDetails } from "@components/_pages/Create/components/RequirementsSettings";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 type VotingRequirementsTokenSettingsError = Record<string, string | undefined>;
 
@@ -9,7 +10,12 @@ interface CreateVotingRequirementsTokenSettingsProps {
 }
 
 const CreateVotingRequirementsTokenSettings: FC<CreateVotingRequirementsTokenSettingsProps> = ({ error }) => {
-  const { votingRequirements, setVotingRequirements } = useDeployContestStore(state => state);
+  const { votingRequirements, setVotingRequirements } = useDeployContestStore(
+    useShallow(state => ({
+      votingRequirements: state.votingRequirements,
+      setVotingRequirements: state.setVotingRequirements,
+    })),
+  );
 
   const onVotingRequirementChainChange = (option: string) => {
     setVotingRequirements({

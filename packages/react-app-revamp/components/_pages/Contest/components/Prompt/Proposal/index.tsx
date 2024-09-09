@@ -18,6 +18,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { FC, ReactNode } from "react";
 import { Tweet } from "react-tweet";
+import { useShallow } from "zustand/react/shallow";
 
 interface ContestProposalProps {
   proposal: Proposal;
@@ -71,7 +72,12 @@ const transform = (node: HTMLElement): ReactNode => {
 const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, contestStatus, displaySocials }) => {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
-  const { votesOpen, contestName } = useContestStore(state => state);
+  const { votesOpen, contestName } = useContestStore(
+    useShallow(state => ({
+      votesOpen: state.votesOpen,
+      contestName: state.contestName,
+    })),
+  );
   const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
 
   return (

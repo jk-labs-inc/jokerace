@@ -13,6 +13,7 @@ import { getTemplateConfigByType } from "../../templates/templates";
 import { TemplateType } from "../../templates/types";
 import { StepTitle } from "../../types";
 import { useCreateContestStartStore } from "../ContestStart";
+import { useShallow } from "zustand/react/shallow";
 
 const templateOptions: TemplateOption[] = Object.values(TemplateType).map(value => ({
   value: value as TemplateType,
@@ -21,7 +22,12 @@ const templateOptions: TemplateOption[] = Object.values(TemplateType).map(value 
 
 const CreateContestTemplate = () => {
   const { setStartContestWithTemplate } = useCreateContestStartStore(state => state);
-  const { step: currentStep, setStep } = useDeployContestStore(state => state);
+  const { step: currentStep, setStep } = useDeployContestStore(
+    useShallow(state => ({
+      step: state.step,
+      setStep: state.setStep,
+    })),
+  );
   const setContestTemplateConfig = useSetContestTemplate();
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateType | "">("");
   const [fadeBg, setFadeBg] = useState(false);

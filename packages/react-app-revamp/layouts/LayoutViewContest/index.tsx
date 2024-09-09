@@ -1,6 +1,5 @@
 "use client";
 /* eslint-disable react-hooks/exhaustive-deps */
-import ShareDropdown from "@components/Share";
 import ButtonV3 from "@components/UI/ButtonV3";
 import Loader from "@components/UI/Loader";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
@@ -16,7 +15,6 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { extractPathSegments } from "@helpers/extractPath";
 import { populateBugReportLink } from "@helpers/githubIssue";
-import { generateUrlContest } from "@helpers/share";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
@@ -26,16 +24,15 @@ import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useUser from "@hooks/useUser";
 import moment from "moment";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useUrl } from "nextjs-current-url";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import LayoutViewContestError from "./components/Error";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
-  const { refresh } = useRouter();
   const pathname = usePathname();
   const url = useUrl();
   const { address: accountAddress } = useAccount();
@@ -51,10 +48,21 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     isReadOnly,
     rewardsModuleAddress,
     rewardsAbi,
-  } = useContestStore(state => state);
+  } = useContestStore(
+    useShallow(state => ({
+      submissionsOpen: state.submissionsOpen,
+      votesClose: state.votesClose,
+      votesOpen: state.votesOpen,
+      contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
+      contestName: state.contestName,
+      isReadOnly: state.isReadOnly,
+      rewardsModuleAddress: state.rewardsModuleAddress,
+      rewardsAbi: state.rewardsAbi,
+    })),
+  );
   const accountChanged = useAccountChange();
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
-  const { setContestStatus } = useContestStatusStore(state => state);
+  const setContestStatus = useContestStatusStore(state => state.setContestStatus);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -220,7 +228,8 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                       {!isMobile && rewardsModuleAddress && rewardsAbi ? (
                         <ContestRewardsInfo rewardsModuleAddress={rewardsModuleAddress} rewardsAbi={rewardsAbi} />
                       ) : null}
-                      {isMobile ? (
+                      {/* TODO: Share button */}
+                      {/* {isMobile ? (
                         <div
                           className="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-[10px] border border-neutral-11 cursor-pointer"
                           onClick={() =>
@@ -238,7 +247,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                           contestName={contestName}
                           onMenuStateChange={setFadeBg}
                         />
-                      )}
+                      )} */}
 
                       <div
                         className="standalone-pwa w-8 h-8 items-center rounded-[10px] border border-neutral-11 cursor-pointer"

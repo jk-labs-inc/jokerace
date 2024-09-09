@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import CreateVotingRequirementsNftSettings from "./components/NFT";
 import CreateVotingRequirementsTokenSettings from "./components/Token";
+import { useShallow } from "zustand/react/shallow";
 
 type WorkerMessageData = {
   merkleRoot: string;
@@ -44,8 +45,25 @@ const CreateVotingRequirements = () => {
     setCharge,
     charge,
     minCharge,
-    votingTab,
-  } = useDeployContestStore(state => state);
+  } = useDeployContestStore(
+    useShallow(state => ({
+      votingRequirements: state.votingRequirements,
+      setVotingRequirements: state.setVotingRequirements,
+      setVotingRequirementsOption: state.setVotingRequirementsOption,
+      votingRequirementsOption: state.votingRequirementsOption,
+      setCharge: state.setCharge,
+      charge: state.charge,
+      minCharge: state.minCharge,
+      step: state.step,
+      submissionTypeOption: state.submissionTypeOption,
+      setVotingMerkle: state.setVotingMerkle,
+      setSubmissionMerkle: state.setSubmissionMerkle,
+      setSubmissionRequirements: state.setSubmissionRequirements,
+      setError: state.setError,
+      setVotingAllowlist: state.setVotingAllowlist,
+      setVotingAllowlistFields: state.setVotingAllowlistFields,
+    })),
+  );
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
   const onNextStep = useNextStep();
   const submittersAsVoters = submissionTypeOption.value === SubmissionType.SameAsVoters;

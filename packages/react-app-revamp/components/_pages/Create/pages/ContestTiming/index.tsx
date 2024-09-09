@@ -2,6 +2,7 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/react/shallow";
 import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import MobileStepper from "../../components/MobileStepper";
@@ -11,7 +12,13 @@ import CreateSubmissionPeriod from "./components/SubmissionPeriod";
 import CreateVotingPeriod from "./components/VotingPeriod";
 
 const CreateContestTiming = () => {
-  const { step, submissionOpen, setSubmissionOpen } = useDeployContestStore(state => state);
+  const { step, submissionOpen, setSubmissionOpen } = useDeployContestStore(
+    useShallow(state => ({
+      step: state.step,
+      submissionOpen: state.submissionOpen,
+      setSubmissionOpen: state.setSubmissionOpen,
+    })),
+  );
   const onNextStep = useNextStep();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const contestTitle = isMobile ? "timing" : "how long will the contest run?";

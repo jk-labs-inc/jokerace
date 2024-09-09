@@ -16,9 +16,9 @@ const CancelContest = () => {
   const contestChainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
   const { address, chainId } = useAccount();
   const isUserOnCorrectChain = contestChainId === chainId;
-  const { contestAuthorEthereumAddress } = useContestStore(state => state);
+  const contestAuthorEthereumAddress = useContestStore(state => state.contestAuthorEthereumAddress);
   const { cancelContest, isLoading, isConfirmed } = useContestState();
-  const { contestState } = useContestStateStore(state => state);
+  const contestState = useContestStateStore(state => state.contestState);
   const [isCloseContestModalOpen, setIsCloseContestModalOpen] = useState(false);
   const isAuthor = address === contestAuthorEthereumAddress;
   const isNotCanceled = contestState !== ContestStateEnum.Canceled;

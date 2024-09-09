@@ -16,13 +16,13 @@ const MAX_LENGTH = 200;
 const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt }) => {
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
-  const { contestStatus } = useContestStatusStore(state => state);
-  const { contestState } = useContestStateStore(state => state);
+  const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const contestState = useContestStateStore(state => state.contestState);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const [contestType, contestTitle, contestSummary, contestEvaluate, contestContactDetails] = prompt.split("|");
   const isVotingOpenOrClosed =
     contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
-  const { isLoading } = useContestStore(state => state);
+  const isLoading = useContestStore(state => state.isLoading);
 
   const shouldDisplayReadMore = () => {
     if (isVotingOpenOrClosed) return false;

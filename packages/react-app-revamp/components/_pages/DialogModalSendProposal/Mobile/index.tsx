@@ -49,10 +49,10 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   const { isLoading, error } = useSubmitProposal();
   const { isMobileConfirmModalOpen, setIsMobileConfirmModalOpen, setIsLoading, setIsSuccess, setProposalId } =
     useSubmitProposalStore(state => state);
-  const { contestPrompt } = useContestStore(state => state);
+  const contestPrompt = useContestStore(state => state.contestPrompt);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields();
-  const { fields: metadataFields } = useMetadataStore(state => state);
+  const metadataFields = useMetadataStore(state => state.fields);
 
   useEffect(() => {
     if (error) {

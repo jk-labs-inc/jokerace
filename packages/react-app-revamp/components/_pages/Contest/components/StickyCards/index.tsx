@@ -6,7 +6,7 @@ import VotingContestQualifier from "./components/VotingQualifier";
 
 const ContestStickyCards = () => {
   const contestStatus = useContestStatusStore(state => state.contestStatus);
-  const { contestState } = useContestStateStore(state => state);
+  const contestState = useContestStateStore(state => state.contestState);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const { displayReloadBanner } = useContestEvents();
 

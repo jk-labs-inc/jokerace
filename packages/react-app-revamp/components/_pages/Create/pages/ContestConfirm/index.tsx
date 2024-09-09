@@ -6,6 +6,7 @@ import { fetchChargeDetails } from "lib/monetization";
 import { useCallback, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import { steps } from "../..";
 import CreateContestButton from "../../components/Buttons/Submit";
 import MobileStepper from "../../components/MobileStepper";
@@ -36,7 +37,27 @@ const ETHEREUM_MAINNET_CHAIN_ID = 1;
 
 const CreateContestConfirm = () => {
   const { chainId, chain } = useAccount();
-  const { ...state } = useDeployContestStore(state => state);
+  const { ...state } = useDeployContestStore(
+    useShallow(state => ({
+      title: state.title,
+      summary: state.summary,
+      prompt: state.prompt,
+      votingMerkle: state.votingMerkle,
+      setStep: state.setStep,
+      type: state.type,
+      submissionOpen: state.submissionOpen,
+      votingOpen: state.votingOpen,
+      votingClose: state.votingClose,
+      submissionMerkle: state.submissionMerkle,
+      submissionRequirements: state.submissionRequirements,
+      votingRequirements: state.votingRequirements,
+      submissionTypeOption: state.submissionTypeOption,
+      charge: state.charge,
+      customization: state.customization,
+      advancedOptions: state.advancedOptions,
+      step: state.step,
+    })),
+  );
   const { deployContest } = useDeployContest();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const title = isMobile ? "let’s confirm" : "finally, let’s confirm";

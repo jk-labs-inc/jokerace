@@ -7,6 +7,7 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import moment from "moment";
 import { usePathname } from "next/navigation";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import ContestParametersEarnings from "./components/Earnings";
 import ContestParametersSubmissions from "./components/Submissions";
 import ContestParametersTimeline from "./components/Timeline";
@@ -26,7 +27,20 @@ const ContestParameters = () => {
     votingMerkleRoot,
     anyoneCanVote,
     charge,
-  } = useContestStore(state => state);
+  } = useContestStore(
+    useShallow(state => ({
+      submissionsOpen: state.submissionsOpen,
+      votesClose: state.votesClose,
+      votesOpen: state.votesOpen,
+      contestMaxProposalCount: state.contestMaxProposalCount,
+      votingRequirements: state.votingRequirements,
+      submissionMerkleRoot: state.submissionMerkleRoot,
+      contestAuthor: state.contestAuthor,
+      votingMerkleRoot: state.votingMerkleRoot,
+      anyoneCanVote: state.anyoneCanVote,
+      charge: state.charge,
+    })),
+  );
   const asPath = usePathname();
   const { chainName } = extractPathSegments(asPath ?? "");
   const nativeCurrency = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.nativeCurrency;

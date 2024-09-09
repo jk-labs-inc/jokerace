@@ -57,7 +57,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   onSwitchNetwork,
   onSubmitProposal,
 }) => {
-  const { contestPrompt } = useContestStore(state => state);
+  const contestPrompt = useContestStore(state => state.contestPrompt);
   const {
     wantsSubscription,
     setWantsSubscription,
@@ -73,7 +73,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const showEntryCharge = charge && charge.type.costToPropose && accountData && isCorrectNetwork;
   const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields();
-  const { fields: metadataFields } = useMetadataStore(state => state);
+  const metadataFields = useMetadataStore(state => state.fields);
   const [error, setError] = useState<string | null>(null);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -5,6 +5,7 @@ import {
 import { TemplateConfig } from "@components/_pages/Create/templates/types";
 import { StepTitle } from "@components/_pages/Create/types";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { useShallow } from "zustand/react/shallow";
 
 const checkIfSubmissionOrVotingNeeded = (
   steps: StepTitle[],
@@ -25,7 +26,18 @@ const useSetContestTemplate = () => {
     setVotingClose,
     setVotingTab,
     setSubmissionTab,
-  } = useDeployContestStore(state => state);
+  } = useDeployContestStore(
+    useShallow(state => ({
+      setPrompt: state.setPrompt,
+      setSummary: state.setSummary,
+      setType: state.setType,
+      setSubmissionOpen: state.setSubmissionOpen,
+      setVotingOpen: state.setVotingOpen,
+      setVotingClose: state.setVotingClose,
+      setVotingTab: state.setVotingTab,
+      setSubmissionTab: state.setSubmissionTab,
+    })),
+  );
   const { setTimingOption: setSubmissionTimingOption } = useTimingOptionForSubmissionPeriod(state => state);
   const { setTimingOption: setVotingTimingOption } = useTimingOptionForVotingPeriod(state => state);
 

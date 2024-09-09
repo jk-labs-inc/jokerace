@@ -4,11 +4,9 @@ import Collapsible from "@components/UI/Collapsible";
 import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import useComments from "@hooks/useComments";
 import { useCommentsStore } from "@hooks/useComments/store";
-import useContractVersion from "@hooks/useContractVersion";
-import { compareVersions } from "compare-versions";
-import { COMMENTS_VERSION } from "lib/proposal";
 import { useSearchParams } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import CommentsForm from "./components/Form";
 import CommentsList from "./components/List";
 
@@ -34,7 +32,19 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
     isPaginating,
     isAddingSuccess,
     isAdding,
-  } = useCommentsStore(state => state);
+  } = useCommentsStore(
+    useShallow(state => ({
+      comments: state.comments,
+      isLoading: state.isLoading,
+      isDeleting: state.isDeleting,
+      currentPage: state.currentPage,
+      isDeletingSuccess: state.isDeletingSuccess,
+      totalPages: state.totalPages,
+      isPaginating: state.isPaginating,
+      isAddingSuccess: state.isAddingSuccess,
+      isAdding: state.isAdding,
+    })),
+  );
   const commentsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

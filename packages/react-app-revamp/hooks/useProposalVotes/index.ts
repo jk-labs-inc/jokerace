@@ -15,7 +15,7 @@ interface VoteEntry {
 type VotesArray = VoteEntry[];
 
 export function useProposalVotes(contractAddress: string, proposalId: string, chainId: number, addressPerPage = 5) {
-  const { contestAbi: abi } = useContestStore(state => state);
+  const abi = useContestStore(state => state.contestAbi);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [addressesVoted, setAddressesVoted] = useState<string[]>([]);

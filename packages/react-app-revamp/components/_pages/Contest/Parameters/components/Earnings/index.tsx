@@ -21,7 +21,7 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge,
     : contestAuthor;
   const blockExplorerAddressUrl = blockExplorerUrl ? `${blockExplorerUrl}/address/${creatorSplitDestination}` : "";
   const [isEditEarningsModalOpen, setIsEditEarningsModalOpen] = useState(false);
-  const { contestState } = useContestStateStore(state => state);
+  const contestState = useContestStateStore(state => state.contestState);
   const isContestFinishedOrCanceled =
     contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
 

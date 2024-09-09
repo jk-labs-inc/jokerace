@@ -1,5 +1,6 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useMedia } from "react-use";
+import { useShallow } from "zustand/react/shallow";
 import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
@@ -14,7 +15,14 @@ const MOBILE_PLACEHOLDER = "eg. “submit a project”";
 const DESKTOP_PLACEHOLDER = "eg. “submit a project” “propose a delegate” “predict the market”";
 
 const CreateContestSummary = () => {
-  const { summary, setSummary, step, errors } = useDeployContestStore(state => state);
+  const { summary, setSummary, step, errors } = useDeployContestStore(
+    useShallow(state => ({
+      summary: state.summary,
+      setSummary: state.setSummary,
+      step: state.step,
+      errors: state.errors,
+    })),
+  );
   const currentStepError = errors.find(error => error.step === step);
   const onNextStep = useNextStep();
   const isMobile = useMedia("(max-width: 768px)");

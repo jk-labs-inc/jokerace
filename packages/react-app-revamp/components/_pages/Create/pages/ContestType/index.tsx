@@ -1,6 +1,7 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/react/shallow";
 import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
@@ -28,7 +29,14 @@ const options: Option[] = [
 
 const CreateContestType = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const { type, setType, errors, step } = useDeployContestStore(state => state);
+  const { type, setType, errors, step } = useDeployContestStore(
+    useShallow(state => ({
+      type: state.type,
+      setType: state.setType,
+      errors: state.errors,
+      step: state.step,
+    })),
+  );
   const currentStepError = errors.find(error => error.step === step);
   const [fadeBg, setFadeBg] = useState(false);
   const onNextStep = useNextStep();

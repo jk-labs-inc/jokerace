@@ -11,6 +11,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { Proposal } from "../ProposalContent";
 
 interface DialogModalVoteForProposalProps {
@@ -20,7 +21,12 @@ interface DialogModalVoteForProposalProps {
 }
 
 export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = ({ isOpen, setIsOpen, proposal }) => {
-  const { downvotingAllowed, contestPrompt } = useContestStore(state => state);
+  const { downvotingAllowed, contestPrompt } = useContestStore(
+    useShallow(state => ({
+      downvotingAllowed: state.downvotingAllowed,
+      contestPrompt: state.contestPrompt,
+    })),
+  );
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
   const { castVotes, isSuccess } = useCastVotes();
   const [readFullEntry, setReadFullEntry] = useState(false);

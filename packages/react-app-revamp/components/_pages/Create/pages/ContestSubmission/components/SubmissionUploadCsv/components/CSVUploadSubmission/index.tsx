@@ -9,6 +9,7 @@ import { parseSubmissionCsv } from "@helpers/parseSubmissionsCsv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import { SubmissionFieldObject } from "../../../SubmissionAllowlist/components/CSVEditor";
 
 interface SubmissionCSVFileUploaderProps {
@@ -17,7 +18,12 @@ interface SubmissionCSVFileUploaderProps {
 }
 
 const SubmissionCSVFileUploader: FC<SubmissionCSVFileUploaderProps> = ({ onChange, onNext }) => {
-  const { setError, step } = useDeployContestStore(state => state);
+  const { setError, step } = useDeployContestStore(
+    useShallow(state => ({
+      setError: state.setError,
+      step: state.step,
+    })),
+  );
   const currentStep = step + 1;
   const { address } = useAccount();
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);

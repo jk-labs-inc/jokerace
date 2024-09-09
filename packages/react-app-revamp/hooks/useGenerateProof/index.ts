@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Address } from "viem";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 
 type ProofType = "submission" | "vote";
 
@@ -22,7 +23,12 @@ const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000
 export function useGenerateProof() {
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const { contestAbi: abi, anyoneCanVote } = useContestStore(state => state);
+  const { contestAbi: abi, anyoneCanVote } = useContestStore(
+    useShallow(state => ({
+      contestAbi: state.contestAbi,
+      anyoneCanVote: state.anyoneCanVote,
+    })),
+  );
   const { connector } = useAccount();
   const [chainId, setChainId] = useState(
     chains.filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id,

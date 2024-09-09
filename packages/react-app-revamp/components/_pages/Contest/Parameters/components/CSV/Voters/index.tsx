@@ -10,7 +10,7 @@ interface ContestParamatersCSVVotersProps {
 }
 
 const ContestParamatersCSVVoters: FC<ContestParamatersCSVVotersProps> = ({ votingMerkleRoot }) => {
-  const { isV3 } = useContestStore(state => state);
+  const isV3 = useContestStore(state => state.isV3);
   const { voters, isLoading, isError, retry } = useVoters(votingMerkleRoot, isV3);
 
   if (!isV3) {

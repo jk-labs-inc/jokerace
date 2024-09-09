@@ -8,6 +8,7 @@ import { FC, useState } from "react";
 import { useAccount } from "wagmi";
 import { VotingFieldObject } from "../../VotingAllowlist/components/CSVEditor";
 import CSVParseError, { ParseError } from "../../VotingAllowlist/components/CSVEditor/CSVParseError";
+import { useShallow } from "zustand/react/shallow";
 
 interface VotingCSVFileUploaderProps {
   onChange?: (fields: Array<VotingFieldObject>) => void;
@@ -15,7 +16,12 @@ interface VotingCSVFileUploaderProps {
 }
 
 const VotingCSVFileUploader: FC<VotingCSVFileUploaderProps> = ({ onChange, onNext }) => {
-  const { setError, step } = useDeployContestStore(state => state);
+  const { setError, step } = useDeployContestStore(
+    useShallow(state => ({
+      setError: state.setError,
+      step: state.step,
+    })),
+  );
   const currentStep = step + 1;
   const { address } = useAccount();
   const [parseError, setParseError] = useState<ParseError>("");

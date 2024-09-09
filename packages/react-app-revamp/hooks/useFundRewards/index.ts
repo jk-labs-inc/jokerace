@@ -17,6 +17,7 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { erc20Abi, parseUnits } from "viem";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import { useFundRewardsStore } from "./store";
 
 export interface RewardData {
@@ -30,7 +31,7 @@ export interface RewardData {
 export function useFundRewardsModule() {
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const { rewardsModuleAddress } = useContestStore(state => state);
+  const rewardsModuleAddress = useContestStore(state => state.rewardsModuleAddress);
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
@@ -45,7 +46,19 @@ export function useFundRewardsModule() {
     setIsSuccess,
     setError,
     setTransactionData,
-  } = useFundRewardsStore(state => state);
+  } = useFundRewardsStore(
+    useShallow(state => ({
+      isModalOpen: state.isModalOpen,
+      isLoading: state.isLoading,
+      error: state.error,
+      isSuccess: state.isSuccess,
+      transactionData: state.transactionData,
+      setIsLoading: state.setIsLoading,
+      setIsSuccess: state.setIsSuccess,
+      setError: state.setError,
+      setTransactionData: state.setTransactionData,
+    })),
+  );
   const { error: errorMessage, handleError } = useError();
   const { handleRefetchBalanceRewardsModule } = useRewardsModule();
 

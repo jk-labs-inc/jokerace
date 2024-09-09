@@ -8,6 +8,7 @@ import { useAccount } from "wagmi";
 import SubmissionQualifierMessage from "./SubmissionQualifierMessage";
 import ContestPromptModal from "./components/Modal";
 import ContestPromptPage from "./components/Page";
+import { useShallow } from "zustand/react/shallow";
 
 interface ContestPromptProps {
   prompt: string;
@@ -20,7 +21,7 @@ const ContestPrompt: FC<ContestPromptProps> = ({ prompt, type, hidePrompt = fals
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const isVotingOpenOrClosed =
     contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
-  const { submissionMerkleRoot } = useContestStore(state => state);
+  const submissionMerkleRoot = useContestStore(state => state.submissionMerkleRoot);
   const {
     currentUserQualifiedToSubmit,
     isCurrentUserSubmitQualificationLoading,
@@ -28,7 +29,16 @@ const ContestPrompt: FC<ContestPromptProps> = ({ prompt, type, hidePrompt = fals
     contestMaxNumberSubmissionsPerUser,
     currentUserProposalCount,
     currentUserAvailableVotesAmount,
-  } = useUserStore(state => state);
+  } = useUserStore(
+    useShallow(state => ({
+      currentUserQualifiedToSubmit: state.currentUserQualifiedToSubmit,
+      isCurrentUserSubmitQualificationLoading: state.isCurrentUserSubmitQualificationLoading,
+      isCurrentUserSubmitQualificationError: state.isCurrentUserSubmitQualificationError,
+      contestMaxNumberSubmissionsPerUser: state.contestMaxNumberSubmissionsPerUser,
+      currentUserProposalCount: state.currentUserProposalCount,
+      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
+    })),
+  );
 
   const renderQualifierMessage = () => {
     if (isVotingOpenOrClosed) return null;

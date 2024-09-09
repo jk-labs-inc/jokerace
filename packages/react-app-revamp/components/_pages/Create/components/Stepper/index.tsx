@@ -2,6 +2,7 @@
 import { isSupabaseConfigured } from "@helpers/database";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, ReactElement, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { useNextStep } from "../../hooks/useNextStep";
 import CreateContestDeploying from "../../pages/ContestDeploying";
 
@@ -15,7 +16,17 @@ interface StepperProps {
 }
 
 const Stepper: FC<StepperProps> = ({ steps }) => {
-  const { step: currentStep, isLoading, isSuccess } = useDeployContestStore(state => state);
+  const {
+    step: currentStep,
+    isLoading,
+    isSuccess,
+  } = useDeployContestStore(
+    useShallow(state => ({
+      step: state.step,
+      isLoading: state.isLoading,
+      isSuccess: state.isSuccess,
+    })),
+  );
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
   const onNextStep = useNextStep();
 

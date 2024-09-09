@@ -4,6 +4,7 @@ import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle, VoteType, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
+import { useShallow } from "zustand/react/shallow";
 import { VotingFieldObject } from "../VotingAllowlist/components/CSVEditor";
 import VotingCSVFileUploader from "./components";
 
@@ -25,8 +26,21 @@ const CreateVotingCSVUploader = () => {
     setVotingRequirements,
     setCharge,
     charge,
-    votingTab,
-  } = useDeployContestStore(state => state);
+  } = useDeployContestStore(
+    useShallow(state => ({
+      step: state.step,
+      setVotingMerkle: state.setVotingMerkle,
+      setError: state.setError,
+      setVotingAllowlist: state.setVotingAllowlist,
+      setSubmissionMerkle: state.setSubmissionMerkle,
+      votingAllowlist: state.votingAllowlist,
+      submissionTypeOption: state.submissionTypeOption,
+      votingRequirements: state.votingRequirements,
+      setVotingRequirements: state.setVotingRequirements,
+      setCharge: state.setCharge,
+      charge: state.charge,
+    })),
+  );
   const onNextStep = useNextStep();
   const submittersAsVoters = submissionTypeOption.value === SubmissionType.SameAsVoters;
 

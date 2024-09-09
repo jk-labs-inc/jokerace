@@ -18,6 +18,7 @@ import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
 import { Abi, parseEther } from "viem";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import { ContestVisibility, MetadataField, useDeployContestStore } from "./store";
 import { SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle } from "./types";
 
@@ -49,7 +50,28 @@ export function useDeployContest() {
     charge,
     setIsLoading,
     setIsSuccess,
-  } = useDeployContestStore(state => state);
+  } = useDeployContestStore(
+    useShallow(state => ({
+      type: state.type,
+      title: state.title,
+      summary: state.summary,
+      prompt: state.prompt,
+      submissionOpen: state.submissionOpen,
+      votingOpen: state.votingOpen,
+      votingClose: state.votingClose,
+      votingMerkle: state.votingMerkle,
+      submissionMerkle: state.submissionMerkle,
+      customization: state.customization,
+      advancedOptions: state.advancedOptions,
+      setDeployContestData: state.setDeployContestData,
+      votingRequirements: state.votingRequirements,
+      submissionRequirements: state.submissionRequirements,
+      metadataFields: state.metadataFields,
+      charge: state.charge,
+      setIsLoading: state.setIsLoading,
+      setIsSuccess: state.setIsSuccess,
+    })),
+  );
   const { error, handleError } = useError();
   const { address, chain } = useAccount();
 

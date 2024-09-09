@@ -17,10 +17,10 @@ import ProposalStatistics from "../components/ProposalStatistics";
 import ContestStickyCards from "../components/StickyCards";
 
 const ContestTab = () => {
-  const { contestPrompt } = useContestStore(state => state);
+  const contestPrompt = useContestStore(state => state.contestPrompt);
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
-  const { contestStatus } = useContestStatusStore(state => state);
+  const contestStatus = useContestStatusStore(state => state.contestStatus);
   const {
     contestMaxNumberSubmissionsPerUser,
     currentUserQualifiedToSubmit,
@@ -39,7 +39,7 @@ const ContestTab = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const [blurProposals, setBlurProposals] = useState(false);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
-  const { contestState } = useContestStateStore(state => state);
+  const contestState = useContestStateStore(state => state.contestState);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
 
   const renderSubmitButton = () => {

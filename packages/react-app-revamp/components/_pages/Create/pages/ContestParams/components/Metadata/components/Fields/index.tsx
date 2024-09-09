@@ -1,10 +1,16 @@
-import { useDeployContestStore, MetadataField } from "@hooks/useDeployContest/store";
-import ContestParamsMetadataField from "./components/Field";
+import { MetadataField, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useState } from "react";
+import { useShallow } from "zustand/react/shallow";
+import ContestParamsMetadataField from "./components/Field";
 import { metadataFields } from "./utils";
 
 const ContestParamsMetadataFields = () => {
-  const { metadataFields: storeFields, setMetadataFields } = useDeployContestStore();
+  const { metadataFields: storeFields, setMetadataFields } = useDeployContestStore(
+    useShallow(state => ({
+      metadataFields: state.metadataFields,
+      setMetadataFields: state.setMetadataFields,
+    })),
+  );
   const [error, setError] = useState<string | null>(null);
 
   const addField = () => {

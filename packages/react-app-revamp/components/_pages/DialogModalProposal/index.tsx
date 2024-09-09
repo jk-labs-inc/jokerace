@@ -62,7 +62,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
   const totalProposals = listProposalsIds.length;
-  const { downvotingAllowed } = useContestStore(state => state);
+  const downvotingAllowed = useContestStore(state => state.downvotingAllowed);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
   const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;

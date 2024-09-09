@@ -27,7 +27,7 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, proposalId }) =>
     loading: isProposalLoading,
     error: isProposalError,
   } = useFetchProposalData(contestInfo.abi, contestInfo.version, contestInfo.address, contestInfo.chainId, proposalId);
-  const { contestPrompt: prompt } = useContestStore(state => state);
+  const contestPrompt = useContestStore(state => state.contestPrompt);
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { openConnectModal } = useConnectModal();
@@ -85,7 +85,7 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, proposalId }) =>
 
   const layoutProps = {
     contestInfo,
-    prompt,
+    prompt: contestPrompt,
     proposalData,
     isProposalLoading,
     isProposalError,

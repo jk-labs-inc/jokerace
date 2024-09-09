@@ -4,7 +4,7 @@ import { validateSubmissionFields } from "@components/_pages/Create/utils/csv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import React, { FC, useEffect } from "react";
-import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import ScrollableTableBody from "./TableBody";
 
 export type SubmissionFieldObject = {
@@ -21,10 +21,17 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
     submissionAllowlistFields: fields,
     setSubmissionAllowlistFields: setFields,
     setSubmissionMerkle,
-    errors,
     setError,
     step,
-  } = useDeployContestStore(state => state);
+  } = useDeployContestStore(
+    useShallow(state => ({
+      submissionAllowlistFields: state.submissionAllowlistFields,
+      setSubmissionAllowlistFields: state.setSubmissionAllowlistFields,
+      setSubmissionMerkle: state.setSubmissionMerkle,
+      setError: state.setError,
+      step: state.step,
+    })),
+  );
   const currentStep = step + 1;
 
   // If user clean the fields, reset the state

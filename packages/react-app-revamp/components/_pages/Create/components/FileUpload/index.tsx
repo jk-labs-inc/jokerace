@@ -16,7 +16,7 @@ interface FileUploadProps {
 }
 
 const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isSuccess }) => {
-  const { errors } = useDeployContestStore(state => state);
+  const errors = useDeployContestStore(state => state.errors);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);

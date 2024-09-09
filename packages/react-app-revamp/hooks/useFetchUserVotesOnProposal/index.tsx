@@ -2,7 +2,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useAccount, useReadContract } from "wagmi";
 
 export const useFetchUserVotesOnProposal = (contestAddress: string, proposalId: string) => {
-  const { contestAbi } = useContestStore(state => state);
+  const contestAbi = useContestStore(state => state.contestAbi);
   const { address, chainId } = useAccount();
   const currentUserVotesOnProposal = useReadContract({
     address: contestAddress as `0x${string}`,

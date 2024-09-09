@@ -1,6 +1,7 @@
-import React, { useState, useEffect, FC } from "react";
-import moment from "moment";
 import { useContestStore } from "@hooks/useContest/store";
+import moment from "moment";
+import { useEffect, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 interface Stage {
   name: string;
@@ -9,7 +10,13 @@ interface Stage {
 }
 
 const ContestTimeline = () => {
-  const { submissionsOpen, votesClose, votesOpen } = useContestStore(state => state);
+  const { submissionsOpen, votesClose, votesOpen } = useContestStore(
+    useShallow(state => ({
+      submissionsOpen: state.submissionsOpen,
+      votesClose: state.votesClose,
+      votesOpen: state.votesOpen,
+    })),
+  );
 
   const stages: Stage[] = [
     { name: "Submission Open", action: "Submissions are open", date: submissionsOpen },

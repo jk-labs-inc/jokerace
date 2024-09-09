@@ -10,7 +10,7 @@ interface ContestNameProps {
 }
 
 const ContestName: FC<ContestNameProps> = ({ contestName, address, chainName }) => {
-  const { contestState } = useContestStateStore(state => state);
+  const contestState = useContestStateStore(state => state.contestState);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
 
   return (

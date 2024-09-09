@@ -10,11 +10,19 @@ import useUnpaidRewardTokens from "@hooks/useRewardsTokens/useUnpaidRewardsToken
 import { readContract, readContracts } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { Abi } from "viem";
+import { useShallow } from "zustand/react/shallow";
 import { useRewardsStore } from "./store";
 
 export function useRewardsModule() {
   const asPath = usePathname();
-  const { rewardsModuleAddress, rewardsAbi, setRewardsModuleAddress, setRewardsAbi } = useContestStore(state => state);
+  const { rewardsModuleAddress, rewardsAbi, setRewardsModuleAddress, setRewardsAbi } = useContestStore(
+    useShallow(state => ({
+      rewardsModuleAddress: state.rewardsModuleAddress,
+      rewardsAbi: state.rewardsAbi,
+      setRewardsModuleAddress: state.setRewardsModuleAddress,
+      setRewardsAbi: state.setRewardsAbi,
+    })),
+  );
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
   const { error, handleError } = useError();

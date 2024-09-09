@@ -32,7 +32,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   const asPath = usePathname();
   const { chainId: accountChainId } = useAccount();
   const { chainName } = extractPathSegments(asPath ?? "");
-  const { isLoading } = useCastVotesStore(state => state);
+  const isLoading = useCastVotesStore(state => state.isLoading);
   const [isUpvote, setIsUpvote] = useState(true);
   const [amount, setAmount] = useState(0);
   const [sliderValue, setSliderValue] = useState(0);
@@ -43,7 +43,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
   const isCorrectNetwork = chainId === accountChainId;
-  const { contestState } = useContestStateStore(state => state);
+  const contestState = useContestStateStore(state => state.contestState);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const inputRef = useRef<HTMLInputElement>(null);
 

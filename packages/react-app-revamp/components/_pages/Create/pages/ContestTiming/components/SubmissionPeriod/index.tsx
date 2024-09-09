@@ -2,6 +2,7 @@ import CreateDatePicker from "@components/_pages/Create/components/DatePicker";
 import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultDropdown";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import {
   TimingPeriod,
   addTimeBasedOnPeriod,
@@ -12,7 +13,18 @@ import {
 
 const CreateSubmissionPeriod = () => {
   const { submissionOpen, setSubmissionOpen, votingOpen, setVotingOpen, votingClose, setVotingClose, errors, step } =
-    useDeployContestStore(state => state);
+    useDeployContestStore(
+      useShallow(state => ({
+        submissionOpen: state.submissionOpen,
+        setSubmissionOpen: state.setSubmissionOpen,
+        votingOpen: state.votingOpen,
+        setVotingOpen: state.setVotingOpen,
+        votingClose: state.votingClose,
+        setVotingClose: state.setVotingClose,
+        errors: state.errors,
+        step: state.step,
+      })),
+    );
   const currentStepError = errors.find(error => error.step === step);
   const currentVotesOpenError = currentStepError?.message.startsWith("Voting open") ? currentStepError.message : "";
   const { timingOption: submissionPeriodTimingOption, setTimingOption: setSubmissionPeriodTimingOption } =

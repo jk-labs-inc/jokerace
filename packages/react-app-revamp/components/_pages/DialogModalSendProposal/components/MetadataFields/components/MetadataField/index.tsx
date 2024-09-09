@@ -11,7 +11,7 @@ const DialogModalSendProposalMetadataField: FC<DialogModalSendProposalMetadataFi
   metadataField,
   index,
 }) => {
-  const { setInputValue } = useMetadataStore(state => state);
+  const setInputValue = useMetadataStore(state => state.setInputValue);
   const [error, setError] = useState<string | null>(null);
 
   const getPlaceholder = (metadataType: string) => {

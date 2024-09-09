@@ -3,6 +3,7 @@ import moment from "moment";
 import { FC, useEffect, useState } from "react";
 import ContestPromptModalLegacyLayout from "./components/Layout/Legacy";
 import ContestPromptModalV3Layout from "./components/Layout/V3";
+import { useShallow } from "zustand/react/shallow";
 
 interface ContestPromptModalProps {
   prompt: string;
@@ -10,7 +11,12 @@ interface ContestPromptModalProps {
 }
 
 const ContestPromptModal: FC<ContestPromptModalProps> = ({ prompt, hidePrompt = false }) => {
-  const { isV3, votesClose } = useContestStore(state => state);
+  const { isV3, votesClose } = useContestStore(
+    useShallow(state => ({
+      isV3: state.isV3,
+      votesClose: state.votesClose,
+    })),
+  );
   const [isPromptOpen, setIsPromptOpen] = useState(moment().isBefore(votesClose) && !hidePrompt);
   const [contestType, contestTitle, contestSummary, contestEvalute] = prompt.split("|");
 

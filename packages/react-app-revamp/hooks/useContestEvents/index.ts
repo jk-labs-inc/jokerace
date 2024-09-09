@@ -12,6 +12,7 @@ import { readContract, watchContractEvent } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { formatEther } from "viem";
+import { useShallow } from "zustand/react/shallow";
 
 export function useContestEvents() {
   const asPath = usePathname();
@@ -20,11 +21,16 @@ export function useContestEvents() {
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
   const provider = getEthersProvider(config, { chainId });
-  const { canUpdateVotesInRealTime } = useContestStore(state => state);
+  const canUpdateVotesInRealTime = useContestStore(state => state.canUpdateVotesInRealTime);
   const { retry: refetchTotalVotesCastOnContest } = useTotalVotesCastOnContest(contestAddress, chainId);
-  const { contestStatus } = useContestStatusStore(state => state);
+  const contestStatus = useContestStatusStore(state => state.contestStatus);
   const { updateProposal } = useProposal();
-  const { setProposalData, listProposalsData } = useProposalStore(state => state);
+  const { setProposalData, listProposalsData } = useProposalStore(
+    useShallow(state => ({
+      setProposalData: state.setProposalData,
+      listProposalsData: state.listProposalsData,
+    })),
+  );
   const [displayReloadBanner, setDisplayReloadBanner] = useState(false);
   const contestStatusRef = useRef(contestStatus);
   const listProposalsDataRef = useRef(listProposalsData);

@@ -34,7 +34,7 @@ export const ListProposals = () => {
     totalPagesPaginationProposals,
     listProposalsData,
   } = useProposalStore(state => state);
-  const { contestAuthorEthereumAddress } = useContestStore(state => state);
+  const contestAuthorEthereumAddress = useContestStore(state => state.contestAuthorEthereumAddress);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const allowDelete =
     (contestStatus === ContestStatus.SubmissionOpen || contestStatus === ContestStatus.VotingOpen) &&

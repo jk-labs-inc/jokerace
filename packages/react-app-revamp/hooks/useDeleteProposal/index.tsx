@@ -12,10 +12,11 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import { useDeleteProposalStore } from "./store";
 
 export function useDeleteProposal() {
-  const { contestAbi: abi } = useContestStore(state => state);
+  const abi = useContestStore(state => state.contestAbi);
   const { address: userAddress, chain } = useAccount();
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
@@ -31,7 +32,19 @@ export function useDeleteProposal() {
     setIsSuccess,
     setError,
     setTransactionData,
-  } = useDeleteProposalStore(state => state);
+  } = useDeleteProposalStore(
+    useShallow(state => ({
+      isLoading: state.isLoading,
+      error: state.error,
+      isSuccess: state.isSuccess,
+      transactionData: state.transactionData,
+      isModalOpen: state.isModalOpen,
+      setIsLoading: state.setIsLoading,
+      setIsSuccess: state.setIsSuccess,
+      setError: state.setError,
+      setTransactionData: state.setTransactionData,
+    })),
+  );
   const { error: errorMessage, handleError } = useError();
 
   async function deleteProposal(proposalIds: string[]) {

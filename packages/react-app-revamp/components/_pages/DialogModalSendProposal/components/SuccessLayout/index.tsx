@@ -24,7 +24,7 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
   contestId,
   proposalId,
 }) => {
-  const { contestName } = useContestStore(state => state);
+  const contestName = useContestStore(state => state.contestName);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { setIsModalOpen } = useSubmitProposalStore(state => state);
   const [copyText, setCopyText] = useState("copy");

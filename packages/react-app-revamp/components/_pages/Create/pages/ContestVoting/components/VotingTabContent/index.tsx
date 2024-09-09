@@ -5,6 +5,7 @@ import CreateVotingAllowlist from "../VotingAllowlist";
 import CreateVotingRequirements from "../VotingRequirements";
 import CreateVotingCSVUploader from "../VotingUploadCsv";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/react/shallow";
 
 const tabOptions = [
   { label: "use presets", mobileLabel: "use presets", content: <CreateVotingRequirements /> },
@@ -13,7 +14,13 @@ const tabOptions = [
 ];
 
 const CreateVotingTabContent = () => {
-  const { setVotingTab, votingTab, setVotingMerkle } = useDeployContestStore(state => state);
+  const { setVotingTab, votingTab, setVotingMerkle } = useDeployContestStore(
+    useShallow(state => ({
+      setVotingTab: state.setVotingTab,
+      votingTab: state.votingTab,
+      setVotingMerkle: state.setVotingMerkle,
+    })),
+  );
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
   const isMobile = useMediaQuery({ maxWidth: 768 });

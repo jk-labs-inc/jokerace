@@ -26,7 +26,7 @@ export const DistributableReward = (props: DistributableRewardProps) => {
   )?.[0]?.id;
   const { chainId: userChainId } = useAccount();
   const isConnectedOnCorrectChain = chainId === userChainId;
-  const { contestStatus } = useContestStatusStore(state => state);
+  const contestStatus = useContestStatusStore(state => state.contestStatus);
   const { isLoading: isDistributeRewardsLoading } = useDistributeRewardStore(state => state);
   const { queryTokenBalance, handleDistributeRewards, queryRankRewardsReleasable } = props;
 

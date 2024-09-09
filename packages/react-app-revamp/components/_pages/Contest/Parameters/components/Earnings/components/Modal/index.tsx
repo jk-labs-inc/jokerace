@@ -25,7 +25,7 @@ const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charg
   const contestChainId = chains.find(chain => chain.name.toLowerCase() === contestChainName.toLowerCase())?.id;
   const { address: userAddress, chainId } = useAccount();
   const isUserOnCorrectChain = contestChainId === chainId;
-  const { rewardsModuleAddress } = useContestStore(state => state);
+  const rewardsModuleAddress = useContestStore(state => state.rewardsModuleAddress);
   const [splitFeeDestinationError, setSplitFeeDestinationError] = useState("");
   const { setCreatorSplitDestination, isLoading, isConfirmed } = useCreatorSplitDestination();
   const [localCharge, setLocalCharge] = useState<Charge>(charge);

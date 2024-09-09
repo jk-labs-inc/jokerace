@@ -9,6 +9,7 @@ import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
 import { useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import CreateSubmissionRequirementsNftSettings from "./components/NFT";
 import CreateSubmissionRequirementsTokenSettings from "./components/Token";
 
@@ -32,8 +33,17 @@ const CreateSubmissionRequirements = () => {
     setSubmissionMerkle,
     setSubmissionRequirements,
     submissionRequirements,
-    submissionTab,
-  } = useDeployContestStore(state => state);
+  } = useDeployContestStore(
+    useShallow(state => ({
+      step: state.step,
+      submissionRequirementsOption: state.submissionRequirementsOption,
+      setSubmissionRequirementsOption: state.setSubmissionRequirementsOption,
+      setSubmissionAllowlistFields: state.setSubmissionAllowlistFields,
+      setSubmissionMerkle: state.setSubmissionMerkle,
+      setSubmissionRequirements: state.setSubmissionRequirements,
+      submissionRequirements: state.submissionRequirements,
+    })),
+  );
   const onNextStep = useNextStep();
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

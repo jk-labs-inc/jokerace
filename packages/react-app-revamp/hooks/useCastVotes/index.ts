@@ -20,6 +20,7 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import { useCastVotesStore } from "./store";
 
 interface UserAnalyticsParams {
@@ -47,14 +48,22 @@ interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsP
 
 export function useCastVotes() {
   const {
-    canUpdateVotesInRealTime,
     charge,
     contestAbi: abi,
+    canUpdateVotesInRealTime,
     anyoneCanVote,
     rewardsModuleAddress,
-  } = useContestStore(state => state);
+  } = useContestStore(
+    useShallow(state => ({
+      charge: state.charge,
+      contestAbi: state.contestAbi,
+      anyoneCanVote: state.anyoneCanVote,
+      rewardsModuleAddress: state.rewardsModuleAddress,
+      canUpdateVotesInRealTime: state.canUpdateVotesInRealTime,
+    })),
+  );
   const { updateProposal } = useProposal();
-  const { listProposalsData } = useProposalStore(state => state);
+  const listProposalsData = useProposalStore(state => state.listProposalsData);
   const {
     castPositiveAmountOfVotes,
     pickedProposal,
@@ -65,11 +74,23 @@ export function useCastVotes() {
     setIsSuccess,
     setError,
     setTransactionData,
-  } = useCastVotesStore(state => state);
+  } = useCastVotesStore(
+    useShallow(state => ({
+      castPositiveAmountOfVotes: state.castPositiveAmountOfVotes,
+      pickedProposal: state.pickedProposal,
+      isLoading: state.isLoading,
+      isSuccess: state.isSuccess,
+      error: state.error,
+      setIsLoading: state.setIsLoading,
+      setIsSuccess: state.setIsSuccess,
+      setError: state.setError,
+      setTransactionData: state.setTransactionData,
+    })),
+  );
   const { address: userAddress, chain } = useAccount();
   const asPath = usePathname();
   const { updateCurrentUserVotes } = useUser();
-  const { currentUserTotalVotesAmount } = useUserStore(state => state);
+  const currentUserTotalVotesAmount = useUserStore(state => state.currentUserTotalVotesAmount);
   const { getProofs } = useGenerateProof();
   const { error: errorMessage, handleError } = useError();
   const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");

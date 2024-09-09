@@ -2,7 +2,7 @@ import { VotingRequirementsSchema } from "@hooks/useContestsIndexV3";
 import { Charge } from "@hooks/useDeployContest/types";
 import { createContext, useContext, useRef } from "react";
 import { Abi } from "viem";
-import { createStore, useStore } from "zustand";
+import { create, createStore, useStore } from "zustand";
 
 export enum ErrorType {
   RPC = "RPC",
@@ -66,78 +66,58 @@ export interface ContestState {
   setRewardsAbi: (abi: Abi | null) => void;
 }
 
-export const createContestStore = () =>
-  createStore<ContestState>(set => ({
-    contestName: "",
-    contestPrompt: "",
-    contestAbi: [],
-    contestAuthorEthereumAddress: "",
-    contestAuthor: "",
-    submissionsOpen: new Date(),
-    votesOpen: new Date(),
-    votesClose: new Date(),
-    submissionMerkleRoot: "",
-    votingMerkleRoot: "",
-    isLoading: true,
-    error: null,
-    charge: null,
-    isSuccess: false,
-    contestMaxProposalCount: 0,
-    downvotingAllowed: false,
-    sortingEnabled: false,
-    canUpdateVotesInRealTime: false,
-    votingRequirements: null,
-    submissionRequirements: null,
-    isV3: false,
-    isReadOnly: false,
-    supportsRewardsModule: false,
-    anyoneCanVote: false,
-    version: "",
-    rewardsModuleAddress: "",
-    rewardsAbi: null,
-    setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
-    setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
-    setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
-    setSortingEnabled: isAllowed => set({ sortingEnabled: isAllowed }),
-    setContestPrompt: prompt => set({ contestPrompt: prompt }),
-    setContestMaxProposalCount: amount => set({ contestMaxProposalCount: amount }),
-    setIsV3: value => set({ isV3: value }),
-    setIsReadOnly: value => set({ isReadOnly: value }),
-    setContestName: name => set({ contestName: name }),
-    setContestAuthor: (author, address) => set({ contestAuthor: author, contestAuthorEthereumAddress: address }),
-    setSubmissionsOpen: datetime => set({ submissionsOpen: datetime }),
-    setVotesOpen: datetime => set({ votesOpen: datetime }),
-    setVotesClose: datetime => set({ votesClose: datetime }),
-    setSubmissionsMerkleRoot: merkleRoot => set({ submissionMerkleRoot: merkleRoot }),
-    setVotingMerkleRoot: merkleRoot => set({ votingMerkleRoot: merkleRoot }),
-    setVotingRequirements: votingRequirements => set({ votingRequirements: votingRequirements }),
-    setSubmissionRequirements: submissionRequirements => set({ submissionRequirements: submissionRequirements }),
-    setIsLoading: value => set({ isLoading: value }),
-    setError: value => set({ error: value }),
-    setIsSuccess: value => set({ isSuccess: value }),
-    setCharge: charge => set({ charge: charge }),
-    setContestAbi: abi => set({ contestAbi: abi }),
-    setAnyoneCanVote: value => set({ anyoneCanVote: value }),
-    setVersion: version => set({ version: version }),
-    setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
-    setRewardsAbi: abi => set({ rewardsAbi: abi }),
-  }));
-
-export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);
-
-export function ContestWrapper({ children }: { children: React.ReactNode }) {
-  const storeRef = useRef<ReturnType<typeof createContestStore>>();
-  if (!storeRef.current) {
-    storeRef.current = createContestStore();
-  }
-  return <ContestContext.Provider value={storeRef.current}>{children}</ContestContext.Provider>;
-}
-
-export function useContestStore<T>(selector: (state: ContestState) => T) {
-  const store = useContext(ContestContext);
-  if (store === null) {
-    throw new Error("Missing ContestWrapper in the tree");
-  }
-  const value = useStore(store, selector);
-  return value;
-}
+export const useContestStore = create<ContestState>(set => ({
+  contestName: "",
+  contestPrompt: "",
+  contestAbi: [],
+  contestAuthorEthereumAddress: "",
+  contestAuthor: "",
+  submissionsOpen: new Date(),
+  votesOpen: new Date(),
+  votesClose: new Date(),
+  submissionMerkleRoot: "",
+  votingMerkleRoot: "",
+  isLoading: true,
+  error: null,
+  charge: null,
+  isSuccess: false,
+  contestMaxProposalCount: 0,
+  downvotingAllowed: false,
+  sortingEnabled: false,
+  canUpdateVotesInRealTime: false,
+  votingRequirements: null,
+  submissionRequirements: null,
+  isV3: false,
+  isReadOnly: false,
+  supportsRewardsModule: false,
+  anyoneCanVote: false,
+  version: "",
+  rewardsModuleAddress: "",
+  rewardsAbi: null,
+  setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
+  setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
+  setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
+  setSortingEnabled: isAllowed => set({ sortingEnabled: isAllowed }),
+  setContestPrompt: prompt => set({ contestPrompt: prompt }),
+  setContestMaxProposalCount: amount => set({ contestMaxProposalCount: amount }),
+  setIsV3: value => set({ isV3: value }),
+  setIsReadOnly: value => set({ isReadOnly: value }),
+  setContestName: name => set({ contestName: name }),
+  setContestAuthor: (author, address) => set({ contestAuthor: author, contestAuthorEthereumAddress: address }),
+  setSubmissionsOpen: datetime => set({ submissionsOpen: datetime }),
+  setVotesOpen: datetime => set({ votesOpen: datetime }),
+  setVotesClose: datetime => set({ votesClose: datetime }),
+  setSubmissionsMerkleRoot: merkleRoot => set({ submissionMerkleRoot: merkleRoot }),
+  setVotingMerkleRoot: merkleRoot => set({ votingMerkleRoot: merkleRoot }),
+  setVotingRequirements: votingRequirements => set({ votingRequirements: votingRequirements }),
+  setSubmissionRequirements: submissionRequirements => set({ submissionRequirements: submissionRequirements }),
+  setIsLoading: value => set({ isLoading: value }),
+  setError: value => set({ error: value }),
+  setIsSuccess: value => set({ isSuccess: value }),
+  setCharge: charge => set({ charge: charge }),
+  setContestAbi: abi => set({ contestAbi: abi }),
+  setAnyoneCanVote: value => set({ anyoneCanVote: value }),
+  setVersion: version => set({ version: version }),
+  setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
+  setRewardsAbi: abi => set({ rewardsAbi: abi }),
+}));

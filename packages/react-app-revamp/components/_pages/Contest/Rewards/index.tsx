@@ -17,6 +17,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount, useAccountEffect } from "wagmi";
 import CreateRewards from "./components/Create";
+import { useShallow } from "zustand/react/shallow";
 
 const ContestRewards = () => {
   const asPath = usePathname();
@@ -37,7 +38,19 @@ const ContestRewards = () => {
     version,
     downvotingAllowed,
     rewardsModuleAddress,
-  } = useContestStore(state => state);
+  } = useContestStore(
+    useShallow(state => ({
+      isSuccess: state.isSuccess,
+      isLoading: state.isLoading,
+      supportsRewardsModule: state.supportsRewardsModule,
+      contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
+      sortingEnabled: state.sortingEnabled,
+      contestMaxProposalCount: state.contestMaxProposalCount,
+      version: state.version,
+      downvotingAllowed: state.downvotingAllowed,
+      rewardsModuleAddress: state.rewardsModuleAddress,
+    })),
+  );
   const [isFundRewardsOpen, setIsFundRewardsOpen] = useState(false);
   const [isWithdrawRewardsOpen, setIsWithdrawRewardsOpen] = useState(false);
   const rewardsStore = useRewardsStore(state => state);

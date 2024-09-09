@@ -3,6 +3,7 @@ import { toastError } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { useDeployRewardsPool } from "@hooks/useDeployRewards";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
@@ -12,7 +13,6 @@ import { useCreateRewardsStore } from "../../store";
 import { useFundPoolStore } from "../FundPool/store";
 import CreateRewardsAddEarningsToggle from "./components/AddEarnings";
 import CreateRewardsReviewTable from "./components/Table";
-import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 
 const CreateRewardsReviewPool = () => {
   const pathname = usePathname();
@@ -24,8 +24,8 @@ const CreateRewardsReviewPool = () => {
   const { deployRewardsPool } = useDeployRewardsPool();
   const { rewardPoolData, currentStep, setStep } = useCreateRewardsStore(state => state);
   const { tokens } = useFundPoolStore(state => state);
-  const { charge } = useContestStore(state => state);
-  const { contestState } = useContestStateStore(state => state);
+  const charge = useContestStore(state => state.charge);
+  const contestState = useContestStateStore(state => state.contestState);
   const isUserOnCorrectChain = contestChainId === userChainId;
   const isContestFinishedOrCanceled =
     contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;

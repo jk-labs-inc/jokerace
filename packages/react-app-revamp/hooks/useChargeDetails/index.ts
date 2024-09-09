@@ -2,10 +2,19 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { fetchChargeDetails } from "lib/monetization";
 import { useCallback, useEffect, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 const useChargeDetails = (chainName: string) => {
   const { setCharge, setPrevChainRefInCharge, prevChainRefInCharge, setMinCharge, votingMerkle } =
-    useDeployContestStore();
+    useDeployContestStore(
+      useShallow(state => ({
+        setCharge: state.setCharge,
+        setPrevChainRefInCharge: state.setPrevChainRefInCharge,
+        prevChainRefInCharge: state.prevChainRefInCharge,
+        setMinCharge: state.setMinCharge,
+        votingMerkle: state.votingMerkle,
+      })),
+    );
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
   const isAnyoneCanVote = Object.values(votingMerkle).every(value => value === null);

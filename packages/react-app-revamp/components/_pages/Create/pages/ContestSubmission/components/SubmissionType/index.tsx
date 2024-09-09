@@ -1,5 +1,6 @@
 import { SubmissionType, SubmissionTypeOption, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/react/shallow";
 
 const submissionTypeOptions: SubmissionTypeOption[] = [
   { value: SubmissionType.DifferentFromVoters, label: "yes, they’re different" },
@@ -8,7 +9,12 @@ const submissionTypeOptions: SubmissionTypeOption[] = [
 
 const CreateSubmissionType = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const { submissionTypeOption, setSubmissionTypeOption } = useDeployContestStore(state => state);
+  const { submissionTypeOption, setSubmissionTypeOption } = useDeployContestStore(
+    useShallow(state => ({
+      submissionTypeOption: state.submissionTypeOption,
+      setSubmissionTypeOption: state.setSubmissionTypeOption,
+    })),
+  );
   const submissionTypeTitle = isMobile
     ? "is the list of people who can submit different from the people who can vote?"
     : "are the people who can submit different from the people who can vote?";

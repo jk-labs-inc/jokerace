@@ -9,6 +9,7 @@ import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/react/shallow";
 import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
@@ -44,7 +45,16 @@ const createEditorConfig = ({ content, placeholderText, onUpdate }: CreateEditor
 });
 
 const CreateContestPrompt = () => {
-  const { step, prompt, setPrompt, errors, metadataToggle, setMetadataToggle } = useDeployContestStore(state => state);
+  const { step, prompt, setPrompt, errors, metadataToggle, setMetadataToggle } = useDeployContestStore(
+    useShallow(state => ({
+      step: state.step,
+      prompt: state.prompt,
+      setPrompt: state.setPrompt,
+      errors: state.errors,
+      metadataToggle: state.metadataToggle,
+      setMetadataToggle: state.setMetadataToggle,
+    })),
+  );
   const currentStepError = errors.find(error => error.step === step);
   const onNextStep = useNextStep();
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);

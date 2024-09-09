@@ -3,10 +3,19 @@ import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultD
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import moment from "moment";
 import { useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { TimingPeriod, addTimeBasedOnPeriod, timingPeriodsOptions, useTimingOptionForVotingPeriod } from "../../utils";
 
 const CreateVotingPeriod = () => {
-  const { votingClose, setVotingClose, errors, step, votingOpen } = useDeployContestStore(state => state);
+  const { votingClose, setVotingClose, errors, step, votingOpen } = useDeployContestStore(
+    useShallow(state => ({
+      votingClose: state.votingClose,
+      setVotingClose: state.setVotingClose,
+      errors: state.errors,
+      step: state.step,
+      votingOpen: state.votingOpen,
+    })),
+  );
   const currentStepError = errors.find(error => error.step === step);
   const currentVotesOpenError = currentStepError?.message.startsWith("Voting ends") ? currentStepError.message : "";
   const [hideDatePickers, setHideDatePickers] = useState<boolean>(false);

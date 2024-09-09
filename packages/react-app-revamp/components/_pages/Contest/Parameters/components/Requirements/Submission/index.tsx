@@ -4,7 +4,7 @@ import useTokenDetails from "@hooks/useTokenDetails";
 import moment from "moment";
 
 const ContestParametersSubmissionRequirements = () => {
-  const { submissionRequirements } = useContestStore(state => state);
+  const submissionRequirements = useContestStore(state => state.submissionRequirements);
   const { tokenSymbol: submissionRequirementToken } = useTokenDetails(
     submissionRequirements?.type ?? "",
     submissionRequirements?.tokenAddress ?? "",

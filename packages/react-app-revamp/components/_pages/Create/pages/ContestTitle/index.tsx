@@ -1,5 +1,6 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/react/shallow";
 import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
@@ -11,7 +12,14 @@ import { useNextStep } from "../../hooks/useNextStep";
 
 const CreateContestTitle = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const { title, setTitle, step, errors } = useDeployContestStore(state => state);
+  const { title, setTitle, step, errors } = useDeployContestStore(
+    useShallow(state => ({
+      title: state.title,
+      setTitle: state.setTitle,
+      step: state.step,
+      errors: state.errors,
+    })),
+  );
   const currentStepError = errors.find(error => error.step === step);
   const onNextStep = useNextStep();
   const stepTitle = isMobile ? "contest title" : "what’s the title?";

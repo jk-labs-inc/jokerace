@@ -1,13 +1,19 @@
 import CreateRequirementsSettings, { TokenDetails } from "@components/_pages/Create/components/RequirementsSettings";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 interface CreateSubmissionRequirementsTokenSettingsProps {
   error?: Record<string, string | undefined>;
 }
 
 const CreateSubmissionRequirementsTokenSettings: FC<CreateSubmissionRequirementsTokenSettingsProps> = ({ error }) => {
-  const { submissionRequirements, setSubmissionRequirements } = useDeployContestStore(state => state);
+  const { submissionRequirements, setSubmissionRequirements } = useDeployContestStore(
+    useShallow(state => ({
+      submissionRequirements: state.submissionRequirements,
+      setSubmissionRequirements: state.setSubmissionRequirements,
+    })),
+  );
 
   const onSubmissionsRequirementChainChange = (option: string) => {
     setSubmissionRequirements({

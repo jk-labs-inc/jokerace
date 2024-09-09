@@ -14,7 +14,7 @@ interface CreateNextButtonProps {
 }
 
 const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled }) => {
-  const { errors } = useDeployContestStore(state => state);
+  const errors = useDeployContestStore(state => state.errors);
   const { setStartContest, setStartContestWithTemplate } = useCreateContestStartStore(state => state);
   const [shake, setShake] = useState(false);
   const onPreviousStep = usePreviousStep();

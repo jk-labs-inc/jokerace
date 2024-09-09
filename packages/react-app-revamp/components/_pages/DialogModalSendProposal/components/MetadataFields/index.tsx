@@ -2,7 +2,8 @@ import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import DialogModalSendProposalMetadataField from "./components/MetadataField";
 
 const DialogModalSendProposalMetadataFields = () => {
-  const { fields: metadataFields } = useMetadataStore(state => state);
+  const metadataFields = useMetadataStore(state => state.fields);
+
   return (
     <div className="flex flex-col gap-8">
       <p className="text-[16px] font-bold text-neutral-14 uppercase">additional fields:</p>

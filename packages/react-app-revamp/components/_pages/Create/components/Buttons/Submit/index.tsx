@@ -14,7 +14,7 @@ interface CreateContestButtonProps {
 }
 
 const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDisabled }) => {
-  const { errors } = useDeployContestStore(state => state);
+  const errors = useDeployContestStore(state => state.errors);
   const { isConnected } = useAccount();
   const [shake, setShake] = useState(false);
   const onPreviousStep = usePreviousStep();

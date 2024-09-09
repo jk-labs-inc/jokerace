@@ -16,7 +16,7 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus, onMenu
   const { sortProposalData } = useProposal();
   const isSubmissionOrVotingOpen =
     contestStatus === ContestStatus.SubmissionOpen || contestStatus === ContestStatus.VotingOpen;
-  const { contestState } = useContestStateStore(state => state);
+  const contestState = useContestStateStore(state => state.contestState);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
 
   const handleSortTypeChange = (value: string) => {

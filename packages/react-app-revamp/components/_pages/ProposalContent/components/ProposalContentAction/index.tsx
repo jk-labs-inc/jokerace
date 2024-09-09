@@ -15,6 +15,7 @@ import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 
 interface ProposalActionProps {
   proposalId: string;
@@ -26,7 +27,13 @@ const ProposalContentAction: FC<ProposalActionProps> = ({ proposalId, onVotingMo
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { openConnectModal } = useConnectModal();
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const { votesOpen, anyoneCanVote, charge } = useContestStore(state => state);
+  const { votesOpen, anyoneCanVote, charge } = useContestStore(
+    useShallow(state => ({
+      votesOpen: state.votesOpen,
+      anyoneCanVote: state.anyoneCanVote,
+      charge: state.charge,
+    })),
+  );
   const { isConnected } = useAccount();
   const formattedVotingOpen = moment(votesOpen);
   const contestStatus = useContestStatusStore(state => state.contestStatus);

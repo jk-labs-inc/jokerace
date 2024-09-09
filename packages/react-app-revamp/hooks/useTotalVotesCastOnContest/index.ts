@@ -3,7 +3,7 @@ import { formatEther } from "viem";
 import { useReadContract } from "wagmi";
 
 const useTotalVotesCastOnContest = (address: string, chainId: number) => {
-  const { contestAbi: abi } = useContestStore(state => state);
+  const abi = useContestStore(state => state.contestAbi);
 
   const totalVotesCast = useReadContract({
     address: address as `0x${string}`,

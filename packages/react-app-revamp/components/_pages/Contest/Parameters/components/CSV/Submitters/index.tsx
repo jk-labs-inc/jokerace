@@ -10,7 +10,7 @@ interface ContestParamatersCSVSubmittersProps {
 }
 
 const ContestParamatersCSVSubmitters: FC<ContestParamatersCSVSubmittersProps> = ({ submissionMerkleRoot }) => {
-  const { isV3 } = useContestStore(state => state);
+  const isV3 = useContestStore(state => state.isV3);
   const { submitters, isLoading, isError, retry } = useSubmitters(submissionMerkleRoot, isV3);
 
   if (!isV3) {

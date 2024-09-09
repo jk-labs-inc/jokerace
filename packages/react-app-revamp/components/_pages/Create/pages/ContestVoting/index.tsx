@@ -7,7 +7,7 @@ import CreateVotingTabContent from "./components/VotingTabContent";
 import CreateVotingTabMessage from "./components/VotingTabMessage";
 
 const CreateContestVoting = () => {
-  const { step } = useDeployContestStore(state => state);
+  const step = useDeployContestStore(state => state.step);
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
   return (

@@ -2,6 +2,7 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import MobileStepper from "../../components/MobileStepper";
@@ -13,7 +14,12 @@ import CreateContestChargeUnconnectedAccount from "./components/UnconnectedAccou
 import CreateContestChargeUnsupportedChain from "./components/UnsupportedChain";
 
 const CreateContestMonetization = () => {
-  const { step, votingRequirementsOption } = useDeployContestStore(state => state);
+  const { step, votingRequirementsOption } = useDeployContestStore(
+    useShallow(state => ({
+      step: state.step,
+      votingRequirementsOption: state.votingRequirementsOption,
+    })),
+  );
   const { isConnected, chain } = useAccount();
   const [disableNextStep, setDisableNextStep] = useState(false);
   const [unsupportedChain, setUnsupportedChain] = useState(false);

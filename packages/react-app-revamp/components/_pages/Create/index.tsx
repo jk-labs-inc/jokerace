@@ -1,5 +1,5 @@
-import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { useEffect } from "react";
 import Stepper from "./components/Stepper";
 import CreateContestConfirm from "./pages/ContestConfirm";
 import CreateContestMonetization from "./pages/ContestMonetization";
@@ -13,7 +13,6 @@ import CreateContestTitle from "./pages/ContestTitle";
 import CreateContestType from "./pages/ContestType";
 import CreateContestTemplate from "./pages/ContestUseTemplate";
 import CreateContestVoting from "./pages/ContestVoting";
-import { useEffect } from "react";
 
 export enum StepTitle {
   Title = "title",
@@ -44,7 +43,7 @@ export const steps = [
 const CreateFlow = () => {
   const { startContest, startContestWithTemplate, setStartContest, setStartContestWithTemplate } =
     useCreateContestStartStore(state => state);
-  const { reset } = useDeployContestStore(state => state);
+  const reset = useDeployContestStore(state => state.reset);
 
   useEffect(() => {
     setStartContest(false);

@@ -4,6 +4,7 @@ import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
+import { useShallow } from "zustand/react/shallow";
 import { SubmissionFieldObject } from "../SubmissionAllowlist/components/CSVEditor";
 import SubmissionCSVFileUploader from "./components/CSVUploadSubmission";
 
@@ -13,8 +14,15 @@ type WorkerMessageData = {
 };
 
 const CreateSubmissionCSVUploader = () => {
-  const { submissionAllowlist, setSubmissionMerkle, setSubmissionAllowlist, setError, step, submissionTab } =
-    useDeployContestStore(state => state);
+  const { submissionAllowlist, setSubmissionMerkle, setSubmissionAllowlist, setError, step } = useDeployContestStore(
+    useShallow(state => ({
+      submissionAllowlist: state.submissionAllowlist,
+      setSubmissionMerkle: state.setSubmissionMerkle,
+      setSubmissionAllowlist: state.setSubmissionAllowlist,
+      setError: state.setError,
+      step: state.step,
+    })),
+  );
   const onNextStep = useNextStep();
 
   const onAllowListChange = (fields: Array<SubmissionFieldObject>) => {

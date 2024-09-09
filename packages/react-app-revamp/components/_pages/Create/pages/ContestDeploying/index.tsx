@@ -5,6 +5,7 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { create } from "zustand";
+import { useShallow } from "zustand/react/shallow";
 
 interface ShowRewardsStore {
   showRewards: boolean;
@@ -19,7 +20,17 @@ export const useShowRewardsStore = create<ShowRewardsStore>(set => ({
 const WARNING_MESSAGE_THRESHOLD = 10000;
 
 const CreateContestDeploying = () => {
-  const { isSuccess, deployContestData, votingMerkle: votingMerkleData } = useDeployContestStore(state => state);
+  const {
+    isSuccess,
+    deployContestData,
+    votingMerkle: votingMerkleData,
+  } = useDeployContestStore(
+    useShallow(state => ({
+      isSuccess: state.isSuccess,
+      deployContestData: state.deployContestData,
+      votingMerkle: state.votingMerkle,
+    })),
+  );
   const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
   const router = useRouter();
   const { setShowRewards } = useShowRewardsStore(state => state);

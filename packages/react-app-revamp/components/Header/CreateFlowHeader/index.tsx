@@ -4,13 +4,25 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect } from "react";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import CreateFlowHeaderDesktopLayout from "./DesktopLayout";
 import CreateFlowHeaderMobileLayout from "./MobileLayout";
 
 const CreateFlowHeader = () => {
   const { isConnected, address } = useAccount();
-  const { step, isLoading, isSuccess } = useDeployContestStore(state => state);
-  const { pageAction, setPageAction } = usePageActionStore(state => state);
+  const { step, isLoading, isSuccess } = useDeployContestStore(
+    useShallow(state => ({
+      step: state.step,
+      isLoading: state.isLoading,
+      isSuccess: state.isSuccess,
+    })),
+  );
+  const { pageAction, setPageAction } = usePageActionStore(
+    useShallow(state => ({
+      pageAction: state.pageAction,
+      setPageAction: state.setPageAction,
+    })),
+  );
   const { openConnectModal } = useConnectModal();
   const { openAccountModal } = useAccountModal();
 

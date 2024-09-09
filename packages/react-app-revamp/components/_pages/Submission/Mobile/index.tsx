@@ -56,9 +56,9 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { openAccountModal } = useAccountModal();
-  const { contestStatus } = useContestStatusStore(state => state);
+  const contestStatus = useContestStatusStore(state => state.contestStatus);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
-  const { downvotingAllowed } = useContestStore(state => state);
+  const downvotingAllowed = useContestStore(state => state.downvotingAllowed);
   const { listProposalsIds } = useProposalStore(state => state);
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);

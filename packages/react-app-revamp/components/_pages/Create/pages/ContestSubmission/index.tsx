@@ -1,6 +1,7 @@
 import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/types";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/react/shallow";
 import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import MobileStepper from "../../components/MobileStepper";
@@ -11,7 +12,14 @@ import CreateSubmissionTabMessage from "./components/SubmissionTabMessage";
 import CreateSubmissionType from "./components/SubmissionType";
 
 const CreateContestSubmissions = () => {
-  const { step, submissionTypeOption, setSubmissionMerkle, setVotingMerkle } = useDeployContestStore(state => state);
+  const { step, submissionTypeOption, setSubmissionMerkle, setVotingMerkle } = useDeployContestStore(
+    useShallow(state => ({
+      step: state.step,
+      submissionTypeOption: state.submissionTypeOption,
+      setSubmissionMerkle: state.setSubmissionMerkle,
+      setVotingMerkle: state.setVotingMerkle,
+    })),
+  );
   const onNextStep = useNextStep();
   const isMobile = useMediaQuery({ maxWidth: 768 });
 

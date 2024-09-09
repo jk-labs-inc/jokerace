@@ -12,8 +12,6 @@ import {
 import { useContestStore } from "@hooks/useContest/store";
 import { useEditorStore } from "@hooks/useEditor/store";
 import useEmailSignup from "@hooks/useEmailSignup";
-import useMetadataFields from "@hooks/useMetadataFields";
-import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUploadImageStore } from "@hooks/useUploadImage";
@@ -32,6 +30,7 @@ import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useBalance } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import DialogModalSendProposalDesktopLayout from "./Desktop";
 import DialogModalSendProposalMobileLayout from "./Mobile";
 
@@ -56,11 +55,16 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     setEmailForSubscription,
     setEmailAlreadyExists,
   } = useSubmitProposalStore(state => state);
-  const { votesOpen, charge } = useContestStore(state => state);
+  const { votesOpen, charge } = useContestStore(
+    useShallow(state => ({
+      votesOpen: state.votesOpen,
+      charge: state.charge,
+    })),
+  );
   const { data: accountData } = useBalance({
     address: address as `0x${string}`,
   });
-  const { setRevertTextOption } = useEditorStore(state => state);
+  const setRevertTextOption = useEditorStore(state => state.setRevertTextOption);
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;

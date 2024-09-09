@@ -1,10 +1,11 @@
 import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { useEffect, useRef, useState } from "react";
+import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/react/shallow";
 import CreateSubmissionAllowlist from "../SubmissionAllowlist";
 import CreateSubmissionRequirements from "../SubmissionRequirements";
 import CreateSubmissionCSVUploader from "../SubmissionUploadCsv";
-import { useMediaQuery } from "react-responsive";
 
 const tabOptions = [
   { label: "use presets", mobileLabel: "use presets", content: <CreateSubmissionRequirements /> },
@@ -13,7 +14,13 @@ const tabOptions = [
 ];
 
 const CreateSubmissionTabContent = () => {
-  const { setSubmissionTab, submissionTab, setSubmissionMerkle } = useDeployContestStore(state => state);
+  const { setSubmissionTab, submissionTab, setSubmissionMerkle } = useDeployContestStore(
+    useShallow(state => ({
+      setSubmissionTab: state.setSubmissionTab,
+      submissionTab: state.submissionTab,
+      setSubmissionMerkle: state.setSubmissionMerkle,
+    })),
+  );
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
   const isMobile = useMediaQuery({ maxWidth: 768 });

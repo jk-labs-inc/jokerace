@@ -69,11 +69,11 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
-  const { votesOpen } = useContestStore(state => state);
+  const votesOpen = useContestStore(state => state.votesOpen);
   const canVote = currentUserAvailableVotesAmount > 0;
   const isProposalTweet = proposal.tweet.isTweet;
   const contestStatus = useContestStatusStore(state => state.contestStatus);
-  const { contestState } = useContestStateStore(state => state);
+  const contestState = useContestStateStore(state => state.contestState);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
   const [isContentHidden, setIsContentHidden] = useState(false);

@@ -1,9 +1,15 @@
 import { SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useMemo } from "react";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/react/shallow";
 
 const CreateSubmissionTabMessage = () => {
-  const { submissionTab, submissionTypeOption } = useDeployContestStore(state => state);
+  const { submissionTab, submissionTypeOption } = useDeployContestStore(
+    useShallow(state => ({
+      submissionTab: state.submissionTab,
+      submissionTypeOption: state.submissionTypeOption,
+    })),
+  );
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const dynamicTabMessage = useMemo<JSX.Element | null>(() => {

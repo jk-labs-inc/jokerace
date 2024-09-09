@@ -1,9 +1,9 @@
-import { pluralize } from "@helpers/pluralize";
 import { useContestStore } from "@hooks/useContest/store";
 import moment from "moment";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/react/shallow";
 import ContestCountdownTimeUnit from "./components/TimeUnit";
 
 const formatDuration = (duration: moment.Duration) => {
@@ -19,7 +19,13 @@ const pluralizeLabel = (count: number, singular: string, plural: string) => {
 };
 
 const ContestCountdown = () => {
-  const { submissionsOpen, votesOpen, votesClose } = useContestStore(state => state);
+  const { submissionsOpen, votesOpen, votesClose } = useContestStore(
+    useShallow(state => ({
+      submissionsOpen: state.submissionsOpen,
+      votesOpen: state.votesOpen,
+      votesClose: state.votesClose,
+    })),
+  );
   const [duration, setDuration] = useState(formatDuration(moment.duration(0)));
   const [phase, setPhase] = useState("start");
   const memoizedSubmissionsOpen = useMemo(() => submissionsOpen, [submissionsOpen]);
