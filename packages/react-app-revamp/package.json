@@ -43,7 +43,7 @@
     "@types/uuid": "10.0.0",
     "@typescript-eslint/parser": "7.18.0",
     "@vercel/node": "3.2.12",
-    "@wagmi/connectors": "5.1.8",
+    "@wagmi/connectors": "5.1.9",
     "@wagmi/core": "2.13.4",
     "autoprefixer": "10.4.20",
     "cheerio": "1.0.0",
@@ -106,7 +106,7 @@
     "uuid": "10.0.0",
     "valibot": "0.41.0",
     "viem": "2.21.3",
-    "wagmi": "2.12.8",
+    "wagmi": "2.12.9",
     "webpack": "5.94.0",
     "zod": "3.23.8",
     "zustand": "4.5.5"

@@ -38,7 +38,7 @@ contract RewardsModule {
     mapping(uint256 => uint256) public shares; // Getter for the amount of shares held by a ranking.
     mapping(uint256 => uint256) public released; // Getter for the amount of Ether already released to a ranking.
     uint256[] public payees;
-    string private constant VERSION = "4.32"; // Private as to not clutter the ABI
+    string private constant VERSION = "4.33"; // Private as to not clutter the ABI
 
     mapping(IERC20 => uint256) public erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released;
@@ -46,6 +46,7 @@ contract RewardsModule {
     GovernorCountingSimple public underlyingContest;
     address public creator;
     bool public paysOutTarget; // If true, pay out target address; if false, pay out proposal author.
+    bool public canceled; // A rewards module must be canceled in order to withdraw funds, and once canceled it can no longer release funds, only withdraw
 
     error PayeesSharesLengthMismatch();
     error MustHaveAtLeastOnePayee();
@@ -62,6 +63,8 @@ contract RewardsModule {
     error RankingCannotBeZero();
     error SharesCannotBeZero();
     error AccountAlreadyHasShares();
+    error CannotReleaseCanceledModule();
+    error MustBeCanceledToWithdraw();
 
     /**
      * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
@@ -146,6 +149,7 @@ contract RewardsModule {
         if (underlyingContest.state() != Governor.ContestState.Completed) revert ContestMustBeCompleted();
         if (ranking == 0) revert PayoutRankCannotBeZero();
         if (shares[ranking] == 0) revert RankingHasNoShares();
+        if (canceled == true) revert CannotReleaseCanceledModule();
     }
 
     /**
@@ -169,6 +173,13 @@ contract RewardsModule {
         }
 
         return addressToPayOut;
+    }
+
+    /**
+     * @dev Cancels the rewards module.
+     */
+    function cancel() public {
+        canceled = true;
     }
 
     /**
@@ -226,6 +237,7 @@ contract RewardsModule {
 
     function withdrawRewards() public {
         if (msg.sender != creator) revert OnlyCreatorCanWithdraw();
+        if (canceled != true) revert MustBeCanceledToWithdraw();
 
         emit RewardWithdrawn(creator, address(this).balance);
         Address.sendValue(payable(creator), address(this).balance);
