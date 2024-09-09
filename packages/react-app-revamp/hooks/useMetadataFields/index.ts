@@ -1,8 +1,7 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import getContestContractVersion from "@helpers/getContestContractVersion";
+import { useContestStore } from "@hooks/useContest/store";
 import { MetadataField } from "@hooks/useDeployContest/store";
-import { useQuery } from "@tanstack/react-query";
 import { compareVersions } from "compare-versions";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
@@ -42,28 +41,19 @@ const useMetadataFields = () => {
   const pathname = usePathname();
   const { address: contestAddress, chainName: contestChainName } = extractPathSegments(pathname ?? "");
   const contestChainId = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.id;
-
-  const {
-    data: contractData,
-    isLoading: isContractDataLoading,
-    isError: isContractDataError,
-  } = useQuery({
-    queryKey: ["contestContract", contestAddress, contestChainId],
-    queryFn: () => getContestContractVersion(contestAddress, contestChainId!),
-    enabled: Boolean(contestAddress && contestChainId),
-  });
+  const { contestAbi, version } = useContestStore(state => state);
 
   const {
     data: metadataSchema,
     isError: isMetadataError,
     isLoading: isMetadataLoading,
   } = useReadContract({
-    abi: contractData?.abi as Abi,
+    abi: contestAbi as Abi,
     address: contestAddress as `0x${string}`,
     chainId: contestChainId,
     functionName: "metadataFieldsSchema",
     query: {
-      enabled: Boolean(contractData && compareVersions(contractData.version, METADATA_FIELDS_VERSION) >= 0),
+      enabled: Boolean(compareVersions(version, METADATA_FIELDS_VERSION) >= 0),
     },
   });
 
@@ -78,8 +68,8 @@ const useMetadataFields = () => {
   }, [metadataSchema, isMetadataError, setFields]);
 
   return {
-    isLoading: isContractDataLoading || isMetadataLoading,
-    isError: isContractDataError || isMetadataError,
+    isLoading: isMetadataLoading,
+    isError: isMetadataError,
   };
 };
 

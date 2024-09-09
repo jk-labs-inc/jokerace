@@ -110,6 +110,7 @@ import { weavevmTestnet } from "./custom-chains/weavevmTestnet";
 import { xLayer } from "./custom-chains/xLayer";
 import { xLayerTestnet } from "./custom-chains/xLayerTestnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
+import { zircuit } from "./custom-chains/zircuit";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
@@ -176,6 +177,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   forma,
   rollux,
   syscoin,
+  zircuit,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,

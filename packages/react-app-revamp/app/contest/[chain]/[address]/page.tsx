@@ -17,7 +17,7 @@ const isDev = process.env.NODE_ENV === "development";
 
 async function getContestDetails(address: string, chainName: string) {
   const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
 
   const { abi } = await getContestContractVersion(address, chainId);
