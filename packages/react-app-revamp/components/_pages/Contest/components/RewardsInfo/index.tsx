@@ -39,14 +39,14 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
   const {
     data: releasableRewards,
     isLoading: isReleasableLoading,
-    isError: isReleasableError,
+    isContractError: isReleasableError,
     refetch: refetchReleasable,
   } = useReleasableRewards({ contractAddress: rewardsModuleAddress, chainId, abi: rewardsAbi, rankings: payees ?? [] });
 
   const {
     data: releasedRewards,
     isLoading: isReleasedLoading,
-    isError: isReleasedError,
+    isContractError: isReleasedError,
     refetch: refetchReleased,
   } = useReleasedRewards({ contractAddress: rewardsModuleAddress, chainId, abi: rewardsAbi, rankings: payees ?? [] });
 
@@ -86,11 +86,6 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
     }
   }, [flattenedRewards]);
 
-  const determineErrorFunction = () => {
-    if (isReleasableError) return refetchReleasable;
-    if (isReleasedError) return refetchReleased;
-  };
-
   if (isLoading) {
     return (
       <SkeletonTheme baseColor="#000000" highlightColor="#212121" duration={1}>
@@ -103,18 +98,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
     );
   }
 
-  if (isError) {
-    return (
-      <p className="text-[16px] text-negative-11 font-bold normal-case">
-        there was an issue while loading rewards,{" "}
-        <span className="underline" onClick={determineErrorFunction}>
-          please try again
-        </span>
-      </p>
-    );
-  }
-
-  if (!currentReward) return null;
+  if (!currentReward || isError) return null;
 
   const currentRewardAmount = transform(
     currentReward?.amount ?? 0n,
