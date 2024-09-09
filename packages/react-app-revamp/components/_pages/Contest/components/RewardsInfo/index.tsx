@@ -111,7 +111,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
 
   return (
     <div
-      className={`flex shrink-0 h-8 min-w-52 p-4 justify-center items-center bg-neutral-0 border ${borderColor} rounded-[10px] text-[16px] font-bold ${textColor} overflow-hidden`}
+      className={`flex shrink-0 h-8 min-w-60 p-4 justify-center items-center bg-neutral-0 border ${borderColor} rounded-[10px] text-[16px] font-bold ${textColor} overflow-hidden`}
     >
       <span className="truncate flex items-center">
         <div className={`flex items-center ${animate ? "animate-reveal" : ""}`}>
