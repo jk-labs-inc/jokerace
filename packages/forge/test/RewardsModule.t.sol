@@ -213,8 +213,10 @@ contract RewardsModuleTest is Test {
     function testCreatorWithdrawNative() public {
         vm.warp(1681650001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to be withdrawn
-        vm.prank(CREATOR_ADDRESS_1);
+        vm.startPrank(CREATOR_ADDRESS_1);
+        rewardsModulePaysAuthor.cancel();
         rewardsModulePaysAuthor.withdrawRewards();
+        vm.stopPrank();
 
         assertEq(CREATOR_ADDRESS_1.balance, 100);
     }
@@ -223,8 +225,10 @@ contract RewardsModuleTest is Test {
     function testCreatorWithdrawERC20() public {
         vm.warp(1681650001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to be withdrawn
-        vm.prank(CREATOR_ADDRESS_1);
+        vm.startPrank(CREATOR_ADDRESS_1);
+        rewardsModulePaysAuthor.cancel();
         rewardsModulePaysAuthor.withdrawRewards();
+        vm.stopPrank();
 
         assertEq(CREATOR_ADDRESS_1.balance, 100);
     }
