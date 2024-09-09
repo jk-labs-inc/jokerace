@@ -51,6 +51,7 @@ export function useCastVotes() {
     canUpdateVotesInRealTime,
     charge,
     contestAbi: abi,
+    version,
     anyoneCanVote,
     rewardsModuleAddress,
     rewardsAbi,
@@ -194,7 +195,7 @@ export function useCastVotes() {
         }
       }
 
-      await updateCurrentUserVotes(anyoneCanVote);
+      await updateCurrentUserVotes(abi, version, anyoneCanVote);
       refetchTotalVotesCastOnContest();
       refetchCurrentUserVotesOnProposal();
       setIsLoading(false);

@@ -57,9 +57,7 @@ export function useSubmitProposal() {
   const { address: userAddress, chain } = useAccount();
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
-  )?.[0]?.id;
+  const chainId = chains.filter(chain => chain.name.toLowerCase() === chainName.toLowerCase())[0]?.id;
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
   const { charge, contestAbi: abi, rewardsModuleAddress, rewardsAbi } = useContestStore(state => state);
@@ -84,6 +82,14 @@ export function useSubmitProposal() {
     if (!charge) return undefined;
 
     return BigInt(charge.type.costToPropose);
+  };
+
+  const getContractConfig = () => {
+    return {
+      address: address as `0x${string}`,
+      abi: abi,
+      chainId: chainId,
+    };
   };
 
   async function sendProposal(proposalContent: string): Promise<{ tx: TransactionResponse; proposalId: string }> {
@@ -172,7 +178,7 @@ export function useSubmitProposal() {
         if (showToast) toastSuccess("proposal submitted successfully!");
         increaseCurrentUserProposalCount();
         setSubmissionsCount(submissionsCount + 1);
-        fetchSingleProposal(proposalId);
+        fetchSingleProposal(getContractConfig(), proposalId);
 
         if (metadataFields.length > 0) {
           const clearedFields = metadataFields.map(field => ({
