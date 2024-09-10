@@ -4,7 +4,7 @@ import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_USER } from 
 import { PageAction } from "@hooks/useCreateFlowAction/store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
 interface CreateFlowHeaderDesktopLayoutProps {
   address: string;
@@ -19,7 +19,12 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
   isSuccess,
   pageAction,
 }) => {
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleNavigation = (action: "play" | "create") => {
     if (action === "play") {
@@ -56,7 +61,7 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
 
       {!isLoading && !isSuccess && (
         <div className="flex items-center gap-3">
-          {address && <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />}
+          {isClient && address && <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />}
           <ConnectButtonCustom />
         </div>
       )}
