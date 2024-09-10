@@ -56,7 +56,7 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge,
     <div className="flex flex-col gap-8">
       <div className="flex gap-4 items-center">
         <p className="text-[20px] font-bold text-neutral-14">earnings</p>
-        {isConnectedWalletAuthor && !isContestFinishedOrCanceled && (
+        {isConnectedWalletAuthor && charge.percentageToCreator > 0 && !isContestFinishedOrCanceled && (
           <button onClick={() => setIsEditEarningsModalOpen(true)}>
             <PencilSquareIcon className="w-6 h-6 text-neutral-9 hover:text-neutral-11 transition-colors duration-300 ease-in-out" />
           </button>
@@ -66,6 +66,7 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge,
         <li className="list-disc">{percentageToCreatorMessage()}</li>
         {isCreatorSplitEnabled && <li className="list-disc">{creatorEarningsDestinationMessage()}</li>}
       </ul>
+
       <ContestParamsEarningsModal
         charge={charge}
         isOpen={isEditEarningsModalOpen}

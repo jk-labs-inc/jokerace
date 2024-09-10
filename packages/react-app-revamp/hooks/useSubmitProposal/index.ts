@@ -1,5 +1,5 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { config } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { extractPathSegments } from "@helpers/extractPath";
 import { getProposalId } from "@helpers/getProposalId";
@@ -11,7 +11,8 @@ import { useGenerateProof } from "@hooks/useGenerateProof";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import useRewardsModule from "@hooks/useRewards";
+import { useReleasableRewards } from "@hooks/useReleasableRewards";
+import { useRewardsStore } from "@hooks/useRewards/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
@@ -57,19 +58,23 @@ export function useSubmitProposal() {
   const { address: userAddress, chain } = useAccount();
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
+  const chainId = chains.filter(chain => chain.name.toLowerCase() === chainName.toLowerCase())[0]?.id;
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
   const {
     charge,
     contestAbi: abi,
     rewardsModuleAddress,
+    rewardsAbi,
   } = useContestStore(
     useShallow(state => ({
       charge: state.charge,
       contestAbi: state.contestAbi,
       rewardsModuleAddress: state.rewardsModuleAddress,
+      rewardsAbi: state.rewardsAbi,
     })),
   );
+  const rankings = useRewardsStore(state => state.rewards.payees);
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
   const { setSubmissionsCount, submissionsCount } = useProposalStore(state => state);
@@ -84,12 +89,25 @@ export function useSubmitProposal() {
     })),
   );
   const isEarningsTowardsRewards = rewardsModuleAddress === charge?.splitFeeDestination.address;
-  const { handleRefetchBalanceRewardsModule } = useRewardsModule();
+  const { refetch: refetchReleasableRewards } = useReleasableRewards({
+    contractAddress: rewardsModuleAddress,
+    chainId,
+    abi: rewardsAbi ?? [],
+    rankings,
+  });
 
   const calculateChargeAmount = () => {
     if (!charge) return undefined;
 
     return BigInt(charge.type.costToPropose);
+  };
+
+  const getContractConfig = () => {
+    return {
+      address: address as `0x${string}`,
+      abi: abi,
+      chainId: chainId,
+    };
   };
 
   async function sendProposal(proposalContent: string): Promise<{ tx: TransactionResponse; proposalId: string }> {
@@ -114,7 +132,7 @@ export function useSubmitProposal() {
         const contractConfig = {
           address: address as `0x${string}`,
           abi: abi,
-          chainId: chain?.id,
+          chainId,
         };
 
         let txSendProposal: TransactionResponse = {} as TransactionResponse;
@@ -148,14 +166,14 @@ export function useSubmitProposal() {
         }
 
         const receipt = await waitForTransactionReceipt(config, {
-          chainId: chain?.id,
+          chainId: chainId,
           hash: hash,
         });
 
         const proposalId = await getProposalId(proposalCore, contractConfig);
 
         setTransactionData({
-          chainId: chain?.id,
+          chainId: chainId,
           hash: receipt.transactionHash,
           transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txSendProposal?.hash}`,
         });
@@ -178,7 +196,7 @@ export function useSubmitProposal() {
         if (showToast) toastSuccess("proposal submitted successfully!");
         increaseCurrentUserProposalCount();
         setSubmissionsCount(submissionsCount + 1);
-        fetchSingleProposal(proposalId);
+        fetchSingleProposal(getContractConfig(), proposalId);
 
         if (metadataFields.length > 0) {
           const clearedFields = metadataFields.map(field => ({
@@ -225,11 +243,10 @@ export function useSubmitProposal() {
           token_address: null,
           created_at: Math.floor(Date.now() / 1000),
         });
-
-        handleRefetchBalanceRewardsModule();
       } catch (error) {
         console.error("Error while updating reward analytics", error);
       }
+      refetchReleasableRewards();
     }
   }
 

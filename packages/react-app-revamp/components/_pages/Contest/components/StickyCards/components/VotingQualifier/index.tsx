@@ -1,8 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { useAccountChange } from "@hooks/useAccountChange";
+import { ContractConfig } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
+import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
@@ -34,7 +38,7 @@ const VotingContestQualifier = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const costToVoteFormatted = formatEther(BigInt(charge?.type.costToVote ?? 0));
   const asPath = usePathname();
-  const { chainName } = extractPathSegments(asPath ?? "");
+  const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
   const nativeCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())
     ?.nativeCurrency.symbol;
   const chainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;

@@ -18,7 +18,7 @@ import { populateBugReportLink } from "@helpers/githubIssue";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
-import { useContest } from "@hooks/useContest";
+import { ContractConfig, useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -31,12 +31,14 @@ import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import { useShallow } from "zustand/react/shallow";
 import LayoutViewContestError from "./components/Error";
+import { chains } from "@config/wagmi";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const url = useUrl();
   const { address: accountAddress } = useAccount();
   const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(pathname ?? "");
+  const chainId = chains.filter(chain => chain.name.toLowerCase() === chainNameFromUrl.toLowerCase())[0]?.id;
   const showRewards = useShowRewardsStore(state => state.showRewards);
   const { isLoading, address, fetchContestInfo, isSuccess, error, chainName } = useContest();
   const {
@@ -48,6 +50,8 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     isReadOnly,
     rewardsModuleAddress,
     rewardsAbi,
+    contestAbi,
+    version,
   } = useContestStore(
     useShallow(state => ({
       submissionsOpen: state.submissionsOpen,
@@ -58,6 +62,8 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
       isReadOnly: state.isReadOnly,
       rewardsModuleAddress: state.rewardsModuleAddress,
       rewardsAbi: state.rewardsAbi,
+      contestAbi: state.contestAbi,
+      version: state.version,
     })),
   );
   const accountChanged = useAccountChange();
@@ -116,14 +122,24 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   }, [submissionsOpen, votesOpen, votesClose, setContestStatus, isLoading]);
 
   useEffect(() => {
+    if (isLoading || !isSuccess) return;
+
     const fetchUserData = async () => {
       if (accountChanged) {
-        await Promise.all([checkIfCurrentUserQualifyToSubmit(), checkIfCurrentUserQualifyToVote()]);
+        const contractConfig: ContractConfig = {
+          address: address as `0x${string}`,
+          abi: contestAbi,
+          chainId: chainId,
+        };
+        await Promise.all([
+          checkIfCurrentUserQualifyToSubmit(contractConfig, version),
+          checkIfCurrentUserQualifyToVote(contractConfig, version),
+        ]);
       }
     };
 
     fetchUserData();
-  }, [accountChanged]);
+  }, [accountChanged, isLoading, isSuccess]);
 
   useEffect(() => {
     fetchContestInfo();
@@ -212,7 +228,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
                     <div className="flex flex-col gap-2">
                       {isMobile && rewardsModuleAddress && rewardsAbi ? (
-                        <div className="w-2/3">
+                        <div className="w-3/4">
                           <ContestRewardsInfo rewardsModuleAddress={rewardsModuleAddress} rewardsAbi={rewardsAbi} />
                         </div>
                       ) : null}

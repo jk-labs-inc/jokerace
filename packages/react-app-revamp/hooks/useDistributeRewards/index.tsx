@@ -1,15 +1,14 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
-import usePaidRewardTokens from "@hooks/useRewardsTokens/usePaidRewardsTokens";
-import useUnpaidRewardTokens from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
+import { useReleasableRewards } from "@hooks/useReleasableRewards";
+import { useReleasedRewards } from "@hooks/useReleasedRewards";
+import { useRewardsStore } from "@hooks/useRewards/store";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
 import { Abi, formatEther, formatUnits } from "viem";
-import { useBalance, useReadContract } from "wagmi";
 import { create } from "zustand";
 
 type Store = {
@@ -33,52 +32,31 @@ export const useDistributeRewards = (
   abiRewardsModule: Abi,
   chainId: number,
   tokenAddress: string,
+  tokenBalance: bigint,
   tokenDecimals: number,
 ) => {
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
+  const rewardsStore = useRewardsStore(state => state);
   const { setIsLoading } = useDistributeRewardStore(state => state);
-  const { refetchUnpaidTokens } = useUnpaidRewardTokens(
-    "rewards-module-unpaid-tokens",
-    contractRewardsModuleAddress,
-    true,
-  );
-  const { refetchPaidTokens } = usePaidRewardTokens("rewards-info-paid-tokens", contractRewardsModuleAddress, true);
-
   const { handleError } = useError();
-
-  const queryTokenBalance = useBalance({
-    address: contractRewardsModuleAddress as `0x${string}`,
+  const { refetch: refetchReleasableRewards } = useReleasableRewards({
+    contractAddress: contractRewardsModuleAddress,
     chainId,
-    token: tokenAddress === "native" ? undefined : (tokenAddress as `0x${string}`),
-  });
-
-  const queryRankRewardsReleasable = useReadContract({
-    address: contractRewardsModuleAddress as `0x${string}`,
     abi: abiRewardsModule,
-    chainId,
-    functionName: "releasable",
-    args: tokenAddress === "native" ? [payee] : [tokenAddress ?? "", payee],
+    rankings: rewardsStore.rewards.payees,
   });
-
-  const queryRankRewardsReleased = useReadContract({
-    address: contractRewardsModuleAddress as `0x${string}`,
+  const { refetch: refetchReleasedRewards } = useReleasedRewards({
+    contractAddress: contractRewardsModuleAddress,
+    chainId,
     abi: abiRewardsModule,
-    chainId,
-    functionName: tokenAddress === "native" ? "released" : "erc20Released",
-    args: tokenAddress === "native" ? [payee] : [tokenAddress ?? "", payee],
+    rankings: rewardsStore.rewards.payees,
   });
-
-  const handleRefetchBalances = () => {
-    refetchUnpaidTokens();
-    refetchPaidTokens();
-  };
 
   const handleDistributeRewards = async () => {
     setIsLoading(true);
     toastLoading(`Distributing funds...`);
-    const amountReleasable = await queryRankRewardsReleasable.refetch();
-    const amountReleasableFormatted = transform(amountReleasable.data as bigint, tokenAddress, tokenDecimals);
+    const amountReleasableFormatted = transform(tokenBalance, tokenAddress, tokenDecimals);
 
     try {
       const hash = await writeContract(config, {
@@ -90,9 +68,6 @@ export const useDistributeRewards = (
       });
 
       await waitForTransactionReceipt(config, { hash });
-
-      await queryTokenBalance.refetch();
-      await queryRankRewardsReleasable.refetch();
 
       setIsLoading(false);
       toastSuccess("Funds distributed successfully!");
@@ -107,11 +82,11 @@ export const useDistributeRewards = (
           token_address: tokenAddress ? tokenAddress : null,
           created_at: Math.floor(Date.now() / 1000),
         });
-
-        handleRefetchBalances();
       } catch (error) {
         console.error("Error while updating reward analytics", error);
       }
+      refetchReleasableRewards();
+      refetchReleasedRewards();
     } catch (error) {
       handleError(error, "Error while releasing token");
       setIsLoading(false);
@@ -121,9 +96,6 @@ export const useDistributeRewards = (
   return {
     share,
     chainId,
-    queryTokenBalance,
-    queryRankRewardsReleasable,
-    queryRankRewardsReleased,
     handleDistributeRewards,
   };
 };

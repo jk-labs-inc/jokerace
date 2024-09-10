@@ -5,6 +5,10 @@ import { FC, useMemo } from "react";
 import ProposalStatisticsPanel from "./components/Panel";
 import SortProposalsDropdown from "./components/SortDropdown";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
+import { useContestStore } from "@hooks/useContest/store";
+import { usePathname } from "next/navigation";
+import { extractPathSegments } from "@helpers/extractPath";
+import { chains } from "@config/wagmi";
 
 interface ProposalStatisticsProps {
   contestStatus: ContestStatus;
@@ -12,15 +16,19 @@ interface ProposalStatisticsProps {
 }
 
 const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus, onMenuStateChange }) => {
+  const asPath = usePathname();
+  const { chainName, address } = extractPathSegments(asPath ?? "");
+  const chainId = chains.filter(chain => chain.name.toLowerCase() === chainName.toLowerCase())[0]?.id;
   const { sortBy, submissionsCount } = useProposalStore(state => state);
   const { sortProposalData } = useProposal();
+  const { contestAbi: abi, version } = useContestStore(state => state);
   const isSubmissionOrVotingOpen =
     contestStatus === ContestStatus.SubmissionOpen || contestStatus === ContestStatus.VotingOpen;
   const contestState = useContestStateStore(state => state.contestState);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
 
   const handleSortTypeChange = (value: string) => {
-    sortProposalData(value as SortOptions);
+    sortProposalData({ address: address as `0x${string}`, abi, chainId }, version, value as SortOptions);
   };
 
   const contestStatusTitle = useMemo<string>(() => {

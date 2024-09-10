@@ -1,22 +1,15 @@
+import { TokenInfo } from "@hooks/useReleasableRewards";
 import { DistributableReward } from "./components/DistributableReward";
 
 export interface RewardProps {
-  queryTokenBalance: any;
-  queryRankRewardsReleasable: any;
-  showPreviouslyDistributed?: boolean;
+  token: TokenInfo;
   handleDistributeRewards?: () => Promise<void>;
 }
 
 export const Reward = (props: RewardProps) => {
-  const { queryTokenBalance, queryRankRewardsReleasable, handleDistributeRewards } = props;
+  const { token, handleDistributeRewards } = props;
 
-  return (
-    <DistributableReward
-      queryTokenBalance={queryTokenBalance}
-      queryRankRewardsReleasable={queryRankRewardsReleasable}
-      handleDistributeRewards={handleDistributeRewards}
-    />
-  );
+  return <DistributableReward token={token} handleDistributeRewards={handleDistributeRewards} />;
 };
 
 export default Reward;

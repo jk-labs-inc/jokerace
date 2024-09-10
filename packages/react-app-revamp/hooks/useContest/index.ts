@@ -33,7 +33,7 @@ interface ContractConfigResult {
   version: string;
 }
 
-interface ContractConfig {
+export interface ContractConfig {
   address: `0x${string}`;
   abi: any;
   chainId: number;
@@ -72,7 +72,6 @@ export function useContest() {
     setSortingEnabled,
     setVersion,
     setRewardsModuleAddress,
-    rewardsModuleAddress,
     setRewardsAbi,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(state => ({
@@ -226,7 +225,7 @@ export function useContest() {
     setIsSuccess(true);
     setIsLoading(false);
 
-    await fetchProposalsIdsList(contractConfig.abi, {
+    await fetchProposalsIdsList(contractConfig, version, {
       submissionOpen: submissionsOpenDate,
       votesOpen: votesOpenDate,
     });
@@ -238,7 +237,7 @@ export function useContest() {
 
       await Promise.all([
         fetchContestContractData(contractConfig, version, rewardsModuleAddress),
-        processUserQualifications(),
+        processUserQualifications(contractConfig, version),
         processRequirementsData(),
       ]);
     } catch (e) {
@@ -286,7 +285,7 @@ export function useContest() {
       setIsLoading(false);
 
       // List of proposals for this contest
-      await fetchProposalsIdsList(contractConfig.abi, {
+      await fetchProposalsIdsList(contractConfig, version, {
         submissionOpen: submissionsOpenDate,
         votesOpen: votesOpenDate,
       });
@@ -372,10 +371,13 @@ export function useContest() {
   /**
    * Fetch merkle tree data from DB and re-create the tree
    */
-  async function processUserQualifications() {
+  async function processUserQualifications(contractConfig: ContractConfig, version: string) {
     if (contestStatus === ContestStatus.VotingClosed) return;
 
-    await Promise.all([checkIfCurrentUserQualifyToSubmit(), checkIfCurrentUserQualifyToVote()]);
+    await Promise.all([
+      checkIfCurrentUserQualifyToSubmit(contractConfig, version),
+      checkIfCurrentUserQualifyToVote(contractConfig, version),
+    ]);
   }
 
   async function processRequirementsData() {

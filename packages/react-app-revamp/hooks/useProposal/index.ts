@@ -1,8 +1,7 @@
-import { toastError } from "@components/UI/Toast";
-import { chains, config } from "@config/wagmi";
+import { chains, serverConfig } from "@config/wagmi/server";
 import arrayToChunks from "@helpers/arrayToChunks";
 import { extractPathSegments } from "@helpers/extractPath";
-import getContestContractVersion from "@helpers/getContestContractVersion";
+import { ContractConfig } from "@hooks/useContest";
 import { useError } from "@hooks/useError";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
@@ -11,7 +10,6 @@ import { COMMENTS_VERSION } from "lib/proposal";
 import { shuffle, sortBy as sortUnique } from "lodash";
 import { usePathname } from "next/navigation";
 import { formatEther } from "viem";
-import { useAccount } from "wagmi";
 import { MappedProposalIds, ProposalCore, SortOptions, useProposalStore } from "./store";
 import {
   formatProposalData,
@@ -22,12 +20,6 @@ import {
 } from "./utils";
 
 export const PROPOSALS_PER_PAGE = 12;
-
-interface ContractConfig {
-  address: `0x${string}`;
-  abi: any;
-  chainId: number;
-}
 
 export function useProposal() {
   const {
@@ -50,31 +42,10 @@ export function useProposal() {
   } = useProposalStore(state => state);
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
-  const { chain } = useAccount();
   const { error, handleError } = useError();
   const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
-
-  async function getContractConfig(): Promise<{ contractConfig: ContractConfig; version: string } | null> {
-    const { abi, version } = await getContestContractVersion(address, chainId);
-
-    if (abi === null) {
-      const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
-      toastError(errorMsg);
-      setIsPageProposalsError(errorMsg);
-      return null;
-    }
-
-    return {
-      contractConfig: {
-        address: address as `0x${string}`,
-        abi: abi,
-        chainId: chainId,
-      },
-      version,
-    };
-  }
 
   /**
    * Fetch the data of each proposals in page X
@@ -84,6 +55,8 @@ export function useProposal() {
    * @param sorting - boolean to know if we need to sort the proposals
    */
   async function fetchProposalsPage(
+    contractConfig: ContractConfig,
+    version: string,
     pageIndex: number,
     slice: Array<any>,
     totalPagesPaginationProposals: number,
@@ -95,12 +68,6 @@ export function useProposal() {
     setIsPageProposalsError("");
 
     try {
-      const contractConfigResult = await getContractConfig();
-
-      if (!contractConfigResult) return;
-
-      const { contractConfig, version } = contractConfigResult;
-
       const commentsAllowed = compareVersions(version, COMMENTS_VERSION) == -1 ? false : true;
 
       const contracts: any[] = [];
@@ -136,7 +103,7 @@ export function useProposal() {
         });
       }
 
-      const results = await readContracts(config, { contracts });
+      const results = await readContracts(serverConfig, { contracts });
 
       structureAndRankProposals(results, slice, pageMappedProposals, sorting);
 
@@ -153,18 +120,18 @@ export function useProposal() {
    * Fetch the list of proposals ids for this contest, order them by votes and set up pagination
    * @param abi - ABI to use
    */
-  async function fetchProposalsIdsList(abi: any, contestDates: { submissionOpen: Date; votesOpen: Date }) {
+  async function fetchProposalsIdsList(
+    contractConfig: ContractConfig,
+    version: string,
+    contestDates: { submissionOpen: Date; votesOpen: Date },
+  ) {
     setIsListProposalsLoading(true);
 
     try {
       const useLegacyGetAllProposalsIdFn =
-        abi?.filter((el: { name: string }) => el.name === "allProposalTotalVotes")?.length > 0 ? false : true;
-
-      const contractConfig = {
-        address: address as `0x${string}`,
-        abi: abi,
-        chainId: chainId,
-      };
+        contractConfig.abi?.filter((el: { name: string }) => el.name === "allProposalTotalVotes")?.length > 0
+          ? false
+          : true;
 
       const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn);
 
@@ -229,7 +196,8 @@ export function useProposal() {
       setTotalPagesPaginationProposals(paginationChunks.length);
       setIndexPaginationProposalPerId(paginationChunks);
 
-      if (paginationChunks.length) fetchProposalsPage(0, paginationChunks[0], paginationChunks.length, mappedProposals);
+      if (paginationChunks.length)
+        fetchProposalsPage(contractConfig, version, 0, paginationChunks[0], paginationChunks.length, mappedProposals);
     } catch (e) {
       handleError(e, "Something went wrong while getting proposal ids.");
       setIsListProposalsSuccess(false);
@@ -241,14 +209,8 @@ export function useProposal() {
    * Fetch a single proposal based on its ID.
    * @param proposalId - the ID of the proposal to fetch
    */
-  async function fetchSingleProposal(proposalId: any) {
+  async function fetchSingleProposal(contractConfig: ContractConfig, proposalId: any) {
     try {
-      const contractConfigResult = await getContractConfig();
-
-      if (!contractConfigResult) return;
-
-      const { contractConfig } = contractConfigResult;
-
       const contracts = [
         {
           ...contractConfig,
@@ -263,7 +225,7 @@ export function useProposal() {
       ];
 
       //@ts-ignore
-      const results = await readContracts(config, { contracts });
+      const results = await readContracts(serverConfig, { contracts });
 
       structureAndRankProposals(results, [proposalId], initialMappedProposalIds);
     } catch (e) {
@@ -344,7 +306,7 @@ export function useProposal() {
    * Sort proposals by a given sorting option
    * @param sortBy - the sorting option to use
    */
-  function sortProposalData(sortBy: SortOptions) {
+  function sortProposalData(contractConfig: ContractConfig, version: string, sortBy: SortOptions) {
     const sortedIds = sortProposals(sortBy, initialMappedProposalIds);
 
     if (listProposalsData.length === sortedIds.length) {
@@ -358,7 +320,15 @@ export function useProposal() {
       setProposalData([]);
 
       setListProposalsIds(sortedIds);
-      fetchProposalsPage(0, paginationChunks[0], paginationChunks.length, initialMappedProposalIds, true);
+      fetchProposalsPage(
+        contractConfig,
+        version,
+        0,
+        paginationChunks[0],
+        paginationChunks.length,
+        initialMappedProposalIds,
+        true,
+      );
     }
   }
 

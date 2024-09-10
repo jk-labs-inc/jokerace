@@ -30,9 +30,8 @@ interface ContestProposalProps {
 
 const transform = (node: HTMLElement): ReactNode => {
   const element = node.tagName.toLowerCase();
-
-  if (element === "a") {
-    const href = node.getAttribute("href");
+  if (element === "a" || element === "p") {
+    const href = element === "a" ? node.getAttribute("href") : node.textContent;
     const tweetUrlMatch = href && href.match(twitterRegex);
 
     const isInsideList =

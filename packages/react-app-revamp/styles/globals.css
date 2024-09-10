@@ -14,28 +14,10 @@
   color: black !important;
 }
 
-/* Custom bullet points */
-.list-explainer {
-  list-style: none !important;
-}
-
 .list-entry-charge {
   list-style: none !important;
 }
 
-.list-explainer li::before {
-  content: "";
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  background-image: url("/explainer/small-ellipse.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  margin-right: 10px;
-  vertical-align: middle;
-  transition: transform 0.3s ease;
-  margin-top: 5px;
-}
 .list-entry-charge li::before {
   content: "";
   display: inline-block;
@@ -68,6 +50,22 @@ li.no-funds-distributed::before {
 
 .list-entry-charge li:hover::before {
   transform: rotate(15deg);
+}
+
+.list-gray-dot li::before {
+  content: "\2022";
+  color: #9d9d9d;
+  font-weight: bold;
+  display: inline-block;
+  width: 1em;
+}
+
+.list-white-dot li::before {
+  content: "\2022";
+  color: #e5e5e5;
+  font-weight: bold;
+  display: inline-block;
+  width: 1em;
 }
 
 .list-bullet-points li::before {
