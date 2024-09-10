@@ -31,6 +31,7 @@ const CancelRewardsModal: FC<CancelRewardsModalProps> = ({
           <p>if you proceed, you will cancel rewards for this contest.</p>
           <p className="font-bold">🚨 players will not be able to receive rewards.</p>
           <p>🚨 after you cancel rewards, you can withdraw any funds on the rewards page.</p>
+          <p>🚨 you will not be able to deploy another rewards pool for this contest.</p>
           <p>are you really, really, really sure you want to proceed?</p>
         </div>
         <button

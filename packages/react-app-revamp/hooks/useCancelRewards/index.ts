@@ -1,8 +1,9 @@
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { compareVersions } from "compare-versions";
-import { Abi } from "viem";
-import { useEffect } from "react";
+import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { useError } from "@hooks/useError";
+import { compareVersions } from "compare-versions";
+import { useEffect } from "react";
+import { Abi } from "viem";
+import { useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 
 interface UseCancelRewardsParams {
   rewardsAddress: `0x${string}`;
@@ -41,6 +42,8 @@ export function useCancelRewards({ rewardsAddress, abi, chainId, version }: UseC
   const cancelRewards = async () => {
     if (!hasCanceledFunction) return;
 
+    toastLoading("Cancelling rewards..");
+
     try {
       writeContract({
         address: rewardsAddress,
@@ -55,6 +58,7 @@ export function useCancelRewards({ rewardsAddress, abi, chainId, version }: UseC
 
   useEffect(() => {
     if (isConfirmed) {
+      toastSuccess("Rewards cancelled!");
       refetch();
     }
   }, [isConfirmed, refetch]);
