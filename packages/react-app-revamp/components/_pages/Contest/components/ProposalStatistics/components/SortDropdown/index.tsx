@@ -1,6 +1,6 @@
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { FC, Fragment, useRef, useState } from "react";
+import { FC, Fragment, useEffect, useRef, useState } from "react";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -22,6 +22,11 @@ interface SortProposalsDropdownProps {
 const SortProposalsDropdown: FC<SortProposalsDropdownProps> = ({ defaultValue, onChange, onMenuStateChange }) => {
   const [selectedValue, setSelectedValue] = useState(defaultValue);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    onMenuStateChange?.(isOpen);
+  }, [isOpen, onMenuStateChange]);
 
   const handleSelectionChange = (value: string) => {
     setSelectedValue(value);
@@ -33,7 +38,9 @@ const SortProposalsDropdown: FC<SortProposalsDropdownProps> = ({ defaultValue, o
   return (
     <Menu as="div" className="relative inline-block text-left" ref={menuRef}>
       {({ open }) => {
-        onMenuStateChange?.(open);
+        if (open !== isOpen) {
+          setIsOpen(open);
+        }
 
         return (
           <>

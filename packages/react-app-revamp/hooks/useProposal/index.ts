@@ -1,6 +1,5 @@
-import { chains, serverConfig } from "@config/wagmi/server";
+import { serverConfig } from "@config/wagmi/server";
 import arrayToChunks from "@helpers/arrayToChunks";
-import { extractPathSegments } from "@helpers/extractPath";
 import { ContractConfig } from "@hooks/useContest";
 import { useError } from "@hooks/useError";
 import { readContracts } from "@wagmi/core";
@@ -8,8 +7,8 @@ import { compareVersions } from "compare-versions";
 import { Result } from "ethers/lib/utils";
 import { COMMENTS_VERSION } from "lib/proposal";
 import { shuffle, sortBy as sortUnique } from "lodash";
-import { usePathname } from "next/navigation";
 import { formatEther } from "viem";
+import { useShallow } from "zustand/react/shallow";
 import { MappedProposalIds, ProposalCore, SortOptions, useProposalStore } from "./store";
 import {
   formatProposalData,
@@ -39,13 +38,27 @@ export function useProposal() {
     setInitialMappedProposalIds,
     initialMappedProposalIds,
     setSortBy,
-  } = useProposalStore(state => state);
-  const asPath = usePathname();
-  const { chainName, address } = extractPathSegments(asPath ?? "");
+  } = useProposalStore(
+    useShallow(state => ({
+      setCurrentPagePaginationProposals: state.setCurrentPagePaginationProposals,
+      setIsPageProposalsLoading: state.setIsPageProposalsLoading,
+      setIsPageProposalsError: state.setIsPageProposalsError,
+      setHasPaginationProposalsNextPage: state.setHasPaginationProposalsNextPage,
+      setProposalData: state.setProposalData,
+      setIsListProposalsLoading: state.setIsListProposalsLoading,
+      setIsListProposalsSuccess: state.setIsListProposalsSuccess,
+      listProposalsData: state.listProposalsData,
+      setListProposalsIds: state.setListProposalsIds,
+      setSubmissionsCount: state.setSubmissionsCount,
+      submissionsCount: state.submissionsCount,
+      setTotalPagesPaginationProposals: state.setTotalPagesPaginationProposals,
+      setIndexPaginationProposalPerId: state.setIndexPaginationProposalPerId,
+      setInitialMappedProposalIds: state.setInitialMappedProposalIds,
+      initialMappedProposalIds: state.initialMappedProposalIds,
+      setSortBy: state.setSortBy,
+    })),
+  );
   const { error, handleError } = useError();
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
-  )?.[0]?.id;
 
   /**
    * Fetch the data of each proposals in page X

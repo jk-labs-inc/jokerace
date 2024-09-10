@@ -53,7 +53,14 @@ const ContestParameters = () => {
     currentUserQualifiedToSubmit,
     currentUserAvailableVotesAmount,
     currentUserTotalVotesAmount,
-  } = useUserStore(state => state);
+  } = useUserStore(
+    useShallow(state => ({
+      contestMaxNumberSubmissionsPerUser: state.contestMaxNumberSubmissionsPerUser,
+      currentUserQualifiedToSubmit: state.currentUserQualifiedToSubmit,
+      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
+      currentUserTotalVotesAmount: state.currentUserTotalVotesAmount,
+    })),
+  );
   const formattedSubmissionsOpen = moment(submissionsOpen).format("MMMM Do, h:mm a");
   const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
   const formattedVotesClosing = moment(votesClose).format("MMMM Do, h:mm a");

@@ -68,7 +68,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
-  const { currentUserAvailableVotesAmount } = useUserStore(state => state);
+  const currentUserAvailableVotesAmount = useUserStore(state => state.currentUserAvailableVotesAmount);
   const votesOpen = useContestStore(state => state.votesOpen);
   const canVote = currentUserAvailableVotesAmount > 0;
   const isProposalTweet = proposal.tweet.isTweet;

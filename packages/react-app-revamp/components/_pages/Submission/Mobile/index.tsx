@@ -20,6 +20,7 @@ import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
 import Image from "next/image";
 import { FC } from "react";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 
 interface SubmissionPageMobileLayoutProps {
   contestInfo: {
@@ -57,9 +58,14 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const { openConnectModal } = useConnectModal();
   const { openAccountModal } = useAccountModal();
   const contestStatus = useContestStatusStore(state => state.contestStatus);
-  const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
+  const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(
+    useShallow(state => ({
+      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
+      currentUserTotalVotesAmount: state.currentUserTotalVotesAmount,
+    })),
+  );
   const downvotingAllowed = useContestStore(state => state.downvotingAllowed);
-  const { listProposalsIds } = useProposalStore(state => state);
+  const listProposalsIds = useProposalStore(state => state.listProposalsIds);
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
   const totalProposals = listProposalsIds.length;

@@ -37,20 +37,20 @@ export const useDistributeRewards = (
 ) => {
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const rewardsStore = useRewardsStore(state => state);
+  const rankings = useRewardsStore(state => state.rewards.payees);
   const { setIsLoading } = useDistributeRewardStore(state => state);
   const { handleError } = useError();
   const { refetch: refetchReleasableRewards } = useReleasableRewards({
     contractAddress: contractRewardsModuleAddress,
     chainId,
     abi: abiRewardsModule,
-    rankings: rewardsStore.rewards.payees,
+    rankings,
   });
   const { refetch: refetchReleasedRewards } = useReleasedRewards({
     contractAddress: contractRewardsModuleAddress,
     chainId,
     abi: abiRewardsModule,
-    rankings: rewardsStore.rewards.payees,
+    rankings,
   });
 
   const handleDistributeRewards = async () => {

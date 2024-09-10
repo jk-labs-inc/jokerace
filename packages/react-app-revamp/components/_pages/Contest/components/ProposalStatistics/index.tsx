@@ -1,14 +1,15 @@
+import { chains } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
+import { useContestStore } from "@hooks/useContest/store";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import useProposal from "@hooks/useProposal";
 import { SortOptions, useProposalStore } from "@hooks/useProposal/store";
+import { usePathname } from "next/navigation";
 import { FC, useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
 import ProposalStatisticsPanel from "./components/Panel";
 import SortProposalsDropdown from "./components/SortDropdown";
-import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
-import { useContestStore } from "@hooks/useContest/store";
-import { usePathname } from "next/navigation";
-import { extractPathSegments } from "@helpers/extractPath";
-import { chains } from "@config/wagmi";
 
 interface ProposalStatisticsProps {
   contestStatus: ContestStatus;
@@ -19,9 +20,19 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus, onMenu
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(chain => chain.name.toLowerCase() === chainName.toLowerCase())[0]?.id;
-  const { sortBy, submissionsCount } = useProposalStore(state => state);
+  const { sortBy, submissionsCount } = useProposalStore(
+    useShallow(state => ({
+      sortBy: state.sortBy,
+      submissionsCount: state.submissionsCount,
+    })),
+  );
   const { sortProposalData } = useProposal();
-  const { contestAbi: abi, version } = useContestStore(state => state);
+  const { contestAbi: abi, version } = useContestStore(
+    useShallow(state => ({
+      contestAbi: state.contestAbi,
+      version: state.version,
+    })),
+  );
   const isSubmissionOrVotingOpen =
     contestStatus === ContestStatus.SubmissionOpen || contestStatus === ContestStatus.VotingOpen;
   const contestState = useContestStateStore(state => state.contestState);

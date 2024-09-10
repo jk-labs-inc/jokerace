@@ -12,6 +12,7 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useEffect } from "react";
+import { useShallow } from "zustand/react/shallow";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import DialogModalSendProposalMobileLayoutConfirm from "./components/ConfirmDialog";
 
@@ -48,7 +49,15 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
 }) => {
   const { isLoading, error } = useSubmitProposal();
   const { isMobileConfirmModalOpen, setIsMobileConfirmModalOpen, setIsLoading, setIsSuccess, setProposalId } =
-    useSubmitProposalStore(state => state);
+    useSubmitProposalStore(
+      useShallow(state => ({
+        isMobileConfirmModalOpen: state.isMobileConfirmModalOpen,
+        setIsMobileConfirmModalOpen: state.setIsMobileConfirmModalOpen,
+        setIsLoading: state.setIsLoading,
+        setIsSuccess: state.setIsSuccess,
+        setProposalId: state.setProposalId,
+      })),
+    );
   const contestPrompt = useContestStore(state => state.contestPrompt);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields();

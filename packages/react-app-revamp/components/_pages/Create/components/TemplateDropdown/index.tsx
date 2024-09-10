@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { TemplateType } from "../../templates/types";
@@ -23,6 +23,11 @@ const CreateTemplateDropdown: FC<CreateTemplateDropdownProps> = ({
   onMenuStateChange,
 }) => {
   const [selectedOption, setSelectedOption] = useState<TemplateOption | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    onMenuStateChange?.(isOpen);
+  }, [isOpen, onMenuStateChange]);
 
   const handleOptionChange = (option: TemplateOption) => {
     setSelectedOption(option);
@@ -32,7 +37,9 @@ const CreateTemplateDropdown: FC<CreateTemplateDropdownProps> = ({
   return (
     <Menu as="div" className="relative inline-block w-full md:w-[240px]">
       {({ open }) => {
-        onMenuStateChange?.(open);
+        if (open !== isOpen) {
+          setIsOpen(open);
+        }
 
         return (
           <>

@@ -32,7 +32,7 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, proposalId }) =>
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { openConnectModal } = useConnectModal();
   const { castVotes } = useCastVotes();
-  const { listProposalsIds } = useProposalStore(state => state);
+  const listProposalsIds = useProposalStore(state => state.listProposalsIds);
 
   const handleCastVotes = (amount: number, isUpvote: boolean) => {
     castVotes(amount, isUpvote);

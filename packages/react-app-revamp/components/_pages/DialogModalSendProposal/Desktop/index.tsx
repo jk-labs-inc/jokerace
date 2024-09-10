@@ -15,6 +15,7 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
 
@@ -65,9 +66,19 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
     emailForSubscription,
     emailAlreadyExists,
     setEmailAlreadyExists,
-  } = useSubmitProposalStore(state => state);
+    proposalId,
+  } = useSubmitProposalStore(
+    useShallow(state => ({
+      wantsSubscription: state.wantsSubscription,
+      setWantsSubscription: state.setWantsSubscription,
+      setEmailForSubscription: state.setEmailForSubscription,
+      emailForSubscription: state.emailForSubscription,
+      emailAlreadyExists: state.emailAlreadyExists,
+      setEmailAlreadyExists: state.setEmailAlreadyExists,
+      proposalId: state.proposalId,
+    })),
+  );
   const { isLoading, isSuccess } = useSubmitProposal();
-  const { proposalId } = useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
   const insufficientBalance = (accountData?.value ?? 0) < (charge?.type.costToPropose ?? 0);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;

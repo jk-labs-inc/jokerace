@@ -66,12 +66,12 @@ export function useFundRewardsModule() {
     })),
   );
   const { error: errorMessage, handleError } = useError();
-  const rewardsStore = useRewardsStore(state => state);
+  const rankings = useRewardsStore(state => state.rewards.payees);
   const { refetch: refetchReleasableRewards } = useReleasableRewards({
     contractAddress: rewardsModuleAddress,
     chainId,
     abi: rewardsAbi ?? [],
-    rankings: rewardsStore.rewards.payees,
+    rankings,
   });
 
   const sendFundsToRewardsModuleV3 = (rewards: FundPoolToken[]) => {

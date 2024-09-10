@@ -27,7 +27,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
       contestPrompt: state.contestPrompt,
     })),
   );
-  const { currentUserAvailableVotesAmount } = useUserStore(state => state);
+  const currentUserAvailableVotesAmount = useUserStore(state => state.currentUserAvailableVotesAmount);
   const { castVotes, isSuccess } = useCastVotes();
   const [readFullEntry, setReadFullEntry] = useState(false);
 

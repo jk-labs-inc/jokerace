@@ -26,6 +26,11 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange, onMenuStateChange }) =
   const pathname = usePathname();
   const router = useRouter();
   const sortByFromQuery = query?.get("sortBy");
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    onMenuStateChange?.(isOpen);
+  }, [isOpen, onMenuStateChange]);
 
   useEffect(() => {
     if (sortByFromQuery) {
@@ -79,7 +84,9 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange, onMenuStateChange }) =
   return (
     <Menu as="div" className="relative inline-block text-left w-full md:w-[220px] text-[16px]">
       {({ open }) => {
-        onMenuStateChange?.(open);
+        if (open !== isOpen) {
+          setIsOpen(open);
+        }
 
         return (
           <>

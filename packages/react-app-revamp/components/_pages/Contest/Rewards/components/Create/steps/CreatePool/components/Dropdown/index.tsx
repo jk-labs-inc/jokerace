@@ -20,6 +20,11 @@ const CreateRewardsPoolRecipientsDropdown: FC<CreateRewardsPoolRecipientsDropdow
   onMenuStateChange,
 }) => {
   const [selectedOption, setSelectedOption] = useState<Option>(defaultOption);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    onMenuStateChange?.(isOpen);
+  }, [isOpen, onMenuStateChange]);
 
   useEffect(() => {
     setSelectedOption(defaultOption);
@@ -33,7 +38,9 @@ const CreateRewardsPoolRecipientsDropdown: FC<CreateRewardsPoolRecipientsDropdow
   return (
     <Menu as="div" className="relative inline-block">
       {({ open }) => {
-        onMenuStateChange?.(open);
+        if (open !== isOpen) {
+          setIsOpen(open);
+        }
 
         return (
           <>

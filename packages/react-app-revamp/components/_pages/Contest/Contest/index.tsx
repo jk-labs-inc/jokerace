@@ -12,9 +12,10 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import ContestPrompt from "../components/Prompt";
-import ProposalStatistics from "../components/ProposalStatistics";
 import ContestStickyCards from "../components/StickyCards";
+import ProposalStatistics from "../components/ProposalStatistics";
 
 const ContestTab = () => {
   const contestPrompt = useContestStore(state => state.contestPrompt);
@@ -26,14 +27,32 @@ const ContestTab = () => {
     currentUserQualifiedToSubmit,
     currentUserProposalCount,
     isCurrentUserSubmitQualificationLoading,
-  } = useUserStore(state => state);
-  const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(state => state);
+  } = useUserStore(
+    useShallow(state => ({
+      contestMaxNumberSubmissionsPerUser: state.contestMaxNumberSubmissionsPerUser,
+      currentUserQualifiedToSubmit: state.currentUserQualifiedToSubmit,
+      currentUserProposalCount: state.currentUserProposalCount,
+      isCurrentUserSubmitQualificationLoading: state.isCurrentUserSubmitQualificationLoading,
+    })),
+  );
+  const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(
+    useShallow(state => ({
+      isListProposalsLoading: state.isListProposalsLoading,
+      isListProposalsSuccess: state.isListProposalsSuccess,
+    })),
+  );
   const { isLoading: isContestLoading, isSuccess: isContestSuccess } = useContest();
   const {
     isModalOpen: isSubmitProposalModalOpen,
     setIsModalOpen: setIsSubmitProposalModalOpen,
     setIsSuccess: setIsSubmitProposalSuccess,
-  } = useSubmitProposalStore(state => state);
+  } = useSubmitProposalStore(
+    useShallow(state => ({
+      isModalOpen: state.isModalOpen,
+      setIsModalOpen: state.setIsModalOpen,
+      setIsSuccess: state.setIsSuccess,
+    })),
+  );
   const qualifiedToSubmit =
     currentUserQualifiedToSubmit && currentUserProposalCount < contestMaxNumberSubmissionsPerUser;
   const isMobile = useMediaQuery({ maxWidth: 768 });

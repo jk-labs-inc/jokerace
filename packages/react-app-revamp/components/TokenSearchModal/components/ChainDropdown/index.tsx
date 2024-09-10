@@ -2,7 +2,7 @@ import { chainsImages } from "@config/wagmi";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import { FC, Fragment, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 
 export interface Option {
   value: string;
@@ -25,6 +25,11 @@ const TokenSearchModalChainDropdown: FC<ChainDropdownProps> = ({
   onMenuStateChange,
 }) => {
   const [selectedOption, setSelectedOption] = useState<Option>(defaultOption);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    onMenuStateChange?.(isOpen);
+  }, [isOpen, onMenuStateChange]);
 
   const handleOptionClick = (option: Option) => {
     setSelectedOption(option);
@@ -43,7 +48,9 @@ const TokenSearchModalChainDropdown: FC<ChainDropdownProps> = ({
   return (
     <Menu as="div" className="relative inline-block text-left">
       {({ open }) => {
-        onMenuStateChange?.(open);
+        if (open !== isOpen) {
+          setIsOpen(open);
+        }
 
         return (
           <>

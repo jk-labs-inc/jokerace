@@ -9,6 +9,7 @@ import { fetchUserBalance } from "lib/fetchUserBalance";
 import { usePathname } from "next/navigation";
 import { Abi, parseEther } from "viem";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/react/shallow";
 import { useUserStore } from "./store";
 
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
@@ -35,14 +36,29 @@ export function useUser() {
     setCurrentUserTotalVotesAmount,
     setCurrentUserProposalCount,
     setCurrentuserTotalVotesCast,
-    currentUserTotalVotesAmount,
     setIsCurrentUserSubmitQualificationLoading,
     setIsCurrentUserSubmitQualificationSuccess,
     setIsCurrentUserSubmitQualificationError,
     setIsCurrentUserVoteQualificationLoading,
     setIsCurrentUserVoteQualificationSuccess,
     setIsCurrentUserVoteQualificationError,
-  } = useUserStore(state => state);
+    currentUserTotalVotesAmount,
+  } = useUserStore(
+    useShallow(state => ({
+      setCurrentUserQualifiedToSubmit: state.setCurrentUserQualifiedToSubmit,
+      setCurrentUserAvailableVotesAmount: state.setCurrentUserAvailableVotesAmount,
+      setCurrentUserTotalVotesAmount: state.setCurrentUserTotalVotesAmount,
+      setCurrentUserProposalCount: state.setCurrentUserProposalCount,
+      setCurrentuserTotalVotesCast: state.setCurrentuserTotalVotesCast,
+      setIsCurrentUserSubmitQualificationLoading: state.setIsCurrentUserSubmitQualificationLoading,
+      setIsCurrentUserSubmitQualificationSuccess: state.setIsCurrentUserSubmitQualificationSuccess,
+      setIsCurrentUserSubmitQualificationError: state.setIsCurrentUserSubmitQualificationError,
+      setIsCurrentUserVoteQualificationLoading: state.setIsCurrentUserVoteQualificationLoading,
+      setIsCurrentUserVoteQualificationSuccess: state.setIsCurrentUserVoteQualificationSuccess,
+      setIsCurrentUserVoteQualificationError: state.setIsCurrentUserVoteQualificationError,
+      currentUserTotalVotesAmount: state.currentUserTotalVotesAmount,
+    })),
+  );
 
   const checkIfCurrentUserQualifyToSubmit = async (contractConfig: ContractConfig, version: string) => {
     setIsCurrentUserSubmitQualificationLoading(true);

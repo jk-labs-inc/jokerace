@@ -23,6 +23,11 @@ interface ShareDropdownProps {
 
 const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, chain, onMenuStateChange }) => {
   const [isCopied, setIsCopied] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    onMenuStateChange?.(isOpen);
+  }, [isOpen, onMenuStateChange]);
 
   useEffect(() => {
     if (isCopied) {
@@ -42,8 +47,9 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
   return (
     <Menu as="div" className="relative inline-block text-left">
       {({ open }) => {
-        onMenuStateChange?.(open);
-
+        if (open !== isOpen) {
+          setIsOpen(open);
+        }
         return (
           <>
             <MediaQuery maxWidth={768}>

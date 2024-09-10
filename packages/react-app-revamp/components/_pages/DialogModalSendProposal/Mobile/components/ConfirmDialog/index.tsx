@@ -4,6 +4,7 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import Image from "next/image";
 import { FC } from "react";
+import { useShallow } from "zustand/react/shallow";
 import SendProposalMobileLayoutConfirmInitialContent from "./components/InitialContent";
 import SendProposalMobileLayoutConfirmLoadingContent from "./components/LoadingContent";
 
@@ -26,12 +27,18 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
   onConfirm,
   onClose,
 }) => {
-  const { isLoading, isSuccess, proposalId } = useSubmitProposalStore(state => state);
+  const { isLoading, isSuccess, proposalId } = useSubmitProposalStore(
+    useShallow(state => ({
+      isLoading: state.isLoading,
+      isSuccess: state.isSuccess,
+      proposalId: state.proposalId,
+    })),
+  );
   const title = isLoading
     ? "approving transaction..."
     : isSuccess && proposalId
-    ? "your submission is live!"
-    : "confirm submission";
+      ? "your submission is live!"
+      : "confirm submission";
 
   if (!isOpen) return null;
 

@@ -52,7 +52,13 @@ const ContestRewards = () => {
   );
   const [isFundRewardsOpen, setIsFundRewardsOpen] = useState(false);
   const [isWithdrawRewardsOpen, setIsWithdrawRewardsOpen] = useState(false);
-  const rewardsStore = useRewardsStore(state => state);
+  const rewardsStore = useRewardsStore(
+    useShallow(state => ({
+      isLoading: state.isLoading,
+      isSuccess: state.isSuccess,
+      rewards: state.rewards,
+    })),
+  );
   const { getContestRewardsModule } = useRewardsModule();
   const { address: accountAddress } = useAccount();
   const creator = contestAuthorEthereumAddress === accountAddress;

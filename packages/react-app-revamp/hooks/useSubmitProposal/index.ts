@@ -77,11 +77,26 @@ export function useSubmitProposal() {
   const rankings = useRewardsStore(state => state.rewards.payees);
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
-  const { setSubmissionsCount, submissionsCount } = useProposalStore(state => state);
-  const { increaseCurrentUserProposalCount } = useUserStore(state => state);
+  const { setSubmissionsCount, submissionsCount } = useProposalStore(
+    useShallow(state => ({
+      setSubmissionsCount: state.setSubmissionsCount,
+      submissionsCount: state.submissionsCount,
+    })),
+  );
+  const increaseCurrentUserProposalCount = useUserStore(state => state.increaseCurrentUserProposalCount);
   const { getProofs } = useGenerateProof();
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
-    useSubmitProposalStore(state => state);
+    useSubmitProposalStore(
+      useShallow(state => ({
+        isLoading: state.isLoading,
+        isSuccess: state.isSuccess,
+        error: state.error,
+        setIsLoading: state.setIsLoading,
+        setIsSuccess: state.setIsSuccess,
+        setError: state.setError,
+        setTransactionData: state.setTransactionData,
+      })),
+    );
   const { fields: metadataFields, setFields: setMetadataFields } = useMetadataStore(
     useShallow(state => ({
       fields: state.fields,

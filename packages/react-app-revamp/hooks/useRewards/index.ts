@@ -22,7 +22,14 @@ export function useRewardsModule() {
     })),
   );
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const { setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
+  const { setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(
+    useShallow(state => ({
+      setRewards: state.setRewards,
+      setIsLoading: state.setIsLoading,
+      setError: state.setError,
+      setIsSuccess: state.setIsSuccess,
+    })),
+  );
   const { error, handleError } = useError();
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),

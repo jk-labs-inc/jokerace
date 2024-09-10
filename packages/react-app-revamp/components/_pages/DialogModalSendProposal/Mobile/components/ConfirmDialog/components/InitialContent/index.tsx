@@ -6,6 +6,7 @@ import { Charge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 interface SendProposalMobileLayoutConfirmInitialContentProps {
   charge: Charge | null;
@@ -19,7 +20,14 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   onConfirm,
 }) => {
   const { wantsSubscription, emailForSubscription, setWantsSubscription, setEmailForSubscription } =
-    useSubmitProposalStore(state => state);
+    useSubmitProposalStore(
+      useShallow(state => ({
+        wantsSubscription: state.wantsSubscription,
+        emailForSubscription: state.emailForSubscription,
+        setWantsSubscription: state.setWantsSubscription,
+        setEmailForSubscription: state.setEmailForSubscription,
+      })),
+    );
   const [emailError, setEmailError] = useState<string | null>(null);
   const insufficientBalance = (accountData?.value ?? 0) < (charge?.type.costToPropose ?? 0);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;

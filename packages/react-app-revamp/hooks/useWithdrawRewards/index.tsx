@@ -32,13 +32,13 @@ export const useWithdrawReward = (
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase());
   const { setIsLoading } = useWithdrawRewardStore(state => state);
-  const rewardsStore = useRewardsStore(state => state);
+  const rankings = useRewardsStore(state => state.rewards.payees);
   const { handleError } = useError();
   const { refetch: refetchReleasableRewards } = useReleasableRewards({
     contractAddress: contractRewardsModuleAddress,
     chainId: chainId[0].id,
     abi: abiRewardsModule,
-    rankings: rewardsStore.rewards.payees,
+    rankings,
   });
 
   const handleWithdraw = async () => {

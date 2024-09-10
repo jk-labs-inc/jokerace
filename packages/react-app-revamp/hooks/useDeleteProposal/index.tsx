@@ -21,7 +21,12 @@ export function useDeleteProposal() {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const { removeProposal } = useProposal();
-  const { submissionsCount, setSubmissionsCount } = useProposalStore(state => state);
+  const { submissionsCount, setSubmissionsCount } = useProposalStore(
+    useShallow(state => ({
+      submissionsCount: state.submissionsCount,
+      setSubmissionsCount: state.setSubmissionsCount,
+    })),
+  );
   const {
     isLoading,
     error,

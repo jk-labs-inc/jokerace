@@ -54,7 +54,17 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     setWantsSubscription,
     setEmailForSubscription,
     setEmailAlreadyExists,
-  } = useSubmitProposalStore(state => state);
+  } = useSubmitProposalStore(
+    useShallow(state => ({
+      setProposalId: state.setProposalId,
+      setIsMobileConfirmModalOpen: state.setIsMobileConfirmModalOpen,
+      wantsSubscription: state.wantsSubscription,
+      emailForSubscription: state.emailForSubscription,
+      setWantsSubscription: state.setWantsSubscription,
+      setEmailForSubscription: state.setEmailForSubscription,
+      setEmailAlreadyExists: state.setEmailAlreadyExists,
+    })),
+  );
   const { votesOpen, charge } = useContestStore(
     useShallow(state => ({
       votesOpen: state.votesOpen,

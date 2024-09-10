@@ -43,7 +43,18 @@ export const ListProposals = () => {
     submissionsCount,
     totalPagesPaginationProposals,
     listProposalsData,
-  } = useProposalStore(state => state);
+  } = useProposalStore(
+    useShallow(state => ({
+      listProposalsIds: state.listProposalsIds,
+      isPageProposalsLoading: state.isPageProposalsLoading,
+      initialMappedProposalIds: state.initialMappedProposalIds,
+      currentPagePaginationProposals: state.currentPagePaginationProposals,
+      indexPaginationProposals: state.indexPaginationProposals,
+      submissionsCount: state.submissionsCount,
+      totalPagesPaginationProposals: state.totalPagesPaginationProposals,
+      listProposalsData: state.listProposalsData,
+    })),
+  );
   const {
     contestAuthorEthereumAddress,
     contestAbi: abi,

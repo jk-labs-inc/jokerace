@@ -24,6 +24,11 @@ const CreateDefaultDropdown: FC<CreateDefaultDropdownProps> = ({
   onMenuStateChange,
 }) => {
   const [selectedOption, setSelectedOption] = useState<Option>(defaultOption);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    onMenuStateChange?.(isOpen);
+  }, [isOpen, onMenuStateChange]);
 
   useEffect(() => {
     setSelectedOption(defaultOption);
@@ -37,7 +42,9 @@ const CreateDefaultDropdown: FC<CreateDefaultDropdownProps> = ({
   return (
     <Menu as="div" className="relative inline-block">
       {({ open }) => {
-        onMenuStateChange?.(open);
+        if (open !== isOpen) {
+          setIsOpen(open);
+        }
 
         return (
           <>

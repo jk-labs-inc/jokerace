@@ -39,7 +39,13 @@ const ProposalContentAction: FC<ProposalActionProps> = ({ proposalId, onVotingMo
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
   const { currentUserAvailableVotesAmount, isCurrentUserVoteQualificationLoading, currentUserTotalVotesAmount } =
-    useUserStore(state => state);
+    useUserStore(
+      useShallow(state => ({
+        currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
+        isCurrentUserVoteQualificationLoading: state.isCurrentUserVoteQualificationLoading,
+        currentUserTotalVotesAmount: state.currentUserTotalVotesAmount,
+      })),
+    );
   const canVote = currentUserAvailableVotesAmount > 0;
   const outOfVotes = currentUserTotalVotesAmount > 0 && !canVote;
   const costToVoteFormatted = formatEther(BigInt(charge?.type.costToVote ?? 0));

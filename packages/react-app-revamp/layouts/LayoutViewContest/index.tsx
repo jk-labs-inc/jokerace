@@ -13,6 +13,7 @@ import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
+import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
@@ -31,7 +32,9 @@ import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import { useShallow } from "zustand/react/shallow";
 import LayoutViewContestError from "./components/Error";
-import { chains } from "@config/wagmi";
+import { generateUrlContest } from "@helpers/share";
+import Image from "next/image";
+import ShareDropdown from "@components/Share";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -244,8 +247,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                       {!isMobile && rewardsModuleAddress && rewardsAbi ? (
                         <ContestRewardsInfo rewardsModuleAddress={rewardsModuleAddress} rewardsAbi={rewardsAbi} />
                       ) : null}
-                      {/* TODO: Share button */}
-                      {/* {isMobile ? (
+                      {isMobile ? (
                         <div
                           className="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-[10px] border border-neutral-11 cursor-pointer"
                           onClick={() =>
@@ -263,7 +265,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                           contestName={contestName}
                           onMenuStateChange={setFadeBg}
                         />
-                      )} */}
+                      )}
 
                       <div
                         className="standalone-pwa w-8 h-8 items-center rounded-[10px] border border-neutral-11 cursor-pointer"

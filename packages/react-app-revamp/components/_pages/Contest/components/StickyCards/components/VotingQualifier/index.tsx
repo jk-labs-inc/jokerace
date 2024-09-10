@@ -1,12 +1,8 @@
 /* eslint-disable react/no-unescaped-entities */
-import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { useAccountChange } from "@hooks/useAccountChange";
-import { ContractConfig } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
-import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
@@ -15,8 +11,8 @@ import Skeleton from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
-import VotingQualifierMessage from "./components/VotingQualifierMessage";
 import { useShallow } from "zustand/react/shallow";
+import VotingQualifierMessage from "./components/VotingQualifierMessage";
 
 const VotingContestQualifier = () => {
   const { anyoneCanVote, charge, isReadOnly } = useContestStore(
@@ -33,7 +29,14 @@ const VotingContestQualifier = () => {
     currentUserTotalVotesAmount,
     isCurrentUserVoteQualificationLoading,
     isCurrentUserVoteQualificationError,
-  } = useUserStore(state => state);
+  } = useUserStore(
+    useShallow(state => ({
+      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
+      currentUserTotalVotesAmount: state.currentUserTotalVotesAmount,
+      isCurrentUserVoteQualificationLoading: state.isCurrentUserVoteQualificationLoading,
+      isCurrentUserVoteQualificationError: state.isCurrentUserVoteQualificationError,
+    })),
+  );
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const costToVoteFormatted = formatEther(BigInt(charge?.type.costToVote ?? 0));
