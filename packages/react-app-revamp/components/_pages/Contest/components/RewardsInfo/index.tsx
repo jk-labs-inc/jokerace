@@ -2,6 +2,7 @@ import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
+import { useCancelRewards } from "@hooks/useCancelRewards";
 import { transform } from "@hooks/useDistributeRewards";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
 import { useReleasedRewards } from "@hooks/useReleasedRewards";
@@ -15,9 +16,10 @@ import { useReadContract } from "wagmi";
 interface ContestRewardsInfoProps {
   rewardsModuleAddress: string;
   rewardsAbi: Abi;
+  version: string;
 }
 
-const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress, rewardsAbi }) => {
+const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress, rewardsAbi, version }) => {
   const pathname = usePathname();
   const { chainName } = extractPathSegments(pathname);
   const chainId = chains.filter(
@@ -34,6 +36,12 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
         return (data as bigint[]).map((payee: bigint) => Number(payee));
       },
     },
+  });
+  const { isCanceled } = useCancelRewards({
+    rewardsAddress: rewardsModuleAddress as `0x${string}`,
+    chainId,
+    abi: rewardsAbi,
+    version,
   });
 
   const {
@@ -96,7 +104,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
     );
   }
 
-  if (!currentReward || isError) return null;
+  if (!currentReward || isError || isCanceled) return null;
 
   const currentRewardAmount = transform(
     currentReward?.amount ?? 0n,
