@@ -6,7 +6,6 @@ import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting
 import { StateKey } from "@components/_pages/Create/utils/validation";
 import { ReactNode } from "react";
 import { create } from "zustand";
-import { DEFAULT_SUBMISSIONS } from ".";
 import {
   Charge,
   SplitFeeDestinationType,
@@ -18,6 +17,8 @@ import {
 } from "./types";
 
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
+
+const DEFAULT_SUBMISSIONS = 1000000;
 
 type ContestDeployError = {
   step: number;
