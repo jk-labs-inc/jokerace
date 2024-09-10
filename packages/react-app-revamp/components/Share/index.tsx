@@ -18,10 +18,9 @@ interface ShareDropdownProps {
   contestName: string;
   contestAddress: string;
   chain: string;
-  onMenuStateChange?: (isOpen: boolean) => void;
 }
 
-const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, chain, onMenuStateChange }) => {
+const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, chain }) => {
   const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
@@ -42,8 +41,6 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
   return (
     <Menu as="div" className="relative inline-block text-left">
       {({ open }) => {
-        onMenuStateChange?.(open);
-
         return (
           <>
             <MediaQuery maxWidth={768}>

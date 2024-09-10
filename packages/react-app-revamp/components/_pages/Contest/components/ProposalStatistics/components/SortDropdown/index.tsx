@@ -16,10 +16,9 @@ const options = [
 interface SortProposalsDropdownProps {
   defaultValue: string;
   onChange?: (value: string) => void;
-  onMenuStateChange?: (isOpen: boolean) => void;
 }
 
-const SortProposalsDropdown: FC<SortProposalsDropdownProps> = ({ defaultValue, onChange, onMenuStateChange }) => {
+const SortProposalsDropdown: FC<SortProposalsDropdownProps> = ({ defaultValue, onChange }) => {
   const [selectedValue, setSelectedValue] = useState(defaultValue);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -33,8 +32,6 @@ const SortProposalsDropdown: FC<SortProposalsDropdownProps> = ({ defaultValue, o
   return (
     <Menu as="div" className="relative inline-block text-left" ref={menuRef}>
       {({ open }) => {
-        onMenuStateChange?.(open);
-
         return (
           <>
             <MenuButton className="flex items-center gap-2 text-[16px] text-positive-11 w-full">
