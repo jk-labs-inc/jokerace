@@ -5,6 +5,7 @@ import { FOOTER_LINKS } from "@config/links";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { REWARDS_CANCELED_VERSION, useCancelRewards } from "@hooks/useCancelRewards";
 import { useContestStore } from "@hooks/useContest/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
@@ -15,6 +16,9 @@ import CreateRewardsModule from "./components/CreateRewardsModule";
 import NoRewardsInfo from "./components/NoRewards";
 import RewardsReleasable from "./components/ReleasableRewards";
 import RewardsReleased from "./components/ReleasedRewards";
+import { compareVersions } from "compare-versions";
+import CancelRewards from "./components/CancelRewards";
+import { useMediaQuery } from "react-responsive";
 
 const ContestRewards = () => {
   const asPath = usePathname();
@@ -43,6 +47,18 @@ const ContestRewards = () => {
   const { address: accountAddress } = useAccount();
   const creator = contestAuthorEthereumAddress === accountAddress;
   const githubLink = FOOTER_LINKS.find(link => link.label === "Github");
+  const {
+    isCanceled,
+    isLoading: isRewardsCanceledLoading,
+    isSuccess: isRewardsCanceledSuccess,
+  } = useCancelRewards({
+    rewardsAddress: rewardsStore.rewards.contractAddress as `0x${string}`,
+    abi: rewardsStore.rewards.abi,
+    chainId,
+    version,
+  });
+  const hasCanceledFunction = compareVersions(version, REWARDS_CANCELED_VERSION) >= 0;
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   useAccountEffect({
     onConnect(data) {
@@ -80,7 +96,29 @@ const ContestRewards = () => {
           {rewardsStore.isSuccess && (
             <div className="flex flex-col gap-12">
               <div className={`flex flex-col gap-8 border-b border-primary-2 ${creator ? "pb-8" : ""}`}>
-                <p className="text-[24px] text-neutral-9 font-bold">rewards pool configuration</p>
+                {isCanceled ? (
+                  <div className="flex">
+                    <div className="inline-block border border-negative-11 py-2 px-4 rounded-lg">
+                      <p className="text-negative-11 text-[16px] md:text-[20px] font-bold text-center">
+                        {isMobile
+                          ? "rewards were canceled by the creator"
+                          : "rewards were canceled by the creator and are no longer active"}
+                      </p>
+                    </div>
+                  </div>
+                ) : null}
+                <div className="flex justify-between items-center">
+                  <p className="text-[24px] text-neutral-9 font-bold">rewards pool configuration</p>
+                  {creator && hasCanceledFunction && !isCanceled && (
+                    <CancelRewards
+                      rewardsAddress={rewardsStore.rewards.contractAddress as `0x${string}`}
+                      abi={rewardsStore.rewards.abi}
+                      chainId={chainId}
+                      version={version}
+                    />
+                  )}
+                </div>
+
                 <div className="flex flex-col gap-3">
                   <p className="text-[16px] text-neutral-11 font-bold">rewards pool address:</p>
                   <a
@@ -118,40 +156,42 @@ const ContestRewards = () => {
                     </div>
                   </div>
 
-                  {creator ? (
+                  {creator && !isRewardsCanceledLoading && isRewardsCanceledSuccess ? (
                     <div className="flex gap-8 items-center">
-                      <button
-                        className="bg-transparent text-positive-11 text-[16px] hover:text-positive-9 transition-colors duration-300"
-                        onClick={() => setIsFundRewardsOpen(true)}
-                      >
-                        add funds
-                      </button>
-                      <button
-                        className="bg-transparent text-negative-11 text-[16px] hover:text-negative-10 transition-colors duration-300"
-                        onClick={() => setIsWithdrawRewardsOpen(true)}
-                      >
-                        remove funds
-                      </button>
+                      {!isCanceled && (
+                        <button
+                          className="bg-transparent text-positive-11 text-[16px] hover:text-positive-9 transition-colors duration-300"
+                          onClick={() => setIsFundRewardsOpen(true)}
+                        >
+                          add funds
+                        </button>
+                      )}
+                      {(isCanceled && hasCanceledFunction) || !hasCanceledFunction ? (
+                        <button
+                          className="bg-transparent text-negative-11 text-[16px] hover:text-negative-10 transition-colors duration-300"
+                          onClick={() => setIsWithdrawRewardsOpen(true)}
+                        >
+                          remove funds
+                        </button>
+                      ) : null}
                     </div>
                   ) : null}
                 </div>
               </div>
 
-              <div className="flex flex-col gap-8 border-b border-primary-2 pb-8">
-                <p className="text-[24px] text-neutral-9 font-bold">rewards to distribute</p>
-                {rewardsStore.rewards.contractAddress &&
-                  rewardsStore.rewards.abi &&
-                  rewardsStore.rewards.payees.length > 0 && (
-                    <RewardsReleasable
-                      rewardsModuleAddress={rewardsStore.rewards.contractAddress}
-                      chainId={chainId}
-                      rewardsAbi={rewardsStore.rewards.abi}
-                      rankings={rewardsStore.rewards.payees}
-                      isWithdrawRewardsOpen={isWithdrawRewardsOpen}
-                      setIsWithdrawRewardsOpen={setIsWithdrawRewardsOpen}
-                    />
-                  )}
-              </div>
+              {rewardsStore.rewards.contractAddress &&
+                rewardsStore.rewards.abi &&
+                rewardsStore.rewards.payees.length > 0 && (
+                  <RewardsReleasable
+                    rewardsModuleAddress={rewardsStore.rewards.contractAddress}
+                    chainId={chainId}
+                    rewardsAbi={rewardsStore.rewards.abi}
+                    rankings={rewardsStore.rewards.payees}
+                    isWithdrawRewardsOpen={isWithdrawRewardsOpen}
+                    setIsWithdrawRewardsOpen={setIsWithdrawRewardsOpen}
+                    isCanceled={isCanceled}
+                  />
+                )}
 
               <div className="flex flex-col gap-8">
                 <p className="text-[24px] text-neutral-9 font-bold">previously distributed rewards</p>

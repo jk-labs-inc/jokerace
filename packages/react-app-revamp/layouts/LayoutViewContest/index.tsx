@@ -218,7 +218,11 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                     <div className="flex flex-col gap-2">
                       {isMobile && rewardsModuleAddress && rewardsAbi ? (
                         <div className="w-3/4">
-                          <ContestRewardsInfo rewardsModuleAddress={rewardsModuleAddress} rewardsAbi={rewardsAbi} />
+                          <ContestRewardsInfo
+                            rewardsModuleAddress={rewardsModuleAddress}
+                            rewardsAbi={rewardsAbi}
+                            version={version}
+                          />
                         </div>
                       ) : null}
                       <ContestName contestName={contestName} address={address} chainName={chainName} />
@@ -231,7 +235,11 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                         textualVersion={isMobile}
                       />
                       {!isMobile && rewardsModuleAddress && rewardsAbi ? (
-                        <ContestRewardsInfo rewardsModuleAddress={rewardsModuleAddress} rewardsAbi={rewardsAbi} />
+                        <ContestRewardsInfo
+                          rewardsModuleAddress={rewardsModuleAddress}
+                          rewardsAbi={rewardsAbi}
+                          version={version}
+                        />
                       ) : null}
                       {isMobile ? (
                         <div
