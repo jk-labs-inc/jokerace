@@ -66,6 +66,8 @@ import { inEvm } from "./custom-chains/inEvm";
 import { inEvmTestnet } from "./custom-chains/inEvmTestnet";
 import { kaiaTestnet } from "./custom-chains/kaiaTestnet";
 import { kroma } from "./custom-chains/kroma";
+import { lamina } from "./custom-chains/lamina";
+import { laminaTestnet } from "./custom-chains/laminaTestnet";
 import { linea } from "./custom-chains/linea";
 import { lineaTestnet } from "./custom-chains/lineaTestnet";
 import { litTestnet } from "./custom-chains/litTestnet";
@@ -200,6 +202,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   rollux,
   syscoin,
   zircuit,
+  lamina,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
@@ -252,6 +255,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   syscoinTestnet,
   storyTestnet,
   soneiumTestnet,
+  laminaTestnet,
   mainnet,
 ];
 
