@@ -143,46 +143,50 @@ export function useContest() {
     const contestState = results[9].result as ContestStateEnum;
 
     if (compareVersions(version, "4.0") >= 0) {
-      const percentageToCreator = Number(results[10].result);
       const costToPropose = Number(results[11].result);
-      let costToVote = 0;
-      let payPerVote = 0;
-      let creatorSplitDestination = "";
 
-      if (compareVersions(version, "4.2") >= 0) {
-        const sortingEnabled = Number(results[12].result) === 1;
+      if (costToPropose === 0) {
+        setCharge(null);
+      } else {
+        const percentageToCreator = Number(results[10].result);
+        let costToVote = 0;
+        let payPerVote = 0;
+        let creatorSplitDestination = "";
 
-        setSortingEnabled(sortingEnabled);
-      }
-
-      if (compareVersions(version, "4.23") >= 0) {
-        if (compareVersions(version, "4.25") >= 0) {
-          payPerVote = Number(results[14].result);
+        if (compareVersions(version, "4.2") >= 0) {
+          const sortingEnabled = Number(results[12].result) === 1;
+          setSortingEnabled(sortingEnabled);
         }
-        costToVote = Number(results[13].result);
-      }
 
-      if (compareVersions(version, "4.29") >= 0) {
-        creatorSplitDestination = results[15].result as string;
-      }
+        if (compareVersions(version, "4.23") >= 0) {
+          if (compareVersions(version, "4.25") >= 0) {
+            payPerVote = Number(results[14].result);
+          }
+          costToVote = Number(results[13].result);
+        }
 
-      setCharge({
-        percentageToCreator,
-        voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
-        splitFeeDestination: {
-          type: determineSplitFeeDestination(
-            creatorSplitDestination,
-            contestAuthor,
-            percentageToCreator,
-            rewardsModuleAddress,
-          ),
-          address: creatorSplitDestination,
-        },
-        type: {
-          costToPropose,
-          costToVote,
-        },
-      });
+        if (compareVersions(version, "4.29") >= 0) {
+          creatorSplitDestination = results[15].result as string;
+        }
+
+        setCharge({
+          percentageToCreator,
+          voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
+          splitFeeDestination: {
+            type: determineSplitFeeDestination(
+              creatorSplitDestination,
+              contestAuthor,
+              percentageToCreator,
+              rewardsModuleAddress,
+            ),
+            address: creatorSplitDestination,
+          },
+          type: {
+            costToPropose,
+            costToVote,
+          },
+        });
+      }
     } else {
       setCharge(null);
     }
