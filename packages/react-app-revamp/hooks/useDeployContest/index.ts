@@ -22,7 +22,6 @@ import { ContestVisibility, MetadataField, useDeployContestStore } from "./store
 import { SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle } from "./types";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000000;
-export const DEFAULT_SUBMISSIONS = 1000000;
 export const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c6118e8a52fa738";
 
 const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
