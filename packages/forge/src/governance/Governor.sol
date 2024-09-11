@@ -256,7 +256,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         for (uint256 i = 0; i < slicedArray.length; i++) {
             slicedArray[i] = proposalIds[startIndex + i];
         }
-        
+
         return slicedArray;
     }
 
