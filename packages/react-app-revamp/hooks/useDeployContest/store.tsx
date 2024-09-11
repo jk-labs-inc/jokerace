@@ -18,7 +18,7 @@ import {
 
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
 
-const DEFAULT_SUBMISSIONS = 1000000;
+const DEFAULT_SUBMISSIONS = 10000;
 
 type ContestDeployError = {
   step: number;
