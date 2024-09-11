@@ -37,7 +37,6 @@ const ContestTab = () => {
   const qualifiedToSubmit =
     currentUserQualifiedToSubmit && currentUserProposalCount < contestMaxNumberSubmissionsPerUser;
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const [blurProposals, setBlurProposals] = useState(false);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
@@ -98,18 +97,11 @@ const ContestTab = () => {
       <div className={`mt-4 ${isInPwaMode ? "mb-12" : "mb-0"}`}>
         <div className="flex flex-col gap-2">
           {contestStatus !== ContestStatus.ContestOpen && !isContestLoading && (
-            <ProposalStatistics
-              contestStatus={contestStatus}
-              onMenuStateChange={(value: boolean) => setBlurProposals(value)}
-            />
+            <ProposalStatistics contestStatus={contestStatus} />
           )}
 
           {!isContestLoading && !isListProposalsLoading && isContestSuccess && isListProposalsSuccess && (
-            <div
-              className={`animate-reveal ${contestStatus !== ContestStatus.SubmissionOpen ? "mt-4" : "mt-0"} ${
-                blurProposals ? "blurProposals" : ""
-              }`}
-            >
+            <div className={`animate-reveal ${contestStatus !== ContestStatus.SubmissionOpen ? "mt-4" : "mt-0"}`}>
               <ListProposals />
             </div>
           )}
