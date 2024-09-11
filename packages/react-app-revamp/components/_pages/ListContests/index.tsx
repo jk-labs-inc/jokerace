@@ -44,7 +44,6 @@ export const ListContests: FC<ListContestsProps> = ({
   onSearchChange,
   onSortChange,
 }) => {
-  const [fadeBg, setFadeBg] = useState(false);
   const [totalCount, setTotalCount] = useState<number | null>(null);
 
   useEffect(() => {
@@ -90,7 +89,7 @@ export const ListContests: FC<ListContestsProps> = ({
 
           {sortOptions && totalCount !== null && (
             <div className="order-2 md:order-none">
-              <Sort sortOptions={sortOptions} onSortChange={onSortChange} onMenuStateChange={setFadeBg} />
+              <Sort sortOptions={sortOptions} onSortChange={onSortChange} />
             </div>
           )}
         </div>
@@ -110,7 +109,7 @@ export const ListContests: FC<ListContestsProps> = ({
             No contests found
           </div>
         ) : (
-          <div className={`${fadeBg ? "opacity-50" : "opacity-100"}`}>
+          <div>
             {isPaginationLoading
               ? placeholders.map((_, index) => (
                   <Contest

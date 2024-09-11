@@ -8,7 +8,6 @@ interface ContestParamsMetadataFieldsDropdownProps {
   defaultOption: Option;
   className?: string;
   onChange?: (option: string) => void;
-  onMenuStateChange?: (isOpen: boolean) => void;
 }
 
 const ContestParamsMetadataFieldsDropdown: FC<ContestParamsMetadataFieldsDropdownProps> = ({
@@ -16,7 +15,6 @@ const ContestParamsMetadataFieldsDropdown: FC<ContestParamsMetadataFieldsDropdow
   defaultOption,
   className,
   onChange,
-  onMenuStateChange,
 }) => {
   const [selectedOption, setSelectedOption] = useState<Option>(defaultOption);
 
@@ -32,8 +30,6 @@ const ContestParamsMetadataFieldsDropdown: FC<ContestParamsMetadataFieldsDropdow
   return (
     <Menu as="div" className="relative inline-block">
       {({ open }) => {
-        onMenuStateChange?.(open);
-
         return (
           <>
             <MenuButton className="flex items-center bg-neutral-14 cursor-pointer w-48 md:w-[216px] h-10 rounded-lg px-4 py-2">

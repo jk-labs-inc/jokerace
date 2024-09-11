@@ -6,11 +6,10 @@ import { FC, useState } from "react";
 
 interface TokenSearchListNftProps {
   nft: NFTMetadata;
-  isChainDropdownOpen?: boolean;
   onSelectNft?: (nft: NFTMetadata) => void;
 }
 
-const TokenSearchListNft: FC<TokenSearchListNftProps> = ({ nft, isChainDropdownOpen, onSelectNft }) => {
+const TokenSearchListNft: FC<TokenSearchListNftProps> = ({ nft, onSelectNft }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const truncateTokenName = (name: string, maxLength: number = 30): string => {
@@ -25,9 +24,7 @@ const TokenSearchListNft: FC<TokenSearchListNftProps> = ({ nft, isChainDropdownO
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => onSelectNft?.(nft)}
-      className={`flex gap-6 items-center cursor-pointer transition-all duration-300 ${
-        isChainDropdownOpen ? "opacity-50" : ""
-      }`}
+      className={`flex gap-6 items-center cursor-pointer transition-all duration-300`}
     >
       <div
         className={`flex items-center bg-neutral-5 rounded-full overflow-hidden w-10 h-10 border border-primary-2 ${
