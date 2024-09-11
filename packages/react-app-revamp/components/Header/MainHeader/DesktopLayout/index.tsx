@@ -2,7 +2,7 @@ import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_USER } from "@config/routes";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
 interface MainHeaderDesktopLayoutProps {
   isConnected: boolean;
@@ -10,6 +10,12 @@ interface MainHeaderDesktopLayoutProps {
 }
 
 const MainHeaderDesktopLayout: FC<MainHeaderDesktopLayoutProps> = ({ isConnected, address }) => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   return (
     <header className="flex items-center justify-between pl-[120px] pr-[60px] mt-8">
       <Link href="/">
@@ -31,11 +37,7 @@ const MainHeaderDesktopLayout: FC<MainHeaderDesktopLayoutProps> = ({ isConnected
       </div>
 
       <div className="flex gap-3 items-center">
-        {address ? (
-          <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
-            <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />
-          </Link>
-        ) : null}
+        {isClient && address ? <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion /> : null}
         <ConnectButtonCustom />
       </div>
     </header>
