@@ -54,6 +54,7 @@ import MakeJkLabsSplitConfigurableRewards from "@contracts/bytecodeAndAbi/module
 import AddMetadataFieldsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.31.addMetadataFields.sol/RewardsModule.json";
 import CheckCanceledRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.32.checkCanceled.sol/RewardsModule.json";
 import MustCancelToWithdrawRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.33.mustCancelToWithdraw.sol/RewardsModule.json";
+import AddPropIdLenAndSliceRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.1.addPropIdLenAndSlice.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -65,7 +66,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
-    if (version === "4.33") {
+    if (version === "5.1") {
+      return AddPropIdLenAndSliceRewards.abi;
+    } else if (version === "4.33") {
       return MustCancelToWithdrawRewards.abi;
     } else if (version === "4.32") {
       return CheckCanceledRewards.abi;
