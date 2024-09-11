@@ -62,7 +62,6 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const bugReportLink = populateBugReportLink(url?.href ?? "", accountAddress ?? "", error ?? "");
-  const [fadeBg, setFadeBg] = useState(false);
 
   useAccountEffect({
     onConnect(data) {
@@ -253,12 +252,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                           <Image src="/forward.svg" alt="share" width={15} height={13} />
                         </div>
                       ) : (
-                        <ShareDropdown
-                          contestAddress={address}
-                          chain={chainName}
-                          contestName={contestName}
-                          onMenuStateChange={setFadeBg}
-                        />
+                        <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
                       )}
 
                       <div
@@ -269,7 +263,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                       </div>
                     </div>
                   </div>
-                  <div className={`${fadeBg ? "opacity-30" : "opacity-100"}`}>
+                  <div>
                     <div className="mt-8 mb-8 gap-3 flex flex-col">
                       <ContestTabs tab={tab} onChange={tab => setTab(tab)} />
                     </div>

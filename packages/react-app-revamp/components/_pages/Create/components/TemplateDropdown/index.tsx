@@ -13,15 +13,9 @@ interface CreateTemplateDropdownProps {
   options: TemplateOption[];
   className?: string;
   onChange?: (option: TemplateType) => void;
-  onMenuStateChange?: (isOpen: boolean) => void;
 }
 
-const CreateTemplateDropdown: FC<CreateTemplateDropdownProps> = ({
-  options,
-  className,
-  onChange,
-  onMenuStateChange,
-}) => {
+const CreateTemplateDropdown: FC<CreateTemplateDropdownProps> = ({ options, className, onChange }) => {
   const [selectedOption, setSelectedOption] = useState<TemplateOption | null>(null);
 
   const handleOptionChange = (option: TemplateOption) => {
@@ -32,8 +26,6 @@ const CreateTemplateDropdown: FC<CreateTemplateDropdownProps> = ({
   return (
     <Menu as="div" className="relative inline-block w-full md:w-[240px]">
       {({ open }) => {
-        onMenuStateChange?.(open);
-
         return (
           <>
             <MenuButton className="flex items-center bg-transparent cursor-pointer w-full pb-2 border-b border-neutral-11">
