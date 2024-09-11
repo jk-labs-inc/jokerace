@@ -98,8 +98,9 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant MAX_FIELDS_METADATA_LENGTH = 10;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
+    uint256 public constant MAX_SLICE_LENGTH = 25;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // our hot wallet that we operate from if need be, and collect revenue to on most chains
-    string private constant VERSION = "4.33"; // Private as to not clutter the ABI
+    string private constant VERSION = "5.1"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
     string public prompt;
@@ -139,6 +140,10 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error UintFieldMetadataArrayTooLong();
     error UnexpectedMetadata(Metadatas unexpectedMetadata);
     error EmptyProposalDescription();
+
+    error CannotSliceZeroLengthProposalIds();
+    error EndMustBeGreaterThanStartToSlice();
+    error CannotSliceMoreThanMax();
 
     error IncorrectCostSent(uint256 msgValue, uint256 costToVote);
 
@@ -229,6 +234,30 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      */
     function getAllProposalIds() public view returns (uint256[] memory) {
         return proposalIds;
+    }
+
+    /**
+     * @dev Return total number of proposals.
+     */
+    function getProposalIdsLength() public view returns (uint256) {
+        return proposalIds.length;
+    }
+
+    /**
+     * @dev Return slice of proposalIds.
+     *      startIndex is inclusive, endIndex is exclusive.
+     */
+    function getProposalIdsSlice(uint256 startIndex, uint256 endIndex) public view returns (uint256[] memory) {
+        if (proposalIds.length == 0) revert CannotSliceZeroLengthProposalIds();
+        if (endIndex <= startIndex) revert EndMustBeGreaterThanStartToSlice();
+        if (endIndex - startIndex > MAX_SLICE_LENGTH) revert CannotSliceMoreThanMax();
+
+        uint256[] memory slicedArray = new uint256[](endIndex - startIndex);
+        for (uint256 i = 0; i < slicedArray.length; i++) {
+            slicedArray[i] = proposalIds[startIndex + i];
+        }
+        
+        return slicedArray;
     }
 
     /**
