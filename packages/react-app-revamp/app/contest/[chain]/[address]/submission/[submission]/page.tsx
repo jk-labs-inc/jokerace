@@ -37,8 +37,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { chain, address } = params;
   const contestName = await getContestDetails(address, chain);
 
-  const title = `Submission for ${contestName} contest on jokerace`;
-  const description = `Submission for ${contestName} contest on jokerace`;
+  const title = `Submission for ${contestName} contest on JokeRace`;
+  const description = `Submission for ${contestName} contest on JokeRace`;
 
   return {
     title,
