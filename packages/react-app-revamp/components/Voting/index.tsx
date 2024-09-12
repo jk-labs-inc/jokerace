@@ -173,7 +173,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
                 max={amountOfVotes}
                 onKeyDown={handleKeyDownInput}
                 onInput={handleInput}
-                className="w-full text-[32px] bg-transparent outline-none placeholder-neutral-10"
+                className="w-full text-[32px] bg-transparent outline-none placeholder-primary-5"
               />
               <span className="absolute right-4 text-neutral-9 text-[16px] font-bold">
                 vote{amount !== 1 ? "s" : ""}
