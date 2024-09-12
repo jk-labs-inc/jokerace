@@ -75,6 +75,3 @@ You will also need to do two more things if the ABI is changed:
 - Tailwind CSS & Headless-UI
 - ethers, wagmi, @wagmi/core, @rainbow-me/rainbowkit
 - zustand
-- [Vercel](https://vercel.com/?utm_source=jokedao&utm_campaign=oss).
-
-jokerace front-end is hosted on [Vercel](https://vercel.com/?utm_source=jokedao&utm_campaign=oss).

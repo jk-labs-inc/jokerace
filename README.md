@@ -72,6 +72,3 @@ Our smart contracts were audited by Certik in September 2023, the audit report i
 - Tailwind CSS & Headless-UI
 - ethers, wagmi, @wagmi/core, @rainbow-me/rainbowkit
 - zustand
-- [Vercel](https://vercel.com/?utm_source=jokedao&utm_campaign=oss).
-
-jokerace front-end is hosted on [Vercel](https://vercel.com/?utm_source=jokedao&utm_campaign=oss).
