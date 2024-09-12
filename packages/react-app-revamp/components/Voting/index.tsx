@@ -158,7 +158,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
               {charge ? <ChargeInfo charge={charge} /> : null}
             </div>
             <div
-              className={`relative flex w-full md:w-80 h-16 items-center px-4 text-[16px] bg-transparent font-bold ${
+              className={`relative flex w-full md:w-80 h-16 items-center px-8 text-[16px] bg-transparent font-bold ${
                 isInvalid ? "text-negative-11" : "text-neutral-11"
               } border-2 ${isFocused && !isInvalid ? "border-neutral-11" : isInvalid ? "border-negative-11" : "border-neutral-10"} rounded-[40px] transition-colors duration-300`}
             >
@@ -173,7 +173,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
                 max={amountOfVotes}
                 onKeyDown={handleKeyDownInput}
                 onInput={handleInput}
-                className="w-full text-center text-[32px] bg-transparent outline-none placeholder-neutral-9"
+                className="w-full text-[32px] bg-transparent outline-none placeholder-neutral-10"
               />
               <span className="absolute right-4 text-neutral-9 text-[16px] font-bold">
                 vote{amount !== 1 ? "s" : ""}
