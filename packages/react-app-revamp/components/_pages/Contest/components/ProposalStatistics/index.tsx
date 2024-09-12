@@ -13,10 +13,9 @@ import SortProposalsDropdown from "./components/SortDropdown";
 
 interface ProposalStatisticsProps {
   contestStatus: ContestStatus;
-  onMenuStateChange: (isOpen: boolean) => void;
 }
 
-const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus, onMenuStateChange }) => {
+const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(chain => chain.name.toLowerCase() === chainName.toLowerCase())[0]?.id;
@@ -73,11 +72,7 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus, onMenu
       <div className="flex flex-col md:flex-row gap-4 md:justify-between md:items-center border-b border-primary-2 pb-4">
         <ProposalStatisticsPanel submissionsCount={submissionsCount} contestStatus={contestStatus} />
         {submissionsCount > 1 ? (
-          <SortProposalsDropdown
-            defaultValue={sortBy ?? ""}
-            onChange={handleSortTypeChange}
-            onMenuStateChange={onMenuStateChange}
-          />
+          <SortProposalsDropdown defaultValue={sortBy ?? ""} onChange={handleSortTypeChange} />
         ) : null}
       </div>
     </div>

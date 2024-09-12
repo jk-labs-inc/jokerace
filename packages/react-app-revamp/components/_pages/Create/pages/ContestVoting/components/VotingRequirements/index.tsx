@@ -67,7 +67,6 @@ const CreateVotingRequirements = () => {
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
   const onNextStep = useNextStep();
   const submittersAsVoters = submissionTypeOption.value === SubmissionType.SameAsVoters;
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { isConnected, chain } = useAccount();
   const {
     isError: isChargeDetailsError,
@@ -127,25 +126,15 @@ const CreateVotingRequirements = () => {
   const renderLayout = () => {
     switch (votingRequirementsOption.value) {
       case "erc721":
-        return (
-          <div className={`${isDropdownOpen ? "opacity-20 transition-opacity duration-300 ease-in-out" : ""}`}>
-            <CreateVotingRequirementsNftSettings error={inputError} />
-          </div>
-        );
+        return <CreateVotingRequirementsNftSettings error={inputError} />;
       case "erc20":
-        return (
-          <div className={`${isDropdownOpen ? "opacity-20 transition-opacity duration-300 ease-in-out" : ""}`}>
-            <CreateVotingRequirementsTokenSettings error={inputError} />
-          </div>
-        );
+        return <CreateVotingRequirementsTokenSettings error={inputError} />;
       default:
         return (
-          <div className={`${isDropdownOpen ? "opacity-20 transition-opacity duration-300 ease-in-out" : ""}`}>
-            <p className="text-[16px] animate-appear">
-              <b>note: </b>by letting anyone vote, you’ll need to set a <br />
-              charge-per-vote to prevent bots from voting.
-            </p>
-          </div>
+          <p className="text-[16px] animate-appear">
+            <b>note: </b>by letting anyone vote, you’ll need to set a <br />
+            charge-per-vote to prevent bots from voting.
+          </p>
         );
     }
   };
@@ -400,7 +389,6 @@ const CreateVotingRequirements = () => {
               options={votingDropdownRequirementsOptions}
               className="w-60 md:w-[240px]"
               onChange={onRequirementChange}
-              onMenuStateChange={value => setIsDropdownOpen(value)}
             />
             {renderLayout()}
           </>

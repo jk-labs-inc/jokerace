@@ -5,15 +5,10 @@ import { debounce } from "underscore";
 
 interface TokenSearchModalSearchInputProps {
   chainId: number;
-  isChainDropdownOpen?: boolean;
   onSearchChange?: (value: string) => void;
 }
 
-const TokenSearchModalSearchInput: FC<TokenSearchModalSearchInputProps> = ({
-  chainId,
-  isChainDropdownOpen,
-  onSearchChange,
-}) => {
+const TokenSearchModalSearchInput: FC<TokenSearchModalSearchInputProps> = ({ chainId, onSearchChange }) => {
   const [searchValue, setSearchValue] = useState("");
   const isChainSupportedBySearch = TOKENLISTOOOR_SUPPORTED_CHAIN_IDS.includes(chainId);
 
@@ -29,9 +24,7 @@ const TokenSearchModalSearchInput: FC<TokenSearchModalSearchInputProps> = ({
 
   return (
     <div
-      className={`flex items-center h-12 rounded-[15px] bg-primary-5 text-[16px] pl-8 pr-4 transition-all duration-300 ease-in-out ${
-        isChainDropdownOpen ? "opacity-50" : ""
-      }`}
+      className={`flex items-center h-12 rounded-[15px] bg-primary-5 text-[16px] pl-8 pr-4 transition-all duration-300 ease-in-out`}
     >
       <span className="text-neutral-11">
         <MagnifyingGlassIcon

@@ -31,7 +31,6 @@ const CreateSubmissionPeriod = () => {
     useTimingOptionForSubmissionPeriod(state => state);
   const { timingOption: votingPeriodTimingOption, setTimingOption: setVotingPeriodTimingOption } =
     useTimingOptionForVotingPeriod(state => state);
-  const [hideDatePickers, setHideDatePickers] = useState<boolean>(false);
 
   const onSubmissionDateChange = (value: Date) => {
     setSubmissionOpen(value);
@@ -116,14 +115,9 @@ const CreateSubmissionPeriod = () => {
           defaultOption={submissionPeriodTimingOption}
           className="w-48 md:w-[216px]"
           onChange={option => onTimingPeriodChange(option)}
-          onMenuStateChange={state => setHideDatePickers(state)}
         />
       </div>
-      <div
-        className={`flex flex-col gap-8 border-l border-neutral-11 pl-6 ${
-          hideDatePickers ? "opacity-20" : "opacity-100"
-        }`}
-      >
+      <div className={`flex flex-col gap-8 border-l border-neutral-11 pl-6`}>
         <div className="flex flex-col gap-4">
           <p className="text-[16px] font-bold text-neutral-11 uppercase">opens</p>
           <CreateDatePicker onChange={onSubmissionDateChange} defaultDate={submissionOpen} minDate={new Date()} />

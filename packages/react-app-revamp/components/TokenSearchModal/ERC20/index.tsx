@@ -17,7 +17,6 @@ const TokenSearchModalERC20: FC<TokenSearchModalERC20Props> = ({ chains: erc20Ch
   const [searchValue, setSearchValue] = useState<string>("");
   const chainId = chains.find(chain => chain.name === erc20SelectedChain)?.id || 1;
   const isChainSupportedBySearch = TOKENLISTOOOR_SUPPORTED_CHAIN_IDS.includes(chainId);
-  const [isChainDropdownOpen, setIsChainDropdownOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-8">
@@ -28,29 +27,15 @@ const TokenSearchModalERC20: FC<TokenSearchModalERC20Props> = ({ chains: erc20Ch
             defaultOption={erc20Chains[0]}
             options={erc20Chains}
             onChange={option => setErc20SelectedChain(option)}
-            onMenuStateChange={isOpen => setIsChainDropdownOpen(isOpen)}
           />
         </div>
       ) : null}
       {!hideChains ? <div className="bg-primary-5 h-[2px]" /> : null}
-      <TokenSearchModalSearchInput
-        onSearchChange={value => setSearchValue(value)}
-        isChainDropdownOpen={isChainDropdownOpen}
-        chainId={chainId}
-      />
+      <TokenSearchModalSearchInput onSearchChange={value => setSearchValue(value)} chainId={chainId} />
       {searchValue ? (
-        <TokenSearchList
-          searchValue={searchValue}
-          chainId={chainId}
-          isChainDropdownOpen={isChainDropdownOpen}
-          onSelectToken={onSelectToken}
-        />
+        <TokenSearchList searchValue={searchValue} chainId={chainId} onSelectToken={onSelectToken} />
       ) : isChainSupportedBySearch ? (
-        <TokenSearchModalUserTokens
-          chainName={erc20SelectedChain}
-          onSelectToken={onSelectToken}
-          isChainDropdownOpen={isChainDropdownOpen}
-        />
+        <TokenSearchModalUserTokens chainName={erc20SelectedChain} onSelectToken={onSelectToken} />
       ) : (
         <div className="flex gap-2">
           <InformationCircleIcon className="w-12 text-neutral-11" />

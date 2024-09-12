@@ -18,7 +18,6 @@ const CreateVotingPeriod = () => {
   );
   const currentStepError = errors.find(error => error.step === step);
   const currentVotesOpenError = currentStepError?.message.startsWith("Voting ends") ? currentStepError.message : "";
-  const [hideDatePickers, setHideDatePickers] = useState<boolean>(false);
   const { timingOption, setTimingOption } = useTimingOptionForVotingPeriod(state => state);
   const formattedVoteOpen = moment(votingOpen).format("MMMM D, YYYY h:mm A z");
 
@@ -50,15 +49,10 @@ const CreateVotingPeriod = () => {
           options={timingPeriodsOptions}
           defaultOption={timingOption}
           className="w-48 md:w-[216px]"
-          onMenuStateChange={state => setHideDatePickers(state)}
           onChange={option => onTimingPeriodChange(option)}
         />
       </div>
-      <div
-        className={`flex flex-col gap-8 border-l border-neutral-11 pl-6 ${
-          hideDatePickers ? "opacity-20" : "opacity-100"
-        }`}
-      >
+      <div className={`flex flex-col gap-8 border-l border-neutral-11 pl-6`}>
         <div className="flex flex-col gap-4">
           <p className="text-[16px] font-bold text-neutral-11 uppercase">opens</p>
           <div className="flex flex-col gap-2">

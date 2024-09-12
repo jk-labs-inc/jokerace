@@ -16,17 +16,11 @@ const options = [
 interface SortProposalsDropdownProps {
   defaultValue: string;
   onChange?: (value: string) => void;
-  onMenuStateChange?: (isOpen: boolean) => void;
 }
 
-const SortProposalsDropdown: FC<SortProposalsDropdownProps> = ({ defaultValue, onChange, onMenuStateChange }) => {
+const SortProposalsDropdown: FC<SortProposalsDropdownProps> = ({ defaultValue, onChange }) => {
   const [selectedValue, setSelectedValue] = useState(defaultValue);
   const menuRef = useRef<HTMLDivElement>(null);
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    onMenuStateChange?.(isOpen);
-  }, [isOpen, onMenuStateChange]);
 
   const handleSelectionChange = (value: string) => {
     setSelectedValue(value);
@@ -37,50 +31,40 @@ const SortProposalsDropdown: FC<SortProposalsDropdownProps> = ({ defaultValue, o
 
   return (
     <Menu as="div" className="relative inline-block text-left" ref={menuRef}>
-      {({ open }) => {
-        if (open !== isOpen) {
-          setIsOpen(open);
-        }
+      <MenuButton className="flex items-center gap-2 text-[16px] text-positive-11 w-full">
+        sort: {selectedLabel}
+        <ChevronDownIcon className="w-6 h-6 text-positive-11" aria-hidden="true" />
+      </MenuButton>
 
-        return (
-          <>
-            <MenuButton className="flex items-center gap-2 text-[16px] text-positive-11 w-full">
-              sort: {selectedLabel}
-              <ChevronDownIcon className="w-6 h-6 text-positive-11" aria-hidden="true" />
-            </MenuButton>
-
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <MenuItems className="absolute overflow-x-clip md:-right-2 z-10 mt-4 w-36 rounded-[10px] shadow-sortProposalDropdown focus:outline-none">
-                {options.map(option => (
-                  <MenuItem key={option.value}>
-                    {({ focus }) => (
-                      <button
-                        type="button"
-                        className={classNames(
-                          focus ? "bg-neutral-2" : "bg-true-black",
-                          "block w-full px-4 py-2 text-left text-[16px]",
-                          option.value === selectedValue ? "font-bold" : "",
-                        )}
-                        onClick={() => handleSelectionChange(option.value)}
-                      >
-                        {option.label}
-                      </button>
-                    )}
-                  </MenuItem>
-                ))}
-              </MenuItems>
-            </Transition>
-          </>
-        );
-      }}
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <MenuItems className="absolute overflow-x-auto md:-right-2 z-10 mt-4 w-36 rounded-md shadow-sortProposalDropdown focus:outline-none">
+          {options.map(option => (
+            <MenuItem key={option.value}>
+              {({ focus }) => (
+                <button
+                  type="button"
+                  className={classNames(
+                    focus ? "bg-neutral-2" : "bg-true-black",
+                    "block w-full px-4 py-2 text-left text-[16px]",
+                    option.value === selectedValue ? "font-bold" : "",
+                  )}
+                  onClick={() => handleSelectionChange(option.value)}
+                >
+                  {option.label}
+                </button>
+              )}
+            </MenuItem>
+          ))}
+        </MenuItems>
+      </Transition>
     </Menu>
   );
 };

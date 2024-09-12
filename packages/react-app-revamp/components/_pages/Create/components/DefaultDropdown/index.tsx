@@ -13,22 +13,10 @@ interface CreateDefaultDropdownProps {
   defaultOption: Option;
   className?: string;
   onChange?: (option: string) => void;
-  onMenuStateChange?: (isOpen: boolean) => void;
 }
 
-const CreateDefaultDropdown: FC<CreateDefaultDropdownProps> = ({
-  options,
-  defaultOption,
-  className,
-  onChange,
-  onMenuStateChange,
-}) => {
+const CreateDefaultDropdown: FC<CreateDefaultDropdownProps> = ({ options, defaultOption, className, onChange }) => {
   const [selectedOption, setSelectedOption] = useState<Option>(defaultOption);
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    onMenuStateChange?.(isOpen);
-  }, [isOpen, onMenuStateChange]);
 
   useEffect(() => {
     setSelectedOption(defaultOption);
@@ -42,10 +30,6 @@ const CreateDefaultDropdown: FC<CreateDefaultDropdownProps> = ({
   return (
     <Menu as="div" className="relative inline-block">
       {({ open }) => {
-        if (open !== isOpen) {
-          setIsOpen(open);
-        }
-
         return (
           <>
             <MenuButton className="flex items-center bg-neutral-14 cursor-pointer w-48 md:w-[216px] h-10 rounded-[5px] px-4 py-2">

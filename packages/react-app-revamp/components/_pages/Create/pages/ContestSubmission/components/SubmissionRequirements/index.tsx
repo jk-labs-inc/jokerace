@@ -46,24 +46,14 @@ const CreateSubmissionRequirements = () => {
   );
   const onNextStep = useNextStep();
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const renderLayout = () => {
     //TODO: see why content jumps when dropdown changes
     switch (submissionRequirementsOption.value) {
       case "erc721":
-        return (
-          <div className={`${isDropdownOpen ? "opacity-20 transition-opacity duration-300 ease-in-out" : ""}`}>
-            <CreateSubmissionRequirementsNftSettings error={inputError} />
-          </div>
-        );
-
+        return <CreateSubmissionRequirementsNftSettings error={inputError} />;
       case "erc20":
-        return (
-          <div className={`${isDropdownOpen ? "opacity-20 transition-opacity duration-300 ease-in-out" : ""}`}>
-            <CreateSubmissionRequirementsTokenSettings error={inputError} />
-          </div>
-        );
+        return <CreateSubmissionRequirementsTokenSettings error={inputError} />;
       default:
         return null;
     }
@@ -215,7 +205,6 @@ const CreateSubmissionRequirements = () => {
           options={options}
           className="w-48 md:w-[240px]"
           onChange={onSubmissionRequirementsOptionChange}
-          onMenuStateChange={value => setIsDropdownOpen(value)}
         />
         {renderLayout()}
       </div>

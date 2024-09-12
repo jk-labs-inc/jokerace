@@ -11,6 +11,7 @@ interface RewardsReleasableProps {
   rewardsAbi: Abi;
   rankings: number[];
   isWithdrawRewardsOpen: boolean;
+  isCanceled: boolean;
   setIsWithdrawRewardsOpen: (isOpen: boolean) => void;
 }
 
@@ -20,6 +21,7 @@ const RewardsReleasable: FC<RewardsReleasableProps> = ({
   rewardsAbi,
   rankings,
   isWithdrawRewardsOpen,
+  isCanceled,
   setIsWithdrawRewardsOpen,
 }) => {
   const {
@@ -45,21 +47,27 @@ const RewardsReleasable: FC<RewardsReleasableProps> = ({
 
   return (
     <>
-      {isReleasableRewardsErc20AddressesError && (
-        <div className="text-[16px] text-negative-11 font-bold">
-          Error while loading ERC20 tokens for rewards distribution, please reload the page.
+      {!isCanceled ? (
+        <div className="flex flex-col gap-8 border-b border-primary-2 pb-8">
+          <p className="text-[24px] text-neutral-9 font-bold">rewards to distribute</p>
+
+          {isReleasableRewardsErc20AddressesError && (
+            <div className="text-[16px] text-negative-11 font-bold">
+              Error while loading ERC20 tokens for rewards distribution, please reload the page.
+            </div>
+          )}
+          {rankings.map((payee, index) => (
+            <RewardsDistributionTable
+              key={index}
+              chainId={chainId}
+              payee={payee}
+              releasableRewards={releasableRewards}
+              contractRewardsModuleAddress={rewardsModuleAddress}
+              abiRewardsModule={rewardsAbi}
+            />
+          ))}
         </div>
-      )}
-      {rankings.map((payee, index) => (
-        <RewardsDistributionTable
-          key={index}
-          chainId={chainId}
-          payee={payee}
-          releasableRewards={releasableRewards}
-          contractRewardsModuleAddress={rewardsModuleAddress}
-          abiRewardsModule={rewardsAbi}
-        />
-      ))}
+      ) : null}
 
       <DialogWithdrawFundsFromRewardsModule isOpen={isWithdrawRewardsOpen} setIsOpen={setIsWithdrawRewardsOpen}>
         <ContestWithdrawRewards

@@ -30,7 +30,6 @@ const CreateContestTemplate = () => {
   );
   const setContestTemplateConfig = useSetContestTemplate();
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateType | "">("");
-  const [fadeBg, setFadeBg] = useState(false);
   const [showStepper, setShowStepper] = useState(false);
   const [isFullMode, setIsFullMode] = useState(false);
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
@@ -84,11 +83,8 @@ const CreateContestTemplate = () => {
         options={templateOptions}
         className="w-full md:w-[240px]"
         onChange={value => setSelectedTemplate(value)}
-        onMenuStateChange={setFadeBg}
       />
-      <div
-        className={`flex flex-col gap-12 ${fadeBg ? "opacity-50" : "opacity-100"} mt-4 transition-opacity duration-300 ease-in-out `}
-      >
+      <div className={`flex flex-col gap-12 mt-4`}>
         {selectedTemplate ? <GeneralTemplate templateType={selectedTemplate} /> : null}
         {isMobileOrTablet ? (
           <MobileBottomButton>

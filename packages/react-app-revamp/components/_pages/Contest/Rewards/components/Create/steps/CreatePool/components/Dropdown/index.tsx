@@ -9,7 +9,6 @@ interface CreateRewardsPoolRecipientsDropdownProps {
   defaultOption: Option;
   className?: string;
   onChange?: (option: string) => void;
-  onMenuStateChange?: (isOpen: boolean) => void;
 }
 
 const CreateRewardsPoolRecipientsDropdown: FC<CreateRewardsPoolRecipientsDropdownProps> = ({
@@ -17,14 +16,8 @@ const CreateRewardsPoolRecipientsDropdown: FC<CreateRewardsPoolRecipientsDropdow
   defaultOption,
   className,
   onChange,
-  onMenuStateChange,
 }) => {
   const [selectedOption, setSelectedOption] = useState<Option>(defaultOption);
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    onMenuStateChange?.(isOpen);
-  }, [isOpen, onMenuStateChange]);
 
   useEffect(() => {
     setSelectedOption(defaultOption);
@@ -38,10 +31,6 @@ const CreateRewardsPoolRecipientsDropdown: FC<CreateRewardsPoolRecipientsDropdow
   return (
     <Menu as="div" className="relative inline-block">
       {({ open }) => {
-        if (open !== isOpen) {
-          setIsOpen(open);
-        }
-
         return (
           <>
             <MenuButton className="flex items-center justify-center bg-neutral-14 cursor-pointer w-20 h-8 rounded-[8px] px-2 py-2 relative">

@@ -16,21 +16,15 @@ export type SortOption = {
 export interface SortProps {
   sortOptions: SortOption[];
   onSortChange?: (sortBy: string) => void;
-  onMenuStateChange?: (isOpen: boolean) => void;
 }
 
-const Sort: FC<SortProps> = ({ sortOptions, onSortChange, onMenuStateChange }) => {
+const Sort: FC<SortProps> = ({ sortOptions, onSortChange }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [label, setLabel] = useState<string | null>(null);
   const query = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
   const sortByFromQuery = query?.get("sortBy");
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    onMenuStateChange?.(isOpen);
-  }, [isOpen, onMenuStateChange]);
 
   useEffect(() => {
     if (sortByFromQuery) {
@@ -84,10 +78,6 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange, onMenuStateChange }) =
   return (
     <Menu as="div" className="relative inline-block text-left w-full md:w-[220px] text-[16px]">
       {({ open }) => {
-        if (open !== isOpen) {
-          setIsOpen(open);
-        }
-
         return (
           <>
             <div

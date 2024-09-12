@@ -14,22 +14,10 @@ interface ChainDropdownProps {
   defaultOption: Option;
   className?: string;
   onChange?: (option: string) => void;
-  onMenuStateChange?: (isOpen: boolean) => void;
 }
 
-const TokenSearchModalChainDropdown: FC<ChainDropdownProps> = ({
-  options,
-  defaultOption,
-  className,
-  onChange,
-  onMenuStateChange,
-}) => {
+const TokenSearchModalChainDropdown: FC<ChainDropdownProps> = ({ options, defaultOption, className, onChange }) => {
   const [selectedOption, setSelectedOption] = useState<Option>(defaultOption);
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    onMenuStateChange?.(isOpen);
-  }, [isOpen, onMenuStateChange]);
 
   const handleOptionClick = (option: Option) => {
     setSelectedOption(option);
@@ -48,10 +36,6 @@ const TokenSearchModalChainDropdown: FC<ChainDropdownProps> = ({
   return (
     <Menu as="div" className="relative inline-block text-left">
       {({ open }) => {
-        if (open !== isOpen) {
-          setIsOpen(open);
-        }
-
         return (
           <>
             <MenuButton className="flex items-center bg-primary-5 cursor-pointer border border-neutral-10 w-full md:w-[200px] h-full md:h-12 rounded-[15px] px-4 py-2">

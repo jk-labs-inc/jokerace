@@ -5,11 +5,10 @@ import TokenSearchListNft from "./component/Nft";
 interface NftsSearchListProps {
   selectedChain: string;
   searchValue: string;
-  isChainDropdownOpen?: boolean;
   onSelectNft?: (nft: NFTMetadata) => void;
 }
 
-const NftsSearchList: FC<NftsSearchListProps> = ({ selectedChain, searchValue, isChainDropdownOpen, onSelectNft }) => {
+const NftsSearchList: FC<NftsSearchListProps> = ({ selectedChain, searchValue, onSelectNft }) => {
   const { data: nfts, error, isLoading } = useSearchNfts(selectedChain, searchValue);
 
   if (error) {
@@ -31,12 +30,7 @@ const NftsSearchList: FC<NftsSearchListProps> = ({ selectedChain, searchValue, i
   return (
     <div className={`flex flex-col gap-6 animate-reveal`}>
       {nfts.map(nft => (
-        <TokenSearchListNft
-          key={nft.address}
-          nft={nft}
-          onSelectNft={onSelectNft}
-          isChainDropdownOpen={isChainDropdownOpen}
-        />
+        <TokenSearchListNft key={nft.address} nft={nft} onSelectNft={onSelectNft} />
       ))}
     </div>
   );

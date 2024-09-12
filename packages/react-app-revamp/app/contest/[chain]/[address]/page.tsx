@@ -1,7 +1,6 @@
 import { chains, serverConfig } from "@config/wagmi/server";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContracts } from "@wagmi/core";
-import { getFrameMetadata } from "frog/next";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { parse } from "node-html-parser";
@@ -12,8 +11,6 @@ const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 type Props = {
   params: { chain: string; address: string };
 };
-
-const isDev = process.env.NODE_ENV === "development";
 
 async function getContestDetails(address: string, chainName: string) {
   const chainId = chains.filter(
@@ -49,20 +46,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   let contestTitle = "";
   let contestDescription = "";
-  let frameMetadata: Record<string, string> = {};
-
-  const url = isDev ? "http://localhost:3000" : "https://jokerace.io";
-  const contestDetailsUrl = getContestDetails(address, chain);
-  const frameMetadataUrl = getFrameMetadata(`${url}/api/contest/${chain}/${address}`);
 
   try {
-    const [contestDetails, frameMetadataResult] = await Promise.all([contestDetailsUrl, frameMetadataUrl]);
+    const contestDetails = await getContestDetails(address, chain);
     const prompt = contestDetails[1].result as string;
     const contestDescriptionRaw = prompt.split("|")[2];
-
-    frameMetadata = frameMetadataResult;
-    delete frameMetadata["og:title"];
-    delete frameMetadata["og:image"];
 
     contestTitle = contestDetails[0].result as string;
     contestDescription = parse(contestDescriptionRaw).textContent;
@@ -81,7 +69,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: contestTitle,
       description: contestDescription,
     },
-    other: frameMetadata,
   };
 }
 

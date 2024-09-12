@@ -14,7 +14,6 @@ interface TokenSearchModalNftProps {
 const TokenSearchModalNft: FC<TokenSearchModalNftProps> = ({ chains, onSelectNft, onSelectChain }) => {
   const [selectedChain, setSelectedChain] = useState<string>(chains[0].value);
   const [searchValue, setSearchValue] = useState<string>("");
-  const [isChainDropdownOpen, setIsChainDropdownOpen] = useState(false);
   const chainId = wagmiChains.find(chain => chain.name.toLowerCase() === selectedChain.toLowerCase())?.id || 1;
 
   const onNftChainChange = (chain: string) => {
@@ -26,26 +25,12 @@ const TokenSearchModalNft: FC<TokenSearchModalNftProps> = ({ chains, onSelectNft
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
         <p className="text-[24px] font-bold text-true-white">chain:</p>
-        <TokenSearchModalChainDropdown
-          defaultOption={chains[0]}
-          options={chains}
-          onChange={onNftChainChange}
-          onMenuStateChange={isOpen => setIsChainDropdownOpen(isOpen)}
-        />
+        <TokenSearchModalChainDropdown defaultOption={chains[0]} options={chains} onChange={onNftChainChange} />
       </div>
       <div className="bg-primary-5 h-[2px]" />
-      <TokenSearchModalSearchInput
-        onSearchChange={value => setSearchValue(value)}
-        isChainDropdownOpen={isChainDropdownOpen}
-        chainId={chainId}
-      />
+      <TokenSearchModalSearchInput onSearchChange={value => setSearchValue(value)} chainId={chainId} />
       {searchValue ? (
-        <NftsSearchList
-          selectedChain={selectedChain}
-          searchValue={searchValue}
-          onSelectNft={onSelectNft}
-          isChainDropdownOpen={isChainDropdownOpen}
-        />
+        <NftsSearchList selectedChain={selectedChain} searchValue={searchValue} onSelectNft={onSelectNft} />
       ) : null}
     </div>
   );
