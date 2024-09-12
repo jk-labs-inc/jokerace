@@ -1,6 +1,7 @@
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { FC, useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { Tooltip } from "react-tooltip";
 
 interface StepSliderProps {
@@ -23,6 +24,7 @@ const StepSlider: FC<StepSliderProps> = ({
   onKeyDown,
 }) => {
   const [value, setValue] = useState(defaultValue);
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   useEffect(() => {
     setValue(val);
@@ -33,44 +35,44 @@ const StepSlider: FC<StepSliderProps> = ({
     onChange?.(value);
   };
 
-  const trackStyle = {
-    backgroundColor: "#BB65FF",
-    height: 8,
-  };
-
-  const handleStyle = {
-    borderColor: "#D9D9D9",
-    height: 16,
-    width: 16,
-    backgroundColor: "#D9D9D9",
-    opacity: "1",
-  };
-
-  const railStyle = {
-    backgroundColor: "#6A6A6A",
-    height: 8,
-  };
-
-  const dotStyle = {
-    borderColor: "#D9D9D9",
-    height: 10,
-    width: 10,
-    backgroundColor: "#D9D9D9",
+  const styles = {
+    track: {
+      backgroundColor: "#BB65FF",
+      height: 8,
+    },
+    handle: {
+      borderColor: "#D9D9D9",
+      height: isMobile ? 32 : 16,
+      width: isMobile ? 32 : 16,
+      backgroundColor: "#D9D9D9",
+      opacity: 1,
+      cursor: "pointer",
+      marginTop: isMobile ? -12 : -4,
+    },
+    rail: {
+      backgroundColor: "#6A6A6A",
+      height: 8,
+    },
+    dot: {
+      borderColor: "#D9D9D9",
+      height: 10,
+      width: 10,
+      backgroundColor: "#D9D9D9",
+    },
   };
 
   return (
-    <div onKeyDown={onKeyDown} tabIndex={0}>
+    <div onKeyDown={onKeyDown} tabIndex={0} className="p-4 md:p-0">
       <Slider
         className="w-60"
         min={min}
         max={max}
         value={value}
-        dotStyle={dotStyle}
         step={step}
-        trackStyle={trackStyle}
-        handleStyle={handleStyle}
-        railStyle={railStyle}
         onChange={handleSliderChange}
+        allowCross={false}
+        pushable={true}
+        styles={styles}
         handleRender={renderProps => {
           return (
             <div {...renderProps.props} data-tooltip-id="voting-slider">
