@@ -5,13 +5,15 @@ on: push
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
-  group: "pages"
+  group: "nextjs"
   cancel-in-progress: false
 
 jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    env: # Or as an environment variable
+      NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -50,7 +52,5 @@ jobs:
       - name: Install dependencies
         run: yarn install --production
       - name: Build with Next.js
-        env: # Or as an environment variable
-          NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
         run: yarn build
 
