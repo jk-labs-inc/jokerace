@@ -50,5 +50,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Build with Next.js
+        env: # Or as an environment variable
+          NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
         run: yarn build
 
