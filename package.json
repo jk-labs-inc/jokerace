@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "yarn workspace @scaffold-eth/react-app-revamp dev",
+    "build": "yarn workspace @scaffold-eth/react-app-revamp build",
+    "start": "yarn workspace @scaffold-eth/react-app-revamp start",
     "format": "yarn workspace @scaffold-eth/forge forgeformat",
     "test": "yarn workspace @scaffold-eth/forge forgetest",
     "forgebuild": "yarn workspace @scaffold-eth/forge forgebuild",
