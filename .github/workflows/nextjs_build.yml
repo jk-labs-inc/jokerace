@@ -12,8 +12,6 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
-    env: # Or as an environment variable
-      NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -53,4 +51,6 @@ jobs:
         run: yarn install --production
       - name: Build with Next.js
         run: yarn build
+        env: 
+          NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
 
