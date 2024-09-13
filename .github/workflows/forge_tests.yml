@@ -5,6 +5,10 @@ on: push
 env:
   FOUNDRY_PROFILE: ci
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   check:
     strategy:
