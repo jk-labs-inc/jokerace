@@ -1,4 +1,6 @@
+import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestStatus } from "@hooks/useContestStatus/store";
 import { FC } from "react";
 
 interface ProposalStatisticsPanelSubmissionOpenProps {
@@ -11,9 +13,9 @@ const ProposalStatisticsPanelSubmissionOpen: FC<ProposalStatisticsPanelSubmissio
   const contestMaxProposalCount = useContestStore(state => state.contestMaxProposalCount);
 
   return (
-    <p className="text-[16px] text-neutral-11">
-      {submissionsCount} submission
-      {submissionsCount !== 1 ? "s" : ""} &#8226; {contestMaxProposalCount.toString()} allowed
+    <p className="text-[12px] md:text-[16px] text-neutral-9 font-bold">
+      {submissionsCount} / {formatNumberAbbreviated(contestMaxProposalCount)}{" "}
+      {submissionsCount !== 1 ? "entries" : "entry"} submitted
     </p>
   );
 };

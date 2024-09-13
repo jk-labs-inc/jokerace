@@ -4,7 +4,6 @@ import { useContestStore } from "@hooks/useContest/store";
 import { compareVersions } from "compare-versions";
 import { usePathname } from "next/navigation";
 import { FC } from "react";
-import ProposalStatisticsTotalVotes from "./components/TotalVotes";
 import ProposalStatisticsTotalVotesCast from "./components/TotalVotesCast";
 
 interface ProposalStatisticsPanelVotingOpenOrClosedProps {
@@ -23,16 +22,15 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
   const isV3OrHigher = compareVersions(version, "3.0") >= 0;
 
   return (
-    <div className="flex flex-col md:flex-row gap-1 md:items-center">
-      <p className="text-[16px] text-neutral-11">
-        {submissionsCount} submission{submissionsCount !== 1 ? "s" : ""}
+    <div className="flex gap-1 items-center">
+      <p className="text-[12px] md:text-[16px] text-neutral-9 font-bold">
+        {submissionsCount} {submissionsCount !== 1 ? "entries" : "entry"}
       </p>
       {isV3OrHigher && (
         <>
-          <span className="hidden md:block">&#8226;</span>
-          <div className="flex gap-1 items-center text-[16px] text-neutral-11">
-            <ProposalStatisticsTotalVotesCast address={address} chainId={chainId} />
-            <ProposalStatisticsTotalVotes address={address} chainId={chainId} /> votes cast in contest
+          <span className=" text-neutral-9">&#8226;</span>
+          <div className="flex gap-1 items-center text-[12px] md:text-[16px] text-neutral-9 font-bold">
+            <ProposalStatisticsTotalVotesCast address={address} chainId={chainId} /> votes
           </div>
         </>
       )}

@@ -34,6 +34,7 @@ import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import LayoutViewContestError from "./components/Error";
 import { chains } from "@config/wagmi";
+import ContestRewardsInfoMobile from "@components/_pages/Contest/components/RewardsInfo/Mobile";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -215,15 +216,6 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                 <div className="animate-reveal pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
                     <div className="flex flex-col gap-2">
-                      {isMobile && rewardsModuleAddress && rewardsAbi ? (
-                        <div className="w-3/4">
-                          <ContestRewardsInfo
-                            rewardsModuleAddress={rewardsModuleAddress}
-                            rewardsAbi={rewardsAbi}
-                            version={version}
-                          />
-                        </div>
-                      ) : null}
                       <ContestName contestName={contestName} address={address} chainName={chainName} />
                     </div>
 
@@ -233,12 +225,20 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                         shortenOnFallback
                         textualVersion={isMobile}
                       />
-                      {!isMobile && rewardsModuleAddress && rewardsAbi ? (
-                        <ContestRewardsInfo
-                          rewardsModuleAddress={rewardsModuleAddress}
-                          rewardsAbi={rewardsAbi}
-                          version={version}
-                        />
+                      {rewardsModuleAddress && rewardsAbi ? (
+                        isMobile ? (
+                          <ContestRewardsInfoMobile
+                            rewardsModuleAddress={rewardsModuleAddress}
+                            rewardsAbi={rewardsAbi}
+                            version={version}
+                          />
+                        ) : (
+                          <ContestRewardsInfo
+                            rewardsModuleAddress={rewardsModuleAddress}
+                            rewardsAbi={rewardsAbi}
+                            version={version}
+                          />
+                        )
                       ) : null}
                       {isMobile ? (
                         <div
@@ -264,7 +264,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                     </div>
                   </div>
                   <div>
-                    <div className="mt-8 mb-8 gap-3 flex flex-col">
+                    <div className="mt-4 md:mt-8 mb-4 md:mb-8 gap-3 flex flex-col">
                       <ContestTabs tab={tab} onChange={tab => setTab(tab)} />
                     </div>
                     {renderTabs}
