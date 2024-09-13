@@ -49,6 +49,10 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: yarn install --production
+      - name: Check logic
+        run: |
+          echo ${{ github.ref == 'refs/heads/main' && "bad" || "good" }}
+          echo ${{ github.ref != 'refs/heads/main' && "good" || "bad" }}
       - name: Build with Next.js
         run: yarn build
         env: 
