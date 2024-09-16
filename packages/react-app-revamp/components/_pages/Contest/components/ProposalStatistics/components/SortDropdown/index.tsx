@@ -31,7 +31,7 @@ const SortProposalsDropdown: FC<SortProposalsDropdownProps> = ({ defaultValue, o
 
   return (
     <Menu as="div" className="relative inline-block text-left" ref={menuRef}>
-      <MenuButton className="flex items-center gap-2 text-[16px] text-positive-11 w-full">
+      <MenuButton className="flex items-center gap-2 text-[12px] md:text-[16px] text-positive-11 w-full">
         sort: {selectedLabel}
         <ChevronDownIcon className="w-6 h-6 text-positive-11" aria-hidden="true" />
       </MenuButton>

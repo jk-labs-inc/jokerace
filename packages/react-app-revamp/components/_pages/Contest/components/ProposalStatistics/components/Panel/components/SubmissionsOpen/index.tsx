@@ -1,3 +1,4 @@
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
 import { FC } from "react";
 
@@ -11,9 +12,9 @@ const ProposalStatisticsPanelSubmissionOpen: FC<ProposalStatisticsPanelSubmissio
   const contestMaxProposalCount = useContestStore(state => state.contestMaxProposalCount);
 
   return (
-    <p className="text-[16px] text-neutral-11">
-      {submissionsCount} submission
-      {submissionsCount !== 1 ? "s" : ""} &#8226; {contestMaxProposalCount.toString()} allowed
+    <p className="text-[12px] md:text-[16px] text-neutral-9 font-bold">
+      {formatNumberWithCommas(submissionsCount)} / {formatNumberWithCommas(contestMaxProposalCount)}{" "}
+      {submissionsCount !== 1 ? "entries" : "entry"} submitted
     </p>
   );
 };

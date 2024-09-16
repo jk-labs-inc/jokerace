@@ -114,11 +114,7 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
   }
 
   if (zeroVotesOnAnyoneCanVote) {
-    return (
-      <p className="text-[16px] md:text-[20px] text-negative-11 font-bold leading-loose">
-        add eth to {chainName} to get votes{" "}
-      </p>
-    );
+    return <p className="text-[16px] text-negative-11 font-bold leading-loose">add eth to {chainName} to get votes </p>;
   }
 
   if (outOfVotes) return <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">you're out of votes :(</p>;
