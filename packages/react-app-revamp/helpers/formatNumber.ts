@@ -36,3 +36,12 @@ export function formatNumberAbbreviated(num: number): string {
 
   return num.toString();
 }
+
+/**
+ * formats a number with commas as thousand separators
+ * @param num - the number to format
+ * @return a string representing the formatted number with commas
+ */
+export function formatNumberWithCommas(num: number): string {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}

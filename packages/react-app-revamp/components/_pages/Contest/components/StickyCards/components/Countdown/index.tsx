@@ -86,7 +86,7 @@ const ContestCountdown = () => {
       case "start":
         return "Contest opens in";
       case "submit":
-        return "Deadline to submit";
+        return "Deadline to enter";
       case "vote":
         return "Deadline to vote";
     }

@@ -61,21 +61,22 @@ const ContestTab = () => {
     if (qualifiedToSubmit)
       return (
         <ButtonV3
-          colorClass="bg-gradient-vote rounded-[40px]"
+          colorClass="bg-gradient-purple rounded-[40px]"
+          textColorClass="text-[16px] md:text-[20px] font-bold text-true-black"
           size={isMobile ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG}
           onClick={() => {
             setIsSubmitProposalSuccess(false);
             setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen);
           }}
         >
-          submit a response
+          enter contest
         </ButtonV3>
       );
   };
 
   return (
     <div className="animate-reveal">
-      <div className="mt-6">
+      <div className="mt-4 md:mt-6">
         <div className="flex flex-col gap-6">
           {isContestCanceled ? (
             <div className="flex">

@@ -65,7 +65,7 @@ const UserProfileDisplay = ({
   if (textualVersion) {
     return (
       <Link
-        className="text-[16px] font-bold"
+        className="text-[16px] font-bold text-neutral-11"
         target="_blank"
         rel="noopener noreferrer"
         href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
