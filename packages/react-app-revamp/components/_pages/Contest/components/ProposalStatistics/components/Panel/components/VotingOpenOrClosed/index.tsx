@@ -5,6 +5,7 @@ import { compareVersions } from "compare-versions";
 import { usePathname } from "next/navigation";
 import { FC } from "react";
 import ProposalStatisticsTotalVotesCast from "./components/TotalVotesCast";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 
 interface ProposalStatisticsPanelVotingOpenOrClosedProps {
   submissionsCount: number;
@@ -24,7 +25,7 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
   return (
     <div className="flex gap-1 items-center">
       <p className="text-[12px] md:text-[16px] text-neutral-9 font-bold">
-        {submissionsCount} {submissionsCount !== 1 ? "entries" : "entry"}
+        {formatNumberWithCommas(submissionsCount)} {submissionsCount !== 1 ? "entries" : "entry"}
       </p>
       {isV3OrHigher && (
         <>

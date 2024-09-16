@@ -1,6 +1,5 @@
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
-import { ContestStatus } from "@hooks/useContestStatus/store";
 import { FC } from "react";
 
 interface ProposalStatisticsPanelSubmissionOpenProps {
@@ -14,7 +13,7 @@ const ProposalStatisticsPanelSubmissionOpen: FC<ProposalStatisticsPanelSubmissio
 
   return (
     <p className="text-[12px] md:text-[16px] text-neutral-9 font-bold">
-      {submissionsCount} / {formatNumberAbbreviated(contestMaxProposalCount)}{" "}
+      {formatNumberWithCommas(submissionsCount)} / {formatNumberWithCommas(contestMaxProposalCount)}{" "}
       {submissionsCount !== 1 ? "entries" : "entry"} submitted
     </p>
   );

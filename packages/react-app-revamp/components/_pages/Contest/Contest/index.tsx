@@ -62,7 +62,7 @@ const ContestTab = () => {
       return (
         <ButtonV3
           colorClass="bg-gradient-purple rounded-[40px]"
-          textColorClass="text-[20px] font-bold text-true-black"
+          textColorClass="text-[16px] md:text-[20px] font-bold text-true-black"
           size={isMobile ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG}
           onClick={() => {
             setIsSubmitProposalSuccess(false);

@@ -1,4 +1,4 @@
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import Skeleton from "react-loading-skeleton";
 
@@ -23,7 +23,7 @@ const ProposalStatisticsTotalVotesCast: React.FC<ProposalStatisticsTotalVotesCas
     );
   }
 
-  return <span>{formatNumberAbbreviated(Number(totalVotesCast.data))}</span>;
+  return <span>{formatNumberWithCommas(Number(totalVotesCast.data))}</span>;
 };
 
 export default ProposalStatisticsTotalVotesCast;

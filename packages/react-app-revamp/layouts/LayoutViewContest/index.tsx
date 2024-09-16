@@ -216,7 +216,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                 <div className="animate-reveal pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
                     <div className="flex flex-col gap-2">
-                      <ContestName contestName={contestName} address={address} chainName={chainName} />
+                      <ContestName contestName={contestName} />
                     </div>
 
                     <div className={`flex flex-row gap-3 md:gap-4 items-center`}>

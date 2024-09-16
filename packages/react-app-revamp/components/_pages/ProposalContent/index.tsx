@@ -9,17 +9,16 @@ import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useUserStore } from "@hooks/useUser/store";
-import { Interweave, Node } from "interweave";
+import { Interweave } from "interweave";
 import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FC, ReactNode, useEffect, useRef, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Tweet } from "react-tweet";
 import { useAccount } from "wagmi";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
-import ImageWithFallback from "./components/ImageWithFallback";
 import ProposalContentInfo from "./components/ProposalContentInfo";
 
 export interface Proposal {
@@ -82,10 +81,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
     pathname: `/contest/${chainName}/${contestAddress}/submission/${proposal.id}`,
     query: { comments: "comments" },
   };
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [isImageExpanded, setIsImageExpanded] = useState(false);
-  const [showResizeButton, setShowResizeButton] = useState(false);
 
   useEffect(() => {
     clearStorageIfNeeded();
@@ -95,18 +90,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
     setIsContentHidden(hiddenProposals.includes(proposal.id));
   }, [contestAddress, proposal.id]);
-
-  useEffect(() => {
-    const updateWidth = () => {
-      if (containerRef.current) {
-        setContainerWidth(containerRef.current.offsetWidth);
-      }
-    };
-
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, []);
 
   const handleVotingModalOpen = () => {
     if (isContestCanceled) {
@@ -160,31 +143,12 @@ const ProposalContent: FC<ProposalContentProps> = ({
     saveToLocalStorage(HIDDEN_PROPOSALS_STORAGE_KEY, visibilityState);
   };
 
-  const handleImageLoad = (canResize: boolean) => {
-    setShowResizeButton(canResize);
-  };
-
-  const toggleImageExpand = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsImageExpanded(!isImageExpanded);
-  };
-
-  const transform = (node: HTMLElement, children: Node[]): ReactNode => {
+  const transform = (node: HTMLElement): ReactNode => {
     const element = node.tagName.toLowerCase();
     const src = node.getAttribute("src") ?? "";
 
     if (element === "img") {
-      return (
-        <ImageWithFallback
-          mediumSrc={`${src}-medium`}
-          fullSrc={src}
-          alt={node.getAttribute("alt") ?? ""}
-          containerWidth={containerWidth}
-          isExpanded={isImageExpanded}
-          onImageLoad={handleImageLoad}
-        />
-      );
+      return <img src={src} alt="proposal" className="rounded-[16px] max-w-full" />;
     }
 
     return undefined;
@@ -201,21 +165,10 @@ const ProposalContent: FC<ProposalContentProps> = ({
           isContentHidden={isContentHidden}
           toggleContentVisibility={toggleContentVisibility}
         />
-        {showResizeButton && !isContentHidden && (
-          <button onClick={toggleImageExpand} className="hidden md:block">
-            <Image
-              src={isImageExpanded ? "/contest/minimize.svg" : "/contest/maximize.svg"}
-              width={16}
-              height={16}
-              alt={isImageExpanded ? "minimize" : "maximize"}
-            />
-          </button>
-        )}
       </div>
-
       {!isContentHidden && (
         <div className="md:mx-8 flex flex-col gap-4">
-          <div className="flex w-full" ref={containerRef}>
+          <div className="flex w-full">
             <Link
               className="inline-block p-4 rounded-[8px] bg-primary-1 border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out overflow-hidden"
               href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
