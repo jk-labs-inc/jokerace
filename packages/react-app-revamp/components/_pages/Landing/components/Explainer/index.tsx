@@ -45,7 +45,8 @@ const LandingPageExplainer = () => {
 
   const sectionContent = [
     {
-      title: "why jokerace?",
+      title: "why JokeRace?",
+      titleFontSize: "text-[20px] md:text-[24px]",
       content: (
         <>
           <ul className="flex flex-col pl-8 gap-2">
@@ -89,6 +90,7 @@ const LandingPageExplainer = () => {
     },
     {
       title: "how it works",
+      titleFontSize: "text-[20px] md:text-[24px]",
       content: (
         <>
           <div className="flex flex-col gap-4 mdgap-6">
@@ -150,6 +152,7 @@ const LandingPageExplainer = () => {
     },
     {
       title: "to play in a contest:",
+      titleFontSize: "text-[16px] md:text-[20px]",
       content: (
         <>
           <ul className="flex flex-col pl-8 gap-2">
@@ -177,6 +180,7 @@ const LandingPageExplainer = () => {
     },
     {
       title: "to build on our protocol:",
+      titleFontSize: "text-[16px] md:text-[20px]",
       content: (
         <>
           <ul className="flex flex-col pl-8 gap-2">
@@ -234,7 +238,7 @@ const LandingPageExplainer = () => {
           }`}
           style={{ transitionDelay: `${visibleSections.indexOf(index) * 200}ms` }}
         >
-          <p className="text-neutral-11 text-[20px] md:text-[24px] font-bold">{section.title}</p>
+          <p className={`text-neutral-11 ${section.titleFontSize} font-bold normal-case`}>{section.title}</p>
           {section.content}
         </div>
       ))}
