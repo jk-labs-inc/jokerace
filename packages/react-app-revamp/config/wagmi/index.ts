@@ -132,6 +132,7 @@ import { zora } from "./custom-chains/zora";
 import { kakarotTestnet } from "./custom-chains/kakarotTestnet";
 import { syscoin } from "./custom-chains/syscoin";
 import { syscoinTestnet } from "./custom-chains/syscoinTestnet";
+import { fhenixHeliumTestnet } from "./custom-chains/fhenixHeliumTestnet";
 
 declare module "wagmi";
 
@@ -256,6 +257,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   storyTestnet,
   soneiumTestnet,
   laminaTestnet,
+  fhenixHeliumTestnet,
   mainnet,
 ];
 
