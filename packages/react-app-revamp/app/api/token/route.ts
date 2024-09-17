@@ -40,7 +40,7 @@ interface FilteredToken {
   logoURI: string;
 }
 
-const DEFILLAMA_TOKEN_LIST_URL = "https://raw.githubusercontent.com/SmolDapp/tokenLists/main/lists/tokenlistooor.json";
+const DEFILLAMA_TOKEN_LIST_URL = "https://raw.githubusercontent.com/SmolDapp/tokenLists/main/lists/popular.json";
 
 const fetchTokenList = async (): Promise<TokenList | null> => {
   const response = await fetch(DEFILLAMA_TOKEN_LIST_URL);
