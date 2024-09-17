@@ -116,6 +116,7 @@ import { zircuit } from "./custom-chains/zircuit";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
+import { fhenixHeliumTestnet } from "./custom-chains/fhenixHeliumTestnet";
 
 type Transports = Record<Chain["id"], Transport>;
 
@@ -234,6 +235,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   storyTestnet,
   soneiumTestnet,
   laminaTestnet,
+  fhenixHeliumTestnet,
   mainnet,
 ];
 
