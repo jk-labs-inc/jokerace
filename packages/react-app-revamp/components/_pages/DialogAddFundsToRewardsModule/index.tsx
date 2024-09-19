@@ -1,4 +1,3 @@
-import TokenSearchModal, { TokenSearchModalType } from "@components/TokenSearchModal";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
@@ -6,15 +5,14 @@ import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import useFundRewardsModule from "@hooks/useFundRewards";
-import { FilteredToken } from "@hooks/useTokenList";
+import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useAccount } from "wagmi";
-import AddTokenWidget from "../Contest/Rewards/components/Create/steps/FundPool/components/AddTokenWidget";
+import TokenWidgets from "../Contest/Rewards/components/Create/steps/FundPool/components/TokenWidgets";
 import { useFundPoolStore } from "../Contest/Rewards/components/Create/steps/FundPool/store";
-import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 
 interface DialogAddFundsToRewardsModuleProps {
   isOpen: boolean;
@@ -29,48 +27,40 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
   const { rewardsModuleAddress } = useContestStore(state => state);
   const selectedChain = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase());
   const isConnectedOnCorrectChain = selectedChain?.id === userChainId;
-  const chainNativeCurrencySymbol = selectedChain?.nativeCurrency.symbol;
-  const [isTokenSearchModalOpen, setIsTokenSearchModalOpen] = useState(false);
-  const [selectedToken, setSelectedToken] = useState<FilteredToken | null>(null);
-  const { tokens, setTokens } = useFundPoolStore(state => state);
+  const { tokenWidgets, setTokenWidgets } = useFundPoolStore(state => state);
+  const isAllTokenWidgetsAddressesUnique =
+    tokenWidgets.length === new Set(tokenWidgets.map(token => token.address)).size;
+  const isAnyTokenWidgetZero = tokenWidgets.some(token => token.amount === "0" || token.amount === "");
+  const isTokenWidgetError = isAllTokenWidgetsAddressesUnique && !isAnyTokenWidgetZero;
   const { sendFundsToRewardsModuleV3 } = useFundRewardsModule();
   const { isLoading: isFundRewardsLoading } = useFundRewardsStore(state => state);
   const toastIdRef = useRef<string | number | null>(null);
 
-  const handleSelectedToken = (token: FilteredToken) => {
-    if (token.symbol === chainNativeCurrencySymbol) {
-      setSelectedToken(null);
-      setIsTokenSearchModalOpen(false);
-      return;
-    }
-
-    setSelectedToken(token);
-    setIsTokenSearchModalOpen(false);
-  };
-
   const fundPool = async () => {
-    setTokens([]);
-    const populatedRewardsPromises = tokens.map(async token => {
-      return {
-        ...token,
-        tokenAddress: token.address,
-        rewardsContractAddress: rewardsModuleAddress,
-        amount: token.amount,
-        decimals: token.decimals,
-      };
-    });
+    setTokenWidgets([]);
+    const populatedRewardsPromises = tokenWidgets
+      .filter(token => parseFloat(token.amount) > 0)
+      .map(async token => {
+        return {
+          ...token,
+          tokenAddress: token.address,
+          rewardsContractAddress: rewardsModuleAddress,
+          amount: token.amount,
+          decimals: token.decimals,
+        };
+      });
 
     const populatedRewards = (await Promise.all(populatedRewardsPromises)).filter(Boolean);
     const promises = sendFundsToRewardsModuleV3(populatedRewards);
 
-    // Don't proceed if promises is empty
+    // don't proceed if promises is empty
     if (!promises || promises.length === 0) {
       return;
     }
 
     const statusMessages: ToastMessage[] = populatedRewards.map((reward, index) => ({
-      message: `Funding reward ${index + 1}/${populatedRewards.length}...`,
-      successMessage: `Funded reward ${index + 1}!`,
+      message: `funding reward ${index + 1}/${populatedRewards.length}...`,
+      successMessage: `funded reward ${index + 1}!`,
       status: "pending" as "pending",
     }));
 
@@ -79,7 +69,7 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
         messages={statusMessages}
         promises={promises}
         toastIdRef={toastIdRef}
-        completionMessage="All rewards have been funded!"
+        completionMessage="all rewards have been funded!"
       />,
       {
         position: "bottom-center",
@@ -110,32 +100,17 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
       }}
     >
       <div className="flex flex-col gap-12 items-center mt-8 animate-appear">
-        <AddTokenWidget
-          selectedToken={selectedToken}
-          selectedChain={selectedChain}
-          isTokenSearchModalOpen={isTokenSearchModalOpen}
-          onOpenTokenSearchModal={setIsTokenSearchModalOpen}
-          addTokenButtonPlacement="left"
-        />
+        <TokenWidgets />
 
         <ButtonV3
           colorClass="text-[20px] bg-gradient-distribute rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           size={ButtonSize.EXTRA_LARGE}
-          isDisabled={!tokens.length || isFundRewardsLoading}
+          isDisabled={!isTokenWidgetError || isFundRewardsLoading}
           onClick={onFundPool}
         >
           submit funds
         </ButtonV3>
       </div>
-
-      <TokenSearchModal
-        type={TokenSearchModalType.ERC20}
-        chains={[{ label: chainName, value: chainName }]}
-        isOpen={isTokenSearchModalOpen}
-        onClose={() => setIsTokenSearchModalOpen(false)}
-        onSelectToken={handleSelectedToken}
-        hideChains
-      />
     </DialogModalV3>
   );
 };

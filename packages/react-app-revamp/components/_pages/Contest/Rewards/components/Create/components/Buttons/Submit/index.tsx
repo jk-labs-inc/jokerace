@@ -19,7 +19,7 @@ const CreateRewardsSubmitButton: FC<CreateRewardsSubmitButtonProps> = ({ step, o
     <div className="flex gap-4 items-start">
       <div className="flex flex-col gap-2 items-center">
         <ButtonV3
-          colorClass="text-[20px] bg-gradient-create-pool rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+          colorClass="text-[20px] bg-gradient-purple rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           size={ButtonSize.EXTRA_LARGE_LONG}
           onClick={onSubmit}
         >

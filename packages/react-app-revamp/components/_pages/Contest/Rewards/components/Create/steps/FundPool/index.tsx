@@ -1,58 +1,34 @@
-/* eslint-disable @next/next/no-img-element */
-import TokenSearchModal, { TokenSearchModalType } from "@components/TokenSearchModal";
-import { chains } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
-import { FilteredToken } from "@hooks/useTokenList";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useContestStore } from "@hooks/useContest/store";
 import CreateRewardsNavigation from "../../components/Buttons/Navigation";
 import { useCreateRewardsStore } from "../../store";
-import AddTokenWidget from "./components/AddTokenWidget";
+import TokenWidgets from "./components/TokenWidgets";
+import { useFundPoolStore } from "./store";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
+import CreateRewardsAddEarningsToggle from "../ReviewPool/components/AddEarnings";
 
 const CreateRewardsFundPool = () => {
-  const pathname = usePathname();
-  const { chainName } = extractPathSegments(pathname);
-  const selectedChain = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase());
-  const chainNativeCurrencySymbol = selectedChain?.nativeCurrency.symbol;
+  const charge = useContestStore(state => state.charge);
+  const contestState = useContestStateStore(state => state.contestState);
+  const isContestFinishedOrCanceled =
+    contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
+  const enableEarningsToggle = charge && charge.percentageToCreator > 0 && !isContestFinishedOrCanceled;
   const { currentStep } = useCreateRewardsStore(state => state);
-  const [isTokenSearchModalOpen, setIsTokenSearchModalOpen] = useState(false);
-  const [selectedToken, setSelectedToken] = useState<FilteredToken | null>(null);
-
-  const handleSelectedToken = (token: FilteredToken) => {
-    if (token.symbol === chainNativeCurrencySymbol) {
-      setSelectedToken(null);
-      setIsTokenSearchModalOpen(false);
-      return;
-    }
-
-    setSelectedToken(token);
-    setIsTokenSearchModalOpen(false);
-  };
+  const { isError, tokenWidgets } = useFundPoolStore(state => state);
+  const allTokensUnique = tokenWidgets.length === new Set(tokenWidgets.map(token => token.address)).size;
 
   return (
     <div className="flex flex-col gap-16 animate-swingInLeft">
       <div className="flex flex-col gap-4">
         <p className="text-[24px] font-bold text-true-white">time to have fun(ds)</p>
         <p className="text-[16px] text-neutral-11">now let’s fund your rewards pool.</p>
-        <p className="text-[16px] text-neutral-11">just leave blank if you’d rather add funds later.</p>
       </div>
 
-      <AddTokenWidget
-        selectedToken={selectedToken}
-        selectedChain={selectedChain}
-        isTokenSearchModalOpen={isTokenSearchModalOpen}
-        onOpenTokenSearchModal={setIsTokenSearchModalOpen}
-      />
+      <div className="flex flex-col gap-12">
+        <TokenWidgets />
+        {enableEarningsToggle && <CreateRewardsAddEarningsToggle />}
+      </div>
 
-      <CreateRewardsNavigation step={currentStep} />
-      <TokenSearchModal
-        type={TokenSearchModalType.ERC20}
-        chains={[{ label: chainName, value: chainName }]}
-        isOpen={isTokenSearchModalOpen}
-        onClose={() => setIsTokenSearchModalOpen(false)}
-        onSelectToken={handleSelectedToken}
-        hideChains
-      />
+      <CreateRewardsNavigation step={currentStep} isDisabled={isError} isError={!allTokensUnique} />
     </div>
   );
 };
