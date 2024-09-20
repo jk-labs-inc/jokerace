@@ -1,12 +1,13 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import useProposal, { PROPOSALS_PER_PAGE } from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
+import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -24,10 +25,10 @@ const ProposalSkeleton = ({ count, highlightColor }: { count?: number; highlight
 );
 
 export const ListProposals = () => {
-  const { address } = useAccount();
+  const { address, chainId: userChainId } = useAccount();
   const asPath = usePathname();
   const { address: contestAddress, chainName: contestChainName } = extractPathSegments(asPath);
-  const chainId = chains.filter(
+  const contestChainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase() === contestChainName.toLowerCase(),
   )?.[0]?.id;
 
@@ -53,9 +54,15 @@ export const ListProposals = () => {
   const showDeleteButton = selectedProposalIds.length > 0 && !isDeleteInProcess;
   const remainingProposalsToLoad = submissionsCount - listProposalsData.length;
   const skeletonRemainingLoaderCount = Math.min(remainingProposalsToLoad, PROPOSALS_PER_PAGE);
+  const isUserOnCorrectChain = contestChainId === userChainId;
 
   const onDeleteSelectedProposals = async () => {
     setDeletingProposalIds(selectedProposalIds);
+
+    if (!isUserOnCorrectChain) {
+      await switchChain(config, { chainId: contestChainId });
+    }
+
     await deleteProposal(selectedProposalIds);
     if (isDeleteSuccess) {
       setDeletingProposalIds([]);
@@ -93,7 +100,7 @@ export const ListProposals = () => {
       next={() =>
         fetchProposalsPage(
           {
-            chainId,
+            chainId: contestChainId,
             address: contestAddress as `0x${string}`,
             abi,
           },
