@@ -29,12 +29,12 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
   openConnectModal,
 }) => {
   const qualifyToSubmitMessage = useMemo<string | JSX.Element>(() => {
-    if (anyoneCanSubmit) return `anyone can submit`;
+    if (anyoneCanSubmit) return `anyone can enter`;
 
     if (currentUserQualifiedToSubmit) {
-      return `you qualify to submit`;
+      return `you qualify to enter`;
     } else {
-      return `you don't qualify to submit`;
+      return `you don't qualify to enter`;
     }
   }, [currentUserQualifiedToSubmit, anyoneCanSubmit]);
 
@@ -49,27 +49,27 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
 
   return (
     <div className="flex flex-col gap-8">
-      <p className="text-[20px] font-bold text-neutral-14">submissions</p>
+      <p className="text-[20px] font-bold text-neutral-14">entries</p>
       <ul className="pl-4 text-[16px] font-bold">
         <li className="list-disc">
           qualified wallets can enter{" "}
           <span>
             {maxProposalsPerUserCapped
               ? "as many submissions as desired"
-              : `a max of ${contestMaxNumberSubmissionsPerUser.toString()} submission${
-                  contestMaxNumberSubmissionsPerUser > 1 ? "s" : ""
+              : `a max of ${contestMaxNumberSubmissionsPerUser.toString()} ${
+                  contestMaxNumberSubmissionsPerUser > 1 ? "entries" : "entry"
                 } `}
           </span>
         </li>
         <li className="list-disc">
-          contest accept{contestMaxProposalCount > 1 ? "s" : ""} up to {contestMaxProposalCount.toString()} submissions
+          contest accept{contestMaxProposalCount > 1 ? "s" : ""} up to {contestMaxProposalCount.toString()} entries
         </li>
         <li className="list-disc">{address || anyoneCanSubmit ? qualifyToSubmitMessage : walletNotConnected}</li>
         <ContestParametersSubmissionRequirements />
         {!anyoneCanSubmit ? <ContestParamatersCSVSubmitters submissionMerkleRoot={submissionMerkleRoot} /> : null}
         {costToPropose ? (
           <li className="list-disc">
-            {formatEther(BigInt(costToPropose))} {nativeCurrencySymbol}/submission
+            {formatEther(BigInt(costToPropose))} {nativeCurrencySymbol}/entry
           </li>
         ) : null}
       </ul>

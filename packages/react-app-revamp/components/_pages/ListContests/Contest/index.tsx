@@ -101,12 +101,12 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, allowToHide, rew
       const submissionsDaysLeft = moment(contest.start_at).diff(now, "days");
 
       if (submissionsDaysLeft > 5) {
-        setSubmissionStatus("Submissions open on:");
+        setSubmissionStatus("open to enter on:");
       } else {
-        setSubmissionStatus("Submissions open in:");
+        setSubmissionStatus("open to enter in:");
       }
     } else if (now.isBefore(moment(contest.vote_start_at))) {
-      setSubmissionStatus("Submissions are open");
+      setSubmissionStatus("open to enter");
 
       const secondsLeft = moment(contest.vote_start_at).diff(now, "seconds");
       const minutesLeft = moment(contest.vote_start_at).diff(now, "minutes");
@@ -128,16 +128,16 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, allowToHide, rew
         setSubmissionTimeLeft({ value: daysLeft, type: "days" });
       }
     } else {
-      setSubmissionStatus("Submissions closed");
+      setSubmissionStatus("entries closed");
     }
 
     if (now.isBefore(moment(contest.vote_start_at))) {
       const votingDaysLeft = moment(contest.vote_start_at).diff(now, "days");
 
       if (votingDaysLeft > 5) {
-        setVotingStatus("Voting opens on:");
+        setVotingStatus("open to vote on:");
       } else {
-        setVotingStatus("Voting opens in:");
+        setVotingStatus("open to vote in:");
       }
     } else if (now.isBefore(moment(contest.end_at))) {
       setVotingStatus("Voting is open");
@@ -397,7 +397,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, allowToHide, rew
                   ) : (
                     <>
                       {votingStatus}{" "}
-                      {votingStatus.includes("Voting opens in:") || votingStatus.includes("Voting opens on:") ? (
+                      {votingStatus.includes("open to vote in:") || votingStatus.includes("open to vote on:") ? (
                         <Countdown
                           date={moment(contest.vote_start_at).toDate()}
                           renderer={(props: CountdownRenderProps) => renderer(props, moment(contest.vote_start_at))}

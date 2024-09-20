@@ -20,7 +20,7 @@ const CreateContestConfirmSubmitters: FC<CreateContestConfirmSubmittersProps> = 
   const isSubmissionMerklePrefilled = submissionMerkle.prefilled;
 
   if (anyoneCanSubmit) {
-    return <li className="text-[16px] list-disc">anyone can submit</li>;
+    return <li className="text-[16px] list-disc">anyone can enter</li>;
   }
 
   if (submittersAsVoters) {

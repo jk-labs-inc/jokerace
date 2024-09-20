@@ -12,7 +12,7 @@ const ContestTimeline = () => {
   const { submissionsOpen, votesClose, votesOpen } = useContestStore(state => state);
 
   const stages: Stage[] = [
-    { name: "Submission Open", action: "Submissions are open", date: submissionsOpen },
+    { name: "Submission Open", action: "open to enter", date: submissionsOpen },
     { name: "Voting Opens", action: "Voting is open", date: votesOpen },
     { name: "Contest Closes", action: "Contest closed", date: votesClose },
   ];
