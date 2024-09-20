@@ -38,15 +38,15 @@ const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timin
 
     switch (timingOption) {
       case TimingPeriod.OneDay:
-        return `submissions run one day: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+        return `entries run one day: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
       case TimingPeriod.OneHour:
-        return `submissions run one hour: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+        return `entries run one hour: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
       case TimingPeriod.OneWeek:
-        return `submissions run one week: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+        return `entries run one week: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
       case TimingPeriod.OneMonth:
-        return `submissions run one month: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+        return `entries run one month: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
       default:
-        return `submissions runs ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+        return `entries run ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
     }
   }, [formattedSubmissionOpen, formattedVoteOpen, timingOptionForSubmissionPeriod]);
 

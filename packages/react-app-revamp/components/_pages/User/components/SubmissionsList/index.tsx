@@ -66,7 +66,7 @@ const UserSubmission: FC<UserSubmissionsProps> = ({ submissions, page, itemsPerP
     <div className="container mx-auto mt-3">
       {totalCount !== null && totalCount > 0 && (
         <div className="px-4 py-3 text-[20px] font-bold">
-          {totalCount} proposal{totalCount > 1 ? "s" : ""}
+          {totalCount} {totalCount > 1 ? "entries" : "entry"}
         </div>
       )}
 

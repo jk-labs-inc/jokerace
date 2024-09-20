@@ -20,7 +20,7 @@ export enum StepTitle {
   Summary = "summary",
   Tag = "tag",
   Timing = "timing",
-  Submissions = "submissions",
+  Submissions = "entries",
   Voting = "voting",
   Monetization = "monetization",
   Customization = "customization",

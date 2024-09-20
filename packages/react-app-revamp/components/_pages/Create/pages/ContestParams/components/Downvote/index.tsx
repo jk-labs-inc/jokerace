@@ -16,7 +16,7 @@ const ContestParamsDownvote: FC<ContestParamsDownvoteProps> = ({ downvote, onCha
           <>can players downvote?</>
         ) : (
           <>
-            can players downvote—that is, vote <span className="italic font-bold">against</span> a submission?
+            can players downvote—that is, vote <span className="italic font-bold">against</span> an entry?
           </>
         )}
       </p>

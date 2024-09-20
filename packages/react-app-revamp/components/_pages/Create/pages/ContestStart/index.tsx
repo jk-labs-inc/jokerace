@@ -26,7 +26,7 @@ const CreateContestStart: FC<CreateContestStartProps> = ({ onCreateContest, onCr
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const stepTitle = isMobile ? "create a contest" : "let’s create a contest";
   const descriptionText = isMobile ? "how the contest works" : "about how the contest works";
-  const timingText = isMobile ? "of submission/voting periods" : "of the submission and voting periods";
+  const timingText = isMobile ? "of the entry/voting periods" : "of the entry and voting periods";
 
   const onCreateContestHandler = () => {
     onCreateContest?.(true);
@@ -49,10 +49,10 @@ const CreateContestStart: FC<CreateContestStartProps> = ({ onCreateContest, onCr
             <li className="text-[20px] text-neutral-11 list-disc">
               <b>timing</b> {timingText}
             </li>
-            <li className="text-[20px] text-neutral-11 list-disc">
-              <b>allowlists</b> of who can vote and (optional) who can submit
-            </li>
           </ul>
+          <p className="text-neutral-11 text-[20px]">
+            you can also allowlist who you want to enter and/or vote—or let anyone enter and anyone vote.
+          </p>
           <p className="text-neutral-11 text-[20px]">after you create the contest, you can add rewards for winners.</p>
         </div>
       </div>

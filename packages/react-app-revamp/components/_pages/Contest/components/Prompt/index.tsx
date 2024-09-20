@@ -37,7 +37,7 @@ const ContestPrompt: FC<ContestPromptProps> = ({ prompt, type, hidePrompt = fals
     } else if (isCurrentUserSubmitQualificationError) {
       return (
         <p className="text-[16px] text-negative-11 font-bold">
-          ruh roh, we couldn't load your submission qualification state! please reload the page
+          ruh roh, we couldn't load your entry qualification state! please reload the page
         </p>
       );
     } else {

@@ -37,8 +37,8 @@ const CreateSubmissionTabMessage = () => {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-[20px] text-neutral-11">
-        if your list of submitters is different from your list of voters, then we can {isMobile ? " " : <br />}
-        define your submitters here.
+        if your list of entrants is different from your list of voters, then we can {isMobile ? " " : <br />}
+        define them here.
       </p>
       {dynamicTabMessage}
     </div>

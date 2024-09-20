@@ -189,7 +189,7 @@ const CreateSubmissionRequirements = () => {
   return (
     <div className="flex flex-col gap-16">
       <div className="flex flex-col gap-4">
-        <p className="text-[16px] font-bold text-neutral-11 uppercase">who can submit?</p>
+        <p className="text-[16px] font-bold text-neutral-11 uppercase">who can enter the contest?</p>
         <CreateDefaultDropdown
           defaultOption={submissionRequirementsOption}
           options={options}

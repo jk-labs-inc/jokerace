@@ -29,12 +29,12 @@ const CreateContestConfirmCustomization: FC<CreateContestConfirmCustomizationPro
         <p className="text-[16px] font-bold">parameters:</p>
         <ul className="flex flex-col pl-8">
           <li className="text-[16px] list-disc">
-            {formatNumber(customizationOptions.maxSubmissions)} submission
-            {customizationOptions.maxSubmissions !== 1 ? "s" : ""} allowed
+            {formatNumber(customizationOptions.maxSubmissions)}{" "}
+            {customizationOptions.maxSubmissions !== 1 ? "entries" : "entry"} allowed
           </li>
           <li className="text-[16px] list-disc">
-            {formatNumber(customizationOptions.allowedSubmissionsPerUser)} submission
-            {customizationOptions.allowedSubmissionsPerUser !== 1 ? "s" : ""} per address
+            {formatNumber(customizationOptions.allowedSubmissionsPerUser)}{" "}
+            {customizationOptions.allowedSubmissionsPerUser !== 1 ? "entries" : "entry"} per address
           </li>
           <li className="text-[16px] list-disc">downvoting {advancedOptions.downvote ? "enabled" : "not enabled"}</li>
           <li className="text-[16px] list-disc">

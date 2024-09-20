@@ -97,7 +97,7 @@ const CreateSubmissionPeriod = () => {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
-        <p className="text-[16px] font-bold text-neutral-11 uppercase">submission period</p>
+        <p className="text-[16px] font-bold text-neutral-11 uppercase">entry period</p>
         <CreateDefaultDropdown
           options={timingPeriodsOptions}
           defaultOption={submissionPeriodTimingOption}

@@ -24,11 +24,11 @@ const CreateContestConfirmSubmitters: FC<CreateContestConfirmSubmittersProps> = 
   }
 
   if (submittersAsVoters) {
-    return <li className="text-[16px] list-disc">submitters allowlist is same as voters</li>;
+    return <li className="text-[16px] list-disc">entrants allowlist is same as voters</li>;
   }
 
   if (!isSubmissionMerklePrefilled) {
-    return <li className="text-[16px] list-disc">custom allowlist for submitters</li>;
+    return <li className="text-[16px] list-disc">custom allowlist for entrants</li>;
   }
 
   return <CreateContestConfirmAlowlistsSubmittersPrefilled submissionRequirements={submissionRequirements} />;
