@@ -227,13 +227,14 @@ export function useCastVotes() {
   }
 
   async function updateRewardAnalyticsIfNeeded(params: RewardsAnalyticsParams) {
-    if (params.isEarningsTowardsRewards && params.costToVote) {
+    if (params.isEarningsTowardsRewards && params.costToVote && params.charge) {
       try {
         await updateRewardAnalytics({
           contest_address: params.address,
           rewards_module_address: params.rewardsModuleAddress,
           network_name: params.chainName,
-          amount: formatChargeAmount(parseFloat(params.costToVote.toString())) / 2,
+          amount:
+            formatChargeAmount(parseFloat(params.costToVote.toString())) * (params.charge.percentageToCreator / 100),
           operation: "deposit",
           token_address: null,
           created_at: Math.floor(Date.now() / 1000),
