@@ -1,5 +1,5 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { config } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
@@ -16,9 +16,12 @@ import { useDeleteProposalStore } from "./store";
 
 export function useDeleteProposal() {
   const { contestAbi: abi } = useContestStore(state => state);
-  const { address: userAddress, chain } = useAccount();
+  const { address: userAddress } = useAccount();
   const asPath = usePathname();
-  const { chainName, address } = extractPathSegments(asPath ?? "");
+  const { address, chainName } = extractPathSegments(asPath ?? "");
+  const chain = chains.filter(chain => chain.name.toLowerCase() === chainName.toLowerCase())[0];
+  const contestChainId = chain.id;
+  const contestChainBlockExplorer = chain.blockExplorers?.default?.url;
   const { removeProposal } = useProposal();
   const { submissionsCount, setSubmissionsCount } = useProposalStore(state => state);
   const {
@@ -44,6 +47,7 @@ export function useDeleteProposal() {
     const contractConfig = {
       address: address as `0x${string}`,
       abi: abi ? abi : (DeployedContestContract.abi as Abi),
+      chainId: contestChainId,
     };
 
     if (!contractConfig.abi) return;
@@ -60,14 +64,14 @@ export function useDeleteProposal() {
       });
 
       const receipt = await waitForTransactionReceipt(config, {
-        chainId: chain?.id,
+        chainId: contestChainId,
         hash: hash,
       });
 
       setTransactionData({
         hash: receipt.transactionHash,
-        chainId: chain?.id,
-        transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${hash}`,
+        chainId: contestChainId,
+        transactionHref: `${contestChainBlockExplorer}/tx/${hash}`,
       });
 
       try {
