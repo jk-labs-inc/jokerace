@@ -8219,6 +8219,19 @@
     "@walletconnect/modal" "2.6.2"
     cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
 
+"@wagmi/connectors@5.1.12":
+  version "5.1.12"
+  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.1.12.tgz#a4345eeeda69942b002dd2710a3f755a30738e2c"
+  integrity sha512-w/MCH+J/sdqfy9ZFoEA3YKnJWlaExTCjMN4qjVNGsRtvy4ADz//zjQsmOZx51oa5xt42hv3fITN36aYZe/rO7g==
+  dependencies:
+    "@coinbase/wallet-sdk" "4.0.4"
+    "@metamask/sdk" "0.28.4"
+    "@safe-global/safe-apps-provider" "0.18.3"
+    "@safe-global/safe-apps-sdk" "9.1.0"
+    "@walletconnect/ethereum-provider" "2.16.1"
+    "@walletconnect/modal" "2.6.2"
+    cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
+
 "@wagmi/core@2.13.5":
   version "2.13.5"
   resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.13.5.tgz#20764d88d36c31c4557511309eef7d23fa60c98e"
