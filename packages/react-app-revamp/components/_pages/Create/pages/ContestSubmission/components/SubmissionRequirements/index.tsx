@@ -1,4 +1,4 @@
-import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { toastDismiss, toastError, toastInfo, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultDropdown";
 import { Option } from "@components/_pages/Create/components/TagDropdown";
@@ -9,11 +9,13 @@ import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
 import { useState } from "react";
+import { useAccount } from "wagmi";
 import CreateSubmissionRequirementsNftSettings from "./components/NFT";
 import CreateSubmissionRequirementsTokenSettings from "./components/Token";
 
 const options: Option[] = [
   { value: "anyone", label: "anyone" },
+  { value: "creator", label: "only me" },
   { value: "erc20", label: "token holders" },
   { value: "erc721", label: "NFT holders" },
 ];
@@ -24,6 +26,7 @@ type WorkerMessageData = {
 };
 
 const CreateSubmissionRequirements = () => {
+  const { address } = useAccount();
   const {
     step,
     submissionRequirementsOption,
@@ -32,7 +35,6 @@ const CreateSubmissionRequirements = () => {
     setSubmissionMerkle,
     setSubmissionRequirements,
     submissionRequirements,
-    submissionTab,
   } = useDeployContestStore(state => state);
   const onNextStep = useNextStep();
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
@@ -176,9 +178,24 @@ const CreateSubmissionRequirements = () => {
     }
   };
 
+  const handleCreatorAsSubmitter = () => {
+    if (!address) {
+      toastInfo("please connect your wallet first.");
+      return;
+    }
+    toastLoading("processing your allowlist...", false);
+    const worker = initializeWorker();
+    worker.postMessage({
+      decimals: 18,
+      allowList: { [address]: 100 },
+    });
+  };
+
   const handleNextStep = async () => {
     if (submissionRequirementsOption.value === "erc20" || submissionRequirementsOption.value === "erc721") {
       fetchRequirementsMerkleData(submissionRequirementsOption);
+    } else if (submissionRequirementsOption.value === "creator") {
+      handleCreatorAsSubmitter();
     } else {
       setSubmissionAllowlistFields([]);
       setAllSubmissionMerkles(null);
