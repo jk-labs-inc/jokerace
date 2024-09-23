@@ -13,11 +13,18 @@ import { useAccount } from "wagmi";
 import CreateSubmissionRequirementsNftSettings from "./components/NFT";
 import CreateSubmissionRequirementsTokenSettings from "./components/Token";
 
+enum SubmissionRequirementsOption {
+  Anyone = "anyone",
+  Creator = "creator",
+  Erc20 = "erc20",
+  Erc721 = "erc721",
+}
+
 const options: Option[] = [
-  { value: "anyone", label: "anyone" },
-  { value: "creator", label: "only me" },
-  { value: "erc20", label: "token holders" },
-  { value: "erc721", label: "NFT holders" },
+  { value: SubmissionRequirementsOption.Anyone, label: "anyone" },
+  { value: SubmissionRequirementsOption.Creator, label: "only me" },
+  { value: SubmissionRequirementsOption.Erc20, label: "token holders" },
+  { value: SubmissionRequirementsOption.Erc721, label: "NFT holders" },
 ];
 
 type WorkerMessageData = {
@@ -42,9 +49,9 @@ const CreateSubmissionRequirements = () => {
   const renderLayout = () => {
     //TODO: see why content jumps when dropdown changes
     switch (submissionRequirementsOption.value) {
-      case "erc721":
+      case SubmissionRequirementsOption.Erc721:
         return <CreateSubmissionRequirementsNftSettings error={inputError} />;
-      case "erc20":
+      case SubmissionRequirementsOption.Erc20:
         return <CreateSubmissionRequirementsTokenSettings error={inputError} />;
       default:
         return null;
@@ -135,11 +142,11 @@ const CreateSubmissionRequirements = () => {
       return;
     }
 
-    toastLoading("processing your allowlist...", false);
+    toastLoading("processing your allowlist...");
 
     try {
       let result;
-      if (type.value === "erc721") {
+      if (type.value === SubmissionRequirementsOption.Erc721) {
         result = await fetchNftHolders(
           "submission",
           submissionRequirements.tokenAddress,
@@ -183,7 +190,7 @@ const CreateSubmissionRequirements = () => {
       toastInfo("please connect your wallet first.");
       return;
     }
-    toastLoading("processing your allowlist...", false);
+    toastLoading("processing your allowlist...");
     const worker = initializeWorker();
     worker.postMessage({
       decimals: 18,
@@ -192,9 +199,12 @@ const CreateSubmissionRequirements = () => {
   };
 
   const handleNextStep = async () => {
-    if (submissionRequirementsOption.value === "erc20" || submissionRequirementsOption.value === "erc721") {
+    if (
+      submissionRequirementsOption.value === SubmissionRequirementsOption.Erc20 ||
+      submissionRequirementsOption.value === SubmissionRequirementsOption.Erc721
+    ) {
       fetchRequirementsMerkleData(submissionRequirementsOption);
-    } else if (submissionRequirementsOption.value === "creator") {
+    } else if (submissionRequirementsOption.value === SubmissionRequirementsOption.Creator) {
       handleCreatorAsSubmitter();
     } else {
       setSubmissionAllowlistFields([]);

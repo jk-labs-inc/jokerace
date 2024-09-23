@@ -44,7 +44,7 @@ export const toastWarning = (message: string) => {
   createToast("warning", <WarningToast message={message} />);
 };
 
-export const toastLoading = (message: string, showSignMessage?: boolean) => {
+export const toastLoading = (message: string, showSignMessage: boolean = false) => {
   createToast("info", <LoadingToast message={message} showSignMessage={showSignMessage} />, {
     autoClose: false,
   });
