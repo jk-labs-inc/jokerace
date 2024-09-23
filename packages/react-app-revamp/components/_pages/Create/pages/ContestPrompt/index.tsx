@@ -139,7 +139,7 @@ const CreateContestPrompt = () => {
           <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-4">
               <p className="text-[20px] text-neutral-11 font-bold">
-                how should voters evaluate if a submission is <i>good</i> ?
+                how should voters evaluate if an entry is <i>good</i> ?
               </p>
               <p className="text-neutral-11 text-[16px] font-normal">
                 (ie 50% for originality, 50% for thoughtfulness)

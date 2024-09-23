@@ -26,7 +26,7 @@ const navLinks = [
   },
   {
     href: ROUTE_VIEW_USER_SUBMISSIONS,
-    label: "Submissions",
+    label: "Entries",
   },
   {
     href: ROUTE_VIEW_USER_VOTING,

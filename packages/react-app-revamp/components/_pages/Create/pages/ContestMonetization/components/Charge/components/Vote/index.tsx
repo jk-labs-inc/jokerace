@@ -69,8 +69,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                   ) : null}
                   {isAnyoneCanVote ? (
                     <p className="text-[14px] text-neutral-11">
-                      <b>note:</b> in order to enable this charge, please use <br />
-                      presets or allowlists for voters instead of anyone-can-vote.
+                      <b>note:</b> not available in anyone-can-vote contests
                     </p>
                   ) : null}
                 </div>

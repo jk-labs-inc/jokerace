@@ -14,19 +14,15 @@ const ContestParametersTimeline: FC<ContestParametersTimelineProps> = ({ submiss
       <ContestTimeline />
       <div className="flex flex-col lg:hidden gap-4">
         <div className="flex justify-between items-end text-[16px] font-bold border-b border-neutral-10 pb-3">
-          <p>submissions open:</p>
+          <p>open to enter:</p>
           <p>{submissionsOpen}</p>
         </div>
         <div className="flex justify-between items-end text-[16px] font-bold  border-b border-neutral-10 pb-3">
-          <p>
-            submissions close/
-            <br />
-            voting opens:
-          </p>
+          <p>open to vote:</p>
           <p>{votesOpen}</p>
         </div>
         <div className="flex justify-between items-end text-[16px] font-bold  border-b border-neutral-10 pb-3">
-          <p>voting closes:</p>
+          <p>contest closes:</p>
           <p>{votesClose}</p>
         </div>
       </div>

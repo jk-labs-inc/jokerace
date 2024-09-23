@@ -82,7 +82,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
         ) : chargeEnabled ? (
           <ul className="flex flex-col pl-8">
             <li className={`text-[16px] list-disc`}>
-              {charge.type.costToPropose} <span className="uppercase">${nativeCurrencySymbol}</span> to submit
+              {charge.type.costToPropose} <span className="uppercase">${nativeCurrencySymbol}</span> to enter
             </li>
             <li className={`text-[16px] list-disc`}>
               {charge.type.costToVote} <span className="uppercase">${nativeCurrencySymbol}</span>{" "}
