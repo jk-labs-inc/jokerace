@@ -133,6 +133,7 @@ const CreateContestConfirm = () => {
               submissionRequirements: state.submissionRequirements,
               votingRequirements: state.votingRequirements,
               submissionTypeOption: state.submissionTypeOption,
+              submissionRequirementsOption: state.submissionRequirementsOption,
             }}
           />
           <CreateContestConfirmMonetization
