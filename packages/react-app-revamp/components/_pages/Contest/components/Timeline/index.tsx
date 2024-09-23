@@ -12,9 +12,9 @@ const ContestTimeline = () => {
   const { submissionsOpen, votesClose, votesOpen } = useContestStore(state => state);
 
   const stages: Stage[] = [
-    { name: "Submission Open", action: "open to enter", date: submissionsOpen },
-    { name: "Voting Opens", action: "Voting is open", date: votesOpen },
-    { name: "Contest Closes", action: "Contest closed", date: votesClose },
+    { name: "open to enter", action: "open to enter", date: submissionsOpen },
+    { name: "open to vote", action: "open to vote", date: votesOpen },
+    { name: "contest closes", action: "contest closes", date: votesClose },
   ];
 
   const [currentStageIndex, setCurrentStageIndex] = useState(-1);
@@ -53,8 +53,8 @@ const ContestTimeline = () => {
               ? stage.action
               : currentStageIndex === stages.length - 1 && index < currentStageIndex
                 ? index === 0
-                  ? "Submissions period"
-                  : "Voting period"
+                  ? "open to enter"
+                  : "open to vote"
                 : stage.name}
           </div>
         </div>

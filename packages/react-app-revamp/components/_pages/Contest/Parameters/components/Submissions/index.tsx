@@ -2,6 +2,7 @@ import { FC, useMemo } from "react";
 import ContestParamatersCSVSubmitters from "../CSV/Submitters";
 import ContestParametersSubmissionRequirements from "../Requirements/Submission";
 import { formatEther } from "viem";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 
 interface ContestParametersSubmissionsProps {
   anyoneCanSubmit: boolean;
@@ -55,14 +56,15 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
           qualified wallets can enter{" "}
           <span>
             {maxProposalsPerUserCapped
-              ? "as many submissions as desired"
+              ? "as many times as desired"
               : `a max of ${contestMaxNumberSubmissionsPerUser.toString()} ${
                   contestMaxNumberSubmissionsPerUser > 1 ? "entries" : "entry"
                 } `}
           </span>
         </li>
         <li className="list-disc">
-          contest accept{contestMaxProposalCount > 1 ? "s" : ""} up to {contestMaxProposalCount.toString()} entries
+          contest accept{contestMaxProposalCount > 1 ? "s" : ""} up to {formatNumberWithCommas(contestMaxProposalCount)}{" "}
+          entries
         </li>
         <li className="list-disc">{address || anyoneCanSubmit ? qualifyToSubmitMessage : walletNotConnected}</li>
         <ContestParametersSubmissionRequirements />
