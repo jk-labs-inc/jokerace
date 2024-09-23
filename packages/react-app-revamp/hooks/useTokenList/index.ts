@@ -6,6 +6,7 @@ import { getToken } from "@wagmi/core";
 export interface FilteredToken {
   address: string;
   name: string;
+  decimals: number;
   symbol: string;
   logoURI: string;
   balance?: number;
@@ -55,6 +56,7 @@ async function fetchTokenListOrMetadata({
         address: token.address,
         name: token.name,
         symbol: token.symbol,
+        decimals: token.decimals,
         logoURI:
           token.logoURI === "" || token.logoURI === "missing_thumb.png"
             ? "/contest/mona-lisa-moustache.png"
@@ -89,6 +91,7 @@ async function fetchTokenByAddress({
       name: token.name ?? "",
       symbol: token.symbol ?? "",
       logoURI: "/contest/mona-lisa-moustache.png",
+      decimals: token.decimals ?? 18,
     };
 
     if (tokenData.name === "" || tokenData.symbol === "") {

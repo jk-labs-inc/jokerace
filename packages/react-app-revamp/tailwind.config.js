@@ -343,7 +343,6 @@ module.exports = {
         "gradient-next": "linear-gradient(90deg, #FFDD3E 0%, #78FFC6 96.62%)",
         "gradient-create": "linear-gradient(90deg, #BB65FF 0%, #78FFC6 100%)",
         "gradient-share-submission": "linear-gradient(90deg, #FFE25B 0%, #BB65FF 96.62%)",
-        "gradient-create-pool": "linear-gradient(90deg, #BB65FF 0%, #FFE25B 100%)",
         "gradient-vote": "linear-gradient(93.06deg, #78FFC6 0%, #BB65FF 100%)",
         "gradient-distribute": "linear-gradient(180deg, #B0FED4 0%, #78FFC6 50%, #4A9575 100%)",
         "gradient-withdraw": "linear-gradient(180deg, #FF78A9 0%, #f04f88 50%, #e93d82 100%)",
@@ -354,6 +353,7 @@ module.exports = {
         "gradient-fade-black-purple":
           "linear-gradient(to bottom, #000000 0%, #050408 15%, #0a0610 25%, #100816 40%, #100816 60%, #0a0610 75%, #050408 85%, #000000 100%)",
         "gradient-purple-white": "linear-gradient(90deg, #C293FF 0%, #FFFFFF 100%)",
+        "gradient-gray": "linear-gradient(90deg, #A1A1A1 0%, #E5E5E5 100%)",
       },
       boxShadow: {
         "create-header": "0 3px 4px 0 rgba(106, 106, 106, 1)",
@@ -361,7 +361,7 @@ module.exports = {
         dialog: "0px 1px 6px 1px rgba(157, 157, 157, 1)",
         sortProposalDropdown: "0px 1px 6px 1px #6A6A6A;",
         "proposal-card": "1px 1px 5px 0px #E5E5E5",
-        "file-upload": "0 0px 100px rgba(229, 229, 229, 0.3)",
+        "file-upload": "0 0px 50px rgba(121, 121, 121, 0.3)",
       },
       backgroundColor: {
         ffdd3e: "#FFDD3E",

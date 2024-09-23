@@ -22,16 +22,18 @@ const CreateRewardsDeploymentStatus: React.FC = () => {
     rewardPoolData: state.rewardPoolData,
     addEarningsToRewards: state.addEarningsToRewards,
   }));
-  const { tokens } = useFundPoolStore(state => state);
+  const { tokenWidgets } = useFundPoolStore(state => state);
 
-  const tokenTransactions: Transaction[] = tokens.map(token => ({
-    key: `fund_${token.symbol}` as TransactionKey,
-    label: (
-      <>
-        Funding pool with {formatBalance(token.amount)} <span className="uppercase">{token.symbol}</span>...
-      </>
-    ),
-  }));
+  const tokenTransactions: Transaction[] = tokenWidgets
+    .filter(token => parseFloat(token.amount) > 0)
+    .map(token => ({
+      key: `fund_${token.symbol}` as TransactionKey,
+      label: (
+        <>
+          Funding pool with {formatBalance(token.amount)} <span className="uppercase">{token.symbol}</span>...
+        </>
+      ),
+    }));
 
   const creatorSplitTransaction: Transaction = {
     key: "setCreatorSplitDestination",
