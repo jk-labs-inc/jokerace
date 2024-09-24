@@ -21,8 +21,16 @@ export interface ProcessedReleasedRewards {
   tokens: TokenInfo[];
 }
 
+export interface TotalRewardInfo {
+  address: string;
+  symbol: string;
+  decimals: number;
+  totalAmount: bigint;
+}
+
 export interface ReleasedRewardsResult {
   data: ProcessedReleasedRewards[] | null;
+  totalRewards: TotalRewardInfo[];
   isContractError: boolean;
   isErc20AddressesError: boolean;
   isLoading: boolean;
@@ -55,7 +63,14 @@ export function useReleasedRewards({
   });
 
   if (!abi)
-    return { data: null, isContractError: false, isErc20AddressesError: false, isLoading: false, refetch: () => {} };
+    return {
+      data: null,
+      totalRewards: [],
+      isContractError: false,
+      isErc20AddressesError: false,
+      isLoading: false,
+      refetch: () => {},
+    };
 
   const calls = useMemo(
     () =>
@@ -86,7 +101,7 @@ export function useReleasedRewards({
   } = useReadContracts({
     contracts: calls,
     query: {
-      select(data): ProcessedReleasedRewards[] {
+      select(data): { processedData: ProcessedReleasedRewards[]; totalRewards: TotalRewardInfo[] } {
         const processedData = rankings.map((ranking, rankIndex) => {
           const startIndex = rankIndex * (1 + (erc20Addresses?.length ?? 0));
           const nativeAmount = data[startIndex]?.result as bigint | undefined;
@@ -120,14 +135,36 @@ export function useReleasedRewards({
           return result;
         });
 
-        return processedData.filter(entry => entry.tokens.length > 0);
+        const totalRewardsMap = new Map<string, TotalRewardInfo>();
+
+        processedData.forEach(entry => {
+          entry.tokens.forEach(token => {
+            const existingTotal = totalRewardsMap.get(token.address);
+            if (existingTotal) {
+              existingTotal.totalAmount += token.amount ?? 0n;
+            } else {
+              totalRewardsMap.set(token.address, {
+                address: token.address,
+                symbol: token.symbol,
+                decimals: token.decimals ?? 18,
+                totalAmount: token.amount ?? 0n,
+              });
+            }
+          });
+        });
+
+        return {
+          processedData: processedData.filter(entry => entry.tokens.length > 0),
+          totalRewards: Array.from(totalRewardsMap.values()),
+        };
       },
       enabled: calls.length > 0,
     },
   });
 
   return {
-    data: data && data.length > 0 ? data : [],
+    data: data?.processedData && data.processedData.length > 0 ? data.processedData : [],
+    totalRewards: data?.totalRewards ?? [],
     isContractError,
     isErc20AddressesError,
     isLoading: isLoading || isTokenInfoLoading,

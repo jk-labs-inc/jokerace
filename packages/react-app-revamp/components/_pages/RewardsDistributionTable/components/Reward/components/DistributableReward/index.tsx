@@ -1,7 +1,6 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { formatBalance } from "@helpers/formatBalance";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useDistributeRewardStore } from "@hooks/useDistributeRewards";
 import { TokenInfo } from "@hooks/useReleasableRewards";
@@ -39,8 +38,7 @@ export const DistributableReward = (props: DistributableRewardProps) => {
   return (
     <div className="flex items-center justify-between w-full">
       <p>
-        {formatBalance(formatUnits(token.amount ?? 0n, token.decimals ?? 18))}{" "}
-        <span className="uppercase">${token.symbol}</span>
+        {formatUnits(token.amount ?? 0n, token.decimals ?? 18)} <span className="uppercase">${token.symbol}</span>
       </p>
 
       <div data-tooltip-id={`tooltip-${token.symbol}`}>

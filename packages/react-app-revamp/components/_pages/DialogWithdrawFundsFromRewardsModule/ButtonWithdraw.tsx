@@ -31,7 +31,7 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
     token.decimals ?? 18,
   );
   const { isLoading } = useWithdrawRewardStore(state => state);
-  const formattedAmount = transform(token.amount ?? 0n, token.address, token.decimals ?? 18).toString();
+  const formattedAmount = transform(token.amount ?? 0n, token.address, token.decimals ?? 18);
 
   const onHandleWithdraw = () => {
     if (!chainId) return;
@@ -47,7 +47,7 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
     <li className="flex items-center">
       <section className="flex justify-between w-full">
         <p>
-          {formatBalance(formattedAmount)} <span className="uppercase">${token.symbol}</span>
+          {formattedAmount} <span className="uppercase">${token.symbol}</span>
         </p>
         <ButtonV3
           isDisabled={isLoading}

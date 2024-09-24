@@ -1,12 +1,11 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { formatBalance } from "@helpers/formatBalance";
 import { useCancelRewards } from "@hooks/useCancelRewards";
 import { transform } from "@hooks/useDistributeRewards";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
 import { useReleasedRewards } from "@hooks/useReleasedRewards";
 import { usePathname } from "next/navigation";
-import { FC, useEffect, useState, useMemo } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { Abi } from "viem";
 import { useReadContract } from "wagmi";
@@ -113,7 +112,7 @@ const ContestRewardsInfoMobile: FC<ContestRewardsInfoMobileProps> = ({ rewardsMo
   if (totalRewards.length === 0 || isError || isCanceled) return null;
 
   const currentReward = totalRewards[currentIndex];
-  const currentRewardAmount = transform(currentReward.amount, currentReward.address, currentReward.decimals).toString();
+  const currentRewardAmount = transform(currentReward.amount, currentReward.address, currentReward.decimals);
 
   return (
     <div
@@ -121,7 +120,7 @@ const ContestRewardsInfoMobile: FC<ContestRewardsInfoMobileProps> = ({ rewardsMo
     >
       <span className="truncate flex items-center">
         <div className={`flex items-center ${animate ? "animate-reveal" : ""}`}>
-          {formatBalance(currentRewardAmount)} $
+          {currentRewardAmount} $
           <span className="uppercase mr-1 truncate inline-block overflow-hidden">{currentReward.symbol}</span>
         </div>
       </span>

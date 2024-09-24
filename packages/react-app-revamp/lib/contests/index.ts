@@ -3,13 +3,12 @@ import { isSupabaseConfigured } from "@helpers/database";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
-import { getBalance, getToken, readContract, readContracts } from "@wagmi/core";
+import { getBalance, readContract, readContracts } from "@wagmi/core";
 import { getTokenAddresses } from "lib/rewards";
 import moment from "moment";
 import { SearchOptions } from "types/search";
 import { Abi, erc20Abi, formatUnits } from "viem";
 import { sortContests } from "./utils/sortContests";
-import { formatBalance } from "@helpers/formatBalance";
 
 export const ITEMS_PER_PAGE = 7;
 export const EMPTY_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
@@ -232,7 +231,7 @@ const processContestRewardsData = async (
         chain: contestChainName,
         token: {
           symbol: chain.nativeCurrency.symbol,
-          value: formatBalance(formatUnits(nativeReleasable, chain.nativeCurrency.decimals)),
+          value: formatUnits(nativeReleasable, chain.nativeCurrency.decimals),
         },
         winners: winners.length,
         numberOfTokens: 1,
@@ -265,7 +264,7 @@ const processContestRewardsData = async (
           chain: contestChainName,
           token: {
             symbol: tokenDetails.symbol ?? "",
-            value: formatBalance(formatUnits(erc20Releasable, tokenDetails.decimals)),
+            value: formatUnits(erc20Releasable, tokenDetails.decimals),
           },
           winners: winners.length,
           numberOfTokens: erc20TokenAddresses.length,
