@@ -146,9 +146,16 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-positive-11"></span>
               </span>
             )}
-            <span>
-              {status} <span className="text-true-white">{timeLeft}</span>
-            </span>
+            {contestData.isCanceled ? (
+              <div className="flex items-center gap-2">
+                <div className="rounded-full bg-negative-11 w-2 h-2"></div>
+                <span>canceled</span>
+              </div>
+            ) : (
+              <span>
+                {status} <span className="text-true-white">{timeLeft}</span>
+              </span>
+            )}
           </p>
         </div>
       </div>
