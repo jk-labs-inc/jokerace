@@ -347,88 +347,95 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, allowToHide, rew
           </div>
 
           <div className="flex items-center gap-4">
-            <div className={`flex items-center ${submissionClass} md:justify-between gap-3`}>
-              <div className="min-w-[185px] min-h-[3rem] flex flex-col justify-center">
-                <p className="font-bold">
-                  {loading ? (
-                    <Skeleton width={185} />
-                  ) : (
-                    <>
-                      {submissionStatus}{" "}
-                      {submissionStatus.includes("in:") || submissionStatus.includes("on:") ? (
-                        <Countdown
-                          date={moment(contest.start_at).toDate()}
-                          renderer={(props: CountdownRenderProps) => renderer(props, moment(contest.start_at))}
-                          onComplete={() => setOnCountdownComplete(true)}
-                        />
-                      ) : null}
-                    </>
-                  )}
-                </p>
-                {loading ? <Skeleton width={185} /> : submissionMessage}
+            {contest.isCanceled ? (
+              <p className="text-neutral-9 font-bold">canceled</p>
+            ) : (
+              <div className={`flex items-center ${submissionClass} md:justify-between gap-3`}>
+                <div className="min-w-[185px] min-h-[3rem] flex flex-col justify-center">
+                  <p className="font-bold">
+                    {loading ? (
+                      <Skeleton width={185} />
+                    ) : (
+                      <>
+                        {submissionStatus}{" "}
+                        {submissionStatus.includes("in:") || submissionStatus.includes("on:") ? (
+                          <Countdown
+                            date={moment(contest.start_at).toDate()}
+                            renderer={(props: CountdownRenderProps) => renderer(props, moment(contest.start_at))}
+                            onComplete={() => setOnCountdownComplete(true)}
+                          />
+                        ) : null}
+                      </>
+                    )}
+                  </p>
+                  {loading ? <Skeleton width={185} /> : submissionMessage}
+                </div>
+                {loading ? (
+                  <Skeleton circle height={50} width={50} />
+                ) : submissionTimeLeft.value ? (
+                  <div className="flex gap-2">
+                    <CircularProgressBar
+                      value={submissionTimeLeft.value}
+                      type={submissionTimeLeft.type}
+                      size={50}
+                      strokeWidth={3}
+                      color="#FFE25B"
+                      initialHours={timerValues.submissionHours}
+                      initialMinutes={timerValues.submissionMinutes}
+                      initialSeconds={timerValues.submissionSeconds}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-50 h-50"></div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {!contest.isCanceled ? (
+            <div className="flex items-center gap-4">
+              <div className={`flex items-center ${votingClass} md:justify-between gap-3`}>
+                <div className="min-w-[185px] min-h-[3rem] flex flex-col justify-center">
+                  <p className="font-bold">
+                    {loading ? (
+                      <Skeleton width={185} />
+                    ) : (
+                      <>
+                        {votingStatus}{" "}
+                        {votingStatus.includes("open to vote in:") || votingStatus.includes("open to vote on:") ? (
+                          <Countdown
+                            date={moment(contest.vote_start_at).toDate()}
+                            renderer={(props: CountdownRenderProps) => renderer(props, moment(contest.vote_start_at))}
+                            onComplete={() => setOnCountdownComplete(true)}
+                          />
+                        ) : null}
+                      </>
+                    )}
+                  </p>
+                  {loading ? <Skeleton width={185} /> : votingMessage}
+                </div>
               </div>
               {loading ? (
                 <Skeleton circle height={50} width={50} />
-              ) : submissionTimeLeft.value ? (
+              ) : votingTimeLeft.value ? (
                 <div className="flex gap-2">
                   <CircularProgressBar
-                    value={submissionTimeLeft.value}
-                    type={submissionTimeLeft.type}
+                    value={votingTimeLeft.value}
+                    type={votingTimeLeft.type}
                     size={50}
                     strokeWidth={3}
-                    color="#FFE25B"
-                    initialHours={timerValues.submissionHours}
-                    initialMinutes={timerValues.submissionMinutes}
-                    initialSeconds={timerValues.submissionSeconds}
+                    color="#78FFC6"
+                    initialHours={timerValues.votingHours}
+                    initialMinutes={timerValues.votingMinutes}
+                    initialSeconds={timerValues.votingSeconds}
                   />
                 </div>
               ) : (
                 <div className="w-50 h-50"></div>
               )}
             </div>
-          </div>
+          ) : null}
 
-          <div className="flex items-center gap-4">
-            <div className={`flex items-center ${votingClass} md:justify-between gap-3`}>
-              <div className="min-w-[185px] min-h-[3rem] flex flex-col justify-center">
-                <p className="font-bold">
-                  {loading ? (
-                    <Skeleton width={185} />
-                  ) : (
-                    <>
-                      {votingStatus}{" "}
-                      {votingStatus.includes("open to vote in:") || votingStatus.includes("open to vote on:") ? (
-                        <Countdown
-                          date={moment(contest.vote_start_at).toDate()}
-                          renderer={(props: CountdownRenderProps) => renderer(props, moment(contest.vote_start_at))}
-                          onComplete={() => setOnCountdownComplete(true)}
-                        />
-                      ) : null}
-                    </>
-                  )}
-                </p>
-                {loading ? <Skeleton width={185} /> : votingMessage}
-              </div>
-            </div>
-            {loading ? (
-              <Skeleton circle height={50} width={50} />
-            ) : votingTimeLeft.value ? (
-              <div className="flex gap-2">
-                <CircularProgressBar
-                  value={votingTimeLeft.value}
-                  type={votingTimeLeft.type}
-                  size={50}
-                  strokeWidth={3}
-                  color="#78FFC6"
-                  initialHours={timerValues.votingHours}
-                  initialMinutes={timerValues.votingMinutes}
-                  initialSeconds={timerValues.votingSeconds}
-                />
-              </div>
-            ) : (
-              <div className="w-50 h-50"></div>
-            )}
-          </div>
           <div className="flex flex-col">
             {rewardsLoading || loading ? (
               <Skeleton />
@@ -442,9 +449,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, allowToHide, rew
                   <p className="font-bold w-full text-positive-11">
                     rewards <br /> paid out!
                   </p>
-                ) : (
-                  <p className="font-bold w-full text-neutral-9">no rewards</p>
-                )}
+                ) : null}
               </>
             )}
 
@@ -498,26 +503,33 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, allowToHide, rew
 
                   {isUpcomingContest && address ? <li>{getQualificationMessage()}</li> : null}
 
-                  <li>
-                    {submissionTimeLeft.value ? (
-                      <>
-                        submissions {getStatusText(contest.start_at, contest.vote_start_at)}{" "}
-                        {moment(contest.start_at).format("MMM D")} - {moment(contest.vote_start_at).format("MMM D")}
-                      </>
-                    ) : (
-                      "entries closed"
-                    )}
-                  </li>
-                  <li>
-                    {votingTimeLeft.value || votingStatus.includes("in:") ? (
-                      <>
-                        voting {getStatusText(contest.vote_start_at, contest.end_at)}{" "}
-                        {moment(contest.vote_start_at).format("MMM D")} - {moment(contest.end_at).format("MMM D")}
-                      </>
-                    ) : (
-                      "voting closed"
-                    )}
-                  </li>
+                  {contest.isCanceled ? (
+                    <li>canceled</li>
+                  ) : (
+                    <li>
+                      {submissionTimeLeft.value ? (
+                        <>
+                          submissions {getStatusText(contest.start_at, contest.vote_start_at)}{" "}
+                          {moment(contest.start_at).format("MMM D")} - {moment(contest.vote_start_at).format("MMM D")}
+                        </>
+                      ) : (
+                        "entries closed"
+                      )}
+                    </li>
+                  )}
+
+                  {contest.isCanceled ? null : (
+                    <li>
+                      {votingTimeLeft.value || votingStatus.includes("in:") ? (
+                        <>
+                          voting {getStatusText(contest.vote_start_at, contest.end_at)}{" "}
+                          {moment(contest.vote_start_at).format("MMM D")} - {moment(contest.end_at).format("MMM D")}
+                        </>
+                      ) : (
+                        "voting closed"
+                      )}
+                    </li>
+                  )}
 
                   {rewardsLoading || loading ? (
                     <li>
@@ -537,51 +549,53 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, allowToHide, rew
             </ul>
           </div>
 
-          <div className={`${!submissionTimeLeft.value && !votingTimeLeft.value && !loading ? "hidden" : ""}`}>
-            <div className={`flex items-center gap-6 mt-5`}>
-              {loading ? (
-                <Skeleton circle width={50} height={50} />
-              ) : submissionTimeLeft.value ? (
-                <CircularProgressBar
-                  value={submissionTimeLeft.value}
-                  type={submissionTimeLeft.type}
-                  size={48}
-                  strokeWidth={2}
-                  color="#FFE25B"
-                  initialHours={timerValues.submissionHours}
-                  initialMinutes={timerValues.submissionMinutes}
-                  initialSeconds={timerValues.submissionSeconds}
-                />
-              ) : votingTimeLeft.value ? (
-                <div className="flex items-center">
+          {contest.isCanceled ? null : (
+            <div className={`${!submissionTimeLeft.value && !votingTimeLeft.value && !loading ? "hidden" : ""}`}>
+              <div className={`flex items-center gap-6 mt-5`}>
+                {loading ? (
+                  <Skeleton circle width={50} height={50} />
+                ) : submissionTimeLeft.value ? (
                   <CircularProgressBar
-                    value={votingTimeLeft.value}
-                    type={votingTimeLeft.type}
+                    value={submissionTimeLeft.value}
+                    type={submissionTimeLeft.type}
                     size={48}
                     strokeWidth={2}
-                    color="#78FFC6"
-                    initialHours={timerValues.votingHours}
-                    initialMinutes={timerValues.votingMinutes}
-                    initialSeconds={timerValues.votingSeconds}
+                    color="#FFE25B"
+                    initialHours={timerValues.submissionHours}
+                    initialMinutes={timerValues.submissionMinutes}
+                    initialSeconds={timerValues.submissionSeconds}
                   />
+                ) : votingTimeLeft.value ? (
+                  <div className="flex items-center">
+                    <CircularProgressBar
+                      value={votingTimeLeft.value}
+                      type={votingTimeLeft.type}
+                      size={48}
+                      strokeWidth={2}
+                      color="#78FFC6"
+                      initialHours={timerValues.votingHours}
+                      initialMinutes={timerValues.votingMinutes}
+                      initialSeconds={timerValues.votingSeconds}
+                    />
+                  </div>
+                ) : null}
+                <div className="flex flex-col w-full">
+                  <p className={`w-full uppercase ${getTextClassForMobiles()} mt-[5px]`}>
+                    {loading ? (
+                      <Skeleton />
+                    ) : submissionTimeLeft.value ? (
+                      "submissions open"
+                    ) : votingTimeLeft.value ? (
+                      "voting open"
+                    ) : null}
+                  </p>
+                  <p className={`w-full ${getTextClassForMobiles()}`}>
+                    {loading ? <Skeleton /> : getTextRequirementForMobiles()}
+                  </p>
                 </div>
-              ) : null}
-              <div className="flex flex-col w-full">
-                <p className={`w-full uppercase ${getTextClassForMobiles()} mt-[5px]`}>
-                  {loading ? (
-                    <Skeleton />
-                  ) : submissionTimeLeft.value ? (
-                    "submissions open"
-                  ) : votingTimeLeft.value ? (
-                    "voting open"
-                  ) : null}
-                </p>
-                <p className={`w-full ${getTextClassForMobiles()}`}>
-                  {loading ? <Skeleton /> : getTextRequirementForMobiles()}
-                </p>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </Link>
     </SkeletonTheme>
