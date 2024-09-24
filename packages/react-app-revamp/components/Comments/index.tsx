@@ -1,11 +1,8 @@
 /* eslint-disable react/no-unescaped-entities */
-/* eslint-disable react-hooks/exhaustive-deps */
-import Collapsible from "@components/UI/Collapsible";
-import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import useComments from "@hooks/useComments";
 import { useCommentsStore } from "@hooks/useComments/store";
 import { useSearchParams } from "next/navigation";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef } from "react";
 import CommentsForm from "./components/Form";
 import CommentsList from "./components/List";
 
@@ -20,7 +17,6 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
   const query = useSearchParams();
   const { getAllCommentsIdsPerProposal, getCommentsWithSpecificFirst, addComment, deleteComments, getCommentsPerPage } =
     useComments(contestAddress, contestChainId, proposalId);
-  const [isCommentsOpen, setIsCommentsOpen] = useState(true);
   const {
     comments,
     isLoading,
@@ -50,38 +46,25 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
   };
 
   return (
-    <div className="flex flex-col gap-12" id="comments" ref={commentsRef}>
-      <div className="flex gap-4 items-center">
-        <p className="text-[24px] text-neutral-11 font-bold">comments</p>
-        <button
-          onClick={() => setIsCommentsOpen(!isCommentsOpen)}
-          className={`transition-transform duration-500 ease-in-out transform ${isCommentsOpen ? "" : "rotate-180"}`}
-        >
-          <ChevronUpIcon height={30} />
-        </button>
-      </div>
-      <Collapsible isOpen={isCommentsOpen}>
-        <div className="flex flex-col gap-12 w-full md:w-[660px]">
-          <CommentsForm
-            contestChainId={contestChainId}
-            onSend={addComment}
-            isAddingSuccess={isAddingSuccess}
-            isAdding={isAdding}
-          />
-          <CommentsList
-            comments={comments}
-            isLoading={isLoading}
-            isPaginating={isPaginating}
-            isDeleting={isDeleting}
-            isDeletingSuccess={isDeletingSuccess}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onDeleteSelectedComments={selectedCommentsIds => deleteComments(selectedCommentsIds)}
-            onLoadMoreComments={onLoadMoreComments}
-            numberOfComments={numberOfComments}
-          />
-        </div>
-      </Collapsible>
+    <div className="flex flex-col gap-12 w-full md:w-[660px]" id="comments" ref={commentsRef}>
+      <CommentsForm
+        contestChainId={contestChainId}
+        onSend={addComment}
+        isAddingSuccess={isAddingSuccess}
+        isAdding={isAdding}
+      />
+      <CommentsList
+        comments={comments}
+        isLoading={isLoading}
+        isPaginating={isPaginating}
+        isDeleting={isDeleting}
+        isDeletingSuccess={isDeletingSuccess}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onDeleteSelectedComments={selectedCommentsIds => deleteComments(selectedCommentsIds)}
+        onLoadMoreComments={onLoadMoreComments}
+        numberOfComments={numberOfComments}
+      />
     </div>
   );
 };

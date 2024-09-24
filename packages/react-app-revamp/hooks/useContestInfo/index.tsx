@@ -53,7 +53,7 @@ const useContestInfo = ({
 
   useEffect(() => {
     const newSubmissionClass = (() => {
-      if (submissionStatus === "entering closed") {
+      if (submissionStatus === "entries closed") {
         return "text-neutral-9";
       }
 
@@ -100,7 +100,7 @@ const useContestInfo = ({
     const newSubmissionMessage = (() => {
       if (loading) return;
 
-      if (submissionStatus === "entering closed") {
+      if (submissionStatus === "entries closed") {
         return null;
       }
 

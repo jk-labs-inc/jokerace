@@ -128,7 +128,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, allowToHide, rew
         setSubmissionTimeLeft({ value: daysLeft, type: "days" });
       }
     } else {
-      setSubmissionStatus("entering closed");
+      setSubmissionStatus("entries closed");
     }
 
     if (now.isBefore(moment(contest.vote_start_at))) {
@@ -513,7 +513,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, allowToHide, rew
                           {moment(contest.start_at).format("MMM D")} - {moment(contest.vote_start_at).format("MMM D")}
                         </>
                       ) : (
-                        "entering closed"
+                        "entries closed"
                       )}
                     </li>
                   )}

@@ -132,45 +132,48 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               </p>
             )}
 
-            <div className="flex flex-col gap-12">
-              {contestStatus === ContestStatus.VotingOpen && (
-                <>
-                  {currentUserAvailableVotesAmount === 0 ? (
-                    <p className="text-neutral-11 text-[24px] font-bold">add votes</p>
-                  ) : null}
-                  {isConnected ? (
-                    currentUserAvailableVotesAmount > 0 ? (
-                      <VotingWidget
-                        proposalId={proposalId}
-                        amountOfVotes={currentUserAvailableVotesAmount}
-                        onVote={onVote}
-                        downvoteAllowed={downvotingAllowed}
-                      />
-                    ) : outOfVotes ? (
-                      <p className="text-[16px] text-neutral-11">
-                        looks like you’ve used up all your votes this contest <br />
-                        feel free to try connecting another wallet to see if it has more votes!
-                      </p>
+            {(contestStatus === ContestStatus.VotingOpen && currentUserAvailableVotesAmount === 0) ||
+            (proposalData && proposalData.proposal && proposalData.proposal.votes > 0) ? (
+              <div className="flex flex-col gap-12">
+                {contestStatus === ContestStatus.VotingOpen && (
+                  <>
+                    {currentUserAvailableVotesAmount === 0 ? (
+                      <p className="text-neutral-11 text-[24px] font-bold">add votes</p>
+                    ) : null}
+                    {isConnected ? (
+                      currentUserAvailableVotesAmount > 0 ? (
+                        <VotingWidget
+                          proposalId={proposalId}
+                          amountOfVotes={currentUserAvailableVotesAmount}
+                          onVote={onVote}
+                          downvoteAllowed={downvotingAllowed}
+                        />
+                      ) : outOfVotes ? (
+                        <p className="text-[16px] text-neutral-11">
+                          looks like you’ve used up all your votes this contest <br />
+                          feel free to try connecting another wallet to see if it has more votes!
+                        </p>
+                      ) : (
+                        <p className="text-[16px] text-neutral-11">
+                          unfortunately your wallet didn’t qualify to vote in this contest <br />
+                          feel free to try connecting another wallet!
+                        </p>
+                      )
                     ) : (
-                      <p className="text-[16px] text-neutral-11">
-                        unfortunately your wallet didn’t qualify to vote in this contest <br />
-                        feel free to try connecting another wallet!
+                      <p className="text-[16px] font-bold text-neutral-11 mt-2">
+                        <span className="text-positive-11 cursor-pointer" onClick={onConnectWallet}>
+                          connect wallet
+                        </span>{" "}
+                        to see if you qualify
                       </p>
-                    )
-                  ) : (
-                    <p className="text-[16px] font-bold text-neutral-11 mt-2">
-                      <span className="text-positive-11 cursor-pointer" onClick={onConnectWallet}>
-                        connect wallet
-                      </span>{" "}
-                      to see if you qualify
-                    </p>
-                  )}
-                </>
-              )}
-              {proposalData && proposalData.proposal && proposalData.proposal.votes > 0 ? (
-                <ListProposalVotes proposalId={proposalId} votedAddresses={proposalData.votedAddresses} />
-              ) : null}
-            </div>
+                    )}
+                  </>
+                )}
+                {proposalData && proposalData.proposal && proposalData.proposal.votes > 0 ? (
+                  <ListProposalVotes proposalId={proposalId} votedAddresses={proposalData.votedAddresses} />
+                ) : null}
+              </div>
+            ) : null}
 
             {commentsAllowed && proposalData ? (
               <Comments

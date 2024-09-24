@@ -9,8 +9,8 @@
     "start": "next start"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.654.0",
-    "@aws-sdk/s3-request-presigner": "3.654.0",
+    "@aws-sdk/client-s3": "3.657.0",
+    "@aws-sdk/s3-request-presigner": "3.657.0",
     "@babel/core": "7.25.2",
     "@babel/preset-env": "7.25.4",
     "@clustersxyz/sdk": "0.4.3",
@@ -104,7 +104,7 @@
     "underscore": "1.13.7",
     "uuid": "10.0.0",
     "valibot": "0.42.1",
-    "viem": "2.21.12",
+    "viem": "2.21.14",
     "wagmi": "2.12.13",
     "webpack": "5.94.0",
     "zod": "3.23.8",
