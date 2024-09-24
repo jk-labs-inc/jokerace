@@ -11,6 +11,7 @@ import { SubmissionType, SubmissionTypeOption } from "@hooks/useDeployContest/st
 import CreateContestConfirmSubmitters from "./components/Submitters";
 import CreateContestConfirmVoters from "./components/Voters";
 import { useMediaQuery } from "react-responsive";
+import { Option } from "@components/_pages/Create/components/TagDropdown";
 
 export type SubmissionMerkleAllowlists = {
   manual: SubmissionMerkle | null;
@@ -29,6 +30,7 @@ interface CreateContestConfirmAllowlistsProps {
     submissionMerkle: SubmissionMerkleAllowlists;
     votingMerkle: VotingMerkleAllowlists;
     submissionRequirements: SubmissionRequirements;
+    submissionRequirementsOption: Option;
     votingRequirements: VotingRequirements;
     submissionTypeOption: SubmissionTypeOption;
   };
@@ -37,8 +39,14 @@ interface CreateContestConfirmAllowlistsProps {
 }
 
 const CreateContestConfirmAllowlists: FC<CreateContestConfirmAllowlistsProps> = ({ allowlists, step, onClick }) => {
-  const { submissionMerkle, votingMerkle, submissionRequirements, votingRequirements, submissionTypeOption } =
-    allowlists;
+  const {
+    submissionMerkle,
+    votingMerkle,
+    submissionRequirements,
+    votingRequirements,
+    submissionTypeOption,
+    submissionRequirementsOption,
+  } = allowlists;
   const [isHovered, setIsHovered] = useState(false);
   const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
 
@@ -55,6 +63,7 @@ const CreateContestConfirmAllowlists: FC<CreateContestConfirmAllowlistsProps> = 
             submissionMerkle={submissionMerkle}
             submissionRequirements={submissionRequirements}
             submissionTypeOption={submissionTypeOption}
+            submissionRequirementsOption={submissionRequirementsOption}
           />
           <CreateContestConfirmVoters votingMerkle={votingMerkle} votingRequirements={votingRequirements} />
         </ul>

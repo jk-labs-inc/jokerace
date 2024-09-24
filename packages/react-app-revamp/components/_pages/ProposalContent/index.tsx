@@ -20,6 +20,7 @@ import { Tweet } from "react-tweet";
 import { useAccount } from "wagmi";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 import ProposalContentInfo from "./components/ProposalContentInfo";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 export interface Proposal {
   id: string;
@@ -63,6 +64,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   toggleProposalSelection,
 }) => {
   const { isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
@@ -103,7 +105,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
     }
 
     if (!isConnected) {
-      alert("You need to be connected with a wallet to vote for a proposal.");
+      openConnectModal?.();
       return;
     }
 

@@ -113,7 +113,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
                 {isLoading && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
               </div>
               {currentPage < totalPages - 1 && !isLoading && (
-                <div className="flex gap-2 items-center mb-8 cursor-pointer" onClick={onLoadMore}>
+                <div className="flex gap-2 items-center cursor-pointer" onClick={onLoadMore}>
                   <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
                   <button
                     className="transition-transform duration-500 ease-in-out transform 

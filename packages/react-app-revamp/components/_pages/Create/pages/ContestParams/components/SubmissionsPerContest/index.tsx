@@ -1,7 +1,6 @@
 import CreateNumberInput from "@components/_pages/Create/components/NumberInput";
 import { MAX_SUBMISSIONS_LIMIT } from "@hooks/useDeployContest";
 import { FC } from "react";
-import { useMediaQuery } from "react-responsive";
 
 interface ContestParamsSubmissionsPerContestProps {
   maxSubmissions: number;
@@ -14,8 +13,7 @@ const ContestParamsSubmissionsPerContest: FC<ContestParamsSubmissionsPerContestP
   submissionsPerContestError,
   onMaxSubmissionsChange,
 }) => {
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const title = isMobile ? "how many submissions do you take?" : "how many total submissions does your contest accept?";
+  const title = "how many total entries does your contest accept?";
   const displayMax = maxSubmissions < MAX_SUBMISSIONS_LIMIT;
 
   const handleMaxClick = () => {

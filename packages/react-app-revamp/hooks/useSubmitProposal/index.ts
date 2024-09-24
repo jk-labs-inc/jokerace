@@ -220,7 +220,8 @@ export function useSubmitProposal() {
           contest_address: params.address,
           rewards_module_address: params.rewardsModuleAddress,
           network_name: params.chainName,
-          amount: Number(formatEther(BigInt(params.charge.type.costToPropose))) / 2,
+          amount:
+            Number(formatEther(BigInt(params.charge.type.costToPropose))) * (params.charge.percentageToCreator / 100),
           operation: "deposit",
           token_address: null,
           created_at: Math.floor(Date.now() / 1000),

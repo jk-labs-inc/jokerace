@@ -21,13 +21,13 @@ function getContestStatus(contest: Contest): { status: string; timeLeft: string 
   if (now.isBefore(start)) {
     const duration = moment.duration(start.diff(now));
     return {
-      status: "Submissions open in",
+      status: "enter to win in",
       timeLeft: formatDuration(duration),
     };
   } else if (now.isBefore(voteStart)) {
     const duration = moment.duration(voteStart.diff(now));
     return {
-      status: "Submissions close in",
+      status: "enter to win within",
       timeLeft: formatDuration(duration),
     };
   } else if (now.isBefore(end)) {
@@ -58,7 +58,7 @@ function formatDuration(duration: moment.Duration): string {
 const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, rewardsData, isRewardsFetching }) => {
   const [contestStatus, setContestStatus] = useState(getContestStatus(contestData));
   const { status, timeLeft } = contestStatus;
-  const isContestActive = status === "Submissions close in" || status === "Voting closes in";
+  const isContestActive = status === "enter to win within" || status === "Voting closes in";
 
   const updateInterval = useCallback(() => {
     const now = moment();
@@ -146,9 +146,16 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-positive-11"></span>
               </span>
             )}
-            <span>
-              {status} <span className="text-true-white">{timeLeft}</span>
-            </span>
+            {contestData.isCanceled ? (
+              <div className="flex items-center gap-2">
+                <div className="rounded-full bg-negative-11 w-2 h-2"></div>
+                <span>canceled</span>
+              </div>
+            ) : (
+              <span>
+                {status} <span className="text-true-white">{timeLeft}</span>
+              </span>
+            )}
           </p>
         </div>
       </div>

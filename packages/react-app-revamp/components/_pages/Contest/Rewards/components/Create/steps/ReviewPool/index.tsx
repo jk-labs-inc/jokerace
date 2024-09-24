@@ -2,7 +2,6 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { toastError } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { useContestStore } from "@hooks/useContest/store";
 import { useDeployRewardsPool } from "@hooks/useDeployRewards";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
@@ -10,9 +9,7 @@ import { useAccount } from "wagmi";
 import CreateRewardsSubmitButton from "../../components/Buttons/Submit";
 import { useCreateRewardsStore } from "../../store";
 import { useFundPoolStore } from "../FundPool/store";
-import CreateRewardsAddEarningsToggle from "./components/AddEarnings";
 import CreateRewardsReviewTable from "./components/Table";
-import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 
 const CreateRewardsReviewPool = () => {
   const pathname = usePathname();
@@ -23,13 +20,8 @@ const CreateRewardsReviewPool = () => {
   const { chainId: userChainId } = useAccount();
   const { deployRewardsPool } = useDeployRewardsPool();
   const { rewardPoolData, currentStep, setStep } = useCreateRewardsStore(state => state);
-  const { tokens } = useFundPoolStore(state => state);
-  const { charge } = useContestStore(state => state);
-  const { contestState } = useContestStateStore(state => state);
+  const { tokenWidgets } = useFundPoolStore(state => state);
   const isUserOnCorrectChain = contestChainId === userChainId;
-  const isContestFinishedOrCanceled =
-    contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
-  const enableEarningsToggle = charge && charge.percentageToCreator > 0 && !isContestFinishedOrCanceled;
 
   const handleSwitchNetwork = async () => {
     if (!contestChainId) return;
@@ -60,20 +52,19 @@ const CreateRewardsReviewPool = () => {
   return (
     <div className="flex flex-col gap-16 animate-swingInLeft">
       <div className="flex flex-col gap-8">
-        <p className="text-[24px] text-true-white font-bold">let’s confirm</p>
+        <p className="text-[24px] text-true-white font-bold">let's confirm</p>
         <CreateRewardsReviewTable
           rankings={rewardPoolData.rankings}
           shareAllocations={rewardPoolData.shareAllocations}
-          tokens={tokens}
+          tokens={tokenWidgets.filter(token => token.amount !== "0" && token.amount !== "")}
         />
-        {enableEarningsToggle ? <CreateRewardsAddEarningsToggle /> : null}
       </div>
       <div className="flex flex-col gap-6">
         {isUserOnCorrectChain ? (
           <CreateRewardsSubmitButton step={currentStep} onSubmit={handleCreateRewards} />
         ) : (
           <ButtonV3
-            colorClass="text-[20px] bg-gradient-create-pool rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+            colorClass="text-[20px] bg-gradient-purple rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
             size={ButtonSize.EXTRA_LARGE_LONG}
             onClick={handleSwitchNetwork}
           >

@@ -10,6 +10,7 @@ import { SearchOptions } from "types/search";
 import { Abi, erc20Abi, formatUnits } from "viem";
 import { sortContests } from "./utils/sortContests";
 import { formatBalance } from "@helpers/formatBalance";
+import { ContestStateEnum } from "@hooks/useContestState/store";
 
 export const ITEMS_PER_PAGE = 7;
 export const EMPTY_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
@@ -47,6 +48,7 @@ export interface Contest {
   cost_to_propose: number | null;
   percentage_to_propose: number | null;
   cost_to_vote: number | null;
+  isCanceled: boolean;
 }
 
 async function getContractConfig(address: string, chainId: number) {
@@ -63,6 +65,29 @@ async function getContractConfig(address: string, chainId: number) {
   };
 
   return contractConfig;
+}
+
+async function checkIfContestIsCanceled(contestAddress: string, networkName: string): Promise<boolean> {
+  const chainId = chains.find(c => c.name.toLowerCase() === networkName.toLowerCase())?.id;
+  if (!chainId) return false;
+
+  try {
+    const contractConfig = await getContractConfig(contestAddress, chainId);
+    if (!contractConfig) {
+      return false;
+    }
+
+    const state = await readContract(config, {
+      ...contractConfig,
+      functionName: "state",
+      args: [],
+    });
+
+    return state === ContestStateEnum.Canceled;
+  } catch (error) {
+    console.error("Error checking if contest is canceled:", error);
+    return false;
+  }
 }
 
 export const fetchNativeBalance = async (contestRewardModuleAddress: string, chainId: number) => {
@@ -351,7 +376,13 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
       }
 
       const processedData = await Promise.all(
-        data.map(contest => processContestQualifications(contest, userAddress ?? "")),
+        data.map(async contest => {
+          const processedContest = await processContestQualifications(contest, userAddress ?? "");
+          return {
+            ...processedContest,
+            isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
+          };
+        }),
       );
 
       return { data: processedData, count };
@@ -413,7 +444,13 @@ export async function getUserContests(
       }
 
       const processedData = await Promise.all(
-        data.map(contest => processContestQualifications(contest, currentUserAddress)),
+        data.map(async contest => {
+          const processedContest = await processContestQualifications(contest, currentUserAddress);
+          return {
+            ...processedContest,
+            isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
+          };
+        }),
       );
 
       return { data: processedData, count: count ?? 0 };
@@ -448,7 +485,15 @@ export async function getFeaturedContests(
 
     if (error) throw new Error(error.message);
 
-    processedData = await Promise.all(data.map(contest => processContestQualifications(contest, userAddress ?? "")));
+    processedData = await Promise.all(
+      data.map(async contest => {
+        const processedContest = await processContestQualifications(contest, userAddress ?? "");
+        return {
+          ...processedContest,
+          isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
+        };
+      }),
+    );
 
     processedData.sort((a, b) => {
       const now = moment();
@@ -510,7 +555,13 @@ export async function getLiveContests(
       }
 
       const processedData = await Promise.all(
-        data.map(contest => processContestQualifications(contest, userAddress ?? "")),
+        data.map(async contest => {
+          const processedContest = await processContestQualifications(contest, userAddress ?? "");
+          return {
+            ...processedContest,
+            isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
+          };
+        }),
       );
 
       return { data: processedData, count };
@@ -543,7 +594,13 @@ export async function getPastContests(currentPage: number, itemsPerPage: number,
       }
 
       const processedData = await Promise.all(
-        data.map(contest => processContestQualifications(contest, userAddress ?? "")),
+        data.map(async contest => {
+          const processedContest = await processContestQualifications(contest, userAddress ?? "");
+          return {
+            ...processedContest,
+            isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
+          };
+        }),
       );
 
       return { data: processedData, count };
@@ -590,7 +647,13 @@ export async function getUpcomingContests(
       }
 
       const processedData = await Promise.all(
-        data.map(contest => processContestQualifications(contest, userAddress ?? "")),
+        data.map(async contest => {
+          const processedContest = await processContestQualifications(contest, userAddress ?? "");
+          return {
+            ...processedContest,
+            isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
+          };
+        }),
       );
 
       return { data: processedData, count };

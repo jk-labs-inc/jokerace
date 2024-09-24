@@ -102,7 +102,7 @@ const LandingPageExplainer = () => {
                   : "let anyone submit and vote on entries—or use allowlists"}
               </li>
               <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
-                set the duration for submission and voting
+                set the duration for entries and voting
               </li>
               <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
                 (optional) add rewards for winners
@@ -157,7 +157,7 @@ const LandingPageExplainer = () => {
         <>
           <ul className="flex flex-col pl-8 gap-2">
             <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
-              submit entries during the submission period
+              submit entries during the entry period
             </li>
             <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
               vote on entries during the voting period

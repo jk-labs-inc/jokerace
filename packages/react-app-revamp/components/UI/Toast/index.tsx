@@ -3,6 +3,7 @@ import ErrorToast from "./components/Error";
 import LoadingToast from "./components/Loading";
 import SuccessToast from "./components/Success";
 import WarningToast from "./components/Warning";
+import InfoToast from "./components/Info";
 
 let toastId: any = null;
 
@@ -24,6 +25,10 @@ const createToast = (type: any, content: JSX.Element, additionalSettings: any = 
   toastId = toast(content, settings);
 };
 
+export const toastInfo = (message: string) => {
+  createToast("info", <InfoToast message={message} />, { autoClose: 2000 });
+};
+
 export const toastSuccess = (message: string) => {
   createToast("success", <SuccessToast message={message} />);
 };
@@ -39,7 +44,7 @@ export const toastWarning = (message: string) => {
   createToast("warning", <WarningToast message={message} />);
 };
 
-export const toastLoading = (message: string, showSignMessage?: boolean) => {
+export const toastLoading = (message: string, showSignMessage: boolean = false) => {
   createToast("info", <LoadingToast message={message} showSignMessage={showSignMessage} />, {
     autoClose: false,
   });

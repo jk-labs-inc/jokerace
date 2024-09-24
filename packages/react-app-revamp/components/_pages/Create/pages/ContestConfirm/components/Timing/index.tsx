@@ -38,15 +38,15 @@ const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timin
 
     switch (timingOption) {
       case TimingPeriod.OneDay:
-        return `submissions run one day: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+        return `one day to enter: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
       case TimingPeriod.OneHour:
-        return `submissions run one hour: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+        return `one hour to enter: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
       case TimingPeriod.OneWeek:
-        return `submissions run one week: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+        return `one week to enter: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
       case TimingPeriod.OneMonth:
-        return `submissions run one month: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+        return `one month to enter: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
       default:
-        return `submissions runs ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+        return `enter contest within ${formattedSubmissionOpen} - ${formattedVoteOpen}`;
     }
   }, [formattedSubmissionOpen, formattedVoteOpen, timingOptionForSubmissionPeriod]);
 
@@ -55,15 +55,15 @@ const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timin
 
     switch (timingOption) {
       case TimingPeriod.OneDay:
-        return `voting runs one day: ${formattedVoteOpen} to ${formattedVotesClose}`;
+        return `one day to vote: ${formattedVoteOpen} to ${formattedVotesClose}`;
       case TimingPeriod.OneHour:
-        return `voting runs one hour: ${formattedVoteOpen} to ${formattedVotesClose}`;
+        return `one hour to vote: ${formattedVoteOpen} to ${formattedVotesClose}`;
       case TimingPeriod.OneWeek:
-        return `voting runs one week: ${formattedVoteOpen} to ${formattedVotesClose}`;
+        return `one week to vote: ${formattedVoteOpen} to ${formattedVotesClose}`;
       case TimingPeriod.OneMonth:
-        return `voting runs one month: ${formattedVoteOpen} to ${formattedVotesClose}`;
+        return `one month to vote: ${formattedVoteOpen} to ${formattedVotesClose}`;
       default:
-        return `voting runs ${formattedVoteOpen} to ${formattedVotesClose}`;
+        return `vote within ${formattedVoteOpen} - ${formattedVotesClose}`;
     }
   }, [formattedVotesClose, formattedVoteOpen, timingOptionForVotingPeriod]);
 

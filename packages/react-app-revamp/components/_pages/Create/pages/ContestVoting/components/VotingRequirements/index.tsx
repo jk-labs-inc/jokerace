@@ -44,7 +44,6 @@ const CreateVotingRequirements = () => {
     setCharge,
     charge,
     minCharge,
-    votingTab,
   } = useDeployContestStore(state => state);
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
   const onNextStep = useNextStep();

@@ -10,8 +10,8 @@ const CreateSubmissionType = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { submissionTypeOption, setSubmissionTypeOption } = useDeployContestStore(state => state);
   const submissionTypeTitle = isMobile
-    ? "is the list of people who can submit different from the people who can vote?"
-    : "are the people who can submit different from the people who can vote?";
+    ? "is the list of people who can enter different from the people who can vote?"
+    : "are the people who can enter the contest different from the people who can vote?";
 
   const onChange = (value: SubmissionTypeOption) => {
     setSubmissionTypeOption(value);

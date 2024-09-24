@@ -51,7 +51,7 @@ const ContestTab = () => {
           size={isMobile ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG}
           onClick={openConnectModal}
         >
-          connect wallet to submit entry
+          connect wallet to enter contest
         </ButtonV3>
       );
     }

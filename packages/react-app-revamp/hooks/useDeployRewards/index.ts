@@ -22,7 +22,7 @@ export function useDeployRewardsPool() {
   const { address: contestAddress } = extractPathSegments(asPath ?? "");
   const setSupportsRewardsModule = useContestStore(state => state.setSupportsRewardsModule);
   const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards } = useCreateRewardsStore(state => state);
-  const { tokens, setTokens } = useFundPoolStore(state => state);
+  const { tokenWidgets, setTokenWidgets } = useFundPoolStore(state => state);
   const { setCreatorSplitDestination } = useCreatorSplitDestination();
 
   async function deployRewardsPool() {
@@ -38,7 +38,7 @@ export function useDeployRewardsPool() {
       }
 
       setSupportsRewardsModule(true);
-      setTokens([]);
+      setTokenWidgets([]);
     } catch (e: any) {
       if (didUserReject(e)) {
         setStep(CreationStep.Review);
@@ -121,7 +121,17 @@ export function useDeployRewardsPool() {
   }
 
   async function fundPoolTokens(contractRewardsModuleAddress: string) {
-    for (const token of tokens) {
+    // exit early if all token amounts are 0
+    if (tokenWidgets.every(token => parseFloat(token.amount) === 0)) {
+      return;
+    }
+
+    for (const token of tokenWidgets) {
+      // skip tokens with 0 amount
+      if (parseFloat(token.amount) === 0) {
+        continue;
+      }
+
       const transactionKey = `fund_${token.symbol}` as const;
 
       setRewardPoolData(prevData => ({
