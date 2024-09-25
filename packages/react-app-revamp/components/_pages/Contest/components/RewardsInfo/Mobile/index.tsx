@@ -1,5 +1,6 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { formatBalance } from "@helpers/formatBalance";
 import { useCancelRewards } from "@hooks/useCancelRewards";
 import { transform } from "@hooks/useDistributeRewards";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
@@ -112,7 +113,7 @@ const ContestRewardsInfoMobile: FC<ContestRewardsInfoMobileProps> = ({ rewardsMo
   if (totalRewards.length === 0 || isError || isCanceled) return null;
 
   const currentReward = totalRewards[currentIndex];
-  const currentRewardAmount = transform(currentReward.amount, currentReward.address, currentReward.decimals);
+  const currentRewardAmount = transform(currentReward.amount, currentReward.address, currentReward.decimals).toString();
 
   return (
     <div
@@ -120,7 +121,7 @@ const ContestRewardsInfoMobile: FC<ContestRewardsInfoMobileProps> = ({ rewardsMo
     >
       <span className="truncate flex items-center">
         <div className={`flex items-center ${animate ? "animate-reveal" : ""}`}>
-          {currentRewardAmount} $
+          {formatBalance(currentRewardAmount)} $
           <span className="uppercase mr-1 truncate inline-block overflow-hidden">{currentReward.symbol}</span>
         </div>
       </span>

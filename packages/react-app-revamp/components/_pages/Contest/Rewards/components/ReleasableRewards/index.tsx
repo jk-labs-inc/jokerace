@@ -38,8 +38,6 @@ const RewardsReleasable: FC<RewardsReleasableProps> = ({
     rankings,
   });
 
-  console.log(totalRewards);
-
   if (isReleasableRewardsLoading)
     return <p className="loadingDots font-sabo text-[14px] text-neutral-14">loading rewards to distribute</p>;
   if (isReleasableRewardsContractError || !releasableRewards)

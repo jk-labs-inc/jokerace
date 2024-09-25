@@ -9,6 +9,7 @@ import moment from "moment";
 import { SearchOptions } from "types/search";
 import { Abi, erc20Abi, formatUnits } from "viem";
 import { sortContests } from "./utils/sortContests";
+import { formatBalance } from "@helpers/formatBalance";
 
 export const ITEMS_PER_PAGE = 7;
 export const EMPTY_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
@@ -231,7 +232,7 @@ const processContestRewardsData = async (
         chain: contestChainName,
         token: {
           symbol: chain.nativeCurrency.symbol,
-          value: formatUnits(nativeReleasable, chain.nativeCurrency.decimals),
+          value: formatBalance(formatUnits(nativeReleasable, chain.nativeCurrency.decimals).toString()),
         },
         winners: winners.length,
         numberOfTokens: 1,
@@ -264,7 +265,7 @@ const processContestRewardsData = async (
           chain: contestChainName,
           token: {
             symbol: tokenDetails.symbol ?? "",
-            value: formatUnits(erc20Releasable, tokenDetails.decimals),
+            value: formatBalance(formatUnits(erc20Releasable, tokenDetails.decimals).toString()),
           },
           winners: winners.length,
           numberOfTokens: erc20TokenAddresses.length,

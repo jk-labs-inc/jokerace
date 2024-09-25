@@ -1,5 +1,6 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { formatBalance } from "@helpers/formatBalance";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
 import { useCancelRewards } from "@hooks/useCancelRewards";
 import { transform } from "@hooks/useDistributeRewards";
@@ -109,7 +110,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
     currentReward?.amount ?? 0n,
     currentReward.address,
     currentReward.decimals ?? 18,
-  );
+  ).toString();
 
   return (
     <div
@@ -117,7 +118,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
     >
       <span className="truncate flex items-center">
         <div className={`flex items-center ${animate ? "animate-reveal" : ""}`}>
-          {currentRewardAmount} $
+          {formatBalance(currentRewardAmount)} $
           <span className="uppercase mr-1 truncate inline-block overflow-hidden">{currentReward.symbol}</span>
         </div>
         <span>

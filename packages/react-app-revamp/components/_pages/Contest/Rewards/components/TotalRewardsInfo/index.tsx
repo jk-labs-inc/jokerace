@@ -1,3 +1,4 @@
+import { formatBalance } from "@helpers/formatBalance";
 import { TotalRewardInfo } from "@hooks/useReleasableRewards";
 import { FC, useEffect, useState } from "react";
 import { formatUnits } from "viem";
@@ -33,7 +34,7 @@ const TotalRewardsInfo: FC<TotalRewardsInfoProps> = ({ totalRewards }) => {
     <div className="w-fit max-w-full">
       <div className="flex h-8 px-2 md:px-4 items-center bg-transparent border border-neutral-10 rounded-[10px] text-[16px] font-bold text-positive-11">
         <div className={`flex items-center gap-1 ${animate ? "animate-reveal" : ""}`}>
-          <p>{formatUnits(currentReward.totalAmount, currentReward.decimals)}</p>{" "}
+          <p>{formatBalance(formatUnits(currentReward.totalAmount, currentReward.decimals).toString())}</p>{" "}
           <p className="uppercase">${currentReward.symbol}</p>
         </div>
       </div>

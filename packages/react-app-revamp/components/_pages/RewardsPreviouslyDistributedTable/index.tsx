@@ -1,3 +1,4 @@
+import { formatBalance } from "@helpers/formatBalance";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
 import { useDistributeRewardStore } from "@hooks/useDistributeRewards";
 import { TokenInfo } from "@hooks/useReleasableRewards";
@@ -57,7 +58,7 @@ const RewardsPreviouslyDistributedTable: FC<RewardsPreviouslyDistributedTablePro
                       <Skeleton width={200} height={16} />
                     ) : (
                       <p className="text-neutral-9">
-                        {formatUnits(token.amount ?? 0n, token.decimals ?? 18)}{" "}
+                        {formatBalance(formatUnits(token.amount ?? 0n, token.decimals ?? 18).toString())}{" "}
                         <span className="uppercase">${token.symbol}</span>
                       </p>
                     )}
