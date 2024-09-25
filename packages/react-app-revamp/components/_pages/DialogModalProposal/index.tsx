@@ -194,7 +194,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                   )
                 ) : (
                   <div className="flex flex-col gap-4 md:w-80">
-                    <hr className={`block border border-neutral-9`} />
+                    <hr className={`md:block border border-neutral-9`} />
                     <p className="text-neutral-11 font-bold text-[20px]">add votes</p>
                     <p className="text-[16px] text-neutral-11 font-bold">
                       <span className="text-positive-11 cursor-pointer text-[16px]" onClick={onConnectWallet}>
