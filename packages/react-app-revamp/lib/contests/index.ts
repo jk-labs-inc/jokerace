@@ -3,7 +3,7 @@ import { isSupabaseConfigured } from "@helpers/database";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
-import { getBalance, getToken, readContract, readContracts } from "@wagmi/core";
+import { getBalance, readContract, readContracts } from "@wagmi/core";
 import { getTokenAddresses } from "lib/rewards";
 import moment from "moment";
 import { SearchOptions } from "types/search";
@@ -257,7 +257,7 @@ const processContestRewardsData = async (
         chain: contestChainName,
         token: {
           symbol: chain.nativeCurrency.symbol,
-          value: formatBalance(formatUnits(nativeReleasable, chain.nativeCurrency.decimals)),
+          value: formatBalance(formatUnits(nativeReleasable, chain.nativeCurrency.decimals).toString()),
         },
         winners: winners.length,
         numberOfTokens: 1,
@@ -290,7 +290,7 @@ const processContestRewardsData = async (
           chain: contestChainName,
           token: {
             symbol: tokenDetails.symbol ?? "",
-            value: formatBalance(formatUnits(erc20Releasable, tokenDetails.decimals)),
+            value: formatBalance(formatUnits(erc20Releasable, tokenDetails.decimals).toString()),
           },
           winners: winners.length,
           numberOfTokens: erc20TokenAddresses.length,

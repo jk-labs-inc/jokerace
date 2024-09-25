@@ -39,7 +39,7 @@ export const DistributableReward = (props: DistributableRewardProps) => {
   return (
     <div className="flex items-center justify-between w-full">
       <p>
-        {formatBalance(formatUnits(token.amount ?? 0n, token.decimals ?? 18))}{" "}
+        {formatBalance(formatUnits(token.amount ?? 0n, token.decimals ?? 18).toString())}{" "}
         <span className="uppercase">${token.symbol}</span>
       </p>
 

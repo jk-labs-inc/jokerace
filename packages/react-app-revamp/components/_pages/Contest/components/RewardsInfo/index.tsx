@@ -7,7 +7,7 @@ import { transform } from "@hooks/useDistributeRewards";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
 import { useReleasedRewards } from "@hooks/useReleasedRewards";
 import { usePathname } from "next/navigation";
-import { FC, useEffect, useState, useMemo } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { Abi } from "viem";

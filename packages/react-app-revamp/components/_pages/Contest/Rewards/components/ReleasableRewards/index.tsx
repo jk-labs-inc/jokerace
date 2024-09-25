@@ -4,6 +4,7 @@ import RewardsDistributionTable from "@components/_pages/RewardsDistributionTabl
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
 import { FC } from "react";
 import { Abi } from "viem";
+import TotalRewardsInfo from "../TotalRewardsInfo";
 
 interface RewardsReleasableProps {
   rewardsModuleAddress: string;
@@ -26,6 +27,7 @@ const RewardsReleasable: FC<RewardsReleasableProps> = ({
 }) => {
   const {
     data: releasableRewards,
+    totalRewards,
     isLoading: isReleasableRewardsLoading,
     isContractError: isReleasableRewardsContractError,
     isErc20AddressesError: isReleasableRewardsErc20AddressesError,
@@ -49,7 +51,10 @@ const RewardsReleasable: FC<RewardsReleasableProps> = ({
     <>
       {!isCanceled ? (
         <div className="flex flex-col gap-8 border-b border-primary-2 pb-8">
-          <p className="text-[24px] text-neutral-9 font-bold">rewards to distribute</p>
+          <div className="flex flex-col-reverse md:flex-row md:items-center gap-2 md:gap-4">
+            <p className="text-[24px] text-neutral-9 font-bold">rewards to distribute</p>
+            {totalRewards.length > 0 ? <TotalRewardsInfo totalRewards={totalRewards} /> : null}
+          </div>
 
           {isReleasableRewardsErc20AddressesError && (
             <div className="text-[16px] text-negative-11 font-bold">
