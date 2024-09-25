@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useChainChange } from "@hooks/useChainChange";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { Charge, SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
@@ -7,7 +8,7 @@ import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
-import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
+import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 
 interface CreateContestConfirmMonetizationProps {
   charge: Charge;
@@ -16,9 +17,9 @@ interface CreateContestConfirmMonetizationProps {
 }
 
 const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps> = ({ charge, step, onClick }) => {
-  const { chain, address } = useAccount();
+  const { chain } = useAccount();
   const chainChanged = useChainChange();
-  const { percentageToCreator, type } = charge;
+  const { type, splitFeeDestination } = charge;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain?.name.toLowerCase() ?? "");
   const [isHovered, setIsHovered] = useState(false);
   const nativeCurrencySymbol = chain?.nativeCurrency.symbol;
@@ -26,12 +27,13 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
   const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
   const [highlightChainChange, setHighlightChainChange] = useState(false);
   const blockExplorerUrl = chain?.blockExplorers?.default.url;
-  const creatorSplitDestination =
-    charge.splitFeeDestination.type === SplitFeeDestinationType.AnotherWallet
-      ? charge.splitFeeDestination.address
-      : address;
-  const blockExplorerAddressUrl = blockExplorerUrl ? `${blockExplorerUrl}/address/${creatorSplitDestination}` : "";
-  const creatorHasSplit = percentageToCreator > 0;
+  const blockExplorerAddressUrl = blockExplorerUrl
+    ? `${blockExplorerUrl}/address/${
+        splitFeeDestination.type === SplitFeeDestinationType.NoSplit
+          ? JK_LABS_SPLIT_DESTINATION_DEFAULT
+          : splitFeeDestination.address
+      }`
+    : "";
 
   useEffect(() => {
     if (chainChanged) {
@@ -41,11 +43,21 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
     }
   }, [chainChanged]);
 
-  const percentageToCreatorMessage = () => {
-    if (percentageToCreator === 50) {
-      return "all earnings split 50/50 with JokeRace";
+  const renderEarningsSplitMessage = () => {
+    if (
+      splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet ||
+      splitFeeDestination.type === SplitFeeDestinationType.AnotherWallet
+    ) {
+      return <li className="text-[16px] list-disc normal-case">all earnings split 50/50 with JokeRace</li>;
     } else {
-      return `all earnings go to JokeRace`;
+      return (
+        <li className="text-[16px] list-disc normal-case">
+          all earnings go to{" "}
+          <a href={blockExplorerAddressUrl} target="_blank" rel="noopener noreferrer" className="underline normal-case">
+            JokeRace
+          </a>
+        </li>
+      );
     }
   };
 
@@ -88,12 +100,13 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
               {charge.type.costToVote} <span className="uppercase">${nativeCurrencySymbol}</span>{" "}
               {charge.voteType === VoteType.PerVote ? "for each" : "to"} vote
             </li>
-            <li className="text-[16px] list-disc normal-case">{percentageToCreatorMessage()}</li>
-            {creatorHasSplit ? (
+            {renderEarningsSplitMessage()}
+            {splitFeeDestination.type === SplitFeeDestinationType.AnotherWallet ||
+            splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet ? (
               <li className="text-[16px] list-disc">
                 creator earnings go to{" "}
                 <a className="underline cursor-pointer" target="_blank" href={blockExplorerAddressUrl}>
-                  {shortenEthereumAddress(creatorSplitDestination ?? "")}
+                  {shortenEthereumAddress(splitFeeDestination.address)}
                 </a>
               </li>
             ) : null}

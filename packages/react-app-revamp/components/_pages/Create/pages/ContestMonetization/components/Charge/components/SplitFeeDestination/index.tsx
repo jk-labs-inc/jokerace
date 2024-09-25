@@ -37,7 +37,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
     setSelected(splitFeeDestination.type);
     setAddress(splitFeeDestination.address);
 
-    if (splitFeeDestination.address === rewardsModuleAddress) {
+    if (splitFeeDestination.address && rewardsModuleAddress && splitFeeDestination.address === rewardsModuleAddress) {
       setIsRewardsModuleAddress(true);
     } else {
       setIsRewardsModuleAddress(false);

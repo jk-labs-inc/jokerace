@@ -23,6 +23,7 @@ import { Abi } from "viem";
 import { ErrorType, useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
 import { getContracts } from "./v3v4/contracts";
+import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -173,12 +174,7 @@ export function useContest() {
           percentageToCreator,
           voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
           splitFeeDestination: {
-            type: determineSplitFeeDestination(
-              creatorSplitDestination,
-              contestAuthor,
-              percentageToCreator,
-              rewardsModuleAddress,
-            ),
+            type: determineSplitFeeDestination(creatorSplitDestination, contestAuthor, rewardsModuleAddress),
             address: creatorSplitDestination,
           },
           type: {
@@ -425,15 +421,14 @@ export function useContest() {
   function determineSplitFeeDestination(
     splitFeeDestination: string,
     creatorWalletAddress: string,
-    percentageToCreator: number,
     rewardsModuleAddress?: string,
   ): SplitFeeDestinationType {
-    if (percentageToCreator === 0) {
-      return SplitFeeDestinationType.NoSplit;
+    if (splitFeeDestination === creatorWalletAddress) {
+      return SplitFeeDestinationType.CreatorWallet;
     }
 
-    if (!splitFeeDestination || splitFeeDestination === creatorWalletAddress) {
-      return SplitFeeDestinationType.CreatorWallet;
+    if (splitFeeDestination === JK_LABS_SPLIT_DESTINATION_DEFAULT) {
+      return SplitFeeDestinationType.NoSplit;
     }
 
     if (rewardsModuleAddress && splitFeeDestination === rewardsModuleAddress) {

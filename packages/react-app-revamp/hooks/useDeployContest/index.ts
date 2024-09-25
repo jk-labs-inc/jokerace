@@ -86,10 +86,11 @@ export function useDeployContest() {
       const { merkleRoot: votingMerkleRoot = EMPTY_ROOT } = votingMerkle || {};
       const { allowedSubmissionsPerUser, maxSubmissions } = customization;
       const creatorSplitDestination =
-        charge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet ||
-        charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit
+        charge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet
           ? signer._address
-          : charge.splitFeeDestination.address;
+          : charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit
+            ? JK_LABS_SPLIT_DESTINATION_DEFAULT
+            : charge.splitFeeDestination.address;
 
       // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
       const finalAllowedSubmissionsPerUser =
