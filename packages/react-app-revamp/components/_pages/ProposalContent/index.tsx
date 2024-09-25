@@ -3,12 +3,14 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
 import { loadFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from "@helpers/localStorage";
+import { twitterRegex } from "@helpers/regex";
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useUserStore } from "@hooks/useUser/store";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { Interweave } from "interweave";
 import moment from "moment";
 import Image from "next/image";
@@ -20,7 +22,6 @@ import { Tweet } from "react-tweet";
 import { useAccount } from "wagmi";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 import ProposalContentInfo from "./components/ProposalContentInfo";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 export interface Proposal {
   id: string;
@@ -153,6 +154,43 @@ const ProposalContent: FC<ProposalContentProps> = ({
       return <img src={src} alt="proposal" className="rounded-[16px] max-w-full" />;
     }
 
+    if (element === "a") {
+      const href = node.getAttribute("href");
+      const tweetUrlMatch = href && href.match(twitterRegex);
+
+      const isInsideList =
+        node.parentNode?.parentNode?.nodeName === "li" ||
+        node.parentNode?.parentNode?.nodeName === "ul" ||
+        node.parentNode?.parentNode?.nodeName === "ol";
+
+      if (tweetUrlMatch) {
+        if (isInsideList) {
+          return (
+            <a href={href} target="_blank" rel="noopener noreferrer nofollow">
+              {node.childNodes[0]?.textContent || ""}
+            </a>
+          );
+        }
+
+        const hasTextContent = node.childNodes[0]?.textContent && node.childNodes[0]?.textContent !== href;
+
+        if (hasTextContent) {
+          return (
+            <a href={href} target="_blank" rel="noopener noreferrer nofollow">
+              {node.childNodes[0]?.textContent}
+            </a>
+          );
+        } else {
+          const tweetId = tweetUrlMatch[4] || tweetUrlMatch[2];
+          return (
+            <div className="dark not-prose">
+              <Tweet apiUrl={`/api/tweet/${tweetId}`} id={tweetId} />
+            </div>
+          );
+        }
+      }
+    }
+
     return undefined;
   };
 
@@ -178,26 +216,14 @@ const ProposalContent: FC<ProposalContentProps> = ({
               scroll={false}
               prefetch
             >
-              {isProposalTweet ? (
-                <div className="dark interweave-container inline-block w-full">
-                  <Interweave
-                    className="prose prose-invert"
-                    content={proposal.content}
-                    transform={transform}
-                    tagName="div"
-                  />
-                  <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
-                </div>
-              ) : (
-                <div className="max-w-full overflow-hidden interweave-container">
-                  <Interweave
-                    className="prose prose-invert interweave-container inline-block w-full"
-                    content={proposal.content}
-                    transform={transform}
-                    tagName="div"
-                  />
-                </div>
-              )}
+              <div className="max-w-full overflow-hidden interweave-container">
+                <Interweave
+                  className="prose prose-invert interweave-container inline-block w-full"
+                  content={proposal.content}
+                  transform={transform}
+                  tagName="div"
+                />
+              </div>
             </Link>
           </div>
           <div className="flex items-center justify-between">
