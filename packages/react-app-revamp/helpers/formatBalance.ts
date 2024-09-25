@@ -1,17 +1,24 @@
-export function formatBalance(balance: string): string {
-  const num = parseFloat(balance);
+import BigNumber from "bignumber.js";
 
-  if (num === 0) {
+export function formatBalance(balance: string): string {
+  const num = new BigNumber(balance);
+
+  // handle zero
+  if (num.isZero()) {
     return "0";
   }
 
-  // handle all non-zero numbers
-  if (num !== 0) {
-    // truncate to 3 decimal places without rounding
-    const truncated = Math.floor(Math.abs(num) * 1000) / 1000;
-    // format with up to 3 decimal places, removing trailing zeros
-    return (num < 0 ? "-" : "") + truncated.toFixed(3).replace(/\.?0+$/, "");
+  // handle small numbers (less than 0.001)
+  if (num.abs().isLessThan(0.001)) {
+    // find the first non-zero digit
+    const firstNonZeroIndex = balance.replace(/^-?0\.?0*/, "").search(/[1-9]/);
+    if (firstNonZeroIndex !== -1) {
+      // return the number with up to 3 significant digits
+      return num.precision(firstNonZeroIndex + 3).toString();
+    }
   }
 
-  return "0";
+  // handle numbers >= 0.001
+  // truncate to 3 decimal places without rounding
+  return num.decimalPlaces(3, BigNumber.ROUND_FLOOR).toString();
 }
