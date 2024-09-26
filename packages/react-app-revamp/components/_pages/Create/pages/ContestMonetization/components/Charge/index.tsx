@@ -8,7 +8,6 @@ import { FC, useState } from "react";
 import ContestParamsSplitFeeDestination from "./components/SplitFeeDestination";
 import ContestParamsChargeSubmission from "./components/Submission";
 import ContestParamsChargeVote from "./components/Vote";
-import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 
 interface CreateContestChargeProps {
   isConnected: boolean;

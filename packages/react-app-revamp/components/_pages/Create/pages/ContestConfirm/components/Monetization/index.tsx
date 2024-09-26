@@ -2,13 +2,13 @@
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useChainChange } from "@hooks/useChainChange";
 import useChargeDetails from "@hooks/useChargeDetails";
+import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 import { Charge, SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
-import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 
 interface CreateContestConfirmMonetizationProps {
   charge: Charge;
@@ -17,7 +17,7 @@ interface CreateContestConfirmMonetizationProps {
 }
 
 const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps> = ({ charge, step, onClick }) => {
-  const { chain } = useAccount();
+  const { chain, address } = useAccount();
   const chainChanged = useChainChange();
   const { type, splitFeeDestination } = charge;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain?.name.toLowerCase() ?? "");
@@ -31,7 +31,9 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
     ? `${blockExplorerUrl}/address/${
         splitFeeDestination.type === SplitFeeDestinationType.NoSplit
           ? JK_LABS_SPLIT_DESTINATION_DEFAULT
-          : splitFeeDestination.address
+          : splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet
+            ? address
+            : splitFeeDestination.address
       }`
     : "";
 
@@ -106,7 +108,11 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
               <li className="text-[16px] list-disc">
                 creator earnings go to{" "}
                 <a className="underline cursor-pointer" target="_blank" href={blockExplorerAddressUrl}>
-                  {shortenEthereumAddress(splitFeeDestination.address)}
+                  {shortenEthereumAddress(
+                    splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet
+                      ? address ?? ""
+                      : splitFeeDestination.address ?? "",
+                  )}
                 </a>
               </li>
             ) : null}
