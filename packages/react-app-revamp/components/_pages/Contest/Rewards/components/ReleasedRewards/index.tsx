@@ -2,6 +2,7 @@ import RewardsPreviouslyDistributedTable from "@components/_pages/RewardsPreviou
 import { useReleasedRewards } from "@hooks/useReleasedRewards";
 import { FC } from "react";
 import { Abi } from "viem";
+import TotalRewardsInfo from "../TotalRewardsInfo";
 
 interface RewardsReleasedProps {
   rewardsModuleAddress: string;
@@ -13,6 +14,7 @@ interface RewardsReleasedProps {
 const RewardsReleased: FC<RewardsReleasedProps> = ({ rewardsModuleAddress, chainId, rewardsAbi, rankings }) => {
   const {
     data: releasedRewards,
+    totalRewards,
     isLoading: isReleasedRewardsLoading,
     isContractError: isReleasedRewardsContractError,
     isErc20AddressesError: isReleasedRewardsErc20AddressesError,
@@ -33,12 +35,17 @@ const RewardsReleased: FC<RewardsReleasedProps> = ({ rewardsModuleAddress, chain
     );
 
   return (
-    <>
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col-reverse md:flex-row md:items-center gap-2 md:gap-4">
+        <p className="text-[24px] text-neutral-9 font-bold">previously distributed rewards</p>
+        {totalRewards.length > 0 ? <TotalRewardsInfo totalRewards={totalRewards} /> : null}
+      </div>
       {isReleasedRewardsErc20AddressesError && (
         <div className="text-[16px] text-negative-11 font-bold">
           Error while loading ERC20 tokens for previously distributed rewards, please reload the page.
         </div>
       )}
+
       {rankings.map((payee, index) => (
         <RewardsPreviouslyDistributedTable
           key={index}
@@ -49,7 +56,7 @@ const RewardsReleased: FC<RewardsReleasedProps> = ({ rewardsModuleAddress, chain
           abiRewardsModule={rewardsAbi}
         />
       ))}
-    </>
+    </div>
   );
 };
 

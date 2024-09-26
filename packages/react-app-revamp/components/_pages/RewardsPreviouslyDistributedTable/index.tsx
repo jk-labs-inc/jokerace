@@ -1,10 +1,8 @@
 import { formatBalance } from "@helpers/formatBalance";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
 import { useDistributeRewardStore } from "@hooks/useDistributeRewards";
-import useFundRewardsModule from "@hooks/useFundRewards";
 import { TokenInfo } from "@hooks/useReleasableRewards";
 import { ProcessedReleasedRewards } from "@hooks/useReleasedRewards";
-import { useWithdrawRewardStore } from "@hooks/useWithdrawRewards";
 import { FC } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { Abi, formatUnits } from "viem";
@@ -60,7 +58,7 @@ const RewardsPreviouslyDistributedTable: FC<RewardsPreviouslyDistributedTablePro
                       <Skeleton width={200} height={16} />
                     ) : (
                       <p className="text-neutral-9">
-                        {formatBalance(formatUnits(token.amount ?? 0n, token.decimals ?? 18))}{" "}
+                        {formatBalance(formatUnits(token.amount ?? 0n, token.decimals ?? 18).toString())}{" "}
                         <span className="uppercase">${token.symbol}</span>
                       </p>
                     )}

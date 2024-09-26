@@ -193,19 +193,16 @@ const ContestRewards = () => {
                   />
                 )}
 
-              <div className="flex flex-col gap-8">
-                <p className="text-[24px] text-neutral-9 font-bold">previously distributed rewards</p>
-                {rewardsStore.rewards.contractAddress &&
-                  rewardsStore.rewards.abi &&
-                  rewardsStore.rewards.payees.length > 0 && (
-                    <RewardsReleased
-                      rewardsModuleAddress={rewardsStore.rewards.contractAddress}
-                      chainId={chainId}
-                      rewardsAbi={rewardsStore.rewards.abi}
-                      rankings={rewardsStore.rewards.payees}
-                    />
-                  )}
-              </div>
+              {rewardsStore.rewards.contractAddress &&
+                rewardsStore.rewards.abi &&
+                rewardsStore.rewards.payees.length > 0 && (
+                  <RewardsReleased
+                    rewardsModuleAddress={rewardsStore.rewards.contractAddress}
+                    chainId={chainId}
+                    rewardsAbi={rewardsStore.rewards.abi}
+                    rankings={rewardsStore.rewards.payees}
+                  />
+                )}
             </div>
           )}
 
