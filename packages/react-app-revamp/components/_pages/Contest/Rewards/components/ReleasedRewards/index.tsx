@@ -36,7 +36,7 @@ const RewardsReleased: FC<RewardsReleasedProps> = ({ rewardsModuleAddress, chain
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-col-reverse md:flex-row md:items-center gap-2 md:gap-4">
+      <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
         <p className="text-[24px] text-neutral-9 font-bold">previously distributed rewards</p>
         {totalRewards.length > 0 ? <TotalRewardsInfo totalRewards={totalRewards} /> : null}
       </div>
