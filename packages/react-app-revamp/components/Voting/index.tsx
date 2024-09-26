@@ -169,7 +169,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
                 onChange={e => handleChange(e.target.value)}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
-                placeholder="0.00"
+                placeholder="0"
                 max={amountOfVotes}
                 onKeyDown={handleKeyDownInput}
                 onInput={handleInput}
