@@ -6,12 +6,14 @@ import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
+import { chains } from "@config/wagmi";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import ordinalize from "@helpers/ordinalize";
 import { generateUrlSubmissions } from "@helpers/share";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { VoteType } from "@hooks/useDeployContest/types";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
@@ -58,7 +60,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const { openAccountModal } = useAccountModal();
   const { contestStatus } = useContestStatusStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
-  const { downvotingAllowed } = useContestStore(state => state);
+  const { downvotingAllowed, charge } = useContestStore(state => state);
   const { listProposalsIds } = useProposalStore(state => state);
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
@@ -66,7 +68,8 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;
-
+  const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
+  const isAnyoneCanVote = charge?.voteType === VoteType.PerVote;
   if (isProposalError) {
     return (
       <DialogModalV3 isOpen={true} title="submissionMobile" isMobile>
@@ -133,7 +136,11 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
             )}
 
             {contestStatus === ContestStatus.VotingOpen && (
-              <div className="flex flex-col gap-12">
+              <div className="flex flex-col gap-4 md:gap-8 md:w-80">
+                <div className="flex flex-col gap-4">
+                  <hr className="block border border-neutral-9" />
+                  <p className="text-neutral-11 font-bold text-[20px]">add votes</p>
+                </div>
                 {isConnected ? (
                   currentUserAvailableVotesAmount > 0 ? (
                     <VotingWidget
@@ -147,6 +154,10 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
                       looks like you've used up all your votes this contest <br />
                       feel free to try connecting another wallet to see if it has more votes!
                     </p>
+                  ) : isAnyoneCanVote ? (
+                    <p className="text-[16px] text-negative-11 font-bold">
+                      add {chainCurrencySymbol} to {contestInfo.chain} to get votes
+                    </p>
                   ) : (
                     <p className="text-[16px] text-neutral-11">
                       unfortunately your wallet didn't qualify to vote in this contest <br />
@@ -154,16 +165,12 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
                     </p>
                   )
                 ) : (
-                  <div className="flex flex-col gap-4 md:w-80">
-                    <hr className={`md:block border border-neutral-9`} />
-                    <p className="text-neutral-11 font-bold text-[20px]">add votes</p>
-                    <p className="text-[16px] text-neutral-11 font-bold">
-                      <span className="text-positive-11 cursor-pointer text-[16px]" onClick={onConnectWallet}>
-                        connect wallet
-                      </span>{" "}
-                      to see if you qualify
-                    </p>
-                  </div>
+                  <p className="text-[16px] text-neutral-11 font-bold">
+                    <span className="text-positive-11 cursor-pointer text-[16px]" onClick={onConnectWallet}>
+                      connect wallet
+                    </span>{" "}
+                    to see if you qualify
+                  </p>
                 )}
               </div>
             )}
