@@ -107,7 +107,6 @@ const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charg
         <ContestParamsSplitFeeDestination
           splitFeeDestination={localCharge.splitFeeDestination}
           splitFeeDestinationError={splitFeeDestinationError}
-          includeRewardsPool={rewardsModuleAddress !== ""}
           rewardsModuleAddress={rewardsModuleAddress}
           onSplitFeeDestinationTypeChange={handleSplitFeeDestinationTypeChange}
           onSplitFeeDestinationAddressChange={handleSplitFeeDestinationAddressChange}
