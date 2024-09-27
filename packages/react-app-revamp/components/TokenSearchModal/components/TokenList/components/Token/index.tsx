@@ -69,14 +69,14 @@ const TokenSearchListToken: FC<TokenSearchListTokenProps> = ({ token, isChainDro
         <div className="flex flex-col gap-1">
           <p
             className={`text-[20px] text-neutral-11 font-bold normal-case transition-colors duration-300 ${
-              isHovered ? "text-primary-10" : ""
+              isHovered ? "text-positive-11" : ""
             }`}
           >
             {token.symbol}
           </p>
           <p
             className={`text-[16px] text-neutral-11 transition-colors duration-300 ${
-              isHovered ? "text-primary-10" : ""
+              isHovered ? "text-positive-11" : ""
             }`}
           >
             {truncateTokenName(token.name)}
@@ -86,7 +86,7 @@ const TokenSearchListToken: FC<TokenSearchListTokenProps> = ({ token, isChainDro
       {token.balance ? (
         <p
           className={`text-[20px] font-bold text-neutral-11 transition-colors duration-300 ${
-            isHovered ? "text-primary-10" : ""
+            isHovered ? "text-positive-11" : ""
           }`}
         >
           {displayBalance()}
