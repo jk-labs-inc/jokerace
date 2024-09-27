@@ -174,7 +174,12 @@ export function useContest() {
           percentageToCreator,
           voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
           splitFeeDestination: {
-            type: determineSplitFeeDestination(creatorSplitDestination, contestAuthor, rewardsModuleAddress),
+            type: determineSplitFeeDestination(
+              creatorSplitDestination,
+              percentageToCreator,
+              contestAuthor,
+              rewardsModuleAddress,
+            ),
             address: creatorSplitDestination,
           },
           type: {
@@ -420,15 +425,16 @@ export function useContest() {
 
   function determineSplitFeeDestination(
     splitFeeDestination: string,
+    percentageToCreator: number,
     creatorWalletAddress: string,
     rewardsModuleAddress?: string,
   ): SplitFeeDestinationType {
-    if (splitFeeDestination === creatorWalletAddress) {
-      return SplitFeeDestinationType.CreatorWallet;
+    if (splitFeeDestination === JK_LABS_SPLIT_DESTINATION_DEFAULT || percentageToCreator === 0) {
+      return SplitFeeDestinationType.NoSplit;
     }
 
-    if (splitFeeDestination === JK_LABS_SPLIT_DESTINATION_DEFAULT) {
-      return SplitFeeDestinationType.NoSplit;
+    if (splitFeeDestination === creatorWalletAddress) {
+      return SplitFeeDestinationType.CreatorWallet;
     }
 
     if (rewardsModuleAddress && splitFeeDestination === rewardsModuleAddress) {

@@ -5,6 +5,7 @@ import { Charge, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
 import ContestParamsEarningsModal from "./components/Modal";
+import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 
 interface ContestParametersEarningsProps {
   charge: Charge;
@@ -19,11 +20,14 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge,
   const creatorSplitDestination = charge.splitFeeDestination.address
     ? charge.splitFeeDestination.address
     : contestAuthor;
-  const blockExplorerAddressUrl = blockExplorerUrl ? `${blockExplorerUrl}/address/${creatorSplitDestination}` : "";
+  const blockExplorerAddressUrl = blockExplorerUrl
+    ? `${blockExplorerUrl}/address/${charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit ? JK_LABS_SPLIT_DESTINATION_DEFAULT : creatorSplitDestination}`
+    : "";
   const [isEditEarningsModalOpen, setIsEditEarningsModalOpen] = useState(false);
   const { contestState } = useContestStateStore(state => state);
   const isContestFinishedOrCanceled =
     contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
+
   const renderEarningsSplitMessage = () => {
     if (isCreatorSplit) {
       return <li className="text-[16px] list-disc normal-case">all earnings split 50/50 with JokeRace</li>;
