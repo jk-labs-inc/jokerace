@@ -12,6 +12,7 @@ interface ContestParamsSplitFeeDestinationProps {
   onSplitFeeDestinationTypeChange?: (value: SplitFeeDestinationType) => void;
   onSplitFeeDestinationAddressChange?: (value: string) => void;
   includeRewardsPool?: boolean;
+  includeRewardsInfo?: boolean;
   rewardsModuleAddress?: string;
 }
 
@@ -25,6 +26,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
   onSplitFeeDestinationAddressChange,
   includeRewardsPool,
   rewardsModuleAddress,
+  includeRewardsInfo,
 }) => {
   const [showRewardsInfo, setShowRewardsInfo] = useState(false);
   const [selected, setSelected] = useState<SplitFeeDestinationType>(splitFeeDestination.type);
@@ -137,7 +139,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                 </div>
               )}
             </Radio>
-            {!includeRewardsPool ? (
+            {includeRewardsInfo ? (
               <div className="flex flex-col gap-4">
                 <div className="w-fit -ml-2 md:-ml-4">
                   <div

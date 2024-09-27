@@ -144,6 +144,7 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
         splitFeeDestinationError={splitFeeDestinationError}
         onSplitFeeDestinationTypeChange={handleSplitFeeDestinationTypeChange}
         onSplitFeeDestinationAddressChange={handleSplitFeeDestinationAddressChange}
+        includeRewardsInfo
       />
       <div className="flex flex-col gap-8">
         <ContestParamsChargeSubmission
