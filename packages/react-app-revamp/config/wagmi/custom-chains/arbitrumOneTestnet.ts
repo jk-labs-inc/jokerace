@@ -14,7 +14,7 @@ export const arbitrumOneTestnet: Chain = {
       http: ["https://sepolia-rollup.arbitrum.io/rpc"],
     },
     default: {
-      http: [`https://sly-wider-dew.arbitrum-sepolia.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
+      http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.arbitrum-sepolia.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
     },
   },
   blockExplorers: {

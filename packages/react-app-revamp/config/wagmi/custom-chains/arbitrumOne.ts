@@ -14,7 +14,7 @@ export const arbitrumOne: Chain = {
       http: ["https://rpc.ankr.com/arbitrum"],
     },
     default: {
-      http: [`https://sly-wider-dew.arbitrum-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
+      http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.arbitrum-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
     },
   },
   blockExplorers: {

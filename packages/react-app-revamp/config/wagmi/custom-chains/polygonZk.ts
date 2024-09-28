@@ -14,7 +14,7 @@ export const polygonZk: Chain = {
       http: ["https://zkevm-rpc.com"],
     },
     default: {
-      http: [`https://sly-wider-dew.zkevm-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
+      http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.zkevm-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
     },
   },
   blockExplorers: {

@@ -14,7 +14,7 @@ export const optimismTestnet: Chain = {
       http: ["https://optimism-sepolia.publicnode.com"],
     },
     default: {
-      http: [`https://sly-wider-dew.optimism-sepolia.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
+      http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.optimism-sepolia.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
     },
   },
   blockExplorers: {

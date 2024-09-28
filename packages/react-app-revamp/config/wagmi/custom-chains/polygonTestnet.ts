@@ -14,7 +14,7 @@ export const polygonTestnet: Chain = {
       http: ["https://rpc.ankr.com/polygon_amoy"],
     },
     default: {
-      http: [`https://sly-wider-dew.matic-amoy.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
+      http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.matic-amoy.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
     },
   },
   blockExplorers: {
