@@ -14,7 +14,7 @@ export const optimismTestnet: Chain = {
       http: ["https://optimism-sepolia.publicnode.com"],
     },
     default: {
-      http: [`https://opt-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
+      http: [`https://sly-wider-dew.optimism-sepolia.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
     },
   },
   blockExplorers: {

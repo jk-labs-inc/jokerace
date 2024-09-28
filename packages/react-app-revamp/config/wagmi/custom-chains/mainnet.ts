@@ -14,7 +14,7 @@ export const mainnet: Chain = {
       http: ["https://eth.llamarpc.com"],
     },
     default: {
-      http: [`https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
+      http: [`https://sly-wider-dew.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
     },
   },
   blockExplorers: {

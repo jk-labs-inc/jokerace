@@ -14,7 +14,7 @@ export const polygonTestnet: Chain = {
       http: ["https://rpc.ankr.com/polygon_amoy"],
     },
     default: {
-      http: [`https://polygon-amoy.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
+      http: [`https://sly-wider-dew.matic-amoy.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
     },
   },
   blockExplorers: {
