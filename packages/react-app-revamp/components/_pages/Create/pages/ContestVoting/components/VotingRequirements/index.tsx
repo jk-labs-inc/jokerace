@@ -8,7 +8,7 @@ import useChargeDetails from "@hooks/useChargeDetails";
 import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle, VoteType, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
-import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
+import { fetchNftHolders } from "lib/permissioning";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import CreateVotingRequirementsNftSettings from "./components/NFT";
@@ -243,14 +243,22 @@ const CreateVotingRequirements = () => {
           votingRequirements.powerType,
         );
       } else {
-        votingAllowlist = await fetchTokenHolders(
-          "voting",
-          votingRequirements.tokenAddress,
-          votingRequirements.chain,
-          votingRequirements.minTokensRequired,
-          votingRequirements.powerValue,
-          votingRequirements.powerType,
-        );
+        const response = await fetch("/api/token-holders", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            type: "voting",
+            contractAddress: votingRequirements.tokenAddress,
+            chainName: votingRequirements.chain,
+            minTokensRequired: votingRequirements.minTokensRequired,
+            powerValue: votingRequirements.powerValue,
+            powerType: votingRequirements.powerType,
+          }),
+        });
+
+        votingAllowlist = await response.json();
       }
 
       if (votingAllowlist instanceof Error) {

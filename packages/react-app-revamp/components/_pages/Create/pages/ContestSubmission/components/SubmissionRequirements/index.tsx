@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import CreateSubmissionRequirementsNftSettings from "./components/NFT";
 import CreateSubmissionRequirementsTokenSettings from "./components/Token";
+import { fetchNftHolders } from "lib/permissioning";
 
 enum SubmissionRequirementsOption {
   Anyone = "anyone",
@@ -146,23 +147,14 @@ const CreateSubmissionRequirements = () => {
     try {
       let result;
       if (type.value === SubmissionRequirementsOption.Erc721) {
-        const response = await fetch("/api/nft-holders", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            type: "submission",
-            contractAddress: submissionRequirements.tokenAddress,
-            chainName: submissionRequirements.chain,
-            minTokensRequired: submissionRequirements.minTokensRequired,
-            tokenId: submissionRequirements.nftTokenId,
-          }),
-        });
-
-        result = await response.json();
+        result = await fetchNftHolders(
+          "submission",
+          submissionRequirements.tokenAddress,
+          submissionRequirements.chain,
+          submissionRequirements.minTokensRequired,
+          submissionRequirements.nftTokenId,
+        );
       } else {
-        console.log("fetching token holders");
         const response = await fetch("/api/token-holders", {
           method: "POST",
           headers: {
@@ -175,8 +167,6 @@ const CreateSubmissionRequirements = () => {
             minTokensRequired: submissionRequirements.minTokensRequired,
           }),
         });
-
-        console.log("response", response);
 
         result = await response.json();
       }
