@@ -28,14 +28,14 @@ const SubmissionQualifierMessage: FC<SubmissionQualifierMessageProps> = ({
   if (isContestOpen) {
     if (canSubmit) {
       return (
-        <p className="text-[16px] text-primary-10">
+        <p className="text-[16px] text-secondary-11">
           good news: you qualify to submit a response once the contest opens
         </p>
       );
     }
     if (!currentUserQualifiedToSubmit) {
       return (
-        <p className="text-[16px] text-primary-10">
+        <p className="text-[16px] text-secondary-11">
           unfortunately, your wallet wasn’t allowlisted to submit in this contest.
         </p>
       );
@@ -44,19 +44,19 @@ const SubmissionQualifierMessage: FC<SubmissionQualifierMessageProps> = ({
 
   if (contestStatus === ContestStatus.SubmissionOpen) {
     if (hasReachedMaxSubmissions) {
-      return <p className="text-[16px] text-primary-10">you’ve reached your max submissions with this account</p>;
+      return <p className="text-[16px] text-secondary-11">you’ve reached your max submissions with this account</p>;
     }
     if (!currentUserQualifiedToSubmit) {
       if (canVote) {
         return (
-          <p className="text-[16px] text-primary-10">
+          <p className="text-[16px] text-secondary-11">
             unfortunately, your wallet wasn’t allowlisted to submit in this contest, but you <i>were</i> allowlisted to
             vote
           </p>
         );
       }
       return (
-        <p className="text-[16px] text-primary-10">
+        <p className="text-[16px] text-secondary-11">
           unfortunately, your wallet wasn’t allowlisted to submit in this contest.
         </p>
       );

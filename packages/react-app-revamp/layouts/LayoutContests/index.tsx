@@ -63,7 +63,7 @@ const LayoutContests = (props: LayoutContestsProps) => {
                   return;
                 }}
                 className={`navLink-desktop whitespace-nowrap font-sabo text-[14px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
-                  pathname === link.href ? "text-primary-10" : "text-neutral-11"
+                  pathname === link.href ? "text-positive-11" : "text-neutral-11"
                 }`}
               >
                 {link.label}
@@ -71,14 +71,17 @@ const LayoutContests = (props: LayoutContestsProps) => {
             </Link>
           ))}
           <div className="absolute left-0 w-full h-1 bottom-0 bg-neutral-0"></div>
-          <div style={indicatorStyle} className="absolute bottom-0 h-1 bg-primary-10 transition-all duration-200"></div>
+          <div
+            style={indicatorStyle}
+            className="absolute bottom-0 h-1 bg-positive-11 transition-all duration-200"
+          ></div>
         </div>
       </div>
 
       <ErrorBoundary
         fallbackRender={({ error, resetErrorBoundary }) => (
           <div role="alert" className="container m-auto sm:text-center">
-            <p className="text-4xl font-black mb-3 text-primary-10">Something went wrong</p>
+            <p className="text-4xl font-black mb-3 text-neutral-11">Something went wrong</p>
             <p className="text-neutral-12 mb-4">{error?.message ?? error}</p>
             <p className="mb-6">
               This site&apos;s current deployment does not have access to jokerace&apos;s reference database of
