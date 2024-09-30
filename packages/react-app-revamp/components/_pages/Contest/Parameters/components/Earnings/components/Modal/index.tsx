@@ -1,5 +1,6 @@
 import ContestParamsSplitFeeDestination from "@components/_pages/Create/pages/ContestMonetization/components/Charge/components/SplitFeeDestination";
 import DialogModalV4 from "@components/UI/DialogModalV4";
+import { toastInfo } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { addressRegex } from "@helpers/regex";
@@ -44,7 +45,7 @@ const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charg
         newAddress = JK_LABS_SPLIT_DESTINATION_DEFAULT;
         break;
       case SplitFeeDestinationType.CreatorWallet:
-        newAddress = userAddress;
+        newAddress = userAddress ?? "";
     }
 
     const newSplitFeeDestination = {
@@ -87,6 +88,11 @@ const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charg
       await switchChain(config, { chainId: contestChainId });
     }
 
+    if (!userAddress && localCharge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet) {
+      toastInfo("Please connect your wallet to set this option");
+      return;
+    }
+
     setCreatorSplitDestination(localCharge.splitFeeDestination);
   };
 
@@ -106,8 +112,8 @@ const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charg
         </div>
         <ContestParamsSplitFeeDestination
           splitFeeDestination={localCharge.splitFeeDestination}
-          splitFeeDestinationError={splitFeeDestinationError}
           includeRewardsPool={rewardsModuleAddress !== ""}
+          splitFeeDestinationError={splitFeeDestinationError}
           rewardsModuleAddress={rewardsModuleAddress}
           onSplitFeeDestinationTypeChange={handleSplitFeeDestinationTypeChange}
           onSplitFeeDestinationAddressChange={handleSplitFeeDestinationAddressChange}

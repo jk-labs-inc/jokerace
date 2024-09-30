@@ -1,6 +1,8 @@
 import { Radio, RadioGroup } from "@headlessui/react";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { SplitFeeDestination, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
+import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -9,22 +11,24 @@ interface ContestParamsSplitFeeDestinationProps {
   splitFeeDestinationError: string;
   onSplitFeeDestinationTypeChange?: (value: SplitFeeDestinationType) => void;
   onSplitFeeDestinationAddressChange?: (value: string) => void;
-  includeRewardsInfo?: boolean;
   includeRewardsPool?: boolean;
+  includeRewardsInfo?: boolean;
   rewardsModuleAddress?: string;
 }
 
 const PLACEHOLDER_ADDRESS = "0x7B15427393A98A041D00b50254A0C7a6fDC79F4E";
+const SELF_FUND_DOCS = "https://docs.jokerace.io/faq#how-can-a-contest-fund-itself";
 
 const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps> = ({
   splitFeeDestination,
   splitFeeDestinationError,
   onSplitFeeDestinationTypeChange,
   onSplitFeeDestinationAddressChange,
-  includeRewardsInfo,
   includeRewardsPool,
   rewardsModuleAddress,
+  includeRewardsInfo,
 }) => {
+  const [showRewardsInfo, setShowRewardsInfo] = useState(false);
   const [selected, setSelected] = useState<SplitFeeDestinationType>(splitFeeDestination.type);
   const [address, setAddress] = useState(splitFeeDestination.address);
   const [isRewardsModuleAddress, setIsRewardsModuleAddress] = useState(false);
@@ -37,7 +41,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
     setSelected(splitFeeDestination.type);
     setAddress(splitFeeDestination.address);
 
-    if (splitFeeDestination.address === rewardsModuleAddress) {
+    if (splitFeeDestination.address && rewardsModuleAddress && splitFeeDestination.address === rewardsModuleAddress) {
       setIsRewardsModuleAddress(true);
     } else {
       setIsRewardsModuleAddress(false);
@@ -46,6 +50,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
 
   const handleSplitFeeDestinationTypeChange = (value: SplitFeeDestinationType) => {
     setSelected(value);
+    setShowRewardsInfo(false);
     onSplitFeeDestinationTypeChange?.(value);
   };
 
@@ -74,7 +79,9 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                     }`}
                   ></div>
                   <div className="flex flex-col gap-4">
-                    <p className="text-[20px] text-neutral-9">my wallet</p>
+                    <p className={`text-[20px] ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                      my wallet ({isMobile ? "i earn" : "i want to earn"})
+                    </p>
                   </div>
                 </div>
               )}
@@ -88,7 +95,9 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                     } `}
                   ></div>
                   <div className="flex flex-col gap-2">
-                    <p className={`text-[20px] text-neutral-9`}>another wallet</p>
+                    <p className={`text-[20px] ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                      another wallet ({isMobile ? "they earn" : "i want someone else to earn"})
+                    </p>
                     {checked ? (
                       <>
                         <input
@@ -121,11 +130,84 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                     }`}
                   ></div>
                   <div className="flex flex-col gap-4">
-                    <p className="text-[20px] text-neutral-9">i prefer to take 0% of earnings</p>
+                    <p className={`text-[20px] normal-case ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                      {isMobile
+                        ? "nobody (JokeRace earns)"
+                        : "i prefer to take 0% of earnings (i want JokeRace to earn)"}
+                    </p>
                   </div>
                 </div>
               )}
             </Radio>
+            {includeRewardsInfo ? (
+              <div className="flex flex-col gap-4">
+                <div className="w-fit -ml-2 md:-ml-4">
+                  <div
+                    className="flex gap-4 items-start cursor-pointer bg-neutral-2 rounded-lg px-2 md:px-4 py-1"
+                    onClick={() => setShowRewardsInfo(!showRewardsInfo)}
+                  >
+                    <div className="flex items-center mt-1 justify-center w-6 h-6 border border-primary-5 rounded-[10px]"></div>
+                    <div className="flex gap-2 items-center">
+                      <p className="text-[20px] text-primary-5">
+                        {isMobile ? "rewards pool (winners earn)" : "the rewards pool (i want winners to earn)"}
+                      </p>
+                      <InformationCircleIcon className="w-7 h-7 text-primary-5" />
+                    </div>
+                  </div>
+                </div>
+
+                {showRewardsInfo && (
+                  <div className="w-fit -ml-0 md:-ml-4 animate-appear">
+                    <div className="flex flex-col gap-4 md:gap-6 p-4 shadow-split-fee-destination border border-primary-1 rounded-lg">
+                      <div className="flex justify-between">
+                        <div className="flex gap-4 md:gap-2 items-center">
+                          <InformationCircleIcon className="w-7 h-7 text-negative-11" />
+                          <p className=" text-[16px] md:text-[20px] text-negative-11 italic font-bold">
+                            action required
+                          </p>
+                        </div>
+                        <button onClick={() => setShowRewardsInfo(false)}>
+                          <Image
+                            src="/modal/modal_close.svg"
+                            width={24}
+                            height={24}
+                            alt="close"
+                            className="hidden md:block cursor-pointer"
+                          />
+                        </button>
+                      </div>
+                      <div className="flex flex-col gap-4 md:gap-6 pl-8">
+                        <p className="text-[16px] md:text-[20px] text-neutral-11">
+                          {isMobile
+                            ? "finish creating this contest first, then:"
+                            : "finish creating this contest first, and we’ll direct you to:"}
+                        </p>
+                        <ul className="list-disc list-inside pl-4">
+                          <li className="text-[16px] md:text-[20px] text-neutral-11">create a rewards pool</li>
+                          <li className="text-[16px] md:text-[20px] text-neutral-11">
+                            turn on self-funding rewards{" "}
+                            {!isMobile && (
+                              <>
+                                (read more{" "}
+                                <a
+                                  href={SELF_FUND_DOCS}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-positive-11"
+                                >
+                                  here)
+                                </a>
+                              </>
+                            )}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : null}
+
             {includeRewardsPool ? (
               <Radio value={SplitFeeDestinationType.RewardsPool}>
                 {({ checked }) => (
@@ -136,8 +218,8 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                       }`}
                     ></div>
                     <div className="flex flex-col gap-4">
-                      <p className="text-[20px] text-neutral-9">
-                        the rewards pool <span className="text-secondary-11">(new)</span>
+                      <p className={`text-[20px] ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                        {isMobile ? "rewards pool (winners earn)" : "the rewards pool (i want winners to earn)"}
                       </p>
                     </div>
                   </div>
@@ -147,18 +229,6 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
           </div>
         </RadioGroup>
       </div>
-      {includeRewardsInfo ? (
-        <p className="text-[16px] text-neutral-11">
-          {isMobile ? (
-            "create a rewards pool after creating this contest to set your earnings to go to rewards."
-          ) : (
-            <>
-              want your earnings to go towards rewards? finish creating this contest, then create a <br />
-              rewards pool, and then you’ll have the option.
-            </>
-          )}
-        </p>
-      ) : null}
     </div>
   );
 };

@@ -163,7 +163,7 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
       ) : null}
 
       {contestStatus === ContestStatus.SubmissionOpen && (
-        <p className="text-[16px] text-primary-10">voting opens {formattedVotesOpen}</p>
+        <p className="text-[16px] text-secondary-11">voting opens {formattedVotesOpen}</p>
       )}
     </div>
   );

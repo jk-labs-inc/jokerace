@@ -34,7 +34,7 @@ const CreateContestSummary = () => {
           <StepCircle step={step + 1} />
         </div>
         <div className="col-span-2 ml-10">
-          <p className="text-[24px] text-primary-10 font-bold">{stepTitle}</p>
+          <p className="text-[24px] text-neutral-11 font-bold">{stepTitle}</p>
         </div>
         <div className="grid gap-12 col-start-1 md:col-start-2 col-span-3 md:col-span-2 md:ml-10 mt-8 md:mt-6">
           {isMobile ? (

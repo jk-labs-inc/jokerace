@@ -22,7 +22,6 @@ enum SubmissionRequirementsOption {
 
 const options: Option[] = [
   { value: SubmissionRequirementsOption.Anyone, label: "anyone" },
-  { value: SubmissionRequirementsOption.Creator, label: "only me" },
   { value: SubmissionRequirementsOption.Erc20, label: "token holders" },
   { value: SubmissionRequirementsOption.Erc721, label: "NFT holders" },
 ];

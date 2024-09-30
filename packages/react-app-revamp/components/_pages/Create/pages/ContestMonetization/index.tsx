@@ -14,7 +14,7 @@ import CreateContestChargeUnsupportedChain from "./components/UnsupportedChain";
 
 const CreateContestMonetization = () => {
   const { step, votingRequirementsOption } = useDeployContestStore(state => state);
-  const { isConnected, chain } = useAccount();
+  const { isConnected, chain, address } = useAccount();
   const [disableNextStep, setDisableNextStep] = useState(false);
   const [unsupportedChain, setUnsupportedChain] = useState(false);
   const onNextStep = useNextStep();
@@ -51,7 +51,7 @@ const CreateContestMonetization = () => {
           <StepCircle step={step + 1} />
         </div>
         <div className="col-span-2 ml-10">
-          <p className="text-[24px] text-primary-10 font-bold">{monetizeTitle}</p>
+          <p className="text-[24px] text-neutral-11 font-bold">{monetizeTitle}</p>
         </div>
         <div className="grid col-start-1 md:col-start-2 col-span-2  md:ml-10 mt-8 md:mt-14">
           {switchLayout}

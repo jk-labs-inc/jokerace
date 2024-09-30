@@ -99,10 +99,10 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
   const handleSplitFeeDestinationTypeChange = (type: SplitFeeDestinationType) => {
     const isCreatorWalletOrNoSplit =
       type === SplitFeeDestinationType.CreatorWallet || type === SplitFeeDestinationType.NoSplit;
-    const newPercentageToCreator = type === SplitFeeDestinationType.NoSplit ? 0 : 50;
+
     const newSplitFeeDestination = { ...charge.splitFeeDestination, type };
 
-    const isValidAddress = addressRegex.test(charge.splitFeeDestination.address ?? "");
+    const isValidAddress = addressRegex.test(newSplitFeeDestination.address ?? "");
     const error = !isCreatorWalletOrNoSplit && !isValidAddress;
 
     setSplitFeeDestinationError(isCreatorWalletOrNoSplit ? "" : error ? "invalid address" : "");
@@ -110,7 +110,6 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
 
     setCharge({
       ...charge,
-      percentageToCreator: newPercentageToCreator,
       splitFeeDestination: newSplitFeeDestination,
       error,
     });

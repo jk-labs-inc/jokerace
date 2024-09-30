@@ -51,10 +51,10 @@ export enum SplitFeeDestinationType {
 }
 
 export type SplitFeeDestination =
-  | { type: SplitFeeDestinationType.CreatorWallet; address?: string }
-  | { type: SplitFeeDestinationType.AnotherWallet; address?: string }
-  | { type: SplitFeeDestinationType.NoSplit; address?: string }
-  | { type: SplitFeeDestinationType.RewardsPool; address?: string };
+  | { type: SplitFeeDestinationType.CreatorWallet; address: string }
+  | { type: SplitFeeDestinationType.AnotherWallet; address: string }
+  | { type: SplitFeeDestinationType.NoSplit; address: string }
+  | { type: SplitFeeDestinationType.RewardsPool; address: string };
 
 export type Charge = {
   percentageToCreator: number;

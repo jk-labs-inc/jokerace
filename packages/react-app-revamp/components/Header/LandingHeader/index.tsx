@@ -24,9 +24,9 @@ const LandingHeader = () => {
   const pathname = usePathname();
   const [isInPwaMode, setIsInPwaMode] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const isActive = (route: string) => (pathname === route ? "text-primary-10 transition-colors font-bold" : "");
+  const isActive = (route: string) => (pathname === route ? "text-positive-11 transition-colors font-bold" : "");
   const isOneOfActive = (routes: string[]) =>
-    routes.includes(pathname ?? "") ? "text-primary-10 transition-colors font-bold" : "";
+    routes.includes(pathname ?? "") ? "text-positive-11 transition-colors font-bold" : "";
   const { openConnectModal } = useConnectModal();
   const { openAccountModal } = useAccountModal();
   const allowedLinks = ["Github", "Twitter", "Report a bug", "Terms", "Telegram", "Media Kit"];

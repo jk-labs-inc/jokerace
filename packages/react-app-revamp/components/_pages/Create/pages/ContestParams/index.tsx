@@ -93,7 +93,7 @@ const CreateContestParams = () => {
           <StepCircle step={step + 1} />
         </div>
         <div className="col-span-2 ml-10">
-          <p className="text-[24px] text-primary-10 font-bold">{customizeTitle}</p>
+          <p className="text-[24px] text-neutral-11 font-bold">{customizeTitle}</p>
         </div>
         <div className="grid gap-16 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-12">
           <div className="flex flex-col gap-8">
