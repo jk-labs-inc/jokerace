@@ -51,14 +51,17 @@ const CreateSubmissionTabContent = () => {
               }}
               className={`text-[20px] sm:text-[24px] font-bold cursor-pointer text-center transition-colors duration-200
                   ${index === tabOptions.length - 1 ? "w-[116px] md:w-[240px]" : "w-[116px] md:w-[224px]"}
-                  ${submissionTab === index ? "text-primary-10" : "text-neutral-10"}`}
+                  ${submissionTab === index ? "text-positive-11" : "text-neutral-10"}`}
               onClick={() => onSubmissionTabChange(index)}
             >
               {isMobile ? link.mobileLabel : link.label}
             </div>
           ))}
           <div className="absolute left-0 w-full md:w-[750px] h-1 bottom-0 bg-neutral-0"></div>
-          <div style={indicatorStyle} className="absolute bottom-0 h-1 bg-primary-10 transition-all duration-200"></div>
+          <div
+            style={indicatorStyle}
+            className="absolute bottom-0 h-1 bg-positive-11 transition-all duration-200"
+          ></div>
         </div>
       </div>
       <div className="mt-8">{tabOptions[submissionTab].content}</div>

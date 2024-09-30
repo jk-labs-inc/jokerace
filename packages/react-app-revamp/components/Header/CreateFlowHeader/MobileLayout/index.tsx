@@ -39,9 +39,9 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
   const [isInPwaMode, setIsInPwaMode] = useState(false);
-  const isActive = (route: string) => (pathname === route ? "text-primary-10 transition-colors font-bold" : "");
+  const isActive = (route: string) => (pathname === route ? "text-neutral-11 transition-colors font-bold" : "");
   const isOneOfActive = (routes: string[]) =>
-    routes.includes(pathname ?? "") ? "text-primary-10 transition-colors font-bold" : "";
+    routes.includes(pathname ?? "") ? "text-neutral-11 transition-colors font-bold" : "";
 
   useEffect(() => {
     setIsClient(true);

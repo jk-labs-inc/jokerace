@@ -35,7 +35,7 @@ const CreateContestDeploying = () => {
 
   return (
     <div className="flex flex-col gap-4 mt-12 lg:mt-[100px] animate-swingInLeft">
-      <p className="text-[24px] font-bold text-primary-10 uppercase font-sabo">
+      <p className="text-[24px] font-bold text-neutral-11 uppercase font-sabo">
         congratulations, you created a contest 👑
       </p>
       <p className="text-[18px] text-neutral-11">we'll redirect you to it as soon as it deploys...</p>

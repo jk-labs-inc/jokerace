@@ -117,7 +117,7 @@ const CreateContestPrompt = () => {
           <StepCircle step={step + 1} />
         </div>
         <div className="col-span-2 ml-10">
-          <p className="text-[24px] text-primary-10 font-bold">{title}</p>
+          <p className="text-[24px] text-neutral-11 font-bold">{title}</p>
         </div>
         <div className="grid gap-12 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-2 w-full">
           <div className="flex bg-true-black z-10 justify-start w-full md:w-[650px] px-1 py-2 border-y border-neutral-10">

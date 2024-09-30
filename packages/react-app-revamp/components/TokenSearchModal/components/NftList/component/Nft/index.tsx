@@ -37,16 +37,16 @@ const TokenSearchListNft: FC<TokenSearchListNftProps> = ({ nft, onSelectNft }) =
         <div className="flex gap-2 items-center">
           <p
             className={`text-[20px] text-neutral-11 font-bold normal-case transition-colors duration-300 ${
-              isHovered ? "text-primary-10" : ""
+              isHovered ? "text-positive-11" : ""
             }`}
           >
             {truncateTokenName(nft.name)}
           </p>
-          {nft.isVerified ? <CheckBadgeIcon width={20} className="text-blue" /> : null}
+          {nft.isVerified ? <CheckBadgeIcon width={20} className="text-positive-11" /> : null}
         </div>
 
         <p
-          className={`text-[16px] text-neutral-11 transition-colors duration-300 ${isHovered ? "text-primary-10" : ""}`}
+          className={`text-[16px] text-neutral-11 transition-colors duration-300 ${isHovered ? "text-positive-11" : ""}`}
         >
           {nft.totalSupply ? `${formatNumber(parseFloat(nft.totalSupply))} items` : "no supply available"}
         </p>

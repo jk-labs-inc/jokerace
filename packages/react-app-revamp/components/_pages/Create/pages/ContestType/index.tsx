@@ -46,7 +46,7 @@ const CreateContestType = () => {
           <StepCircle step={step + 1} />
         </div>
         <div className="col-span-2 ml-10">
-          <p className="text-[24px] font-bold text-primary-10">{stepTitle}</p>
+          <p className="text-[24px] font-bold text-neutral-11">{stepTitle}</p>
         </div>
         <div className="grid gap-12 col-start-1 md:col-start-2 col-span-3 md:col-span-2 md:ml-10 mt-8 md:mt-6">
           <p className="text-[20px] text-neutral-11">how should we tag your contest for players to find it?</p>

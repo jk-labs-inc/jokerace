@@ -124,7 +124,7 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
 
   if (outOfVotes) return <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">you're out of votes :(</p>;
 
-  if (!canVote) return <p className="text-[16px] md:text-[24px] text-primary-10 font-bold">ineligible to vote</p>;
+  if (!canVote) return <p className="text-[16px] md:text-[24px] text-secondary-11 font-bold">ineligible to vote</p>;
 
   return null;
 };
