@@ -14,7 +14,7 @@ import CreateContestChargeUnsupportedChain from "./components/UnsupportedChain";
 
 const CreateContestMonetization = () => {
   const { step, votingRequirementsOption } = useDeployContestStore(state => state);
-  const { isConnected, chain } = useAccount();
+  const { isConnected, chain, address } = useAccount();
   const [disableNextStep, setDisableNextStep] = useState(false);
   const [unsupportedChain, setUnsupportedChain] = useState(false);
   const onNextStep = useNextStep();
