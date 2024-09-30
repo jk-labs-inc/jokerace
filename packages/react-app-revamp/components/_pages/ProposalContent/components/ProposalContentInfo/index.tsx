@@ -21,20 +21,9 @@ const ProposalContentInfo: FC<ProposalContentInfoProps> = ({
   toggleContentVisibility,
 }) => {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center justify-between">
       <div className="flex items-center gap-1">
-        <button
-          onClick={toggleContentVisibility}
-          className="p-1 rounded-full hover:bg-primary-2 transition-colors duration-300"
-        >
-          {isContentHidden ? (
-            <PlusIcon className="w-4 h-4 text-neutral-9" />
-          ) : (
-            <MinusIcon className="w-4 h-4 text-neutral-9" />
-          )}
-        </button>
         <UserProfileDisplay ethereumAddress={authorAddress} shortenOnFallback={true} />
-
         {rank > 0 && (
           <>
             <span className="text-neutral-9">&#8226;</span>{" "}
@@ -51,6 +40,16 @@ const ProposalContentInfo: FC<ProposalContentInfoProps> = ({
           </>
         )}
       </div>
+      <button
+        onClick={toggleContentVisibility}
+        className="p-1 rounded-full hover:bg-primary-2 transition-colors duration-300 md:mr-8"
+      >
+        {isContentHidden ? (
+          <PlusIcon className="w-4 h-4 text-neutral-11" />
+        ) : (
+          <MinusIcon className="w-4 h-4 text-neutral-11" />
+        )}
+      </button>
     </div>
   );
 };

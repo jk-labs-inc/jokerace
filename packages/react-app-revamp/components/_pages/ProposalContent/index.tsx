@@ -204,16 +204,14 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
   return (
     <div className="flex flex-col gap-4 pb-4 border-b border-primary-2 animate-reveal">
-      <div className="flex justify-between items-center">
-        <ProposalContentInfo
-          authorAddress={proposal.authorEthereumAddress}
-          rank={proposal.rank}
-          isTied={proposal.isTied}
-          isMobile={isMobile}
-          isContentHidden={isContentHidden}
-          toggleContentVisibility={toggleContentVisibility}
-        />
-      </div>
+      <ProposalContentInfo
+        authorAddress={proposal.authorEthereumAddress}
+        rank={proposal.rank}
+        isTied={proposal.isTied}
+        isMobile={isMobile}
+        isContentHidden={isContentHidden}
+        toggleContentVisibility={toggleContentVisibility}
+      />
       {!isContentHidden && (
         <div className="md:mx-8 flex flex-col gap-4">
           <div className="flex w-full">
