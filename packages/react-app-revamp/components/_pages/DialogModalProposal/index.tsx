@@ -18,6 +18,8 @@ import Image from "next/image";
 import { FC, useEffect } from "react";
 import { useAccount } from "wagmi";
 import ListProposalVotes from "../ListProposalVotes";
+import { VoteType } from "@hooks/useDeployContest/types";
+import { chains } from "@config/wagmi";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -62,10 +64,12 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
   const totalProposals = listProposalsIds.length;
-  const { downvotingAllowed } = useContestStore(state => state);
+  const { downvotingAllowed, charge } = useContestStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
   const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;
+  const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
+  const isAnyoneCanVote = charge?.voteType === VoteType.PerVote;
 
   useEffect(() => {
     if (isSuccess) setIsOpen?.(false);
@@ -172,7 +176,11 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
               />
             ) : null}
             {contestStatus === ContestStatus.VotingOpen && (
-              <div className="flex flex-col gap-12">
+              <div className="flex flex-col gap-4 md:gap-8 md:w-80">
+                <div className="flex flex-col gap-4">
+                  <hr className="block border border-neutral-9" />
+                  <p className="text-neutral-11 font-bold text-[20px]">add votes</p>
+                </div>
                 {isConnected ? (
                   currentUserAvailableVotesAmount > 0 ? (
                     <VotingWidget
@@ -186,6 +194,10 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                       looks like you've used up all your votes this contest <br />
                       feel free to try connecting another wallet to see if it has more votes!
                     </p>
+                  ) : isAnyoneCanVote ? (
+                    <p className="text-[16px] text-negative-11 font-bold">
+                      add {chainCurrencySymbol} to {contestInfo.chain} to get votes
+                    </p>
                   ) : (
                     <p className="text-[16px] text-neutral-11">
                       unfortunately your wallet didn't qualify to vote in this contest <br />
@@ -193,16 +205,12 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                     </p>
                   )
                 ) : (
-                  <div className="flex flex-col gap-4 md:w-80">
-                    <hr className={`md:block border border-neutral-9`} />
-                    <p className="text-neutral-11 font-bold text-[20px]">add votes</p>
-                    <p className="text-[16px] text-neutral-11 font-bold">
-                      <span className="text-positive-11 cursor-pointer text-[16px]" onClick={onConnectWallet}>
-                        connect wallet
-                      </span>{" "}
-                      to see if you qualify
-                    </p>
-                  </div>
+                  <p className="text-[16px] text-neutral-11 font-bold">
+                    <span className="text-positive-11 cursor-pointer text-[16px]" onClick={onConnectWallet}>
+                      connect wallet
+                    </span>{" "}
+                    to see if you qualify
+                  </p>
                 )}
               </div>
             )}
