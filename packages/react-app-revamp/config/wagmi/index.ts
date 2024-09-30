@@ -36,6 +36,7 @@ import { berachainTestnet } from "./custom-chains/berachainTestnet";
 import { blast } from "./custom-chains/blast";
 import { blastTestnet } from "./custom-chains/blastTestnet";
 import { bnb } from "./custom-chains/bnb";
+import { boba } from "./custom-chains/boba";
 import { campTestnet } from "./custom-chains/campTestnet";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
@@ -204,6 +205,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   syscoin,
   zircuit,
   lamina,
+  boba,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
