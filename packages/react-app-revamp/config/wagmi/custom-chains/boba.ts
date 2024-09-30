@@ -14,7 +14,7 @@ export const boba: Chain = {
     default: { http: ["https://gateway.tenderly.co/public/boba-ethereum"] },
   },
   blockExplorers: {
-    etherscan: { name: "Boba Mainnet Scan", url: "https://bobascan.org/" },
-    default: { name: "Boba Mainnet Scan", url: "https://bobascan.org/" },
+    etherscan: { name: "Boba Mainnet Scan", url: "https://bobascan.com/" },
+    default: { name: "Boba Mainnet Scan", url: "https://bobascan.com/" },
   },
 };
