@@ -114,7 +114,7 @@ module.exports = {
       "true-black": "#000000",
       blue: "#1E81E2",
       primary: {
-        1: "#141414",
+        1: "#1a1a1a",
         2: "#242424",
         3: "#100816",
         4: "#352800",
@@ -172,7 +172,7 @@ module.exports = {
       },
       neutral: {
         0: "#212121",
-        1: "#161618",
+        1: "#151515",
         2: "#1E1E1E",
         3: "#232326",
         4: "#28282c",
@@ -362,7 +362,9 @@ module.exports = {
         sortProposalDropdown: "0px 1px 6px 1px #6A6A6A;",
         "proposal-card": "1px 1px 5px 0px #E5E5E5",
         "file-upload": "0 0px 50px rgba(121, 121, 121, 0.3)",
+        "split-fee-destination": "0 0 1px 1px rgba(106, 106, 106, 1)",
       },
+
       backgroundColor: {
         ffdd3e: "#FFDD3E",
         "78ffc6": "#78FFC6",

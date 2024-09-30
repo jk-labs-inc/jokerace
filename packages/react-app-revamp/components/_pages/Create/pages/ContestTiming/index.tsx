@@ -32,7 +32,7 @@ const CreateContestTiming = () => {
           <StepCircle step={step + 1} />
         </div>
         <div className="col-span-2 ml-10">
-          <p className="text-[24px] font-bold text-primary-10">{contestTitle}</p>
+          <p className="text-[24px] font-bold text-neutral-11">{contestTitle}</p>
         </div>
         <div className="grid col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-6">
           <div className="flex flex-col gap-8">

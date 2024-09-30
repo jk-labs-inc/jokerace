@@ -22,6 +22,9 @@ import { Tweet } from "react-tweet";
 import { useAccount } from "wagmi";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 import ProposalContentInfo from "./components/ProposalContentInfo";
+import { VoteType } from "@hooks/useDeployContest/types";
+import { chains } from "@config/wagmi";
+import { toastInfo } from "@components/UI/Toast";
 
 export interface Proposal {
   id: string;
@@ -69,11 +72,12 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
+  const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.nativeCurrency
+    ?.symbol;
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
-  const { votesOpen } = useContestStore(state => state);
+  const { votesOpen, charge } = useContestStore(state => state);
   const canVote = currentUserAvailableVotesAmount > 0;
-  const isProposalTweet = proposal.tweet.isTweet;
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
@@ -101,7 +105,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
     }
 
     if (contestStatus === ContestStatus.VotingClosed) {
-      alert("Voting is closed for this contest.");
+      toastInfo("Voting is closed for this contest.");
       return;
     }
 
@@ -111,7 +115,11 @@ const ProposalContent: FC<ProposalContentProps> = ({
     }
 
     if (!canVote) {
-      alert("You need to have votes to vote for a proposal.");
+      if (charge?.voteType === VoteType.PerVote) {
+        toastInfo(`add ${chainCurrencySymbol} to ${chainName} to get votes`);
+        return;
+      }
+      toastInfo("You need to be allowlisted to vote for this contest.");
       return;
     }
 
@@ -196,16 +204,14 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
   return (
     <div className="flex flex-col gap-4 pb-4 border-b border-primary-2 animate-reveal">
-      <div className="flex justify-between items-center">
-        <ProposalContentInfo
-          authorAddress={proposal.authorEthereumAddress}
-          rank={proposal.rank}
-          isTied={proposal.isTied}
-          isMobile={isMobile}
-          isContentHidden={isContentHidden}
-          toggleContentVisibility={toggleContentVisibility}
-        />
-      </div>
+      <ProposalContentInfo
+        authorAddress={proposal.authorEthereumAddress}
+        rank={proposal.rank}
+        isTied={proposal.isTied}
+        isMobile={isMobile}
+        isContentHidden={isContentHidden}
+        toggleContentVisibility={toggleContentVisibility}
+      />
       {!isContentHidden && (
         <div className="md:mx-8 flex flex-col gap-4">
           <div className="flex w-full">
@@ -264,7 +270,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
                 <CheckIcon
                   className={`absolute top-0 left-0 transform transition-all ease-in-out duration-300 
                     ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
-                    h-6 w-6 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
+                    h-6 w-6 text-secondary-11 bg-white bg-true-black border border-secondary-11 hover:text-secondary-10 
                     shadow-md hover:shadow-lg rounded-md`}
                 />
                 <TrashIcon

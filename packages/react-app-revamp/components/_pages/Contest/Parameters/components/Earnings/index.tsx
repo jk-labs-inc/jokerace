@@ -5,6 +5,7 @@ import { Charge, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
 import ContestParamsEarningsModal from "./components/Modal";
+import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 
 interface ContestParametersEarningsProps {
   charge: Charge;
@@ -15,21 +16,35 @@ interface ContestParametersEarningsProps {
 const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge, blockExplorerUrl, contestAuthor }) => {
   const { address } = useAccount();
   const isConnectedWalletAuthor = address === contestAuthor;
-  const isCreatorSplitEnabled = charge.percentageToCreator > 0;
+  const isCreatorSplit = charge.splitFeeDestination.type !== SplitFeeDestinationType.NoSplit;
   const creatorSplitDestination = charge.splitFeeDestination.address
     ? charge.splitFeeDestination.address
     : contestAuthor;
-  const blockExplorerAddressUrl = blockExplorerUrl ? `${blockExplorerUrl}/address/${creatorSplitDestination}` : "";
+  const blockExplorerAddressUrl = blockExplorerUrl
+    ? `${blockExplorerUrl}/address/${charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit ? JK_LABS_SPLIT_DESTINATION_DEFAULT : creatorSplitDestination}`
+    : "";
   const [isEditEarningsModalOpen, setIsEditEarningsModalOpen] = useState(false);
   const { contestState } = useContestStateStore(state => state);
   const isContestFinishedOrCanceled =
     contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
 
-  const percentageToCreatorMessage = () => {
-    if (charge.percentageToCreator === 50) {
-      return "all earnings split 50/50 with JokeRace";
+  const renderEarningsSplitMessage = () => {
+    if (isCreatorSplit) {
+      return <li className="text-[16px] list-disc normal-case">all earnings split 50/50 with JokeRace</li>;
     } else {
-      return `all earnings go to JokeRace`;
+      return (
+        <li className="text-[16px] list-disc normal-case">
+          all earnings go to{" "}
+          <a
+            href={blockExplorerAddressUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline normal-case hover:text-positive-11 transition-colors duration-300"
+          >
+            JokeRace
+          </a>
+        </li>
+      );
     }
   };
 
@@ -63,8 +78,8 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge,
         )}
       </div>
       <ul className="pl-4 text-[16px] font-bold">
-        <li className="list-disc">{percentageToCreatorMessage()}</li>
-        {isCreatorSplitEnabled && <li className="list-disc">{creatorEarningsDestinationMessage()}</li>}
+        <li className="list-disc">{renderEarningsSplitMessage()}</li>
+        {isCreatorSplit ? <li className="list-disc">{creatorEarningsDestinationMessage()}</li> : null}
       </ul>
 
       <ContestParamsEarningsModal

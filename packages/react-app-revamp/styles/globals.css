@@ -150,12 +150,12 @@ li {
 }
 
 .react-datepicker__day--selected {
-  background-color: #ffe25b !important;
+  background-color: #bb65ff !important;
   color: black !important;
 }
 
 .react-datepicker__day:hover {
-  background-color: #ffe25b !important;
+  background-color: #bb65ff !important;
   color: black !important;
 }
 
@@ -165,12 +165,12 @@ li {
 }
 
 .react-datepicker__time-list-item--selected {
-  background-color: #ffe25b !important;
+  background-color: #bb65ff !important;
   color: black !important;
 }
 
 .react-datepicker__time-list-item:hover {
-  background-color: #ffe25b !important;
+  background-color: #bb65ff !important;
   color: black !important;
 }
 
@@ -259,7 +259,7 @@ li {
   }
 
   html {
-    --brand: theme("colors.primary.10");
+    --brand: theme("colors.secondary.11");
     color-scheme: dark;
     overflow-y: scroll;
   }
@@ -270,7 +270,7 @@ li {
     --toastify-color-error: #ff78a9 !important;
     --toastify-color-info: #ffff !important;
     --toastify-icon-color-error: #ff78a9 !important;
-    --toastify-icon-color-info: #ffe25b !important;
+    --toastify-icon-color-info: #bb65ff !important;
     --toastify-text-color-success: black !important;
     --toastify-text-color-info: black !important;
     --toastify-text-color-error: black !important;

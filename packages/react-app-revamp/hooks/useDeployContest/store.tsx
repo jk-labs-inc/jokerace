@@ -268,7 +268,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     charge: {
       percentageToCreator: 50,
-      splitFeeDestination: { type: SplitFeeDestinationType.CreatorWallet },
+      splitFeeDestination: { type: SplitFeeDestinationType.CreatorWallet, address: "" },
       voteType: VoteType.PerVote,
       type: {
         costToPropose: 0,

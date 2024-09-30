@@ -96,7 +96,7 @@ const CreateContestConfirm = () => {
           <StepCircle step={state.step + 1} />
         </div>
         <div className="col-span-2 ml-10">
-          <p className="text-[24px] text-primary-10 font-bold">{title}</p>
+          <p className="text-[24px] text-neutral-11 font-bold">{title}</p>
         </div>
         <div className="grid gap-4 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-4">
           <CreateContestConfirmTitle

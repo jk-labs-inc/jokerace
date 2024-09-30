@@ -17,7 +17,7 @@ const LayoutViewContestError: FC<LayoutViewContestErrorProps> = ({ error, bugRep
           it looks like we can’t connect to the chain to load this contest—please check the link as well as any malware
           blockers you have installed, or try on another browser or device. <br />
           if that doesn’t work,{" "}
-          <a href={bugReportLink} target="no_blank" className="text-primary-10">
+          <a href={bugReportLink} target="no_blank" className="text-positive-11">
             please file a bug report so we can look into this
           </a>
         </p>
@@ -32,7 +32,7 @@ const LayoutViewContestError: FC<LayoutViewContestErrorProps> = ({ error, bugRep
         <p className="text-[16px] font-bold text-neutral-11 text-center">
           we were unable to fetch this contest — please check url to make sure it’s accurate <i>or</i> search for
           contests{" "}
-          <Link href={ROUTE_VIEW_CONTESTS} className="text-primary-10">
+          <Link href={ROUTE_VIEW_CONTESTS} className="text-positive-11">
             here
           </Link>
         </p>

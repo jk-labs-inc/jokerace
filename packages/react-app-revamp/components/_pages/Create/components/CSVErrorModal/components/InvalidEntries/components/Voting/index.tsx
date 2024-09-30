@@ -135,7 +135,7 @@ const CSVErrorModalInvalidEntriesVoting: FC<CSVErrorModalInvalidEntriesVotingPro
 
                 <div className="flex flex-col w-40 items-center gap-2 mt-2">
                   <ButtonV3
-                    colorClass={`text-[16px] bg-gradient-next rounded-[10px] font-bold  text-true-black hover:scale-105 transition-transform duration-200 ease-in-out`}
+                    colorClass={`text-[16px] bg-gradient-purple rounded-[10px] font-bold  text-true-black hover:scale-105 transition-transform duration-200 ease-in-out`}
                     size={ButtonSize.DEFAULT_LONG}
                     isDisabled={!allFieldsWithoutErrors}
                     onClick={onClick}

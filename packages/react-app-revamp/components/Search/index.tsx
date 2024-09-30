@@ -22,7 +22,7 @@ const Search: React.FC<SearchProps> = ({ onSearchChange }) => {
   return (
     <div
       className={`flex items-center h-10 bg-true-black text-[16px] pl-2 w-full md:w-[220px] border-2 rounded-xl ${
-        searchValue ? "border-primary-10" : "border-neutral-9"
+        searchValue ? "border-secondary-11" : "border-neutral-9"
       } transition-colors duration-300 ease-in-out`}
     >
       <span className="text-neutral-11">

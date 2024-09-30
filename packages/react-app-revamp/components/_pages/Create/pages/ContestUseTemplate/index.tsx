@@ -68,7 +68,7 @@ const CreateContestTemplate = () => {
   return (
     <div className="flex flex-col gap-12 pl-4 pr-4 lg:pl-[120px] lg:pr-[60px] lg:ml-[300px] mt-8 md:mt-32 animate-reveal">
       <div className="flex flex-col gap-6">
-        <p className="text-[24px] text-primary-10 font-bold">Pick a template</p>
+        <p className="text-[24px] text-neutral-11 font-bold">Pick a template</p>
         <p className="text-[20px] text-neutral-11">
           Pick one of the following templates to save time filling in fields.
         </p>
@@ -89,7 +89,7 @@ const CreateContestTemplate = () => {
               <ButtonV3
                 onClick={handleNextClick}
                 isDisabled={!selectedTemplate}
-                colorClass="text-[20px] bg-gradient-next rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+                colorClass="text-[20px] bg-gradient-purple rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
               >
                 next
               </ButtonV3>
@@ -99,7 +99,7 @@ const CreateContestTemplate = () => {
           <div className="flex gap-4 items-start mt-14">
             <div className={`flex flex-col gap-4 items-center`}>
               <ButtonV3
-                colorClass="text-[20px] bg-gradient-next rounded-[10px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+                colorClass="text-[20px] bg-gradient-purple rounded-[10px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
                 size={ButtonSize.LARGE}
                 onClick={handleNextClick}
                 isDisabled={!selectedTemplate}

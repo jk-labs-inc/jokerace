@@ -64,6 +64,7 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
   const outOfVotes = currentUserTotalVotesAmount > 0 && !canVote;
   const zeroVotesOnAnyoneCanVote = currentUserTotalVotesAmount === 0 && anyoneCanVote;
   const chainName = chains.find(chain => chain.id === chainId)?.name;
+  const chainCurrencySymbol = chains.find(chain => chain.id === chainId)?.nativeCurrency?.symbol;
   const { data: userBalance, isLoading: isUserBalanceLoading } = useBalance({
     address: userAddress as `0x${string}`,
     chainId,
@@ -114,12 +115,16 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
   }
 
   if (zeroVotesOnAnyoneCanVote) {
-    return <p className="text-[16px] text-negative-11 font-bold leading-loose">add eth to {chainName} to get votes </p>;
+    return (
+      <p className="text-[16px] text-negative-11 font-bold leading-loose">
+        add {chainCurrencySymbol} to {chainName} to get votes{" "}
+      </p>
+    );
   }
 
   if (outOfVotes) return <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">you're out of votes :(</p>;
 
-  if (!canVote) return <p className="text-[16px] md:text-[24px] text-primary-10 font-bold">ineligible to vote</p>;
+  if (!canVote) return <p className="text-[16px] md:text-[24px] text-secondary-11 font-bold">ineligible to vote</p>;
 
   return null;
 };
