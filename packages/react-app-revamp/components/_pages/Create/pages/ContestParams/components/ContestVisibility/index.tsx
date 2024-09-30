@@ -38,7 +38,7 @@ const ContestParamsVisibility: FC<ContestParamsVisibilityProps> = ({ contestVisi
         </div>
         <p className="text-[16px] text-neutral-11">
           {contestVisibility === ContestVisibility.Public
-            ? "public contests can be searched and viewed on our site"
+            ? "you can always edit if a contest is public or unlisted on your user profile"
             : "unlisted contests can only be found on your profile or by url"}
         </p>
       </div>
