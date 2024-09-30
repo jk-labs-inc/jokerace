@@ -42,7 +42,7 @@ const ProposalContentInfo: FC<ProposalContentInfoProps> = ({
       </div>
       <button
         onClick={toggleContentVisibility}
-        className="p-1 rounded-full hover:bg-primary-2 transition-colors duration-300 md:mr-8"
+        className="p-1 rounded-full hover:bg-primary-2 transition-colors duration-300"
       >
         {isContentHidden ? (
           <PlusIcon className="w-4 h-4 text-neutral-11" />
