@@ -51,7 +51,7 @@ const RewardsReleasable: FC<RewardsReleasableProps> = ({
     <>
       {!isCanceled ? (
         <div className="flex flex-col gap-8 border-b border-primary-2 pb-8">
-          <div className="flex flex-col-reverse md:flex-row md:items-center gap-2 md:gap-4">
+          <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
             <p className="text-[24px] text-neutral-9 font-bold">rewards to distribute</p>
             {totalRewards.length > 0 ? <TotalRewardsInfo totalRewards={totalRewards} /> : null}
           </div>
