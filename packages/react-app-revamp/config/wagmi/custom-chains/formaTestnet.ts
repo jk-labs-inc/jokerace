@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const formaTestnet: Chain = {
   id: 984123,
   name: "formaTestnet",
-  iconUrl: "/contest/mona-lisa-moustache.png",
+  iconUrl: "/forma-sketchpad.svg",
   nativeCurrency: {
     decimals: 18,
     name: "TIA",
@@ -18,8 +18,8 @@ export const formaTestnet: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Forma Block Explorer", url: "https://explorer.sketchpad-1.forma.art" },
-    default: { name: "Forma Block Explorer", url: "https://explorer.sketchpad-1.forma.art" },
+    etherscan: { name: "Forma Sketchpad Block Explorer", url: "https://explorer.sketchpad-1.forma.art" },
+    default: { name: "Forma Sketchpad Block Explorer", url: "https://explorer.sketchpad-1.forma.art" },
   },
   testnet: true,
 };
