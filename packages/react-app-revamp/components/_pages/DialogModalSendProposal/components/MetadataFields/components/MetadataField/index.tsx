@@ -1,6 +1,6 @@
 import { REGEX_ETHEREUM_ADDRESS } from "@helpers/getAddressProps";
 import { MetadataFieldWithInput, useMetadataStore } from "@hooks/useMetadataFields/store";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 
 interface DialogModalSendProposalMetadataFieldProps {
   metadataField: MetadataFieldWithInput;
@@ -13,6 +13,19 @@ const DialogModalSendProposalMetadataField: FC<DialogModalSendProposalMetadataFi
 }) => {
   const { setInputValue } = useMetadataStore(state => state);
   const [error, setError] = useState<string | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "28px";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  };
+
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [metadataField.inputValue]);
 
   const getPlaceholder = (metadataType: string) => {
     switch (metadataType) {
@@ -63,8 +76,7 @@ const DialogModalSendProposalMetadataField: FC<DialogModalSendProposalMetadataFi
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
+  const handleInputChange = (newValue: string) => {
     setInputValue(index, newValue);
 
     if (metadataField.metadataType === "uint256") {
@@ -72,6 +84,33 @@ const DialogModalSendProposalMetadataField: FC<DialogModalSendProposalMetadataFi
     } else if (metadataField.metadataType === "address") {
       validateAddress(newValue);
     }
+  };
+
+  const getInputElement = () => {
+    if (metadataField.metadataType === "string") {
+      return (
+        <textarea
+          ref={textareaRef}
+          className={`text-[16px] w-full md:w-[502px] border-b border-primary-2 placeholder-neutral-10 bg-transparent focus:outline-none resize-none overflow-hidden ${error ? "border-negative-11" : ""}`}
+          placeholder={getPlaceholder(metadataField.metadataType)}
+          onChange={e => {
+            handleInputChange(e.target.value);
+            adjustTextareaHeight();
+          }}
+          value={metadataField.inputValue}
+        />
+      );
+    }
+
+    return (
+      <input
+        className={`text-[16px] w-full md:w-[502px] border-b border-primary-2 placeholder-neutral-10 bg-transparent focus:outline-none ${error ? "border-negative-11" : ""}`}
+        placeholder={getPlaceholder(metadataField.metadataType)}
+        type={getInputType(metadataField.metadataType)}
+        onChange={e => handleInputChange(e.target.value)}
+        value={metadataField.inputValue}
+      />
+    );
   };
 
   useEffect(() => {
@@ -86,13 +125,7 @@ const DialogModalSendProposalMetadataField: FC<DialogModalSendProposalMetadataFi
     <div className="flex flex-col gap-3">
       <p className="text-[16px] text-neutral-11 italic">{metadataField.prompt}</p>
       <div className="flex flex-col">
-        <input
-          className={`text-[16px] w-full md:w-[502px] border-b border-primary-2 placeholder-neutral-10 bg-transparent focus:outline-none ${error ? "border-negative-11" : ""}`}
-          placeholder={getPlaceholder(metadataField.metadataType)}
-          type={getInputType(metadataField.metadataType)}
-          onChange={handleInputChange}
-          value={metadataField.inputValue}
-        />
+        {getInputElement()}
         {error && <p className="text-negative-11 text-[14px] mt-2 font-bold">{error}</p>}
       </div>
     </div>
