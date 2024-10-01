@@ -1,6 +1,3 @@
-import { config } from "@config/wagmi";
-import { getAccount } from "@wagmi/core";
-
 export type VotingRequirementsSchema = {
   type: string;
   tokenAddress: string;
@@ -43,36 +40,26 @@ export interface ContestValues {
 export function useContestsIndexV3() {
   async function indexContestV3(values: ContestValues) {
     try {
-      const { address } = getAccount(config);
-      const supabaseConfig = await import("@config/supabase");
-      const supabase = supabaseConfig.supabase;
-      const { error, data } = await supabase.from("contests_v3").insert([
-        {
-          created_at: new Date().toISOString(),
-          start_at: values.datetimeOpeningSubmissions.toISOString(),
-          vote_start_at: values.datetimeOpeningVoting.toISOString(),
-          end_at: values.datetimeClosingVoting.toISOString(),
-          title: values.title,
-          type: values.type,
-          summary: values.summary,
-          prompt: values.prompt,
-          address: values.contractAddress,
-          votingMerkleRoot: values.votingMerkleRoot,
-          submissionMerkleRoot: values.submissionMerkleRoot,
-          author_address: values?.authorAddress ?? address,
-          network_name: values.networkName,
-          featured: values.featured ?? false,
-          voting_requirements: values.voting_requirements,
-          submission_requirements: values.submission_requirements,
-          cost_to_propose: values.cost_to_propose,
-          cost_to_vote: values.cost_to_vote,
-          percentage_to_creator: values.percentage_to_creator,
-          hidden: values.hidden,
+      console.log({ values });
+      const response = await fetch("/api/contest/index-contest", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      ]);
-      if (error) {
-        throw new Error(error.message);
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Failed to index contest: ${JSON.stringify(errorData)}`);
       }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error("Failed to index contest");
+      }
+
+      return result.data;
     } catch (e) {
       throw e;
     }

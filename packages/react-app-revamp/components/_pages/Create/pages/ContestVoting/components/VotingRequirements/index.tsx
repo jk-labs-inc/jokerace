@@ -253,12 +253,14 @@ const CreateVotingRequirements = () => {
             contractAddress: votingRequirements.tokenAddress,
             chainName: votingRequirements.chain,
             minTokensRequired: votingRequirements.minTokensRequired,
-            powerValue: votingRequirements.powerValue,
-            powerType: votingRequirements.powerType,
+            votesPerUnit: votingRequirements.powerValue,
+            voteCalculationMethod: votingRequirements.powerType,
           }),
         });
 
         votingAllowlist = await response.json();
+
+        console.log({ votingAllowlist });
       }
 
       if (votingAllowlist instanceof Error) {
