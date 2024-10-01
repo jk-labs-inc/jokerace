@@ -1,12 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
+import { createSupabaseClient } from "@config/supabase";
 import { isSupabaseConfigured } from "@helpers/database";
 import getPagination from "@helpers/getPagination";
 import { sortContests } from "lib/contests/utils/sortContests";
+import { NextRequest, NextResponse } from "next/server";
+
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 export const ITEMS_PER_PAGE = 7;
 
 export async function GET(request: NextRequest) {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured(SUPABASE_URL, SUPABASE_ANON_KEY)) {
     return NextResponse.json({ message: "Supabase is not configured" }, { status: 500 });
   }
 
@@ -21,8 +25,7 @@ export async function GET(request: NextRequest) {
   const language = searchParams.get("language") || "english";
   const sortBy = searchParams.get("sortBy") || "";
 
-  const config = await import("@config/supabase");
-  const supabase = config.supabase;
+  const supabase = createSupabaseClient(SUPABASE_URL as string, SUPABASE_ANON_KEY as string);
   const { from, to } = getPagination(currentPage, itemsPerPage);
 
   try {

@@ -1,17 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isSupabaseConfigured } from "@helpers/database";
 import { ContestValues } from "@hooks/useContestsIndexV3";
+import { createSupabaseClient } from "@config/supabase";
+
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 export async function POST(request: NextRequest) {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured(SUPABASE_URL, SUPABASE_ANON_KEY)) {
     return NextResponse.json({ error: "Supabase is not configured" }, { status: 500 });
   }
 
   try {
     const values: ContestValues = await request.json();
 
-    const supabaseConfig = await import("@config/supabase");
-    const supabase = supabaseConfig.supabase;
+    const supabase = createSupabaseClient(SUPABASE_URL as string, SUPABASE_ANON_KEY as string);
 
     const { error, data } = await supabase.from("contests_v3").insert([
       {

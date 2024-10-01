@@ -1,8 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { createSupabaseClient } from "@config/supabase";
 import { isSupabaseConfigured } from "@helpers/database";
+import { NextRequest, NextResponse } from "next/server";
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 export async function POST(request: NextRequest) {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured(SUPABASE_URL, SUPABASE_ANON_KEY)) {
     return NextResponse.json({ error: "Supabase is not configured" }, { status: 500 });
   }
 
@@ -13,8 +16,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Email address is required" }, { status: 400 });
     }
 
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
+    const supabase = createSupabaseClient(SUPABASE_URL as string, SUPABASE_ANON_KEY as string);
 
     const { error } = await supabase.from("email_signups").insert([{ email_address, user_address }]);
 

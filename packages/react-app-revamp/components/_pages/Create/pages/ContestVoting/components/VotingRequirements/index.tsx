@@ -259,8 +259,6 @@ const CreateVotingRequirements = () => {
         });
 
         votingAllowlist = await response.json();
-
-        console.log({ votingAllowlist });
       }
 
       if (votingAllowlist instanceof Error) {

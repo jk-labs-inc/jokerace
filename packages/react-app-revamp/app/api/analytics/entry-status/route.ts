@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isSupabaseConfigured } from "@helpers/database";
+import { createSupabaseClient } from "@config/supabase";
 
 interface UpdatedProposalStatus {
   userAddress: string;
@@ -8,16 +9,18 @@ interface UpdatedProposalStatus {
   proposal_ids: string[];
 }
 
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+
 export async function POST(request: NextRequest) {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured(SUPABASE_URL, SUPABASE_ANON_KEY)) {
     return NextResponse.json({ error: "Supabase is not configured" }, { status: 500 });
   }
 
   try {
     const { userAddress, contestAddress, chainName, proposal_ids }: UpdatedProposalStatus = await request.json();
 
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
+    const supabase = createSupabaseClient(SUPABASE_URL as string, SUPABASE_ANON_KEY as string);
 
     const errors = [];
 

@@ -1,8 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { createSupabaseClient } from "@config/supabase";
 import { isSupabaseConfigured } from "@helpers/database";
+import { NextRequest, NextResponse } from "next/server";
+
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 export async function GET(request: NextRequest) {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured(SUPABASE_URL, SUPABASE_ANON_KEY)) {
     return NextResponse.json({ error: "Supabase is not configured" }, { status: 500 });
   }
 
@@ -15,8 +19,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
+    const supabase = createSupabaseClient(SUPABASE_URL as string, SUPABASE_ANON_KEY as string);
 
     let result = await supabase
       .from("contests_v3")

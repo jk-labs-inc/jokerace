@@ -1,7 +1,11 @@
-import { NextResponse } from "next/server";
+import { createSupabaseClient } from "@config/supabase";
 import { isSupabaseConfigured } from "@helpers/database";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: Request) {
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const rewardsModuleAddress = searchParams.get("rewardsModuleAddress");
   const networkName = searchParams.get("networkName");
@@ -10,9 +14,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "invalid parameters" }, { status: 400 });
   }
 
-  if (isSupabaseConfigured) {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
+  if (isSupabaseConfigured(SUPABASE_URL, SUPABASE_ANON_KEY)) {
+    const supabase = createSupabaseClient(SUPABASE_URL as string, SUPABASE_ANON_KEY as string);
 
     const { data: tokens, error } = await supabase
       .from("analytics_rewards_v3")

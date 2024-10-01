@@ -40,7 +40,6 @@ export interface ContestValues {
 export function useContestsIndexV3() {
   async function indexContestV3(values: ContestValues) {
     try {
-      console.log({ values });
       const response = await fetch("/api/contest/index-contest", {
         method: "POST",
         headers: {
