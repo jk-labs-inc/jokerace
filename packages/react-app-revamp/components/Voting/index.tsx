@@ -130,7 +130,22 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
               }`}
               onClick={() => handleClick(true)}
             >
-              upvote
+              <input
+                ref={inputRef}
+                type="number"
+                value={amount || ""}
+                onChange={e => handleChange(e.target.value)}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                placeholder="0"
+                max={amountOfVotes}
+                onKeyDown={handleKeyDownInput}
+                onInput={handleInput}
+                className="w-full text-[32px] bg-transparent outline-none placeholder-primary-5"
+              />
+              <span className="absolute right-4 text-neutral-9 text-[16px] font-bold">
+                vote{amount !== 1 ? "s" : ""}
+              </span>
             </div>
             <div
               className={`w-full px-4 py-1 cursor-pointer ${
