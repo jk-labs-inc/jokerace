@@ -2,10 +2,24 @@ import { chains } from "@config/wagmi";
 import { formatNumber } from "@helpers/formatNumber";
 
 const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
+const etherscanApiKey = process.env.NEXT_PUBLIC_ETHERSCAN_KEY;
+const etherscanBaseUrl = `https://api.etherscan.io/api`;
 
 export type VoteCalculationMethod = "token" | "token holder";
 
+interface EtherscanApiResponse {
+  status: string;
+  message: string;
+  result: TokenHolder[];
+}
+
+interface TokenHolder {
+  TokenHolderAddress: string;
+  TokenHolderQuantity: string;
+}
+
 const NFTS_HARD_LIMIT = 400000;
+const ERC20_HARD_LIMIT = 1000000;
 
 export async function fetchNftHolders(
   type: "voting" | "submission",
@@ -95,6 +109,93 @@ export async function fetchNftHolders(
       minTokensRequired,
       eventType: type,
       tokenId,
+    });
+  });
+}
+
+export async function fetchTokenHolders(
+  type: "voting" | "submission",
+  contractAddress: string,
+  chainName: string,
+  minTokensRequired: number = 1,
+  votesPerUnit: number = 100,
+  voteCalculationMethod: string = "token",
+): Promise<Record<string, number> | Error> {
+  if (!etherscanApiKey) return new Error("Etherscan API key is not provided.");
+
+  let allTokenHoldersData: TokenHolder[] = [];
+  let page = 1;
+  const offset = 10000;
+
+  try {
+    while (true) {
+      const queryParams = new URLSearchParams({
+        module: "token",
+        action: "tokenholderlist",
+        contractaddress: contractAddress,
+        page: page.toString(),
+        offset: offset.toString(),
+        apikey: etherscanApiKey,
+      });
+
+      const response = await fetch(`${etherscanBaseUrl}?${queryParams.toString()}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Network response was not ok ${response.statusText}`);
+      }
+
+      const data: EtherscanApiResponse = await response.json();
+      const tokenHolders = data.result || [];
+
+      allTokenHoldersData.push(...tokenHolders);
+
+      if (tokenHolders.length === 0) {
+        if (page === 1) {
+          return new Error("according to etherscan, this token has 0 holders.");
+        } else {
+          break;
+        }
+      }
+
+      if (allTokenHoldersData.length > ERC20_HARD_LIMIT) {
+        return new Error(`tokens of more than ${formatNumber(ERC20_HARD_LIMIT)} holders aren’t currently supported`);
+      }
+
+      page++;
+    }
+  } catch (error: any) {
+    console.error("There was a problem with the ERC20 fetch operation:", error);
+    return new Error(error.message);
+  }
+
+  const worker = new Worker(new URL("/workers/tokenHoldersProcessing", import.meta.url));
+
+  return new Promise((resolve, reject) => {
+    worker.onmessage = event => {
+      if (event.data.error) {
+        reject(new Error(event.data.error));
+        worker.terminate();
+      } else {
+        resolve(event.data);
+      }
+      worker.terminate();
+    };
+    worker.onerror = error => {
+      reject(error);
+      worker.terminate();
+    };
+
+    worker.postMessage({
+      tokenHolders: allTokenHoldersData,
+      votesPerUnit,
+      voteCalculationMethod,
+      minTokensRequired,
+      eventType: type,
     });
   });
 }
