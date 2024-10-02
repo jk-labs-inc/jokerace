@@ -11,8 +11,6 @@ import ContestParamsVisibility from "./components/ContestVisibility";
 import ContestParamsDownvote from "./components/Downvote";
 import ContestParamsSubmissionsPerContest from "./components/SubmissionsPerContest";
 import ContestParamsSubmissionsPerPlayer from "./components/SubmissionsPerPlayer";
-import { ChevronUpIcon } from "@heroicons/react/24/outline";
-import ContestParamsMetadata from "./components/Metadata";
 
 export const VOTING_STEP = 6;
 
