@@ -4,7 +4,6 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Cont
 import { MAX_ROWS } from "@helpers/csvConstants";
 import { getEthersSigner } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { isR2Configured } from "@helpers/r2";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { useError } from "@hooks/useError";
@@ -222,10 +221,6 @@ export function useDeployContest() {
   }
 
   async function saveFilesToBucket(votingMerkle: VotingMerkle | null, submissionMerkle: SubmissionMerkle | null) {
-    if (!isR2Configured) {
-      throw new Error("R2 is not configured");
-    }
-
     const tasks: Promise<void>[] = [];
 
     if (votingMerkle && !(await checkExistingFileInBucket(votingMerkle.merkleRoot))) {
