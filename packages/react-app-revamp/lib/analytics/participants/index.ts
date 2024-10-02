@@ -1,5 +1,3 @@
-import { isSupabaseConfigured } from "@helpers/database";
-
 interface SaveToAnalyticsContestParticipantsOptions {
   contest_address: string;
   user_address: `0x${string}` | undefined;
@@ -13,24 +11,27 @@ interface SaveToAnalyticsContestParticipantsOptions {
   comment_id?: string;
 }
 
-const saveToAnalyticsContestParticipantsV3 = async (options: SaveToAnalyticsContestParticipantsOptions) => {
-  if (isSupabaseConfigured) {
-    try {
-      const config = await import("@config/supabase");
-      const supabase = config.supabase;
-
-      const { error } = await supabase.from("analytics_contest_participants_v3").insert(options);
-      if (error) {
-        console.error("Error in saveToAnalyticsContestParticipantsV3:", error.message);
-      }
-    } catch (e) {
-      console.error("Unexpected error in saveToAnalyticsContestParticipantsV3:", e);
-    }
-  }
-};
-
 export const addUserActionForAnalytics = async (options: SaveToAnalyticsContestParticipantsOptions) => {
-  await saveToAnalyticsContestParticipantsV3(options);
+  try {
+    const response = await fetch("/api/analytics/participants", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(options),
+    });
+
+    if (!response.ok) {
+      throw new Error("failed to save analytics data");
+    }
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error("failed to save analytics data");
+    }
+  } catch (error) {
+    console.error("error saving analytics data:", error);
+  }
 };
 
 export const saveUpdatedProposalsStatusToAnalyticsV3 = async (
@@ -39,29 +40,31 @@ export const saveUpdatedProposalsStatusToAnalyticsV3 = async (
   chainName: string,
   proposal_ids: string[],
 ) => {
-  if (isSupabaseConfigured) {
-    try {
-      const config = await import("@config/supabase");
-      const supabase = config.supabase;
+  try {
+    const response = await fetch("/api/analytics/entry-status", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userAddress,
+        contestAddress,
+        chainName,
+        proposal_ids,
+      }),
+    });
 
-      for (let proposal_id of proposal_ids) {
-        const { error } = await supabase.from("analytics_contest_participants_v3").insert([
-          {
-            user_address: userAddress,
-            contest_address: contestAddress.toLowerCase(),
-            network_name: chainName,
-            proposal_id: proposal_id,
-            deleted: true,
-          },
-        ]);
-
-        if (error) {
-          console.error("Error inserting analytics for proposal:", proposal_id, "; Error:", error.message);
-        }
-      }
-    } catch (e) {
-      console.error("Unexpected error in saveUpdatedProposalsStatusToAnalyticsV3:", e);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`failed to save updated proposal statuses: ${JSON.stringify(errorData)}`);
     }
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error("failed to save updated proposal statuses");
+    }
+  } catch (error) {
+    console.error("error saving updated proposal statuses:", error);
   }
 };
 
@@ -72,29 +75,31 @@ export const saveUpdatedProposalsCommentStatusToAnalyticsV3 = async (
   proposal_id: string,
   comment_ids: string[],
 ) => {
-  if (isSupabaseConfigured) {
-    try {
-      const config = await import("@config/supabase");
-      const supabase = config.supabase;
+  try {
+    const response = await fetch("/api/analytics/comments/status", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userAddress,
+        contestAddress,
+        chainName,
+        proposal_id,
+        comment_ids,
+      }),
+    });
 
-      for (let comment_id of comment_ids) {
-        const { error } = await supabase.from("analytics_contest_participants_v3").insert([
-          {
-            user_address: userAddress,
-            contest_address: contestAddress.toLowerCase(),
-            network_name: chainName,
-            proposal_id: proposal_id,
-            comment_id: comment_id,
-            deleted: true,
-          },
-        ]);
-
-        if (error) {
-          console.error("Error inserting analytics for proposal:", proposal_id, "; Error:", error.message);
-        }
-      }
-    } catch (e) {
-      console.error("Unexpected error in saveUpdatedProposalsCommentStatusToAnalyticsV3:", e);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`failed to save updated comment statuses: ${JSON.stringify(errorData)}`);
     }
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error("failed to save updated comment statuses");
+    }
+  } catch (error) {
+    console.error("error saving updated comment statuses:", error);
   }
 };
