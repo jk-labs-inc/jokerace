@@ -156,6 +156,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error NeedToSubmitWithProofFirst();
     error NeedToVoteWithProofFirst();
 
+    error OnlyCreatorCanSetName();
+    error OnlyCreatorCanSetPrompt();
     error OnlyCreatorCanDelete();
     error CannotDeleteWhenCompletedOrCanceled();
 
@@ -284,6 +286,24 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      */
     function getProposal(uint256 proposalId) public view returns (ProposalCore memory) {
         return proposals[proposalId];
+    }
+
+    /**
+     * @dev Set the contest name.
+     */
+    function setName(string memory newName) public returns (string memory) {
+        if (msg.sender != creator) revert OnlyCreatorCanSetName();
+        name = newName;
+        return newName;
+    }
+
+    /**
+     * @dev Set the contest prompt.
+     */
+    function setPrompt(string memory newPrompt) public returns (string memory) {
+        if (msg.sender != creator) revert OnlyCreatorCanSetPrompt();
+        prompt = newPrompt;
+        return newPrompt;
     }
 
     /**
