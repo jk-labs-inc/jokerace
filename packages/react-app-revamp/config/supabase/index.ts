@@ -1,12 +1,5 @@
-import { isSupabaseConfigured } from "@helpers/database";
 import { createClient } from "@supabase/supabase-js";
 
-let supabaseUrl = "000000000000000000000000000000000000.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.0000000000000000000000000000000000000000000";
-let supabaseAnonKey = "000000000000000000000000000000000000.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.0000000000000000000000000000000000000000000";
-
-if (isSupabaseConfigured) {
-  supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-  supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const createSupabaseClient = (supabaseUrl: string, supabaseAnonKey: string) => {
+  return createClient(supabaseUrl, supabaseAnonKey);
+};

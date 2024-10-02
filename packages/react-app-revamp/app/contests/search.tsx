@@ -2,7 +2,6 @@
 import ListContests from "@components/_pages/ListContests";
 import { SearchBar } from "@components/_pages/SearchBar";
 import { config } from "@config/wagmi";
-import { isSupabaseConfigured } from "@helpers/database";
 import useContestSortOptions from "@hooks/useSortOptions";
 import { useQuery } from "@tanstack/react-query";
 import { getEnsAddress } from "@wagmi/core";
@@ -123,35 +122,19 @@ const SearchContests = () => {
       {searchCriteria.searchString.length > 0 && (
         <div className="container mx-auto">
           <h1 className="sr-only">Searched contests</h1>
-          {isSupabaseConfigured ? (
-            <ListContests
-              isContestDataFetching={isContestDataFetching}
-              itemsPerPage={ITEMS_PER_PAGE}
-              status={status}
-              error={error}
-              page={page}
-              setPage={setPage}
-              contestData={contestData}
-              rewardsData={rewardsData}
-              isRewardsFetching={isRewardsFetching}
-              onSortChange={setSortBy}
-              sortOptions={sortOptions}
-            />
-          ) : (
-            <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">
-              This site&apos;s current deployment does not have access to jokerace&apos;s reference database of
-              contests, but you can check out our Supabase backups{" "}
-              <a
-                className="link px-1ex"
-                href="https://github.com/jk-labs-inc/jokerace/tree/staging/packages/supabase"
-                target="_blank"
-                rel="noreferrer"
-              >
-                here
-              </a>{" "}
-              for contest chain and address information!
-            </div>
-          )}
+          <ListContests
+            isContestDataFetching={isContestDataFetching}
+            itemsPerPage={ITEMS_PER_PAGE}
+            status={status}
+            error={error}
+            page={page}
+            setPage={setPage}
+            contestData={contestData}
+            rewardsData={rewardsData}
+            isRewardsFetching={isRewardsFetching}
+            onSortChange={setSortBy}
+            sortOptions={sortOptions}
+          />
         </div>
       )}
     </div>
