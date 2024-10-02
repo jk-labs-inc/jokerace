@@ -7,11 +7,11 @@ import { addressRegex } from "@helpers/regex";
 import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
+import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import CreateSubmissionRequirementsNftSettings from "./components/NFT";
 import CreateSubmissionRequirementsTokenSettings from "./components/Token";
-import { fetchNftHolders } from "lib/permissioning";
 
 enum SubmissionRequirementsOption {
   Anyone = "anyone",
@@ -154,31 +154,22 @@ const CreateSubmissionRequirements = () => {
           submissionRequirements.nftTokenId,
         );
       } else {
-        const response = await fetch("/api/token-holders", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            type: "submission",
-            contractAddress: submissionRequirements.tokenAddress,
-            chainName: submissionRequirements.chain,
-            minTokensRequired: submissionRequirements.minTokensRequired,
-          }),
-        });
-
-        result = await response.json();
+        result = await fetchTokenHolders(
+          "submission",
+          submissionRequirements.tokenAddress,
+          submissionRequirements.chain,
+          submissionRequirements.minTokensRequired,
+        );
       }
 
-      if ("error" in result) {
+      if (result instanceof Error) {
         setInputError({
-          tokenAddressError: result.error,
+          tokenAddressError: result.message,
         });
         toastDismiss();
         return;
       }
 
-      // process the result
       const worker = initializeWorker();
       worker.postMessage({
         decimals: 18,
