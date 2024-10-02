@@ -91,7 +91,7 @@ export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions
       throw new Error("Invalid JSON response from server");
     }
 
-    toastSuccess("Image uploaded successfully! Resized versions will be available shortly.");
+    toastSuccess("Image uploaded successfully!");
     return data.url;
   } catch (error: any) {
     toastError("Failed to upload an image, please try again.");
