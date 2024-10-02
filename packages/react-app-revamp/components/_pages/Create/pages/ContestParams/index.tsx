@@ -67,7 +67,7 @@ const CreateContestParams = () => {
     if (value === null || value < 1) {
       setSubmissionsPerUserError("must be at least 1");
     } else if (value > MAX_SUBMISSIONS_LIMIT) {
-      setSubmissionsPerUserError(`must be less than ${MAX_SUBMISSIONS_LIMIT}`);
+      setSubmissionsPerUserError(`must be ${MAX_SUBMISSIONS_LIMIT} or less`);
     } else {
       setSubmissionsPerUserError("");
     }
@@ -77,7 +77,7 @@ const CreateContestParams = () => {
     if (value === null || value < 1) {
       setMaxSubmissionsError("must be at least 1");
     } else if (value > MAX_SUBMISSIONS_LIMIT) {
-      setMaxSubmissionsError(`must be less than ${MAX_SUBMISSIONS_LIMIT}`);
+      setMaxSubmissionsError(`must be ${MAX_SUBMISSIONS_LIMIT}` or less);
     } else {
       setMaxSubmissionsError("");
     }
