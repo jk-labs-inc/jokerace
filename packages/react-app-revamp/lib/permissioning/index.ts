@@ -1,6 +1,5 @@
 import { chains } from "@config/wagmi";
 import { formatNumber } from "@helpers/formatNumber";
-import { getTokenDecimals } from "@helpers/getTokenDecimals";
 
 const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 const etherscanApiKey = process.env.NEXT_PUBLIC_ETHERSCAN_KEY;
@@ -126,25 +125,7 @@ export async function fetchTokenHolders(
 
   let allTokenHoldersData: TokenHolder[] = [];
   let page = 1;
-  let decimals: number;
-
   const offset = 10000;
-
-  const chain = chains.find(c => c.name.toLowerCase() === chainName.toLowerCase());
-  if (!chain) {
-    return new Error("invalid chain name provided");
-  }
-
-  try {
-    const fetchedDecimals = await getTokenDecimals(contractAddress, chain.id);
-    if (fetchedDecimals === null) {
-      throw new Error("failed to fetch token decimals");
-    }
-    decimals = fetchedDecimals;
-  } catch (error: any) {
-    console.error("error fetching token decimals:", error);
-    return new Error(error.message);
-  }
 
   try {
     while (true) {
@@ -171,20 +152,18 @@ export async function fetchTokenHolders(
       const data: EtherscanApiResponse = await response.json();
       const tokenHolders = data.result || [];
 
+      allTokenHoldersData.push(...tokenHolders);
+
       if (tokenHolders.length === 0) {
-        // if we've fetched at least one page with results, break the loop
-        if (allTokenHoldersData.length > 0) {
-          break;
-        } else {
-          // if the first page is empty, return an error
+        if (page === 1) {
           return new Error("according to etherscan, this token has 0 holders.");
+        } else {
+          break;
         }
       }
 
-      allTokenHoldersData.push(...tokenHolders);
-
       if (allTokenHoldersData.length > ERC20_HARD_LIMIT) {
-        return new Error(`tokens of more than ${formatNumber(ERC20_HARD_LIMIT)} holders aren't currently supported`);
+        return new Error(`tokens of more than ${formatNumber(ERC20_HARD_LIMIT)} holders aren’t currently supported`);
       }
 
       page++;
@@ -217,7 +196,6 @@ export async function fetchTokenHolders(
       voteCalculationMethod,
       minTokensRequired,
       eventType: type,
-      decimals,
     });
   });
 }

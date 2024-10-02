@@ -1,4 +1,4 @@
-import { loadFileFromBucket } from "lib/buckets";
+import { fetchDataFromBucket } from "lib/buckets";
 
 /**
  * Get all voters for a given voting merkle root from S3 bucket
@@ -7,7 +7,7 @@ import { loadFileFromBucket } from "lib/buckets";
  */
 export async function getVoters(votingMerkleRoot: string) {
   try {
-    const votingMerkleTreeData = await loadFileFromBucket({ fileId: votingMerkleRoot });
+    const votingMerkleTreeData = await fetchDataFromBucket(votingMerkleRoot);
     return {
       voters: votingMerkleTreeData || [],
     };

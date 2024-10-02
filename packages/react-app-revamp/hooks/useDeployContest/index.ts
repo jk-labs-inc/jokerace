@@ -2,8 +2,10 @@ import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { MAX_ROWS } from "@helpers/csvConstants";
+import { isSupabaseConfigured } from "@helpers/database";
 import { getEthersSigner } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { isR2Configured } from "@helpers/r2";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { useError } from "@hooks/useError";
@@ -222,6 +224,10 @@ export function useDeployContest() {
   }
 
   async function saveFilesToBucket(votingMerkle: VotingMerkle | null, submissionMerkle: SubmissionMerkle | null) {
+    if (!isR2Configured) {
+      throw new Error("R2 is not configured");
+    }
+
     const tasks: Promise<void>[] = [];
 
     if (votingMerkle && !(await checkExistingFileInBucket(votingMerkle.merkleRoot))) {
@@ -267,30 +273,44 @@ export function useDeployContest() {
     votingMerkle: VotingMerkle | null,
     submissionMerkle: SubmissionMerkle | null,
   ) {
+    const participantsWorker = new Worker(new URL("/workers/indexContestParticipants", import.meta.url));
+
     try {
+      if (!isSupabaseConfigured) {
+        throw new Error("Supabase is not configured");
+      }
+
       const tasks = [];
 
       tasks.push(indexContestV3(contestData));
 
-      const indexParticipantsTask = fetch("/api/contest/index-participants", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contestData,
-          votingMerkle,
-          submissionMerkle,
-        }),
-      }).then(async response => {
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(`Failed to index contest participants: ${JSON.stringify(errorData)}`);
-        }
-        return response.json();
+      const workerData = {
+        contestData,
+        votingMerkle,
+        submissionMerkle,
+      };
+
+      const workerTask = new Promise<void>((resolve, reject) => {
+        participantsWorker.onmessage = event => {
+          if (event.data.success) {
+            resolve();
+          } else {
+            reject(new Error(event.data.error));
+          }
+        };
+
+        participantsWorker.onerror = error => {
+          stateContestDeployment.setIsLoading(false);
+          stateContestDeployment.setError(error.message);
+          setIsLoading(false);
+          toastError(`contest deployment failed to index in db`, error.message);
+          reject(error);
+        };
+
+        participantsWorker.postMessage(workerData);
       });
 
-      tasks.push(indexParticipantsTask);
+      tasks.push(workerTask);
 
       await Promise.all(tasks);
     } catch (e: any) {
@@ -299,6 +319,8 @@ export function useDeployContest() {
       setIsLoading(false);
       toastError(`contest deployment failed to index in db`, e.message);
       throw e;
+    } finally {
+      participantsWorker.terminate();
     }
   }
 
@@ -360,27 +382,40 @@ export function useDeployContest() {
     chainId: number,
     chargeType: { costToPropose: number; costToVote: number },
   ): Promise<string> {
-    try {
-      const chainName = chains.find((c: { id: number }) => c.id === chainId)?.name;
-      const params = new URLSearchParams({
-        chainName: chainName?.toLowerCase() ?? "",
-        costToPropose: chargeType.costToPropose.toString(),
-        costToVote: chargeType.costToVote.toString(),
-      });
-
-      const response = await fetch(`/api/contest/jklabs-split-destination-address?${params}`);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Failed to fetch JKLabs split destination address: ${errorData.error}`);
-      }
-
-      const { address } = await response.json();
-      return address;
-    } catch (error) {
-      console.error("Error fetching JKLabs split destination address:", error);
-      throw error;
+    // check if either costToPropose or costToVote is 0 ( this means no monetization )
+    if (chargeType.costToPropose === 0 || chargeType.costToVote === 0) {
+      return "";
     }
+
+    if (!isSupabaseConfigured) {
+      throw new Error("Supabase is not configured");
+    }
+
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+
+    const chain = chains.find(c => c.id === chainId);
+    if (!chain) {
+      throw new Error(`Chain with id ${chainId} not found`);
+    }
+
+    const chainName = chain.name;
+
+    const { data, error } = await supabase
+      .from("chain_params")
+      .select("jk_labs_split_destination")
+      .eq("network_name", chainName.toLowerCase())
+      .single();
+
+    if (error) {
+      throw new Error(`Error fetching data: ${error.message}`);
+    }
+
+    if (!data) {
+      throw new Error(`No data found for chain ${chainName}`);
+    }
+
+    return data.jk_labs_split_destination;
   }
 
   function createMetadataFieldsSchema(metadataFields: MetadataField[]): string {
