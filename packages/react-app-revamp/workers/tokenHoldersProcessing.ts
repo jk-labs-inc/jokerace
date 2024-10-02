@@ -41,9 +41,9 @@ self.onmessage = (event: MessageEvent<EventData>) => {
       if (eventType === "voting") {
         if (voteCalculationMethod === "token") {
           const tokenQuantityInEther = parseFloat(formatEther(tokenQuantityInWei));
-          totalVotes = tokenQuantityInEther * votesPerUnit;
+          totalVotes = Math.round(tokenQuantityInEther * votesPerUnit);
         } else if (voteCalculationMethod === "token holder") {
-          totalVotes = votesPerUnit;
+          totalVotes = Math.round(votesPerUnit);
         }
       } else if (eventType === "submission") {
         totalVotes = 10;

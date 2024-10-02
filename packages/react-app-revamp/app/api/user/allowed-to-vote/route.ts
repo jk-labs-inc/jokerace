@@ -26,8 +26,8 @@ export async function GET(request: NextRequest) {
       .from("contest_participants_v3")
       .select("num_votes")
       .eq("user_address", userAddress)
-      .eq("contest_address", contestAddress.toLowerCase())
-      .eq("network_name", chainName.toLowerCase());
+      .eq("contest_address", contestAddress)
+      .eq("network_name", chainName);
 
     if (error) {
       throw error;
