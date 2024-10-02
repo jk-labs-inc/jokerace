@@ -1,5 +1,6 @@
 import { chains, config } from "@config/wagmi";
 import { isAlchemyConfigured } from "@helpers/alchemy";
+import { isSupabaseConfigured } from "@helpers/database";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
@@ -383,23 +384,40 @@ export function useContest() {
   }
 
   async function processRequirementsData() {
+    if (!isSupabaseConfigured) return;
+
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+
     try {
-      const params = new URLSearchParams({
-        address,
-        chainName,
-      });
+      let result = await supabase
+        .from("contests_v3")
+        .select("voting_requirements, submission_requirements")
+        .eq("address", address.toLowerCase())
+        .eq("network_name", chainName);
 
-      const response = await fetch(`/api/contest/requirements-data?${params}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to process requirements data");
+      if (result.data && result.data.length > 0) {
+        const { voting_requirements, submission_requirements } = result.data[0];
+        setVotingRequirements(voting_requirements || null);
+        setSubmissionRequirements(submission_requirements || null);
+        return;
       }
 
-      const { voting_requirements, submission_requirements } = await response.json();
-      setVotingRequirements(voting_requirements || null);
-      setSubmissionRequirements(submission_requirements || null);
+      result = await supabase
+        .from("contests_v3")
+        .select("voting_requirements, submission_requirements")
+        .eq("address", address)
+        .eq("network_name", chainName);
+
+      if (result.data && result.data.length > 0) {
+        const { voting_requirements, submission_requirements } = result.data[0];
+        setVotingRequirements(voting_requirements || null);
+        setSubmissionRequirements(submission_requirements || null);
+      } else {
+        setVotingRequirements(null);
+        setSubmissionRequirements(null);
+      }
     } catch (error) {
-      console.error("Error processing requirements data:", error);
       setVotingRequirements(null);
       setSubmissionRequirements(null);
     }
