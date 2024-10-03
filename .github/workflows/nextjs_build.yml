@@ -61,4 +61,6 @@ jobs:
           NEXT_PUBLIC_MERKLE_TREES_BUCKET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_MERKLE_TREES_BUCKET || secrets.DEV_NEXT_PUBLIC_MERKLE_TREES_BUCKET }}
           NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET || secrets.DEV_NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET }}
           NEXT_PUBLIC_ETHERSCAN_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_ETHERSCAN_KEY || secrets.DEV_NEXT_PUBLIC_ETHERSCAN_KEY }}
+          NEXT_PUBLIC_QUICKNODE_SLUG: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_QUICKNODE_SLUG || secrets.DEV_NEXT_PUBLIC_QUICKNODE_SLUG }}
+          NEXT_PUBLIC_QUICKNODE_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_QUICKNODE_KEY || secrets.DEV_NEXT_PUBLIC_QUICKNODE_KEY }}
           NEXT_PUBLIC_ALCHEMY_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_ALCHEMY_KEY || secrets.DEV_NEXT_PUBLIC_ALCHEMY_KEY }}

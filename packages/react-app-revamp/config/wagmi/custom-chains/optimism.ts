@@ -14,7 +14,7 @@ export const optimism: Chain = {
       http: ["https://rpc.ankr.com/optimism"],
     },
     default: {
-      http: [`https://opt-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
+      http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.optimism.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
     },
   },
   blockExplorers: {
