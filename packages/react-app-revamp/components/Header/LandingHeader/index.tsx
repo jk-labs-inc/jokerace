@@ -1,5 +1,6 @@
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import { IconTrophy } from "@components/UI/Icons";
+import { MobileProfilePortal } from "@components/UI/MobileWalletPortal";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { FOOTER_LINKS } from "@config/links";
 import {
@@ -9,12 +10,14 @@ import {
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_LIVE_CONTESTS,
 } from "@config/routes";
-import { HomeIcon, MagnifyingGlassIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
-import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
+import { config } from "@config/wagmi";
+import { HomeIcon, MagnifyingGlassIcon, PencilSquareIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { disconnect } from "@wagmi/core";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 
@@ -28,14 +31,44 @@ const LandingHeader = () => {
   const isOneOfActive = (routes: string[]) =>
     routes.includes(pathname ?? "") ? "text-positive-11 transition-colors font-bold" : "";
   const { openConnectModal } = useConnectModal();
-  const { openAccountModal } = useAccountModal();
   const allowedLinks = ["Github", "Twitter", "Report a bug", "Terms", "Telegram", "Media Kit"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
+  const [showWalletPortal, setShowWalletPortal] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
     setIsInPwaMode(window.matchMedia("(display-mode: standalone)").matches);
   }, []);
+
+  const handleWalletClick = () => {
+    setShowWalletPortal(true);
+  };
+
+  const closeWalletPortal = useCallback(() => {
+    setShowWalletPortal(false);
+  }, []);
+
+  const handleDisconnect = useCallback(async () => {
+    try {
+      await disconnect(config);
+      closeWalletPortal();
+    } catch (error) {
+      console.error("Failed to disconnect:", error);
+    }
+  }, [closeWalletPortal]);
+
+  const WalletPortal = () => {
+    if (!isClient) return null;
+
+    return (
+      <MobileProfilePortal
+        isOpen={showWalletPortal}
+        onClose={closeWalletPortal}
+        address={address ?? ""}
+        onDisconnect={handleDisconnect}
+      />
+    );
+  };
 
   if (isMobile) {
     return (
@@ -100,14 +133,14 @@ const LandingHeader = () => {
                 <p className="text-[12px]">create</p>
               </Link>
 
-              <div onClick={isConnected ? openAccountModal : openConnectModal} className="transition-all duration-500">
+              <div className="transition-all duration-500">
                 {isConnected ? (
-                  <div className="flex flex-col items-center">
-                    <Image width={26} height={26} src="/header/wallet-connected.svg" alt="wallet-connected" />
-                    <p className="text-[12px]">wallet</p>
+                  <div className="flex flex-col items-center" onClick={handleWalletClick}>
+                    <UserCircleIcon width={26} height={26} className="text-neutral-11" />
+                    <p className="text-[12px]">profile</p>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center" onClick={openConnectModal}>
                     <Image width={26} height={26} src="/header/wallet.svg" alt="wallet" />
                     <p className="text-[12px]">wallet</p>
                   </div>
@@ -115,6 +148,7 @@ const LandingHeader = () => {
               </div>
             </div>
           </div>
+          <WalletPortal />
         </header>
       </>
     );

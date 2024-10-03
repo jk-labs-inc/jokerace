@@ -135,6 +135,7 @@ import { syscoin } from "./custom-chains/syscoin";
 import { syscoinTestnet } from "./custom-chains/syscoinTestnet";
 import { fhenixHeliumTestnet } from "./custom-chains/fhenixHeliumTestnet";
 import { plumeTestnet } from "./custom-chains/plumeTestnet";
+import { zeta } from "./custom-chains/zeta";
 
 declare module "wagmi";
 
@@ -207,6 +208,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   zircuit,
   lamina,
   boba,
+  zeta,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,

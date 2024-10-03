@@ -119,6 +119,7 @@ import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
 import { fhenixHeliumTestnet } from "./custom-chains/fhenixHeliumTestnet";
 import { plumeTestnet } from "./custom-chains/plumeTestnet";
+import { zeta } from "./custom-chains/zeta";
 
 type Transports = Record<Chain["id"], Transport>;
 
@@ -185,6 +186,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   zircuit,
   lamina,
   boba,
+  zeta,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
