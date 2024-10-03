@@ -105,37 +105,21 @@ const LandingPage = () => {
         </div>
 
         <div className="pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-28 2xl:pr-0 mt-4">
-          {isSupabaseConfigured ? (
-            <div className="flex flex-col gap-8 w-full">
-              <FeaturedContests
-                status={status}
-                contestData={contestData}
-                rewardsData={rewardsData}
-                isContestDataFetching={isContestDataFetching}
-                isRewardsFetching={isRewardsFetching}
-              />
-              <Link href={ROUTE_VIEW_LIVE_CONTESTS} className="flex gap-1 items-center">
-                <p className="text-[16px] md:text-[18px] text-positive-11 font-bold hover:text-positive-10 transition-colors duration-300 ease-in-out">
-                  view all contests
-                </p>
-                <ChevronRightIcon className="w-4 h-4 text-positive-11 font-bold" />
-              </Link>
-            </div>
-          ) : (
-            <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">
-              This site&apos;s current deployment does not have access to jokerace&apos;s reference database of
-              contests, but you can check out our Supabase backups{" "}
-              <a
-                className="link px-1ex"
-                href="https://github.com/jk-labs-inc/jokerace/tree/staging/packages/supabase"
-                target="_blank"
-                rel="noreferrer"
-              >
-                here
-              </a>{" "}
-              for contest chain and address information!
-            </div>
-          )}
+          <div className="flex flex-col gap-8 w-full">
+            <FeaturedContests
+              status={status}
+              contestData={contestData}
+              rewardsData={rewardsData}
+              isContestDataFetching={isContestDataFetching}
+              isRewardsFetching={isRewardsFetching}
+            />
+            <Link href={ROUTE_VIEW_LIVE_CONTESTS} className="flex gap-1 items-center">
+              <p className="text-[16px] md:text-[18px] text-positive-11 font-bold hover:text-positive-10 transition-colors duration-300 ease-in-out">
+                view all contests
+              </p>
+              <ChevronRightIcon className="w-4 h-4 text-positive-11 font-bold" />
+            </Link>
+          </div>
         </div>
       </div>
       <LandingPageUsedBy />

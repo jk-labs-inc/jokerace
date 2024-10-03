@@ -1,4 +1,3 @@
-import { supabase } from "@config/supabase";
 import getPagination from "@helpers/getPagination";
 import { Comment, CommentsResult, Contest, Submission, SubmissionCriteria, SubmissionsResult } from "./types";
 
@@ -39,70 +38,23 @@ async function fetchSubmissions(
   range: { from: number; to: number },
 ): Promise<{ data: any[]; count: number }> {
   try {
-    const executeQuery = async (useIlike: boolean) => {
-      let dataQuery;
-      let countQuery;
+    const params = new URLSearchParams({
+      userAddress: criteria.user_address,
+      from: range.from.toString(),
+      to: range.to.toString(),
+      voteAmount: criteria.vote_amount === null ? "null" : "notNull",
+    });
 
-      const baseQuery = (query: any) => {
-        if (useIlike) {
-          return query.ilike("user_address", criteria.user_address);
-        } else {
-          return query.eq("user_address", criteria.user_address);
-        }
-      };
+    const response = await fetch(`/api/user/submissions?${params}`);
 
-      if (criteria.vote_amount === null) {
-        dataQuery = baseQuery(
-          supabase
-            .from("analytics_contest_participants_v3")
-            .select("network_name, contest_address, proposal_id, created_at"),
-        )
-          .is("vote_amount", criteria.vote_amount)
-          .is("comment_id", null)
-          .order("created_at", { ascending: false })
-          .range(range.from, range.to);
-
-        countQuery = baseQuery(
-          supabase.from("analytics_contest_participants_v3").select("*", { count: "exact", head: true }),
-        )
-          .is("vote_amount", criteria.vote_amount)
-          .is("comment_id", null);
-      } else {
-        dataQuery = baseQuery(
-          supabase
-            .from("analytics_contest_participants_v3")
-            .select("network_name, contest_address, proposal_id, created_at, vote_amount"),
-        )
-          .not("vote_amount", "is", null)
-          .order("created_at", { ascending: false })
-          .range(range.from, range.to);
-
-        countQuery = baseQuery(
-          supabase.from("analytics_contest_participants_v3").select("*", { count: "exact", head: true }),
-        ).not("vote_amount", "is", null);
-      }
-
-      const [dataResult, countResult] = await Promise.all([dataQuery, countQuery]);
-
-      return { dataResult, countResult };
-    };
-
-    // first attempt with eq
-    let { dataResult, countResult } = await executeQuery(false);
-
-    // if no results, it could be that address is lowercase, try with ilike
-    if (dataResult.data?.length === 0) {
-      ({ dataResult, countResult } = await executeQuery(true));
+    if (!response.ok) {
+      throw new Error("Failed to fetch submissions");
     }
 
-    if (dataResult.error) throw dataResult.error;
-    if (countResult.error) throw countResult.error;
-
-    const data = dataResult.data || [];
-    const count = countResult.count ?? 0;
-
-    return { data, count };
+    const result = await response.json();
+    return result;
   } catch (error) {
+    console.error("Error fetching submissions:", error);
     throw error;
   }
 }
@@ -112,68 +64,42 @@ async function fetchComments(
   range: { from: number; to: number },
 ): Promise<{ data: any[]; count: number }> {
   try {
-    const executeQuery = async (useIlike: boolean) => {
-      const baseQuery = (query: any) => {
-        if (useIlike) {
-          return query.ilike("user_address", userAddress);
-        } else {
-          return query.eq("user_address", userAddress);
-        }
-      };
+    const params = new URLSearchParams({
+      userAddress,
+      from: range.from.toString(),
+      to: range.to.toString(),
+    });
 
-      const dataQuery = baseQuery(
-        supabase
-          .from("analytics_contest_participants_v3")
-          .select("network_name, contest_address, proposal_id, created_at, comment_id"),
-      )
-        .order("created_at", { ascending: false })
-        .not("comment_id", "is", null)
-        .not("deleted", "is", true)
-        .range(range.from, range.to);
+    const response = await fetch(`/api/user/comments?${params}`);
 
-      const countQuery = baseQuery(
-        supabase.from("analytics_contest_participants_v3").select("*", { count: "exact", head: true }),
-      )
-        .not("comment_id", "is", null)
-        .not("deleted", "is", true);
-
-      const [dataResult, countResult] = await Promise.all([dataQuery, countQuery]);
-
-      return { dataResult, countResult };
-    };
-
-    // first attempt with eq
-    let { dataResult, countResult } = await executeQuery(false);
-
-    // if no results, it could be that address is lowercase, try with ilike
-    if (dataResult.data?.length === 0) {
-      ({ dataResult, countResult } = await executeQuery(true));
+    if (!response.ok) {
+      throw new Error("Failed to fetch comments");
     }
 
-    if (dataResult.error) throw dataResult.error;
-    if (countResult.error) throw countResult.error;
-
-    const data = dataResult.data || [];
-    const count = countResult.count ?? 0;
-
-    return { data, count };
+    const result = await response.json();
+    return result;
   } catch (error) {
+    console.error("Error fetching comments:", error);
     throw error;
   }
 }
 
 async function getContestDetailsByAddresses(contestAddresses: string[]) {
   try {
-    const result = await supabase.from("contests_v3").select("title, address").in("address", contestAddresses);
+    const params = new URLSearchParams({
+      addresses: contestAddresses.join(","),
+    });
 
-    const { data, error } = result;
-    if (error) {
-      console.error(error);
-      throw error;
+    const response = await fetch(`/api/contest/get-details-by-address?${params}`);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch contest details");
     }
 
+    const { data } = await response.json();
     return data;
   } catch (error) {
+    console.error("Error fetching contest details:", error);
     throw error;
   }
 }
