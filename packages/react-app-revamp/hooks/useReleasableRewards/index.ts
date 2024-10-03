@@ -71,14 +71,14 @@ export function useReleasableRewards({
         chainId,
         abi,
         functionName: "releasable",
-        args: [BigInt(ranking)],
+        args: [ranking],
       },
       ...(erc20Addresses?.map(tokenAddress => ({
         address: contractAddress as `0x${string}`,
         chainId,
         abi,
         functionName: "releasable",
-        args: [tokenAddress, BigInt(ranking)],
+        args: [tokenAddress, ranking],
       })) ?? []),
     ]);
   }, [abi, contractAddress, chainId, rankings, erc20Addresses]);

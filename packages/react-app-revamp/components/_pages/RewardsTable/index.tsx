@@ -25,7 +25,7 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
     chainId: chains.filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]
       ?.id,
     functionName: "shares",
-    args: [BigInt(payee)],
+    args: [payee],
   }) as any;
 
   const shareForPayee = ((BigInt(data ?? 0) * BigInt(100)) / BigInt(totalShares)).toString();

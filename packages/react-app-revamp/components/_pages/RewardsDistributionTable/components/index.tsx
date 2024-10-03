@@ -40,7 +40,7 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
     abi: abiRewardsModule,
     chainId: chainId,
     functionName: "shares",
-    args: [Number(payee)],
+    args: [payee],
     query: {
       select(data) {
         return Number(data);
