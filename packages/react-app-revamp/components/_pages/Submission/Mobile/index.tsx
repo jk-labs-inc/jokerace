@@ -16,7 +16,7 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { VoteType } from "@hooks/useDeployContest/types";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
-import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { compareVersions } from "compare-versions";
 import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
 import Image from "next/image";
@@ -57,7 +57,6 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
 }) => {
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
-  const { openAccountModal } = useAccountModal();
   const { contestStatus } = useContestStatusStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const { downvotingAllowed, charge } = useContestStore(state => state);
@@ -228,7 +227,6 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           <MainHeaderMobileLayout
             isConnected={isConnected}
             address={contestInfo.address}
-            openAccountModal={openAccountModal}
             openConnectModal={openConnectModal}
           />
         </div>

@@ -12,18 +12,11 @@ interface MainHeaderProps {
 const MainHeader: FC<MainHeaderProps> = ({ showProfile }) => {
   const { isConnected, address } = useAccount();
   const { openConnectModal } = useConnectModal();
-  const { openAccountModal } = useAccountModal();
 
   return (
     <div>
       <MediaQuery maxWidth={1024}>
-        <MainHeaderMobileLayout
-          isConnected={isConnected}
-          address={address ?? ""}
-          openAccountModal={openAccountModal}
-          openConnectModal={openConnectModal}
-          showProfile={showProfile}
-        />
+        <MainHeaderMobileLayout isConnected={isConnected} address={address ?? ""} openConnectModal={openConnectModal} />
       </MediaQuery>
       <MediaQuery minWidth={1025}>
         <MainHeaderDesktopLayout isConnected={isConnected} address={address ?? ""} />
