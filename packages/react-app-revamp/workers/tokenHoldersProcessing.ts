@@ -1,7 +1,7 @@
-import { formatEther } from "@ethersproject/units";
 import { MAX_ROWS } from "@helpers/csvConstants";
 import { formatNumber } from "@helpers/formatNumber";
 import { VoteCalculationMethod } from "lib/permissioning";
+import { formatEther, parseUnits } from "viem";
 
 interface TokenHolder {
   TokenHolderAddress: string;
@@ -14,6 +14,7 @@ interface EventData {
   votesPerUnit: number;
   minTokensRequired: number;
   eventType: "voting" | "submission";
+  decimals: number;
 }
 
 interface OwnersBalancesRecord {
@@ -23,25 +24,26 @@ interface OwnersBalancesRecord {
 const BASE_LIMIT = 100000;
 
 self.onmessage = (event: MessageEvent<EventData>) => {
-  const { tokenHolders, voteCalculationMethod, votesPerUnit, minTokensRequired, eventType } = event.data;
+  const { tokenHolders, voteCalculationMethod, votesPerUnit, minTokensRequired, eventType, decimals } = event.data;
   const ownersBalancesRecord: OwnersBalancesRecord = {};
   let qualifiedHoldersCount = 0;
 
+  const minTokensRequiredInWei = parseUnits(minTokensRequired.toString(), decimals);
+
   for (const holder of tokenHolders) {
     const holderAddress: string = holder.TokenHolderAddress;
-    const tokenQuantityInWei = holder.TokenHolderQuantity;
+    const tokenQuantityInWei = BigInt(holder.TokenHolderQuantity);
 
-    const tokenQuantityInEther = Math.round(parseFloat(formatEther(tokenQuantityInWei)));
-
-    if (tokenQuantityInEther >= minTokensRequired) {
+    if (tokenQuantityInWei >= minTokensRequiredInWei) {
       qualifiedHoldersCount++;
       let totalVotes: number = 0;
 
       if (eventType === "voting") {
         if (voteCalculationMethod === "token") {
-          totalVotes = tokenQuantityInEther * votesPerUnit;
+          const tokenQuantityInEther = parseFloat(formatEther(tokenQuantityInWei));
+          totalVotes = Math.round(tokenQuantityInEther * votesPerUnit);
         } else if (voteCalculationMethod === "token holder") {
-          totalVotes = votesPerUnit;
+          totalVotes = Math.round(votesPerUnit);
         }
       } else if (eventType === "submission") {
         totalVotes = 10;
