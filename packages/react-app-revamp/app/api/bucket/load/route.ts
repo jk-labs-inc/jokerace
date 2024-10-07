@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 
-export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 const s3 = new S3Client({
   region: "auto",
