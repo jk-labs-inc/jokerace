@@ -123,6 +123,7 @@ const updateContestWithUserQualifications = async (contest: any, userAddress: st
     try {
       const response = await fetch(
         `/api/contests/participant-data?contestAddress=${address}&userAddress=${userAddress}&networkName=${network_name}`,
+        { cache: "no-store" },
       );
       if (!response.ok) {
         throw new Error("Failed to fetch participant data");
@@ -351,7 +352,7 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
       sortBy: sortBy || "",
     });
 
-    const response = await fetch(`/api/contests/search?${params}`);
+    const response = await fetch(`/api/contests/search?${params}`, { cache: "no-store" });
 
     if (!response.ok) {
       throw new Error("failed to fetch search results");
@@ -395,7 +396,7 @@ export async function getUserContests(
       ...(sortBy && { sortBy }),
     });
 
-    const response = await fetch(`/api/user/contests?${params}`);
+    const response = await fetch(`/api/user/contests?${params}`, { cache: "no-store" });
 
     if (!response.ok) {
       throw new Error("Failed to fetch user contests");
@@ -426,7 +427,9 @@ export async function getFeaturedContests(
   userAddress?: string,
 ): Promise<{ data: Contest[]; count: number | null }> {
   try {
-    const response = await fetch(`/api/contests/featured?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`);
+    const response = await fetch(`/api/contests/featured?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, {
+      cache: "no-store",
+    });
     if (!response.ok) {
       throw new Error("Failed to fetch featured contests");
     }
@@ -465,7 +468,7 @@ export async function getLiveContests(
       sortBy: sortBy || "",
     });
 
-    const response = await fetch(`/api/contests/live?${params}`);
+    const response = await fetch(`/api/contests/live?${params}`, { cache: "no-store" });
 
     if (!response.ok) {
       throw new Error("failed to fetch live contests");
@@ -497,7 +500,7 @@ export async function getPastContests(currentPage: number, itemsPerPage: number,
       itemsPerPage: itemsPerPage.toString(),
     });
 
-    const response = await fetch(`/api/contests/past?${params}`);
+    const response = await fetch(`/api/contests/past?${params}`, { cache: "no-store" });
 
     if (!response.ok) {
       throw new Error("failed to fetch past contests");
@@ -535,7 +538,7 @@ export async function getUpcomingContests(
       sortBy: sortBy || "",
     });
 
-    const response = await fetch(`/api/contests/upcoming?${params}`);
+    const response = await fetch(`/api/contests/upcoming?${params}`, { cache: "no-store" });
 
     if (!response.ok) {
       throw new Error("failed to fetch upcoming contests");
@@ -567,7 +570,7 @@ export async function checkIfContestExists(address: string, networkName: string)
       networkName,
     });
 
-    const response = await fetch(`/api/contest-exists?${params}`);
+    const response = await fetch(`/api/contest-exists?${params}`, { cache: "no-store" });
 
     if (!response.ok) {
       throw new Error("failed to check if contest exists");
