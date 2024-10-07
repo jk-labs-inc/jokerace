@@ -2,7 +2,6 @@ import { Radio, RadioGroup } from "@headlessui/react";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { SplitFeeDestination, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
-import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -167,7 +166,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                           </p>
                         </div>
                         <button onClick={() => setShowRewardsInfo(false)}>
-                          <Image
+                          <img
                             src="/modal/modal_close.svg"
                             width={24}
                             height={24}

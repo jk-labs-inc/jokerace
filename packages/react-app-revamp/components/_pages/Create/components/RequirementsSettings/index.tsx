@@ -5,7 +5,6 @@ import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { NFTMetadata } from "@hooks/useSearchNfts";
 import { FilteredToken } from "@hooks/useTokenList";
-import Image from "next/image";
 import { FC, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import CreateDefaultDropdown, { Option } from "../DefaultDropdown";
@@ -133,7 +132,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-4">
           <div className="flex gap-3 items-center">
-            <Image src={chainLogo} alt="ethereum" width={20} height={20} />
+            <img src={chainLogo} alt="ethereum" width={20} height={20} />
             <p className="text-[16px] text-neutral-11 font-bold uppercase">
               {settingType === "erc20" ? "token" : "nft"}
             </p>

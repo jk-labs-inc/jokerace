@@ -1,6 +1,5 @@
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import Image from "next/image";
 import { FC } from "react";
 
 interface DisplayOptions {
@@ -58,7 +57,7 @@ export const ConnectButtonCustom: FC<ConnectButtonCustomProps> = ({ displayOptio
                         }}
                       >
                         {chain.iconUrl && (
-                          <Image width={24} height={24} alt={chain.name ?? "Chain icon"} src={chain.iconUrl} />
+                          <img width={24} height={24} alt={chain.name ?? "Chain icon"} src={chain.iconUrl} />
                         )}
                       </div>
                     )}

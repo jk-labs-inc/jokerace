@@ -1,6 +1,5 @@
 import { DocumentArrowDownIcon } from "@heroicons/react/24/outline";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import Image from "next/image";
 import React, { FC, useMemo, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -62,7 +61,7 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
   const Icon = useMemo<React.ReactNode>(() => {
     if (type === "csv") {
       return (
-        <Image src="/create-flow/csv_upload.png" width={fileUploadIconWidth} height={fileUploadIconHeight} alt="csv" />
+        <img src="/create-flow/csv_upload.png" width={fileUploadIconWidth} height={fileUploadIconHeight} alt="csv" />
       );
     } else if (type === "docx") {
       return <DocumentArrowDownIcon className="w-[50px]" />;
@@ -108,7 +107,7 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
         {isSuccess ? (
           <>
             <div className="flex gap-4 items-center text-positive-11">
-              <Image src="/create-flow/success.png" height={32} width={32} alt="success" />
+              <img src="/create-flow/success.png" height={32} width={32} alt="success" />
               <span className="uppercase text-[24px] font-bold ">success!</span>
             </div>
             <p className="text-center text-positive-11">+ add more addresses</p>

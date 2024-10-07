@@ -1,7 +1,5 @@
-import { pluralize } from "@helpers/pluralize";
 import { useContestStore } from "@hooks/useContest/store";
 import moment from "moment";
-import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import ContestCountdownTimeUnit from "./components/TimeUnit";
@@ -95,7 +93,7 @@ const ContestCountdown = () => {
   return (
     <div className="w-full flex flex-col gap-2 md:gap-4 border-r-primary-2 border-r-2 pr-3">
       <div className="flex gap-2">
-        <Image src="/contest/timer.svg" width={16} height={16} alt="timer" />
+        <img src="/contest/timer.svg" width={16} height={16} alt="timer" />
         <p className="text-[12px] md:text-[16px] uppercase text-neutral-9">{displayText(phase)}</p>
       </div>
       <div className="flex items-center">

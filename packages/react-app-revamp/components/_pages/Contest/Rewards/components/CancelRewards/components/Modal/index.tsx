@@ -1,5 +1,4 @@
 import DialogModalV4 from "@components/UI/DialogModalV4";
-import Image from "next/image";
 import { FC } from "react";
 
 interface CancelRewardsModalProps {
@@ -18,7 +17,7 @@ const CancelRewardsModal: FC<CancelRewardsModalProps> = ({
       <div className="flex flex-col gap-8 py-6 md:py-16 pl-8 md:pl-32 pr-4 md:pr-16">
         <div className="flex justify-between items-center">
           <p className="text-[24px] text-neutral-11 font-bold">cancel rewards?? 😬</p>
-          <Image
+          <img
             src="/modal/modal_close.svg"
             width={39}
             height={33}

@@ -10,10 +10,12 @@ import ContestParameters from "@components/_pages/Contest/Parameters";
 import ContestRewards from "@components/_pages/Contest/Rewards";
 import ContestName from "@components/_pages/Contest/components/ContestName";
 import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
+import ContestRewardsInfoMobile from "@components/_pages/Contest/components/RewardsInfo/Mobile";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
+import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { generateUrlContest } from "@helpers/share";
@@ -26,15 +28,12 @@ import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useUser from "@hooks/useUser";
 import moment from "moment";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useUrl } from "nextjs-current-url";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import LayoutViewContestError from "./components/Error";
-import { chains } from "@config/wagmi";
-import ContestRewardsInfoMobile from "@components/_pages/Contest/components/RewardsInfo/Mobile";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -249,7 +248,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                             })
                           }
                         >
-                          <Image src="/forward.svg" alt="share" width={15} height={13} />
+                          <img src="/forward.svg" alt="share" width={15} height={13} />
                         </div>
                       ) : (
                         <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />

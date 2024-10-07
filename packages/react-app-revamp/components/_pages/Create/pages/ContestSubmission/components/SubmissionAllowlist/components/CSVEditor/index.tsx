@@ -2,9 +2,7 @@
 import { EMPTY_FIELDS_SUBMISSION } from "@components/_pages/Create/constants/csv";
 import { validateSubmissionFields } from "@components/_pages/Create/utils/csv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import Image from "next/image";
 import React, { FC, useEffect } from "react";
-import { useAccount } from "wagmi";
 import ScrollableTableBody from "./TableBody";
 
 export type SubmissionFieldObject = {
@@ -107,7 +105,7 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
                   Address <span className="normal-case">(starting with 0x)</span>
                 </p>
                 {fields.some(field => field.address !== "") && (
-                  <Image
+                  <img
                     src="/create-flow/trashcan.png"
                     width={18}
                     height={18}

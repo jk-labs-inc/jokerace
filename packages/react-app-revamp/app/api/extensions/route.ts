@@ -3,6 +3,7 @@ import { isSupabaseConfigured } from "@helpers/database";
 import { NextResponse } from "next/server";
 
 export const fetchCache = "force-no-store";
+export const revalidate = 0;
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;

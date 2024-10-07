@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { FC } from "react";
 import { VotingFieldObject } from "..";
 
@@ -53,7 +52,7 @@ const TableRow: FC<TableRowProps> = ({ address, votes, error, index, handlePaste
             className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
             onClick={() => handleDelete(index)}
           >
-            <Image src="/create-flow/trashcan.png" width={20} height={20} alt="trashcan" className="mt-[2px]" />
+            <img src="/create-flow/trashcan.png" width={20} height={20} alt="trashcan" className="mt-[2px]" />
           </div>
         </div>
       </td>

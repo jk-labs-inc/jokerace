@@ -8,7 +8,6 @@ import {
 } from "@helpers/share";
 import { useContestStore } from "@hooks/useContest/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import Image from "next/image";
 import Link from "next/link";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -49,14 +48,14 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
           className="cursor-pointer"
           target="_blank"
         >
-          <Image src="/socials/share-submission/lens.svg" width={32} height={32} alt="lens" />
+          <img src="/socials/share-submission/lens.svg" width={32} height={32} alt="lens" />
         </a>
         <a
           href={generateTwitterShareUrlForSubmission(contestId, chainName, proposalId)}
           className="cursor-pointer"
           target="_blank"
         >
-          <Image src="/socials/share-submission/twitter.svg" width={32} height={32} alt="twitter" />
+          <img src="/socials/share-submission/twitter.svg" width={32} height={32} alt="twitter" />
         </a>
         <div className="relative w-8 h-8 rounded-full bg-[#855DCD] flex items-center justify-center">
           <a
@@ -65,7 +64,7 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
             target="_blank"
             aria-label="Share on Farcaster"
           >
-            <Image
+            <img
               src="/socials/share-submission/farcaster.svg"
               width={32}
               height={32}
@@ -75,10 +74,10 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
           </a>
         </div>
         <a href={generateLinkedInShareUrlForSubmission(contestId, chainName, proposalId)} target="_blank">
-          <Image src="/socials/share-submission/linkedin.svg" width={32} height={32} alt="linkedIn" />
+          <img src="/socials/share-submission/linkedin.svg" width={32} height={32} alt="linkedIn" />
         </a>
         <a href={generateFacebookShareUrlForSubmission(contestId, chainName, proposalId)} target="_blank">
-          <Image src="/socials/share-submission/facebook.svg" width={32} height={32} alt="fb" />
+          <img src="/socials/share-submission/facebook.svg" width={32} height={32} alt="fb" />
         </a>
       </div>
       <p className="text-[20px] text-neutral-11 font-bold">or copy it:</p>

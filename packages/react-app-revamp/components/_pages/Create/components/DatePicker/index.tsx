@@ -1,4 +1,3 @@
-import Image from "next/image";
 import React, { forwardRef, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import ErrorMessage from "../Error";
@@ -17,7 +16,7 @@ const CustomInput = forwardRef<HTMLInputElement, { value: string; onClick: () =>
     ref={ref}
   >
     <p className="text-[18px] md:text-[20px] text-true-black">{value}</p>
-    <Image width={32} height={32} src="/create-flow/calendar.svg" alt="calendar" className="ml-auto" />
+    <img width={32} height={32} src="/create-flow/calendar.svg" alt="calendar" className="ml-auto" />
   </div>
 ));
 

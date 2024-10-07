@@ -7,7 +7,6 @@ import {
   generateUrlToCopy,
 } from "@helpers/share";
 import { CheckIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
 import { FC, Fragment, useEffect, useState } from "react";
 
 function classNames(...classes: string[]) {
@@ -42,12 +41,12 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
     <Menu as="div" className="relative inline-block text-left">
       <MediaQuery maxWidth={768}>
         <MenuButton className="w-8 h-8 flex items-center rounded-[10px] border border-neutral-11">
-          <Image src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
+          <img src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
         </MenuButton>
       </MediaQuery>
       <MediaQuery minWidth={769}>
         <MenuButton className="p-4 h-8 flex items-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[10px] border border-neutral-11">
-          Share <Image src="/forward.svg" alt="share" className="ml-1" width={20} height={20} />
+          Share <img src="/forward.svg" alt="share" className="ml-1" width={20} height={20} />
         </MenuButton>
       </MediaQuery>
 
@@ -73,7 +72,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 rel="noreferrer"
                 onClick={close}
               >
-                <Image src="/socials/lens.svg" alt="Lens" width={32} height={32} className="object-fit-cover mr-2" />
+                <img src="/socials/lens.svg" alt="Lens" width={32} height={32} className="object-fit-cover mr-2" />
                 <span className="text-left">share on Lens</span>
               </a>
             )}
@@ -90,7 +89,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 rel="noreferrer"
                 onClick={close}
               >
-                <Image
+                <img
                   src="/socials/twitter.svg"
                   alt="Twitter"
                   width={32}
@@ -113,7 +112,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 rel="noreferrer"
                 onClick={close}
               >
-                <Image
+                <img
                   src="/socials/farcaster.svg"
                   alt="Twitter"
                   width={32}

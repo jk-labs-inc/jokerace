@@ -2,7 +2,6 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
 import { useCreateContestStartStore } from "@components/_pages/Create/pages/ContestStart";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import Image from "next/image";
 import { FC, MouseEventHandler, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import MobileBottomButton from "../Mobile";
@@ -84,7 +83,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
           onClick={() => onBackHandler(step)}
         >
           <div className="transition-transform duration-200 group-hover:-translate-x-1">
-            <Image src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-[1px]" />
+            <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-[1px]" />
           </div>
           <p className="text-[16px]">back</p>
         </div>
