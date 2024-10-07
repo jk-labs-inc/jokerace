@@ -3,7 +3,7 @@ import { lensClient } from "@config/lens";
 import { config } from "@config/wagmi";
 import { mainnet } from "@config/wagmi/custom-chains/mainnet";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
-import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getEnsAvatar, getEnsName } from "@wagmi/core";
 import { normalize } from "viem/ens";
 
@@ -44,8 +44,11 @@ const checkImageUrl = async (url: string): Promise<string> => {
   });
 };
 
-const fetchProfileData = async ({ queryKey }: QueryFunctionContext): Promise<ProfileData> => {
-  const [ethereumAddress, shortenOnFallback, includeSocials] = queryKey as [string, boolean, boolean];
+const fetchProfileData = async (
+  ethereumAddress: string,
+  shortenOnFallback: boolean,
+  includeSocials?: boolean,
+): Promise<ProfileData> => {
   let profileName = shortenOnFallback ? shortenEthereumAddress(ethereumAddress) : ethereumAddress;
   let profileAvatar = DEFAULT_AVATAR_URL;
   let socials = {
@@ -137,8 +140,9 @@ const fetchProfileData = async ({ queryKey }: QueryFunctionContext): Promise<Pro
 const useProfileData = (ethereumAddress: string, shortenOnFallback: boolean, includeSocials?: boolean) => {
   const { data, isLoading, isError, error } = useQuery<ProfileData>({
     queryKey: [ethereumAddress, shortenOnFallback, includeSocials],
-    queryFn: fetchProfileData,
+    queryFn: () => fetchProfileData(ethereumAddress, shortenOnFallback, includeSocials),
     enabled: !!ethereumAddress || !!includeSocials,
+    staleTime: 1000 * 60 * 60,
   });
 
   return {
