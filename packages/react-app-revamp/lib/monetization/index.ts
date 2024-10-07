@@ -16,7 +16,9 @@ export const fetchChargeDetails = async (chainName: string): Promise<ChargeDetai
   }
 
   try {
-    const response = await fetch(`/api/monetization/charge-details?chainName=${encodeURIComponent(chainName)}`);
+    const response = await fetch(`/api/monetization/charge-details?chainName=${encodeURIComponent(chainName)}`, {
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       throw new Error("failed to fetch charge details");

@@ -10,7 +10,7 @@ const BELLO_API_URL = "https://api.bello.lol/v2/jokerace/redirectUrl";
 
 export const fetchExtensions = async (): Promise<ExtensionSupabase[]> => {
   try {
-    const response = await fetch("/api/extensions");
+    const response = await fetch("/api/extensions", { cache: "no-store" });
 
     if (!response.ok) {
       throw new Error("failed to fetch extensions");
@@ -28,7 +28,7 @@ export const fetchBelloRedirectUrl = async (contractAddress: string, chain: stri
   const apiUrl = `${BELLO_API_URL}?contractAddress=${contractAddress}&chain=${chain}`;
 
   try {
-    const response = await fetch(apiUrl);
+    const response = await fetch(apiUrl, { cache: "no-store" });
     if (!response.ok) {
       throw new Error(`Error fetching from Bello API: ${response.statusText}`);
     }

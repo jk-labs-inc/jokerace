@@ -16,6 +16,7 @@ export const getTokenAddresses = async (rewardsModuleAddress: string, networkNam
   try {
     const response = await fetch(
       `/api/rewards/token-addresses?rewardsModuleAddress=${encodeURIComponent(rewardsModuleAddress)}&networkName=${encodeURIComponent(networkName)}`,
+      { cache: "no-store" },
     );
 
     if (!response.ok) {

@@ -389,7 +389,7 @@ export function useContest() {
         chainName,
       });
 
-      const response = await fetch(`/api/contest/requirements-data?${params}`);
+      const response = await fetch(`/api/contest/requirements-data?${params}`, { cache: "no-store" });
 
       if (!response.ok) {
         throw new Error("Failed to process requirements data");
