@@ -110,7 +110,9 @@ export function useUser() {
           chainName: lowerCaseChainName,
         });
 
-        const response = await fetch(`/api/user/allowed-to-submit?${params}`);
+        const response = await fetch(`/api/user/allowed-to-submit?${params}`, {
+          cache: "no-store",
+        });
 
         if (!response.ok) {
           throw new Error("Failed to check if user is allowed to submit");
@@ -196,7 +198,9 @@ export function useUser() {
         chainName: lowerCaseChainName,
       });
 
-      const response = await fetch(`/api/user/allowed-to-vote?${params}`);
+      const response = await fetch(`/api/user/allowed-to-vote?${params}`, {
+        cache: "no-store",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch user vote info");
