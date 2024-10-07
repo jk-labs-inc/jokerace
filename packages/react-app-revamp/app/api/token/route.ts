@@ -1,7 +1,7 @@
 import Fuse from "fuse.js";
 import { NextResponse, type NextRequest } from "next/server";
 
-export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 interface Token {
   address: string;

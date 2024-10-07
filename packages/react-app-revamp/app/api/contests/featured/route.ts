@@ -4,7 +4,7 @@ import getPagination from "@helpers/getPagination";
 import moment from "moment";
 import { NextRequest, NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
