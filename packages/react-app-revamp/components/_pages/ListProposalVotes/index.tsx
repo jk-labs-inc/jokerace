@@ -1,36 +1,19 @@
 import Collapsible from "@components/UI/Collapsible";
-import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { formatNumber } from "@helpers/formatNumber";
 import { ArrowPathIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import { VOTES_PER_PAGE, useProposalVotes } from "@hooks/useProposalVotes";
 import { usePathname } from "next/navigation";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { FixedSizeList as List } from "react-window";
+import VoterRow from "./components/VoterRow";
 
 interface ListProposalVotesProps {
   proposalId: string;
   votedAddresses: string[] | null;
 }
-
-const VotersList: FC<{ votesPerAddress: any }> = ({ votesPerAddress }) => {
-  return (
-    <div className="flex flex-col gap-4 md:w-[350px]">
-      {Object.keys(votesPerAddress).map((address: string, index, self) => (
-        <div
-          key={address}
-          className={`flex justify-between items-end text-[16px] font-bold pb-3 ${
-            index !== self.length - 1 ? "border-b border-neutral-10" : ""
-          }`}
-        >
-          <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} />
-          <p>{formatNumber(votesPerAddress[address])} votes</p>
-        </div>
-      ))}
-    </div>
-  );
-};
 
 const LoadingSkeleton: FC<{ count: number }> = ({ count }) => (
   <div className="flex flex-col gap-4 md:w-[350px]">
@@ -61,6 +44,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
   const count =
     isLoading && onLoadMoreCalledRef.current ? Math.min(remainingItems, VOTES_PER_PAGE) : initialSkeletonCount;
   const [isVotersOpen, setIsVotersOpen] = useState(true);
+  const showLoadMore = currentPage < totalPages - 1;
 
   useEffect(() => {
     onLoadMoreCalledRef.current = false;
@@ -83,6 +67,8 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
     refreshData();
   };
 
+  const addresses = Object.keys(accumulatedVotesData);
+
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
       <div className="flex gap-4 items-center">
@@ -104,15 +90,27 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
         <div className="flex flex-col gap-5">
           {votedAddresses ? (
             <>
-              <div className="flex flex-col gap-4 md:w-[350px]">
+              <div className="md:w-[400px] max-h-[400px] overflow-auto">
                 {isLoading && !onLoadMoreCalledRef.current ? (
                   <LoadingSkeleton count={count} />
                 ) : (
-                  <VotersList votesPerAddress={accumulatedVotesData} />
+                  <AutoSizer disableHeight>
+                    {({ width }: { width: number }) => (
+                      <List
+                        height={Math.min(addresses.length * 50, 400)}
+                        itemCount={addresses.length}
+                        itemSize={50}
+                        width={width}
+                        itemData={{ votesPerAddress: accumulatedVotesData, addresses }}
+                      >
+                        {VoterRow}
+                      </List>
+                    )}
+                  </AutoSizer>
                 )}
                 {isLoading && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
               </div>
-              {currentPage < totalPages - 1 && !isLoading && (
+              {showLoadMore && (
                 <div className="flex gap-2 items-center cursor-pointer" onClick={onLoadMore}>
                   <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
                   <button
@@ -126,7 +124,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
             </>
           ) : (
             <p className="text-[16px] text-negative-11 font-bold">
-              ruh-roh! An error occurred when retrieving votes for this proposal; try refreshing the page.
+              ruh-roh! an error occurred when retrieving votes for this proposal; try refreshing the page.
             </p>
           )}
         </div>
