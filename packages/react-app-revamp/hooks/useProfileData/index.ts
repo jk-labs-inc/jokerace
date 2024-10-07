@@ -142,7 +142,7 @@ const useProfileData = (ethereumAddress: string, shortenOnFallback: boolean, inc
     queryKey: [ethereumAddress, shortenOnFallback, includeSocials],
     queryFn: () => fetchProfileData(ethereumAddress, shortenOnFallback, includeSocials),
     enabled: !!ethereumAddress || !!includeSocials,
-    staleTime: Infinity,
+    staleTime: 1000 * 60 * 60,
   });
 
   return {
