@@ -46,7 +46,7 @@ function useFeaturedContests() {
     isFetching: isContestDataFetching,
   } = useQuery({
     queryKey: ["featuredContests", page],
-    queryFn: () => getFeaturedContests(page, 6),
+    queryFn: () => getFeaturedContests(page, 8),
     refetchOnWindowFocus: false,
   });
 
