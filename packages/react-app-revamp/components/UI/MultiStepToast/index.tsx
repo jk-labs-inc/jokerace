@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Image from "next/image";
 import { FC, RefObject, useEffect, useState } from "react";
 import { FadeLoader } from "react-spinners";
 import { toast } from "react-toastify";
@@ -58,7 +57,7 @@ const MultiStepToast: FC<MultiStepToastProps> = ({ messages, promises, toastIdRe
 
   const successMessage = (
     <div className="flex gap-4 items-center pl-4">
-      <Image src="/toast/success.svg" width={40} height={40} alt="success" />
+      <img src="/toast/success.svg" width={40} height={40} alt="success" />
       <div className="flex flex-col">
         <p className="uppercase font-bold text-[16px]">success!</p>
         <p className="text-[12px]">{completionMessage}</p>

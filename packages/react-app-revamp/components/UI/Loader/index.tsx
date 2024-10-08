@@ -1,4 +1,3 @@
-import Image from "next/image";
 interface LoaderProps {
   children?: React.ReactNode;
 }
@@ -7,7 +6,7 @@ export const Loader = (props: LoaderProps) => {
   const { children } = props;
   return (
     <div className="flex flex-col gap-8 items-center justify-center mt-40">
-      <Image
+      <img
         src="/contest/mona-lisa-moustache.png"
         alt="mona-lista-moustached"
         height={72}

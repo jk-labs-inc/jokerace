@@ -3,7 +3,6 @@ import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting
 import ScrollableTableBody from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor/TableBody";
 import { validateVotingFields } from "@components/_pages/Create/utils/csv";
 import { Dialog, DialogPanel } from "@headlessui/react";
-import Image from "next/image";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -90,7 +89,7 @@ const CSVErrorModalInvalidEntriesVoting: FC<CSVErrorModalInvalidEntriesVotingPro
                     <p className="text-[24px] font-bold text-true-white normal-case">
                       <p className="text-[24px] text-neutral-11 font-bold">we spied some issues 🕵️</p>
                     </p>
-                    <Image
+                    <img
                       src="/modal/modal_close.svg"
                       alt="close"
                       width={30}

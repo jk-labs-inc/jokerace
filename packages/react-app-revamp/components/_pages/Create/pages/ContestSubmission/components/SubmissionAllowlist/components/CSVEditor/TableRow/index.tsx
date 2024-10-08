@@ -1,5 +1,4 @@
 import { FC } from "react";
-import Image from "next/image";
 import { SubmissionFieldObject } from "..";
 
 type TableRowProps = SubmissionFieldObject & {
@@ -24,7 +23,7 @@ const TableRow: FC<TableRowProps> = ({ address, error, index, handlePaste, handl
           className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
           onClick={() => handleDelete(index)}
         >
-          <Image src="/create-flow/trashcan.png" width={20} height={20} alt="trashcan" className="mt-[2px]" />
+          <img src="/create-flow/trashcan.png" width={20} height={20} alt="trashcan" className="mt-[2px]" />
         </div>
       </div>
     </td>

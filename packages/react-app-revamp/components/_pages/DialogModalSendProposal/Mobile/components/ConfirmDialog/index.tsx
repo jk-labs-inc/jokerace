@@ -2,7 +2,6 @@ import DialogModalSendProposalSuccessLayout from "@components/_pages/DialogModal
 import { Charge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { type GetBalanceReturnType } from "@wagmi/core";
-import Image from "next/image";
 import { FC } from "react";
 import SendProposalMobileLayoutConfirmInitialContent from "./components/InitialContent";
 import SendProposalMobileLayoutConfirmLoadingContent from "./components/LoadingContent";
@@ -30,8 +29,8 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
   const title = isLoading
     ? "approving transaction..."
     : isSuccess && proposalId
-    ? "your submission is live!"
-    : "confirm submission";
+      ? "your submission is live!"
+      : "confirm submission";
 
   if (!isOpen) return null;
 
@@ -51,7 +50,7 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
       <div className={`flex flex-col ${isSuccess ? "gap-8" : "gap-5"} transition-all`}>
         <div className="flex justify-between items-center">
           <p className="text-[24px] font-bold">{title}</p>
-          <Image src="/modal/modal_close.svg" width={24} height={24} alt="close" onClick={onClose} />
+          <img src="/modal/modal_close.svg" width={24} height={24} alt="close" onClick={onClose} />
         </div>
         {renderContent()}
       </div>

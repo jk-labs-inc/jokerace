@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { FC, ReactNode, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -26,7 +25,7 @@ const CreateContestConfirmLayout: FC<CreateConfirmLayoutProps> = ({ children, on
     return (
       <div className="relative flex gap-2">
         <div className={`absolute top-[4px] cursor-pointer transition-opacity duration-300`} onClick={onClick}>
-          <Image src="/create-flow/edit.svg" height={16} width={16} alt="edit" />
+          <img src="/create-flow/edit.svg" height={16} width={16} alt="edit" />
         </div>
         <div className="flex ml-6">{children}</div>
       </div>
@@ -41,7 +40,7 @@ const CreateContestConfirmLayout: FC<CreateConfirmLayoutProps> = ({ children, on
         }`}
         onClick={onClick}
       >
-        <Image src="/create-flow/edit.svg" height={16} width={16} alt="edit" />
+        <img src="/create-flow/edit.svg" height={16} width={16} alt="edit" />
       </div>
       <div className="flex items-start">{children}</div>
     </div>

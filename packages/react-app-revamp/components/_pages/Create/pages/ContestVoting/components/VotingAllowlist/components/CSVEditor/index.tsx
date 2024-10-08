@@ -3,10 +3,9 @@ import { EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
 import { validateVotingFields } from "@components/_pages/Create/utils/csv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { cloneDeep } from "lodash";
-import Image from "next/image";
 import React, { FC, useEffect, useState } from "react";
-import ScrollableTableBody from "./TableBody";
 import { useMediaQuery } from "react-responsive";
+import ScrollableTableBody from "./TableBody";
 
 export type VotingFieldObject = {
   address: string;
@@ -143,7 +142,7 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
               <div className="flex items-center justify-between">
                 <span className="normal-case">{votesRowTitle}</span>
                 {fields.some(field => field.address !== "" || field.votes !== "") && (
-                  <Image
+                  <img
                     src="/create-flow/trashcan.png"
                     width={18}
                     height={18}

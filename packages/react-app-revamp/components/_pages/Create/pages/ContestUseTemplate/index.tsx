@@ -1,7 +1,6 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import useSetContestTemplate from "@hooks/useSetContestTemplate";
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { steps } from "../..";
@@ -111,7 +110,7 @@ const CreateContestTemplate = () => {
                 onClick={handleBackClick}
               >
                 <div className="transition-transform duration-200 group-hover:-translate-x-1">
-                  <Image src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-[1px]" />
+                  <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-[1px]" />
                 </div>
                 <p className="text-[16px]">Back</p>
               </div>

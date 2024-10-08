@@ -1,7 +1,6 @@
 import { chainsImages } from "@config/wagmi";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
 import { FC, Fragment, useState } from "react";
 
 export interface Option {
@@ -27,7 +26,7 @@ const TokenSearchModalChainDropdown: FC<ChainDropdownProps> = ({ options, defaul
   if (options.length === 1) {
     return (
       <div className="flex gap-2 items-center">
-        <Image src="/mainnet.svg" alt="ethereum" width={20} height={20} />
+        <img src="/mainnet.svg" alt="ethereum" width={20} height={20} />
         <p className="text-[16px] text-neutral-11 font-bold uppercase">ethereum</p>
       </div>
     );
@@ -40,7 +39,7 @@ const TokenSearchModalChainDropdown: FC<ChainDropdownProps> = ({ options, defaul
           <>
             <MenuButton className="flex items-center bg-primary-5 cursor-pointer border border-neutral-10 w-full md:w-[200px] h-full md:h-12 rounded-[15px] px-4 py-2">
               <div className="flex gap-2 items-center">
-                <Image src={chainsImages[selectedOption.value]} width={24} height={24} alt="chain logo" />
+                <img src={chainsImages[selectedOption.value]} width={24} height={24} alt="chain logo" />
                 <p className="text-[20px] text-neutral-11 font-bold">{selectedOption.label}</p>
               </div>
               <ChevronDownIcon
@@ -72,7 +71,7 @@ const TokenSearchModalChainDropdown: FC<ChainDropdownProps> = ({ options, defaul
                         onClick={() => handleOptionClick(option)}
                       >
                         <div className="flex gap-2 items-center">
-                          <Image src={chainsImages[option.value]} width={24} height={24} alt="chain logo" />
+                          <img src={chainsImages[option.value]} width={24} height={24} alt="chain logo" />
                           {option.label}
                         </div>
                       </button>

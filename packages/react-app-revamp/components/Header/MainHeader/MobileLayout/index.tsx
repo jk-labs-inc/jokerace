@@ -10,7 +10,6 @@ import {
 import { config } from "@config/wagmi";
 import { HomeIcon, MagnifyingGlassIcon, PencilSquareIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { disconnect } from "@wagmi/core";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FC, useCallback, useEffect, useState } from "react";
@@ -103,7 +102,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
             </div>
           ) : (
             <div className="flex flex-col items-center" onClick={openConnectModal}>
-              <Image width={26} height={26} src="/header/wallet.svg" alt="wallet" />
+              <img width={26} height={26} src="/header/wallet.svg" alt="wallet" />
               <p className="text-[12px]">wallet</p>
             </div>
           )}

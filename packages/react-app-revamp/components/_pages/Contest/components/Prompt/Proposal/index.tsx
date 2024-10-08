@@ -14,7 +14,6 @@ import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { FC, ReactNode } from "react";
 import { Tweet } from "react-tweet";
@@ -88,7 +87,7 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
             href={generateLensShareUrlForSubmission(address, chainName, proposalId)}
             target="_blank"
           >
-            <Image
+            <img
               width={32}
               height={32}
               className="object-cover m-auto grayscale"
@@ -101,20 +100,14 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
             href={generateTwitterShareUrlForSubmission(address, chainName, proposalId)}
             target="_blank"
           >
-            <Image
-              width={28}
-              height={28}
-              className="object-cover m-auto"
-              src="/socials/twitter-light.svg"
-              alt="avatar"
-            />
+            <img width={28} height={28} className="object-cover m-auto" src="/socials/twitter-light.svg" alt="avatar" />
           </a>
           <a
             className={`flex items-center  bg-neutral-13 rounded-full overflow-hidden w-8 h-8`}
             href={generateFarcasterShareUrlForSubmission(contestName, address, chainName, proposalId)}
             target="_blank"
           >
-            <Image
+            <img
               width={28}
               height={28}
               className="object-cover m-auto"
@@ -127,7 +120,7 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
             href={generateFacebookShareUrlForSubmission(address, chainName, proposalId)}
             target="_blank"
           >
-            <Image
+            <img
               width={30}
               height={30}
               className="object-cover m-auto grayscale"
@@ -140,7 +133,7 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
             href={generateLinkedInShareUrlForSubmission(address, chainName, proposalId)}
             target="_blank"
           >
-            <Image
+            <img
               width={34}
               height={34}
               className="object-cover m-auto grayscale"
@@ -157,7 +150,7 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
               })
             }
           >
-            <Image src="/forward.svg" alt="share" className="object-cover m-auto" width={15} height={13} />
+            <img src="/forward.svg" alt="share" className="object-cover m-auto" width={15} height={13} />
           </div>
         </div>
       ) : null}

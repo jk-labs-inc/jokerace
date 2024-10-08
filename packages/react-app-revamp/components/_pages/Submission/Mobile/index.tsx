@@ -19,7 +19,6 @@ import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { compareVersions } from "compare-versions";
 import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
-import Image from "next/image";
 import { FC } from "react";
 import { useAccount } from "wagmi";
 
@@ -92,7 +91,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               })
             }
           >
-            <Image src="/forward.svg" alt="share" className="object-cover m-auto" width={15} height={13} />
+            <img src="/forward.svg" alt="share" className="object-cover m-auto" width={15} height={13} />
           </div>
         </div>
       </div>
@@ -204,7 +203,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
                 className="flex items-center justify-center gap-2 text-positive-11 text-[16px] font-bold transform transition-transform duration-200 active:scale-95"
                 onClick={onPreviousEntry}
               >
-                <Image
+                <img
                   src="/contest/previous-entry-mobile.svg"
                   alt="prev-entry"
                   width={16}
@@ -220,7 +219,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
                 onClick={onNextEntry}
               >
                 next entry
-                <Image src="/contest/next-entry-mobile.svg" alt="prev-entry" width={16} height={16} className="mt-1" />
+                <img src="/contest/next-entry-mobile.svg" alt="prev-entry" width={16} height={16} className="mt-1" />
               </div>
             )}
           </div>

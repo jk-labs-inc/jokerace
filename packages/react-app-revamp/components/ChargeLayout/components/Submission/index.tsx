@@ -6,7 +6,6 @@ import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { Charge } from "@hooks/useDeployContest/types";
 import { GetBalanceReturnType } from "@wagmi/core";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { formatEther } from "viem";
@@ -37,7 +36,7 @@ const ChargeLayoutSubmission: FC<ChargeLayoutSubmissionProps> = ({ charge, accou
       <div className="flex gap-8">
         <div className="flex flex-col">
           <div className="flex gap-3">
-            <Image
+            <img
               src={insufficientBalance ? "/contest/wallet-entry-insufficient.svg" : "/contest/wallet-entry.svg"}
               height={20}
               width={22}
