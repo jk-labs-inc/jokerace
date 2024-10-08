@@ -47,38 +47,44 @@ const ContestParameters = () => {
   const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
 
   return (
-    <div className="flex flex-col gap-16 animate-reveal">
+    <div className="flex flex-col gap-12 animate-reveal">
       <ContestParametersTimeline
         submissionsOpen={formattedSubmissionsOpen}
         votesOpen={formattedVotesOpen}
         votesClose={formattedVotesClosing}
       />
-      <ContestParametersSubmissions
-        anyoneCanSubmit={anyoneCanSubmit}
-        currentUserQualifiedToSubmit={currentUserQualifiedToSubmit}
-        contestMaxNumberSubmissionsPerUser={contestMaxNumberSubmissionsPerUser}
-        contestMaxProposalCount={contestMaxProposalCount}
-        maxProposalsPerUserCapped={maxProposalsPerUserCapped}
-        submissionMerkleRoot={submissionMerkleRoot}
-        address={address ?? ""}
-        costToPropose={charge?.type.costToPropose}
-        nativeCurrencySymbol={nativeCurrency?.symbol}
-        openConnectModal={openConnectModal}
-      />
-      <ContestParametersVoting
-        anyoneCanVote={anyoneCanVote}
-        votingMerkleRoot={votingMerkleRoot}
-        address={address ?? ""}
-        currentUserAvailableVotesAmount={currentUserAvailableVotesAmount}
-        currentUserTotalVotesAmount={currentUserTotalVotesAmount}
-        voteCharge={charge && { type: charge.voteType, cost: charge.type.costToVote }}
-        nativeCurrencySymbol={nativeCurrency?.symbol}
-        votingRequirementsDescription={votingRequirements?.description}
-        openConnectModal={openConnectModal}
-      />
-      {charge ? (
-        <ContestParametersEarnings charge={charge} contestAuthor={contestAuthor} blockExplorerUrl={blockExplorerUrl} />
-      ) : null}
+      <div className="flex flex-col gap-8">
+        <ContestParametersSubmissions
+          anyoneCanSubmit={anyoneCanSubmit}
+          currentUserQualifiedToSubmit={currentUserQualifiedToSubmit}
+          contestMaxNumberSubmissionsPerUser={contestMaxNumberSubmissionsPerUser}
+          contestMaxProposalCount={contestMaxProposalCount}
+          maxProposalsPerUserCapped={maxProposalsPerUserCapped}
+          submissionMerkleRoot={submissionMerkleRoot}
+          address={address ?? ""}
+          nativeCurrencySymbol={nativeCurrency?.symbol}
+          openConnectModal={openConnectModal}
+        />
+        <ContestParametersVoting
+          anyoneCanVote={anyoneCanVote}
+          votingMerkleRoot={votingMerkleRoot}
+          address={address ?? ""}
+          currentUserAvailableVotesAmount={currentUserAvailableVotesAmount}
+          currentUserTotalVotesAmount={currentUserTotalVotesAmount}
+          voteCharge={charge && { type: charge.voteType, cost: charge.type.costToVote }}
+          nativeCurrencySymbol={nativeCurrency?.symbol}
+          votingRequirementsDescription={votingRequirements?.description}
+          openConnectModal={openConnectModal}
+        />
+        {charge ? (
+          <ContestParametersEarnings
+            charge={charge}
+            contestAuthor={contestAuthor}
+            blockExplorerUrl={blockExplorerUrl}
+            nativeCurrencySymbol={nativeCurrency?.symbol}
+          />
+        ) : null}
+      </div>
     </div>
   );
 };

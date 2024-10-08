@@ -13,7 +13,6 @@ interface ContestParametersSubmissionsProps {
   submissionMerkleRoot: string;
   address: string;
   nativeCurrencySymbol?: string;
-  costToPropose?: number;
   openConnectModal?: () => void;
 }
 
@@ -26,7 +25,6 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
   submissionMerkleRoot,
   address,
   nativeCurrencySymbol,
-  costToPropose,
   openConnectModal,
 }) => {
   const qualifyToSubmitMessage = useMemo<string | JSX.Element>(() => {
@@ -50,8 +48,8 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
 
   return (
     <div className="flex flex-col gap-8">
-      <p className="text-[20px] font-bold text-neutral-14">entries</p>
-      <ul className="pl-4 text-[16px] font-bold">
+      <p className="text-[20px] font-bold text-neutral-10">entering</p>
+      <ul className="pl-4 text-[16px] font-bold text-neutral-9">
         <li className="list-disc">
           qualified wallets can enter{" "}
           <span>
@@ -69,11 +67,6 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
         <li className="list-disc">{address || anyoneCanSubmit ? qualifyToSubmitMessage : walletNotConnected}</li>
         <ContestParametersSubmissionRequirements />
         {!anyoneCanSubmit ? <ContestParamatersCSVSubmitters submissionMerkleRoot={submissionMerkleRoot} /> : null}
-        {costToPropose ? (
-          <li className="list-disc">
-            {formatEther(BigInt(costToPropose))} {nativeCurrencySymbol}/entry
-          </li>
-        ) : null}
       </ul>
     </div>
   );
