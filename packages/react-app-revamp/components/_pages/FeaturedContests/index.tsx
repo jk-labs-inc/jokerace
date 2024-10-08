@@ -48,7 +48,7 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
           <div className="overflow-x-auto scrollbar-hide">
             <div className="flex lg:featured-contests-grid gap-4 pb-4">
               {isContestDataFetching
-                ? Array.from({ length: 6 }).map((_, index) => <SkeletonCard key={index} />)
+                ? Array.from({ length: 8 }).map((_, index) => <SkeletonCard key={index} />)
                 : contestData?.data.map((contest, index) => (
                     <div className="w-[320px] flex-shrink-0 lg:w-auto" key={index}>
                       <FeaturedContestCard
