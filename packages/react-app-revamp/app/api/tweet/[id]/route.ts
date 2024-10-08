@@ -3,7 +3,7 @@ import { getTweet } from "react-tweet/api";
 
 type RouteSegment = { params: { id: string } };
 
-export const fetchCache = "force-no-store";
+export const fetchCache = "only-cache";
 
 export async function GET(_req: Request, { params }: RouteSegment) {
   try {

@@ -1,4 +1,4 @@
-import { loadFileFromBucket } from "..";
+import { fetchDataFromBucket } from "..";
 
 /**
  * Get all submitters for a given submission merkle root from S3 bucket
@@ -7,7 +7,7 @@ import { loadFileFromBucket } from "..";
  */
 export async function getSubmitters(submissionMerkleRoot: string) {
   try {
-    const submissionMerkleTreeData = await loadFileFromBucket({ fileId: submissionMerkleRoot });
+    const submissionMerkleTreeData = await fetchDataFromBucket(submissionMerkleRoot);
     return {
       submitters: submissionMerkleTreeData || [],
     };
