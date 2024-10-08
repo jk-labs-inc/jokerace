@@ -1,6 +1,5 @@
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
 import { FC, useState } from "react";
 
 interface CSVErrorModalDuplicatesProps {
@@ -40,7 +39,7 @@ const CSVErrorModalDuplicates: FC<CSVErrorModalDuplicatesProps> = ({ addresses, 
                 <div className="flex flex-col gap-4">
                   <div className="flex justify-between items-center">
                     <p className="text-[24px] font-bold text-true-white normal-case">we’re seeing double 👀</p>
-                    <Image
+                    <img
                       src="/modal/modal_close.svg"
                       alt="close"
                       width={30}
@@ -62,7 +61,7 @@ const CSVErrorModalDuplicates: FC<CSVErrorModalDuplicatesProps> = ({ addresses, 
                       onClick={handleCopy}
                       className="flex gap-1 items-center justify-center w-[104px] h-8 bg-secondary-11 hover:bg-secondary-10 transition-colors duration-300 rounded-[10px] text-[16px] text-true-black font-bold"
                     >
-                      <Image src="/create-flow/copy.svg" width={16} height={16} alt="copy" />
+                      <img src="/create-flow/copy.svg" width={16} height={16} alt="copy" />
                       {copyText}
                     </button>
                     <ul className="flex flex-col pl-8">

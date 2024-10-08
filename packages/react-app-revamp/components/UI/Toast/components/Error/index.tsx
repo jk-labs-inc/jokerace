@@ -1,6 +1,5 @@
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { ClipboardIcon, FlagIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
 import { useUrl } from "nextjs-current-url";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
@@ -32,7 +31,7 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
 
   return (
     <div className="flex gap-4 items-center pl-3 md:pl-6">
-      <Image className="hidden md:block" src="/toast/sadboi.png" width={40} height={40} alt="error" />
+      <img className="hidden md:block" src="/toast/sadboi.png" width={40} height={40} alt="error" />
       <div className="flex flex-col gap-4 pl-1">
         <div className="flex flex-col max-w-[350px] md:max-w-full">
           <p className="text-[14px] font-medium">{messageToShow}</p>

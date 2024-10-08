@@ -9,7 +9,6 @@ import { useCreatorSplitDestination } from "@hooks/useCreatorSplitDestination";
 import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 import { Charge, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { switchChain } from "@wagmi/core";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
@@ -100,8 +99,8 @@ const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charg
     <DialogModalV4 isOpen={isOpen} onClose={onClose}>
       <div className="flex flex-col gap-8 md:gap-20 py-6 md:py-16 pl-8 md:pl-32 pr-4 md:pr-16">
         <div className="flex justify-between items-center">
-          <p className="text-[24px] text-neutral-11 font-bold">edit earnings</p>
-          <Image
+          <p className="text-[24px] text-neutral-11 font-bold">edit charges</p>
+          <img
             src="/modal/modal_close.svg"
             width={39}
             height={33}

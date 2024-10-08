@@ -1,7 +1,6 @@
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { NFTMetadata } from "@hooks/useSearchNfts";
 import { FilteredToken } from "@hooks/useTokenList";
-import Image from "next/image";
 import { FC, useCallback } from "react";
 import { Option } from "./components/ChainDropdown";
 import TokenSearchModalERC20 from "./ERC20";
@@ -56,7 +55,7 @@ const TokenSearchModal: FC<TokenSearchModalProps> = ({
                 <div className="flex flex-col gap-4">
                   <div className="flex justify-between items-center">
                     <p className="text-[24px] font-bold text-true-white normal-case">{tokenSearchModalTitle}</p>
-                    <Image
+                    <img
                       src="/modal/modal_close.svg"
                       alt="close"
                       width={30}

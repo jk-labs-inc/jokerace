@@ -1,4 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
+import { toastInfo } from "@components/UI/Toast";
+import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
@@ -9,11 +11,11 @@ import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { VoteType } from "@hooks/useDeployContest/types";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { Interweave } from "interweave";
 import moment from "moment";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FC, ReactNode, useEffect, useState } from "react";
@@ -22,9 +24,6 @@ import { Tweet } from "react-tweet";
 import { useAccount } from "wagmi";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 import ProposalContentInfo from "./components/ProposalContentInfo";
-import { VoteType } from "@hooks/useDeployContest/types";
-import { chains } from "@config/wagmi";
-import { toastInfo } from "@components/UI/Toast";
 
 export interface Proposal {
   id: string;
@@ -239,13 +238,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
                   onClick={handleVotingModalOpen}
                   className="min-w-36 flex-shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-primary-1 rounded-[16px] cursor-pointer border border-transparent hover:border-positive-11 transition-colors duration-300 ease-in-out"
                 >
-                  <Image
-                    src="/contest/upvote.svg"
-                    width={21.56}
-                    height={20.44}
-                    alt="upvote"
-                    className="flex-shrink-0"
-                  />
+                  <img src="/contest/upvote.svg" width={21.56} height={20.44} alt="upvote" className="flex-shrink-0" />
                   <p className="text-[16px] text-positive-11 font-bold flex-grow text-center">
                     {formatNumberAbbreviated(proposal.votes)} vote{proposal.votes !== 1 ? "s" : ""}
                   </p>

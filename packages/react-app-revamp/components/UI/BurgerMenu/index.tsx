@@ -1,6 +1,5 @@
 import { Dialog, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
-import Image from "next/image";
 import { Fragment, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 
@@ -55,7 +54,7 @@ const BurgerMenu = ({ children, className, onOpen, onClose }: BurgerMenuProps) =
                   <div className="absolute top-2 right-0 pt-4 pr-6">
                     <button type="button" onClick={onMenuClose}>
                       <span className="sr-only">Close</span>
-                      <Image src="/modal/modal_close.svg" width={32} height={32} alt="close" />
+                      <img src="/modal/modal_close.svg" width={32} height={32} alt="close" />
                     </button>
                   </div>
                 </div>

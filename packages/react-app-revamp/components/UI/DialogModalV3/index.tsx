@@ -1,6 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import Image from "next/image";
 import { FC, useCallback } from "react";
 
 interface DialogModalProps {
@@ -53,7 +52,7 @@ const DialogModalV3: FC<DialogModalProps> = ({
                   isMobile || disableClose ? "hidden" : "absolute"
                 } z-10 top-0 right-[30px] inline-start-0 2xs:inline-start-auto 2xs:inline-end-0 p-4 hover:scale-[1.1] text-neutral-11`}
               >
-                <Image
+                <img
                   src="/modal/modal_close.svg"
                   width={closeButtonSize.width}
                   height={closeButtonSize.height}

@@ -9,7 +9,6 @@ import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Skeleton from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
@@ -41,7 +40,7 @@ const VotingContestQualifier = () => {
   return (
     <div className="w-full flex flex-col gap-2 md:gap-4 md:pl-8">
       <div className="flex items-center gap-2">
-        <Image src="/contest/ballot.svg" width={16} height={16} alt="timer" />
+        <img src="/contest/ballot.svg" width={16} height={16} alt="timer" />
         {anyoneCanVote ? (
           <div className="flex items-center gap-2">
             <p className="text-[12px] md:text-[16px] uppercase text-neutral-9">my wallet</p>

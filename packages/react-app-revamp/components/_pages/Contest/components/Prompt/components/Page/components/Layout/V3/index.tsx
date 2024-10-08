@@ -1,7 +1,6 @@
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
-import Image from "next/image";
 import { FC, useState } from "react";
 
 interface ContestPromptPageV3LayoutProps {
@@ -95,7 +94,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt 
       {shouldDisplayReadMore() && (
         <div className="flex gap-1 items-center cursor-pointer" onClick={handleToggle}>
           <p className="text-[16px] text-positive-11">{isExpanded ? "Read Less" : "Read More"}</p>
-          <Image
+          <img
             src="/contest/chevron.svg"
             width={24}
             height={24}

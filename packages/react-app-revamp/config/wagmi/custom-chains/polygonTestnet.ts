@@ -6,8 +6,8 @@ export const polygonTestnet: Chain = {
   iconUrl: "/polygon.svg",
   nativeCurrency: {
     decimals: 18,
-    name: "MATIC",
-    symbol: "MATIC",
+    name: "POL",
+    symbol: "POL",
   },
   rpcUrls: {
     public: {

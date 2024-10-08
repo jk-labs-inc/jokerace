@@ -2,7 +2,6 @@ import { Radio, RadioGroup } from "@headlessui/react";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { SplitFeeDestination, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
-import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -34,8 +33,8 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
   const [isRewardsModuleAddress, setIsRewardsModuleAddress] = useState(false);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const percentageTitle = isMobile
-    ? "who should we split earnings with?"
-    : "we split all earnings 50/50. who should receive these?";
+    ? "who should we split charges with?"
+    : "we split all charges 50/50. who should receive these?";
 
   useEffect(() => {
     setSelected(splitFeeDestination.type);
@@ -112,7 +111,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                         />
                         {isRewardsModuleAddress && (
                           <p className="text-[16px] font-bold text-secondary-11">
-                            looks like this is the rewards pool! we’ll send all your earnings to the rewards.
+                            looks like this is the rewards pool! we’ll send all charges to the rewards.
                           </p>
                         )}
                       </>
@@ -131,9 +130,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                   ></div>
                   <div className="flex flex-col gap-4">
                     <p className={`text-[20px] normal-case ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
-                      {isMobile
-                        ? "nobody (JokeRace earns)"
-                        : "i prefer to take 0% of earnings (i want JokeRace to earn)"}
+                      {isMobile ? "nobody (JokeRace earns)" : "i prefer to take 0%  (i want JokeRace to earn)"}
                     </p>
                   </div>
                 </div>
@@ -167,7 +164,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                           </p>
                         </div>
                         <button onClick={() => setShowRewardsInfo(false)}>
-                          <Image
+                          <img
                             src="/modal/modal_close.svg"
                             width={24}
                             height={24}

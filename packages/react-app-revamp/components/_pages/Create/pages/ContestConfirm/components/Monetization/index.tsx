@@ -29,11 +29,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
   const blockExplorerUrl = chain?.blockExplorers?.default.url;
   const blockExplorerAddressUrl = blockExplorerUrl
     ? `${blockExplorerUrl}/address/${
-        splitFeeDestination.type === SplitFeeDestinationType.NoSplit
-          ? JK_LABS_SPLIT_DESTINATION_DEFAULT
-          : splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet
-            ? address
-            : splitFeeDestination.address
+        splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet ? address : splitFeeDestination.address
       }`
     : "";
 
@@ -50,16 +46,9 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
       splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet ||
       splitFeeDestination.type === SplitFeeDestinationType.AnotherWallet
     ) {
-      return <li className="text-[16px] list-disc normal-case">all earnings split 50/50 with JokeRace</li>;
+      return <li className="text-[16px] list-disc normal-case">all charges split 50/50 with jk labs inc.</li>;
     } else {
-      return (
-        <li className="text-[16px] list-disc normal-case">
-          all earnings go to{" "}
-          <a href={blockExplorerAddressUrl} target="_blank" rel="noopener noreferrer" className="underline normal-case">
-            JokeRace
-          </a>
-        </li>
-      );
+      return <li className="text-[16px] list-disc normal-case">all charges go to jk labs inc.</li>;
     }
   };
 
@@ -106,7 +95,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
             {splitFeeDestination.type === SplitFeeDestinationType.AnotherWallet ||
             splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet ? (
               <li className="text-[16px] list-disc">
-                creator earnings go to{" "}
+                creator charges go to{" "}
                 <a className="underline cursor-pointer" target="_blank" href={blockExplorerAddressUrl}>
                   {shortenEthereumAddress(
                     splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet

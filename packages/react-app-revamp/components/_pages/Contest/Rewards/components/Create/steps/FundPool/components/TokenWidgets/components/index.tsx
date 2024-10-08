@@ -6,7 +6,6 @@ import { formatBalance } from "@helpers/formatBalance";
 import { ArrowPathIcon, ChevronDownIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useTokenOrNativeBalance } from "@hooks/useBalance";
 import { FilteredToken } from "@hooks/useTokenList";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { FC, useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
@@ -156,7 +155,7 @@ const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index }) => {
                     </button>
                   ) : null}
                   <div className="flex justify-end">
-                    <Image
+                    <img
                       src={chainLogo?.toString() ?? ""}
                       alt="chain-logo"
                       width={20}
@@ -192,9 +191,9 @@ const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index }) => {
                           height={16}
                         />
                       ) : isEtherChainNativeCurrency ? (
-                        <Image src="/tokens/ether.svg" alt="ether" width={16} height={16} />
+                        <img src="/tokens/ether.svg" alt="ether" width={16} height={16} />
                       ) : (
-                        <Image src="/contest/mona-lisa-moustache.png" alt="ether" width={16} height={16} />
+                        <img src="/contest/mona-lisa-moustache.png" alt="ether" width={16} height={16} />
                       )}
 
                       <p className="text-[16px] text-neutral-11 font-bold uppercase">

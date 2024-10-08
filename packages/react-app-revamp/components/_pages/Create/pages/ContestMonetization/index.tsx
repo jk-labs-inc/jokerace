@@ -19,7 +19,7 @@ const CreateContestMonetization = () => {
   const [unsupportedChain, setUnsupportedChain] = useState(false);
   const onNextStep = useNextStep();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const monetizeTitle = isMobile ? `let’s monetize` : `let’s monetize this puppy`;
+  const monetizeTitle = isMobile ? `charges` : `let’s monetize this puppy`;
   const onPreviousStep = usePreviousStep();
 
   useEffect(() => {

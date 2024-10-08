@@ -1,5 +1,4 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import Image from "next/image";
 import { FC } from "react";
 
 interface CommentFormInputSubmitButtonProps {
@@ -34,7 +33,7 @@ const CommentFormInputSubmitButton: FC<CommentFormInputSubmitButtonProps> = ({
   };
 
   return isMobile ? (
-    <Image
+    <img
       className={`ml-auto pr-1 ${allowSend ? "filter-send-commment-icon" : ""} ${
         isAdding ? "filter-send-commment-icon opacity-50 pointer-events-none" : "cursor-pointer"
       }`}
@@ -53,7 +52,7 @@ const CommentFormInputSubmitButton: FC<CommentFormInputSubmitButtonProps> = ({
       {isMobile ? "switch chain" : "switch network"}
     </ButtonV3>
   ) : (
-    <Image
+    <img
       className={`ml-auto pr-1 transition-all duration-300 ${allowSend ? "filter-send-commment-icon" : ""} ${
         isAdding ? "filter-send-commment-icon opacity-50 pointer-events-none" : "cursor-pointer"
       }`}

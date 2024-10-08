@@ -1,5 +1,4 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import Image from "next/image";
 import { FC } from "react";
 import { useCreateRewardsStore } from "../../../store";
 
@@ -30,7 +29,7 @@ const CreateRewardsSubmitButton: FC<CreateRewardsSubmitButtonProps> = ({ step, o
           onClick={() => onBackHandler(step)}
         >
           <div className="transition-transform duration-200 group-hover:-translate-x-1">
-            <Image src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-[1px]" />
+            <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-[1px]" />
           </div>
           <p className="text-[16px]">back</p>
         </div>

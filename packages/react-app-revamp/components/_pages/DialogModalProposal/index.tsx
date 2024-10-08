@@ -5,21 +5,20 @@ import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
+import { chains } from "@config/wagmi";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import ordinalize from "@helpers/ordinalize";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { VoteType } from "@hooks/useDeployContest/types";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { compareVersions } from "compare-versions";
 import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
-import Image from "next/image";
 import { FC, useEffect } from "react";
 import { useAccount } from "wagmi";
 import ListProposalVotes from "../ListProposalVotes";
-import { VoteType } from "@hooks/useDeployContest/types";
-import { chains } from "@config/wagmi";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -119,7 +118,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
               isDisabled={isProposalLoading}
             >
               <div className="transition-transform duration-200 group-hover:-translate-x-1">
-                <Image src="/contest/previous-entry.svg" alt="prev-entry" width={16} height={14} className="mt-1" />
+                <img src="/contest/previous-entry.svg" alt="prev-entry" width={16} height={14} className="mt-1" />
               </div>
               previous entry
             </ButtonV3>
@@ -134,7 +133,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
             >
               next entry
               <div className="transition-transform duration-200 group-hover:translate-x-1">
-                <Image src="/contest/next-entry.svg" alt="prev-entry" width={16} height={14} className="mt-[3px]" />
+                <img src="/contest/next-entry.svg" alt="prev-entry" width={16} height={14} className="mt-[3px]" />
               </div>
             </ButtonV3>
           )}
