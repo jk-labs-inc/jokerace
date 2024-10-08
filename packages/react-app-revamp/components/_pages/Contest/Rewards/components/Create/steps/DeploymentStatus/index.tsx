@@ -37,7 +37,7 @@ const CreateRewardsDeploymentStatus: React.FC = () => {
 
   const creatorSplitTransaction: Transaction = {
     key: "setCreatorSplitDestination",
-    label: "setting your earnings to go to rewards pool...",
+    label: "setting charges to go to rewards pool...",
   };
 
   const transactions: Transaction[] = [
