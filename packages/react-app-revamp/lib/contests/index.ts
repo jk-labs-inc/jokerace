@@ -1,12 +1,16 @@
 import { chains, config } from "@config/wagmi";
-import { formatBalance } from "@helpers/formatBalance";
+import { isSupabaseConfigured } from "@helpers/database";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
-import { ContestStateEnum } from "@hooks/useContestState/store";
 import { getBalance, readContract, readContracts } from "@wagmi/core";
 import { getTokenAddresses } from "lib/rewards";
+import moment from "moment";
 import { SearchOptions } from "types/search";
 import { Abi, erc20Abi, formatUnits } from "viem";
+import { sortContests } from "./utils/sortContests";
+import { formatBalance } from "@helpers/formatBalance";
+import { ContestStateEnum } from "@hooks/useContestState/store";
 
 export const ITEMS_PER_PAGE = 7;
 export const EMPTY_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
@@ -113,6 +117,20 @@ export const fetchFirstToken = async (contestRewardModuleAddress: string, chainI
   }
 };
 
+const fetchParticipantData = async (contestAddress: string, userAddress: string, networkName: string) => {
+  const config = await import("@config/supabase");
+  const supabase = config.supabase;
+
+  const { data } = await supabase
+    .from("contest_participants_v3")
+    .select("can_submit, num_votes")
+    .eq("user_address", userAddress)
+    .eq("contest_address", contestAddress)
+    .eq("network_name", networkName);
+
+  return data && data.length > 0 ? data[0] : null;
+};
+
 const updateContestWithUserQualifications = async (contest: any, userAddress: string) => {
   const { submissionMerkleRoot, network_name, address, votingMerkleRoot } = contest;
   const anyoneCanSubmit = submissionMerkleRoot === EMPTY_HASH;
@@ -120,20 +138,8 @@ const updateContestWithUserQualifications = async (contest: any, userAddress: st
 
   let participantData = { can_submit: anyoneCanSubmit, num_votes: 0 };
   if (userAddress) {
-    try {
-      const response = await fetch(
-        `/api/contests/participant-data?contestAddress=${address}&userAddress=${userAddress}&networkName=${network_name}`,
-        { cache: "no-store" },
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch participant data");
-      }
-      const fetchedData = await response.json();
-      participantData = fetchedData ? fetchedData : participantData;
-    } catch (error) {
-      console.error("Error fetching participant data:", error);
-      // fallback to default participantData if fetch fails
-    }
+    const fetchedData = await fetchParticipantData(address, userAddress, network_name);
+    participantData = fetchedData ? fetchedData : participantData;
   }
 
   const updatedContest = {
@@ -339,41 +345,50 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
   const { currentPage = 1, itemsPerPage = ITEMS_PER_PAGE } = pagination;
   const { orderBy = "created_at", ascending = false } = sorting;
 
-  try {
-    const params = new URLSearchParams({
-      searchColumn,
-      searchString,
-      currentPage: currentPage.toString(),
-      itemsPerPage: itemsPerPage.toString(),
-      orderBy,
-      ascending: ascending.toString(),
-      table,
-      language,
-      sortBy: sortBy || "",
-    });
+  if (isSupabaseConfigured) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+    const { from, to } = getPagination(currentPage, itemsPerPage);
+    try {
+      let query = supabase
+        .from(table)
+        .select(
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+          { count: "exact" },
+        )
+        .textSearch(searchColumn, `${searchString}`, {
+          type: "websearch",
+          config: language,
+        })
+        .eq("hidden", false);
 
-    const response = await fetch(`/api/contests/search?${params}`, { cache: "no-store" });
+      if (sortBy) {
+        query = sortContests(query, sortBy);
+      }
 
-    if (!response.ok) {
-      throw new Error("failed to fetch search results");
+      query = query.range(from, to).order(orderBy, { ascending });
+
+      const result = await query;
+
+      const { data, count, error } = result;
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const processedData = await Promise.all(
+        data.map(async contest => {
+          const processedContest = await processContestQualifications(contest, userAddress ?? "");
+          return {
+            ...processedContest,
+            isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
+          };
+        }),
+      );
+
+      return { data: processedData, count };
+    } catch (e) {
+      console.error(e);
     }
-
-    const { data, count } = await response.json();
-
-    const processedData = await Promise.all(
-      data.map(async (contest: any) => {
-        const processedContest = await processContestQualifications(contest, userAddress ?? "");
-        return {
-          ...processedContest,
-          isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
-        };
-      }),
-    );
-
-    return { data: processedData, count };
-  } catch (error) {
-    console.error("error searching contests:", error);
-    return { data: [], count: 0 };
   }
 }
 
@@ -388,37 +403,63 @@ export async function getUserContests(
   currentUserAddress: string,
   sortBy?: string,
 ) {
-  try {
-    const params = new URLSearchParams({
-      currentPage: currentPage.toString(),
-      itemsPerPage: itemsPerPage.toString(),
-      profileAddress,
-      ...(sortBy && { sortBy }),
-    });
+  if (isSupabaseConfigured && profileAddress) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+    const { from, to } = getPagination(currentPage, itemsPerPage);
 
-    const response = await fetch(`/api/user/contests?${params}`, { cache: "no-store" });
+    try {
+      const executeQuery = async (useIlike: boolean) => {
+        let query = supabase
+          .from("contests_v3")
+          .select(
+            "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, hidden, votingMerkleRoot, voting_requirements, submission_requirements",
+            { count: "exact" },
+          );
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch user contests");
+        if (useIlike) {
+          query = query.ilike("author_address", profileAddress);
+        } else {
+          query = query.eq("author_address", profileAddress);
+        }
+        query = query.order("created_at", { ascending: false });
+
+        if (sortBy) {
+          query = sortContests(query, sortBy);
+        }
+        return query.range(from, to);
+      };
+
+      // first attempt with eq
+      let result = await executeQuery(false);
+
+      // if no results, it could be that address is lowercase, try with ilike
+      if (result.data?.length === 0) {
+        result = await executeQuery(true);
+      }
+
+      const { data, count, error } = result;
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const processedData = await Promise.all(
+        data.map(async contest => {
+          const processedContest = await processContestQualifications(contest, currentUserAddress);
+          return {
+            ...processedContest,
+            isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
+          };
+        }),
+      );
+
+      return { data: processedData, count: count ?? 0 };
+    } catch (e) {
+      console.error(e);
+      return { data: [], count: 0 };
     }
-
-    const { data, count } = await response.json();
-
-    const processedData = await Promise.all(
-      data.map(async (contest: any) => {
-        const processedContest = await processContestQualifications(contest, currentUserAddress);
-        return {
-          ...processedContest,
-          isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
-        };
-      }),
-    );
-
-    return { data: processedData, count };
-  } catch (error) {
-    console.error("Error fetching user contests:", error);
-    return { data: [], count: 0 };
   }
+  return { data: [], count: 0 };
 }
 
 export async function getFeaturedContests(
@@ -426,31 +467,55 @@ export async function getFeaturedContests(
   itemsPerPage: number,
   userAddress?: string,
 ): Promise<{ data: Contest[]; count: number | null }> {
+  if (!isSupabaseConfigured) return { data: [], count: 0 };
+
+  const config = await import("@config/supabase");
+  const { from, to } = getPagination(currentPage, itemsPerPage);
+  let processedData = [];
+
   try {
-    const response = await fetch(`/api/contests/featured?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, {
-      cache: "no-store",
-    });
-    if (!response.ok) {
-      throw new Error("Failed to fetch featured contests");
-    }
-    const { data, count } = await response.json();
+    const { data, count, error } = await config.supabase
+      .from("contests_v3")
+      .select(
+        "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+        { count: "exact" },
+      )
+      .is("featured", true)
+      .range(from, to);
 
-    const processedData = await Promise.all(
-      data.map(async (contest: Contest) => {
-        const processedContest = await updateContestWithUserQualifications(contest, userAddress ?? "");
+    if (error) throw new Error(error.message);
 
-        const isCanceled = await checkIfContestIsCanceled(processedContest.address, processedContest.network_name);
-
+    processedData = await Promise.all(
+      data.map(async contest => {
+        const processedContest = await processContestQualifications(contest, userAddress ?? "");
         return {
           ...processedContest,
-          isCanceled,
+          isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
         };
       }),
     );
 
+    processedData.sort((a, b) => {
+      const now = moment();
+      const aIsHappening = moment(a.created_at).isBefore(now) && moment(a.end_at).isAfter(now);
+      const bIsHappening = moment(b.created_at).isBefore(now) && moment(b.end_at).isAfter(now);
+
+      // both are happening, sort by nearest end date. we could have a 'order' column in the future
+      if (aIsHappening && bIsHappening) {
+        return moment(a.end_at).diff(now) - moment(b.end_at).diff(now);
+      }
+
+      // only one is happening, it comes first
+      if (aIsHappening) return -1;
+      if (bIsHappening) return 1;
+
+      // none are happening, sort by nearest start date
+      return moment(a.created_at).diff(now) - moment(b.created_at).diff(now);
+    });
+
     return { data: processedData, count };
   } catch (e) {
-    console.error("Error fetching featured contests:", e);
+    console.error(e);
     return { data: [], count: 0 };
   }
 }
@@ -461,66 +526,87 @@ export async function getLiveContests(
   userAddress?: string,
   sortBy?: string,
 ) {
-  try {
-    const params = new URLSearchParams({
-      currentPage: currentPage.toString(),
-      itemsPerPage: itemsPerPage.toString(),
-      sortBy: sortBy || "",
-    });
+  if (isSupabaseConfigured) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+    const { from, to } = getPagination(currentPage, itemsPerPage);
+    try {
+      let query = supabase
+        .from("contests_v3")
+        .select(
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+          { count: "exact" },
+        )
+        .eq("hidden", false)
+        .lte("start_at", new Date().toISOString())
+        .gte("end_at", new Date().toISOString());
 
-    const response = await fetch(`/api/contests/live?${params}`, { cache: "no-store" });
+      if (sortBy) {
+        query = sortContests(query, sortBy);
+      }
 
-    if (!response.ok) {
-      throw new Error("failed to fetch live contests");
+      query = query.range(from, to);
+
+      const result = await query;
+
+      const { data, count, error } = result;
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const processedData = await Promise.all(
+        data.map(async contest => {
+          const processedContest = await processContestQualifications(contest, userAddress ?? "");
+          return {
+            ...processedContest,
+            isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
+          };
+        }),
+      );
+
+      return { data: processedData, count };
+    } catch (e) {
+      console.error(e);
+      return { data: [], count: 0 };
     }
-
-    const { data, count } = await response.json();
-
-    const processedData = await Promise.all(
-      data.map(async (contest: any) => {
-        const processedContest = await processContestQualifications(contest, userAddress ?? "");
-        return {
-          ...processedContest,
-          isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
-        };
-      }),
-    );
-
-    return { data: processedData, count };
-  } catch (error) {
-    console.error("error fetching live contests:", error);
-    return { data: [], count: 0 };
   }
 }
 
 export async function getPastContests(currentPage: number, itemsPerPage: number, userAddress?: string) {
-  try {
-    const params = new URLSearchParams({
-      currentPage: currentPage.toString(),
-      itemsPerPage: itemsPerPage.toString(),
-    });
+  if (isSupabaseConfigured) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+    const { from, to } = getPagination(currentPage, itemsPerPage);
+    try {
+      const result = await supabase
+        .from("contests_v3")
+        .select(
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+          { count: "exact" },
+        )
+        .eq("hidden", false)
+        .lt("end_at", new Date().toISOString())
+        .order("end_at", { ascending: false })
+        .range(from, to);
+      const { data, count, error } = result;
+      if (error) {
+        throw new Error(error.message);
+      }
 
-    const response = await fetch(`/api/contests/past?${params}`, { cache: "no-store" });
+      const processedData = await Promise.all(
+        data.map(async contest => {
+          const processedContest = await processContestQualifications(contest, userAddress ?? "");
+          return {
+            ...processedContest,
+            isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
+          };
+        }),
+      );
 
-    if (!response.ok) {
-      throw new Error("failed to fetch past contests");
+      return { data: processedData, count };
+    } catch (e) {
+      console.error(e);
     }
-
-    const { data, count } = await response.json();
-
-    const processedData = await Promise.all(
-      data.map(async (contest: any) => {
-        const processedContest = await processContestQualifications(contest, userAddress ?? "");
-        return {
-          ...processedContest,
-          isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
-        };
-      }),
-    );
-
-    return { data: processedData, count };
-  } catch (error) {
-    console.error("error fetching past contests:", error);
     return { data: [], count: 0 };
   }
 }
@@ -531,55 +617,88 @@ export async function getUpcomingContests(
   userAddress?: string,
   sortBy?: string,
 ) {
-  try {
-    const params = new URLSearchParams({
-      currentPage: currentPage.toString(),
-      itemsPerPage: itemsPerPage.toString(),
-      sortBy: sortBy || "",
-    });
+  if (isSupabaseConfigured) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+    const { from, to } = getPagination(currentPage, itemsPerPage);
 
-    const response = await fetch(`/api/contests/upcoming?${params}`, { cache: "no-store" });
+    try {
+      let query = supabase
+        .from("contests_v3")
+        .select(
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+          { count: "exact" },
+        )
+        .eq("hidden", false)
+        .gt("start_at", new Date().toISOString());
 
-    if (!response.ok) {
-      throw new Error("failed to fetch upcoming contests");
+      if (sortBy) {
+        query = sortContests(query, sortBy);
+      } else {
+        query = query.order("start_at", { ascending: false });
+      }
+
+      query = query.range(from, to);
+
+      const result = await query;
+      const { data, count, error } = result;
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const processedData = await Promise.all(
+        data.map(async contest => {
+          const processedContest = await processContestQualifications(contest, userAddress ?? "");
+          return {
+            ...processedContest,
+            isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
+          };
+        }),
+      );
+
+      return { data: processedData, count };
+    } catch (e) {
+      console.error(e);
+      return { data: [], count: 0 };
     }
-
-    const { data, count } = await response.json();
-
-    const processedData = await Promise.all(
-      data.map(async (contest: any) => {
-        const processedContest = await processContestQualifications(contest, userAddress ?? "");
-        return {
-          ...processedContest,
-          isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
-        };
-      }),
-    );
-
-    return { data: processedData, count };
-  } catch (error) {
-    console.error("error fetching upcoming contests:", error);
-    return { data: [], count: 0 };
   }
+  return { data: [], count: 0 };
 }
 
 export async function checkIfContestExists(address: string, networkName: string) {
-  try {
-    const params = new URLSearchParams({
-      address,
-      networkName,
-    });
+  if (isSupabaseConfigured) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+    try {
+      let { data, error } = await supabase
+        .from("contests_v3")
+        .select("address")
+        .eq("address", address.toLowerCase())
+        .eq("network_name", networkName);
 
-    const response = await fetch(`/api/contest-exists?${params}`, { cache: "no-store" });
+      if (error) {
+        throw new Error(error.message);
+      }
 
-    if (!response.ok) {
-      throw new Error("failed to check if contest exists");
+      if (data && data.length > 0) {
+        return true;
+      }
+
+      ({ data, error } = await supabase
+        .from("contests_v3")
+        .select("address")
+        .eq("address", address)
+        .eq("network_name", networkName));
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data ? data.length > 0 : false;
+    } catch (e) {
+      console.error(e);
+      return false;
     }
-
-    const { exists } = await response.json();
-    return exists;
-  } catch (error) {
-    console.error("error checking if contest exists:", error);
-    return false;
   }
+  return false;
 }

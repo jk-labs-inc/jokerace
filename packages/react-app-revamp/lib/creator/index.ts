@@ -1,3 +1,5 @@
+import { supabase } from "@config/supabase";
+
 export async function toggleContestVisibility(
   contestAddress: string,
   networkName: string,
@@ -5,25 +7,17 @@ export async function toggleContestVisibility(
   isHidden: boolean,
 ): Promise<void> {
   try {
-    const response = await fetch("/api/contest/toggle-contest-visibility", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        contestAddress,
-        networkName,
-        userAddress,
-        isHidden,
-      }),
-    });
+    const { error } = await supabase
+      .from("contests_v3")
+      .update({ hidden: isHidden })
+      .eq("network_name", networkName)
+      .eq("address", contestAddress)
+      .eq("author_address", userAddress);
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to toggle contest visibility");
+    if (error) {
+      throw error;
     }
   } catch (error) {
-    console.error("Error toggling contest visibility:", error);
     throw error;
   }
 }

@@ -1,18 +1,17 @@
+import { isSupabaseConfigured } from "@helpers/database";
+
 export const canUploadLargeAllowlist = async (userAddress: string, requiredSize: number) => {
-  try {
-    const response = await fetch(
-      `/api/contest/check-allowlist-permission?userAddress=${userAddress}&requiredSize=${requiredSize}`,
-      { cache: "no-store" },
-    );
+  if (isSupabaseConfigured) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+    const { data, error } = await supabase
+      .from("user_permissions")
+      .select("allowlist_max_size")
+      .eq("user_address", userAddress);
 
-    if (!response.ok) {
-      throw new Error("Failed to check allowlist permission");
-    }
+    if (error || !data[0]) return false;
 
-    const { canUpload } = await response.json();
-    return canUpload;
-  } catch (error) {
-    console.error("Error checking allowlist permission:", error);
-    return false;
+    return data[0].allowlist_max_size >= requiredSize;
   }
+  return false;
 };

@@ -39,8 +39,7 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
         <p>
           you have{" "}
           <span className="font-bold">
-            {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"} ( 1
-            vote = {formatEther(BigInt(voteCharge?.cost ?? 0))} {nativeCurrencySymbol})
+            {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"}
           </span>
         </p>
       );
@@ -80,8 +79,8 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
 
   return (
     <div className="flex flex-col gap-8">
-      <p className="text-[20px] font-bold text-neutral-14">voting</p>
-      <ul className="pl-4 text-[16px] font-bold">
+      <p className="text-[20px] font-bold text-neutral-10">voting</p>
+      <ul className="pl-4 text-[16px] font-bold text-neutral-9">
         <li className="list-disc">{address ? qualifyToVoteMessage : walletNotConnected}</li>
         {anyoneCanVote ? (
           <li className="list-disc">anyone can vote</li>
@@ -91,12 +90,6 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
             <ContestParamatersCSVVoters votingMerkleRoot={votingMerkleRoot} />
           </>
         )}
-        {voteCharge ? (
-          <li className="list-disc">
-            {formatEther(BigInt(voteCharge.cost))} {nativeCurrencySymbol}
-            {voteCharge.type === VoteType.PerVote ? "/vote" : " to vote"}
-          </li>
-        ) : null}
       </ul>
     </div>
   );
