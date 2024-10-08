@@ -3,7 +3,7 @@ import { getTweet } from "react-tweet/api";
 
 type RouteSegment = { params: { id: string } };
 
-export const dynamic = "force-dynamic";
+export const fetchCache = "only-cache";
 
 export async function GET(_req: Request, { params }: RouteSegment) {
   try {
