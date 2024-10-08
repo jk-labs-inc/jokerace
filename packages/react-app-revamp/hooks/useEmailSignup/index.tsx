@@ -1,4 +1,6 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { supabase } from "@config/supabase";
+import { isSupabaseConfigured } from "@helpers/database";
 import { useState } from "react";
 
 const useEmailSignup = () => {
@@ -9,50 +11,47 @@ const useEmailSignup = () => {
     user_address: string | null = null,
     showToasts: boolean = true,
   ) => {
-    setLoading(true);
-    showToasts && toastLoading("Subscribing...");
-    try {
-      const response = await fetch("/api/subscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email_address, user_address }),
-      });
-
-      setLoading(false);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to subscribe");
+    if (isSupabaseConfigured) {
+      setLoading(true);
+      showToasts && toastLoading("Subscribing...");
+      try {
+        const { error } = await supabase.from("email_signups").insert([{ email_address, user_address }]);
+        setLoading(false);
+        if (error) {
+          showToasts && toastError("There was an error while subscribing. Please try again later.", error.message);
+          return;
+        }
+        showToasts && toastSuccess("You have been subscribed successfully.");
+      } catch (error: any) {
+        setLoading(false);
+        showToasts && toastError("There was an error while subscribing. Please try again later.", error.message);
       }
-
-      showToasts && toastSuccess("You have been subscribed successfully.");
-    } catch (error: any) {
-      setLoading(false);
-      showToasts && toastError("There was an error while subscribing. Please try again later.", error.message);
     }
   };
 
   const checkIfEmailExists = async (emailAddress: string, displayToasts: boolean = true) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({ emailAddress });
-      const response = await fetch(`/api/subscribe/is-subscribed?${params}`, { cache: "no-store" });
-
-      setLoading(false);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to check email");
+    if (isSupabaseConfigured) {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("email_signups")
+          .select("email_address")
+          .eq("email_address", emailAddress);
+        setLoading(false);
+        if (error) {
+          displayToasts && toastError("There was an error while checking. Please try again later.", error.message);
+          return false;
+        }
+        if (data?.length) {
+          return true;
+        } else {
+          return false;
+        }
+      } catch (error: any) {
+        setLoading(false);
+        displayToasts && toastError("There was an error while checking. Please try again later.", error.message);
+        return false;
       }
-
-      const { exists } = await response.json();
-      return exists;
-    } catch (error: any) {
-      setLoading(false);
-      displayToasts && toastError("There was an error while checking. Please try again later.", error.message);
-      return false;
     }
   };
 

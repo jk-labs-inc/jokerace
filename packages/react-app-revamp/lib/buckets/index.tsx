@@ -1,5 +1,12 @@
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { s3 } from "@config/s3";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
+
+const MERKLE_TREES_BUCKET = process.env.NEXT_PUBLIC_MERKLE_TREES_BUCKET as string;
+const IMAGE_UPLOAD_BUCKET = process.env.NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET as string;
+
+const IMAGE_PUBLIC_URL = "https://images.jokerace.io";
 
 interface LoadFileOptions {
   fileId: string;
@@ -24,18 +31,21 @@ interface SaveImageOptions {
  */
 export const loadFileFromBucket = async ({ fileId }: LoadFileOptions): Promise<Recipient[] | null> => {
   try {
-    const response = await fetch(`/api/bucket/load?fileId=${encodeURIComponent(fileId)}`, { cache: "no-store" });
+    const input = {
+      Bucket: MERKLE_TREES_BUCKET,
+      Key: fileId,
+    };
+    const command = new GetObjectCommand(input);
+    const response = await s3.send(command);
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to load file from bucket");
+    if (response.Body) {
+      const dataString = await response.Body.transformToString("utf-8");
+      return JSON.parse(dataString);
     }
-
-    const { data } = await response.json();
-    return data;
+    return null;
   } catch (error) {
     console.error(`Error loading file from bucket: ${error}`);
-    throw new Error(`Failed to load file with ID ${fileId}`);
+    throw new Error(`Failed to load file with ID ${fileId} from bucket ${MERKLE_TREES_BUCKET}`);
   }
 };
 
@@ -46,56 +56,68 @@ export const loadFileFromBucket = async ({ fileId }: LoadFileOptions): Promise<R
  */
 export const saveFileToBucket = async ({ fileId, content }: SaveFileOptions): Promise<void> => {
   try {
-    const response = await fetch("/api/bucket/save-file", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ fileId, content }),
-    });
+    const input = {
+      Bucket: MERKLE_TREES_BUCKET,
+      Key: fileId,
+      Body: JSON.stringify(content),
+      ContentType: "application/json",
+    };
+    const command = new PutObjectCommand(input);
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to save file to bucket");
-    }
+    await s3.send(command);
   } catch (error) {
     console.error(`Error saving file to bucket: ${error}`);
-    throw new Error(`Failed to save file with ID ${fileId} to bucket`);
+    throw new Error(`Failed to save file with ID ${fileId} to bucket ${MERKLE_TREES_BUCKET}`);
   }
 };
 
 export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions): Promise<string> => {
   toastLoading("Uploading image...", false);
   try {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("fileId", fileId);
-    formData.append("type", type);
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    const response = await fetch("/api/bucket/save-image", {
-      method: "POST",
-      body: formData,
-    });
+    const input = {
+      Bucket: IMAGE_UPLOAD_BUCKET,
+      Key: fileId,
+      Body: buffer,
+      ContentType: type,
+    };
 
-    const responseText = await response.text();
+    const command = new PutObjectCommand(input);
+    await s3.send(command);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}, body: ${responseText}`);
-    }
-
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch (e) {
-      console.error("Error parsing JSON:", e);
-      throw new Error("Invalid JSON response from server");
-    }
-
-    toastSuccess("Image uploaded successfully!");
-    return data.url;
+    const originalUrl = `${IMAGE_PUBLIC_URL}/${fileId}`;
+    toastSuccess("Image uploaded successfully! Resized versions will be available shortly.");
+    return originalUrl;
   } catch (error: any) {
     toastError("Failed to upload an image, please try again.");
     console.error("Upload error:", error);
-    throw new Error(`Failed to upload image with ID ${fileId}`);
+    throw new Error(`Failed to upload image with ID ${fileId} to bucket ${IMAGE_UPLOAD_BUCKET}`);
   }
 };
+
+/**
+ * Fetches voter or submitter data from S3 bucket using web worker
+ * @param fileId
+ * @returns Voter or submitter data from S3 bucket
+ */
+export async function fetchDataFromBucket(fileId: string): Promise<Recipient[] | null> {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(new URL("/workers/fetchDataFromBucket", import.meta.url));
+
+    worker.onmessage = event => {
+      if (event.data.error) {
+        reject(event.data.error);
+      } else {
+        resolve(event.data.data);
+      }
+    };
+
+    worker.onerror = error => {
+      reject(error);
+    };
+
+    worker.postMessage({ fileId });
+  });
+}
