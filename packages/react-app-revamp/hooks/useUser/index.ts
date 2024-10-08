@@ -1,3 +1,4 @@
+import { supabase } from "@config/supabase";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { ContractConfig } from "@hooks/useContest";
@@ -103,20 +104,15 @@ export function useUser() {
         setIsCurrentUserSubmitQualificationSuccess(false);
       }
     } else {
+      const supabaseConfig = await import("@config/supabase");
+      const supabase = supabaseConfig.supabase;
       try {
-        const params = new URLSearchParams({
-          userAddress,
-          contestAddress: contestAddressLowerCase,
-          chainName: lowerCaseChainName,
-        });
-
-        const response = await fetch(`/api/user/allowed-to-submit?${params}`);
-
-        if (!response.ok) {
-          throw new Error("Failed to check if user is allowed to submit");
-        }
-
-        const { data } = await response.json();
+        const { data } = await supabase
+          .from("contest_participants_v3")
+          .select("can_submit")
+          .eq("user_address", userAddress)
+          .eq("contest_address", contestAddressLowerCase)
+          .eq("network_name", lowerCaseChainName);
 
         if (data && data.length > 0 && data[0].can_submit) {
           const numOfSubmittedProposalsRaw = (await readContract(config, {
@@ -190,19 +186,13 @@ export function useUser() {
     }
 
     try {
-      const params = new URLSearchParams({
-        userAddress,
-        contestAddress: contestAddressLowerCase,
-        chainName: lowerCaseChainName,
-      });
-
-      const response = await fetch(`/api/user/allowed-to-vote?${params}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch user vote info");
-      }
-
-      const { data } = await response.json();
+      // Perform a lookup in the 'contest_participants_v3' table.
+      const { data } = await supabase
+        .from("contest_participants_v3")
+        .select("num_votes")
+        .eq("user_address", userAddress)
+        .eq("contest_address", contestAddressLowerCase)
+        .eq("network_name", lowerCaseChainName);
 
       if (data && data.length > 0 && data[0].num_votes > 0) {
         const currentUserTotalVotesCast = (await readContract(config, {
@@ -236,7 +226,7 @@ export function useUser() {
         setIsCurrentUserVoteQualificationLoading(false);
       }
     } catch (error) {
-      console.error("Error fetching user vote info:", error);
+      console.error("Error performing lookup in 'contest_participants_v3':", error);
       setCurrentUserTotalVotesAmount(0);
       setCurrentUserAvailableVotesAmount(0);
       setCurrentuserTotalVotesCast(0);

@@ -2,7 +2,7 @@ import { config } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
 import { useQuery } from "@tanstack/react-query";
 import { readContract } from "@wagmi/core";
-import { loadFileFromBucket } from "lib/buckets";
+import { fetchDataFromBucket } from "lib/buckets";
 import { EMPTY_HASH } from "lib/contests";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { Abi } from "viem";
@@ -47,7 +47,7 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
       return 0;
     }
 
-    const votingMerkleTreeData = await loadFileFromBucket({ fileId: votingMerkleRoot });
+    const votingMerkleTreeData = await fetchDataFromBucket(votingMerkleRoot);
     if (!votingMerkleTreeData) {
       throw new Error("Voting data could not be fetched");
     }
