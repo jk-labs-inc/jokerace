@@ -24,7 +24,7 @@ interface SaveImageOptions {
  */
 export const loadFileFromBucket = async ({ fileId }: LoadFileOptions): Promise<Recipient[] | null> => {
   try {
-    const response = await fetch(`/api/bucket/load?fileId=${encodeURIComponent(fileId)}`, { cache: "no-store" });
+    const response = await fetch(`/api/bucket/load?fileId=${encodeURIComponent(fileId)}`);
 
     if (!response.ok) {
       const errorData = await response.json();

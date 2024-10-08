@@ -38,7 +38,7 @@ const useEmailSignup = () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({ emailAddress });
-      const response = await fetch(`/api/subscribe/is-subscribed?${params}`, { cache: "no-store" });
+      const response = await fetch(`/api/subscribe/is-subscribed?${params}`);
 
       setLoading(false);
 

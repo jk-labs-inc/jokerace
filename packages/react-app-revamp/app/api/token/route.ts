@@ -45,7 +45,7 @@ interface FilteredToken {
 const DEFILLAMA_TOKEN_LIST_URL = "https://raw.githubusercontent.com/SmolDapp/tokenLists/main/lists/popular.json";
 
 const fetchTokenList = async (): Promise<TokenList | null> => {
-  const response = await fetch(DEFILLAMA_TOKEN_LIST_URL, { cache: "no-store" });
+  const response = await fetch(DEFILLAMA_TOKEN_LIST_URL);
   if (!response.ok) {
     throw new Error(`Failed to fetch: ${response.status}`);
   }

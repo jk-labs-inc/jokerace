@@ -2,7 +2,6 @@ export const canUploadLargeAllowlist = async (userAddress: string, requiredSize:
   try {
     const response = await fetch(
       `/api/contest/check-allowlist-permission?userAddress=${userAddress}&requiredSize=${requiredSize}`,
-      { cache: "no-store" },
     );
 
     if (!response.ok) {

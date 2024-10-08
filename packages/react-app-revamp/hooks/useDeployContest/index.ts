@@ -368,7 +368,7 @@ export function useDeployContest() {
         costToVote: chargeType.costToVote.toString(),
       });
 
-      const response = await fetch(`/api/contest/jklabs-split-destination-address?${params}`, { cache: "no-store" });
+      const response = await fetch(`/api/contest/jklabs-split-destination-address?${params}`);
 
       if (!response.ok) {
         const errorData = await response.json();

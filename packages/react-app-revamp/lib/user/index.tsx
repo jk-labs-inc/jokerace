@@ -45,7 +45,7 @@ async function fetchSubmissions(
       voteAmount: criteria.vote_amount === null ? "null" : "notNull",
     });
 
-    const response = await fetch(`/api/user/submissions?${params}`, { cache: "no-store" });
+    const response = await fetch(`/api/user/submissions?${params}`);
 
     if (!response.ok) {
       throw new Error("Failed to fetch submissions");
@@ -70,7 +70,7 @@ async function fetchComments(
       to: range.to.toString(),
     });
 
-    const response = await fetch(`/api/user/comments?${params}`, { cache: "no-store" });
+    const response = await fetch(`/api/user/comments?${params}`);
 
     if (!response.ok) {
       throw new Error("Failed to fetch comments");
@@ -90,7 +90,7 @@ async function getContestDetailsByAddresses(contestAddresses: string[]) {
       addresses: contestAddresses.join(","),
     });
 
-    const response = await fetch(`/api/contest/get-details-by-address?${params}`, { cache: "no-store" });
+    const response = await fetch(`/api/contest/get-details-by-address?${params}`);
 
     if (!response.ok) {
       throw new Error("Failed to fetch contest details");
