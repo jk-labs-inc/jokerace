@@ -497,7 +497,7 @@ li {
 
   .featured-contests-grid {
     @apply grid;
-    grid-template-columns: repeat(3, minmax(0, 320px));
+    grid-template-columns: repeat(4, minmax(0, 320px));
   }
 
   @media (max-width: 768px) {
