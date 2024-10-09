@@ -1,5 +1,7 @@
-import UserProfileDisplay from "@components/UI/UserProfileDisplay";
+import { Avatar } from "@components/UI/Avatar";
+import UserProfileDisplay, { SIZES } from "@components/UI/UserProfileDisplay";
 import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
+import useProfileData from "@hooks/useProfileData";
 import { Contest, ContestReward } from "lib/contests";
 import moment from "moment";
 import Link from "next/link";
@@ -59,6 +61,12 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
   const [contestStatus, setContestStatus] = useState(getContestStatus(contestData));
   const { status, timeLeft } = contestStatus;
   const isContestActive = status === "enter to win within" || status === "Voting closes in";
+  const {
+    profileAvatar,
+    profileName,
+    isLoading: isUserProfileLoading,
+    isError: isUserProfileError,
+  } = useProfileData(contestData.author_address ?? "", true);
 
   const updateInterval = useCallback(() => {
     const now = moment();
@@ -160,7 +168,16 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
         </div>
       </div>
 
-      <UserProfileDisplay ethereumAddress={contestData.author_address ?? ""} size="extraSmall" shortenOnFallback />
+      {isUserProfileLoading ? (
+        <Skeleton width={150} height={16} baseColor="#212121" highlightColor="#100816" />
+      ) : isUserProfileError ? (
+        <p className="text-negative-11 font-bold text-[12px]">ruh-roh, couldn't load creator name!</p>
+      ) : (
+        <div className="flex gap-2 items-center">
+          <Avatar src={profileAvatar} size="extraSmall" />
+          <p className="text-neutral-11 font-bold text-[12px]">{profileName}</p>
+        </div>
+      )}
     </Link>
   );
 };
