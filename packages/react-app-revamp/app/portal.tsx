@@ -1,24 +1,34 @@
 "use client";
-import { Portal as HeadlessUiPortal } from "@headlessui/react";
 import { Slide, ToastContainer } from "react-toastify";
+import { createPortal } from "react-dom";
+import { useState, useEffect } from "react";
 
 const Portal = () => {
-  return (
-    <HeadlessUiPortal>
-      <ToastContainer
-        position="bottom-center"
-        autoClose={4000}
-        hideProgressBar
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-        bodyClassName={() => "text-[16px] flex items-center"}
-        transition={Slide}
-      />
-    </HeadlessUiPortal>
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
+
+  return createPortal(
+    <ToastContainer
+      position="bottom-center"
+      autoClose={4000}
+      hideProgressBar
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="colored"
+      bodyClassName={() => "text-[16px] flex items-center"}
+      transition={Slide}
+    />,
+    document.body,
   );
 };
 
