@@ -1,5 +1,4 @@
 import { Avatar } from "@components/UI/Avatar";
-import UserProfileDisplay, { SIZES } from "@components/UI/UserProfileDisplay";
 import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import useProfileData from "@hooks/useProfileData";
 import { Contest, ContestReward } from "lib/contests";
