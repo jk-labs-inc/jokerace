@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 import "react-tooltip/dist/react-tooltip.css";
 import Portal from "./portal";
 import Providers from "./providers";
+import dynamic from "next/dynamic";
 
 polyfill();
 
@@ -71,6 +72,8 @@ const sabo = localFont({
   variable: "--font-sabo",
 });
 
+const DynamicPortal = dynamic(() => import("./portal"), { ssr: false });
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const cookie = headers().get("cookie") ?? "";
 
@@ -81,7 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <NextTopLoader color="#BB65FF" shadow="0 0 10px #BB65FF, 0 0 5px #78FFC6" showSpinner={false} />
           <Providers cookie={cookie}>
             <LayoutBase>{children}</LayoutBase>
-            <Portal />
+            <DynamicPortal />
             <GoogleAnalytics gaId={GA_TRACKING_ID} />
           </Providers>
         </div>

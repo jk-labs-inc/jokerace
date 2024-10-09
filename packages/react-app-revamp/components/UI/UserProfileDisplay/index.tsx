@@ -2,7 +2,7 @@
 import { ROUTE_VIEW_USER } from "@config/routes";
 import useProfileData from "@hooks/useProfileData";
 import Link from "next/link";
-import { FC } from "react";
+import { Avatar } from "../Avatar";
 
 interface UserProfileDisplayProps {
   ethereumAddress: string;
@@ -13,12 +13,7 @@ interface UserProfileDisplayProps {
   includeSocials?: boolean;
 }
 
-interface AvatarProps {
-  src: string;
-  size: "extraSmall" | "small" | "medium" | "large";
-}
-
-const SIZES = {
+export const SIZES = {
   extraSmall: {
     avatarSizeClass: "w-6 h-6",
     textSizeClass: "text-[12px]",
@@ -35,16 +30,6 @@ const SIZES = {
     avatarSizeClass: "w-[100px] h-[100px]",
     textSizeClass: "text-[24px] font-sabo",
   },
-};
-
-const Avatar: FC<AvatarProps> = ({ src, size }) => {
-  const { avatarSizeClass } = SIZES[size];
-
-  return (
-    <div className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}>
-      <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={src} alt="avatar" />
-    </div>
-  );
 };
 
 const UserProfileDisplay = ({
