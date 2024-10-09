@@ -1,0 +1,1 @@
+export const CONTESTS_FEATURE_COUNT = 8;

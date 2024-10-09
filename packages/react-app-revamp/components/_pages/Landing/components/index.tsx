@@ -10,6 +10,7 @@ import { useMediaQuery } from "react-responsive";
 import { TypeAnimation } from "react-type-animation";
 import LandingPageExplainer from "./Explainer";
 import LandingPageUsedBy from "./UsedBy";
+import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
 
 const wordConfig = {
   desktop: [
@@ -46,7 +47,7 @@ function useFeaturedContests() {
     isFetching: isContestDataFetching,
   } = useQuery({
     queryKey: ["featuredContests", page],
-    queryFn: () => getFeaturedContests(page, 8),
+    queryFn: () => getFeaturedContests(page, CONTESTS_FEATURE_COUNT),
     refetchOnWindowFocus: false,
   });
 
