@@ -3,6 +3,7 @@ import { FilteredToken } from "@hooks/useTokenList";
 import { FC } from "react";
 import { useAccount } from "wagmi";
 import TokenSearchListToken from "../TokenList/components/Token";
+import { isAlchemyConfigured } from "@helpers/alchemy";
 
 interface TokenSearchModalUserTokensProps {
   chainName: string;
@@ -19,6 +20,12 @@ const TokenSearchModalUserTokens: FC<TokenSearchModalUserTokensProps> = ({
   const { isLoading, tokens, error } = useFetchUserTokens(address ?? "", chainName);
 
   if (!address) return null;
+
+  if (!isAlchemyConfigured) {
+    return (
+      <p className="text-[16px] text-negative-11 font-bold">alchemy api key is missing or not configured correctly</p>
+    );
+  }
 
   if (error) {
     return (
