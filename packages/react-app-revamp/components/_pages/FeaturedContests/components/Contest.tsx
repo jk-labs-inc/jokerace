@@ -115,7 +115,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
   return (
     <Link
       href={getContestUrl(contestData.network_name ?? "", contestData.address ?? "")}
-      className="flex flex-col justify-between w-[320px] h-[216px] pt-4 pb-3 px-8 bg-gradient-radial rounded-[16px] border border-neutral-0 hover:border-neutral-10 transition-all duration-300 ease-in-out"
+      className="animate-appear flex flex-col justify-between w-[320px] h-[216px] pt-4 pb-3 px-8 bg-gradient-radial rounded-[16px] border border-neutral-0 hover:border-neutral-10 transition-all duration-300 ease-in-out"
     >
       <div className="flex flex-col gap-8">
         <div className="flex items-center gap-2">
@@ -130,7 +130,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
               duration={1}
             />
           ) : rewardsData && (rewardsData.token || rewardsData.rewardsPaidOut) ? (
-            <div className="animate-reveal flex items-center h-6 border border-neutral-10 rounded-[8px] px-2">
+            <div className="animate-appear flex items-center h-6 border border-neutral-10 rounded-[8px] px-2">
               {rewardsData.token ? (
                 <p className="text-positive-11 font-bold text-[12px]">
                   {rewardsData.token.value} <span className="uppercase">${rewardsData.token.symbol}</span>
