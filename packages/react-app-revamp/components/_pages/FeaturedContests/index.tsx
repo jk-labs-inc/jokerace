@@ -2,6 +2,7 @@ import { Contest, ContestReward } from "lib/contests";
 import { FC } from "react";
 import FeaturedContestCard from "./components/Contest";
 import Skeleton from "react-loading-skeleton";
+import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
 
 interface FeaturedContestsProps {
   status: "error" | "pending" | "success";
@@ -48,7 +49,7 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
           <div className="overflow-x-auto scrollbar-hide">
             <div className="flex lg:featured-contests-grid gap-4 pb-4">
               {isContestDataFetching
-                ? Array.from({ length: 6 }).map((_, index) => <SkeletonCard key={index} />)
+                ? Array.from({ length: CONTESTS_FEATURE_COUNT }).map((_, index) => <SkeletonCard key={index} />)
                 : contestData?.data.map((contest, index) => (
                     <div className="w-[320px] flex-shrink-0 lg:w-auto" key={index}>
                       <FeaturedContestCard
