@@ -12,6 +12,8 @@ import { useAccount } from "wagmi";
 import { useUserStore } from "./store";
 
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
+
+const STANDARD_ANYONE_CAN_VOTE_GAS_LIMIT = 1000000;
 const ANYONE_CAN_VOTE_VERSION = "4.27";
 
 export function useUser() {
@@ -264,9 +266,8 @@ export function useUser() {
         }) as unknown as bigint,
       ]);
 
-      const totalCost = costToVote + gasPrice;
-
-      const userVotesRaw = userBalance.value / totalCost;
+      const totalGasCost = gasPrice * BigInt(STANDARD_ANYONE_CAN_VOTE_GAS_LIMIT);
+      const userVotesRaw = (userBalance.value - totalGasCost) / costToVote;
 
       const userVotesFormatted = Number(parseEther(userVotesRaw.toString())) / 1e18;
 
