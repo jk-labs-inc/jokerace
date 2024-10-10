@@ -13,7 +13,6 @@ export const grantsRoundConfig: TemplateConfig = {
       evaluateVoters:
         "Judges should evaluate builders’ projects based on their relevance, impact, originality, innovativeness, and success of what they’ve built.",
     },
-    summary: "submit your project",
     type: "grants round",
     submissionOpen: moment().toDate(),
     votingOpen: moment().add(7, "days").toDate(),

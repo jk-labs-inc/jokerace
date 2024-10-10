@@ -13,7 +13,6 @@ export const karaokeChallengeConfig: TemplateConfig = {
       evaluateVoters:
         "Judges should evaluate singers based on their singing quality, star quality, and most importantly, their commitment to the bit.",
     },
-    summary: "Pick the Karaoke Winner",
     type: "karaoke challenge",
     submissionOpen: moment().toDate(),
     votingOpen: moment().add(15, "minutes").toDate(),

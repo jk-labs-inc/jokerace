@@ -15,7 +15,6 @@ import CreateContestConfirmAllowlists from "./components/Allowlists";
 import CreateContestConfirmCustomization from "./components/Customization";
 import CreateContestConfirmDescription from "./components/Description";
 import CreateContestConfirmMonetization from "./components/Monetization";
-import CreatContestConfirmSummary from "./components/Summary";
 import CreateContestConfirmTag from "./components/Tag";
 import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
@@ -23,13 +22,12 @@ import CreateContestConfirmTitle from "./components/Title";
 export enum Steps {
   ContestTitle = 0,
   ContestDescription = 1,
-  ContestSummary = 2,
-  ContestTag = 3,
-  ContestTiming = 4,
-  ContestSubmissions = 5,
-  ContestVoting = 6,
-  ContestMonetization = 7,
-  ContestCustomization = 8,
+  ContestTag = 2,
+  ContestTiming = 3,
+  ContestSubmissions = 4,
+  ContestVoting = 5,
+  ContestMonetization = 6,
+  ContestCustomization = 7,
 }
 
 const ETHEREUM_MAINNET_CHAIN_ID = 1;
@@ -105,11 +103,6 @@ const CreateContestConfirm = () => {
             onClick={step => onNavigateToStep(step)}
           />
           <CreateContestConfirmTag step={Steps.ContestTag} tag={state.type} onClick={step => onNavigateToStep(step)} />
-          <CreatContestConfirmSummary
-            step={Steps.ContestSummary}
-            summary={state.summary}
-            onClick={step => onNavigateToStep(step)}
-          />
           <CreateContestConfirmDescription
             step={Steps.ContestDescription}
             prompt={state.prompt}
