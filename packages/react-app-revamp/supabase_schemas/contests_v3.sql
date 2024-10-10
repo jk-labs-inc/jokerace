@@ -10,7 +10,6 @@ create table
     featured boolean null,
     title character varying null,
     type character varying null,
-    summary character varying null,
     prompt character varying null,
     uuid uuid not null default gen_random_uuid (),
     "votingMerkleRoot" character varying null,
