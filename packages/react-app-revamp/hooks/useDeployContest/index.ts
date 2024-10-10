@@ -32,7 +32,6 @@ export function useDeployContest() {
   const {
     type,
     title,
-    summary,
     prompt,
     submissionOpen,
     votingOpen,
@@ -77,7 +76,7 @@ export function useDeployContest() {
       );
       let jkLabsSplitDestination = "";
       const combinedPrompt = `${prompt.summarize}|${prompt.evaluateVoters}|${prompt.contactDetails ?? ""}`;
-      const contestInfo = type + "|" + summary + "|" + combinedPrompt;
+      const contestInfo = type + "|" + combinedPrompt;
       const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled || votingMerkleData.csv;
       const submissionMerkle =
         submissionMerkleData.manual || submissionMerkleData.prefilled || submissionMerkleData.csv;
@@ -189,7 +188,6 @@ export function useDeployContest() {
       const contestData = {
         title: title,
         type: type,
-        summary: summary,
         prompt: combinedPrompt,
         datetimeOpeningSubmissions: submissionOpen,
         datetimeOpeningVoting: votingOpen,

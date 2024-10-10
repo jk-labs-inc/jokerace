@@ -24,7 +24,6 @@ export interface ContestValues {
   datetimeClosingVoting: Date;
   title: string;
   type: string;
-  summary: string;
   prompt: string;
   contractAddress: string;
   networkName: string;
@@ -54,7 +53,6 @@ export function useContestsIndexV3() {
           end_at: values.datetimeClosingVoting.toISOString(),
           title: values.title,
           type: values.type,
-          summary: values.summary,
           prompt: values.prompt,
           address: values.contractAddress,
           votingMerkleRoot: values.votingMerkleRoot,

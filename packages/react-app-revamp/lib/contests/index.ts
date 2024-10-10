@@ -38,7 +38,6 @@ export interface Contest {
   featured: boolean | null;
   title: string | null;
   type: string | null;
-  summary: string | null;
   prompt: string | null;
   votingMerkleRoot: string | null;
   submissionMerkleRoot: string | null;
@@ -353,7 +352,7 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
       let query = supabase
         .from(table)
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
           { count: "exact" },
         )
         .textSearch(searchColumn, `${searchString}`, {
@@ -413,7 +412,7 @@ export async function getUserContests(
         let query = supabase
           .from("contests_v3")
           .select(
-            "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, hidden, votingMerkleRoot, voting_requirements, submission_requirements",
+            "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, prompt, submissionMerkleRoot, hidden, votingMerkleRoot, voting_requirements, submission_requirements",
             { count: "exact" },
           );
 
@@ -477,7 +476,7 @@ export async function getFeaturedContests(
     const { data, count, error } = await config.supabase
       .from("contests_v3")
       .select(
-        "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+        "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
         { count: "exact" },
       )
       .is("featured", true)
@@ -534,7 +533,7 @@ export async function getLiveContests(
       let query = supabase
         .from("contests_v3")
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
           { count: "exact" },
         )
         .eq("hidden", false)
@@ -581,7 +580,7 @@ export async function getPastContests(currentPage: number, itemsPerPage: number,
       const result = await supabase
         .from("contests_v3")
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
           { count: "exact" },
         )
         .eq("hidden", false)
@@ -626,7 +625,7 @@ export async function getUpcomingContests(
       let query = supabase
         .from("contests_v3")
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
           { count: "exact" },
         )
         .eq("hidden", false)

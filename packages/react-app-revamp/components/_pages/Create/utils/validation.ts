@@ -7,7 +7,6 @@ import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/
 export type StateKey =
   | "title"
   | "prompt"
-  | "summary"
   | "type"
   | "votingOpen"
   | "votingClose"
@@ -21,13 +20,6 @@ export type StateKey =
 const titleValidation = (title: string) => {
   if (!title || title.length > CONTEST_TITLE_MAX_LENGTH) {
     return "Contest title should be no more than 30 characters";
-  }
-  return "";
-};
-
-const summaryValidation = (summary: string) => {
-  if (!summary || summary.length > CONTEST_TITLE_MAX_LENGTH) {
-    return "Contest summary should be no more than 30 characters";
   }
   return "";
 };
@@ -121,7 +113,6 @@ const customizationValidation = (customization: CustomizationOptions) => {
 const validationMap: Record<StateKey, (...args: any[]) => string> = {
   title: titleValidation,
   prompt: promptValidation,
-  summary: summaryValidation,
   type: typeValidation,
   votingOpen: votingOpenValidation,
   votingClose: votingEndsValidation,
@@ -142,8 +133,6 @@ export const validateField = (key: StateKey, state: any): string => {
       return validationFunction(state.title);
     case "prompt":
       return validationFunction(state.prompt);
-    case "summary":
-      return validationFunction(state.summary);
     case "type":
       return validationFunction(state.type);
     case "submissionOpen":

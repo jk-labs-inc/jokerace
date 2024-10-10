@@ -5,20 +5,22 @@ import { UrlMatcher } from "interweave-autolink";
 import { FC } from "react";
 
 interface ContestPromptModalV3LayoutProps {
-  contestTitle: string;
+  contestName: string;
   contestType: string;
   contestSummary: string;
   isPromptOpen: boolean;
   contestEvaluate?: string;
+  contestContactDetails?: string;
   setIsPromptOpen: (value: boolean) => void;
 }
 
 const ContestPromptModalV3Layout: FC<ContestPromptModalV3LayoutProps> = ({
-  contestTitle,
+  contestName,
   contestType,
   contestSummary,
   isPromptOpen,
   contestEvaluate,
+  contestContactDetails,
   setIsPromptOpen,
 }) => {
   return (
@@ -27,7 +29,7 @@ const ContestPromptModalV3Layout: FC<ContestPromptModalV3LayoutProps> = ({
         <div className="relative inline-block">
           <span className="text-[24px] font-bold inline-block">
             <span className="relative z-10 bg-gradient-purple text-transparent bg-clip-text inline-block">
-              {contestTitle}
+              {contestName}
             </span>
           </span>
         </div>
@@ -48,6 +50,12 @@ const ContestPromptModalV3Layout: FC<ContestPromptModalV3LayoutProps> = ({
                   <div>
                     <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
                     <Interweave content={contestEvaluate} matchers={[new UrlMatcher("url")]} />
+                  </div>
+                ) : null}
+                {contestContactDetails ? (
+                  <div>
+                    <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
+                    <Interweave content={contestContactDetails} matchers={[new UrlMatcher("url")]} />
                   </div>
                 ) : null}
               </div>

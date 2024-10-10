@@ -12,7 +12,6 @@ export const artConfig: TemplateConfig = {
         "In this art contest, anyone can submit their art, and a jury of voters from our team will vote on their favorite.",
       evaluateVoters: "Judges should evaluate art based on their originality, beauty, and use of the medium.",
     },
-    summary: "submit your art",
     type: "art contest",
     submissionOpen: moment().toDate(),
     votingOpen: moment().add(7, "days").toDate(),

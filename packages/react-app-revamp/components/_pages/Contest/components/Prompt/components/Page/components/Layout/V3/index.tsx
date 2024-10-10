@@ -1,3 +1,4 @@
+import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
@@ -13,7 +14,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt 
   const [isExpanded, setIsExpanded] = useState(false);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
-  const [contestType, contestTitle, contestSummary, contestEvaluate, contestContactDetails] = prompt.split("|");
+  const { contestType, contestTitle, contestSummary, contestEvaluate, contestContactDetails } = parsePrompt(prompt);
 
   const shouldDisplayReadMore = () => {
     const totalLength = contestSummary.length + (contestEvaluate?.length || 0) + (contestContactDetails?.length || 0);

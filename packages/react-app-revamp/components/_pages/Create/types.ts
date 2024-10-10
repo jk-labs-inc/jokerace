@@ -1,7 +1,6 @@
 export enum StepTitle {
   Title = "title",
   Description = "description",
-  Summary = "summary",
   Tag = "tag",
   Timing = "timing",
   Submissions = "entering",
