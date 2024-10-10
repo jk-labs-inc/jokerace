@@ -31,17 +31,6 @@
     "@tiptap/pm": "2.4.0",
     "@tiptap/react": "2.4.0",
     "@tiptap/starter-kit": "2.4.0",
-    "@types/gtag.js": "0.0.20",
-    "@types/lodash": "4.17.10",
-    "@types/node": "20.16.11",
-    "@types/papaparse": "5.3.14",
-    "@types/react": "18.3.11",
-    "@types/react-csv": "1.1.10",
-    "@types/react-dom": "18.3.0",
-    "@types/react-virtualized": "9.21.30",
-    "@types/react-window": "1.8.8",
-    "@types/underscore": "1.11.15",
-    "@types/uuid": "10.0.0",
     "@typescript-eslint/parser": "7.18.0",
     "@vercel/node": "3.2.22",
     "@wagmi/connectors": "5.1.15",
@@ -110,5 +99,18 @@
     "webpack": "5.95.0",
     "zod": "3.23.8",
     "zustand": "4.5.5"
+  },
+  "devDependencies": {
+    "@types/gtag.js": "0.0.20",
+    "@types/lodash": "4.17.10",
+    "@types/node": "20.16.11",
+    "@types/papaparse": "5.3.14",
+    "@types/react": "18.3.11",
+    "@types/react-csv": "1.1.10",
+    "@types/react-dom": "18.3.0",
+    "@types/react-virtualized": "9.21.30",
+    "@types/react-window": "1.8.8",
+    "@types/underscore": "1.11.15",
+    "@types/uuid": "10.0.0"
   }
 }
