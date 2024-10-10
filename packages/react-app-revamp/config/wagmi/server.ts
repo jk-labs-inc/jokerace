@@ -108,6 +108,7 @@ import { syscoin } from "./custom-chains/syscoin";
 import { syscoinTestnet } from "./custom-chains/syscoinTestnet";
 import { taiko } from "./custom-chains/taiko";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
+import { unichainTestnet } from "./custom-chains/unichainTestnet";
 import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
 import { weavevmTestnet } from "./custom-chains/weavevmTestnet";
@@ -244,6 +245,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   laminaTestnet,
   fhenixHeliumTestnet,
   plumeTestnet,
+  unichainTestnet,
   mainnet,
 ];
 
