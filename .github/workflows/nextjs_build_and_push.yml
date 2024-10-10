@@ -2,6 +2,9 @@ name: nextjs
 
 on: push
 
+permissions:
+  packages: write
+
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
@@ -9,49 +12,23 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Detect package manager
-        id: detect-package-manager
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set short git commit SHA
+        id: vars
         run: |
-          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
-            echo "manager=yarn" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            echo "runner=yarn" >> $GITHUB_OUTPUT
-            exit 0
-          elif [ -f "${{ github.workspace }}/package.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            echo "Unable to determine package manager"
-            exit 1
-          fi
-      - name: Setup Node
-        uses: actions/setup-node@v4
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v3
         with:
-          node-version: "20"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            .next/cache
-          # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
-      - name: Install dependencies
-        run: yarn install --production
-      - name: Build with Next.js
-        run: yarn build
-        env: 
+          context: .
+        build-args: |
           NEXT_PUBLIC_SUPABASE_URL: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_SUPABASE_URL || secrets.DEV_NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_SUPABASE_ANON_KEY || secrets.DEV_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || secrets.DEV_NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
@@ -64,3 +41,22 @@ jobs:
           NEXT_PUBLIC_QUICKNODE_SLUG: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_QUICKNODE_SLUG || secrets.DEV_NEXT_PUBLIC_QUICKNODE_SLUG }}
           NEXT_PUBLIC_QUICKNODE_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_QUICKNODE_KEY || secrets.DEV_NEXT_PUBLIC_QUICKNODE_KEY }}
           NEXT_PUBLIC_ALCHEMY_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_ALCHEMY_KEY || secrets.DEV_NEXT_PUBLIC_ALCHEMY_KEY }}
+
+  push-image:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: https://ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Docker image to registry
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/seanmc9/mask-bloc-bot:prod
