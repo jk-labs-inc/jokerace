@@ -14,7 +14,6 @@ export enum TemplateType {
 
 interface ContestData {
   prompt: Prompt;
-  summary: string;
   type: string;
   submissionOpen: Date;
   votingOpen: Date;

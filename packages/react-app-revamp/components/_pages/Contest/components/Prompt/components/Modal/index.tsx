@@ -3,6 +3,7 @@ import moment from "moment";
 import { FC, useEffect, useState } from "react";
 import ContestPromptModalLegacyLayout from "./components/Layout/Legacy";
 import ContestPromptModalV3Layout from "./components/Layout/V3";
+import { parsePrompt } from "../../utils";
 
 interface ContestPromptModalProps {
   prompt: string;
@@ -10,9 +11,9 @@ interface ContestPromptModalProps {
 }
 
 const ContestPromptModal: FC<ContestPromptModalProps> = ({ prompt, hidePrompt = false }) => {
-  const { isV3, votesClose } = useContestStore(state => state);
+  const { isV3, votesClose, contestName } = useContestStore(state => state);
   const [isPromptOpen, setIsPromptOpen] = useState(moment().isBefore(votesClose) && !hidePrompt);
-  const [contestType, contestTitle, contestSummary, contestEvalute] = prompt.split("|");
+  const { contestType, contestTitle, contestSummary, contestEvaluate, contestContactDetails } = parsePrompt(prompt);
 
   useEffect(() => {
     setIsPromptOpen(!hidePrompt);
@@ -22,10 +23,11 @@ const ContestPromptModal: FC<ContestPromptModalProps> = ({ prompt, hidePrompt = 
     <>
       {isV3 ? (
         <ContestPromptModalV3Layout
-          contestTitle={contestTitle}
+          contestName={contestName}
           contestType={contestType}
           contestSummary={contestSummary}
-          contestEvaluate={contestEvalute}
+          contestEvaluate={contestEvaluate}
+          contestContactDetails={contestContactDetails}
           isPromptOpen={isPromptOpen}
           setIsPromptOpen={setIsPromptOpen}
         />

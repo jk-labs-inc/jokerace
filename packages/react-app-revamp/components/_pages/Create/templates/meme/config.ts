@@ -13,7 +13,6 @@ export const memeConfig: TemplateConfig = {
       evaluateVoters:
         "Judges should evaluate memes based on their relevance, impact, originality, and—obviously—their humor.",
     },
-    summary: "submit your meme",
     type: "meme contest",
     submissionOpen: moment().toDate(),
     votingOpen: moment().add(7, "days").toDate(),

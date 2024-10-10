@@ -12,7 +12,6 @@ export const debateConfig: TemplateConfig = {
       evaluateVoters:
         "Voters should evaluate contestants equally based on the merits of their case as well as their delivery.",
     },
-    summary: "Pick the winner",
     type: "debate",
     submissionOpen: moment().toDate(),
     votingOpen: moment().add(30, "minutes").toDate(),

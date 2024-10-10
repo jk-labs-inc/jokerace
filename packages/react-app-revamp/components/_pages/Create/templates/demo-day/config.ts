@@ -13,7 +13,6 @@ export const demoDayConfig: TemplateConfig = {
       evaluateVoters:
         "Voters should evaluate builders’ projects based on their relevance, impact, originality, innovativeness, and success of what they’ve built.",
     },
-    summary: "Upvote your favorite projects",
     type: "demo day",
     submissionOpen: moment().toDate(),
     votingOpen: moment().add(1, "days").toDate(),

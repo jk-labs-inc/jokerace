@@ -87,7 +87,6 @@ export interface DeployContestState {
   };
   type: string;
   title: string;
-  summary: string;
   prompt: Prompt;
   submissionOpen: Date;
   votingOpen: Date;
@@ -146,7 +145,6 @@ export interface DeployContestState {
   ) => void;
   setType: (type: string) => void;
   setTitle: (title: string) => void;
-  setSummary: (summary: string) => void;
   setPrompt: (prompt: Prompt) => void;
   setSubmissionOpen: (submissionOpen: Date) => void;
   setVotingOpen: (votingOpen: Date) => void;
@@ -198,7 +196,6 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     type: "curation",
     title: "",
-    summary: "",
     prompt: {
       summarize: "",
       evaluateVoters: "",
@@ -306,7 +303,6 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     stepConfig: [
       { key: "title", fields: ["title"] },
       { key: "prompt", fields: ["prompt"] },
-      { key: "summary", fields: ["summary"] },
       { key: "type", fields: ["type"] },
       { key: "dates", fields: ["votingOpen", "votingClose", "submissionOpen"] },
       { key: "submissionRequirements", fields: ["submissionMerkle", "submissionRequirements"] },
@@ -324,7 +320,6 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     ) => set({ deployContestData: { chain, chainId, hash, address, downvote, sortingEnabled } }),
     setType: (type: string) => set({ type }),
     setTitle: (title: string) => set({ title }),
-    setSummary: (summary: string) => set({ summary }),
     setPrompt: (prompt: Prompt) => set({ prompt }),
     setSubmissionOpen: (submissionOpen: Date) => set({ submissionOpen }),
     setVotingOpen: (votingOpen: Date) => set({ votingOpen }),

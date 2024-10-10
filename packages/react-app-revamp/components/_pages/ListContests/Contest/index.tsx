@@ -335,7 +335,6 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, allowToHide, rew
 
             <div className="flex flex-col items-start w-full">
               <p className="font-bold w-full">{loading ? <Skeleton width={200} /> : contest.title}</p>
-              <p>{loading ? <Skeleton width={200} /> : contest.summary}</p>
               {loading ? (
                 <Skeleton width={200} />
               ) : (
@@ -479,7 +478,6 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, allowToHide, rew
             )}
             <div className="flex flex-col gap-1">
               <p className="font-bold">{loading ? <Skeleton width={200} /> : contest.title}</p>
-              <p>{loading ? <Skeleton width={200} /> : contest.summary}</p>
               {loading ? (
                 <Skeleton width={200} />
               ) : (
