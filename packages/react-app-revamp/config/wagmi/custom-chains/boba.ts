@@ -10,8 +10,8 @@ export const boba: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: ["https://gateway.tenderly.co/public/boba-ethereum"] },
-    default: { http: ["https://gateway.tenderly.co/public/boba-ethereum"] },
+    public: { http: ["https://mainnet.boba.network"] },
+    default: { http: ["https://mainnet.boba.network"] },
   },
   blockExplorers: {
     etherscan: { name: "Boba Mainnet Scan", url: "https://bobascan.com/" },
