@@ -6,7 +6,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
@@ -23,7 +23,6 @@ import { Abi } from "viem";
 import { ErrorType, useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
 import { getContracts } from "./v3v4/contracts";
-import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -81,7 +80,6 @@ export function useContest() {
   const { setContestMaxNumberSubmissionsPerUser } = useUserStore(state => state);
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList } = useProposal();
-  const { contestStatus } = useContestStatusStore(state => state);
   const { setContestState } = useContestStateStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const alchemyRpc = chains
@@ -375,8 +373,6 @@ export function useContest() {
    * Fetch merkle tree data from DB and re-create the tree
    */
   async function processUserQualifications(contractConfig: ContractConfig, version: string) {
-    if (contestStatus === ContestStatus.VotingClosed) return;
-
     await Promise.all([
       checkIfCurrentUserQualifyToSubmit(contractConfig, version),
       checkIfCurrentUserQualifyToVote(contractConfig, version),
