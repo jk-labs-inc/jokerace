@@ -46,4 +46,5 @@ RUN yarn build
 # disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1 
 
+EXPOSE 3000
 CMD ["yarn", "start"]
