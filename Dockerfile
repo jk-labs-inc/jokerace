@@ -1,16 +1,16 @@
 FROM node:18-alpine AS base
 
 FROM base AS builder
+
+# Install
 RUN apk add --update python3 make g++\
    && rm -rf /var/cache/apk/*
 WORKDIR /app
 COPY . .
 
-# Install
 RUN yarn --production 
 
 # Build
-
 # disable telemetry during the build
 ENV NEXT_TELEMETRY_DISABLED=1 
 
@@ -49,27 +49,24 @@ ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-COPY --from=builder /app/public ./packages/react-app-revamp/public
-
 # Set the correct permission for prerender cache
+RUN addgroup nodejs
+RUN adduser -SDH nextjs
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/packages/react-app-revamp/.next/standalone ./ 
+COPY --from=builder --chown=nextjs:nodejs /app/packages/react-app-revamp/.next/static ./.next/static 
+COPY --from=builder /app/packages/react-app-revamp/public ./public 
 
 USER nextjs
 
+# Exposed port (for orchestrators and dynamic reverse proxies)
 EXPOSE 3000
-
 ENV PORT=3000
-
-# server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/next-config-js/output
 ENV HOSTNAME="0.0.0.0"
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ "wget", "-q0", "http://localhost:3000/health" ]
+
 CMD ["node", "server.js"]
