@@ -22,6 +22,7 @@ enum SubmissionRequirementsOption {
 
 const options: Option[] = [
   { value: SubmissionRequirementsOption.Anyone, label: "anyone" },
+  { value: SubmissionRequirementsOption.Creator, label: "only me" },
   { value: SubmissionRequirementsOption.Erc20, label: "token holders" },
   { value: SubmissionRequirementsOption.Erc721, label: "NFT holders" },
 ];
@@ -84,6 +85,8 @@ const CreateSubmissionRequirements = () => {
 
   const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>): void => {
     const { merkleRoot, recipients } = event.data;
+
+    console.log(merkleRoot, recipients);
 
     setSubmissionMerkle("prefilled", { merkleRoot, submitters: recipients });
     setOtherSubmissionMerkles(null);
@@ -193,7 +196,7 @@ const CreateSubmissionRequirements = () => {
     const worker = initializeWorker();
     worker.postMessage({
       decimals: 18,
-      allowList: { [address]: 100 },
+      allowList: { [address]: 10 },
     });
   };
 
