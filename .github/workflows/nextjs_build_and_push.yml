@@ -58,5 +58,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/seanmc9/mask-bloc-bot:${{ github.ref == 'refs/heads/main' && prod || dev }}
+          tags: ghcr.io/seanmc9/mask-bloc-bot:${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
 
