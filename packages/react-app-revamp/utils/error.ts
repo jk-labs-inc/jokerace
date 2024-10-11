@@ -46,6 +46,11 @@ export function didUserReject(error: any): boolean {
 export function handleError(error: any): { message: string; codeFound: boolean } {
   const code = error.code as ErrorCodes;
 
+  // check for the specific insufficient funds error from simulation
+  if (error.message && error.message.includes("insufficient funds for gas * price + value")) {
+    return { message: errorMessages[ErrorCodes.INSUFFICIENT_FUNDS]!, codeFound: true };
+  }
+
   const isInsufficientFundsError =
     error instanceof EstimateGasExecutionError || (error.code === -32603 && error.data?.code === -32000);
 
