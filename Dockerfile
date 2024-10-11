@@ -7,7 +7,9 @@ COPY . .
 RUN yarn --production 
 
 # Build
-ENV NEXT_TELEMETRY_DISABLED=1 # disable telemetry during the build
+
+# disable telemetry during the build
+ENV NEXT_TELEMETRY_DISABLED=1 
 
 ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -38,6 +40,8 @@ ENV NEXT_PUBLIC_ALCHEMY_KEY=$NEXT_PUBLIC_ALCHEMY_KEY
 RUN yarn build
 
 # Serve
-ENV NEXT_TELEMETRY_DISABLED=1 # disable telemetry during runtime.
+
+# disable telemetry during runtime.
+ENV NEXT_TELEMETRY_DISABLED=1 
 
 CMD ["yarn", "start"]
