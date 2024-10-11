@@ -86,8 +86,6 @@ const CreateSubmissionRequirements = () => {
   const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>): void => {
     const { merkleRoot, recipients } = event.data;
 
-    console.log(merkleRoot, recipients);
-
     setSubmissionMerkle("prefilled", { merkleRoot, submitters: recipients });
     setOtherSubmissionMerkles(null);
     setSubmissionAllowlistFields([]);
