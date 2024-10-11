@@ -43,7 +43,6 @@ jobs:
             NEXT_PUBLIC_ALCHEMY_KEY= ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_ALCHEMY_KEY || secrets.DEV_NEXT_PUBLIC_ALCHEMY_KEY }}
 
   push-image:
-    if: ${{ github.ref == 'refs/heads/main' }}
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -59,4 +58,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/seanmc9/mask-bloc-bot:prod
+          tags: ghcr.io/seanmc9/mask-bloc-bot:${{ github.ref == 'refs/heads/main' && "prod" || "dev" }}
+
