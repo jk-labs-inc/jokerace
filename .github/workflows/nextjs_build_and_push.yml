@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -42,10 +42,6 @@ jobs:
             NEXT_PUBLIC_QUICKNODE_KEY= ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_QUICKNODE_KEY || secrets.DEV_NEXT_PUBLIC_QUICKNODE_KEY }}
             NEXT_PUBLIC_ALCHEMY_KEY= ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_ALCHEMY_KEY || secrets.DEV_NEXT_PUBLIC_ALCHEMY_KEY }}
 
-  push-image:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
