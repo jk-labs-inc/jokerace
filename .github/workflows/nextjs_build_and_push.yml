@@ -36,7 +36,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/seanmc9/mask-bloc-bot:${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+          tags: ghcr.io/jk-labs-inc/jokerace:${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL= ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_SUPABASE_URL || secrets.DEV_NEXT_PUBLIC_SUPABASE_URL }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY= ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_SUPABASE_ANON_KEY || secrets.DEV_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
