@@ -35,8 +35,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          push: true
-          tags: ghcr.io/jk-labs-inc/jokerace:${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: ghcr.io/jk-labs-inc/jokerace:prod
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL= ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_SUPABASE_URL || secrets.DEV_NEXT_PUBLIC_SUPABASE_URL }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY= ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_SUPABASE_ANON_KEY || secrets.DEV_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
