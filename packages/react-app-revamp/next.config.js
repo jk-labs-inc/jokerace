@@ -38,9 +38,9 @@ const nextConfig = {
 };
 
 module.exports = withPWA({
-    dest: "public",
-    register: true,
-    skipWaiting: true,
-    disable: process.env.NODE_ENV === "development",
-    maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 5mb
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === "development",
+  maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 5mb
 })(nextConfig);
