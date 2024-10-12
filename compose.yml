@@ -1,6 +1,6 @@
 services:
-  jokerace-main:
-    container_name: jokerace-main
+  main-jokerace:
+    container_name: main-jokerace
     image: ghcr.io/jk-labs-inc/jokerace:main
     deploy:
       mode: replicated
@@ -11,7 +11,7 @@ services:
     container_name: jokerace-watchtower
     image: containrrr/watchtower
     command:
-      - "jokerace-main"
+      - "main-jokerace"
       - "--interval"
       - "30"
       - "--cleanup"
