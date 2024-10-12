@@ -1,4 +1,4 @@
-name: nextjs
+name: nextjs-docker
 
 on: push
 
