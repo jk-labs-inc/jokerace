@@ -22,7 +22,4 @@
   "dependencies": {
     "husky": "9.1.5"
   },
-  "devDependencies": {
-    "turbo": "2.0.14"
-  }
 }
