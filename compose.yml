@@ -1,0 +1,24 @@
+services:
+  jokerace-main:
+    container_name: jokerace-main
+    image: ghcr.io/jk-labs-inc/jokerace:main
+    deploy:
+      mode: replicated
+      replicas: 3
+    restart: always
+
+  watchtower:
+    container_name: jokerace-watchtower
+    image: containrrr/watchtower
+    command:
+      - "jokerace-main"
+      - "--interval"
+      - "30"
+      - "--cleanup"
+      - "true"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: global
+    restart: always
+
