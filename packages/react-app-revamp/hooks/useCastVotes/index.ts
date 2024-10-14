@@ -14,7 +14,7 @@ import { useRewardsStore } from "@hooks/useRewards/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
@@ -122,9 +122,10 @@ export function useCastVotes() {
       const totalVoteAmount = anyoneCanVote ? 0 : parseUnits(currentUserTotalVotesAmount.toString());
 
       let hash: `0x${string}`;
+      let request;
 
       if (!isVerified) {
-        hash = await writeContract(config, {
+        const { request: simulatedRequest } = await simulateContract(config, {
           address: contestAddress as `0x${string}`,
           abi: abi ? abi : DeployedContestContract.abi,
           chainId,
@@ -133,8 +134,9 @@ export function useCastVotes() {
           //@ts-ignore
           value: costToVote,
         });
+        request = simulatedRequest;
       } else {
-        hash = await writeContract(config, {
+        const { request: simulatedRequest } = await simulateContract(config, {
           address: contestAddress as `0x${string}`,
           abi: abi ? abi : DeployedContestContract.abi,
           chainId,
@@ -143,7 +145,10 @@ export function useCastVotes() {
           //@ts-ignore
           value: costToVote,
         });
+        request = simulatedRequest;
       }
+
+      hash = await writeContract(config, request);
 
       const receipt = await waitForTransactionReceipt(config, {
         chainId,

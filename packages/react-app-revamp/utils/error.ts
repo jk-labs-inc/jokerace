@@ -40,11 +40,23 @@ function handleContractFunctionExecutionError(error: any): { message: string; co
 
 export function didUserReject(error: any): boolean {
   const errorCode = error?.code ?? error?.cause?.code;
-  return errorCode === 4001 || errorCode === "ACTION_REJECTED";
+  const errorMessage = error?.message ?? error?.cause?.message ?? "";
+
+  return (
+    errorCode === 4001 ||
+    errorCode === "ACTION_REJECTED" ||
+    errorMessage.toLowerCase().includes("user rejected") ||
+    errorMessage.toLowerCase().includes("user denied")
+  );
 }
 
 export function handleError(error: any): { message: string; codeFound: boolean } {
   const code = error.code as ErrorCodes;
+
+  // check for the specific insufficient funds error from simulation
+  if (error.message && error.message.includes("insufficient funds for gas * price + value")) {
+    return { message: errorMessages[ErrorCodes.INSUFFICIENT_FUNDS]!, codeFound: true };
+  }
 
   const isInsufficientFundsError =
     error instanceof EstimateGasExecutionError || (error.code === -32603 && error.data?.code === -32000);
