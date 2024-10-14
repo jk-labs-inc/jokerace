@@ -55,8 +55,8 @@ const useChargeDetails = (chainName: string) => {
         splitFeeDestination: { type: SplitFeeDestinationType.CreatorWallet, address: "" },
         voteType: isAnyoneCanVote ? VoteType.PerVote : VoteType.PerTransaction,
         type: {
-          costToPropose: details.minCostToPropose,
-          costToVote: details.minCostToVote,
+          costToPropose: details.defaultCostToPropose,
+          costToVote: details.defaultCostToVote,
         },
         error: false,
       });
