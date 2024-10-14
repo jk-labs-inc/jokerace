@@ -20,6 +20,7 @@ create table
     cost_to_propose numeric null,
     percentage_to_creator numeric null,
     cost_to_vote numeric null,
+    has_been_featured boolean null default false,
     constraint contests_v3_pkey primary key (uuid)
   ) tablespace pg_default;
 
