@@ -11,7 +11,7 @@ export const polygonZk: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://zkevm-rpc.com"],
+      http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.zkevm-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
     },
     default: {
       http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.zkevm-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
