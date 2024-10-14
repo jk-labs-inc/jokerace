@@ -11,7 +11,7 @@ export const polygon: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://rpc.ankr.com/polygon"],
+      http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.matic.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
     },
     default: {
       http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.matic.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],

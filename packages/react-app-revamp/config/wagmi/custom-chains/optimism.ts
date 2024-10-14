@@ -11,7 +11,7 @@ export const optimism: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://rpc.ankr.com/optimism"],
+      http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.optimism.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
     },
     default: {
       http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.optimism.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],

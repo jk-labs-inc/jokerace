@@ -11,7 +11,7 @@ export const arbitrumOne: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://rpc.ankr.com/arbitrum"],
+      http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.arbitrum-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
     },
     default: {
       http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.arbitrum-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
