@@ -15,15 +15,9 @@ import ContestParamsSubmissionsPerPlayer from "./components/SubmissionsPerPlayer
 export const VOTING_STEP = 6;
 
 const CreateContestParams = () => {
-  const {
-    customization,
-    setCustomization,
-    advancedOptions,
-    setAdvancedOptions,
-    step,
-    metadataToggle,
-    setMetadataToggle,
-  } = useDeployContestStore(state => state);
+  const { customization, setCustomization, advancedOptions, setAdvancedOptions, step } = useDeployContestStore(
+    state => state,
+  );
   const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
   const [maxSubmissionsError, setMaxSubmissionsError] = useState<string>("");
   const onNextStep = useNextStep();
