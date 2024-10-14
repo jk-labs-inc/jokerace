@@ -40,7 +40,14 @@ function handleContractFunctionExecutionError(error: any): { message: string; co
 
 export function didUserReject(error: any): boolean {
   const errorCode = error?.code ?? error?.cause?.code;
-  return errorCode === 4001 || errorCode === "ACTION_REJECTED";
+  const errorMessage = error?.message ?? error?.cause?.message ?? "";
+
+  return (
+    errorCode === 4001 ||
+    errorCode === "ACTION_REJECTED" ||
+    errorMessage.toLowerCase().includes("user rejected") ||
+    errorMessage.toLowerCase().includes("user denied")
+  );
 }
 
 export function handleError(error: any): { message: string; codeFound: boolean } {
