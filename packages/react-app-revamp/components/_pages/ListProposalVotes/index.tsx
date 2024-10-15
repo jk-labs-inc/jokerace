@@ -35,8 +35,16 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
-  const { accumulatedVotesData, currentPage, totalPages, setCurrentPage, isLoading, fetchVotesPerPage, refreshData } =
-    useProposalVotes(address, proposalId, chainId);
+  const {
+    accumulatedVotesData,
+    currentPage,
+    totalPages,
+    setCurrentPage,
+    isLoading,
+    fetchVotesPerPage,
+    addressesVoted,
+    refreshData,
+  } = useProposalVotes(address, proposalId, chainId);
   const onLoadMoreCalledRef = useRef(false);
   const initialSkeletonCount = votedAddresses ? Math.min(votedAddresses.length, VOTES_PER_PAGE) : VOTES_PER_PAGE;
   const remainingItems =
@@ -72,7 +80,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
       <div className="flex gap-4 items-center">
-        <p className="text-[24px] text-neutral-11 font-bold">voters</p>
+        <p className="text-[24px] text-neutral-11 font-bold">voters ({addressesVoted.length})</p>
         <button
           onClick={toggleVotersOpen}
           className={`transition-transform duration-500 ease-in-out transform ${isVotersOpen ? "" : "rotate-180"}`}
