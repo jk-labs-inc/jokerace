@@ -5,6 +5,7 @@ import TokenWidgets from "./components/TokenWidgets";
 import { useFundPoolStore } from "./store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import CreateRewardsAddEarningsToggle from "../ReviewPool/components/AddEarnings";
+import CreateRewardsAddFundsToggle from "../ReviewPool/components/AddFunds";
 
 const CreateRewardsFundPool = () => {
   const charge = useContestStore(state => state.charge);
@@ -12,7 +13,7 @@ const CreateRewardsFundPool = () => {
   const isContestFinishedOrCanceled =
     contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
   const enableEarningsToggle = charge && charge.percentageToCreator > 0 && !isContestFinishedOrCanceled;
-  const { currentStep } = useCreateRewardsStore(state => state);
+  const { currentStep, addFundsToRewards } = useCreateRewardsStore(state => state);
   const { isError, tokenWidgets } = useFundPoolStore(state => state);
   const allTokensUnique = tokenWidgets.length === new Set(tokenWidgets.map(token => token.address)).size;
 
@@ -23,9 +24,11 @@ const CreateRewardsFundPool = () => {
         <p className="text-[16px] text-neutral-11">now let’s fund your rewards pool.</p>
       </div>
 
-      <div className="flex flex-col gap-12">
-        <TokenWidgets />
+      <div className="flex flex-col gap-8">
         {enableEarningsToggle && <CreateRewardsAddEarningsToggle />}
+        <CreateRewardsAddFundsToggle />
+
+        {addFundsToRewards && <TokenWidgets />}
       </div>
 
       <CreateRewardsNavigation step={currentStep} isDisabled={isError} isError={!allTokensUnique} />
