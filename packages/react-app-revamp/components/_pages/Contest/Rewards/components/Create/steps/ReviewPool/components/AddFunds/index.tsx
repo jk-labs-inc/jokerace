@@ -1,17 +1,26 @@
 import { Switch } from "@headlessui/react";
 import { useCreateRewardsStore } from "../../../../store";
+import { useFundPoolStore } from "../../../FundPool/store";
 import { useMediaQuery } from "react-responsive";
 
-const CreateRewardsAddEarningsToggle = () => {
+const CreateRewardsAddFundsToggle = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const { addEarningsToRewards, setAddEarningsToRewards } = useCreateRewardsStore(state => state);
-  const toggleLabel = isMobile ? "send my 50% of charges to the rewards" : "send my 50% of charges to the rewards pool";
+  const { addFundsToRewards, setAddFundsToRewards } = useCreateRewardsStore(state => state);
+  const { setTokenWidgets } = useFundPoolStore(state => state);
+  const toggleLabel = isMobile ? "i want to fund the rewards pool" : "i want to personally fund the rewards pool";
+
+  const onAddFundsChange = (checked: boolean) => {
+    if (!checked) {
+      setTokenWidgets([]);
+    }
+    setAddFundsToRewards?.(checked);
+  };
 
   return (
     <div className="flex gap-4 items-center">
       <Switch
-        checked={addEarningsToRewards}
-        onChange={setAddEarningsToRewards}
+        checked={addFundsToRewards}
+        onChange={onAddFundsChange}
         className="group relative flex w-12 h-6 cursor-pointer rounded-full bg-neutral-10 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-secondary-11"
       >
         <span
@@ -24,4 +33,4 @@ const CreateRewardsAddEarningsToggle = () => {
   );
 };
 
-export default CreateRewardsAddEarningsToggle;
+export default CreateRewardsAddFundsToggle;

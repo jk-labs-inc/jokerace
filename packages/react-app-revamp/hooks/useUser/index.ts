@@ -242,16 +242,10 @@ export function useUser() {
     if (!userAddress) return;
 
     try {
-      if (compareVersions(version, ANYONE_CAN_VOTE_VERSION) == -1) {
+      if (compareVersions(version, ANYONE_CAN_VOTE_VERSION) < 0 || !abi) {
         setIsCurrentUserVoteQualificationSuccess(false);
         setIsCurrentUserVoteQualificationLoading(false);
-        return;
-      }
-
-      if (!abi) {
-        setIsCurrentUserVoteQualificationError(true);
-        setIsCurrentUserVoteQualificationSuccess(false);
-        setIsCurrentUserVoteQualificationLoading(false);
+        setIsCurrentUserVoteQualificationError(!abi);
         return;
       }
 
@@ -263,25 +257,22 @@ export function useUser() {
           abi: abi as Abi,
           chainId: chainId,
           functionName: "costToVote",
-        }) as unknown as bigint,
+        }) as Promise<bigint>,
       ]);
+
+      if (userBalance.value === 0n) {
+        setUserVoteQualification(0, 0, true, false, false);
+        return;
+      }
 
       const totalGasCost = gasPrice * BigInt(STANDARD_ANYONE_CAN_VOTE_GAS_LIMIT);
       const userVotesRaw = (userBalance.value - totalGasCost) / costToVote;
-
       const userVotesFormatted = Number(parseEther(userVotesRaw.toString())) / 1e18;
 
-      setCurrentUserTotalVotesAmount(userVotesFormatted);
-      setCurrentUserAvailableVotesAmount(userVotesFormatted);
-
-      setIsCurrentUserVoteQualificationSuccess(true);
-      setIsCurrentUserVoteQualificationLoading(false);
-      setIsCurrentUserVoteQualificationError(false);
+      setUserVoteQualification(userVotesFormatted, userVotesFormatted, true, false, false);
     } catch (error) {
-      console.error("Error in checkAnyoneCanVoteUserQualification:", error);
-      setIsCurrentUserVoteQualificationError(true);
-      setIsCurrentUserVoteQualificationSuccess(false);
-      setIsCurrentUserVoteQualificationLoading(false);
+      console.error("error in checkAnyoneCanVoteUserQualification:", error);
+      setUserVoteQualification(0, 0, false, false, true);
     }
   }
 
@@ -324,6 +315,21 @@ export function useUser() {
       setIsCurrentUserVoteQualificationSuccess(false);
       setIsCurrentUserVoteQualificationLoading(false);
     }
+  }
+
+  // helper function to set multiple state values
+  function setUserVoteQualification(
+    totalVotes: number,
+    availableVotes: number,
+    success: boolean,
+    loading: boolean,
+    error: boolean,
+  ) {
+    setCurrentUserTotalVotesAmount(totalVotes);
+    setCurrentUserAvailableVotesAmount(availableVotes);
+    setIsCurrentUserVoteQualificationSuccess(success);
+    setIsCurrentUserVoteQualificationLoading(loading);
+    setIsCurrentUserVoteQualificationError(error);
   }
 
   return {

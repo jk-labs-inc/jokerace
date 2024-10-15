@@ -44,9 +44,11 @@ export interface RewardPoolData {
 interface CreateRewardsState {
   currentStep: CreationStep;
   rewardPoolData: RewardPoolData;
+  addFundsToRewards?: boolean;
   addEarningsToRewards?: boolean;
   setStep: (step: CreationStep) => void;
   setRewardPoolData: (data: ReactStyleStateSetter<RewardPoolData>) => void;
+  setAddFundsToRewards?: (addFundsToRewards: boolean) => void;
   setAddEarningsToRewards?: (addEarningsToRewards: boolean) => void;
 }
 
@@ -74,7 +76,9 @@ export const useCreateRewardsStore = create<CreateRewardsState>(set => ({
     },
   },
   addEarningsToRewards: false,
+  addFundsToRewards: false,
   setAddEarningsToRewards: addEarningsToRewards => set({ addEarningsToRewards }),
+  setAddFundsToRewards: addFundsToRewards => set({ addFundsToRewards }),
   setRewardPoolData: data =>
     set(state => ({
       rewardPoolData: typeof data === "function" ? data(state.rewardPoolData) : data,
