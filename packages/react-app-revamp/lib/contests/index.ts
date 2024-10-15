@@ -38,7 +38,6 @@ export interface Contest {
   featured: boolean | null;
   title: string | null;
   type: string | null;
-  prompt: string | null;
   votingMerkleRoot: string | null;
   submissionMerkleRoot: string | null;
   hidden: boolean;
@@ -48,6 +47,29 @@ export interface Contest {
   percentage_to_propose: number | null;
   cost_to_vote: number | null;
   isCanceled: boolean;
+}
+
+export async function getContestTitle(contestAddress: string, networkName: string) {
+  const chainId = chains.find(c => c.name.toLowerCase() === networkName.toLowerCase())?.id;
+  if (!chainId) return null;
+
+  try {
+    const contractConfig = await getContractConfig(contestAddress, chainId);
+    if (!contractConfig) {
+      return null;
+    }
+
+    const title = (await readContract(config, {
+      ...contractConfig,
+      functionName: "name",
+      args: [],
+    })) as string;
+
+    return title;
+  } catch (error) {
+    console.error("Error fetching contest title:", error);
+    return null;
+  }
 }
 
 async function getContractConfig(address: string, chainId: number) {
@@ -352,7 +374,7 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
       let query = supabase
         .from(table)
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, type, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
           { count: "exact" },
         )
         .textSearch(searchColumn, `${searchString}`, {
@@ -376,7 +398,8 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
 
       const processedData = await Promise.all(
         data.map(async contest => {
-          const processedContest = await processContestQualifications(contest, userAddress ?? "");
+          const title = await getContestTitle(contest.address, contest.network_name);
+          const processedContest = await processContestQualifications({ ...contest, title }, userAddress ?? "");
           return {
             ...processedContest,
             isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
@@ -412,7 +435,7 @@ export async function getUserContests(
         let query = supabase
           .from("contests_v3")
           .select(
-            "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, prompt, submissionMerkleRoot, hidden, votingMerkleRoot, voting_requirements, submission_requirements",
+            "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, type, submissionMerkleRoot, hidden, votingMerkleRoot, voting_requirements, submission_requirements",
             { count: "exact" },
           );
 
@@ -444,7 +467,8 @@ export async function getUserContests(
 
       const processedData = await Promise.all(
         data.map(async contest => {
-          const processedContest = await processContestQualifications(contest, currentUserAddress);
+          const title = await getContestTitle(contest.address, contest.network_name);
+          const processedContest = await processContestQualifications({ ...contest, title }, currentUserAddress);
           return {
             ...processedContest,
             isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
@@ -476,7 +500,7 @@ export async function getFeaturedContests(
     const { data, count, error } = await config.supabase
       .from("contests_v3")
       .select(
-        "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+        "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, type, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
         { count: "exact" },
       )
       .is("featured", true)
@@ -486,7 +510,9 @@ export async function getFeaturedContests(
 
     processedData = await Promise.all(
       data.map(async contest => {
-        const processedContest = await processContestQualifications(contest, userAddress ?? "");
+        const title = await getContestTitle(contest.address, contest.network_name);
+
+        const processedContest = await processContestQualifications({ ...contest, title }, userAddress ?? "");
         return {
           ...processedContest,
           isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
@@ -533,7 +559,7 @@ export async function getLiveContests(
       let query = supabase
         .from("contests_v3")
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, type, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
           { count: "exact" },
         )
         .eq("hidden", false)
@@ -555,7 +581,8 @@ export async function getLiveContests(
 
       const processedData = await Promise.all(
         data.map(async contest => {
-          const processedContest = await processContestQualifications(contest, userAddress ?? "");
+          const title = await getContestTitle(contest.address, contest.network_name);
+          const processedContest = await processContestQualifications({ ...contest, title }, userAddress ?? "");
           return {
             ...processedContest,
             isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
@@ -580,7 +607,7 @@ export async function getPastContests(currentPage: number, itemsPerPage: number,
       const result = await supabase
         .from("contests_v3")
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, type, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
           { count: "exact" },
         )
         .eq("hidden", false)
@@ -594,7 +621,8 @@ export async function getPastContests(currentPage: number, itemsPerPage: number,
 
       const processedData = await Promise.all(
         data.map(async contest => {
-          const processedContest = await processContestQualifications(contest, userAddress ?? "");
+          const title = await getContestTitle(contest.address, contest.network_name);
+          const processedContest = await processContestQualifications({ ...contest, title }, userAddress ?? "");
           return {
             ...processedContest,
             isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),
@@ -625,7 +653,7 @@ export async function getUpcomingContests(
       let query = supabase
         .from("contests_v3")
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, type, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
           { count: "exact" },
         )
         .eq("hidden", false)
@@ -647,7 +675,8 @@ export async function getUpcomingContests(
 
       const processedData = await Promise.all(
         data.map(async contest => {
-          const processedContest = await processContestQualifications(contest, userAddress ?? "");
+          const title = await getContestTitle(contest.address, contest.network_name);
+          const processedContest = await processContestQualifications({ ...contest, title }, userAddress ?? "");
           return {
             ...processedContest,
             isCanceled: await checkIfContestIsCanceled(processedContest.address, processedContest.network_name),

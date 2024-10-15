@@ -1,6 +1,7 @@
 import { supabase } from "@config/supabase";
 import getPagination from "@helpers/getPagination";
 import { Comment, CommentsResult, Contest, Submission, SubmissionCriteria, SubmissionsResult } from "./types";
+import { getContestTitle } from "lib/contests";
 
 function mergeSubmissionsWithContests(submissions: Submission[], contests: Contest[]): SubmissionsResult["data"] {
   const validsubmissions = submissions.filter(submission =>
@@ -162,18 +163,21 @@ async function fetchComments(
   }
 }
 
-async function getContestDetailsByAddresses(contestAddresses: string[]) {
+async function getContestDetailsByAddresses(contests: { address: string; network_name: string }[]) {
   try {
-    const result = await supabase.from("contests_v3").select("title, address").in("address", contestAddresses);
+    const contestDetails = await Promise.all(
+      contests.map(async contest => {
+        const title = await getContestTitle(contest.address, contest.network_name);
+        return {
+          address: contest.address,
+          title: title ?? "",
+        };
+      }),
+    );
 
-    const { data, error } = result;
-    if (error) {
-      console.error(error);
-      throw error;
-    }
-
-    return data;
+    return contestDetails;
   } catch (error) {
+    console.error("error fetching contest details:", error);
     throw error;
   }
 }
@@ -188,8 +192,12 @@ export async function getUserSubmissions(
 
   const { data: submissions, count } = await fetchSubmissions(criteria, range);
 
-  const contestAddresses = submissions.map(p => p.contest_address);
-  const contests = await getContestDetailsByAddresses(contestAddresses);
+  const contestsAddressesAndChains = submissions.map(p => ({
+    address: p.contest_address,
+    network_name: p.network_name,
+  }));
+
+  const contests = await getContestDetailsByAddresses(contestsAddressesAndChains);
 
   const mergedSubmissions = mergeSubmissionsWithContests(submissions, contests);
 
@@ -206,8 +214,11 @@ export async function getUserVotes(
   criteria["vote_amount"] = { neq: null };
 
   const { data: submissions, count } = await fetchSubmissions(criteria, range);
-  const contestAddresses = submissions.map(s => s.contest_address);
-  const contests = await getContestDetailsByAddresses(contestAddresses);
+  const contestsAddressesAndChains = submissions.map(s => ({
+    address: s.contest_address,
+    network_name: s.network_name,
+  }));
+  const contests = await getContestDetailsByAddresses(contestsAddressesAndChains);
 
   const mergedSubmissions = mergeSubmissionsWithContests(submissions, contests);
 
@@ -222,8 +233,11 @@ export async function getUserComments(
   const range = getPagination(currentPage, itemsPerPage);
 
   const { data: comments, count } = await fetchComments(userAddress, range);
-  const contestAddresses = comments.map(c => c.contest_address);
-  const contests = await getContestDetailsByAddresses(contestAddresses);
+  const contestsAddressesAndChains = comments.map(c => ({
+    address: c.contest_address,
+    network_name: c.network_name,
+  }));
+  const contests = await getContestDetailsByAddresses(contestsAddressesAndChains);
 
   const mergedComments = mergeCommentsWithContests(comments, contests);
 
