@@ -22,7 +22,7 @@ const ContestParamsMetadataFields = () => {
 
       // determine which field type to add
       let fieldToAdd: MetadataField | null = null;
-      if (counts.string < 10) {
+      if (counts.string < 9) {
         fieldToAdd = metadataFields[0]; // string field
       } else if (counts.number < 10) {
         fieldToAdd = metadataFields[1]; // integer field

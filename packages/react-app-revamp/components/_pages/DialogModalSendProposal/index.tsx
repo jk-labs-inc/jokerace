@@ -63,13 +63,11 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
   const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
-  const [lastEdited, setLastEdited] = useState<Date>(new Date());
   const [proposal, setProposal] = useState(savedProposal?.content || "");
-  const formattedDate = lastEdited ? moment(lastEdited).format("MMMM D, h:mm a") : null;
   const isCorrectNetwork = chainId === chain?.id;
   const [isDragging, setIsDragging] = useState(false);
   const { uploadImage } = useUploadImageStore(state => state);
-  const placeholderText = isMobile ? "this is my entry..." : "this is my entry and here’s why...";
+  const placeholderText = "this is my entry...";
 
   const editorProposal = useEditor({
     extensions: [
@@ -91,7 +89,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     content: proposal,
     editorProps: {
       attributes: {
-        class: "prose prose-invert pt-4 md:pt-12 flex-grow focus:outline-none",
+        class: "prose prose-invert pt-4 pl-4 flex-grow focus:outline-none",
       },
       handleDOMEvents: {
         keydown: (view, event) => {
@@ -111,8 +109,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
         expiresAt: votesOpen,
       };
       saveSubmissionToLocalStorage("submissions", submissionCache);
-
-      setLastEdited(new Date());
     },
   });
 
@@ -205,7 +201,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           address={address ?? ""}
           charge={charge}
           accountData={accountData}
-          formattedDate={formattedDate}
           isOpen={isOpen}
           isCorrectNetwork={isCorrectNetwork}
           setIsOpen={setIsOpen}
@@ -221,7 +216,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           address={address ?? ""}
           charge={charge}
           accountData={accountData}
-          formattedDate={formattedDate}
           isOpen={isOpen}
           isCorrectNetwork={isCorrectNetwork}
           isDragging={isDragging}

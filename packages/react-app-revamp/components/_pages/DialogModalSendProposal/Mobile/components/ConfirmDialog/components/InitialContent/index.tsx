@@ -1,6 +1,8 @@
+import DialogModalSendProposalEmailSubscription from "@components/_pages/DialogModalSendProposal/Desktop/components/EmailSubscription";
 import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { FOOTER_LINKS } from "@config/links";
+import { Switch } from "@headlessui/react";
 import { emailRegex } from "@helpers/regex";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
@@ -18,14 +20,14 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   accountData,
   onConfirm,
 }) => {
-  const { wantsSubscription, emailForSubscription, setWantsSubscription, setEmailForSubscription } =
+  const { wantsSubscription, emailForSubscription, setWantsSubscription, setEmailForSubscription, emailAlreadyExists } =
     useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
   const insufficientBalance = (accountData?.value ?? 0) < (charge?.type.costToPropose ?? 0);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
 
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setWantsSubscription(event.target.checked);
+  const handleCheckboxChange = (checked: boolean) => {
+    setWantsSubscription(checked);
     setEmailError(null);
   };
 
@@ -61,55 +63,43 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
 
   return (
     <>
+      <div className="flex flex-col gap-4 ">
+        <div className="flex gap-4 items-center">
+          <Switch
+            checked={wantsSubscription}
+            onChange={handleCheckboxChange}
+            className="group relative flex w-12 h-6 cursor-pointer rounded-full bg-neutral-10 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-secondary-11"
+          >
+            <span
+              aria-hidden="true"
+              className="pointer-events-none inline-block size-6 translate-x-0 rounded-full bg-neutral-11 ring-0 shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-7"
+            />
+          </Switch>
+          <p className="text-[16px] text-neutral-11 font-bold">get updates on contests</p>
+        </div>
+        {wantsSubscription ? (
+          <DialogModalSendProposalEmailSubscription
+            emailAlreadyExists={emailAlreadyExists ?? false}
+            emailError={emailError}
+            emailForSubscription={emailForSubscription ?? ""}
+            tosHref={tosHref ?? ""}
+            handleEmailChange={handleEmailChange}
+          />
+        ) : null}
+      </div>
       {charge && charge.type.costToPropose && accountData ? (
         <ChargeLayoutSubmission charge={charge} accountData={accountData} />
       ) : null}
-      <div className="flex flex-col gap-4 mt-4">
-        {!insufficientBalance ? (
-          <div className="flex flex-col gap-4">
-            <div className="flex gap-4">
-              <label className="checkbox-container">
-                <input type="checkbox" checked={wantsSubscription} onChange={handleCheckboxChange} />
-                <span className="checkmark"></span>
-              </label>
-              <p className="text-[16px] text-neutral-9">i’d like to hear about new contests</p>
-            </div>
-            <div className="flex flex-col gap-1 -mx-4">
-              <input
-                type="text"
-                className="w-full rounded-[40px] h-8 bg-true-black border border-neutral-9 indent-4 placeholder-neutral-7 focus:outline-none submission-subscription-input"
-                placeholder="myemail@email.com"
-                onChange={handleEmailChange}
-              />
-              {emailError ? (
-                <p className="text-[14px] text-negative-11 font-bold pl-2 mt-2">{emailError}</p>
-              ) : (
-                <p className="ml-4 opacity-50 text-neutral-11 text-[12px]">
-                  by giving your email, you agree to share it with the contest <br />
-                  creator and jk labs, inc., according to{" "}
-                  <a
-                    className="text-positive-11 hover:text-positive-10"
-                    href={tosHref}
-                    rel="nofollow noreferrer"
-                    target="_blank"
-                  >
-                    our privacy policy
-                  </a>
-                </p>
-              )}
-            </div>
-          </div>
-        ) : null}
-        <div className="mt-12">
-          <ButtonV3
-            colorClass="bg-gradient-vote rounded-[40px]"
-            size={ButtonSize.FULL}
-            onClick={handleConfirm}
-            isDisabled={insufficientBalance}
-          >
-            submit!
-          </ButtonV3>
-        </div>
+
+      <div className="mt-12">
+        <ButtonV3
+          colorClass="bg-gradient-vote rounded-[40px]"
+          size={ButtonSize.FULL}
+          onClick={handleConfirm}
+          isDisabled={insufficientBalance}
+        >
+          submit!
+        </ButtonV3>
       </div>
     </>
   );

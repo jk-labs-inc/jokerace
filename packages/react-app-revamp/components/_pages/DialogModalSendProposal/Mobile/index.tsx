@@ -23,7 +23,6 @@ interface DialogModalSendProposalMobileLayoutProps {
   charge: Charge | null;
   accountData: GetBalanceReturnType | undefined;
   address: string;
-  formattedDate: string | null;
   isOpen: boolean;
   isCorrectNetwork: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -39,7 +38,6 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   address,
   charge,
   accountData,
-  formattedDate,
   isOpen,
   isCorrectNetwork,
   setIsOpen,
@@ -99,12 +97,12 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
           </p>
           {isCorrectNetwork ? (
             <ButtonV3
-              colorClass="bg-gradient-vote rounded-[40px]"
+              colorClass="bg-gradient-purple rounded-[40px]"
               size={ButtonSize.SMALL}
               onClick={resetStatesAndProceed}
               isDisabled={isLoading || isSubmitButtonDisabled()}
             >
-              submit!
+              submit
             </ButtonV3>
           ) : (
             <ButtonV3
@@ -120,18 +118,19 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
           <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
           <div className="flex flex-col gap-2">
             <UserProfileDisplay ethereumAddress={address ?? ""} shortenOnFallback={true} />
-            <p className="text-[16px] font-bold text-neutral-10">{formattedDate}</p>
           </div>
-          <div className="flex flex-col min-h-[12rem] rounded-md md:w-[650px]">
-            <div className="flex w-full px-1 py-2 border-y border-neutral-10">
-              <TipTapEditorControls editor={editorProposal} />
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
+              <div className="flex w-full p-1 border-y border-neutral-2">
+                <TipTapEditorControls editor={editorProposal} />
+              </div>
+              <EditorContent
+                editor={editorProposal}
+                className={`bg-secondary-1 outline-none rounded-[16px] placeholder-primary-3 w-full overflow-y-auto h-52`}
+              />
             </div>
 
             <div className="flex flex-col gap-8">
-              <EditorContent
-                editor={editorProposal}
-                className={`md:border-b border-primary-2 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto h-auto max-h-[300px]`}
-              />
               {isMetadataFieldsLoading ? (
                 <p className="loadingDots font-sabo text-[16px] text-neutral-14">loading metadata fields</p>
               ) : isMetadataFieldsError ? (
