@@ -572,12 +572,12 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         votingMerkleRoot = newVotingMerkleRoot;
     }
 
-    function setJkLabsSplitDestination(address newCreatorSplitDestination) public {
+    function setJkLabsSplitDestination(address newJkLabsSplitDestination) public {
         if (msg.sender != JK_LABS_ADDRESS) revert OnlyJkLabsCanAmend();
         if (state() == ContestState.Completed || state() == ContestState.Canceled) {
             revert CannotUpdateWhenCompletedOrCanceled();
         }
-        creatorSplitDestination = newCreatorSplitDestination;
+        jkLabsSplitDestination = newJkLabsSplitDestination;
     }
 
     function setCreatorSplitDestination(address newCreatorSplitDestination) public {
