@@ -18,7 +18,7 @@ export const avalanche: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Snowtrace", url: "https://snowtrace.io/" },
-    default: { name: "Snowtrace", url: "https://snowtrace.io/" },
+    etherscan: { name: "Snowtrace", url: "https://snowscan.xyz/" },
+    default: { name: "Snowtrace", url: "https://snowscan.xyz/" },
   },
 };
