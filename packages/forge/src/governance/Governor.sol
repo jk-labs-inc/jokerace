@@ -157,6 +157,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error NeedToVoteWithProofFirst();
 
     error OnlyCreatorCanDelete();
+    error OnlyCreatorCanSetName();
+    error OnlyCreatorCanSetPrompt();
     error CannotDeleteWhenCompletedOrCanceled();
     error CannotSetWhenCompletedOrCanceled();
 
