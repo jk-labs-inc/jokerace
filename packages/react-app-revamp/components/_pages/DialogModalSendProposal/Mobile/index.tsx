@@ -14,6 +14,9 @@ import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useEffect } from "react";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import DialogModalSendProposalMobileLayoutConfirm from "./components/ConfirmDialog";
+import { isEntryPreviewPrompt } from "../utils";
+import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
+import DialogModalSendProposalEditor from "../components/Editor";
 
 interface DialogModalSendProposalMobileLayoutProps {
   chainName: string;
@@ -51,6 +54,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields();
   const { fields: metadataFields } = useMetadataStore(state => state);
+  const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);
 
   useEffect(() => {
     if (error) {
@@ -98,7 +102,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
           {isCorrectNetwork ? (
             <ButtonV3
               colorClass="bg-gradient-purple rounded-[40px]"
-              size={ButtonSize.SMALL}
+              size={ButtonSize.DEFAULT_LONG}
               onClick={resetStatesAndProceed}
               isDisabled={isLoading || isSubmitButtonDisabled()}
             >
@@ -114,21 +118,22 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
             </ButtonV3>
           )}
         </div>
-        <div className="flex flex-col gap-4">
-          <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
+        <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <UserProfileDisplay ethereumAddress={address ?? ""} shortenOnFallback={true} />
-          </div>
-          <div className="flex flex-col gap-8">
-            <div className="flex flex-col gap-4">
-              <div className="flex w-full p-1 border-y border-neutral-2">
-                <TipTapEditorControls editor={editorProposal} />
-              </div>
-              <EditorContent
-                editor={editorProposal}
-                className={`bg-secondary-1 outline-none rounded-[16px] placeholder-primary-3 w-full overflow-y-auto h-52`}
-              />
+            <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
+            <div className="flex flex-col gap-2">
+              <UserProfileDisplay ethereumAddress={address ?? ""} shortenOnFallback={true} />
             </div>
+          </div>
+          <div className="flex flex-col gap-4">
+            {hasEntryPreview ? (
+              <DialogModalSendProposalEntryPreviewLayout
+                entryPreviewLayout={metadataFields[0].prompt}
+                editorProposal={editorProposal}
+              />
+            ) : (
+              <DialogModalSendProposalEditor editorProposal={editorProposal} />
+            )}
 
             <div className="flex flex-col gap-8">
               {isMetadataFieldsLoading ? (

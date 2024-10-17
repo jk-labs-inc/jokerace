@@ -373,7 +373,7 @@ li {
 
   /* Placeholder (at the top) */
   .ProseMirror p.is-editor-empty:first-child::before {
-    color: #3d3d3d;
+    color: #6a6a6a;
     content: attr(data-placeholder);
     float: left;
     height: 0;
@@ -382,7 +382,7 @@ li {
 
   /* Placeholder (at the top) */
   .ProseMirror p.is-editor-create-flow-empty:first-child::before {
-    color: #3d3d3d;
+    color: #6a6a6a;
     font-weight: bold;
     content: attr(data-placeholder);
     float: left;
@@ -392,7 +392,7 @@ li {
 
   /* Placeholder (at the top) */
   .ProseMirror p.is-editor-comment-empty:first-child::before {
-    color: #3d3d3d;
+    color: #6a6a6a;
     font-weight: bold;
     content: attr(data-placeholder);
     float: left;

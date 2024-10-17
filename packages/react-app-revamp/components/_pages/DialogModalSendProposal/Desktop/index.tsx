@@ -15,11 +15,12 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useState } from "react";
+import DialogModalSendProposalEditor from "../components/Editor";
+import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
-import DialogModalSendProposalEditor from "./components/Editor";
-import DialogModalSendProposalEmailSubscription from "./components/EmailSubscription";
 import { isEntryPreviewPrompt } from "../utils";
+import DialogModalSendProposalEmailSubscription from "./components/EmailSubscription";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -153,14 +154,23 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
             <DialogModalSendProposalSuccessLayout proposalId={proposalId} chainName={chainName} contestId={contestId} />
           </div>
         ) : (
-          <>
-            <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
-            <div className="flex flex-col gap-2">
-              <UserProfileDisplay ethereumAddress={address ?? ""} shortenOnFallback={true} />
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
+              <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
+              <div className="flex flex-col gap-2">
+                <UserProfileDisplay ethereumAddress={address ?? ""} shortenOnFallback={true} />
+              </div>
             </div>
             <div className="flex flex-col gap-8 rounded-md md:w-[650px]">
               {hasEntryPreview ? (
-                <p>hi!</p>
+                <DialogModalSendProposalEntryPreviewLayout
+                  entryPreviewLayout={metadataFields[0].prompt}
+                  editorProposal={editorProposal}
+                  isDragging={isDragging}
+                  handleDrop={handleDrop}
+                  handleDragOver={handleDragOver}
+                  handleDragLeave={handleDragLeave}
+                />
               ) : (
                 <DialogModalSendProposalEditor
                   editorProposal={editorProposal}
@@ -228,7 +238,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                 </ButtonV3>
               )}
             </div>
-          </>
+          </div>
         )}
       </div>
     </DialogModalV3>

@@ -22,7 +22,7 @@ const DialogModalSendProposalEmailSubscription: FC<DialogModalSendProposalEmailS
           <input
             value={emailForSubscription}
             type="text"
-            className="text-[16px] w-[312px] h-12 bg-secondary-1 rounded-[16px] indent-4 placeholder-primary-3 focus:outline-none"
+            className="text-[16px] w-[312px] h-12 bg-secondary-1 rounded-[16px] indent-4 placeholder-neutral-10 focus:outline-none"
             placeholder="myemail@email.com"
             onChange={handleEmailChange}
           />
