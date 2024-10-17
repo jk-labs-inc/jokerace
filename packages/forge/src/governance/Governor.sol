@@ -98,8 +98,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant MAX_FIELDS_METADATA_LENGTH = 10;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
-    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // our hot wallet that we operate from if need be, and collect revenue to on most chains
-    string private constant VERSION = "4.34"; // Private as to not clutter the ABI
+    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // our hot wallet that we collect revenue to
+    string private constant VERSION = "4.35"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
     string public prompt;
@@ -159,7 +159,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error OnlyCreatorCanDelete();
     error CannotDeleteWhenCompletedOrCanceled();
 
-    error OnlyJkLabsOrCreatorCanCancel();
+    error OnlyCreatorOrJkLabsCanCancel();
     error ContestAlreadyCanceled();
 
     error CannotUpdateWhenCompletedOrCanceled();
@@ -477,7 +477,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      * Emits a {IGovernor-ContestCanceled} event.
      */
     function cancel() public {
-        if (((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS))) revert OnlyJkLabsOrCreatorCanCancel();
+        if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
 
         ContestState status = state();
         if (status == ContestState.Canceled) revert ContestAlreadyCanceled();
@@ -556,28 +556,26 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         return addressTotalVotes[account];
     }
 
+    /**
+     * ONLY FOR USE IN EMERGENCIES, if you change this users will not be able to play in your contest on the JokeRace frontend.
+     */
     function setSubmissionMerkleRoot(bytes32 newSubmissionMerkleRoot) public {
-        if (msg.sender != JK_LABS_ADDRESS) revert OnlyJkLabsCanAmend();
+        if (msg.sender != creator) revert OnlyCreatorCanAmend();
         if (state() == ContestState.Completed || state() == ContestState.Canceled) {
             revert CannotUpdateWhenCompletedOrCanceled();
         }
         submissionMerkleRoot = newSubmissionMerkleRoot;
     }
 
+    /**
+     * ONLY FOR USE IN EMERGENCIES, if you change this users will not be able to play in your contest on the JokeRace frontend.
+     */
     function setVotingMerkleRoot(bytes32 newVotingMerkleRoot) public {
-        if (msg.sender != JK_LABS_ADDRESS) revert OnlyJkLabsCanAmend();
+        if (msg.sender != creator) revert OnlyCreatorCanAmend();
         if (state() == ContestState.Completed || state() == ContestState.Canceled) {
             revert CannotUpdateWhenCompletedOrCanceled();
         }
         votingMerkleRoot = newVotingMerkleRoot;
-    }
-
-    function setJkLabsSplitDestination(address newJkLabsSplitDestination) public {
-        if (msg.sender != JK_LABS_ADDRESS) revert OnlyJkLabsCanAmend();
-        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
-            revert CannotUpdateWhenCompletedOrCanceled();
-        }
-        jkLabsSplitDestination = newJkLabsSplitDestination;
     }
 
     function setCreatorSplitDestination(address newCreatorSplitDestination) public {
@@ -586,5 +584,13 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
             revert CannotUpdateWhenCompletedOrCanceled();
         }
         creatorSplitDestination = newCreatorSplitDestination;
+    }
+
+    function setJkLabsSplitDestination(address newJkLabsSplitDestination) public {
+        if (msg.sender != JK_LABS_ADDRESS) revert OnlyJkLabsCanAmend();
+        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
+            revert CannotUpdateWhenCompletedOrCanceled();
+        }
+        jkLabsSplitDestination = newJkLabsSplitDestination;
     }
 }
