@@ -1,4 +1,4 @@
-import DialogModalSendProposalEmailSubscription from "@components/_pages/DialogModalSendProposal/Desktop/components/EmailSubscription";
+import DialogModalSendProposalEmailSubscription from "@components/_pages/DialogModalSendProposal/components/EmailSubscription";
 import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { FOOTER_LINKS } from "@config/links";

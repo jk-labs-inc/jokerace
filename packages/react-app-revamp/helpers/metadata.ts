@@ -61,9 +61,9 @@ export function generateFieldInputsHTML(proposalContent: string, fieldInputs: Me
     : "";
 }
 
-export function generateEntryPreviewHTML(proposalContent: string, fieldInputs: MetadataFieldWithInput[]): string {
+export function generateEntryPreviewHTML(fieldInputs: MetadataFieldWithInput[]): string {
   if (fieldInputs.length === 0) {
-    return proposalContent;
+    return "";
   }
 
   const firstFieldInput = fieldInputs[0];

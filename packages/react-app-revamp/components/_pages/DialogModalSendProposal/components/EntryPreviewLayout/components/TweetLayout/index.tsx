@@ -70,7 +70,7 @@ const DialogModalSendProposalEntryPreviewTweetLayout: FC<DialogModalSendProposal
           placeholder="www.x.com/me/status/18431..."
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-          {isLoading && <ClipLoader size={18} color="#E5E5E5" />}
+          {isLoading && <ClipLoader size={18} color="#E5E5E5" className="mt-2 mr-1" />}
           {!isLoading && isValid === true && <CheckCircleIcon className="text-positive-11 w-6 h-6 animate-reveal" />}
           {!isLoading && isValid === false && <XCircleIcon className="text-negative-11 w-6 h-6 animate-reveal" />}
         </div>

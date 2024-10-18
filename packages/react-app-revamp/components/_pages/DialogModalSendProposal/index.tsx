@@ -144,6 +144,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
 
       if (proposalResult) {
         setProposalId(proposalResult.proposalId);
+        setProposal("");
         editorProposal?.commands.clearContent();
         removeSubmissionFromLocalStorage("submissions", contestId);
         if (isMobile) {

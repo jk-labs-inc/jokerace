@@ -114,7 +114,8 @@ export const ListProposals = () => {
       hasMore={listProposalsData.length < submissionsCount}
       loader={<ProposalSkeleton count={skeletonRemainingLoaderCount} highlightColor="#FFE25B" />}
     >
-      <div className="flex flex-col gap-8">
+      {/* TODO: add diff gap here based on view */}
+      <div className="flex flex-col gap-4">
         {listProposalsData.map((proposal, index) => {
           if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
             return <ProposalSkeleton key={proposal.id} highlightColor="#FF78A9" />;
@@ -133,6 +134,7 @@ export const ListProposals = () => {
                 rank: proposal.rank,
                 isTied: proposal.isTied,
                 commentsCount: proposal.commentsCount,
+                metadataFields: proposal.metadataFields,
               }}
               allowDelete={allowDelete}
               selectedProposalIds={selectedProposalIds}

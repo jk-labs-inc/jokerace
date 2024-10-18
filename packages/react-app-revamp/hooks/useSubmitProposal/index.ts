@@ -100,7 +100,7 @@ export function useSubmitProposal() {
     setTransactionData(null);
 
     // generate the entry preview HTML
-    const entryPreviewHTML = generateEntryPreviewHTML(proposalContent, metadataFields);
+    const entryPreviewHTML = generateEntryPreviewHTML(metadataFields);
 
     // generate the HTML for field inputs
     const fieldInputsHTML = generateFieldInputsHTML(proposalContent, metadataFields);

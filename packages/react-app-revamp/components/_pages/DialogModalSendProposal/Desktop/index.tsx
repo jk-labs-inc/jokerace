@@ -16,11 +16,11 @@ import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useState } from "react";
 import DialogModalSendProposalEditor from "../components/Editor";
+import DialogModalSendProposalEmailSubscription from "../components/EmailSubscription";
 import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
 import { isEntryPreviewPrompt } from "../utils";
-import DialogModalSendProposalEmailSubscription from "./components/EmailSubscription";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -144,7 +144,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
       title="submission"
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      className="w-full xl:w-[1110px] 3xl:w-[1300px]"
+      className="w-full xl:w-[1100px]"
       disableClose={!!(isSuccess && proposalId)}
     >
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">

@@ -9,7 +9,7 @@ interface ProposalContentInfoProps {
   isTied: boolean;
   isMobile: boolean;
   isContentHidden: boolean;
-  toggleContentVisibility: () => void;
+  toggleContentVisibility?: () => void;
 }
 
 const ProposalContentInfo: FC<ProposalContentInfoProps> = ({
