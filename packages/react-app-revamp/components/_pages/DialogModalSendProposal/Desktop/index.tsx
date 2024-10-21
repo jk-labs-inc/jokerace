@@ -1,10 +1,10 @@
 import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
-import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { FOOTER_LINKS } from "@config/links";
+import { Switch } from "@headlessui/react";
 import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
 import { Charge } from "@hooks/useDeployContest/types";
@@ -12,11 +12,15 @@ import useMetadataFields from "@hooks/useMetadataFields";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { Editor, EditorContent } from "@tiptap/react";
+import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useState } from "react";
+import DialogModalSendProposalEditor from "../components/Editor";
+import DialogModalSendProposalEmailSubscription from "../components/EmailSubscription";
+import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
+import { isEntryPreviewPrompt } from "../utils";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -24,7 +28,6 @@ interface DialogModalSendProposalDesktopLayoutProps {
   proposal: string;
   editorProposal: Editor | null;
   address: string;
-  formattedDate: string | null;
   isOpen: boolean;
   isCorrectNetwork: boolean;
   isDragging: boolean;
@@ -44,7 +47,6 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   proposal,
   editorProposal,
   address,
-  formattedDate,
   isOpen,
   isCorrectNetwork,
   charge,
@@ -75,9 +77,10 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields();
   const { fields: metadataFields } = useMetadataStore(state => state);
   const [error, setError] = useState<string | null>(null);
+  const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);
 
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setWantsSubscription(event.target.checked);
+  const handleCheckboxChange = (checked: boolean) => {
+    setWantsSubscription(checked);
     setEmailError(null);
   };
 
@@ -141,7 +144,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
       title="submission"
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      className="w-full xl:w-[1110px] 3xl:w-[1300px]"
+      className="w-full xl:w-[1100px]"
       disableClose={!!(isSuccess && proposalId)}
     >
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
@@ -151,28 +154,33 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
             <DialogModalSendProposalSuccessLayout proposalId={proposalId} chainName={chainName} contestId={contestId} />
           </div>
         ) : (
-          <>
-            <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
-            <div className="flex flex-col gap-2">
-              <UserProfileDisplay ethereumAddress={address ?? ""} shortenOnFallback={true} />
-              <p className="text-[16px] font-bold text-neutral-10">{formattedDate}</p>
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
+              <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
+              <div className="flex flex-col gap-2">
+                <UserProfileDisplay ethereumAddress={address ?? ""} shortenOnFallback={true} />
+              </div>
             </div>
             <div className="flex flex-col gap-8 rounded-md md:w-[650px]">
-              <div className="flex flex-col">
-                <div className="flex bg-true-black z-10 justify-start w-full px-1 py-2 border-y border-neutral-10">
-                  <TipTapEditorControls editor={editorProposal} />
-                </div>
-
-                <EditorContent
-                  editor={editorProposal}
-                  onDrop={handleDrop}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  className={`md:border-b border-primary-2 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto h-auto max-h-[300px] ${
-                    isDragging ? "backdrop-blur-md opacity-70" : ""
-                  }`}
+              {hasEntryPreview ? (
+                <DialogModalSendProposalEntryPreviewLayout
+                  entryPreviewLayout={metadataFields[0].prompt}
+                  editorProposal={editorProposal}
+                  isDragging={isDragging}
+                  handleDrop={handleDrop}
+                  handleDragOver={handleDragOver}
+                  handleDragLeave={handleDragLeave}
                 />
-              </div>
+              ) : (
+                <DialogModalSendProposalEditor
+                  editorProposal={editorProposal}
+                  handleDrop={handleDrop}
+                  handleDragOver={handleDragOver}
+                  handleDragLeave={handleDragLeave}
+                  isDragging={isDragging}
+                />
+              )}
+
               {isMetadataFieldsLoading ? (
                 <p className="loadingDots font-sabo text-[16px] text-neutral-14">loading metadata fields</p>
               ) : isMetadataFieldsError ? (
@@ -180,61 +188,43 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
               ) : metadataFields.length > 0 ? (
                 <DialogModalSendProposalMetadataFields />
               ) : null}
-            </div>
-            <div className="flex flex-col gap-11 mt-11">
-              {showEntryCharge ? <ChargeLayoutSubmission charge={charge} accountData={accountData} /> : null}
-
-              {!insufficientBalance ? (
-                <div className="flex flex-col gap-4">
-                  <div className="flex gap-4">
-                    <label className="checkbox-container">
-                      <input type="checkbox" checked={wantsSubscription} onChange={handleCheckboxChange} />
-                      <span className="checkmark"></span>
-                    </label>
-
-                    <p className="text-[16px] text-neutral-9">i’d like to hear about new contests</p>
-                  </div>
-                  <div className="flex flex-col gap-1 -mx-4">
-                    <input
-                      value={emailForSubscription}
-                      type="text"
-                      className="w-[360px] rounded-[40px] h-8 bg-true-black border border-neutral-9 indent-4 placeholder-neutral-7 focus:outline-none submission-subscription-input"
-                      placeholder="myemail@email.com"
-                      onChange={handleEmailChange}
+              <div className="flex flex-col gap-4 -mt-2">
+                <div className="flex gap-4 items-center">
+                  <Switch
+                    checked={wantsSubscription}
+                    onChange={handleCheckboxChange}
+                    className="group relative flex w-12 h-6 cursor-pointer rounded-full bg-neutral-10 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-secondary-11"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none inline-block size-6 translate-x-0 rounded-full bg-neutral-11 ring-0 shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-7"
                     />
-                    {emailError ? (
-                      <p className="text-[14px] text-negative-11 font-bold pl-2 mt-2">{emailError}</p>
-                    ) : emailAlreadyExists ? (
-                      <p className="text-positive-11 text-[12px] font-bold pl-2">
-                        your email has already been subscribed! :)
-                      </p>
-                    ) : (
-                      <p className="ml-4 opacity-50 text-neutral-11 text-[12px]">
-                        by giving your email, you agree to share it with the contest <br />
-                        creator and jk labs, inc., according to{" "}
-                        <a
-                          className="text-positive-11 hover:text-positive-10"
-                          href={tosHref}
-                          rel="nofollow noreferrer"
-                          target="_blank"
-                        >
-                          our privacy policy
-                        </a>
-                      </p>
-                    )}
-                  </div>
+                  </Switch>
+                  <p className="text-[16px] text-neutral-11 font-bold">get updates on contests</p>
                 </div>
-              ) : null}
+                {wantsSubscription ? (
+                  <DialogModalSendProposalEmailSubscription
+                    emailAlreadyExists={emailAlreadyExists ?? false}
+                    emailError={emailError}
+                    emailForSubscription={emailForSubscription ?? ""}
+                    tosHref={tosHref ?? ""}
+                    handleEmailChange={handleEmailChange}
+                  />
+                ) : null}
+              </div>
+            </div>
+            <div className="flex flex-col gap-12 mt-12">
+              {showEntryCharge ? <ChargeLayoutSubmission charge={charge} accountData={accountData} /> : null}
 
               {isCorrectNetwork ? (
                 <div className="flex flex-col gap-2">
                   <ButtonV3
-                    colorClass="bg-gradient-vote rounded-[40px]"
+                    colorClass="bg-gradient-purple rounded-[40px]"
                     size={ButtonSize.EXTRA_LARGE_LONG}
                     onClick={handleConfirm}
                     isDisabled={isLoading}
                   >
-                    submit!
+                    submit
                   </ButtonV3>
                   {error && <p className="text-negative-11 text-[14px] font-bold">{error}</p>}
                 </div>
@@ -248,7 +238,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                 </ButtonV3>
               )}
             </div>
-          </>
+          </div>
         )}
       </div>
     </DialogModalV3>

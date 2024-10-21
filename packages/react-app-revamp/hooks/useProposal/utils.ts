@@ -11,6 +11,12 @@ interface RankDictionary {
   [key: string]: number;
 }
 
+export interface RawMetadataFields {
+  addressArray: string[];
+  stringArray: string[];
+  uintArray: bigint[];
+}
+
 const checkForTiedRanks = (ranks: RankDictionary, currentRank: number): boolean => {
   let count = 0;
   Object.values(ranks).forEach(rank => {
@@ -155,12 +161,20 @@ export function transformProposalData(
   const deletedCommentIdsSet = new Set(deletedCommentIds.map(id => id.toString()));
   const allCommentsIds = proposalCommentsIds.map(id => id.toString()).filter(id => !deletedCommentIdsSet.has(id));
 
+  const { fieldsMetadata, ...restProposalData } = proposalData;
+  const metadataFields: RawMetadataFields = {
+    addressArray: fieldsMetadata.addressArray,
+    stringArray: fieldsMetadata.stringArray,
+    uintArray: fieldsMetadata.uintArray,
+  };
+
   return {
     id: id.toString(),
-    ...proposalData,
-    isContentImage: isContentImage,
-    tweet: tweet,
-    netVotes: netVotes,
+    ...restProposalData,
+    metadataFields,
+    isContentImage,
+    tweet,
+    netVotes,
     commentsCount: allCommentsIds.length,
   };
 }

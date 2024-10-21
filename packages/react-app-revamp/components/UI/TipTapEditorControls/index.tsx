@@ -61,14 +61,14 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
   };
 
   return (
-    <div className={`inline-flex flex-wrap sm:gap-2 ${props.className}`}>
+    <div className={`inline-flex flex-wrap sm:gap-2 items-center ${props.className}`}>
       <TipTapEditorControlsTextDropdown onSelectionChange={handleHeadingChange} />
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleBold().run()}
         className={`${styles.control} ${editor.isActive("bold") ? styles["control--active"] : ""} `}
       >
-        <IconEditorBold />
+        <IconEditorBold color="#" />
         <span className="sr-only">Toggle bold text formatting</span>
       </button>
       <button

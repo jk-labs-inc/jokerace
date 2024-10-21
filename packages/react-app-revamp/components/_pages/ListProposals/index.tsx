@@ -114,7 +114,8 @@ export const ListProposals = () => {
       hasMore={listProposalsData.length < submissionsCount}
       loader={<ProposalSkeleton count={skeletonRemainingLoaderCount} highlightColor="#FFE25B" />}
     >
-      <div className="flex flex-col gap-8">
+      {/* TODO: add diff gap here based on view */}
+      <div className="flex flex-col gap-4">
         {listProposalsData.map((proposal, index) => {
           if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
             return <ProposalSkeleton key={proposal.id} highlightColor="#FF78A9" />;
@@ -133,6 +134,7 @@ export const ListProposals = () => {
                 rank: proposal.rank,
                 isTied: proposal.isTied,
                 commentsCount: proposal.commentsCount,
+                metadataFields: proposal.metadataFields,
               }}
               allowDelete={allowDelete}
               selectedProposalIds={selectedProposalIds}
@@ -146,7 +148,7 @@ export const ListProposals = () => {
         <div className="flex sticky bottom-0 left-0 right-0 p-4 bg-white shadow-lg">
           <ButtonV3
             size={ButtonSize.EXTRA_LARGE}
-            colorClass="bg-gradient-withdraw mx-auto animate-appear"
+            colorClass="bg-gradient-light-pink mx-auto animate-appear"
             onClick={onDeleteSelectedProposals}
           >
             Delete {selectedProposalIds.length} {selectedProposalIds.length === 1 ? "submission" : "submissions"}

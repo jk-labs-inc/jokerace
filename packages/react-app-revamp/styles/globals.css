@@ -392,7 +392,7 @@ li {
 
   /* Placeholder (at the top) */
   .ProseMirror p.is-editor-comment-empty:first-child::before {
-    color: #9d9d9d;
+    color: #6a6a6a;
     font-weight: bold;
     content: attr(data-placeholder);
     float: left;
@@ -537,10 +537,6 @@ li {
   .twitter-tweet.twitter-tweet-rendered,
   .twitter-tweet.twitter-tweet-rendered > iframe {
     @apply !max-w-full !xs:max-w-screen-2xs;
-  }
-
-  .submission-subscription-input::placeholder {
-    font-weight: 700;
   }
 
   /* Customize the label (the container) */

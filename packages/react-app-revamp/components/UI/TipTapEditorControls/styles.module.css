@@ -1,5 +1,9 @@
 .control {
-  @apply rounded-md p-2 flex items-center justify-center focus:outline-none focus-visible:ring focus-visible:ring-primary-10 focus-visible:ring-opacity-75;
+  @apply rounded-md p-2 text-neutral-9 flex items-center justify-center focus:outline-none focus-visible:ring focus-visible:ring-positive-11 focus-visible:ring-opacity-75;
+}
+
+.control:hover {
+  @apply text-positive-11 transition-colors duration-300 ease-in-out;
 }
 
 .control:not(.text) {
@@ -7,5 +11,5 @@
 }
 
 .control--active {
-  @apply bg-primary-10 text-primary-1;
+  @apply bg-positive-11 text-primary-1;
 }
