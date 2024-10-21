@@ -22,6 +22,19 @@ interface TokenHolder {
 const NFTS_HARD_LIMIT = 400000;
 const ERC20_HARD_LIMIT = 1000000;
 
+const chainToAlchemySubdomain = {
+  mainnet: "eth-mainnet",
+  polygon: "polygon-mainnet",
+  arbitrumone: "arb-mainnet",
+  optimism: "opt-mainnet",
+  base: "base-mainnet",
+};
+
+const getAlchemyBaseUrl = (chain: string) => {
+  const subdomain = chainToAlchemySubdomain[chain as keyof typeof chainToAlchemySubdomain] || "eth-mainnet";
+  return `https://${subdomain}.g.alchemy.com/v2/${alchemyApiKey}`;
+};
+
 export async function fetchNftHolders(
   type: "voting" | "submission",
   contractAddress: string,
@@ -31,12 +44,7 @@ export async function fetchNftHolders(
   votesPerUnit: number = 100,
   voteCalculationMethod: string = "token",
 ): Promise<Record<string, number> | Error> {
-  let baseAlchemyAppUrl = chains.filter((chain: { name: string }) => chain.name == chainName.toLowerCase())[0].rpcUrls
-    .default.http[0];
-
-  baseAlchemyAppUrl = baseAlchemyAppUrl.replace(/(v2\/).*/, "$1");
-
-  const alchemyAppUrl = `${baseAlchemyAppUrl}${alchemyApiKey}/getOwnersForCollection`;
+  const alchemyAppUrl = `${getAlchemyBaseUrl(chainName.toLowerCase())}/getOwnersForCollection`;
 
   let allOwnersData: any[] = [];
   let nextPageKey: string | undefined;
