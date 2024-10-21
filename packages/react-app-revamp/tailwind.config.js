@@ -362,6 +362,7 @@ module.exports = {
         sortProposalDropdown: "0px 1px 6px 1px #6A6A6A;",
         "proposal-card": "1px 1px 5px 0px #E5E5E5",
         "file-upload": "0 0px 30px rgba(121, 121, 121, 0.3)",
+        "entry-card": "0 0px 15px rgba(121, 121, 121, 0.3)",
         "split-fee-destination": "0 0 1px 1px rgba(106, 106, 106, 1)",
       },
 

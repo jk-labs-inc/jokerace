@@ -72,7 +72,7 @@ export function generateEntryPreviewHTML(fieldInputs: MetadataFieldWithInput[]):
   let previewHTML = "";
   switch (enabledPreview) {
     case EntryPreview.TITLE:
-      previewHTML = `<p style="font-size: 24px;">${firstFieldInput.inputValue}</p>`;
+      previewHTML = `<p style="font-size: 24px; color: #E5E5E5; font-weight: 600;">${firstFieldInput.inputValue}</p>`;
       break;
     case EntryPreview.IMAGE:
       previewHTML = `<img src="${firstFieldInput.inputValue}" alt="Preview Image" />`;
