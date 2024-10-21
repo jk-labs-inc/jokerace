@@ -11,10 +11,10 @@ export const campTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://rpc-camp-network-4xje7wy105.t.conduit.xyz"],
+      http: ["https://rpc-campnetwork.xyz/"],
     },
     default: {
-      http: ["https://rpc-camp-network-4xje7wy105.t.conduit.xyz"],
+      http: ["https://rpc-campnetwork.xyz/"],
     },
   },
   blockExplorers: {
