@@ -7,7 +7,6 @@ import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/
 export type StateKey =
   | "title"
   | "prompt"
-  | "entries"
   | "type"
   | "votingOpen"
   | "votingClose"
@@ -111,19 +110,10 @@ const customizationValidation = (customization: CustomizationOptions) => {
   return "";
 };
 
-// come back to this
-const entriesValidation = (entries: any[]) => {
-  if (entries.length === 0) {
-    return "Please enter a valid number";
-  }
-  return "";
-};
-
 const validationMap: Record<StateKey, (...args: any[]) => string> = {
   title: titleValidation,
   prompt: promptValidation,
   type: typeValidation,
-  entries: entriesValidation,
   votingOpen: votingOpenValidation,
   votingClose: votingEndsValidation,
   submissionOpen: votingOpenValidation,
@@ -143,8 +133,6 @@ export const validateField = (key: StateKey, state: any): string => {
       return validationFunction(state.title);
     case "prompt":
       return validationFunction(state.prompt);
-    case "entries":
-      return validationFunction(state.entries);
     case "type":
       return validationFunction(state.type);
     case "submissionOpen":
