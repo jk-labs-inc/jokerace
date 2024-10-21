@@ -66,72 +66,94 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
   };
 
   return (
-    <div className="flex flex-col min-h-16 gap-6 bg-true-black shadow-entry-card p-4 rounded-2xl border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out">
-      <div className="flex justify-between items-center">
-        <div className="flex gap-12 items-center">
-          <div className="flex gap-8 items-center">
-            {renderRank()}
-            <UserProfileDisplay
-              textColor="text-neutral-10"
-              ethereumAddress={proposal.authorEthereumAddress}
-              size="small"
-              shortenOnFallback
-            />
-          </div>
-          <p className="text-[16px] text-neutral-11 font-bold normal-case">{entryTitle}</p>
-        </div>
-        <div className="flex gap-6 items-center ml-auto">
-          {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-            <button
-              onClick={handleVotingModalOpen}
-              className="min-w-16 flex-shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
-            >
-              <img src="/contest/upvote.svg" width={24} height={24} alt="upvote" className="flex-shrink-0" />
-              <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
-            </button>
-          ) : null}
-          <ChevronDownIcon
-            className={`w-6 h-6 text-positive-11 cursor-pointer transition-transform duration-300 ${isContentHidden ? "" : "transform rotate-180"}`}
-            onClick={handleToggleVisibility}
+    <div className={`flex gap-6 ${isContentHidden ? "items-center" : "items-start"}`}>
+      {allowDelete && (
+        <div
+          className="-ml-12 h-6 w-6 relative cursor-pointer mt-1"
+          onClick={() => toggleProposalSelection?.(proposal.id)}
+        >
+          <CheckIcon
+            className={`absolute top-0 left-0 transform transition-all ease-in-out duration-300 
+                    ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
+                    h-6 w-6 text-positive-11 bg-white bg-true-black border border-positive-11 hover:text-positive-10 
+                    shadow-md hover:shadow-lg rounded-md`}
+          />
+          <TrashIcon
+            className={`absolute top-0 left-0 transition-opacity duration-300 
+                    ${selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"}
+                    h-6 w-6 text-negative-11 bg-true-black hover:text-negative-10 transition-colors duration-300 ease-in-out`}
           />
         </div>
-      </div>
-      {!isContentHidden && (
-        <div className="flex flex-col gap-4">
-          <div className="pl-4 animate-reveal">
-            <Interweave
-              className="prose prose-invert interweave-container inline-block w-full text-neutral-9"
-              content={proposal.content}
-              transform={transform}
-              tagName="div"
-            />
+      )}
+      <div className="w-full flex flex-col min-h-16 gap-6 bg-true-black shadow-entry-card p-4 rounded-2xl border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out">
+        <div className="flex justify-between items-center">
+          <div className="flex gap-12 items-center">
+            <div className="flex gap-8 items-center">
+              {renderRank()}
+              <UserProfileDisplay
+                textColor="text-neutral-10"
+                ethereumAddress={proposal.authorEthereumAddress}
+                size="small"
+                shortenOnFallback
+              />
+            </div>
+            <p className="text-[16px] text-neutral-11 font-bold normal-case">{entryTitle}</p>
           </div>
-          <div className="pl-4 flex gap-4 items-center">
+          <div className="flex gap-6 items-center ml-auto">
             {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
               <button
                 onClick={handleVotingModalOpen}
-                className="min-w-16 flex-shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
+                className="min-w-16 flex-shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
               >
                 <img src="/contest/upvote.svg" width={24} height={24} alt="upvote" className="flex-shrink-0" />
                 <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
               </button>
-            ) : (
-              <p className="text-neutral-10 text-[16px] font-bold">
-                voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
-              </p>
-            )}
-            <Link
-              href={commentLink}
-              className="min-w-16 flex-shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
-              shallow
-              scroll={false}
-            >
-              <ChatBubbleLeftEllipsisIcon className="w-6 h-6 flex-shrink-0" />
-              <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
-            </Link>
+            ) : null}
+            <ChevronDownIcon
+              className={`w-6 h-6 text-positive-11 cursor-pointer transition-transform duration-300 ${isContentHidden ? "" : "transform rotate-180"}`}
+              onClick={handleToggleVisibility}
+            />
           </div>
         </div>
-      )}
+        {!isContentHidden && (
+          <div className="flex flex-col gap-4">
+            <div className="pl-4 animate-reveal">
+              <Interweave
+                className="prose prose-invert interweave-container inline-block w-full text-neutral-9"
+                content={proposal.content}
+                transform={transform}
+                tagName="div"
+              />
+            </div>
+            <div className="pl-4 flex gap-4 items-center">
+              {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
+                <button
+                  onClick={handleVotingModalOpen}
+                  className="min-w-16 flex-shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
+                >
+                  <img src="/contest/upvote.svg" width={24} height={24} alt="upvote" className="flex-shrink-0" />
+                  <p className="text-[16px] font-bold flex-grow text-center">
+                    {formatNumberAbbreviated(proposal.votes)}
+                  </p>
+                </button>
+              ) : (
+                <p className="text-neutral-10 text-[16px] font-bold">
+                  voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
+                </p>
+              )}
+              <Link
+                href={commentLink}
+                className="min-w-16 flex-shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
+                shallow
+                scroll={false}
+              >
+                <ChatBubbleLeftEllipsisIcon className="w-6 h-6 flex-shrink-0" />
+                <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
