@@ -15,7 +15,6 @@ const DialogModalSendProposalEntryPreviewTweetLayout: FC<DialogModalSendProposal
 }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const [isValid, setIsValid] = useState<boolean | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const checkTweet = useCallback(
     debounce(async (url: string) => {
@@ -24,29 +23,18 @@ const DialogModalSendProposalEntryPreviewTweetLayout: FC<DialogModalSendProposal
         return;
       }
 
-      setIsLoading(true);
       const match = url.match(twitterRegex);
       if (!match) {
         setIsValid(false);
-        setIsLoading(false);
         return;
       }
 
       const tweetId = match[2] || match[4]; // get id from either twitter.com or x.com match
       if (!tweetId) {
         setIsValid(false);
-        setIsLoading(false);
+
         return;
       }
-
-      try {
-        const response = await fetch(`/api/tweet/${tweetId}`);
-        setIsValid(response.ok);
-      } catch (error) {
-        console.error("error checking tweet:", error);
-        setIsValid(false);
-      }
-      setIsLoading(false);
     }, 500),
     [],
   );
@@ -70,9 +58,8 @@ const DialogModalSendProposalEntryPreviewTweetLayout: FC<DialogModalSendProposal
           placeholder="www.x.com/me/status/18431..."
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-          {isLoading && <ClipLoader size={18} color="#E5E5E5" className="mt-2 mr-1" />}
-          {!isLoading && isValid === true && <CheckCircleIcon className="text-positive-11 w-6 h-6 animate-reveal" />}
-          {!isLoading && isValid === false && <XCircleIcon className="text-negative-11 w-6 h-6 animate-reveal" />}
+          {isValid === true && <CheckCircleIcon className="text-positive-11 w-6 h-6 animate-reveal" />}
+          {isValid === false && <XCircleIcon className="text-negative-11 w-6 h-6 animate-reveal" />}
         </div>
       </div>
     </div>

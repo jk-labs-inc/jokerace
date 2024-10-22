@@ -8,8 +8,8 @@ import { Interweave } from "interweave";
 import Link from "next/link";
 import { FC, useState } from "react";
 import ProposalContentDeleteButton from "../../Buttons/Delete";
-import ProposalLayoutRankOrPlaceholder from "../components/RankOrPlaceholder";
 import ProposalLayoutLeaderboardMobile from "./components/Mobile";
+import ProposalLayoutLeaderboardRankOrPlaceholder from "./components/RankOrPlaceholder";
 
 interface ProposalLayoutLeaderboardProps {
   proposal: Proposal;
@@ -73,7 +73,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
       <div className="w-full flex flex-col min-h-16 gap-6 bg-true-black shadow-entry-card px-8 py-6 rounded-2xl border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out">
         <div className={`flex gap-10 ${isContentHidden ? "items-center" : ""}`}>
           <div className={`${isContentHidden ? "" : "-mt-1"}`}>
-            <ProposalLayoutRankOrPlaceholder proposal={proposal} contestStatus={contestStatus} />
+            <ProposalLayoutLeaderboardRankOrPlaceholder proposal={proposal} contestStatus={contestStatus} />
           </div>
           <div className="flex flex-col gap-8 w-full">
             <div className="flex justify-between items-center">

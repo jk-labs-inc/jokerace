@@ -5,24 +5,17 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
+import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useProposal, { PROPOSALS_PER_PAGE } from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount } from "wagmi";
-
-const ProposalSkeleton = ({ count, highlightColor }: { count?: number; highlightColor: string }) => (
-  <SkeletonTheme baseColor="#141414" highlightColor={highlightColor} duration={1}>
-    <Skeleton
-      borderRadius={10}
-      count={count}
-      className="flex flex-col w-full h-80 animate-appear rounded-[10px] mt-3"
-    />
-  </SkeletonTheme>
-);
+import { verifyEntryPreviewPrompt } from "../DialogModalSendProposal/utils";
+import ListProposalsContainer from "./container";
+import ListProposalsSkeleton from "./skeleton";
 
 export const ListProposals = () => {
   const { address, chainId: userChainId } = useAccount();
@@ -55,6 +48,11 @@ export const ListProposals = () => {
   const remainingProposalsToLoad = submissionsCount - listProposalsData.length;
   const skeletonRemainingLoaderCount = Math.min(remainingProposalsToLoad, PROPOSALS_PER_PAGE);
   const isUserOnCorrectChain = contestChainId === userChainId;
+  const { fields: metadataFieldsConfig } = useMetadataStore(state => state);
+  const { enabledPreview } =
+    metadataFieldsConfig.length > 0
+      ? verifyEntryPreviewPrompt(metadataFieldsConfig[0].prompt)
+      : { enabledPreview: null };
 
   const onDeleteSelectedProposals = async () => {
     setDeletingProposalIds(selectedProposalIds);
@@ -86,9 +84,10 @@ export const ListProposals = () => {
 
   if (isPageProposalsLoading && !listProposalsData.length) {
     return (
-      <ProposalSkeleton
-        count={listProposalsIds.length > PROPOSALS_PER_PAGE ? PROPOSALS_PER_PAGE : listProposalsIds.length}
+      <ListProposalsSkeleton
+        enabledPreview={enabledPreview}
         highlightColor="#FFE25B"
+        count={listProposalsIds.length > PROPOSALS_PER_PAGE ? PROPOSALS_PER_PAGE : listProposalsIds.length}
       />
     );
   }
@@ -112,13 +111,18 @@ export const ListProposals = () => {
         )
       }
       hasMore={listProposalsData.length < submissionsCount}
-      loader={<ProposalSkeleton count={skeletonRemainingLoaderCount} highlightColor="#FFE25B" />}
+      loader={
+        <ListProposalsSkeleton
+          enabledPreview={enabledPreview}
+          highlightColor="#FFE25B"
+          count={skeletonRemainingLoaderCount}
+        />
+      }
     >
-      {/* TODO: add diff gap here based on view */}
-      <div className="flex flex-col gap-4">
+      <ListProposalsContainer enabledPreview={enabledPreview}>
         {listProposalsData.map((proposal, index) => {
           if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
-            return <ProposalSkeleton key={proposal.id} highlightColor="#FF78A9" />;
+            return <ListProposalsSkeleton enabledPreview={enabledPreview} highlightColor="#FF78A9" />;
           }
           return (
             <ProposalContent
@@ -136,13 +140,14 @@ export const ListProposals = () => {
                 commentsCount: proposal.commentsCount,
                 metadataFields: proposal.metadataFields,
               }}
+              enabledPreview={enabledPreview}
               allowDelete={allowDelete}
               selectedProposalIds={selectedProposalIds}
               toggleProposalSelection={toggleProposalSelection}
             />
           );
         })}
-      </div>
+      </ListProposalsContainer>
 
       {showDeleteButton && (
         <div className="flex sticky bottom-0 left-0 right-0 p-4 bg-white shadow-lg">
@@ -151,7 +156,7 @@ export const ListProposals = () => {
             colorClass="bg-gradient-light-pink mx-auto animate-appear"
             onClick={onDeleteSelectedProposals}
           >
-            Delete {selectedProposalIds.length} {selectedProposalIds.length === 1 ? "submission" : "submissions"}
+            Delete {selectedProposalIds.length} {selectedProposalIds.length === 1 ? "entry" : "entries"}
           </ButtonV3>
         </div>
       )}

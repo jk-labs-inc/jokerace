@@ -5,9 +5,6 @@ interface ImageWithFallbackProps {
   mediumSrc: string;
   fullSrc: string;
   alt: string;
-  containerWidth: number;
-  isExpanded: boolean;
-  onImageLoad: (showResizeButton: boolean) => void;
 }
 
 interface ImageData {
@@ -25,55 +22,18 @@ const preloadImage = async (src: string): Promise<ImageData> => {
   });
 };
 
-const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
-  mediumSrc,
-  fullSrc,
-  alt,
-  containerWidth,
-  isExpanded,
-  onImageLoad,
-}) => {
-  const [useMediumImage, setUseMediumImage] = useState(true);
-
+const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ mediumSrc, fullSrc, alt }) => {
   const { data: mediumImage, isLoading: isMediumLoading } = useQuery({
     queryKey: ["image", mediumSrc, "medium"],
     queryFn: () => preloadImage(mediumSrc),
     staleTime: Infinity,
   });
 
-  const { data: fullImage, isLoading: isFullLoading } = useQuery({
-    queryKey: ["image", fullSrc, "full"],
-    queryFn: () => preloadImage(fullSrc),
-    staleTime: Infinity,
-  });
-
-  useEffect(() => {
-    if (mediumImage && fullImage) {
-      const isMediumLarger = mediumImage.width > fullImage.width || mediumImage.height > fullImage.height;
-      setUseMediumImage(!isMediumLarger);
-
-      if (!isMediumLarger && containerWidth > 0) {
-        const widthDifference = Math.abs(mediumImage.width - containerWidth);
-        const threshold = 0.1; // 10% difference
-        const significantDifference = widthDifference / containerWidth > threshold;
-        onImageLoad(significantDifference);
-      } else {
-        onImageLoad(false);
-      }
-    }
-  }, [mediumImage, fullImage, containerWidth, onImageLoad]);
-
-  const currentImage = isExpanded || !useMediumImage ? fullImage : mediumImage;
-  const isLoading = isExpanded || !useMediumImage ? isFullLoading : isMediumLoading;
+  const currentImage = mediumImage || { img: { src: fullSrc } };
+  const isLoading = isMediumLoading;
 
   return (
-    <img
-      src={isLoading ? fullSrc : currentImage?.img.src || fullSrc}
-      alt={alt}
-      className={`rounded-[16px] max-w-full ${isExpanded ? "w-full" : ""}`}
-      width={currentImage?.width}
-      height={currentImage?.height}
-    />
+    <img src={isLoading ? fullSrc : currentImage.img.src} alt={alt} className="rounded-[16px] max-w-full w-full" />
   );
 };
 

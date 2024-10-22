@@ -2,12 +2,15 @@ import { Proposal } from "@components/_pages/ProposalContent";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { FC } from "react";
 
-interface ProposalLayoutRankOrPlaceholderProps {
+interface ProposalLayoutLeaderboardRankOrPlaceholderProps {
   proposal: Proposal;
   contestStatus: ContestStatus;
 }
 
-const ProposalLayoutRankOrPlaceholder: FC<ProposalLayoutRankOrPlaceholderProps> = ({ proposal, contestStatus }) => {
+const ProposalLayoutLeaderboardRankOrPlaceholder: FC<ProposalLayoutLeaderboardRankOrPlaceholderProps> = ({
+  proposal,
+  contestStatus,
+}) => {
   if (proposal.rank) {
     if (proposal.rank === 1) {
       return (
@@ -46,4 +49,4 @@ const ProposalLayoutRankOrPlaceholder: FC<ProposalLayoutRankOrPlaceholderProps> 
   }
 };
 
-export default ProposalLayoutRankOrPlaceholder;
+export default ProposalLayoutLeaderboardRankOrPlaceholder;

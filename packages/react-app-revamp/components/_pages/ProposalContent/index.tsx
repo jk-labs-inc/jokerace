@@ -22,6 +22,7 @@ import { verifyEntryPreviewPrompt } from "../DialogModalSendProposal/utils";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
 import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
+import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
 
 export interface Proposal {
   id: string;
@@ -40,6 +41,7 @@ export interface Proposal {
 interface ProposalContentProps {
   proposal: Proposal;
   allowDelete: boolean;
+  enabledPreview: EntryPreview | null;
   selectedProposalIds: string[];
   toggleProposalSelection?: (proposalId: string) => void;
 }
@@ -49,6 +51,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   allowDelete,
   selectedProposalIds,
   toggleProposalSelection,
+  enabledPreview,
 }) => {
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
@@ -70,11 +73,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
     pathname: `/contest/${chainName}/${contestAddress}/submission/${proposal.id}`,
     query: { comments: "comments" },
   };
-  const { fields: metadataFieldsConfig } = useMetadataStore(state => state);
-  const { enabledPreview } =
-    metadataFieldsConfig.length > 0
-      ? verifyEntryPreviewPrompt(metadataFieldsConfig[0].prompt)
-      : { enabledPreview: null };
 
   const handleVotingModalOpen = () => {
     if (isContestCanceled) {
@@ -124,7 +122,19 @@ const ProposalContent: FC<ProposalContentProps> = ({
           />
         );
       case EntryPreview.IMAGE:
-        return <p>image</p>;
+        return (
+          <ProposalLayoutGallery
+            proposal={proposal}
+            isMobile={isMobile}
+            chainName={chainName}
+            contestAddress={contestAddress}
+            contestStatus={contestStatus}
+            allowDelete={allowDelete}
+            selectedProposalIds={selectedProposalIds}
+            handleVotingModalOpen={handleVotingModalOpen}
+            toggleProposalSelection={toggleProposalSelection}
+          />
+        );
       case EntryPreview.TWEET:
         return <p>tweet</p>;
       default:
