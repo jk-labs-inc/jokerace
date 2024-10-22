@@ -8,11 +8,12 @@ import {
 import { transform } from "@components/_pages/ProposalContent/utils/markdown";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { loadFromLocalStorage } from "@helpers/localStorage";
-import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ProposalContentDeleteButton from "../../Buttons/Delete";
 import ProposalContentInfo from "../../ProposalContentInfo";
 
 interface ProposalLayoutClassicProps {
@@ -115,19 +116,11 @@ const ProposalLayoutClassic = ({
               </Link>
             </div>
             {allowDelete && (
-              <div className="h-8 w-8 relative cursor-pointer" onClick={() => toggleProposalSelection?.(proposal.id)}>
-                <CheckIcon
-                  className={`absolute top-0 left-0 transform transition-all ease-in-out duration-300 
-                    ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
-                    h-6 w-6 text-positive-11 bg-white bg-true-black border border-positive-11 hover:text-positive-10 
-                    shadow-md hover:shadow-lg rounded-md`}
-                />
-                <TrashIcon
-                  className={`absolute top-0 left-0 transition-opacity duration-300 
-                    ${selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"}
-                    h-6 w-6 text-negative-11 bg-true-black hover:text-negative-10 transition-colors duration-300 ease-in-out`}
-                />
-              </div>
+              <ProposalContentDeleteButton
+                proposalId={proposal.id}
+                selectedProposalIds={selectedProposalIds}
+                toggleProposalSelection={toggleProposalSelection}
+              />
             )}
           </div>
         </div>
