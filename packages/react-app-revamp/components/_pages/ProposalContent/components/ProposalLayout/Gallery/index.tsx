@@ -6,8 +6,8 @@ import { ContestStatus } from "@hooks/useContestStatus/store";
 import Link from "next/link";
 import { FC } from "react";
 import ImageWithFallback from "../../ImageWithFallback";
+import ProposalLayoutGalleryMobile from "./components/Mobile";
 import ProposalLayoutGalleryRankOrPlaceholder from "./components/RankOrPlaceholder";
-import ProposalContentDeleteButton from "../../Buttons/Delete";
 
 interface ProposalLayoutGalleryProps {
   proposal: Proposal;
@@ -15,6 +15,8 @@ interface ProposalLayoutGalleryProps {
   chainName: string;
   contestAddress: string;
   contestStatus: ContestStatus;
+  formattedVotingOpen: moment.Moment;
+  commentLink: string;
   allowDelete: boolean;
   selectedProposalIds: string[];
   handleVotingModalOpen?: () => void;
@@ -27,11 +29,31 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
   chainName,
   contestAddress,
   contestStatus,
+  formattedVotingOpen,
+  commentLink,
   allowDelete,
   selectedProposalIds,
   handleVotingModalOpen,
   toggleProposalSelection,
 }) => {
+  if (isMobile) {
+    return (
+      <ProposalLayoutGalleryMobile
+        proposal={proposal}
+        isMobile={isMobile}
+        chainName={chainName}
+        contestAddress={contestAddress}
+        contestStatus={contestStatus}
+        formattedVotingOpen={formattedVotingOpen}
+        commentLink={commentLink}
+        allowDelete={allowDelete}
+        selectedProposalIds={selectedProposalIds}
+        handleVotingModalOpen={handleVotingModalOpen}
+        toggleProposalSelection={toggleProposalSelection}
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card h-52 max-h-52 w-full">
       <div className="pl-2 items-center flex justify-between w-full">
@@ -54,9 +76,12 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
           fullSrc={proposal.metadataFields.stringArray[0]}
           alt="entry image"
         />
-        <div className="absolute top-2 left-2">
-          <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} />
-        </div>
+        {proposal.rank ? (
+          <div className="absolute top-2 left-2">
+            <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} />
+          </div>
+        ) : null}
+
         {allowDelete ? (
           <div className="absolute bottom-1 left-2">
             <div className="bg-true-black bg-opacity-75 w-8 h-6 rounded-full flex items-center justify-center">

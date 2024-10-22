@@ -75,8 +75,10 @@ export function generateEntryPreviewHTML(fieldInputs: MetadataFieldWithInput[]):
       previewHTML = `<p style="font-size: 24px; color: #E5E5E5; font-weight: 600;">${firstFieldInput.inputValue}</p>`;
       break;
     case EntryPreview.IMAGE:
+      previewHTML = `<img src="${firstFieldInput.inputValue}" alt="Preview Image" />`;
+      break;
     case EntryPreview.TWEET:
-      previewHTML = firstFieldInput.inputValue;
+      previewHTML = `<a href="${firstFieldInput.inputValue}" target="_blank" rel="noopener noreferrer">${firstFieldInput.inputValue}</a>`;
       break;
     default:
       previewHTML = "";

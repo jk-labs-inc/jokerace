@@ -103,56 +103,30 @@ const ProposalContent: FC<ProposalContentProps> = ({
     setIsVotingModalOpen(true);
   };
 
+  const props = {
+    proposal,
+    isMobile,
+    chainName,
+    contestAddress,
+    contestStatus,
+    allowDelete,
+    selectedProposalIds,
+    handleVotingModalOpen,
+    toggleProposalSelection,
+    formattedVotingOpen,
+    commentLink: commentLink.pathname,
+  };
+
   const renderLayout = () => {
     switch (enabledPreview) {
       case EntryPreview.TITLE:
-        return (
-          <ProposalLayoutLeaderboard
-            proposal={proposal}
-            isMobile={isMobile}
-            chainName={chainName}
-            contestAddress={contestAddress}
-            contestStatus={contestStatus}
-            formattedVotingOpen={formattedVotingOpen}
-            commentLink={commentLink.pathname}
-            allowDelete={allowDelete}
-            selectedProposalIds={selectedProposalIds}
-            handleVotingModalOpen={handleVotingModalOpen}
-            toggleProposalSelection={toggleProposalSelection}
-          />
-        );
+        return <ProposalLayoutLeaderboard {...props} />;
       case EntryPreview.IMAGE:
-        return (
-          <ProposalLayoutGallery
-            proposal={proposal}
-            isMobile={isMobile}
-            chainName={chainName}
-            contestAddress={contestAddress}
-            contestStatus={contestStatus}
-            allowDelete={allowDelete}
-            selectedProposalIds={selectedProposalIds}
-            handleVotingModalOpen={handleVotingModalOpen}
-            toggleProposalSelection={toggleProposalSelection}
-          />
-        );
+        return <ProposalLayoutGallery {...props} />;
       case EntryPreview.TWEET:
         return <p>tweet</p>;
       default:
-        return (
-          <ProposalLayoutClassic
-            proposal={proposal}
-            isMobile={isMobile}
-            chainName={chainName}
-            contestAddress={contestAddress}
-            contestStatus={contestStatus}
-            formattedVotingOpen={formattedVotingOpen}
-            commentLink={commentLink.pathname}
-            allowDelete={allowDelete}
-            selectedProposalIds={selectedProposalIds}
-            handleVotingModalOpen={handleVotingModalOpen}
-            toggleProposalSelection={toggleProposalSelection}
-          />
-        );
+        return <ProposalLayoutClassic {...props} />;
     }
   };
 
