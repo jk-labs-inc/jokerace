@@ -2,11 +2,15 @@ import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
   bitgetWallet,
+  braveWallet,
   coinbaseWallet,
+  frameWallet,
   imTokenWallet,
+  ledgerWallet,
   metaMaskWallet,
   okxWallet,
   omniWallet,
+  oneInchWallet,
   phantomWallet,
   rabbyWallet,
   rainbowWallet,
@@ -15,6 +19,7 @@ import {
   trustWallet,
   uniswapWallet,
   walletConnectWallet,
+  zerionWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
@@ -297,6 +302,11 @@ const connectors = connectorsForWallets(
         omniWallet,
         phantomWallet,
         bitgetWallet,
+        oneInchWallet,
+        braveWallet,
+        frameWallet,
+        zerionWallet,
+        ledgerWallet,
       ],
     },
   ],
