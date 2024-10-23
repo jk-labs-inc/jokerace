@@ -31,6 +31,7 @@ abstract contract GovernorEngagement is Governor {
     mapping(uint256 => bool) public commentIsDeleted;
 
     error OnlyCreatorOrAuthorCanDeleteComments(uint256 failedToDeleteCommentId);
+    error CannotCommentWhenCompletedOrCanceled();
 
     /**
      * @dev Hashing function used to build the comment id from the comment details.
@@ -73,6 +74,10 @@ abstract contract GovernorEngagement is Governor {
      * Emits a {CommentCreated} event.
      */
     function comment(uint256 proposalId, string memory commentContent) public returns (uint256) {
+        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
+            revert CannotCommentWhenCompletedOrCanceled();
+        }
+
         CommentCore memory commentObject = CommentCore({
             author: msg.sender,
             timestamp: block.timestamp,
@@ -96,6 +101,10 @@ abstract contract GovernorEngagement is Governor {
      * Emits a {CommentsDeleted} event.
      */
     function deleteComments(uint256[] memory commentIdsParam) public {
+        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
+            revert CannotDeleteWhenCompletedOrCanceled();
+        }
+
         uint256 commentIdsParamMemVar = commentIdsParam.length;
 
         for (uint256 index = 0; index < commentIdsParamMemVar; index++) {
