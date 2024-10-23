@@ -2267,6 +2267,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error CannotDeleteWhenCompletedOrCanceled();
 
     error OnlyCreatorOrJkLabsCanCancel();
+    error CannotCancelWhenCompletedOrCanceled();
     error ContestAlreadyCanceled();
 
     error CannotUpdateWhenCompletedOrCanceled();
@@ -2586,8 +2587,9 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     function cancel() public {
         if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
 
-        ContestState status = state();
-        if (status == ContestState.Canceled) revert ContestAlreadyCanceled();
+        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
+            revert CannotCancelWhenCompletedOrCanceled();
+        }
 
         canceled = true;
 
