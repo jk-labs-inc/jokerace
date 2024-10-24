@@ -1,6 +1,5 @@
-import { chains, serverConfig } from "@config/wagmi/server";
+import { serverConfig } from "@config/wagmi/server";
 import arrayToChunks from "@helpers/arrayToChunks";
-import { extractPathSegments } from "@helpers/extractPath";
 import { ContractConfig } from "@hooks/useContest";
 import { useError } from "@hooks/useError";
 import { readContracts } from "@wagmi/core";
@@ -8,7 +7,6 @@ import { compareVersions } from "compare-versions";
 import { Result } from "ethers/lib/utils";
 import { COMMENTS_VERSION } from "lib/proposal";
 import { shuffle, sortBy as sortUnique } from "lodash";
-import { usePathname } from "next/navigation";
 import { formatEther } from "viem";
 import { MappedProposalIds, ProposalCore, SortOptions, useProposalStore } from "./store";
 import {
@@ -40,12 +38,7 @@ export function useProposal() {
     initialMappedProposalIds,
     setSortBy,
   } = useProposalStore(state => state);
-  const asPath = usePathname();
-  const { chainName, address } = extractPathSegments(asPath ?? "");
   const { error, handleError } = useError();
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
-  )?.[0]?.id;
 
   /**
    * Fetch the data of each proposals in page X

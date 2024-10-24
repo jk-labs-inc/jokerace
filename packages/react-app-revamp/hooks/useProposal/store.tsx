@@ -1,6 +1,7 @@
 import { Tweet } from "@helpers/isContentTweet";
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
+import { RawMetadataFields } from "./utils";
 
 export interface ProposalCore {
   id: string;
@@ -13,6 +14,7 @@ export interface ProposalCore {
   isContentImage: boolean;
   tweet: Tweet;
   commentsCount: number;
+  metadataFields: RawMetadataFields;
 }
 
 export interface MappedProposalIds {

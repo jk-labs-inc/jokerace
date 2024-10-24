@@ -7,6 +7,7 @@ import { Avatar } from "../Avatar";
 interface UserProfileDisplayProps {
   ethereumAddress: string;
   shortenOnFallback: boolean;
+  textColor?: string;
   size?: "extraSmall" | "small" | "medium" | "large";
   textualVersion?: boolean;
   avatarVersion?: boolean;
@@ -37,6 +38,7 @@ const UserProfileDisplay = ({
   avatarVersion,
   ethereumAddress,
   includeSocials,
+  textColor,
   shortenOnFallback,
   size = "small",
 }: UserProfileDisplayProps) => {
@@ -50,7 +52,7 @@ const UserProfileDisplay = ({
   if (textualVersion) {
     return (
       <Link
-        className="text-[16px] font-bold text-neutral-11"
+        className={`text-[16px] font-bold ${textColor || "text-neutral-11"}`}
         target="_blank"
         rel="noopener noreferrer"
         href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
@@ -72,10 +74,10 @@ const UserProfileDisplay = ({
   }
 
   return (
-    <span
+    <div
       className={`flex ${
         size === "large" ? "gap-6" : size === "medium" ? "gap-4" : "gap-2"
-      } items-center ${textSizeClass} text-neutral-11 font-bold`}
+      } items-center ${textSizeClass} ${textColor || "text-neutral-11"} font-bold`}
     >
       <div className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}>
         <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={profileAvatar} alt="avatar" />
@@ -85,7 +87,7 @@ const UserProfileDisplay = ({
       ) : (
         <div className="animate-reveal flex flex-col gap-1">
           <a
-            className={`no-underline ${textSizeClass} text-neutral-11 font-bold`}
+            className={`no-underline ${textSizeClass} ${textColor || "text-neutral-11"} font-bold`}
             target="_blank"
             rel="noopener noreferrer"
             href={includeSocials ? undefined : `${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
@@ -120,7 +122,7 @@ const UserProfileDisplay = ({
           ) : null}
         </div>
       )}
-    </span>
+    </div>
   );
 };
 

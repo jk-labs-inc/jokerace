@@ -44,7 +44,7 @@ const ContestTabs: FC<ContestTabsProps> = ({ tab, onChange }) => {
             }}
             key={tabKey}
             className={`text-[16px] md:text-[24px] cursor-pointer font-bold transition-colors duration-300 ${
-              tabKey === activeTab ? "text-positive-11" : "text-neutral-11"
+              tabKey === activeTab ? "text-neutral-11" : "text-neutral-10"
             }`}
             onClick={() => onTabChange(Tab[tabKey as keyof typeof Tab])}
           >
@@ -53,7 +53,7 @@ const ContestTabs: FC<ContestTabsProps> = ({ tab, onChange }) => {
         ))}
       </div>
       <div className="absolute left-0 w-full h-1 bottom-0 bg-neutral-0"></div>
-      <div style={indicatorStyle} className="absolute bottom-0 h-1 bg-positive-11 transition-all duration-300"></div>
+      <div style={indicatorStyle} className="absolute bottom-0 h-1 bg-neutral-11 transition-all duration-300"></div>
     </div>
   );
 };
