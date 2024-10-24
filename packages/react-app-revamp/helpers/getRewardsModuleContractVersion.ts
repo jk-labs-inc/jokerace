@@ -56,6 +56,7 @@ import CheckCanceledRewards from "@contracts/bytecodeAndAbi/modules/RewardsModul
 import MustCancelToWithdrawRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.33.mustCancelToWithdraw.sol/RewardsModule.json";
 import AllowJkLabsDestUpdateRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.34.allowJkLabsDestUpdate.sol/RewardsModule.json";
 import OnlyCreatorChangeMerkleRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.35.onlyCreatorChangeMerkle.sol/RewardsModule.json";
+import NoCommentAfterCloseRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.36.noCommentAfterClose.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -67,7 +68,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
-    if (version === "4.35") {
+    if (version === "4.36") {
+      return NoCommentAfterCloseRewards.abi;
+    } else if (version === "4.35") {
       return OnlyCreatorChangeMerkleRewards.abi;
     } else if (version === "4.34") {
       return AllowJkLabsDestUpdateRewards.abi;
