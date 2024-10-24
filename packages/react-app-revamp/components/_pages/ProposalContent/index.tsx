@@ -23,6 +23,7 @@ import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
 import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
 import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
+import ProposalLayoutTweet from "./components/ProposalLayout/Tweet";
 
 export interface Proposal {
   id: string;
@@ -124,7 +125,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
       case EntryPreview.IMAGE:
         return <ProposalLayoutGallery {...props} />;
       case EntryPreview.TWEET:
-        return <p>tweet</p>;
+        return <ProposalLayoutTweet {...props} />;
       default:
         return <ProposalLayoutClassic {...props} />;
     }

@@ -55,7 +55,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
   }
 
   return (
-    <div className="flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card h-52 max-h-52 w-full">
+    <div className="flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full h-fit-content">
       <div className="pl-2 items-center flex justify-between w-full">
         <UserProfileDisplay
           ethereumAddress={proposal.authorEthereumAddress}
@@ -70,9 +70,9 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
           <ChevronRightIcon className="w-4 h-4" />
         </Link>
       </div>
-      <div className="rounded-2xl overflow-hidden flex-grow relative">
+      <div className="rounded-2xl overflow-hidden relative">
         <ImageWithFallback
-          mediumSrc={`${proposal.metadataFields.stringArray[0]}-thumbnail`}
+          mediumSrc={`${proposal.metadataFields.stringArray[0]}-medium`}
           fullSrc={proposal.metadataFields.stringArray[0]}
           alt="entry image"
         />
@@ -106,9 +106,15 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
           <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
             <button
               onClick={handleVotingModalOpen}
-              className="min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black bg-opacity-75 rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
+              className="min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black bg-opacity-75 rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out group"
             >
-              <img src="/contest/upvote.svg" width={16} height={16} alt="upvote" className="flex-shrink-0" />
+              <img
+                src="/contest/upvote.svg"
+                width={16}
+                height={16}
+                alt="upvote"
+                className="flex-shrink-0 transition-all duration-300 ease-in-out group-hover:brightness-0 group-hover:saturate-0"
+              />
               <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
             </button>
           </div>

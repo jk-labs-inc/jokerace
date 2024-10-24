@@ -32,9 +32,10 @@ const DialogModalSendProposalEntryPreviewTweetLayout: FC<DialogModalSendProposal
       const tweetId = match[2] || match[4]; // get id from either twitter.com or x.com match
       if (!tweetId) {
         setIsValid(false);
-
         return;
       }
+
+      setIsValid(true);
     }, 500),
     [],
   );

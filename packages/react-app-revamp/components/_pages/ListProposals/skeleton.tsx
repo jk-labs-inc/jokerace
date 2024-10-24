@@ -30,11 +30,7 @@ const ListProposalsSkeleton: FC<ListProposalsSkeletonProps> = ({ enabledPreview,
     case EntryPreview.TWEET:
       return (
         <ProposalSkeleton highlightColor={highlightColor}>
-          <Skeleton
-            borderRadius={10}
-            count={count}
-            className="flex flex-col w-full h-80 animate-appear rounded-[10px] mt-3"
-          />
+          <Skeleton borderRadius={16} count={count} className="flex flex-col w-full h-52 animate-appear rounded-2xl" />
         </ProposalSkeleton>
       );
     default:

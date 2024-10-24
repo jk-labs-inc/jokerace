@@ -203,7 +203,28 @@ li {
   background-color: black !important;
 }
 
+.my-masonry-grid {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-left: -16px; /* gutter size offset */
+  width: auto;
+}
+.my-masonry-grid_column {
+  padding-left: 16px; /* gutter size */
+}
+
+.my-masonry-grid_column > div {
+  /* change div to reference your elements you put in <Masonry> */
+  margin-bottom: 16px;
+}
+
 /* React tweet custom styles */
+
+#tweet-skeleton > .react-tweet-theme {
+  min-width: 100% !important;
+}
+
 .react-tweet-theme {
   background-color: #141414 !important;
   min-width: 580px !important;

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import React from "react";
 
 interface ImageWithFallbackProps {
   mediumSrc: string;
@@ -32,9 +32,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ mediumSrc, fullSr
   const currentImage = mediumImage || { img: { src: fullSrc } };
   const isLoading = isMediumLoading;
 
-  return (
-    <img src={isLoading ? fullSrc : currentImage.img.src} alt={alt} className="rounded-[16px] max-w-full w-full" />
-  );
+  return <img src={isLoading ? fullSrc : currentImage.img.src} alt={alt} className="rounded-[16px] w-full h-full " />;
 };
 
 export default ImageWithFallback;
