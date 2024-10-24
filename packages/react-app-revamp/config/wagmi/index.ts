@@ -92,6 +92,7 @@ import { merlinTestnet } from "./custom-chains/merlinTestnet";
 import { metis } from "./custom-chains/metis";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
+import { morph } from "./custom-chains/morph";
 import { morphTestnet } from "./custom-chains/morphTestnet";
 import { movementTestnet } from "./custom-chains/movementTestnet";
 import { nautilusChain } from "./custom-chains/nautilusChain";
@@ -218,6 +219,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   boba,
   zeta,
   shape,
+  morph,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
