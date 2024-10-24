@@ -32,7 +32,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ mediumSrc, fullSr
   const currentImage = mediumImage || { img: { src: fullSrc } };
   const isLoading = isMediumLoading;
 
-  return <img src={isLoading ? fullSrc : currentImage.img.src} alt={alt} className="rounded-[16px] w-full h-full " />;
+  return <img src={isLoading ? fullSrc : currentImage.img.src} alt={alt} className="rounded-[16px] w-full h-full" />;
 };
 
 export default ImageWithFallback;

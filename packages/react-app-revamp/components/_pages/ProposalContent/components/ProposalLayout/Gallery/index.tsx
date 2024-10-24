@@ -55,7 +55,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
   }
 
   return (
-    <div className="flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full h-fit-content">
+    <div className="flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full">
       <div className="pl-2 items-center flex justify-between w-full">
         <UserProfileDisplay
           ethereumAddress={proposal.authorEthereumAddress}

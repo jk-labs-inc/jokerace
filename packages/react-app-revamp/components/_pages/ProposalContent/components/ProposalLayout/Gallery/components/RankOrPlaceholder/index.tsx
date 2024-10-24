@@ -10,7 +10,7 @@ const ProposalLayoutGalleryRankOrPlaceholder: FC<ProposalLayoutGalleryRankOrPlac
   if (rank === 1) return <img src="/contest/ranks/first.svg" alt="Rank 1" className="w-10 md:h-10 object-contain" />;
 
   return (
-    <div className="w-6 h-6 bg-true-black bg-opacity-30 rounded-full flex items-center justify-center">
+    <div className="w-6 h-6 bg-true-black bg-opacity-40 rounded-full flex items-center justify-center">
       <p
         className="text-neutral-11 text-center text-[16px] font-bold"
         style={{
