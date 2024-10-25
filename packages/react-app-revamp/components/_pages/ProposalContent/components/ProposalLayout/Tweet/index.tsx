@@ -7,6 +7,7 @@ import Link from "next/link";
 import { FC } from "react";
 import ProposalLayoutTweetRankOrPlaceholder from "./components/RankOrPlacehoder";
 import { Tweet } from "./components/CustomTweet";
+import ProposalLayoutLeaderboardRankOrPlaceholder from "../Leaderboard/components/RankOrPlaceholder";
 
 interface ProposalLayoutTweetProps {
   proposal: Proposal;
@@ -46,21 +47,33 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
   return (
     <div className="flex flex-col gap-6 p-2 bg-true-black rounded-2xl shadow-entry-card w-full">
       <div className="pl-2 items-center flex justify-between w-full">
-        <UserProfileDisplay
-          ethereumAddress={proposal.authorEthereumAddress}
-          size="small"
-          textColor="text-neutral-9"
-          shortenOnFallback
-        />
-        <Link
-          href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
-          className="text-neutral-9 hover:text-positive-11 transition-colors duration-300 ease-in-out"
-        >
-          <ChevronRightIcon className="w-4 h-4" />
-        </Link>
+        <div className="flex items-center gap-6">
+          <ProposalLayoutTweetRankOrPlaceholder proposal={proposal} />
+          <UserProfileDisplay
+            ethereumAddress={proposal.authorEthereumAddress}
+            size="small"
+            textColor="text-neutral-9"
+            shortenOnFallback
+          />
+        </div>
+        {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
+          <button
+            onClick={handleVotingModalOpen}
+            className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
+          >
+            <img
+              src="/contest/upvote.svg"
+              width={16}
+              height={16}
+              alt="upvote"
+              className="flex-shrink-0 transition-all duration-300 ease-in-out group-hover:brightness-0 group-hover:saturate-0"
+            />
+            <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
+          </button>
+        ) : null}
       </div>
       <div className="dark not-prose">
-        <Tweet apiUrl={`/api/tweet/${tweetId}`} rank={<ProposalLayoutTweetRankOrPlaceholder proposal={proposal} />} />
+        <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />
       </div>
       <div className="mt-auto pl-2">
         <div className="flex gap-2 items-center">

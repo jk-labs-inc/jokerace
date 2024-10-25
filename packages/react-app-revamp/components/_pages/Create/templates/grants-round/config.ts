@@ -2,16 +2,21 @@ import moment from "moment";
 import { StepTitle } from "../../types";
 import { TemplateConfig, TemplateType } from "../types";
 import { TimingPeriod } from "../../pages/ContestTiming/utils";
+import { EntryPreview } from "@hooks/useDeployContest/store";
 
 export const grantsRoundConfig: TemplateConfig = {
   type: TemplateType.grantsRound,
-  stepsToFulfill: [StepTitle.Title, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
+  stepsToFulfill: [StepTitle.Title, StepTitle.Entries, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
   data: {
     prompt: {
       summarize:
         "In this grants round, builders are invited to submit their project, and a jury of voters from our team will vote on their favorite.",
       evaluateVoters:
         "Judges should evaluate builders’ projects based on their relevance, impact, originality, innovativeness, and success of what they’ve built.",
+    },
+    entryPreviewConfig: {
+      preview: EntryPreview.TITLE,
+      isAdditionalDescriptionEnabled: true,
     },
     type: "grants round",
     submissionOpen: moment().toDate(),

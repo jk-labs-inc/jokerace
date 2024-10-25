@@ -2,16 +2,21 @@ import moment from "moment";
 import { TimingPeriod } from "../../pages/ContestTiming/utils";
 import { StepTitle } from "../../types";
 import { TemplateConfig, TemplateType } from "../types";
+import { EntryPreview } from "@hooks/useDeployContest/store";
 
 export const hackathonConfig: TemplateConfig = {
   type: TemplateType.hackathon,
-  stepsToFulfill: [StepTitle.Title, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
+  stepsToFulfill: [StepTitle.Title, StepTitle.Entries, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
   data: {
     prompt: {
       summarize:
         "In this hackathon, builders are invited to submit their project, and a jury of voters will vote on their favorite.",
       evaluateVoters:
         "Judges should evaluate builders’ projects based on their relevance, impact, originality, innovativeness, and success of what they’ve built.",
+    },
+    entryPreviewConfig: {
+      preview: EntryPreview.TITLE,
+      isAdditionalDescriptionEnabled: true,
     },
     type: "hackathon",
     submissionOpen: moment().toDate(),

@@ -3,16 +3,7 @@
 import { type TweetProps, TweetNotFound, TweetSkeleton, useTweet } from "react-tweet";
 import { MyTweet } from "./custom-tweet";
 
-interface ExtendedTweetProps {
-  id?: string;
-  apiUrl?: string;
-  fallback?: React.ReactNode;
-  components?: TweetProps["components"];
-  onError?: TweetProps["onError"];
-  rank?: React.ReactNode;
-}
-
-export const Tweet = ({ id, apiUrl, fallback = <TweetSkeleton />, components, onError, rank }: ExtendedTweetProps) => {
+export const Tweet = ({ id, apiUrl, fallback = <TweetSkeleton />, components, onError }: TweetProps) => {
   const { data, error, isLoading } = useTweet(id, apiUrl);
 
   if (isLoading) return <div id="tweet-skeleton">{fallback}</div>;
@@ -21,5 +12,5 @@ export const Tweet = ({ id, apiUrl, fallback = <TweetSkeleton />, components, on
     return <NotFound error={onError ? onError(error) : error} />;
   }
 
-  return <MyTweet tweet={data} components={components} rank={rank} />;
+  return <MyTweet tweet={data} components={components} />;
 };
