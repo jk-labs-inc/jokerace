@@ -45,7 +45,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
   const tweetId = extractTweetId(tweetUrl);
 
   return (
-    <div className="flex flex-col gap-6 p-2 bg-true-black rounded-2xl shadow-entry-card w-full">
+    <div className="flex flex-col gap-6 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out">
       <div className="pl-2 items-center flex justify-between w-full">
         <div className="flex items-center gap-6">
           <ProposalLayoutTweetRankOrPlaceholder proposal={proposal} />
