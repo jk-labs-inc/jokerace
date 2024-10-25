@@ -254,6 +254,14 @@ li {
   height: 32px !important;
 }
 
+[class^="tweet-header_header"] {
+  font-size: 16px !important;
+}
+
+[class^="tweet-body_root"] {
+  font-size: 16px !important;
+}
+
 .interweave-container {
   line-height: 0 !important;
   width: 100%;

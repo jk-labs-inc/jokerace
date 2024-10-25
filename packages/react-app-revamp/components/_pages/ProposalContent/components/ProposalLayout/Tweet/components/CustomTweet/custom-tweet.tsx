@@ -24,7 +24,7 @@ export const MyTweet = ({ tweet: t, components }: Props) => {
 
   return (
     <button className="w-full text-left cursor-pointer" onClick={navigateToTweet}>
-      <TweetContainer className="!min-w-full !bg-true-black !m-0 !border-primary-1 transition-colors duration-300 ease-in-out">
+      <TweetContainer className="!min-w-full !text-neutral-9  !bg-true-black !m-0 !border-primary-1">
         <TweetHeader tweet={tweet} components={components} />
         {tweet.in_reply_to_status_id_str && <TweetInReplyTo tweet={tweet} />}
         <TweetBody tweet={tweet} />
