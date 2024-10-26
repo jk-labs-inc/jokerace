@@ -11,8 +11,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.679.0",
     "@aws-sdk/s3-request-presigner": "3.679.0",
-    "@babel/core": "7.25.9",
-    "@babel/preset-env": "7.25.9",
+    "@babel/core": "7.26.0",
+    "@babel/preset-env": "7.26.0",
     "@clustersxyz/sdk": "0.4.3",
     "@headlessui/react": "2.1.10",
     "@heroicons/react": "2.1.5",
