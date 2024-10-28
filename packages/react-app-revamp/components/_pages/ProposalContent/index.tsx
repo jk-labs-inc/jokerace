@@ -24,6 +24,7 @@ import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
 import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
 import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
 import ProposalLayoutTweet from "./components/ProposalLayout/Tweet";
+import useProfileData from "@hooks/useProfileData";
 
 export interface Proposal {
   id: string;
@@ -74,6 +75,12 @@ const ProposalContent: FC<ProposalContentProps> = ({
     pathname: `/contest/${chainName}/${contestAddress}/submission/${proposal.id}`,
     query: { comments: "comments" },
   };
+  const {
+    profileAvatar,
+    profileName,
+    isLoading: isUserProfileLoading,
+    isError: isUserProfileError,
+  } = useProfileData(proposal.authorEthereumAddress, true);
 
   const handleVotingModalOpen = () => {
     if (isContestCanceled) {
@@ -106,6 +113,12 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
   const props = {
     proposal,
+    proposalAuthorData: {
+      name: profileName,
+      avatar: profileAvatar,
+      isLoading: isUserProfileLoading,
+      isError: isUserProfileError,
+    },
     isMobile,
     chainName,
     contestAddress,

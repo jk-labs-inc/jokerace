@@ -1,5 +1,6 @@
 import {
   type TwitterComponents,
+  QuotedTweet,
   TweetBody,
   TweetContainer,
   TweetHeader,
@@ -19,17 +20,21 @@ export const MyTweet = ({ tweet: t, components }: Props) => {
 
   const navigateToTweet = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.nativeEvent.stopImmediatePropagation();
     window.open(tweet.url, "_blank");
   };
 
   return (
-    <button className="w-full text-left cursor-pointer" onClick={navigateToTweet}>
-      <TweetContainer className="!min-w-full !text-neutral-9  !bg-true-black !m-0 !border-primary-1">
-        <TweetHeader tweet={tweet} components={components} />
+    <div className="w-full text-left">
+      <TweetContainer className="w-full md:!w-[360px] !min-w-full !text-neutral-9 !bg-true-black !m-0 !border-primary-1">
+        <button className="w-full cursor-pointer" onClick={navigateToTweet}>
+          <TweetHeader tweet={tweet} components={components} />
+        </button>
         {tweet.in_reply_to_status_id_str && <TweetInReplyTo tweet={tweet} />}
         <TweetBody tweet={tweet} />
         {tweet.mediaDetails?.length ? <TweetMedia tweet={tweet} components={components} /> : null}
+        {tweet.quoted_tweet && <QuotedTweet tweet={tweet.quoted_tweet} />}
       </TweetContainer>
-    </button>
+    </div>
   );
 };

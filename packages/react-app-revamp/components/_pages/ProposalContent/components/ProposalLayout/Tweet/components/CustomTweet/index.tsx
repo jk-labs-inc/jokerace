@@ -1,6 +1,7 @@
 "use client";
 
-import { type TweetProps, TweetNotFound, TweetSkeleton, useTweet } from "react-tweet";
+import { type TweetProps, TweetSkeleton, useTweet } from "react-tweet";
+import CustomTweetNotFound from "./custom-not-found";
 import { MyTweet } from "./custom-tweet";
 
 export const Tweet = ({ id, apiUrl, fallback = <TweetSkeleton />, components, onError }: TweetProps) => {
@@ -8,8 +9,7 @@ export const Tweet = ({ id, apiUrl, fallback = <TweetSkeleton />, components, on
 
   if (isLoading) return <div id="tweet-skeleton">{fallback}</div>;
   if (error || !data) {
-    const NotFound = components?.TweetNotFound || TweetNotFound;
-    return <NotFound error={onError ? onError(error) : error} />;
+    return <CustomTweetNotFound error={onError ? onError(error) : error} />;
   }
 
   return <MyTweet tweet={data} components={components} />;

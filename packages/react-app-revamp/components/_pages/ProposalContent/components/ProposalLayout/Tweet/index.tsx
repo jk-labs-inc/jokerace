@@ -1,16 +1,22 @@
 import { Proposal } from "@components/_pages/ProposalContent";
-import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
-import { ChatBubbleLeftEllipsisIcon, CheckIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import Link from "next/link";
 import { FC } from "react";
-import ProposalLayoutTweetRankOrPlaceholder from "./components/RankOrPlacehoder";
+import ProposalContentProfile from "../../Profile";
 import { Tweet } from "./components/CustomTweet";
-import ProposalLayoutLeaderboardRankOrPlaceholder from "../Leaderboard/components/RankOrPlaceholder";
+import ProposalLayoutTweetRankOrPlaceholder from "./components/RankOrPlacehoder";
+import { useRouter } from "next/navigation";
 
 interface ProposalLayoutTweetProps {
   proposal: Proposal;
+  proposalAuthorData: {
+    name: string;
+    avatar: string;
+    isLoading: boolean;
+    isError: boolean;
+  };
   isMobile: boolean;
   chainName: string;
   contestAddress: string;
@@ -30,6 +36,7 @@ const extractTweetId = (url: string): string => {
 
 const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
   proposal,
+  proposalAuthorData,
   isMobile,
   chainName,
   contestAddress,
@@ -43,22 +50,46 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
 }) => {
   const tweetUrl = proposal.metadataFields.stringArray[0];
   const tweetId = extractTweetId(tweetUrl);
+  const router = useRouter();
+
+  const onVotingModalOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.nativeEvent.stopImmediatePropagation();
+    handleVotingModalOpen?.();
+  };
+
+  const onCommentLinkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.nativeEvent.stopImmediatePropagation();
+    router.push(commentLink);
+  };
+
+  const onDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.nativeEvent.stopImmediatePropagation();
+    toggleProposalSelection?.(proposal.id);
+  };
 
   return (
-    <div className="flex flex-col gap-6 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out">
+    <Link
+      href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
+      className="flex flex-col gap-4 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out"
+    >
       <div className="pl-2 items-center flex justify-between w-full">
         <div className="flex items-center gap-6">
           <ProposalLayoutTweetRankOrPlaceholder proposal={proposal} />
-          <UserProfileDisplay
-            ethereumAddress={proposal.authorEthereumAddress}
+          <ProposalContentProfile
+            name={proposalAuthorData.name}
+            avatar={proposalAuthorData.avatar}
+            isLoading={proposalAuthorData.isLoading}
+            isError={proposalAuthorData.isError}
             size="small"
             textColor="text-neutral-9"
-            shortenOnFallback
           />
         </div>
         {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
           <button
-            onClick={handleVotingModalOpen}
+            onClick={onVotingModalOpen}
             className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
           >
             <img
@@ -79,7 +110,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
         <div className="flex gap-2 items-center">
           {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
             <button
-              onClick={handleVotingModalOpen}
+              onClick={onVotingModalOpen}
               className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
             >
               <img
@@ -96,18 +127,16 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
               voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
             </p>
           )}
-          <Link
-            href={commentLink}
+          <button
+            onClick={onCommentLinkClick}
             className="min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
-            shallow
-            scroll={false}
           >
             <ChatBubbleLeftEllipsisIcon className="w-4 h-4 flex-shrink-0" />
             <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
-          </Link>
+          </button>
           <div className="ml-auto">
             {allowDelete ? (
-              <div className="relative w-4 h-4 cursor-pointer" onClick={() => toggleProposalSelection?.(proposal.id)}>
+              <button className="relative w-4 h-4 cursor-pointer" onClick={onDeleteClick}>
                 <CheckIcon
                   className={`absolute inset-0 transform transition-all ease-in-out duration-300 
             ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
@@ -119,12 +148,12 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
             ${selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"}
             text-negative-11 bg-transparent hover:text-negative-10 transition-colors duration-300 ease-in-out`}
                 />
-              </div>
+              </button>
             ) : null}
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

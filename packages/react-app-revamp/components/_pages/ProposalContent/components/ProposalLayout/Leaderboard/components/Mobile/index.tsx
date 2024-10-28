@@ -1,6 +1,6 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import ProposalContentDeleteButton from "@components/_pages/ProposalContent/components/Buttons/Delete";
-import UserProfileDisplay from "@components/UI/UserProfileDisplay";
+import ProposalContentProfile from "@components/_pages/ProposalContent/components/Profile";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
@@ -10,6 +10,12 @@ import ProposalLayoutLeaderboardRankOrPlaceholder from "../RankOrPlaceholder";
 
 interface ProposalLayoutLeaderboardMobileProps {
   proposal: Proposal;
+  proposalAuthorData: {
+    name: string;
+    avatar: string;
+    isLoading: boolean;
+    isError: boolean;
+  };
   contestStatus: ContestStatus;
   commentLink: string;
   allowDelete: boolean;
@@ -22,6 +28,7 @@ interface ProposalLayoutLeaderboardMobileProps {
 
 const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> = ({
   proposal,
+  proposalAuthorData,
   contestStatus,
   commentLink,
   allowDelete,
@@ -37,11 +44,13 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
     <div className="w-full flex flex-col min-h-20 gap-4 bg-true-black shadow-entry-card p-4 rounded-2xl border border-transparent">
       <div className="flex items-center gap-6">
         <ProposalLayoutLeaderboardRankOrPlaceholder proposal={proposal} contestStatus={contestStatus} />
-        <UserProfileDisplay
+        <ProposalContentProfile
+          name={proposalAuthorData.name}
+          avatar={proposalAuthorData.avatar}
+          isLoading={proposalAuthorData.isLoading}
+          isError={proposalAuthorData.isError}
           textColor="text-neutral-10"
-          ethereumAddress={proposal.authorEthereumAddress}
           size="extraSmall"
-          shortenOnFallback
         />
         <div className="flex gap-2 items-center ml-auto ">
           <Link

@@ -1,6 +1,5 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import { transform } from "@components/_pages/ProposalContent/utils/markdown";
-import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
@@ -8,11 +7,18 @@ import { Interweave } from "interweave";
 import Link from "next/link";
 import { FC, useState } from "react";
 import ProposalContentDeleteButton from "../../Buttons/Delete";
+import ProposalContentProfile from "../../Profile";
 import ProposalLayoutLeaderboardMobile from "./components/Mobile";
 import ProposalLayoutLeaderboardRankOrPlaceholder from "./components/RankOrPlaceholder";
 
 interface ProposalLayoutLeaderboardProps {
   proposal: Proposal;
+  proposalAuthorData: {
+    name: string;
+    avatar: string;
+    isLoading: boolean;
+    isError: boolean;
+  };
   isMobile: boolean;
   chainName: string;
   contestAddress: string;
@@ -27,6 +33,7 @@ interface ProposalLayoutLeaderboardProps {
 
 const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
   proposal,
+  proposalAuthorData,
   isMobile,
   chainName,
   contestAddress,
@@ -49,6 +56,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
     return (
       <ProposalLayoutLeaderboardMobile
         proposal={proposal}
+        proposalAuthorData={proposalAuthorData}
         contestStatus={contestStatus}
         commentLink={commentLink}
         allowDelete={allowDelete}
@@ -78,11 +86,12 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
           <div className="flex flex-col gap-8 w-full">
             <div className="flex justify-between items-center">
               <div className="flex gap-12 items-center">
-                <UserProfileDisplay
+                <ProposalContentProfile
+                  name={proposalAuthorData.name}
+                  avatar={proposalAuthorData.avatar}
+                  isLoading={proposalAuthorData.isLoading}
+                  isError={proposalAuthorData.isError}
                   textColor="text-neutral-10"
-                  ethereumAddress={proposal.authorEthereumAddress}
-                  size="small"
-                  shortenOnFallback
                 />
                 <div className="flex gap-2 items-center">
                   <p className="text-[16px] text-neutral-11 font-bold normal-case">{entryTitle}</p>
@@ -122,7 +131,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
               <>
                 <div className="animate-reveal">
                   <Interweave
-                    className="prose prose-invert interweave-container inline-block w-full text-neutral-9 max-w-[525px]"
+                    className="prose prose-invert interweave-container inline-block w-full text-neutral-9 max-w-[560px]"
                     content={proposal.content}
                     transform={transform}
                     tagName="div"

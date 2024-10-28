@@ -1,15 +1,21 @@
 import { Proposal } from "@components/_pages/ProposalContent";
-import UserProfileDisplay from "@components/UI/UserProfileDisplay";
+import ProposalContentProfile from "@components/_pages/ProposalContent/components/Profile";
+import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { ChatBubbleLeftEllipsisIcon, CheckIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import Link from "next/link";
 import { FC } from "react";
-import ProposalLayoutLeaderboardRankOrPlaceholder from "../../../Leaderboard/components/RankOrPlaceholder";
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
-import { ChatBubbleLeftEllipsisIcon, CheckIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import ProposalLayoutGalleryRankOrPlaceholderMobile from "../RankOrPlaceholder/components/Mobile";
+import { useRouter } from "next/navigation";
 
 interface ProposalLayoutGalleryMobileProps {
   proposal: Proposal;
+  proposalAuthorData: {
+    name: string;
+    avatar: string;
+    isLoading: boolean;
+    isError: boolean;
+  };
   isMobile: boolean;
   chainName: string;
   contestAddress: string;
@@ -18,12 +24,13 @@ interface ProposalLayoutGalleryMobileProps {
   commentLink: string;
   allowDelete: boolean;
   selectedProposalIds: string[];
-  handleVotingModalOpen?: () => void;
-  toggleProposalSelection?: (proposalId: string) => void;
+  handleVotingModalOpen?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  toggleProposalSelection?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const ProposalLayoutGalleryMobile: FC<ProposalLayoutGalleryMobileProps> = ({
   proposal,
+  proposalAuthorData,
   contestStatus,
   chainName,
   commentLink,
@@ -33,14 +40,27 @@ const ProposalLayoutGalleryMobile: FC<ProposalLayoutGalleryMobileProps> = ({
   contestAddress,
   handleVotingModalOpen,
 }) => {
+  const router = useRouter();
+
+  const navigateToProposal = () => {
+    router.push(`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`);
+  };
+
+  const navigateToComment = () => {
+    router.push(`${commentLink}`);
+  };
+
   return (
-    <div className="flex flex-col gap-2 p-4 bg-true-black rounded-2xl shadow-entry-card w-full">
+    <Link
+      href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
+      className="flex flex-col gap-2 p-4 bg-true-black rounded-2xl shadow-entry-card w-full"
+    >
       <div className="flex gap-4">
         <div className="flex flex-col justify-between">
           <ProposalLayoutGalleryRankOrPlaceholderMobile proposal={proposal} contestStatus={contestStatus} />
           <div className="w-6 h-6 flex items-center justify-center">
             {allowDelete ? (
-              <div className="h-4 w-4 relative cursor-pointer" onClick={() => toggleProposalSelection?.(proposal.id)}>
+              <button className="h-4 w-4 relative cursor-pointer" onClick={toggleProposalSelection}>
                 <CheckIcon
                   className={`absolute top-0 left-0 transform transition-all ease-in-out duration-300 
               ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
@@ -52,36 +72,29 @@ const ProposalLayoutGalleryMobile: FC<ProposalLayoutGalleryMobileProps> = ({
               ${selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"}
               h-4 w-4 text-negative-11 bg-true-black hover:text-negative-10 transition-colors duration-300 ease-in-out`}
                 />
-              </div>
+              </button>
             ) : null}
           </div>
         </div>
         <div className="flex flex-col gap-4 w-full">
           <div className="flex justify-between items-center">
-            <UserProfileDisplay
-              ethereumAddress={proposal.authorEthereumAddress}
-              shortenOnFallback
+            <ProposalContentProfile
+              name={proposalAuthorData.name}
+              avatar={proposalAuthorData.avatar}
+              isLoading={proposalAuthorData.isLoading}
+              isError={proposalAuthorData.isError}
               size="extraSmall"
               textColor="text-neutral-9"
             />
-            <Link
-              href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
-              className="text-neutral-10"
+            <button
+              onClick={navigateToProposal}
+              className="w-4 h-4 flex justify-center items-center rounded-full border text-positive-11 border-positive-11"
             >
               <ChevronRightIcon className="w-4 h-4" />
-            </Link>
+            </button>
           </div>
           <img src={proposal.metadataFields.stringArray[0]} alt="entry image" className="rounded-2xl" />
           <div className="flex gap-2 items-center">
-            <Link
-              href={commentLink}
-              className="min-w-12 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px]  text-neutral-9  border border-neutral-9"
-              shallow
-              scroll={false}
-            >
-              <ChatBubbleLeftEllipsisIcon className="w-4 h-4 flex-shrink-0" />
-              <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
-            </Link>
             {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
               <button
                 onClick={handleVotingModalOpen}
@@ -91,10 +104,17 @@ const ProposalLayoutGalleryMobile: FC<ProposalLayoutGalleryMobileProps> = ({
                 <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
               </button>
             ) : null}
+            <button
+              onClick={navigateToComment}
+              className="min-w-12 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px]  text-neutral-9  border border-neutral-9"
+            >
+              <ChatBubbleLeftEllipsisIcon className="w-4 h-4 flex-shrink-0" />
+              <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
