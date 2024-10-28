@@ -2,16 +2,21 @@ import moment from "moment";
 import { TimingPeriod } from "../../pages/ContestTiming/utils";
 import { StepTitle } from "../../types";
 import { TemplateConfig, TemplateType } from "../types";
+import { EntryPreview } from "@hooks/useDeployContest/store";
 
 export const demoDayConfig: TemplateConfig = {
   type: TemplateType.demoDay,
-  stepsToFulfill: [StepTitle.Title, StepTitle.Timing, StepTitle.Confirm],
+  stepsToFulfill: [StepTitle.Title, StepTitle.Entries, StepTitle.Timing, StepTitle.Confirm],
   data: {
     prompt: {
       summarize:
         "In this demo day, anyone can vote on their favorite projects for 0.0001 eth per vote. Projects will be able to record their top supporters—so they can create and incentivize a community of voters at any time if they wish.",
       evaluateVoters:
         "Voters should evaluate builders’ projects based on their relevance, impact, originality, innovativeness, and success of what they’ve built.",
+    },
+    entryPreviewConfig: {
+      preview: EntryPreview.TITLE,
+      isAdditionalDescriptionEnabled: true,
     },
     type: "demo day",
     submissionOpen: moment().toDate(),

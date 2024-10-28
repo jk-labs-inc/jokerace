@@ -5,6 +5,7 @@ import "@styles/globals.css";
 import { polyfill } from "interweave-ssr";
 import { GA_TRACKING_ID } from "lib/gtag";
 import { Metadata, Viewport } from "next";
+import dynamic from "next/dynamic";
 import localFont from "next/font/local";
 import { headers } from "next/headers";
 import NextTopLoader from "nextjs-toploader";
@@ -12,9 +13,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "react-toastify/dist/ReactToastify.min.css";
 import "react-tooltip/dist/react-tooltip.css";
-import Portal from "./portal";
 import Providers from "./providers";
-import dynamic from "next/dynamic";
 
 polyfill();
 

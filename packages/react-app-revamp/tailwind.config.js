@@ -116,7 +116,7 @@ module.exports = {
       primary: {
         1: "#1a1a1a",
         2: "#242424",
-        3: "#100816",
+        3: "#3d3d3d",
         4: "#352800",
         5: "#3e3e3e",
         6: "#493c00",
@@ -128,7 +128,7 @@ module.exports = {
         12: "#fffad1",
       },
       secondary: {
-        1: "#1b141d",
+        1: "#141414",
         2: "#221527",
         3: "#301a3a",
         4: "#3a1e48",
@@ -354,6 +354,7 @@ module.exports = {
           "linear-gradient(to bottom, #000000 0%, #050408 15%, #0a0610 25%, #100816 40%, #100816 60%, #0a0610 75%, #050408 85%, #000000 100%)",
         "gradient-purple-white": "linear-gradient(90deg, #C293FF 0%, #FFFFFF 100%)",
         "gradient-gray": "linear-gradient(90deg, #A1A1A1 0%, #E5E5E5 100%)",
+        "gradient-light-pink": "linear-gradient(90deg, #FF78A9 0%, #E5E5E5 100%)",
       },
       boxShadow: {
         "create-header": "0 3px 4px 0 rgba(106, 106, 106, 1)",
@@ -361,7 +362,8 @@ module.exports = {
         dialog: "0px 1px 6px 1px rgba(157, 157, 157, 1)",
         sortProposalDropdown: "0px 1px 6px 1px #6A6A6A;",
         "proposal-card": "1px 1px 5px 0px #E5E5E5",
-        "file-upload": "0 0px 50px rgba(121, 121, 121, 0.3)",
+        "file-upload": "0 0px 30px rgba(121, 121, 121, 0.3)",
+        "entry-card": "0 0px 15px rgba(121, 121, 121, 0.3)",
         "split-fee-destination": "0 0 1px 1px rgba(106, 106, 106, 1)",
       },
 

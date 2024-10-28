@@ -12,10 +12,12 @@ import CreateContestTitle from "./pages/ContestTitle";
 import CreateContestType from "./pages/ContestType";
 import CreateContestTemplate from "./pages/ContestUseTemplate";
 import CreateContestVoting from "./pages/ContestVoting";
+import CreateContestEntries from "./pages/ContestEntries";
 
 export enum StepTitle {
   Title = "title",
   Description = "description",
+  Entries = "entries",
   Tag = "tag",
   Timing = "timing",
   Submissions = "entering",
@@ -28,6 +30,7 @@ export enum StepTitle {
 export const steps = [
   { title: StepTitle.Title, content: <CreateContestTitle /> },
   { title: StepTitle.Description, content: <CreateContestPrompt /> },
+  { title: StepTitle.Entries, content: <CreateContestEntries /> },
   { title: StepTitle.Tag, content: <CreateContestType /> },
   { title: StepTitle.Timing, content: <CreateContestTiming /> },
   { title: StepTitle.Submissions, content: <CreateContestSubmissions /> },

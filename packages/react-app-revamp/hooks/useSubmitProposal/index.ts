@@ -3,7 +3,7 @@ import { chains, config } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { extractPathSegments } from "@helpers/extractPath";
 import { getProposalId } from "@helpers/getProposalId";
-import { generateFieldInputsHTML, processFieldInputs } from "@helpers/metadata";
+import { generateEntryPreviewHTML, generateFieldInputsHTML, processFieldInputs } from "@helpers/metadata";
 import { useContestStore } from "@hooks/useContest/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
@@ -99,11 +99,14 @@ export function useSubmitProposal() {
     setError("");
     setTransactionData(null);
 
+    // generate the entry preview HTML
+    const entryPreviewHTML = generateEntryPreviewHTML(metadataFields);
+
     // generate the HTML for field inputs
     const fieldInputsHTML = generateFieldInputsHTML(proposalContent, metadataFields);
 
     // combine the original proposalContent with the generated HTML
-    const fullProposalContent = `${proposalContent}\n\n${fieldInputsHTML}`;
+    const fullProposalContent = `${entryPreviewHTML}\n\n${proposalContent}\n\n${fieldInputsHTML}`;
 
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
       const costToPropose = calculateChargeAmount();
