@@ -18,6 +18,10 @@ export interface ProposalData {
   votedAddresses: string[] | null;
 }
 
+export enum ProposalState {
+  Deleted = "This entry has been deleted by the creator.",
+}
+
 export const COMMENTS_VERSION = "4.13";
 
 const extractVotes = (forVotesValue: bigint, againstVotesValue: bigint) => {
@@ -78,7 +82,7 @@ const fetchProposalInfo = async (abi: any, address: string, chainId: number, sub
   const againstVotesBigInt = results[1].result[1] as bigint;
   const votes = extractVotes(forVotesBigInt, againstVotesBigInt);
   const isDeleted = results[2].result;
-  const content = isDeleted ? "This proposal has been deleted by the creator" : data.description;
+  const content = isDeleted ? ProposalState.Deleted : data.description;
   const { fieldsMetadata } = data;
   const metadataFields: RawMetadataFields = {
     addressArray: fieldsMetadata.addressArray,
