@@ -2,16 +2,21 @@ import moment from "moment";
 import { TimingPeriod } from "../../pages/ContestTiming/utils";
 import { StepTitle } from "../../types";
 import { TemplateConfig, TemplateType } from "../types";
+import { EntryPreview } from "@hooks/useDeployContest/store";
 
 export const karaokeChallengeConfig: TemplateConfig = {
   type: TemplateType.karaokeChallenge,
-  stepsToFulfill: [StepTitle.Title, StepTitle.Timing, StepTitle.Confirm],
+  stepsToFulfill: [StepTitle.Title, StepTitle.Entries, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
   data: {
     prompt: {
       summarize:
         "It’s a Karaoke Challenge. Singers all need to submit their names, and then everyone can vote live on who they think gives the best performance",
       evaluateVoters:
         "Judges should evaluate singers based on their singing quality, star quality, and most importantly, their commitment to the bit.",
+    },
+    entryPreviewConfig: {
+      preview: EntryPreview.TITLE,
+      isAdditionalDescriptionEnabled: true,
     },
     type: "karaoke challenge",
     submissionOpen: moment().toDate(),

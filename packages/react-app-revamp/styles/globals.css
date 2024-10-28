@@ -203,7 +203,28 @@ li {
   background-color: black !important;
 }
 
+.my-masonry-grid {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-left: -16px; /* gutter size offset */
+  width: auto;
+}
+.my-masonry-grid_column {
+  padding-left: 16px; /* gutter size */
+}
+
+.my-masonry-grid_column > div {
+  /* change div to reference your elements you put in <Masonry> */
+  margin-bottom: 16px;
+}
+
 /* React tweet custom styles */
+
+#tweet-skeleton > .react-tweet-theme {
+  min-width: 100% !important;
+}
+
 .react-tweet-theme {
   background-color: #141414 !important;
   min-width: 580px !important;
@@ -231,6 +252,29 @@ li {
 [class^="tweet-header_avatar"] {
   width: 32px !important;
   height: 32px !important;
+}
+
+[class^="tweet-header_header"] {
+  font-size: 16px !important;
+}
+
+[class^="tweet-body_root"] {
+  font-size: 16px !important;
+}
+
+[class^="react-tweet-theme"] {
+  background-color: #000000 !important;
+  border: 1px solid #242424 !important;
+  border-radius: 16px !important;
+}
+
+[class^="quoted-tweet-container"] {
+  min-width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  background-color: #000000 !important;
+  border: 1px solid #242424 !important;
+  border-radius: 16px !important;
 }
 
 .interweave-container {
@@ -392,7 +436,7 @@ li {
 
   /* Placeholder (at the top) */
   .ProseMirror p.is-editor-comment-empty:first-child::before {
-    color: #9d9d9d;
+    color: #6a6a6a;
     font-weight: bold;
     content: attr(data-placeholder);
     float: left;
@@ -537,10 +581,6 @@ li {
   .twitter-tweet.twitter-tweet-rendered,
   .twitter-tweet.twitter-tweet-rendered > iframe {
     @apply !max-w-full !xs:max-w-screen-2xs;
-  }
-
-  .submission-subscription-input::placeholder {
-    font-weight: 700;
   }
 
   /* Customize the label (the container) */

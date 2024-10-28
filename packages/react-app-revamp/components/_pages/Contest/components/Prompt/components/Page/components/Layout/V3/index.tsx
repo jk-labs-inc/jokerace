@@ -71,7 +71,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt 
   };
 
   return (
-    <div className="flex flex-col gap-2 md:gap-4">
+    <div className="flex flex-col gap-2 md:gap-4 w-full md:w-[560px]">
       <div
         className={`overflow-hidden ${isContestCanceled ? "line-through" : ""}`}
         style={{ maxHeight: isExpanded ? "none" : "150px" }}
@@ -94,7 +94,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt 
       </div>
       {shouldDisplayReadMore() && (
         <div className="flex gap-1 items-center cursor-pointer" onClick={handleToggle}>
-          <p className="text-[16px] text-positive-11">{isExpanded ? "Read Less" : "Read More"}</p>
+          <p className="text-[16px] text-positive-11">{isExpanded ? "less description" : "full description"}</p>
           <img
             src="/contest/chevron.svg"
             width={24}

@@ -16,8 +16,16 @@ const checkIfSubmissionOrVotingNeeded = (
 };
 
 const useSetContestTemplate = () => {
-  const { setPrompt, setType, setSubmissionOpen, setVotingOpen, setVotingClose, setVotingTab, setSubmissionTab } =
-    useDeployContestStore(state => state);
+  const {
+    setPrompt,
+    setType,
+    setSubmissionOpen,
+    setVotingOpen,
+    setVotingClose,
+    setVotingTab,
+    setSubmissionTab,
+    setEntryPreviewConfig,
+  } = useDeployContestStore(state => state);
   const { setTimingOption: setSubmissionTimingOption } = useTimingOptionForSubmissionPeriod(state => state);
   const { setTimingOption: setVotingTimingOption } = useTimingOptionForVotingPeriod(state => state);
 
@@ -33,6 +41,7 @@ const useSetContestTemplate = () => {
     setVotingTab(isVotingNeeded ? 2 : 0);
     setSubmissionTimingOption(config.data.votingOpenPeriod);
     setVotingTimingOption(config.data.votingClosePeriod);
+    setEntryPreviewConfig(config.data.entryPreviewConfig);
   };
 
   return setContestTemplateConfig;
