@@ -30,7 +30,7 @@ const LandingHeader = () => {
   const isOneOfActive = (routes: string[]) =>
     routes.includes(pathname ?? "") ? "text-positive-11 transition-colors font-bold" : "";
   const { openConnectModal } = useConnectModal();
-  const allowedLinks = ["Github", "Twitter", "Report a bug", "Terms", "Telegram", "Media Kit"];
+  const allowedLinks = ["Github", "Twitter", "Report a bug", "Terms", "Telegram", "Media Kit", "FAQ"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const [showWalletPortal, setShowWalletPortal] = useState(false);
 
