@@ -45,7 +45,7 @@
     "@typescript-eslint/parser": "7.18.0",
     "@vercel/node": "3.2.23",
     "@wagmi/connectors": "5.3.3",
-    "@wagmi/core": "2.13.9",
+    "@wagmi/core": "2.14.1",
     "autoprefixer": "10.4.20",
     "cheerio": "1.0.0",
     "class-variance-authority": "0.7.0",
