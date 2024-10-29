@@ -1,7 +1,7 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
 export const campTestnet: Chain = {
-  id: 90354,
+  id: 325000,
   name: "campTestnet",
   iconUrl: "/camp.png",
   nativeCurrency: {
@@ -18,8 +18,8 @@ export const campTestnet: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Camp Testnet Block Explorer", url: "https://explorerl2new-camp-network-4xje7wy105.t.conduit.xyz/" },
-    default: { name: "Camp Testnet Block Explorer", url: "https://explorerl2new-camp-network-4xje7wy105.t.conduit.xyz/" },
+    etherscan: { name: "Camp Testnet Block Explorer", url: "https://camp-network-testnet.blockscout.com/" },
+    default: { name: "Camp Testnet Block Explorer", url: "https://camp-network-testnet.blockscout.com/" },
   },
   testnet: true,
 };
