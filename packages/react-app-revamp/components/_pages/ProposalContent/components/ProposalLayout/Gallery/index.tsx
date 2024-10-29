@@ -104,7 +104,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
       </div>
       <div className="rounded-2xl overflow-hidden relative">
         <ImageWithFallback
-          mediumSrc={`${proposal.metadataFields.stringArray[0]}-medium`}
+          mediumSrc={`${proposal.metadataFields.stringArray[0]}`}
           fullSrc={proposal.metadataFields.stringArray[0]}
           alt="entry image"
         />
