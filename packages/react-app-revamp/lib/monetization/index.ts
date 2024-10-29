@@ -1,3 +1,4 @@
+import { chains } from "@config/wagmi";
 import { isSupabaseConfigured } from "@helpers/database";
 
 type ChargeDetails = {
@@ -19,6 +20,16 @@ const defaultChargeDetails: ChargeDetails = {
 export const fetchChargeDetails = async (chainName: string): Promise<ChargeDetails> => {
   if (!isSupabaseConfigured || !chainName) {
     return { ...defaultChargeDetails, isError: true };
+  }
+
+  if (checkIfChainIsTestnet(chainName)) {
+    return {
+      minCostToPropose: 0.0001,
+      minCostToVote: 0.0001,
+      defaultCostToPropose: 0.0001,
+      defaultCostToVote: 0.0001,
+      isError: false,
+    };
   }
 
   const config = await import("@config/supabase");
@@ -48,4 +59,9 @@ export const fetchChargeDetails = async (chainName: string): Promise<ChargeDetai
     console.error("Unexpected error fetching entry charge details:", error.message);
     return { ...defaultChargeDetails, isError: true };
   }
+};
+
+export const checkIfChainIsTestnet = (chainName: string): boolean => {
+  const isTestnet = chains.find(c => c.name.toLowerCase() === chainName.toLowerCase())?.testnet;
+  return isTestnet ?? false;
 };
