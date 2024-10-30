@@ -23,7 +23,7 @@ const ChargeLayoutSubmission: FC<ChargeLayoutSubmissionProps> = ({ charge, accou
   const accountBalance = formatEther(accountData.value);
 
   return (
-    <div className="flex flex-col gap-4 w-full md:w-[320px]">
+    <div className="flex flex-col gap-2 w-full md:w-[320px]">
       <div className="flex justify-between items-center">
         <p className="text-[16px] text-neutral-9">my wallet</p>
         <p className={`text-[16px] text-neutral-9 ${insufficientBalance ? "text-negative-11" : ""}`}>

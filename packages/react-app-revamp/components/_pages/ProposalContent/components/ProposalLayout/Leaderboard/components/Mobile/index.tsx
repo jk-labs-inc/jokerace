@@ -7,6 +7,7 @@ import { ContestStatus } from "@hooks/useContestStatus/store";
 import Link from "next/link";
 import { FC } from "react";
 import ProposalLayoutLeaderboardRankOrPlaceholder from "../RankOrPlaceholder";
+import { useRouter } from "next/navigation";
 
 interface ProposalLayoutLeaderboardMobileProps {
   proposal: Proposal;
@@ -38,10 +39,32 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
   chainName,
   contestAddress,
 }) => {
+  const router = useRouter();
   const entryTitle = proposal.metadataFields.stringArray[0];
 
+  const navigateToCommentLink = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.nativeEvent.stopImmediatePropagation();
+    router.push(commentLink);
+  };
+
+  const navigateToVotingModal = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.nativeEvent.stopImmediatePropagation();
+    handleVotingModalOpen?.();
+  };
+
+  const navigateToProposal = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.nativeEvent.stopImmediatePropagation();
+    router.push(`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`);
+  };
+
   return (
-    <div className="w-full flex flex-col min-h-20 gap-4 bg-true-black shadow-entry-card p-4 rounded-2xl border border-transparent">
+    <Link
+      href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
+      className="w-full flex flex-col min-h-20 gap-4 bg-true-black shadow-entry-card p-4 rounded-2xl border border-transparent"
+    >
       <div className="flex items-center gap-6">
         <ProposalLayoutLeaderboardRankOrPlaceholder proposal={proposal} contestStatus={contestStatus} />
         <ProposalContentProfile
@@ -53,18 +76,16 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
           size="extraSmall"
         />
         <div className="flex gap-2 items-center ml-auto ">
-          <Link
-            href={commentLink}
+          <button
+            onClick={navigateToCommentLink}
             className="min-w-12 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px]  text-neutral-9  border border-neutral-9"
-            shallow
-            scroll={false}
           >
             <ChatBubbleLeftEllipsisIcon className="w-4 h-4 flex-shrink-0" />
             <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
-          </Link>
+          </button>
           {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
             <button
-              onClick={handleVotingModalOpen}
+              onClick={navigateToVotingModal}
               className="min-w-12 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2"
             >
               <img src="/contest/upvote.svg" width={16} height={16} alt="upvote" className="flex-shrink-0" />
@@ -85,15 +106,15 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
         )}
         <p className="text-[16px] text-neutral-11 font-bold normal-case">{entryTitle}</p>
         <div className="flex ml-auto">
-          <Link
-            href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
+          <button
+            onClick={navigateToProposal}
             className="text-neutral-10 hover:text-positive-11 transition-colors duration-300 ease-in-out"
           >
             <ChevronRightIcon className="w-4 h-4" />
-          </Link>
+          </button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

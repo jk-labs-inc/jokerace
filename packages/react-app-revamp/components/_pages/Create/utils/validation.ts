@@ -7,6 +7,7 @@ import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/
 export type StateKey =
   | "title"
   | "prompt"
+  | "entries"
   | "type"
   | "votingOpen"
   | "votingClose"
@@ -110,9 +111,15 @@ const customizationValidation = (customization: CustomizationOptions) => {
   return "";
 };
 
+const entriesValidation = (entries: any) => {
+  // we do not need to validate entries for now
+  return "";
+};
+
 const validationMap: Record<StateKey, (...args: any[]) => string> = {
   title: titleValidation,
   prompt: promptValidation,
+  entries: entriesValidation,
   type: typeValidation,
   votingOpen: votingOpenValidation,
   votingClose: votingEndsValidation,
