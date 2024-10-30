@@ -1,4 +1,5 @@
-import { Dialog, DialogPanel, DialogTitle, DialogBackdrop } from "@headlessui/react";
+/* eslint-disable react/no-unescaped-entities */
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { FC, useCallback } from "react";
 
 interface DialogModalProps {
@@ -36,16 +37,11 @@ const DialogModalV3: FC<DialogModalProps> = ({
 
   return (
     <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
-      <DialogBackdrop
-        transition
-        className="fixed inset-0 bg-neutral-8 bg-opacity-60 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
-        aria-hidden="true"
-      />
+      <div className="fixed inset-0 pointer-events-none bg-neutral-8 bg-opacity-60" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center 2xs:p-4">
         <div className="flex min-h-full w-full items-center justify-center">
           <DialogPanel
-            transition
-            className={`text-sm mx-auto min-h-screen max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full px-4 2xs:pt-4 bg-true-black 2xs:rounded-[10px] transform transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in ${className}`}
+            className={`text-sm mx-auto min-h-screen max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full px-4 2xs:pt-4 bg-true-black 2xs:rounded-[10px] ${className}`}
           >
             <DialogTitle className="sr-only">{title}</DialogTitle>
             <div className="p-0 md:p-2 relative">

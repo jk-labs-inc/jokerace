@@ -1,5 +1,6 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import React, { FC, useMemo, useRef, useState } from "react";
+import { ACCEPTED_FILE_TYPES } from "./utils";
 
 interface ImageUploadProps {
   step?: number;

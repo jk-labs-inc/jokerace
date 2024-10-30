@@ -12,11 +12,14 @@ const ProposalContentDeleteButton: FC<ProposalContentDeleteButtonProps> = ({
   selectedProposalIds,
   toggleProposalSelection,
 }) => {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.nativeEvent.stopImmediatePropagation();
+    toggleProposalSelection?.(proposalId);
+  };
+
   return (
-    <div
-      className="ml-[5px] md:-ml-12 h-6 w-6 relative cursor-pointer mt-1"
-      onClick={() => toggleProposalSelection?.(proposalId)}
-    >
+    <div className="ml-[5px] md:-ml-12 h-6 w-6 relative cursor-pointer mt-1" onClick={handleClick}>
       <CheckIcon
         className={`absolute top-0 left-0 transform transition-all ease-in-out duration-300 
               ${selectedProposalIds.includes(proposalId) ? "opacity-100" : "opacity-0"}

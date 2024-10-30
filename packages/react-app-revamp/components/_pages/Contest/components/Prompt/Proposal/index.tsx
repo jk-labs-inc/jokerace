@@ -79,7 +79,7 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
         <p className="text-[16px] text-neutral-11">{ProposalState.Deleted}</p>
       ) : (
         <Interweave
-          className="prose prose-invert overflow-hidden interweave-container"
+          className="prose prose-invert overflow-hidden"
           content={proposal.content}
           matchers={[new UrlMatcher("url")]}
           transform={transform}
