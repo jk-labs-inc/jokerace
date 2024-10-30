@@ -13,7 +13,9 @@ import { formatBalance } from "@helpers/formatBalance";
 import { ContestStateEnum } from "@hooks/useContestState/store";
 
 export const ITEMS_PER_PAGE = 7;
+
 export const EMPTY_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
+export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 export interface ContestReward {
   contestAddress: string;
@@ -224,7 +226,7 @@ const processContestRewardsData = async (
       args: [],
     })) as string;
 
-    if (rewardsModuleAddress === EMPTY_HASH) return null;
+    if (rewardsModuleAddress === EMPTY_ADDRESS || rewardsModuleAddress === EMPTY_HASH) return null;
 
     const abiRewardsModule = await getRewardsModuleContractVersion(rewardsModuleAddress, chain.id);
     if (!abiRewardsModule) return null;
