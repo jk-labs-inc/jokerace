@@ -20,6 +20,7 @@ import { Abi, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { ContestVisibility, EntryPreviewConfig, MetadataField, useDeployContestStore } from "./store";
 import { SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle } from "./types";
+import { checkIfChainIsTestnet } from "lib/monetization";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000;
 export const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c6118e8a52fa738";
@@ -381,9 +382,18 @@ export function useDeployContest() {
     chainId: number,
     chargeType: { costToPropose: number; costToVote: number },
   ): Promise<string> {
+    const chain = chains.find(c => c.id === chainId);
     // check if either costToPropose or costToVote is 0 ( this means no monetization )
     if (chargeType.costToPropose === 0 || chargeType.costToVote === 0) {
       return "";
+    }
+
+    if (!chain) {
+      throw new Error(`Chain with id ${chainId} not found`);
+    }
+
+    if (checkIfChainIsTestnet(chain.name)) {
+      return JK_LABS_SPLIT_DESTINATION_DEFAULT;
     }
 
     if (!isSupabaseConfigured) {
@@ -392,11 +402,6 @@ export function useDeployContest() {
 
     const config = await import("@config/supabase");
     const supabase = config.supabase;
-
-    const chain = chains.find(c => c.id === chainId);
-    if (!chain) {
-      throw new Error(`Chain with id ${chainId} not found`);
-    }
 
     const chainName = chain.name;
 
