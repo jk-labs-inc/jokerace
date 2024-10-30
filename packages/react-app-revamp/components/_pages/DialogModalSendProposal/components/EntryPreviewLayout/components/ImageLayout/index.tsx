@@ -1,4 +1,5 @@
 import ImageUpload from "@components/UI/ImageUpload";
+import { ACCEPTED_FILE_TYPES } from "@components/UI/ImageUpload/utils";
 import { useUploadImageStore } from "@hooks/useUploadImage";
 import { FC, useState } from "react";
 
@@ -11,15 +12,27 @@ const DialogModalSendProposalEntryPreviewImageLayout: FC<DialogModalSendProposal
   const [uploadError, setUploadError] = useState<string>("");
   const { uploadImage } = useUploadImageStore();
 
+  const validateFile = (file: File): boolean => {
+    if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
+      setUploadError("Please upload a valid image/gif file (JPEG, JPG, PNG, JFIF, GIF, or WebP)");
+      return false;
+    }
+
+    const maxSize = 20 * 1024 * 1024; // 20MB in bytes
+    if (file.size > maxSize) {
+      setUploadError("File size should be less than 20MB");
+      return false;
+    }
+
+    return true;
+  };
+
   const onFileSelectHandler = async (file: File) => {
-    // check if the file is an image or gif
-    if (!file.type.startsWith("image/")) {
-      setUploadError("Please upload an image or GIF file.");
+    if (!validateFile(file)) {
       return;
     }
 
     try {
-      // use your custom upload function here
       const imageUrl = await uploadImageToServer(file);
 
       setUploadSuccess(true);
@@ -30,10 +43,7 @@ const DialogModalSendProposalEntryPreviewImageLayout: FC<DialogModalSendProposal
     }
   };
 
-  // replace this with your actual upload function
   const uploadImageToServer = async (file: File): Promise<string> => {
-    // implement your image upload logic here
-    // this should return the URL of the uploaded image
     const img = await uploadImage(file);
     return img ?? "";
   };
