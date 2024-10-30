@@ -41,7 +41,7 @@ const ContestParamatersCSVSubmitters: FC<ContestParamatersCSVSubmittersProps> = 
   return (
     <li className="list-disc">
       see full allowlist{" "}
-      <CSVLink data={submitters} filename={"contestants.csv"} className="text-positive-11">
+      <CSVLink data={submitters} filename={"entrants.csv"} className="text-positive-11">
         here
       </CSVLink>
     </li>
