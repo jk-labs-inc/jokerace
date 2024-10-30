@@ -319,7 +319,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     stepConfig: [
       { key: "title", fields: ["title"] },
       { key: "prompt", fields: ["prompt"] },
-      { key: "entries", fields: ["entries"] },
+      { key: "entryPreviewConfig", fields: ["entryPreviewConfig"] },
       { key: "type", fields: ["type"] },
       { key: "dates", fields: ["votingOpen", "votingClose", "submissionOpen"] },
       { key: "submissionRequirements", fields: ["submissionMerkle", "submissionRequirements"] },
