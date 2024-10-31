@@ -2,11 +2,15 @@ import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
   bitgetWallet,
+  braveWallet,
   coinbaseWallet,
+  frameWallet,
   imTokenWallet,
+  ledgerWallet,
   metaMaskWallet,
   okxWallet,
   omniWallet,
+  oneInchWallet,
   phantomWallet,
   rabbyWallet,
   rainbowWallet,
@@ -15,6 +19,7 @@ import {
   trustWallet,
   uniswapWallet,
   walletConnectWallet,
+  zerionWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
@@ -87,6 +92,7 @@ import { merlinTestnet } from "./custom-chains/merlinTestnet";
 import { metis } from "./custom-chains/metis";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
+import { morph } from "./custom-chains/morph";
 import { morphTestnet } from "./custom-chains/morphTestnet";
 import { movementTestnet } from "./custom-chains/movementTestnet";
 import { nautilusChain } from "./custom-chains/nautilusChain";
@@ -213,6 +219,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   boba,
   zeta,
   shape,
+  morph,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
@@ -297,6 +304,11 @@ const connectors = connectorsForWallets(
         omniWallet,
         phantomWallet,
         bitgetWallet,
+        oneInchWallet,
+        braveWallet,
+        frameWallet,
+        zerionWallet,
+        ledgerWallet,
       ],
     },
   ],

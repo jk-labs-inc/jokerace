@@ -13,6 +13,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
+import { ProposalState } from "lib/proposal";
 import moment from "moment";
 import { usePathname } from "next/navigation";
 import { FC, ReactNode } from "react";
@@ -74,12 +75,17 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
 
   return (
     <div className="flex flex-col gap-4">
-      <Interweave
-        className="prose prose-invert overflow-hidden interweave-container"
-        content={proposal.content}
-        matchers={[new UrlMatcher("url")]}
-        transform={transform}
-      />
+      {proposal.content === ProposalState.Deleted ? (
+        <p className="text-[16px] text-neutral-11">{ProposalState.Deleted}</p>
+      ) : (
+        <Interweave
+          className="prose prose-invert overflow-hidden"
+          content={proposal.content}
+          matchers={[new UrlMatcher("url")]}
+          transform={transform}
+        />
+      )}
+
       {displaySocials && proposalId ? (
         <div className="hidden md:flex gap-2">
           <a

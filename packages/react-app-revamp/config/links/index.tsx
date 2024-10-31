@@ -12,11 +12,6 @@ const LINK_MEDIA_KIT = "https://drive.google.com/drive/folders/10BVM0YtoyCuCG8y7
 
 export const FOOTER_LINKS = [
   {
-    label: "FAQ",
-    href: LINK_FAQ,
-  },
-
-  {
     label: "V1 website",
     href: LINK_V1,
   },
@@ -47,5 +42,9 @@ export const FOOTER_LINKS = [
   {
     label: "Media Kit",
     href: LINK_MEDIA_KIT,
+  },
+  {
+    label: "FAQ",
+    href: LINK_FAQ,
   },
 ];

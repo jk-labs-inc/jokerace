@@ -68,7 +68,14 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
     votingRequirementsDescription,
   ]);
 
-  const walletNotConnected = (
+  const walletNotConnected = anyoneCanVote ? (
+    <>
+      <span className="text-positive-11 cursor-pointer font-bold" onClick={openConnectModal}>
+        connect wallet
+      </span>{" "}
+      to add votes
+    </>
+  ) : (
     <>
       <span className="text-positive-11 cursor-pointer font-bold" onClick={openConnectModal}>
         connect wallet

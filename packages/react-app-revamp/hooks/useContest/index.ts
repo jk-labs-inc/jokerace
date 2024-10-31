@@ -144,6 +144,11 @@ export function useContest() {
     if (compareVersions(version, "4.0") >= 0) {
       const costToPropose = Number(results[11].result);
 
+      if (compareVersions(version, "4.2") >= 0) {
+        const sortingEnabled = Number(results[12].result) === 1;
+        setSortingEnabled(sortingEnabled);
+      }
+
       if (costToPropose === 0) {
         setCharge(null);
       } else {
@@ -151,11 +156,6 @@ export function useContest() {
         let costToVote = 0;
         let payPerVote = 0;
         let creatorSplitDestination = "";
-
-        if (compareVersions(version, "4.2") >= 0) {
-          const sortingEnabled = Number(results[12].result) === 1;
-          setSortingEnabled(sortingEnabled);
-        }
 
         if (compareVersions(version, "4.23") >= 0) {
           if (compareVersions(version, "4.25") >= 0) {

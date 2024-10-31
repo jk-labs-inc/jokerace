@@ -2,16 +2,21 @@ import moment from "moment";
 import { TimingPeriod } from "../../pages/ContestTiming/utils";
 import { StepTitle } from "../../types";
 import { TemplateConfig, TemplateType } from "../types";
+import { EntryPreview } from "@hooks/useDeployContest/store";
 
 export const memeConfig: TemplateConfig = {
   type: TemplateType.memeContest,
-  stepsToFulfill: [StepTitle.Title, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
+  stepsToFulfill: [StepTitle.Title, StepTitle.Entries, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
   data: {
     prompt: {
       summarize:
         "In this meme contest, anyone can submit a meme, and a jury of voters from our team will vote on their favorite.",
       evaluateVoters:
         "Judges should evaluate memes based on their relevance, impact, originality, and—obviously—their humor.",
+    },
+    entryPreviewConfig: {
+      preview: EntryPreview.IMAGE,
+      isAdditionalDescriptionEnabled: true,
     },
     type: "meme contest",
     submissionOpen: moment().toDate(),

@@ -14,7 +14,7 @@ const ContestName: FC<ContestNameProps> = ({ contestName }) => {
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const allowedLinks = ["Github", "Twitter", "Telegram", "Report a bug", "Terms", "Media Kit"];
+  const allowedLinks = ["Github", "Twitter", "Telegram", "Report a bug", "Terms", "Media Kit", "FAQ"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
 
   return (

@@ -71,6 +71,16 @@ export interface MetadataField {
   };
 }
 
+export enum EntryPreview {
+  TITLE = "JOKERACE_TITLE_PREVIEW",
+  IMAGE = "JOKERACE_IMAGE_PREVIEW",
+  TWEET = "JOKERACE_TWEET_PREVIEW",
+}
+export interface EntryPreviewConfig {
+  preview: EntryPreview;
+  isAdditionalDescriptionEnabled: boolean;
+}
+
 type StepConfig = {
   key: string;
   fields: StateKey[];
@@ -135,6 +145,7 @@ export interface DeployContestState {
   stepConfig: StepConfig[];
   metadataToggle: boolean;
   metadataFields: MetadataField[];
+  entryPreviewConfig: EntryPreviewConfig;
   setDeployContestData: (
     chain: string,
     chainId: number,
@@ -175,6 +186,7 @@ export interface DeployContestState {
   setStepConfig: (stepConfig: StepConfig[]) => void;
   setMetadataToggle: (toggle: boolean) => void;
   setMetadataFields: (data: ReactStyleStateSetter<MetadataField[]>) => void;
+  setEntryPreviewConfig: (data: ReactStyleStateSetter<EntryPreviewConfig>) => void;
 }
 export const useDeployContestStore = create<DeployContestState>((set, get) => {
   const initialSubmissionOpen: Date = new Date();
@@ -296,6 +308,10 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     votingTab: 0,
     metadataFields: metadataFields.slice(0, 1),
     metadataToggle: false,
+    entryPreviewConfig: {
+      preview: EntryPreview.TITLE,
+      isAdditionalDescriptionEnabled: true,
+    },
   };
 
   return {
@@ -303,6 +319,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     stepConfig: [
       { key: "title", fields: ["title"] },
       { key: "prompt", fields: ["prompt"] },
+      { key: "entryPreviewConfig", fields: ["entryPreviewConfig"] },
       { key: "type", fields: ["type"] },
       { key: "dates", fields: ["votingOpen", "votingClose", "submissionOpen"] },
       { key: "submissionRequirements", fields: ["submissionMerkle", "submissionRequirements"] },
@@ -392,5 +409,9 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
         metadataFields: typeof data === "function" ? data(state.metadataFields) : data,
       })),
     setMetadataToggle: (toggle: boolean) => set({ metadataToggle: toggle }),
+    setEntryPreviewConfig: (data: ReactStyleStateSetter<EntryPreviewConfig>) =>
+      set(state => ({
+        entryPreviewConfig: typeof data === "function" ? data(state.entryPreviewConfig) : data,
+      })),
   };
 });

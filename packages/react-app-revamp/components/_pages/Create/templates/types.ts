@@ -1,4 +1,4 @@
-import { Prompt } from "@hooks/useDeployContest/store";
+import { EntryPreviewConfig, Prompt } from "@hooks/useDeployContest/store";
 import { Option } from "../components/DefaultDropdown";
 import { StepTitle } from "../types";
 
@@ -14,6 +14,7 @@ export enum TemplateType {
 
 interface ContestData {
   prompt: Prompt;
+  entryPreviewConfig: EntryPreviewConfig;
   type: string;
   submissionOpen: Date;
   votingOpen: Date;

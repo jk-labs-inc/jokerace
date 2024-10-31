@@ -175,7 +175,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div className={`${isLoading ? "pointer-events-none" : ""} w-full px-6 md:px-7 lg:w-[750px] mx-auto`}>
+    <div className={`${isLoading ? "pointer-events-none" : ""} w-full px-6 md:px-0 lg:w-[760px] mx-auto`}>
       <div
         className={`md:pt-5 md:pb-20 flex flex-col ${
           pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"

@@ -18,8 +18,9 @@ import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
 import { Abi, parseEther } from "viem";
 import { useAccount } from "wagmi";
-import { ContestVisibility, MetadataField, useDeployContestStore } from "./store";
+import { ContestVisibility, EntryPreviewConfig, MetadataField, useDeployContestStore } from "./store";
 import { SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle } from "./types";
+import { checkIfChainIsTestnet } from "lib/monetization";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000;
 export const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c6118e8a52fa738";
@@ -44,6 +45,7 @@ export function useDeployContest() {
     votingRequirements,
     submissionRequirements,
     metadataFields,
+    entryPreviewConfig,
     charge,
     setIsLoading,
     setIsSuccess,
@@ -380,9 +382,18 @@ export function useDeployContest() {
     chainId: number,
     chargeType: { costToPropose: number; costToVote: number },
   ): Promise<string> {
+    const chain = chains.find(c => c.id === chainId);
     // check if either costToPropose or costToVote is 0 ( this means no monetization )
     if (chargeType.costToPropose === 0 || chargeType.costToVote === 0) {
       return "";
+    }
+
+    if (!chain) {
+      throw new Error(`Chain with id ${chainId} not found`);
+    }
+
+    if (checkIfChainIsTestnet(chain.name)) {
+      return JK_LABS_SPLIT_DESTINATION_DEFAULT;
     }
 
     if (!isSupabaseConfigured) {
@@ -391,11 +402,6 @@ export function useDeployContest() {
 
     const config = await import("@config/supabase");
     const supabase = config.supabase;
-
-    const chain = chains.find(c => c.id === chainId);
-    if (!chain) {
-      throw new Error(`Chain with id ${chainId} not found`);
-    }
 
     const chainName = chain.name;
 
@@ -417,6 +423,11 @@ export function useDeployContest() {
   }
 
   function createMetadataFieldsSchema(metadataFields: MetadataField[]): string {
+    // start with an object that has a 'string' property initialized with the entry preview prompt
+    const initialSchema: Record<string, string | string[]> = {
+      string: getEntryPreviewPrompt(entryPreviewConfig),
+    };
+
     const schema = metadataFields
       .filter(field => field.prompt.trim() !== "")
       .reduce<Record<string, string | string[]>>((acc, field) => {
@@ -434,9 +445,20 @@ export function useDeployContest() {
         }
 
         return acc;
-      }, {});
+      }, initialSchema);
+
+    // ensure 'string' is always an array
+    if (!Array.isArray(schema.string)) {
+      schema.string = [schema.string];
+    }
 
     return JSON.stringify(schema);
+  }
+
+  function getEntryPreviewPrompt(config: EntryPreviewConfig): string {
+    const { preview, isAdditionalDescriptionEnabled } = config;
+    const descriptionSuffix = isAdditionalDescriptionEnabled ? "_DESCRIPTION_ENABLED" : "_DESCRIPTION_NOT_ENABLED";
+    return `${preview}${descriptionSuffix}`;
   }
 
   // Helper function to format recipients (either voters or submitters)

@@ -6,7 +6,9 @@ import { Recipient } from "lib/merkletree/generateMerkleTree";
 const MERKLE_TREES_BUCKET = process.env.NEXT_PUBLIC_MERKLE_TREES_BUCKET as string;
 const IMAGE_UPLOAD_BUCKET = process.env.NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET as string;
 
-const IMAGE_PUBLIC_URL = "https://images.jokerace.io";
+const IMAGE_PUBLIC_URL = IMAGE_UPLOAD_BUCKET.includes("dev")
+  ? "https://dev.images.jokerace.io"
+  : "https://images.jokerace.io";
 
 interface LoadFileOptions {
   fileId: string;

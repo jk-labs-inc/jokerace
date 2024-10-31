@@ -3,7 +3,7 @@ import { config } from "@config/wagmi";
 import { isContentTweet } from "@helpers/isContentTweet";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { MappedProposalIds } from "@hooks/useProposal/store";
-import { getProposalIdsRaw } from "@hooks/useProposal/utils";
+import { getProposalIdsRaw, RawMetadataFields } from "@hooks/useProposal/utils";
 import { readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { formatEther } from "viem";
@@ -16,6 +16,10 @@ export interface ProposalData {
   proposal: Proposal | null;
   numberOfComments: number | null;
   votedAddresses: string[] | null;
+}
+
+export enum ProposalState {
+  Deleted = "This entry has been deleted by the creator.",
 }
 
 export const COMMENTS_VERSION = "4.13";
@@ -78,7 +82,13 @@ const fetchProposalInfo = async (abi: any, address: string, chainId: number, sub
   const againstVotesBigInt = results[1].result[1] as bigint;
   const votes = extractVotes(forVotesBigInt, againstVotesBigInt);
   const isDeleted = results[2].result;
-  const content = isDeleted ? "This proposal has been deleted by the creator" : data.description;
+  const content = isDeleted ? ProposalState.Deleted : data.description;
+  const { fieldsMetadata } = data;
+  const metadataFields: RawMetadataFields = {
+    addressArray: fieldsMetadata.addressArray,
+    stringArray: fieldsMetadata.stringArray,
+    uintArray: fieldsMetadata.uintArray,
+  };
 
   let rankInfo = { rank: 0, isTied: false };
 
@@ -106,6 +116,7 @@ const fetchProposalInfo = async (abi: any, address: string, chainId: number, sub
     content: content,
     isContentImage: isUrlToImage(data.description),
     tweet: isContentTweet(data.description),
+    metadataFields,
     exists: data.exists,
     votes,
     ...rankInfo,
