@@ -11,10 +11,10 @@ export const hedera: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://mainnet.hashio.io/api"],
+      http: ["https://295.rpc.thirdweb.com"],
     },
     default: {
-      http: ["https://mainnet.hashio.io/api"],
+      http: ["https://295.rpc.thirdweb.com"],
     },
   },
   blockExplorers: {
