@@ -7175,10 +7175,10 @@
   dependencies:
     "@supabase/node-fetch" "^2.6.14"
 
-"@supabase/supabase-js@2.45.6":
-  version "2.45.6"
-  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.45.6.tgz#5b74abb58bba7c99ee141706e1609f794f5417c8"
-  integrity sha512-qVXSSUhhIqdFnF2VUGgeecPvw1cDW6+avcTbRgur4LaGnzrJCbM3Rx7g81/SSZjjeqYOtmHuKWhiHzV/EN8Ktw==
+"@supabase/supabase-js@2.46.1":
+  version "2.46.1"
+  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.46.1.tgz#4d23cdf7b6aab45686dfe87577ca7d1371afd341"
+  integrity sha512-HiBpd8stf7M6+tlr+/82L8b2QmCjAD8ex9YdSAKU+whB/SHXXJdus1dGlqiH9Umy9ePUuxaYmVkGd9BcvBnNvg==
   dependencies:
     "@supabase/auth-js" "2.65.1"
     "@supabase/functions-js" "2.4.3"
@@ -7893,10 +7893,10 @@
   resolved "https://registry.yarnpkg.com/@vanilla-extract/sprinkles/-/sprinkles-1.6.3.tgz#733968d653cc2395538b5c29f04dcdb0a2ca15c5"
   integrity sha512-oCHlQeYOBIJIA2yWy2GnY5wE2A7hGHDyJplJo4lb+KEIBcJWRnDJDg8ywDwQS5VfWJrBBO3drzYZPFpWQjAMiQ==
 
-"@vercel/build-utils@8.4.11":
-  version "8.4.11"
-  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-8.4.11.tgz#ea83ccf838ba8eae099f402533a621a3f32863d8"
-  integrity sha512-bs6FwEhdWJ8+Wtey2jtAobgktk148Ipbc1VfTv1awUI5yEfhIGN87x20NfNsE+48vKlai/HkwHeubpMUwiS8Lw==
+"@vercel/build-utils@8.4.12":
+  version "8.4.12"
+  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-8.4.12.tgz#8c5dcd4269bc2347b89424805d28e2661a3aa302"
+  integrity sha512-pIH0b965wJhd1otROVPndfZenPKFVoYSaRjtSKVOT/oNBT13ifq86UVjb5ZjoVfqUI2TtSTP+68kBqLPeoq30g==
 
 "@vercel/error-utils@2.0.2":
   version "2.0.2"
@@ -7921,16 +7921,16 @@
     node-gyp-build "^4.2.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@3.2.23":
-  version "3.2.23"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-3.2.23.tgz#0b709c5f7b19486fea6fa4f9ecebd8743c11d532"
-  integrity sha512-qJmHZU3UeEoEDYHba9R7fb7EkpDF9fls2uyJTKJgUh+wH3NKWEWknrnP/Aipq/1U2e+UDtX3zVBfnbfPN0/d9A==
+"@vercel/node@3.2.24":
+  version "3.2.24"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-3.2.24.tgz#1c52a264e1355ee39f9bf87575f3b2442106b1ef"
+  integrity sha512-KEm50YBmcfRNOw5NfdcqMI4BkP4+5TD9kRwAByHHlIZXLj1NTTknvMF+69sHBYzwpK/SUZIkeo7jTrtcl4g+RQ==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
     "@edge-runtime/vm" "3.2.0"
     "@types/node" "16.18.11"
-    "@vercel/build-utils" "8.4.11"
+    "@vercel/build-utils" "8.4.12"
     "@vercel/error-utils" "2.0.2"
     "@vercel/nft" "0.27.3"
     "@vercel/static-config" "3.0.0"
