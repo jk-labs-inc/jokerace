@@ -11,6 +11,7 @@ import ProposalContentProfile from "../../Profile";
 import ProposalLayoutLeaderboardMobile from "./components/Mobile";
 import ProposalLayoutLeaderboardRankOrPlaceholder from "./components/RankOrPlaceholder";
 import { toastInfo } from "@components/UI/Toast";
+import { UrlMatcher } from "interweave-autolink";
 
 interface ProposalLayoutLeaderboardProps {
   proposal: Proposal;
@@ -140,6 +141,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                     content={proposal.content}
                     transform={transform}
                     tagName="div"
+                    matchers={[new UrlMatcher("url")]}
                   />
                 </div>
                 <div className="flex gap-2 items-center">
