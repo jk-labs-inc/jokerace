@@ -24,6 +24,12 @@ export enum ProposalState {
 
 export const COMMENTS_VERSION = "4.13";
 
+const defaultMetadataFields: RawMetadataFields = {
+  addressArray: [],
+  stringArray: [],
+  uintArray: [],
+};
+
 const extractVotes = (forVotesValue: bigint, againstVotesValue: bigint) => {
   const netVotes = Number(formatEther(forVotesValue - againstVotesValue));
 
@@ -84,11 +90,13 @@ const fetchProposalInfo = async (abi: any, address: string, chainId: number, sub
   const isDeleted = results[2].result;
   const content = isDeleted ? ProposalState.Deleted : data.description;
   const { fieldsMetadata } = data;
-  const metadataFields: RawMetadataFields = {
-    addressArray: fieldsMetadata.addressArray,
-    stringArray: fieldsMetadata.stringArray,
-    uintArray: fieldsMetadata.uintArray,
-  };
+  const metadataFields: RawMetadataFields = fieldsMetadata
+    ? {
+        addressArray: fieldsMetadata.addressArray ?? defaultMetadataFields.addressArray,
+        stringArray: fieldsMetadata.stringArray ?? defaultMetadataFields.stringArray,
+        uintArray: fieldsMetadata.uintArray ?? defaultMetadataFields.uintArray,
+      }
+    : defaultMetadataFields;
 
   let rankInfo = { rank: 0, isTied: false };
 

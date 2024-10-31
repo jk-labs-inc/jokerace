@@ -17,6 +17,12 @@ export interface RawMetadataFields {
   uintArray: bigint[];
 }
 
+const defaultMetadataFields: RawMetadataFields = {
+  addressArray: [],
+  stringArray: [],
+  uintArray: [],
+};
+
 const checkForTiedRanks = (ranks: RankDictionary, currentRank: number): boolean => {
   let count = 0;
   Object.values(ranks).forEach(rank => {
@@ -162,11 +168,13 @@ export function transformProposalData(
   const allCommentsIds = proposalCommentsIds.map(id => id.toString()).filter(id => !deletedCommentIdsSet.has(id));
 
   const { fieldsMetadata, ...restProposalData } = proposalData;
-  const metadataFields: RawMetadataFields = {
-    addressArray: fieldsMetadata.addressArray,
-    stringArray: fieldsMetadata.stringArray,
-    uintArray: fieldsMetadata.uintArray,
-  };
+  const metadataFields: RawMetadataFields = fieldsMetadata
+    ? {
+        addressArray: fieldsMetadata.addressArray ?? defaultMetadataFields.addressArray,
+        stringArray: fieldsMetadata.stringArray ?? defaultMetadataFields.stringArray,
+        uintArray: fieldsMetadata.uintArray ?? defaultMetadataFields.uintArray,
+      }
+    : defaultMetadataFields;
 
   return {
     id: id.toString(),
