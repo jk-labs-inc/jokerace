@@ -99,7 +99,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant MAX_FIELDS_METADATA_LENGTH = 10;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // our hot wallet that we collect revenue to
-    string private constant VERSION = "4.36"; // Private as to not clutter the ABI
+    string private constant VERSION = "4.37"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
     string public prompt;
@@ -157,7 +157,10 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error NeedToVoteWithProofFirst();
 
     error OnlyCreatorCanDelete();
+    error OnlyCreatorCanSetName();
+    error OnlyCreatorCanSetPrompt();
     error CannotDeleteWhenCompletedOrCanceled();
+    error CannotSetWhenCompletedOrCanceled();
 
     error OnlyCreatorOrJkLabsCanCancel();
     error CannotCancelWhenCompletedOrCanceled();
@@ -285,6 +288,32 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      */
     function getProposal(uint256 proposalId) public view returns (ProposalCore memory) {
         return proposals[proposalId];
+    }
+
+    /**
+     * @dev Set the contest name.
+     */
+    function setName(string memory newName) public returns (string memory) {
+        if (msg.sender != creator) revert OnlyCreatorCanSetName();
+        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
+            revert CannotSetWhenCompletedOrCanceled();
+        }
+
+        name = newName;
+        return newName;
+    }
+
+    /**
+     * @dev Set the contest prompt.
+     */
+    function setPrompt(string memory newPrompt) public returns (string memory) {
+        if (msg.sender != creator) revert OnlyCreatorCanSetPrompt();
+        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
+            revert CannotSetWhenCompletedOrCanceled();
+        }
+
+        prompt = newPrompt;
+        return newPrompt;
     }
 
     /**
