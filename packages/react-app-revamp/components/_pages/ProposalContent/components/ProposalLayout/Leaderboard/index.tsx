@@ -136,7 +136,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
               <>
                 <div className="animate-reveal">
                   <Interweave
-                    className="prose prose-invert inline-block w-full  [&_*]:text-neutral-9 max-w-[560px]"
+                    className="prose prose-invert inline-block w-full overflow-hidden [&_*]:text-neutral-9 max-w-[560px]"
                     content={proposal.content}
                     transform={transform}
                     tagName="div"
