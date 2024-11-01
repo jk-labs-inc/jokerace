@@ -281,6 +281,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, allowToHide, rew
 
   const handleToggleContestView = async (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
     e.preventDefault();
+    e.nativeEvent.stopImmediatePropagation();
 
     const newState = !isHidden;
     setIsHidden(newState);
