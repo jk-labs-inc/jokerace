@@ -1,6 +1,5 @@
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import Iframe from "@components/tiptap/Iframe";
-import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Image as TipTapImage } from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
@@ -15,7 +14,6 @@ import ErrorMessage from "../../components/Error";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
-import ContestParamsMetadata from "../ContestParams/components/Metadata";
 
 interface CreateEditorConfigArgs {
   content: string;
@@ -23,7 +21,7 @@ interface CreateEditorConfigArgs {
   onUpdate: any;
 }
 
-const createEditorConfig = ({ content, placeholderText, onUpdate }: CreateEditorConfigArgs) => ({
+export const createEditorConfig = ({ content, placeholderText, onUpdate }: CreateEditorConfigArgs) => ({
   extensions: [
     StarterKit,
     TipTapImage,

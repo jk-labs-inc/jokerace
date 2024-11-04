@@ -38,6 +38,7 @@ export interface ContestState {
   version: string;
   rewardsModuleAddress: string;
   rewardsAbi: Abi | null;
+  canEditTitleAndDescription: boolean;
   setSupportsRewardsModule: (value: boolean) => void;
   setCanUpdateVotesInRealTime: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
@@ -64,6 +65,7 @@ export interface ContestState {
   setVersion: (version: string) => void;
   setRewardsModuleAddress: (address: string) => void;
   setRewardsAbi: (abi: Abi | null) => void;
+  setCanEditTitleAndDescription: (value: boolean) => void;
 }
 
 export const createContestStore = () =>
@@ -95,6 +97,7 @@ export const createContestStore = () =>
     version: "",
     rewardsModuleAddress: "",
     rewardsAbi: null,
+    canEditTitleAndDescription: false,
     setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
     setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
     setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
@@ -121,6 +124,7 @@ export const createContestStore = () =>
     setVersion: version => set({ version: version }),
     setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
     setRewardsAbi: abi => set({ rewardsAbi: abi }),
+    setCanEditTitleAndDescription: value => set({ canEditTitleAndDescription: value }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);

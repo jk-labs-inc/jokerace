@@ -73,6 +73,7 @@ export function useContest() {
     setVersion,
     setRewardsModuleAddress,
     setRewardsAbi,
+    setCanEditTitleAndDescription,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
     state => state,
@@ -147,6 +148,10 @@ export function useContest() {
       if (compareVersions(version, "4.2") >= 0) {
         const sortingEnabled = Number(results[12].result) === 1;
         setSortingEnabled(sortingEnabled);
+      }
+
+      if (compareVersions(version, "4.27") >= 0) {
+        setCanEditTitleAndDescription(true);
       }
 
       if (costToPropose === 0) {

@@ -3,18 +3,20 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import { FC, useState } from "react";
+import EditContestPrompt from "./components/EditContestPrompt";
 
 interface ContestPromptPageV3LayoutProps {
   prompt: string;
+  canEditTitleAndDescription: boolean;
 }
 
 const MAX_LENGTH = 200;
 
-const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt }) => {
+const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt, canEditTitleAndDescription }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
-  const { contestType, contestTitle, contestSummary, contestEvaluate, contestContactDetails } = parsePrompt(prompt);
+  const { contestSummary, contestEvaluate, contestContactDetails } = parsePrompt(prompt);
 
   const shouldDisplayReadMore = () => {
     const totalLength = contestSummary.length + (contestEvaluate?.length || 0) + (contestContactDetails?.length || 0);
@@ -71,39 +73,44 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt 
   };
 
   return (
-    <div className="flex flex-col gap-2 md:gap-4 w-full md:w-[560px]">
-      <div
-        className={`overflow-hidden ${isContestCanceled ? "line-through" : ""}`}
-        style={{ maxHeight: isExpanded ? "none" : "150px" }}
-      >
-        <div className="prose prose-invert flex flex-col">
-          <Interweave content={summaryContent} matchers={[new UrlMatcher("url")]} />
-          {shouldDisplayEvaluate && (
-            <>
-              <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
-              <Interweave content={evaluateContent} matchers={[new UrlMatcher("url")]} />
-            </>
-          )}
-          {shouldDisplayContactDetails && (
-            <div>
-              <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
-              <Interweave content={contactDetailsContent} matchers={[new UrlMatcher("url")]} />
-            </div>
-          )}
+    <div className="flex items-start w-full">
+      <div className="flex flex-col gap-2 md:gap-4 md:w-[560px]">
+        <div
+          className={`overflow-hidden ${isContestCanceled ? "line-through" : ""}`}
+          style={{ maxHeight: isExpanded ? "none" : "150px" }}
+        >
+          <div className="prose prose-invert flex flex-col">
+            <Interweave content={summaryContent} matchers={[new UrlMatcher("url")]} />
+            {shouldDisplayEvaluate && (
+              <>
+                <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
+                <Interweave content={evaluateContent} matchers={[new UrlMatcher("url")]} />
+              </>
+            )}
+            {shouldDisplayContactDetails && (
+              <div>
+                <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
+                <Interweave content={contactDetailsContent} matchers={[new UrlMatcher("url")]} />
+              </div>
+            )}
+          </div>
         </div>
+        {shouldDisplayReadMore() && (
+          <div className="flex gap-1 items-center cursor-pointer" onClick={handleToggle}>
+            <p className="text-[16px] text-positive-11">{isExpanded ? "less description" : "full description"}</p>
+            <img
+              src="/contest/chevron.svg"
+              width={24}
+              height={24}
+              alt="toggleRead"
+              className={`transition-transform duration-300 ${isExpanded ? "transform rotate-180 pt-0" : "pt-1"}`}
+            />
+          </div>
+        )}
       </div>
-      {shouldDisplayReadMore() && (
-        <div className="flex gap-1 items-center cursor-pointer" onClick={handleToggle}>
-          <p className="text-[16px] text-positive-11">{isExpanded ? "less description" : "full description"}</p>
-          <img
-            src="/contest/chevron.svg"
-            width={24}
-            height={24}
-            alt="toggleRead"
-            className={`transition-transform duration-300 ${isExpanded ? "transform rotate-180 pt-0" : "pt-1"}`}
-          />
-        </div>
-      )}
+      <div className="ml-auto">
+        <EditContestPrompt canEditPrompt={canEditTitleAndDescription} prompt={prompt} />
+      </div>
     </div>
   );
 };
