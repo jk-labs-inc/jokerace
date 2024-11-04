@@ -1,6 +1,6 @@
-import { createEditorConfig } from "@components/_pages/Create/pages/ContestPrompt";
 import DialogModalV4 from "@components/UI/DialogModalV4";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
+import { createEditorConfig } from "@helpers/createEditorConfig";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -86,13 +86,15 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
   });
 
   const onSavePrompt = () => {
+    if (editorSummarize?.isEmpty || editorEvaluateVoters?.isEmpty) return;
+
     handleSavePrompt?.();
     setIsCloseModal?.(false);
   };
 
   return (
     <DialogModalV4 isOpen={isOpen} onClose={() => setIsCloseModal?.(false)}>
-      <div className="flex flex-col gap-14 py-6 md:py-16 pl-8 md:pl-32 pr-4 md:pr-16">
+      <div className="flex flex-col gap-14 py-6 md:py-16 pl-8 md:pl-32 pr-4 md:pr-16 max-h-screen overflow-y-auto">
         <div className="flex justify-between items-center">
           <p className="text-[24px] text-neutral-11 font-bold">edit prompt</p>
           <img
@@ -105,12 +107,17 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
           />
         </div>
         <div className="flex flex-col gap-6">
-          <div className="flex bg-true-black z-10 justify-start w-full md:w-[650px] px-1 py-2 border-y border-neutral-10">
+          <div
+            className="flex justify-start w-full md:w-[600px] px-1 py-2 sticky top-0 z-10
+            bg-true-black/20 backdrop-blur border-y border-neutral-10/30
+            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)]
+            transition-all duration-300"
+          >
             <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
           </div>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-4">
-              <p className="text-[20px] text-neutral-11 font-bold">summarize the contest, rewards, and voters</p>
+              <p className="text-[20px] text-neutral-9 font-bold">summarize the contest, rewards, and voters</p>
               <div className="bg-true-black w-full md:w-[600px] rounded-[16px] border-true-black md:shadow-file-upload md:p-4">
                 <EditorContent
                   editor={editorSummarize}
@@ -119,7 +126,7 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
               </div>
             </div>
             <div className="flex flex-col gap-4">
-              <p className="text-[20px] text-neutral-11 font-bold">
+              <p className="text-[20px] text-neutral-9 font-bold">
                 how should voters evaluate if an entry is <i>good?</i>
               </p>
               <div className="bg-true-black w-full md:w-[600px] rounded-[16px] border-true-black md:shadow-file-upload md:p-4">
@@ -130,7 +137,7 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
               </div>
             </div>
             <div className="flex flex-col gap-4">
-              <p className="text-[20px] text-neutral-11 font-bold">
+              <p className="text-[20px] text-neutral-9 font-bold">
                 what’s the best way for players to reach you? (optional)
               </p>
               <div className="bg-true-black w-full md:w-[600px] rounded-[16px] border-true-black md:shadow-file-upload md:p-4">
@@ -143,12 +150,19 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
           </div>
         </div>
 
-        <button
-          className="bg-gradient-purple self-center md:self-start rounded-[40px] w-80 h-10 text-center text-true-black text-[16px] font-bold hover:opacity-80 transition-opacity duration-300 ease-in-out"
-          onClick={onSavePrompt}
-        >
-          save prompt
-        </button>
+        <div className="flex flex-col gap-4">
+          {editorSummarize?.isEmpty || editorEvaluateVoters?.isEmpty ? (
+            <p className="text-[16px] font-bold text-negative-11">summarize or evaluate prompt shouldn't be empty!</p>
+          ) : (
+            ""
+          )}
+          <button
+            className="bg-gradient-purple self-center md:self-start rounded-[40px] w-80 h-10 text-center text-true-black text-[16px] font-bold hover:opacity-80 transition-opacity duration-300 ease-in-out"
+            onClick={onSavePrompt}
+          >
+            save prompt
+          </button>
+        </div>
       </div>
     </DialogModalV4>
   );
