@@ -16,7 +16,10 @@ export const parsePrompt = (prompt: string): ParsedPrompt => {
     contestContactDetails: "",
   };
 
-  if (segments.length === 3) {
+  if (segments.length === 2) {
+    // new minimal format with just type and summary
+    return { ...defaultPrompt, contestType: segments[0], contestSummary: segments[1] };
+  } else if (segments.length === 3) {
     // new format without title
     return { ...defaultPrompt, contestType: segments[0], contestSummary: segments[1], contestEvaluate: segments[2] };
   } else if (segments.length === 4) {

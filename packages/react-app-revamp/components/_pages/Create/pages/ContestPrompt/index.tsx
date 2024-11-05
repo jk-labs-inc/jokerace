@@ -1,12 +1,7 @@
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
-import Iframe from "@components/tiptap/Iframe";
-import { ChevronUpIcon } from "@heroicons/react/24/outline";
+import { createEditorConfig } from "@helpers/createEditorConfig";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { Image as TipTapImage } from "@tiptap/extension-image";
-import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
-import Placeholder from "@tiptap/extension-placeholder";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { steps } from "../..";
@@ -15,33 +10,6 @@ import ErrorMessage from "../../components/Error";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
-import ContestParamsMetadata from "../ContestParams/components/Metadata";
-
-interface CreateEditorConfigArgs {
-  content: string;
-  placeholderText: string;
-  onUpdate: any;
-}
-
-const createEditorConfig = ({ content, placeholderText, onUpdate }: CreateEditorConfigArgs) => ({
-  extensions: [
-    StarterKit,
-    TipTapImage,
-    TiptapExtensionLink,
-    Placeholder.configure({
-      emptyEditorClass: "is-editor-create-flow-empty",
-      placeholder: placeholderText,
-    }),
-    Iframe,
-  ],
-  content: content,
-  editorProps: {
-    attributes: {
-      class: "prose prose-invert flex-grow focus:outline-none",
-    },
-  },
-  onUpdate: onUpdate,
-});
 
 const CreateContestPrompt = () => {
   const { step, prompt, setPrompt, errors } = useDeployContestStore(state => state);
