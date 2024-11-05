@@ -5,23 +5,27 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 import CancelContest from "../CancelContest";
+import EditContestName from "./components/EditContestName";
 
 interface ContestNameProps {
   contestName: string;
+  canEditTitle: boolean;
 }
 
-const ContestName: FC<ContestNameProps> = ({ contestName }) => {
+const ContestName: FC<ContestNameProps> = ({ contestName, canEditTitle }) => {
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const allowedLinks = ["Github", "Twitter", "Telegram", "Report a bug", "Terms", "Media Kit", "FAQ"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
 
-  return (
-    <div className={`flex items-center justify-between ${isMobile ? "w-full" : ""}`}>
-      <GradientText text={contestName} isStrikethrough={isContestCanceled} />
-      {isMobile ? (
-        <div className="flex flex-col items-center gap-2">
+  if (isMobile) {
+    return (
+      <div className="flex items-center justify-between w-full">
+        <GradientText text={contestName} isStrikethrough={isContestCanceled} />
+        <div className="flex items-center gap-2">
+          <EditContestName contestName={contestName} canEditTitle={canEditTitle} />
+          <CancelContest />
           <BurgerMenu>
             <div className="flex justify-end flex-col gap-2">
               {filteredLinks.map((link, key) => (
@@ -37,11 +41,18 @@ const ContestName: FC<ContestNameProps> = ({ contestName }) => {
               ))}
             </div>
           </BurgerMenu>
-          <CancelContest />
         </div>
-      ) : (
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center justify-between w-full">
+      <GradientText text={contestName} isStrikethrough={isContestCanceled} />
+      <div className="flex items-center gap-2 justify-end">
+        <EditContestName contestName={contestName} canEditTitle={canEditTitle} />
         <CancelContest />
-      )}
+      </div>
     </div>
   );
 };
