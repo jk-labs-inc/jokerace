@@ -1,6 +1,7 @@
-import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TITLE_MIN_LENGTH } from "@components/_pages/Create/constants/length";
+import { CONTEST_TITLE_MAX_LENGTH } from "@components/_pages/Create/constants/length";
 import DialogModalV4 from "@components/UI/DialogModalV4";
 import { FC, useEffect, useRef, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 
 interface EditContestNameModalProps {
   contestName: string;
@@ -15,26 +16,45 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
   setIsCloseModal,
   handleEditContestName,
 }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [inputValue, setInputValue] = useState(contestName);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 0);
-    }
-  }, [isOpen]);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     setInputValue(contestName);
   }, [contestName]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    const value = e.target.value;
+    setInputValue(value);
+
+    if (!value.trim()) {
+      setError("title cannot be empty");
+    } else if (value.length >= CONTEST_TITLE_MAX_LENGTH) {
+      setError(`title must not exceed ${CONTEST_TITLE_MAX_LENGTH} characters`);
+    } else {
+      setError("");
+    }
+  };
+
+  const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+
+    if (!value.trim()) {
+      setError("title cannot be empty");
+    } else if (value.length >= CONTEST_TITLE_MAX_LENGTH) {
+      setError(`title must not exceed ${CONTEST_TITLE_MAX_LENGTH} characters`);
+    } else {
+      setError("");
+    }
   };
 
   const handleEditContestNameClick = (value: string) => {
+    if (!value.trim() || value.length >= CONTEST_TITLE_MAX_LENGTH) {
+      return;
+    }
+
     handleEditContestName?.(value);
     setIsCloseModal(false);
   };
@@ -53,31 +73,55 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
             onClick={() => setIsCloseModal(false)}
           />
         </div>
-        <div className="bg-true-black w-full md:w-[600px] h-28 rounded-[16px] border-true-black md:shadow-file-upload md:p-4">
-          <div className="bg-secondary-1 w-full h-28 md:h-20 rounded-[16px] outline-none p-4">
-            <input
-              ref={inputRef}
-              autoFocus
-              type="text"
-              value={inputValue}
-              onChange={handleInputChange}
-              className="text-[24px] md:text-[31px] font-sabo outline-none
+        <div className="bg-true-black w-full md:w-[700px] rounded-[16px] border-true-black md:shadow-file-upload md:p-4">
+          <div className="bg-secondary-1 w-full rounded-[16px] outline-none p-4">
+            {isMobile ? (
+              <textarea
+                autoFocus
+                value={inputValue}
+                onChange={handleTextAreaChange}
+                className="text-[24px] md:text-[31px] font-sabo outline-none
               bg-transparent
-             text-transparent
+              text-transparent
               placeholder:text-neutral-10
-              [&:not(:placeholder-shown)]:bg-gradient-purple [&:not(:placeholder-shown)]:bg-clip-text"
-              placeholder="title of my contest.."
-              minLength={CONTEST_TITLE_MIN_LENGTH}
-              maxLength={CONTEST_TITLE_MAX_LENGTH}
-            />
+              [&:not(:placeholder-shown)]:bg-gradient-purple [&:not(:placeholder-shown)]:bg-clip-text
+              w-full
+              resize-none
+              overflow-hidden
+              leading-tight"
+                placeholder="title of my contest.."
+                maxLength={CONTEST_TITLE_MAX_LENGTH}
+                rows={2}
+              />
+            ) : (
+              <input
+                autoFocus
+                value={inputValue}
+                onChange={handleInputChange}
+                className="text-[24px] md:text-[31px] font-sabo outline-none
+            bg-transparent
+            text-transparent
+            placeholder:text-neutral-10
+            [&:not(:placeholder-shown)]:bg-gradient-purple [&:not(:placeholder-shown)]:bg-clip-text
+            w-full
+            resize-none
+            overflow-hidden
+            leading-tight"
+                placeholder="title of my contest.."
+                maxLength={CONTEST_TITLE_MAX_LENGTH}
+              />
+            )}
           </div>
         </div>
-        <button
-          className="bg-gradient-purple self-center md:self-start rounded-[40px] w-80 h-10 text-center text-true-black text-[16px] font-bold hover:opacity-80 transition-opacity duration-300 ease-in-out"
-          onClick={() => handleEditContestNameClick(inputValue)}
-        >
-          save title
-        </button>
+        <div className="flex flex-col gap-4">
+          {error && <p className="text-[16px] text-negative-11 font-bold">{error}</p>}
+          <button
+            className="bg-gradient-purple self-center md:self-start rounded-[40px] w-80 h-10 text-center text-true-black text-[16px] font-bold hover:opacity-80 transition-opacity duration-300 ease-in-out"
+            onClick={() => handleEditContestNameClick(inputValue)}
+          >
+            save title
+          </button>
+        </div>
       </div>
     </DialogModalV4>
   );

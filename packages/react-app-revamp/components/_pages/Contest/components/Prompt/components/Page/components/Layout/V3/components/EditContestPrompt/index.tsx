@@ -4,7 +4,7 @@ import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { usePathname } from "next/navigation";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import EditContestPromptModal from "./components/Modal";
 import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
@@ -35,21 +35,15 @@ const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }
     contestAddress,
   });
   const [newPrompt, setNewPrompt] = useState({
-    summaryContent: contestSummary,
-    evaluateContent: contestEvaluate,
-    contactDetailsContent: contestContactDetails,
+    contestDescription: `${contestSummary}\n\n${contestEvaluate}\n\n${contestContactDetails}`,
   });
 
   if (!shouldRender) return null;
 
   const handleOpenModal = () => setIsEditContestNameModalOpen(true);
 
-  const handleEditPrompt = (newPrompt: {
-    summaryContent: string;
-    evaluateContent: string;
-    contactDetailsContent: string;
-  }) => {
-    setNewPrompt(newPrompt);
+  const handleEditPrompt = (contestDescription: string) => {
+    setNewPrompt({ contestDescription });
   };
 
   const handleSavePrompt = async () => {
@@ -57,7 +51,7 @@ const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }
 
     if (!isOnCorrectChain) await switchChain(config, { chainId: contestChainId });
 
-    const formattedPrompt = `${contestType}|${newPrompt.summaryContent}|${newPrompt.evaluateContent}|${newPrompt.contactDetailsContent}`;
+    const formattedPrompt = `${contestType}|${newPrompt.contestDescription}`;
 
     editPrompt(formattedPrompt);
   };
@@ -69,7 +63,7 @@ const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }
       </button>
 
       <EditContestPromptModal
-        prompt={newPrompt}
+        contestDescription={newPrompt.contestDescription}
         isOpen={isEditContestNameModalOpen}
         setIsCloseModal={setIsEditContestNameModalOpen}
         handleEditPrompt={handleEditPrompt}

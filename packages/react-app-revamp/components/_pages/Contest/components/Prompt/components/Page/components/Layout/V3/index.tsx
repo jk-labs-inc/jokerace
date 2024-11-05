@@ -74,7 +74,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
 
   return (
     <div className="flex items-start w-full">
-      <div className="flex flex-col gap-2 md:gap-4 md:w-[560px]">
+      <div className="flex flex-col gap-2 md:gap-4 w-80 xs:w-[460px] sm:w-[560px]">
         <div
           className={`overflow-hidden ${isContestCanceled ? "line-through" : ""}`}
           style={{ maxHeight: isExpanded ? "none" : "150px" }}

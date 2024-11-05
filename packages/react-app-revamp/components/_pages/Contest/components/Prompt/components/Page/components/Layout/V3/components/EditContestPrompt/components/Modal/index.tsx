@@ -7,86 +7,33 @@ import { useMediaQuery } from "react-responsive";
 
 interface EditContestPromptModalProps {
   isOpen: boolean;
-  prompt: {
-    summaryContent: string;
-    evaluateContent: string;
-    contactDetailsContent: string;
-  };
+  contestDescription: string;
   setIsCloseModal?: (isOpen: boolean) => void;
-  handleEditPrompt?: (prompt: {
-    summaryContent: string;
-    evaluateContent: string;
-    contactDetailsContent: string;
-  }) => void;
+  handleEditPrompt?: (contestDescription: string) => void;
   handleSavePrompt?: () => void;
 }
 
 const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
   isOpen,
-  prompt,
+  contestDescription,
   setIsCloseModal,
   handleEditPrompt,
   handleSavePrompt,
 }) => {
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
-
-  const editorSummarize = useEditor({
+  const editorContestDescription = useEditor({
     ...createEditorConfig({
-      content: prompt.summaryContent,
-      placeholderText: isMobile
-        ? "core team will pick best feature idea"
-        : "our core team will vote on $1000 for best feature proposal",
+      content: contestDescription,
+      placeholderText: "here is my contest description...",
       onUpdate: ({ editor }: { editor: Editor }) => {
         const content = editor.getHTML();
 
-        handleEditPrompt?.({
-          ...prompt,
-          summaryContent: content,
-        });
+        handleEditPrompt?.(content);
       },
     }),
-    onFocus: () => setActiveEditor(editorSummarize),
-  });
-
-  const editorEvaluateVoters = useEditor({
-    ...createEditorConfig({
-      content: prompt.evaluateContent,
-      placeholderText: isMobile
-        ? "pick which will bring the most users"
-        : "voters should vote on the feature that will bring the most users",
-      onUpdate: ({ editor }: { editor: Editor }) => {
-        const content = editor.getHTML();
-
-        handleEditPrompt?.({
-          ...prompt,
-          evaluateContent: content,
-        });
-      },
-    }),
-    onFocus: () => setActiveEditor(editorEvaluateVoters),
-  });
-
-  const editorContactDetails = useEditor({
-    ...createEditorConfig({
-      content: prompt.contactDetailsContent ?? "",
-      placeholderText: isMobile
-        ? "i’m on telegram: @me"
-        : "we have a telegram group for everyone to coordinate at tgexample.com",
-      onUpdate: ({ editor }: { editor: Editor }) => {
-        const content = editor.getHTML();
-
-        handleEditPrompt?.({
-          ...prompt,
-          contactDetailsContent: content,
-        });
-      },
-    }),
-    onFocus: () => setActiveEditor(editorContactDetails),
   });
 
   const onSavePrompt = () => {
-    if (editorSummarize?.isEmpty || editorEvaluateVoters?.isEmpty) return;
+    if (editorContestDescription?.isEmpty) return;
 
     handleSavePrompt?.();
     setIsCloseModal?.(false);
@@ -113,46 +60,21 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
             shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)]
             transition-all duration-300"
           >
-            <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
+            <TipTapEditorControls editor={editorContestDescription} />
           </div>
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-4">
-              <p className="text-[20px] text-neutral-9 font-bold">summarize the contest, rewards, and voters</p>
-              <div className="bg-true-black w-full md:w-[600px] rounded-[16px] border-true-black md:shadow-file-upload md:p-4">
-                <EditorContent
-                  editor={editorSummarize}
-                  className="bg-secondary-1 w-full rounded-[16px] outline-none p-4"
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-4">
-              <p className="text-[20px] text-neutral-9 font-bold">
-                how should voters evaluate if an entry is <i>good?</i>
-              </p>
-              <div className="bg-true-black w-full md:w-[600px] rounded-[16px] border-true-black md:shadow-file-upload md:p-4">
-                <EditorContent
-                  editor={editorEvaluateVoters}
-                  className="bg-secondary-1 w-full rounded-[16px] outline-none p-4"
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-4">
-              <p className="text-[20px] text-neutral-9 font-bold">
-                what’s the best way for players to reach you? (optional)
-              </p>
-              <div className="bg-true-black w-full md:w-[600px] rounded-[16px] border-true-black md:shadow-file-upload md:p-4">
-                <EditorContent
-                  editor={editorContactDetails}
-                  className="bg-secondary-1 w-full rounded-[16px] outline-none p-4"
-                />
-              </div>
+            <div className="bg-true-black w-full md:w-[600px] rounded-[16px] border-true-black md:shadow-file-upload md:p-4">
+              <EditorContent
+                editor={editorContestDescription}
+                className="bg-secondary-1 w-full rounded-[16px] outline-none p-4"
+              />
             </div>
           </div>
         </div>
 
         <div className="flex flex-col gap-4">
-          {editorSummarize?.isEmpty || editorEvaluateVoters?.isEmpty ? (
-            <p className="text-[16px] font-bold text-negative-11">summarize or evaluate prompt shouldn't be empty!</p>
+          {editorContestDescription?.isEmpty ? (
+            <p className="text-[16px] font-bold text-negative-11">contest description can't be empty!</p>
           ) : (
             ""
           )}
