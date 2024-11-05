@@ -16,7 +16,7 @@ const CancelContest = () => {
   const contestChainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
   const { address, chainId } = useAccount();
   const isUserOnCorrectChain = contestChainId === chainId;
-  const { contestAuthorEthereumAddress } = useContestStore(state => state);
+  const contestAuthorEthereumAddress = useContestStore(state => state.contestAuthorEthereumAddress);
   const { cancelContest, isLoading, isConfirmed } = useContestState();
   const { contestState } = useContestStateStore(state => state);
   const [isCloseContestModalOpen, setIsCloseContestModalOpen] = useState(false);
@@ -42,7 +42,7 @@ const CancelContest = () => {
   return (
     <>
       <button disabled={isLoading} onClick={handleOpenModal}>
-        <TrashIcon className="-ml-0 md:-ml-8 w-6 h-6 text-negative-11 hover:text-negative-10 transition-colors duration-300 ease-in-out" />
+        <TrashIcon className="w-6 h-6 text-negative-11 hover:text-negative-10 transition-colors duration-300 ease-in-out" />
       </button>
 
       <CancelContestModal

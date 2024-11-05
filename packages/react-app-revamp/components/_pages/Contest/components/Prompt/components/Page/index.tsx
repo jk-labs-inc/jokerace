@@ -8,10 +8,16 @@ interface ContestPromptPageProps {
 }
 
 const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
-  const { isV3 } = useContestStore(state => state);
+  const { isV3, canEditTitleAndDescription } = useContestStore(state => state);
 
   return (
-    <>{isV3 ? <ContestPromptPageV3Layout prompt={prompt} /> : <ContestPromptPageLegacyLayout prompt={prompt} />}</>
+    <>
+      {isV3 ? (
+        <ContestPromptPageV3Layout prompt={prompt} canEditTitleAndDescription={canEditTitleAndDescription} />
+      ) : (
+        <ContestPromptPageLegacyLayout prompt={prompt} />
+      )}
+    </>
   );
 };
 

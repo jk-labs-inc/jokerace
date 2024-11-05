@@ -54,6 +54,7 @@ import MustCancelToWithdrawContract from "@contracts/bytecodeAndAbi/Contest.4.33
 import AllowJkLabsDestUpdateContract from "@contracts/bytecodeAndAbi/Contest.4.34.allowJkLabsDestUpdate.sol/Contest.json";
 import OnlyCreatorChangeMerkleContract from "@contracts/bytecodeAndAbi/Contest.4.35.onlyCreatorChangeMerkle.sol/Contest.json";
 import NoCommentAfterCloseContract from "@contracts/bytecodeAndAbi/Contest.4.36.noCommentAfterClose.sol/Contest.json";
+import EditTitleDescContract from "@contracts/bytecodeAndAbi/Contest.4.37.editTitleDesc.sol/Contest.json";
 import NewValueAlreadyInArrayContract from "@contracts/bytecodeAndAbi/Contest.4.3.newValueAlreadyInArray.sol/Contest.json";
 import UseCustomErrorsContract from "@contracts/bytecodeAndAbi/Contest.4.4.useCustomErrors.sol/Contest.json";
 import CleanUpSortingContract from "@contracts/bytecodeAndAbi/Contest.4.5.cleanUpSorting.sol/Contest.json";
@@ -76,7 +77,9 @@ export async function getContestContractVersion(address: string, chainId: number
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
     const defaultReturn = { abi: null, version: "unknown" };
-    if (version === "4.36") {
+    if (version === "4.37") {
+      return { abi: EditTitleDescContract.abi, version }; 
+    } else if (version === "4.36") {
       return { abi: NoCommentAfterCloseContract.abi, version }; 
     } else if (version === "4.35") {
       return { abi: OnlyCreatorChangeMerkleContract.abi, version }; 

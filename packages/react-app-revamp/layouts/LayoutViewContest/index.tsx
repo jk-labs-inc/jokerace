@@ -53,6 +53,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     rewardsModuleAddress,
     rewardsAbi,
     contestAbi,
+    canEditTitleAndDescription,
     version,
   } = useContestStore(state => state);
   const accountChanged = useAccountChange();
@@ -215,7 +216,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                 <div className="animate-reveal pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
                     <div className="flex flex-col gap-2">
-                      <ContestName contestName={contestName} />
+                      <ContestName contestName={contestName} canEditTitle={canEditTitleAndDescription} />
                     </div>
 
                     <div className={`flex flex-row gap-3 md:gap-4 items-center`}>
