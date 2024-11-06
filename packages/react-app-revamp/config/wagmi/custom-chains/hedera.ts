@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const hedera: Chain = {
   id: 295,
   name: "hedera",
-  iconUrl: "/contest/mona-lisa-moustache.png",
+  iconUrl: "/hedera.svg",
   nativeCurrency: {
     decimals: 18,
     name: "HBAR",
