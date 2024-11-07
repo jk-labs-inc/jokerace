@@ -4,6 +4,7 @@ import { cookieStorage, createConfig, createStorage, fallback, http } from "wagm
 import { aevo } from "./custom-chains/aevo";
 import { ancient8 } from "./custom-chains/ancient8";
 import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
+import { apechain } from "./custom-chains/apechain";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { arthera } from "./custom-chains/arthera";
 import { artheraTestnet } from "./custom-chains/artheraTestnet";
@@ -191,6 +192,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   zeta,
   shape,
   morph,
+  apechain, 
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
