@@ -26,6 +26,7 @@ import { cookieStorage, createConfig, createStorage, fallback, http } from "wagm
 import { aevo } from "./custom-chains/aevo";
 import { ancient8 } from "./custom-chains/ancient8";
 import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
+import { apechain } from "./custom-chains/apechain";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { arthera } from "./custom-chains/arthera";
 import { artheraTestnet } from "./custom-chains/artheraTestnet";
@@ -123,7 +124,6 @@ import { sei } from "./custom-chains/sei";
 import { seiTestnet } from "./custom-chains/seiTestnet";
 import { sepolia } from "./custom-chains/sepolia";
 import { shape } from "./custom-chains/shape";
-import { soneiumTestnet } from "./custom-chains/soneiumTestnet";
 import { storyTestnet } from "./custom-chains/storyTestnet";
 import { syndicateFrame } from "./custom-chains/syndicateFrame";
 import { taiko } from "./custom-chains/taiko";
@@ -220,6 +220,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   zeta,
   shape,
   morph,
+  apechain,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
@@ -271,7 +272,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   rolluxTestnet,
   syscoinTestnet,
   storyTestnet,
-  soneiumTestnet,
   laminaTestnet,
   fhenixHeliumTestnet,
   plumeTestnet,
@@ -283,6 +283,8 @@ const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 
 const appName = "jokerace";
 const projectId = WALLETCONECT_PROJECT_ID;
+
+coinbaseWallet.preference = 'smartWalletOnly';
 
 const connectors = connectorsForWallets(
   [
