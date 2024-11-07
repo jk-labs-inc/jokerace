@@ -8049,10 +8049,10 @@
     mipd "0.0.7"
     zustand "5.0.0"
 
-"@wagmi/core@2.14.2":
-  version "2.14.2"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.14.2.tgz#0697e13ac1dbf3bbec3f79d0bdffa4e7ee290dcf"
-  integrity sha512-FugfZ2/4E4unj1VODvDznfK0iff8krZ1CpBv4Ckf/XK7t54Had71tokTgqvhsYDIcxPhVBfeGHMWFxugmhzAmA==
+"@wagmi/core@2.14.3":
+  version "2.14.3"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.14.3.tgz#030d3f8775e7d9855f639de8eb242669b1975cfb"
+  integrity sha512-KpbejlQcXa5w6G9c0cXMspZJ/+ni3HzhybhoBCk9lWbQgGkI5o27Ay+FVR7TI6sMG8V5sG/XE51Rscyqg8xiNg==
   dependencies:
     eventemitter3 "5.0.1"
     mipd "0.0.7"
