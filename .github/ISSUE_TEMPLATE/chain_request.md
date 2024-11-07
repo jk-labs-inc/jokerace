@@ -11,7 +11,7 @@ Please include the network name, RPC url, chain id, native currency symbol, bloc
 
 If you are a mainnet chain, please drop a link showing that koinly supports you so we can enable monetization (which allows creator fees, anyone-can-vote contests, circuits, etc).
 
-And lastly, please @danglard somewhere in your ticket so that he can be notified when it's closed. 
+And lastly, please @divine-economy somewhere in your ticket so that he can be notified when it's closed. 
 
 Please use [this issue](https://github.com/jk-labs-inc/jokerace/issues/2047) as a template! 
 
