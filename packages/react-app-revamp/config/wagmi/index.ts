@@ -284,6 +284,8 @@ const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 const appName = "jokerace";
 const projectId = WALLETCONECT_PROJECT_ID;
 
+coinbaseWallet.preference = 'smartWalletOnly';
+
 const connectors = connectorsForWallets(
   [
     {
