@@ -14360,10 +14360,10 @@ orderedmap@^2.0.0:
   resolved "https://registry.yarnpkg.com/orderedmap/-/orderedmap-2.1.1.tgz#61481269c44031c449915497bf5a4ad273c512d2"
   integrity sha512-TvAWxi0nDe1j/rtMcWcIj94+Ffe6n7zhow33h40SKxmsmozs6dz/e+EajymfoFcHd7sxNn8yHM8839uixMOV6g==
 
-ox@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/ox/-/ox-0.1.0.tgz#ff6d914b57f973a2e0af5532e4d60b9aea05e84f"
-  integrity sha512-xs+STnBP8XG38N+7W5c/5LRN68XOleiTfKJlSBw5rcorIfGvpJPB45lRE3AlziiiuZ+KrEd/1ZLrD+LkN5XFzQ==
+ox@0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/ox/-/ox-0.1.2.tgz#0f791be2ccabeaf4928e6d423498fe1c8094e560"
+  integrity sha512-ak/8K0Rtphg9vnRJlbOdaX9R7cmxD2MiSthjWGaQdMk3D7hrAlDoM+6Lxn7hN52Za3vrXfZ7enfke/5WjolDww==
   dependencies:
     "@adraffy/ens-normalize" "^1.10.1"
     "@noble/curves" "^1.6.0"
@@ -17566,10 +17566,10 @@ vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
-viem@2.21.43:
-  version "2.21.43"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.21.43.tgz#02a977bd8e1fa94836cd97c515ca7c0a2ff1a63d"
-  integrity sha512-dSLb5bMRSr2Jw65xSZs6YMynhLMewvmlmYMtBK3IblFqa3b1O/N+Fn9qkTZxP5BUzKp8AB2eRTipESzGkLtfAg==
+viem@2.21.44:
+  version "2.21.44"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.21.44.tgz#793600a6afa8c0c1d62b4b819d036f833f623195"
+  integrity sha512-oyLTCt7OQUetQN2m9KPNgSA//MzpnQLABAyglPKh+fAypU8cTT/hC5UyLQvaYt4WPg6dkbKOxfsahV4739pu9w==
   dependencies:
     "@noble/curves" "1.6.0"
     "@noble/hashes" "1.5.0"
@@ -17577,7 +17577,7 @@ viem@2.21.43:
     "@scure/bip39" "1.4.0"
     abitype "1.0.6"
     isows "1.0.6"
-    ox "0.1.0"
+    ox "0.1.2"
     webauthn-p256 "0.0.10"
     ws "8.18.0"
 
