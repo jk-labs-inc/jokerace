@@ -67,7 +67,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const isCorrectNetwork = chainId === chain?.id;
   const [isDragging, setIsDragging] = useState(false);
   const { uploadImage } = useUploadImageStore(state => state);
-  const placeholderText = "this is my entry...";
+  const placeholderText = "this is my description about the entry (optional)...";
 
   const editorProposal = useEditor({
     extensions: [
