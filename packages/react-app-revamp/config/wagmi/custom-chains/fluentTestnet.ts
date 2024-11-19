@@ -11,15 +11,15 @@ export const fluentTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://rpc.dev.thefluent.xyz/"],
+      http: ["https://rpc.dev.gblend.xyz/"],
     },
     default: {
-      http: ["https://rpc.dev.thefluent.xyz/"],
+      http: ["https://rpc.dev.gblend.xyz/"],
     },
   },
   blockExplorers: {
-    etherscan: { name: "Fluent Testnet Block Explorer", url: "https://blockscout.dev.thefluent.xyz/" },
-    default: { name: "Fluent Testnet Block Explorer", url: "https://blockscout.dev.thefluent.xyz/" },
+    etherscan: { name: "Fluent Testnet Block Explorer", url: "https://blockscout.dev.gblend.xyz/" },
+    default: { name: "Fluent Testnet Block Explorer", url: "https://blockscout.dev.gblend.xyz/" },
   },
   testnet: true,
 };
