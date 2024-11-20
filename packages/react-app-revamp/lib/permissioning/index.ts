@@ -124,6 +124,7 @@ export async function fetchNftHolders(
 
 export async function fetchTokenHolders(
   type: "voting" | "submission",
+  tokenSymbol: string,
   contractAddress: string,
   chainName: string,
   minTokensRequired: number = 1,
@@ -141,6 +142,12 @@ export async function fetchTokenHolders(
   const chain = chains.find(c => c.name.toLowerCase() === chainName.toLowerCase());
   if (!chain) {
     return new Error("invalid chain name provided");
+  }
+
+  if (chain.nativeCurrency.symbol === tokenSymbol) {
+    return new Error(
+      `contest is already allowlisted to ${chain.nativeCurrency.symbol} holders as they'll need it to pay charges.`,
+    );
   }
 
   try {
