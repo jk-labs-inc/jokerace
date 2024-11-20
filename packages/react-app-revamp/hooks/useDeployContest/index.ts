@@ -76,7 +76,6 @@ export function useDeployContest() {
         DeployedContestContract.bytecode,
         signer,
       );
-      let jkLabsSplitDestination = "";
       const combinedPrompt = `${prompt.summarize}|${prompt.evaluateVoters}|${prompt.contactDetails ?? ""}`;
       const contestInfo = type + "|" + combinedPrompt;
       const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled || votingMerkleData.csv;
@@ -86,12 +85,7 @@ export function useDeployContest() {
       const { merkleRoot: submissionMerkleRoot = EMPTY_ROOT } = submissionMerkle || {};
       const { merkleRoot: votingMerkleRoot = EMPTY_ROOT } = votingMerkle || {};
       const { allowedSubmissionsPerUser, maxSubmissions } = customization;
-      const creatorSplitDestination =
-        charge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet
-          ? signer._address
-          : charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit
-            ? JK_LABS_SPLIT_DESTINATION_DEFAULT
-            : charge.splitFeeDestination.address;
+      let jkLabsSplitDestination = "";
 
       // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
       const finalAllowedSubmissionsPerUser =
@@ -129,7 +123,12 @@ export function useDeployContest() {
 
       const constructorArgs = {
         intConstructorArgs,
-        creatorSplitDestination,
+        creatorSplitDestination:
+          charge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet
+            ? signer._address
+            : charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit
+              ? jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT
+              : charge.splitFeeDestination.address,
         jkLabsSplitDestination: jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT,
         metadataFieldsSchema: createMetadataFieldsSchema(metadataFields),
       };
