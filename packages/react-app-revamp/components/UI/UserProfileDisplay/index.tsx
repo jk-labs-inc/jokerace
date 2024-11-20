@@ -3,6 +3,8 @@ import { ROUTE_VIEW_USER } from "@config/routes";
 import useProfileData from "@hooks/useProfileData";
 import Link from "next/link";
 import { Avatar } from "../Avatar";
+import { CheckCircleIcon, LinkIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 
 interface UserProfileDisplayProps {
   ethereumAddress: string;
@@ -48,6 +50,7 @@ const UserProfileDisplay = ({
     includeSocials,
   );
   const { avatarSizeClass, textSizeClass } = SIZES[size];
+  const [isAddressCopied, setIsAddressCopied] = useState(false);
 
   if (textualVersion) {
     return (
@@ -73,6 +76,14 @@ const UserProfileDisplay = ({
     );
   }
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(ethereumAddress);
+    setIsAddressCopied(true);
+    setTimeout(() => {
+      setIsAddressCopied(false);
+    }, 1000);
+  };
+
   return (
     <div
       className={`flex ${
@@ -86,14 +97,23 @@ const UserProfileDisplay = ({
         <p className={`${textSizeClass} animate-flicker-infinite`}>Loading profile data</p>
       ) : (
         <div className="animate-reveal flex flex-col gap-1">
-          <a
-            className={`no-underline ${textSizeClass} ${textColor || "text-neutral-11"} font-bold`}
-            target="_blank"
-            rel="noopener noreferrer"
-            href={includeSocials ? undefined : `${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
-          >
-            {profileName}
-          </a>
+          <div className="flex items-center gap-2">
+            <a
+              className={`no-underline ${textSizeClass} ${textColor || "text-neutral-11"} font-bold`}
+              target="_blank"
+              rel="noopener noreferrer"
+              href={includeSocials ? undefined : `${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
+            >
+              {profileName}
+            </a>
+            {isAddressCopied ? (
+              <CheckCircleIcon className="w-4 h-4 text-positive-11" />
+            ) : (
+              <button className="flex lg:hidden items-center gap-1" onClick={copyToClipboard}>
+                <img src="/icons/copy.svg" alt="link" className="w-4 h-4" />
+              </button>
+            )}
+          </div>
 
           {includeSocials ? (
             <div className="flex gap-2 items-center">
