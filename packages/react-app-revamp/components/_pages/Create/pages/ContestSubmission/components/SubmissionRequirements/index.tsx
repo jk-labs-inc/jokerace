@@ -157,6 +157,7 @@ const CreateSubmissionRequirements = () => {
       } else {
         result = await fetchTokenHolders(
           "submission",
+          submissionRequirements.symbol,
           submissionRequirements.tokenAddress,
           submissionRequirements.chain,
           submissionRequirements.minTokensRequired,
