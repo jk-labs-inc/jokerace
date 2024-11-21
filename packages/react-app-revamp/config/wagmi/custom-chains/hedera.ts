@@ -5,16 +5,16 @@ export const hedera: Chain = {
   name: "hedera",
   iconUrl: "/hedera.svg",
   nativeCurrency: {
-    decimals: 8,
+    decimals: 18,
     name: "HBAR",
     symbol: "HBAR",
   },
   rpcUrls: {
     public: {
-      http: ["https://295.rpc.thirdweb.com"],
+      http: ["https://mainnet.hashio.io/api"],
     },
     default: {
-      http: ["https://295.rpc.thirdweb.com"],
+      http: ["https://mainnet.hashio.io/api"],
     },
   },
   blockExplorers: {
