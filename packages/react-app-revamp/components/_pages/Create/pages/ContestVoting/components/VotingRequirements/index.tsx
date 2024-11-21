@@ -245,6 +245,7 @@ const CreateVotingRequirements = () => {
       } else {
         votingAllowlist = await fetchTokenHolders(
           "voting",
+          votingRequirements.symbol,
           votingRequirements.tokenAddress,
           votingRequirements.chain,
           votingRequirements.minTokensRequired,

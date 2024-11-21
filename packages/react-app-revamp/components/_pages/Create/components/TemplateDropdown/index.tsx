@@ -15,8 +15,12 @@ interface CreateTemplateDropdownProps {
   onChange?: (option: TemplateType) => void;
 }
 
+const defaultSelectedOption = TemplateType.demoDay;
+
 const CreateTemplateDropdown: FC<CreateTemplateDropdownProps> = ({ options, className, onChange }) => {
-  const [selectedOption, setSelectedOption] = useState<TemplateOption | null>(null);
+  const [selectedOption, setSelectedOption] = useState<TemplateOption | null>(
+    options.find(o => o.value === defaultSelectedOption) || null,
+  );
 
   const handleOptionChange = (option: TemplateOption) => {
     setSelectedOption(option);

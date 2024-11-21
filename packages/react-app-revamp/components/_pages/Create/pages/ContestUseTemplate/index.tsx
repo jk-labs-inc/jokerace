@@ -22,7 +22,7 @@ const CreateContestTemplate = () => {
   const { setStartContestWithTemplate } = useCreateContestStartStore(state => state);
   const { step: currentStep, setStep } = useDeployContestStore(state => state);
   const setContestTemplateConfig = useSetContestTemplate();
-  const [selectedTemplate, setSelectedTemplate] = useState<TemplateType | "">("");
+  const [selectedTemplate, setSelectedTemplate] = useState<TemplateType | "">(TemplateType.demoDay);
   const [showStepper, setShowStepper] = useState(false);
   const [isFullMode, setIsFullMode] = useState(false);
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
