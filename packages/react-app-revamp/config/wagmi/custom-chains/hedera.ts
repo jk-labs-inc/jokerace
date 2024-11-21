@@ -5,7 +5,7 @@ export const hedera: Chain = {
   name: "hedera",
   iconUrl: "/hedera.svg",
   nativeCurrency: {
-    decimals: 18,
+    decimals: 8,
     name: "HBAR",
     symbol: "HBAR",
   },
