@@ -40,7 +40,6 @@ import { mantle } from "./custom-chains/mantle";
 import { metis } from "./custom-chains/metis";
 import { mode } from "./custom-chains/mode";
 import { optimism } from "./custom-chains/optimism";
-import { optimismTestnet } from "./custom-chains/optimismTestnet";
 import { polygon } from "./custom-chains/polygon";
 import { polygonZk } from "./custom-chains/polygonZk";
 import { scroll } from "./custom-chains/scroll";
@@ -64,7 +63,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   base,
   avalanche,
   zora,
-  bnb,
   linea,
   celo,
   gnosis,

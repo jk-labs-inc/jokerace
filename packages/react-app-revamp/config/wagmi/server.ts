@@ -8,10 +8,13 @@ import { baseTestnet } from "./custom-chains/baseTestnet";
 import { boba } from "./custom-chains/boba";
 import { celo } from "./custom-chains/celo";
 import { cyber } from "./custom-chains/cyber";
+import { fluentTestnet } from "./custom-chains/fluentTestnet";
 import { forma } from "./custom-chains/forma";
 import { gnosis } from "./custom-chains/gnosis";
 import { kaiaTestnet } from "./custom-chains/kaiaTestnet";
+import { linea } from "./custom-chains/linea";
 import { mainnet } from "./custom-chains/mainnet";
+import { mantle } from "./custom-chains/mantle";
 import { metis } from "./custom-chains/metis";
 import { mode } from "./custom-chains/mode";
 import { optimism } from "./custom-chains/optimism";
@@ -41,6 +44,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   sei,
   cyber,
   metis,
+  forma,
   boba,
   sepolia,
   baseTestnet,
