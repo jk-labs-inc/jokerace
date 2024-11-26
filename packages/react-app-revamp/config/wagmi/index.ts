@@ -78,8 +78,8 @@ export const chains: readonly [Chain, ...Chain[]] = [
   boba,
   sepolia,
   baseTestnet,
-  fluentTestnet,  
   kaiaTestnet,
+  fluentTestnet,  
   mainnet,
 ];
 
