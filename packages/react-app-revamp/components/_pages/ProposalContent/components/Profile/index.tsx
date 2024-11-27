@@ -10,6 +10,7 @@ interface ProposalContentProfileProps {
   isError: boolean;
   size?: "extraSmall" | "small" | "medium" | "large";
   textColor?: string;
+  dropShadow?: boolean;
 }
 
 const ProposalContentProfile: FC<ProposalContentProfileProps> = ({
@@ -19,6 +20,7 @@ const ProposalContentProfile: FC<ProposalContentProfileProps> = ({
   isError,
   textColor,
   size = "small",
+  dropShadow = false,
 }) => {
   return (
     <>
@@ -28,8 +30,12 @@ const ProposalContentProfile: FC<ProposalContentProfileProps> = ({
         <p className="text-negative-11 font-bold text-[12px]">ruh-roh, couldn't load creator name!</p>
       ) : (
         <div className="flex gap-2 items-center">
-          <Avatar src={avatar} size={size} />
-          <p className={`font-bold ${SIZES[size].textSizeClass} ${textColor ? textColor : "text-neutral-11"}`}>
+          {avatar ? <Avatar src={avatar} size={size} /> : null}
+          <p
+            className={`font-bold ${SIZES[size].textSizeClass} ${textColor ? textColor : "text-neutral-11"} ${
+              dropShadow ? "drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]" : ""
+            }`}
+          >
             {name}
           </p>
         </div>
