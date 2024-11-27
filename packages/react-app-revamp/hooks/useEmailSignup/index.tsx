@@ -1,6 +1,7 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { supabase } from "@config/supabase";
 import { isSupabaseConfigured } from "@helpers/database";
+import moment from "moment";
 import { useState } from "react";
 
 const useEmailSignup = () => {
@@ -15,7 +16,13 @@ const useEmailSignup = () => {
       setLoading(true);
       showToasts && toastLoading("Subscribing...");
       try {
-        const { error } = await supabase.from("email_signups").insert([{ email_address, user_address }]);
+        const { error } = await supabase.from("email_signups").insert([
+          {
+            email_address,
+            user_address,
+            date: moment().format("YYYY-MM-DD HH:mm:ss"),
+          },
+        ]);
         setLoading(false);
         if (error) {
           showToasts && toastError("There was an error while subscribing. Please try again later.", error.message);

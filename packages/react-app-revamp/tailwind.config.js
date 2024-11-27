@@ -186,6 +186,7 @@ module.exports = {
         12: "#CDCDCD",
         13: "#8E8E8E",
         14: "#A1A1A1",
+        15: "#D0D0D0",
       },
     },
     extend: {

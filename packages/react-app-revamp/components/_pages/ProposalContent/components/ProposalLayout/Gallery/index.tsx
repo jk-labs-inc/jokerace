@@ -1,13 +1,12 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
-import { CheckIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
 import ImageWithFallback from "../../ImageWithFallback";
 import ProposalContentProfile from "../../Profile";
-import ProposalLayoutGalleryMobile from "./components/Mobile";
 import ProposalLayoutGalleryRankOrPlaceholder from "./components/RankOrPlaceholder";
 
 interface ProposalLayoutGalleryProps {
@@ -33,12 +32,9 @@ interface ProposalLayoutGalleryProps {
 const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
   proposal,
   proposalAuthorData,
-  isMobile,
   chainName,
   contestAddress,
   contestStatus,
-  formattedVotingOpen,
-  commentLink,
   allowDelete,
   selectedProposalIds,
   handleVotingModalOpen,
@@ -62,57 +58,35 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
     toggleProposalSelection?.(proposal.id);
   };
 
-  if (isMobile) {
-    return (
-      <ProposalLayoutGalleryMobile
-        proposal={proposal}
-        proposalAuthorData={proposalAuthorData}
-        isMobile={isMobile}
-        chainName={chainName}
-        contestAddress={contestAddress}
-        contestStatus={contestStatus}
-        formattedVotingOpen={formattedVotingOpen}
-        commentLink={commentLink}
-        allowDelete={allowDelete}
-        selectedProposalIds={selectedProposalIds}
-        handleVotingModalOpen={onVotingModalOpen}
-        toggleProposalSelection={onDeleteClick}
-      />
-    );
-  }
-
   return (
     <Link
       href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
       className="flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out"
     >
-      <div className="pl-2 items-center flex justify-between w-full">
-        <ProposalContentProfile
-          name={proposalAuthorData.name}
-          avatar={proposalAuthorData.avatar}
-          isLoading={proposalAuthorData.isLoading}
-          isError={proposalAuthorData.isError}
-          textColor="text-neutral-9"
-          size="small"
-        />
-        <button
-          onClick={navigateToProposal}
-          className="w-6 h-6 flex justify-center items-center rounded-full border text-positive-11 border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out group"
-        >
-          <ChevronRightIcon className="w-4 h-4 group-hover:brightness-0 group-hover:saturate-0" />
-        </button>
-      </div>
       <div className="rounded-2xl overflow-hidden relative">
         <ImageWithFallback
           mediumSrc={`${proposal.metadataFields.stringArray[0]}`}
           fullSrc={proposal.metadataFields.stringArray[0]}
           alt="entry image"
         />
+
         {proposal.rank ? (
           <div className="absolute top-2 left-2">
             <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} />
           </div>
         ) : null}
+
+        <div className="absolute top-2 right-2">
+          <ProposalContentProfile
+            name={proposalAuthorData.name}
+            avatar=""
+            isLoading={proposalAuthorData.isLoading}
+            isError={proposalAuthorData.isError}
+            textColor="text-neutral-15"
+            size="extraSmall"
+            dropShadow
+          />
+        </div>
 
         {allowDelete ? (
           <div className="absolute bottom-1 left-2">
