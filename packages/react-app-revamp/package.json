@@ -48,7 +48,7 @@
     "@wagmi/core": "2.14.5",
     "autoprefixer": "10.4.20",
     "cheerio": "1.0.0",
-    "class-variance-authority": "0.7.0",
+    "class-variance-authority": "0.7.1",
     "compare-versions": "6.1.1",
     "date-fns": "3.6.0",
     "eslint": "9.15.0",
