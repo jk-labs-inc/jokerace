@@ -5,6 +5,7 @@ import CoinviseExtension from "./Coinvise";
 import HatsProtocolExtension from "./HatsProtocol";
 import NanceExtension from "./Nance";
 import StackExtension from "./Stack";
+import DuneExtension from "./Dune";
 
 type ExtensionComponentMap = {
   [key: string]: React.ComponentType<any>;
@@ -16,6 +17,7 @@ const EXTENSION_COMPONENTS: ExtensionComponentMap = {
   nance: NanceExtension,
   coinvise: CoinviseExtension,
   stack: StackExtension,
+  dune: DuneExtension,
 };
 
 interface ExtensionsListProps {
