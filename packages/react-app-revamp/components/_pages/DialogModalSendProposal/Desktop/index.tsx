@@ -98,8 +98,6 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const handleConfirm = () => {
     setError(null);
 
-    console.log({ metadataFields });
-
     if (metadataFields.length > 0) {
       if (isAnyMetadataFieldEmpty()) {
         setError("Please fill in all additional fields before submitting.");

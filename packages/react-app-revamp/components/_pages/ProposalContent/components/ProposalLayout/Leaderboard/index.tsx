@@ -5,13 +5,14 @@ import { ChatBubbleLeftEllipsisIcon, ChevronDownIcon, ChevronRightIcon, LinkIcon
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
 import Link from "next/link";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import ProposalContentDeleteButton from "../../Buttons/Delete";
 import ProposalContentProfile from "../../Profile";
 import ProposalLayoutLeaderboardMobile from "./components/Mobile";
 import ProposalLayoutLeaderboardRankOrPlaceholder from "./components/RankOrPlaceholder";
 import { toastInfo } from "@components/UI/Toast";
 import { UrlMatcher } from "interweave-autolink";
+import { useEntryPreviewTitleToggleStore } from "@components/_pages/Contest/components/EntryPreviewTitleToggle/store";
 
 interface ProposalLayoutLeaderboardProps {
   proposal: Proposal;
@@ -49,6 +50,12 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
 }) => {
   const [isContentHidden, setIsContentHidden] = useState(true);
   const entryTitle = proposal.metadataFields.stringArray[0];
+  const { isExpanded } = useEntryPreviewTitleToggleStore(state => state);
+
+  useEffect(() => {
+    if (isExpanded) setIsContentHidden(false);
+    else setIsContentHidden(true);
+  }, [isExpanded]);
 
   const handleToggleVisibility = () => {
     setIsContentHidden(!isContentHidden);
