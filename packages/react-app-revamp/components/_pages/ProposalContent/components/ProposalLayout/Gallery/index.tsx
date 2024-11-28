@@ -74,7 +74,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 
   useEffect(() => {
     updateImgUrl();
-  }, [enabledPreview]);
+  }, [enabledPreview, proposal.metadataFields.stringArray]);
 
   return (
     <Link

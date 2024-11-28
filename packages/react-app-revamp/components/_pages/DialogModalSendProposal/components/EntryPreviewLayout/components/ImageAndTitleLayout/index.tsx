@@ -83,7 +83,7 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.trim();
+    const value = e.target.value;
     setInputValue(value);
     setIsExceeded(value.length >= MAX_IMAGE_TITLE_LENGTH);
     updateCombinedValue(imageUrl, value);
