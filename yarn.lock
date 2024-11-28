@@ -4032,10 +4032,10 @@
     ethers "^5.7.2"
     tslib "^2.6.2"
 
-"@lens-protocol/client@2.3.1":
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/client/-/client-2.3.1.tgz#833122c7780ea2ddd797e0d2272845d9c1214205"
-  integrity sha512-Ey1yg8N2lp51wyWXKacOs36aOHlmCsF4ysCBJH4C85wwxIFBKbN5jXZX9Zxd1Gfe658SxKU2zGjBsg3X6LikiA==
+"@lens-protocol/client@2.3.2":
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/client/-/client-2.3.2.tgz#9421308bb691374c20a44d9784cee33d6d8a7b25"
+  integrity sha512-TOgCCTcJHHUI8dyfiAFo1rz8SukLgpZ+YFOf/34MsdPuAreK236MVAeIjXKFVnxLBxeLFcxCmUaBjsI0WD5eoQ==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/abstract-signer" "^5.7.0"
