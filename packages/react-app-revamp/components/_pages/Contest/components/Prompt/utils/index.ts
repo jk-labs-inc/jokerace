@@ -4,10 +4,10 @@ interface ParsedPrompt {
   contestSummary: string;
   contestEvaluate: string;
   contestContactDetails: string;
+  contestImageUrl?: string;
 }
 
 export const parsePrompt = (prompt: string): ParsedPrompt => {
-  const segments = prompt.split("|");
   const defaultPrompt: ParsedPrompt = {
     contestType: "",
     contestTitle: "",
@@ -16,14 +16,29 @@ export const parsePrompt = (prompt: string): ParsedPrompt => {
     contestContactDetails: "",
   };
 
+  try {
+    const params = new URLSearchParams(prompt);
+    if (params.has("type") && params.has("summarize") && params.has("evaluateVoters")) {
+      return {
+        ...defaultPrompt,
+        contestType: params.get("type") || "",
+        contestSummary: params.get("summarize") || "",
+        contestEvaluate: params.get("evaluateVoters") || "",
+        contestContactDetails: params.get("contactDetails") || "",
+        contestImageUrl: params.get("imageUrl") || "",
+      };
+    }
+  } catch (error) {
+    console.error("Error parsing URLSearchParams:", error);
+  }
+
+  const segments = prompt.split("|");
+
   if (segments.length === 2) {
-    // new minimal format with just type and summary
     return { ...defaultPrompt, contestType: segments[0], contestSummary: segments[1] };
   } else if (segments.length === 3) {
-    // new format without title
     return { ...defaultPrompt, contestType: segments[0], contestSummary: segments[1], contestEvaluate: segments[2] };
   } else if (segments.length === 4) {
-    // new format without title, but with contact details
     return {
       ...defaultPrompt,
       contestType: segments[0],
@@ -32,7 +47,6 @@ export const parsePrompt = (prompt: string): ParsedPrompt => {
       contestContactDetails: segments[3],
     };
   } else if (segments.length === 5) {
-    // old format with all fields
     return {
       contestType: segments[0],
       contestTitle: segments[1],

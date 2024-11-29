@@ -76,8 +76,14 @@ export function useDeployContest() {
         DeployedContestContract.bytecode,
         signer,
       );
-      const combinedPrompt = `${prompt.summarize}|${prompt.evaluateVoters}|${prompt.contactDetails ?? ""}`;
-      const contestInfo = type + "|" + combinedPrompt;
+      const combinedPrompt = new URLSearchParams({
+        type: type,
+        summarize: prompt.summarize,
+        evaluateVoters: prompt.evaluateVoters,
+        contactDetails: prompt.contactDetails ?? "",
+        imageUrl: prompt.imageUrl ?? "",
+      }).toString();
+
       const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled || votingMerkleData.csv;
       const submissionMerkle =
         submissionMerkleData.manual || submissionMerkleData.prefilled || submissionMerkleData.csv;
@@ -135,7 +141,7 @@ export function useDeployContest() {
 
       const contractContest = await factoryCreateContest.deploy(
         title,
-        contestInfo,
+        combinedPrompt,
         submissionMerkleRoot,
         votingMerkleRoot,
         constructorArgs,
