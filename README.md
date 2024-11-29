@@ -67,7 +67,7 @@ You will also need to do two more things if the ABI is changed:
 
 ## Audits
 
-Our smart contracts were audited by Certik in September 2023, the audit report is available [here](https://github.com/jk-labs-inc/jokerace-audits/blob/main/audit-reports/Sept23_Certik_Final_Report.pdf).
+Our smart contracts were audited by Certik in September 2023, and the audit report is available [here](https://github.com/jk-labs-inc/jokerace-audits/blob/main/audit-reports/Sept23_Certik_Final_Report.pdf).
 
 ## Built with
 - NextJS
