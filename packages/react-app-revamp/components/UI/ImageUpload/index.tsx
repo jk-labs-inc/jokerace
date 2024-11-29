@@ -1,6 +1,5 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import React, { FC, useMemo, useRef, useState } from "react";
-import { ACCEPTED_FILE_TYPES } from "./utils";
 
 interface ImageUploadProps {
   step?: number;
@@ -90,8 +89,8 @@ const ImageUpload: FC<ImageUploadProps> = ({ onFileSelect, step, isSuccess }) =>
           </>
         ) : (
           <>
-            <p className="text-neutral-10 text-[16px] font-bold">drag & drop image/gif</p>
-            <span className="text-neutral-10 text-[16px] font-normal self-center">
+            <p className="text-neutral-11 text-[16px] font-bold">drag & drop image/gif</p>
+            <span className="text-neutral-11 text-[16px] font-normal self-center">
               or <span className="text-[16px] text-positive-11">browse</span>
             </span>
           </>

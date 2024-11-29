@@ -10,6 +10,11 @@ import ErrorMessage from "../../components/Error";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
+import CreateFlowPromptPreview from "../../components/PromptPreview";
+import CreateFlowPromptPreviewToggle from "../../components/PromptPreviewToggle";
+import ImageUpload from "@components/UI/ImageUpload";
+import { ACCEPTED_FILE_TYPES } from "@components/UI/ImageUpload/utils";
+import { useUploadImageStore } from "@hooks/useUploadImage";
 
 const CreateContestPrompt = () => {
   const { step, prompt, setPrompt, errors } = useDeployContestStore(state => state);
@@ -18,6 +23,10 @@ const CreateContestPrompt = () => {
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const title = isMobile ? "description" : "now for the description";
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const { uploadImage } = useUploadImageStore();
 
   const editorSummarize = useEditor({
     ...createEditorConfig({
@@ -73,6 +82,45 @@ const CreateContestPrompt = () => {
     onFocus: () => setActiveEditor(editorContactDetails),
   });
 
+  const validateFile = (file: File): boolean => {
+    if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
+      setUploadError("Please upload a valid image/gif file (JPEG, JPG, PNG, JFIF, GIF, or WebP)");
+      return false;
+    }
+
+    const maxSize = 20 * 1024 * 1024; // 20MB in bytes
+    if (file.size > maxSize) {
+      setUploadError("File size should be less than 20MB");
+      return false;
+    }
+
+    return true;
+  };
+
+  const onFileSelectHandler = async (file: File) => {
+    if (!validateFile(file)) {
+      return;
+    }
+
+    try {
+      const imageUrl = await uploadImageToServer(file);
+
+      setUploadSuccess(true);
+      setUploadError("");
+      setPrompt({
+        ...prompt,
+        imageUrl: imageUrl,
+      });
+    } catch (error) {
+      setUploadError("Failed to upload image. Please try again.");
+    }
+  };
+
+  const uploadImageToServer = async (file: File): Promise<string> => {
+    const img = await uploadImage(file);
+    return img ?? "";
+  };
+
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
@@ -81,66 +129,90 @@ const CreateContestPrompt = () => {
           <StepCircle step={step + 1} />
         </div>
         <div className="col-span-2 ml-10">
-          <p className="text-[24px] text-neutral-11 font-bold">{title}</p>
+          <div className="flex justify-between w-full md:w-[650px]">
+            <p className="text-[24px] text-neutral-11 font-bold">{title}</p>
+            <CreateFlowPromptPreviewToggle onClick={() => setIsPreviewOpen(!isPreviewOpen)} />
+          </div>
         </div>
-        <div className="grid gap-12 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-2 w-full">
-          <div className="flex bg-true-black z-10 justify-start w-full md:w-[650px] px-1 py-2 border-y border-neutral-10">
-            <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
+        {isPreviewOpen ? (
+          <div className="grid gap-12 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-8 w-full md:w-[650px]">
+            <CreateFlowPromptPreview
+              summarize={{ content: prompt.summarize, isEmpty: editorSummarize?.isEmpty ?? true }}
+              evaluateVoters={{ content: prompt.evaluateVoters, isEmpty: editorEvaluateVoters?.isEmpty ?? true }}
+              contactDetails={{ content: prompt.contactDetails ?? "", isEmpty: editorContactDetails?.isEmpty ?? true }}
+              imageUrl={prompt.imageUrl}
+            />
           </div>
-          <div className="flex flex-col gap-8">
-            <p className="text-neutral-11 text-[20px] font-bold">summarize the contest, prizes, and voters:</p>
-            <div className="flex flex-col gap-2">
-              <EditorContent
-                editor={editorSummarize}
-                className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
-              />
-
-              {currentStepError?.message.includes("Contest summary") ? (
-                <ErrorMessage error={(currentStepError || { message: "" }).message} />
-              ) : null}
+        ) : (
+          <div className="grid gap-12 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-2 w-full">
+            <div className="flex bg-true-black z-10 justify-start w-full md:w-[650px] p-1 border-y border-neutral-2">
+              <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
             </div>
-          </div>
-          <div className="flex flex-col gap-8">
-            <div className="flex flex-col gap-4">
-              <p className="text-[20px] text-neutral-11 font-bold">
-                how should voters evaluate if an entry is <i>good</i> ?
-              </p>
-              <p className="text-neutral-11 text-[16px] font-normal">
-                (ie 50% for originality, 50% for thoughtfulness)
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <EditorContent
-                editor={editorEvaluateVoters}
-                className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
-              />
-
-              {currentStepError?.message.includes("Voter evaluation") ? (
-                <ErrorMessage error={(currentStepError || { message: "" }).message} />
-              ) : (
-                <p className="text-[16px] font-bold text-neutral-14">
-                  if you are offering rewards, voting must legally be based on skill or talent—not guessing
+            <div className="flex flex-col gap-8">
+              <div className="flex flex-col gap-4">
+                <p className="text-neutral-11 text-[20px] font-bold">
+                  add a pic <span className="font-normal">(optional)</span>
                 </p>
-              )}
-            </div>
-          </div>
-          <div className="flex flex-col gap-8">
-            <p className="text-neutral-11 text-[20px] font-bold">
-              what’s the best way for players to reach you? <span className="font-normal">(optional)</span>
-            </p>
-            <div className="flex flex-col gap-2">
-              <EditorContent
-                editor={editorContactDetails}
-                className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
-              />
-            </div>
-          </div>
+                <ImageUpload onFileSelect={onFileSelectHandler} isSuccess={uploadSuccess} />
+                {uploadError && <p className="text-[12px] text-negative-11 font-bold">{uploadError}</p>}
+              </div>
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4">
+                  <p className="text-neutral-11 text-[20px] font-bold">
+                    what’s the best way for players to reach you? <span className="font-normal">(recommended)</span>
+                  </p>
+                  <div
+                    className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
+                  >
+                    <EditorContent
+                      editor={editorContactDetails}
+                      className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-14 md:h-20"
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col gap-4">
+                  <p className="text-neutral-11 text-[20px] font-bold">summarize the contest, rewards, and voters:</p>
+                  <div className="flex flex-col gap-2">
+                    <div
+                      className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
+                    >
+                      <EditorContent
+                        editor={editorSummarize}
+                        className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-52 md:h-36"
+                      />
+                    </div>
 
-          <div className="mt-4">
-            <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
+                    {currentStepError?.message.includes("Contest summary") ? (
+                      <ErrorMessage error={(currentStepError || { message: "" }).message} />
+                    ) : null}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-4">
+                  <p className="text-[20px] text-neutral-11 font-bold">
+                    how should voters evaluate if an entry is <i>good</i> ?
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    <div
+                      className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
+                    >
+                      <EditorContent
+                        editor={editorEvaluateVoters}
+                        className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-52 md:h-36"
+                      />
+                    </div>
+
+                    {currentStepError?.message.includes("Voter evaluation") ? (
+                      <ErrorMessage error={(currentStepError || { message: "" }).message} />
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-4">
+              <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
