@@ -27,7 +27,7 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex gap-4 items-center pb-4">
+      <div className="flex gap-4 items-center">
         <ProposalStatisticsPanel submissionsCount={submissionsCount} contestStatus={contestStatus} />
         {submissionsCount > 1 ? (
           <>

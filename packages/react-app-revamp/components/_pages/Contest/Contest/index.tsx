@@ -15,6 +15,7 @@ import { useAccount } from "wagmi";
 import ContestPrompt from "../components/Prompt";
 import ProposalStatistics from "../components/ProposalStatistics";
 import ContestStickyCards from "../components/StickyCards";
+import EntryPreviewTitleToggle from "../components/EntryPreviewTitleToggle";
 
 const ContestTab = () => {
   const { contestPrompt } = useContestStore(state => state);
@@ -98,7 +99,10 @@ const ContestTab = () => {
       <div className={`mt-4 ${isInPwaMode ? "mb-12" : "mb-0"}`}>
         <div className="flex flex-col gap-2">
           {contestStatus !== ContestStatus.ContestOpen && !isContestLoading && (
-            <ProposalStatistics contestStatus={contestStatus} />
+            <div className="flex items-center gap-12 pb-4 ">
+              <ProposalStatistics contestStatus={contestStatus} />
+              <EntryPreviewTitleToggle />
+            </div>
           )}
 
           {!isContestLoading && !isListProposalsLoading && isContestSuccess && isListProposalsSuccess && (
