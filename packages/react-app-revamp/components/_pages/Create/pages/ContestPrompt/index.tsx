@@ -144,7 +144,7 @@ const CreateContestPrompt = () => {
           </div>
         </div>
         {isPreviewOpen ? (
-          <div className="grid gap-12 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-8 w-full xs:w-[460px] sm:w-[560px]">
+          <div className="grid gap-12 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-8 w-full md:w-[650px]">
             <CreateFlowPromptPreview
               summarize={{ content: prompt.summarize, isEmpty: editorSummarize?.isEmpty ?? true }}
               evaluateVoters={{ content: prompt.evaluateVoters, isEmpty: editorEvaluateVoters?.isEmpty ?? true }}
