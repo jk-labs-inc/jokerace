@@ -7,6 +7,7 @@ import DialogModalSendProposalEntryPreviewAdditionalDescriptionLayout from "./co
 import ImageLayout from "./components/ImageLayout";
 import TitleLayout from "./components/TitleLayout";
 import TweetLayout from "./components/TweetLayout";
+import ImageAndTitleLayout from "./components/ImageAndTitleLayout";
 
 interface DialogModalSendProposalEntryPreviewLayoutsProps {
   entryPreviewLayout: string;
@@ -26,7 +27,7 @@ const DialogModalSendProposalEntryPreviewLayout: FC<DialogModalSendProposalEntry
   handleDragLeave,
 }) => {
   const { enabledPreview, isDescriptionEnabled } = verifyEntryPreviewPrompt(entryPreviewLayout);
-  const { setInputValue } = useMetadataStore();
+  const { setInputValue, fields } = useMetadataStore();
 
   const handleMetadataFieldChange = (value: string) => {
     // always set the first input value ( index = 0 )
@@ -39,6 +40,8 @@ const DialogModalSendProposalEntryPreviewLayout: FC<DialogModalSendProposalEntry
         return <TitleLayout onChange={handleMetadataFieldChange} />;
       case EntryPreview.IMAGE:
         return <ImageLayout onChange={handleMetadataFieldChange} />;
+      case EntryPreview.IMAGE_AND_TITLE:
+        return <ImageAndTitleLayout onChange={handleMetadataFieldChange} />;
       case EntryPreview.TWEET:
         return <TweetLayout onChange={handleMetadataFieldChange} />;
       default:

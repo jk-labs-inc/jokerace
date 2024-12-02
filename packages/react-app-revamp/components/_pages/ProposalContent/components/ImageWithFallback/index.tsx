@@ -34,7 +34,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ mediumSrc, fullSr
 
   return (
     <div className="relative rounded-[16px] w-full h-full">
-      <div className="absolute inset-x-0 top-0 h-10 rounded-t-[16px] bg-gradient-to-t from-true-black/0 from-0% via-true-black/30 via-30% to-true-black/60 to-100%" />
+      <div className="absolute inset-x-0 top-0 h-12 rounded-t-[16px] bg-gradient-to-t from-true-black/0 from-0% via-true-black/60 via-30% to-true-black/90 to-100%" />
       <img
         src={isLoading ? fullSrc : currentImage.img.src}
         alt={alt}

@@ -75,6 +75,7 @@ export interface MetadataField {
 export enum EntryPreview {
   TITLE = "JOKERACE_TITLE_PREVIEW",
   IMAGE = "JOKERACE_IMAGE_PREVIEW",
+  IMAGE_AND_TITLE = "JOKERACE_IMAGE_AND_TITLE_PREVIEW",
   TWEET = "JOKERACE_TWEET_PREVIEW",
 }
 export interface EntryPreviewConfig {

@@ -9,7 +9,7 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/store";
 import { VoteType } from "@hooks/useDeployContest/types";
-import { useMetadataStore } from "@hooks/useMetadataFields/store";
+import useProfileData from "@hooks/useProfileData";
 import { RawMetadataFields } from "@hooks/useProposal/utils";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
@@ -18,13 +18,11 @@ import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
-import { verifyEntryPreviewPrompt } from "../DialogModalSendProposal/utils";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
-import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
 import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
+import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
 import ProposalLayoutTweet from "./components/ProposalLayout/Tweet";
-import useProfileData from "@hooks/useProfileData";
 
 export interface Proposal {
   id: string;
@@ -128,6 +126,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
     handleVotingModalOpen,
     toggleProposalSelection,
     formattedVotingOpen,
+    enabledPreview,
     commentLink: commentLink.pathname,
   };
 
@@ -136,6 +135,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
       case EntryPreview.TITLE:
         return <ProposalLayoutLeaderboard {...props} />;
       case EntryPreview.IMAGE:
+      case EntryPreview.IMAGE_AND_TITLE:
         return <ProposalLayoutGallery {...props} />;
       case EntryPreview.TWEET:
         return <ProposalLayoutTweet {...props} />;
