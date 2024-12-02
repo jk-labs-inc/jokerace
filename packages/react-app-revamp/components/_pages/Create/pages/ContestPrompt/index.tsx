@@ -97,7 +97,16 @@ const CreateContestPrompt = () => {
     return true;
   };
 
-  const onFileSelectHandler = async (file: File) => {
+  const onFileSelectHandler = async (file: File | null) => {
+    if (!file) {
+      setUploadError("");
+      setPrompt({
+        ...prompt,
+        imageUrl: "",
+      });
+      return;
+    }
+
     if (!validateFile(file)) {
       return;
     }
@@ -135,7 +144,7 @@ const CreateContestPrompt = () => {
           </div>
         </div>
         {isPreviewOpen ? (
-          <div className="grid gap-12 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-8 w-full md:w-[650px]">
+          <div className="grid gap-12 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-8 w-full xs:w-[460px] sm:w-[560px]">
             <CreateFlowPromptPreview
               summarize={{ content: prompt.summarize, isEmpty: editorSummarize?.isEmpty ?? true }}
               evaluateVoters={{ content: prompt.evaluateVoters, isEmpty: editorEvaluateVoters?.isEmpty ?? true }}
@@ -153,7 +162,11 @@ const CreateContestPrompt = () => {
                 <p className="text-neutral-11 text-[20px] font-bold">
                   add a pic <span className="font-normal">(optional)</span>
                 </p>
-                <ImageUpload onFileSelect={onFileSelectHandler} isSuccess={uploadSuccess} />
+                <ImageUpload
+                  onFileSelect={onFileSelectHandler}
+                  isSuccess={uploadSuccess}
+                  initialImageUrl={prompt.imageUrl}
+                />
                 {uploadError && <p className="text-[12px] text-negative-11 font-bold">{uploadError}</p>}
               </div>
               <div className="flex flex-col gap-4">

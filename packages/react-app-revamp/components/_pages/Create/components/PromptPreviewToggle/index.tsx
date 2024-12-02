@@ -17,10 +17,12 @@ const CreateFlowPromptPreviewToggle: FC<CreateFlowPromptPreviewToggleProps> = ({
   return (
     <button
       onClick={handleClick}
-      className="flex justify-between items-center w-40 px-4 py-1 bg-true-black rounded-2xl shadow-prompt-preview text-neutral-14 hover:bg-neutral-14 hover:text-true-black transition-colors duration-300 ease-in-out"
+      className="flex justify-center sm:justify-between items-center w-20 sm:w-40 px-2 sm:px-4 py-1 bg-true-black rounded-2xl shadow-prompt-preview text-neutral-14 hover:bg-neutral-14 hover:text-true-black transition-colors duration-300 ease-in-out"
     >
-      {isPreviewOpen ? <EyeSlashIcon className="w-6 h-6 " /> : <EyeIcon className="w-6 h-6 " />}
-      <p className="text-[16px] font-bold">{buttonText}</p>
+      <span className="hidden sm:block">
+        {isPreviewOpen ? <EyeSlashIcon className="w-6 h-6" /> : <EyeIcon className="w-6 h-6" />}
+      </span>
+      <p className="text-[14px] sm:text-[16px] font-bold">{buttonText}</p>
     </button>
   );
 };
