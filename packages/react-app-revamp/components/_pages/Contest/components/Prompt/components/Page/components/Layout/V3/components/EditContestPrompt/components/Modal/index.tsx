@@ -180,6 +180,14 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
         ) : (
           <>
             <div className="flex flex-col gap-12">
+              <div
+                className="flex justify-start w-full md:w-[656px] px-1 py-2 sticky top-0 z-10
+            bg-true-black/20 backdrop-blur border-y border-neutral-10/30
+            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)]
+            transition-all duration-300"
+              >
+                <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
+              </div>
               <div className="flex flex-col gap-4">
                 <p className="text-neutral-11 text-[20px] font-bold">
                   add a pic <span className="font-normal">(optional)</span>
@@ -191,56 +199,45 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
                 />
                 {uploadError && <p className="text-[12px] text-negative-11 font-bold">{uploadError}</p>}
               </div>
-
-              <div className="flex flex-col gap-8">
-                <div
-                  className="flex justify-start w-full md:w-[656px] px-1 py-2 sticky top-0 z-10
-            bg-true-black/20 backdrop-blur border-y border-neutral-10/30
-            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)]
-            transition-all duration-300"
-                >
-                  <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4">
+                  <p className="text-neutral-11 text-[20px] font-bold">
+                    what’s the best way for players to reach you? <span className="font-normal">(recommended)</span>
+                  </p>
+                  <div
+                    className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
+                  >
+                    <EditorContent
+                      editor={editorContactDetails}
+                      className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-14 md:h-20"
+                    />
+                  </div>
                 </div>
                 <div className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-4">
-                    <p className="text-neutral-11 text-[20px] font-bold">
-                      what’s the best way for players to reach you? <span className="font-normal">(recommended)</span>
-                    </p>
+                  <p className="text-neutral-11 text-[20px] font-bold">summarize the contest, rewards, and voters:</p>
+                  <div className="flex flex-col gap-2">
                     <div
                       className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
                     >
                       <EditorContent
-                        editor={editorContactDetails}
-                        className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-14 md:h-20"
+                        editor={editorSummarize}
+                        className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-52 md:h-36"
                       />
                     </div>
                   </div>
-                  <div className="flex flex-col gap-4">
-                    <p className="text-neutral-11 text-[20px] font-bold">summarize the contest, rewards, and voters:</p>
-                    <div className="flex flex-col gap-2">
-                      <div
-                        className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
-                      >
-                        <EditorContent
-                          editor={editorSummarize}
-                          className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-52 md:h-36"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-4">
-                    <p className="text-[20px] text-neutral-11 font-bold">
-                      how should voters evaluate if an entry is <i>good</i> ?
-                    </p>
-                    <div className="flex flex-col gap-2">
-                      <div
-                        className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
-                      >
-                        <EditorContent
-                          editor={editorEvaluateVoters}
-                          className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-52 md:h-36"
-                        />
-                      </div>
+                </div>
+                <div className="flex flex-col gap-4">
+                  <p className="text-[20px] text-neutral-11 font-bold">
+                    how should voters evaluate if an entry is <i>good</i> ?
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    <div
+                      className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
+                    >
+                      <EditorContent
+                        editor={editorEvaluateVoters}
+                        className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-52 md:h-36"
+                      />
                     </div>
                   </div>
                 </div>
