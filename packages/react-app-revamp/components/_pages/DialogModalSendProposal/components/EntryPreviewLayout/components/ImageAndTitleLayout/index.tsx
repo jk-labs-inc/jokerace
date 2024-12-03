@@ -51,7 +51,14 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
     return true;
   };
 
-  const onFileSelectHandler = async (file: File) => {
+  const onFileSelectHandler = async (file: File | null) => {
+    if (!file) {
+      setUploadError("");
+      setImageUrl("");
+      updateCombinedValue("", inputValue);
+      return;
+    }
+
     if (!validateFile(file)) {
       return;
     }
@@ -77,7 +84,9 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
     }
   };
 
-  const uploadImageToServer = async (file: File): Promise<string> => {
+  const uploadImageToServer = async (file: File | null): Promise<string> => {
+    if (!file) return "";
+
     const img = await uploadImage(file);
     return img ?? "";
   };
