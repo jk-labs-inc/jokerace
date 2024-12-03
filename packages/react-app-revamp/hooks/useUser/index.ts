@@ -249,25 +249,50 @@ export function useUser() {
         return;
       }
 
-      const [userBalance, gasPrice, costToVote] = await Promise.all([
-        fetchUserBalance(userAddress, chainId),
-        getGasPrice(config, { chainId }),
+      const [userBalanceResult, gasPriceResult, costToVoteResult] = await Promise.all([
+        fetchUserBalance(userAddress, chainId).catch(error => {
+          return { value: 0n };
+        }),
+        getGasPrice(config, { chainId }).catch(error => {
+          return 0n;
+        }),
         readContract(config, {
           address: address as `0x${string}`,
           abi: abi as Abi,
           chainId: chainId,
           functionName: "costToVote",
+        }).catch(error => {
+          return 0n;
         }) as Promise<bigint>,
       ]);
 
-      if (userBalance.value === 0n) {
+      // safety check for valid BigInt values
+      if (!userBalanceResult.value || !gasPriceResult || !costToVoteResult) {
+        setUserVoteQualification(0, 0, false, false, true);
+        return;
+      }
+
+      if (userBalanceResult.value === 0n) {
         setUserVoteQualification(0, 0, true, false, false);
         return;
       }
 
-      const totalGasCost = gasPrice * BigInt(STANDARD_ANYONE_CAN_VOTE_GAS_LIMIT);
-      const userVotesRaw = (userBalance.value - totalGasCost) / costToVote;
+      const totalGasCost = gasPriceResult * BigInt(STANDARD_ANYONE_CAN_VOTE_GAS_LIMIT);
+
+      // prevent negative values
+      if (userBalanceResult.value <= totalGasCost || costToVoteResult === 0n) {
+        setUserVoteQualification(0, 0, true, false, false);
+        return;
+      }
+
+      const userVotesRaw = (userBalanceResult.value - totalGasCost) / costToVoteResult;
       const userVotesFormatted = Number(parseEther(userVotesRaw.toString())) / 1e18;
+
+      // check for valid number
+      if (isNaN(userVotesFormatted)) {
+        setUserVoteQualification(0, 0, false, false, true);
+        return;
+      }
 
       setUserVoteQualification(userVotesFormatted, userVotesFormatted, true, false, false);
     } catch (error) {
@@ -275,7 +300,6 @@ export function useUser() {
       setUserVoteQualification(0, 0, false, false, true);
     }
   }
-
   /**
    * Update the amount of votes casted in this contest by the current user
    */

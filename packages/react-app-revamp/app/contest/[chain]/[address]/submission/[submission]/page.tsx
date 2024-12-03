@@ -17,57 +17,85 @@ type Props = {
 };
 
 async function getContestDetails(address: string, chainName: string) {
-  const chainId = chains.find(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
-  )?.id;
+  try {
+    const chainId = chains.find(
+      (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
+    )?.id;
 
-  const { abi } = await getContestContractVersion(address, chainId ?? 1);
+    const { abi } = await getContestContractVersion(address, chainId ?? 1);
 
-  const result = await readContract(serverConfig, {
-    address: address as `0x${string}`,
-    abi: abi as Abi,
-    chainId,
-    functionName: "name",
-  });
+    const result = await readContract(serverConfig, {
+      address: address as `0x${string}`,
+      abi: abi as Abi,
+      chainId,
+      functionName: "name",
+    });
 
-  return result;
+    return result as string;
+  } catch (error) {
+    console.error("failed to fetch contest details:", error);
+    return "contest"; // safe fallback value
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { chain, address } = params;
-  const contestName = await getContestDetails(address, chain);
-
-  const title = `Entry for ${contestName} contest on JokeRace`;
-  const description = `Entry for ${contestName} contest on JokeRace`;
-
-  return {
-    title,
-    description,
+  const defaultMetadata = {
+    title: "Contest Entry on JokeRace",
+    description: "Contest Entry on JokeRace",
     openGraph: {
-      title,
-      description,
+      title: "Contest Entry on JokeRace",
+      description: "Contest Entry on JokeRace",
     },
     twitter: {
-      title,
-      description,
+      title: "Contest Entry on JokeRace",
+      description: "Contest Entry on JokeRace",
     },
   };
+
+  try {
+    const { chain, address } = params;
+    const contestName = await getContestDetails(address, chain);
+
+    const title = `Entry for ${contestName} contest on JokeRace`;
+    const description = `Entry for ${contestName} contest on JokeRace`;
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+      },
+      twitter: {
+        title,
+        description,
+      },
+    };
+  } catch (error) {
+    console.error("failed to generate metadata:", error);
+    return defaultMetadata;
+  }
 }
 
 const Page = async ({ params }: Props) => {
-  const { chain, address, submission } = params;
-  const chainId = chains.find((c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain)?.id;
-  const { abi, version } = await getContestContractVersion(address, chainId ?? 1);
+  try {
+    const { chain, address, submission } = params;
+    const chainId = chains.find((c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain)?.id;
+    const { abi, version } = await getContestContractVersion(address, chainId ?? 1);
 
-  if (
-    !REGEX_ETHEREUM_ADDRESS.test(address) ||
-    !chains.some((c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain) ||
-    !submission
-  ) {
+    if (
+      !REGEX_ETHEREUM_ADDRESS.test(address) ||
+      !chains.some((c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain) ||
+      !submission
+    ) {
+      return notFound();
+    }
+
+    return <Submission address={address} chain={chain} submission={submission} abi={abi as Abi} version={version} />;
+  } catch (error) {
+    console.error("failed to render submission page:", error);
     return notFound();
   }
-
-  return <Submission address={address} chain={chain} submission={submission} abi={abi as Abi} version={version} />;
 };
 
 export default Page;

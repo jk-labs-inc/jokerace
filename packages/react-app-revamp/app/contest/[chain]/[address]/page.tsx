@@ -13,63 +13,80 @@ type Props = {
 };
 
 async function getContestDetails(address: string, chainName: string) {
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
-  )?.[0]?.id;
+  try {
+    const chainId = chains.filter(
+      (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
+    )?.[0]?.id;
 
-  const { abi } = await getContestContractVersion(address, chainId);
+    const { abi } = await getContestContractVersion(address, chainId);
 
-  const contracts = [
-    {
-      address: address as `0x${string}`,
-      abi: abi as Abi,
-      chainId,
-      functionName: "name",
-      args: [],
-    },
-    {
-      address: address as `0x${string}`,
-      abi: abi as Abi,
-      chainId,
-      functionName: "prompt",
-      args: [],
-    },
-  ];
+    const contracts = [
+      {
+        address: address as `0x${string}`,
+        abi: abi as Abi,
+        chainId,
+        functionName: "name",
+        args: [],
+      },
+      {
+        address: address as `0x${string}`,
+        abi: abi as Abi,
+        chainId,
+        functionName: "prompt",
+        args: [],
+      },
+    ];
 
-  const results = (await readContracts(serverConfig, { contracts })) as any;
-
-  return results;
+    const results = (await readContracts(serverConfig, { contracts })) as any;
+    return results;
+  } catch (error) {
+    console.error("failed to fetch contest details:", error);
+    return [
+      { result: "" }, // empty name
+      { result: "||" }, // empty prompt with minimum required delimiters
+    ];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { chain, address } = params;
-
-  let contestTitle = "";
-  let contestDescription = "";
+  const defaultMetadata = {
+    title: "Contest",
+    description: "",
+    openGraph: {
+      title: "Contest",
+      description: "",
+    },
+    twitter: {
+      title: "Contest",
+      description: "",
+    },
+  };
 
   try {
     const contestDetails = await getContestDetails(address, chain);
     const prompt = contestDetails[1].result as string;
-    const contestDescriptionRaw = prompt.split("|")[2];
+    const contestDescriptionRaw = prompt.split("|")[2] || "";
 
-    contestTitle = contestDetails[0].result as string;
-    contestDescription = parse(contestDescriptionRaw).textContent;
+    const contestTitle = contestDetails[0].result as string;
+    const contestDescription = parse(contestDescriptionRaw).textContent;
+
+    return {
+      title: contestTitle || defaultMetadata.title,
+      description: contestDescription,
+      openGraph: {
+        title: contestTitle || defaultMetadata.title,
+        description: contestDescription,
+      },
+      twitter: {
+        title: contestTitle || defaultMetadata.title,
+        description: contestDescription,
+      },
+    };
   } catch (error) {
-    console.error("failed to retrieve title or description for metatags:", error);
+    console.error("failed to generate metadata:", error);
+    return defaultMetadata;
   }
-
-  return {
-    title: contestTitle,
-    description: contestDescription,
-    openGraph: {
-      title: contestTitle,
-      description: contestDescription,
-    },
-    twitter: {
-      title: contestTitle,
-      description: contestDescription,
-    },
-  };
 }
 
 const Page = ({ params }: Props) => {
