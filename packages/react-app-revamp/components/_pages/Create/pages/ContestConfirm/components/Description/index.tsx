@@ -51,6 +51,7 @@ const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> 
               isHovered || isMobileOrTablet ? "text-neutral-11" : "text-neutral-14"
             } transition-color duration-300`}
           >
+            {prompt.imageUrl && <img src={prompt.imageUrl} alt="preview" className="w-full h-auto" />}
             <Interweave content={prompt.summarize} matchers={[new UrlMatcher("url")]} />
             {prompt.evaluateVoters && (
               <>

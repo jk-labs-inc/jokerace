@@ -27,7 +27,13 @@ const DialogModalSendProposalEntryPreviewImageLayout: FC<DialogModalSendProposal
     return true;
   };
 
-  const onFileSelectHandler = async (file: File) => {
+  const onFileSelectHandler = async (file: File | null) => {
+    if (!file) {
+      setUploadError("");
+      onChange?.("");
+      return;
+    }
+
     if (!validateFile(file)) {
       return;
     }

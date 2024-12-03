@@ -29,6 +29,7 @@ export type Prompt = {
   summarize: string;
   evaluateVoters: string;
   contactDetails?: string;
+  imageUrl?: string;
 };
 
 export enum ContestVisibility {
