@@ -14,6 +14,7 @@ const ListProposalsContainer = ({ enabledPreview, children }: ListProposalsConta
     case EntryPreview.TITLE:
       return <div className="flex flex-col gap-4">{children}</div>;
     case EntryPreview.IMAGE:
+    case EntryPreview.IMAGE_AND_TITLE:
     case EntryPreview.TWEET:
       const childrenArray = React.Children.toArray(children);
       const leftColumn = childrenArray.filter((_, index) => index % 2 === 0);

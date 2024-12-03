@@ -1,15 +1,15 @@
+import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
-import { usePathname } from "next/navigation";
-import { FC, useEffect, useState } from "react";
-import { useAccount } from "wagmi";
-import EditContestPromptModal from "./components/Modal";
-import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
 import useEditContestPrompt from "@hooks/useEditContestPrompt";
 import { switchChain } from "@wagmi/core";
+import { usePathname } from "next/navigation";
+import { FC, useState } from "react";
+import { useAccount } from "wagmi";
+import EditContestPromptModal, { EditPrompt } from "./components/Modal";
 
 interface EditContestPromptProps {
   canEditPrompt: boolean;
@@ -17,7 +17,7 @@ interface EditContestPromptProps {
 }
 
 const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }) => {
-  const { contestType, contestSummary, contestEvaluate, contestContactDetails } = parsePrompt(prompt);
+  const { contestType, contestSummary, contestEvaluate, contestContactDetails, contestImageUrl } = parsePrompt(prompt);
   const { address, chain: accountChain } = useAccount();
   const pathname = usePathname();
   const { address: contestAddress, chainName: contestChainName } = extractPathSegments(pathname ?? "");
@@ -34,16 +34,19 @@ const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }
     contestAbi,
     contestAddress,
   });
-  const [newPrompt, setNewPrompt] = useState({
-    contestDescription: `${contestSummary}\n\n${contestEvaluate}\n\n${contestContactDetails}`,
+  const [newPrompt, setNewPrompt] = useState<EditPrompt>({
+    contestSummary,
+    contestEvaluate,
+    contestContactDetails,
+    contestImageUrl: contestImageUrl ?? "",
   });
 
   if (!shouldRender) return null;
 
   const handleOpenModal = () => setIsEditContestNameModalOpen(true);
 
-  const handleEditPrompt = (contestDescription: string) => {
-    setNewPrompt({ contestDescription });
+  const handleEditPrompt = (prompt: EditPrompt) => {
+    setNewPrompt(prompt);
   };
 
   const handleSavePrompt = async () => {
@@ -51,7 +54,13 @@ const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }
 
     if (!isOnCorrectChain) await switchChain(config, { chainId: contestChainId });
 
-    const formattedPrompt = `${contestType}|${newPrompt.contestDescription}`;
+    const formattedPrompt = new URLSearchParams({
+      type: contestType,
+      summarize: newPrompt.contestSummary,
+      evaluateVoters: newPrompt.contestEvaluate,
+      contactDetails: newPrompt.contestContactDetails ?? "",
+      imageUrl: newPrompt.contestImageUrl ?? "",
+    }).toString();
 
     editPrompt(formattedPrompt);
   };
@@ -63,8 +72,8 @@ const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }
       </button>
 
       <EditContestPromptModal
-        contestDescription={newPrompt.contestDescription}
         isOpen={isEditContestNameModalOpen}
+        prompt={newPrompt}
         setIsCloseModal={setIsEditContestNameModalOpen}
         handleEditPrompt={handleEditPrompt}
         handleSavePrompt={handleSavePrompt}

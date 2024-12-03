@@ -77,6 +77,18 @@ export function generateEntryPreviewHTML(fieldInputs: MetadataFieldWithInput[]):
     case EntryPreview.IMAGE:
       previewHTML = `<img src="${firstFieldInput.inputValue}" alt="Preview Image" />`;
       break;
+    case EntryPreview.IMAGE_AND_TITLE: {
+      const params = new URLSearchParams(firstFieldInput.inputValue);
+      const imageUrl = params.get("JOKERACE_IMG") || "";
+      const title = params.get("JOKERACE_IMG_TITLE") || "";
+
+      previewHTML = `
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <p style="font-size: 24px; color: #E5E5E5; font-weight: 600;">${title}</p>
+            <img src="${imageUrl}" alt="Preview Image" style="max-width: 100%; border-radius: 8px;" />
+          </div>`;
+      break;
+    }
     case EntryPreview.TWEET:
       previewHTML = `<a href="${firstFieldInput.inputValue}" target="_blank" rel="noopener noreferrer">${firstFieldInput.inputValue}</a>`;
       break;
