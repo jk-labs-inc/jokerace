@@ -17,8 +17,9 @@ const ListProposalsContainer = ({ enabledPreview, children }: ListProposalsConta
     case EntryPreview.IMAGE_AND_TITLE:
     case EntryPreview.TWEET:
       const childrenArray = React.Children.toArray(children);
-      const leftColumn = childrenArray.filter((_, index) => index % 2 === 0);
-      const rightColumn = childrenArray.filter((_, index) => index % 2 !== 0);
+      const firstColumn = childrenArray.filter((_, index) => index % 3 === 0);
+      const secondColumn = childrenArray.filter((_, index) => index % 3 === 1);
+      const thirdColumn = childrenArray.filter((_, index) => index % 3 === 2);
 
       if (isMobile) {
         return <div className="flex flex-col gap-4">{children}</div>;
@@ -27,14 +28,21 @@ const ListProposalsContainer = ({ enabledPreview, children }: ListProposalsConta
       return (
         <div className="flex gap-4">
           <div className="flex-1 flex flex-col gap-4">
-            {leftColumn.map((child, index) => (
+            {firstColumn.map((child, index) => (
               <div key={index} className="break-inside-avoid">
                 {child}
               </div>
             ))}
           </div>
           <div className="flex-1 flex flex-col gap-4">
-            {rightColumn.map((child, index) => (
+            {secondColumn.map((child, index) => (
+              <div key={index} className="break-inside-avoid">
+                {child}
+              </div>
+            ))}
+          </div>
+          <div className="flex-1 flex flex-col gap-4">
+            {thirdColumn.map((child, index) => (
               <div key={index} className="break-inside-avoid">
                 {child}
               </div>

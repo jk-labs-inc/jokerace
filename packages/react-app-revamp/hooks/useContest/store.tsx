@@ -26,7 +26,6 @@ export interface ContestState {
   contestMaxProposalCount: number;
   downvotingAllowed: boolean;
   sortingEnabled: boolean;
-  canUpdateVotesInRealTime: boolean;
   supportsRewardsModule: boolean;
   submissionMerkleRoot: string;
   votingMerkleRoot: string;
@@ -40,7 +39,6 @@ export interface ContestState {
   rewardsAbi: Abi | null;
   canEditTitleAndDescription: boolean;
   setSupportsRewardsModule: (value: boolean) => void;
-  setCanUpdateVotesInRealTime: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
   setSortingEnabled: (isAllowed: boolean) => void;
   setContestPrompt: (prompt: string) => void;
@@ -87,7 +85,6 @@ export const createContestStore = () =>
     contestMaxProposalCount: 0,
     downvotingAllowed: false,
     sortingEnabled: false,
-    canUpdateVotesInRealTime: false,
     votingRequirements: null,
     submissionRequirements: null,
     isV3: false,
@@ -99,7 +96,6 @@ export const createContestStore = () =>
     rewardsAbi: null,
     canEditTitleAndDescription: false,
     setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
-    setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
     setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
     setSortingEnabled: isAllowed => set({ sortingEnabled: isAllowed }),
     setContestPrompt: prompt => set({ contestPrompt: prompt }),
