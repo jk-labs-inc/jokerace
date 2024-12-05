@@ -19,7 +19,11 @@ export const fetchExtensions = async (): Promise<ExtensionSupabase[]> => {
     const config = await import("@config/supabase");
     const supabase = config.supabase;
 
-    const { data, error } = await supabase.from("extensions").select("name").eq("enabled", true);
+    const { data, error } = await supabase
+      .from("extensions")
+      .select("name, order")
+      .eq("enabled", true)
+      .order("order", { ascending: true });
 
     if (error) {
       throw new Error(`Error in fetchExtensions: ${error.message}`);
