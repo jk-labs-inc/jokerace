@@ -48,7 +48,6 @@ interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsP
 
 export function useCastVotes() {
   const {
-    canUpdateVotesInRealTime,
     charge,
     contestAbi: abi,
     version,
@@ -174,30 +173,27 @@ export function useCastVotes() {
         hash: receipt.transactionHash,
       });
 
-      // We need this to update the votes either if there is more than 2 hours
-      if (!canUpdateVotesInRealTime) {
-        const voteResponse = (await readContract(config, {
-          address: contestAddress as `0x${string}`,
-          abi: DeployedContestContract.abi,
-          functionName: "proposalVotes",
-          args: [pickedProposal],
-        })) as bigint[];
+      const voteResponse = (await readContract(config, {
+        address: contestAddress as `0x${string}`,
+        abi: DeployedContestContract.abi,
+        functionName: "proposalVotes",
+        args: [pickedProposal],
+      })) as bigint[];
 
-        const forVotes = voteResponse[0] as bigint;
-        const againstVotes = voteResponse[1] as bigint;
-        const finalVotes = forVotes - againstVotes;
-        const votes = Number(formatEther(finalVotes));
-        const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
+      const forVotes = voteResponse[0] as bigint;
+      const againstVotes = voteResponse[1] as bigint;
+      const finalVotes = forVotes - againstVotes;
+      const votes = Number(formatEther(finalVotes));
+      const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
 
-        if (existingProposal) {
-          updateProposal(
-            {
-              ...existingProposal,
-              netVotes: votes,
-            },
-            listProposalsData,
-          );
-        }
+      if (existingProposal) {
+        updateProposal(
+          {
+            ...existingProposal,
+            netVotes: votes,
+          },
+          listProposalsData,
+        );
       }
 
       await updateCurrentUserVotes(abi, version, anyoneCanVote);

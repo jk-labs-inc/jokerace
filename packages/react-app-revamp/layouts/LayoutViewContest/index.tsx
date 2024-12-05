@@ -24,7 +24,6 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
 import { ContractConfig, useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
-import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useUser from "@hooks/useUser";
 import moment from "moment";
@@ -59,7 +58,6 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const accountChanged = useAccountChange();
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { setContestStatus } = useContestStatusStore(state => state);
-  const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const bugReportLink = populateBugReportLink(url?.href ?? "", accountAddress ?? "", error ?? "");
@@ -202,17 +200,6 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
           <>
             {isSuccess && !error && !isLoading && (
               <>
-                {displayReloadBanner && (
-                  <div className="w-full bg-true-black text-[16px] text-center flex flex-col sticky top-0 gap-1 z-50 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
-                    <div className="flex flex-col">
-                      <span>Let&apos;s refresh!</span>
-                      <p className="font-normal">Looks like live updates were frozen.</p>
-                    </div>
-                    <ButtonV3 colorClass="bg-gradient-create" onClick={() => window.location.reload()}>
-                      Refresh
-                    </ButtonV3>
-                  </div>
-                )}
                 <div className="animate-reveal pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
                     <div className="flex flex-col gap-2">

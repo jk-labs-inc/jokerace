@@ -38,7 +38,6 @@ interface ProposalState {
   totalPagesPaginationProposals: number;
   currentPagePaginationProposals: number;
   hasPaginationProposalsNextPage: boolean;
-  canUpdateVotesInRealTime: boolean;
   submissionsCount: number;
   sortBy: SortOptions | null;
   addProposalId: (id: string) => void;
@@ -56,7 +55,6 @@ interface ProposalState {
   setTotalPagesPaginationProposals: (value: number) => void;
   setCurrentPagePaginationProposals: (value: number) => void;
   setHasPaginationProposalsNextPage: (value: boolean) => void;
-  setCanUpdateVotesInRealTime: (value: boolean) => void;
   setSortBy: (sortBy: SortOptions | null) => void;
 }
 
@@ -75,7 +73,6 @@ export const createProposalStore = () =>
     totalPagesPaginationProposals: 0,
     currentPagePaginationProposals: 0,
     hasPaginationProposalsNextPage: false,
-    canUpdateVotesInRealTime: false,
     submissionsCount: 0,
     sortBy: null,
     setSubmissionsCount: value => set({ submissionsCount: value }),
@@ -93,7 +90,6 @@ export const createProposalStore = () =>
     setTotalPagesPaginationProposals: newTotal => set({ totalPagesPaginationProposals: newTotal }),
     setHasPaginationProposalsNextPage: hasNextPage => set({ hasPaginationProposalsNextPage: hasNextPage }),
     addProposalId: id => set(state => ({ listProposalsIds: [...state.listProposalsIds, id] })),
-    setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
     setIsListProposalsLoading: value => set({ isListProposalsLoading: value }),
     setIsListProposalsError: value => set({ isListProposalsError: value }),
     setIsListProposalsSuccess: value => set({ isListProposalsSuccess: value }),
