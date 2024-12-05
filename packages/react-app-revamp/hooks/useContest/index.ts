@@ -64,7 +64,6 @@ export function useContest() {
     setVotesClose,
     setVotesOpen,
     setSubmissionsOpen,
-    setCanUpdateVotesInRealTime,
     setCharge,
     setVotingRequirements,
     setContestAbi,
@@ -205,27 +204,6 @@ export function useContest() {
     setContestPrompt(contestPrompt);
     setDownvotingAllowed(isDownvotingAllowed);
     setContestState(contestState);
-
-    // We want to track VoteCast event only 2H before the end of the contest, and only if alchemy support is enabled and if alchemy is configured
-    if (isBefore(new Date(), closingVoteDate) && alchemyRpc && isAlchemyConfigured) {
-      if (differenceInMinutes(closingVoteDate, new Date()) <= 120) {
-        setCanUpdateVotesInRealTime(true);
-      } else {
-        setCanUpdateVotesInRealTime(false);
-
-        let delayBeforeVotesCanBeUpdated =
-          differenceInMilliseconds(closingVoteDate, new Date()) - minutesToMilliseconds(120);
-
-        // Cap the delay at the maximum allowable value to prevent overflow
-        delayBeforeVotesCanBeUpdated = Math.min(delayBeforeVotesCanBeUpdated, MAX_MS_TIMEOUT);
-
-        setTimeout(() => {
-          setCanUpdateVotesInRealTime(true);
-        }, delayBeforeVotesCanBeUpdated);
-      }
-    } else {
-      setCanUpdateVotesInRealTime(false);
-    }
 
     setError(null);
     setIsSuccess(true);

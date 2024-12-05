@@ -1,4 +1,3 @@
-import useContestEvents from "@hooks/useContestEvents";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import ContestCountdown from "./components/Countdown";
@@ -8,7 +7,6 @@ const ContestStickyCards = () => {
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
-  const { displayReloadBanner } = useContestEvents();
 
   if (isContestCanceled || contestStatus === ContestStatus.VotingClosed) {
     return (
@@ -19,9 +17,7 @@ const ContestStickyCards = () => {
   }
 
   return (
-    <div
-      className={`flex flex-col bg-true-black sticky ${displayReloadBanner ? "top-[105px]" : "-top-[1px]"} z-10 mt-8`}
-    >
+    <div className="flex flex-col bg-true-black sticky -top-[1px] z-10 mt-8">
       <div className="flex gap-4 py-4">
         <ContestCountdown />
         <VotingContestQualifier />
