@@ -29,10 +29,8 @@ import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
 import { celo } from "./custom-chains/celo";
 import { cyber } from "./custom-chains/cyber";
-import { fluentTestnet } from "./custom-chains/fluentTestnet";
 import { forma } from "./custom-chains/forma";
 import { gnosis } from "./custom-chains/gnosis";
-import { kaiaTestnet } from "./custom-chains/kaiaTestnet";
 import { linea } from "./custom-chains/linea";
 import { mainnet } from "./custom-chains/mainnet";
 import { mantle } from "./custom-chains/mantle";
@@ -74,8 +72,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   forma,
   sepolia,
   baseTestnet,
-  kaiaTestnet,
-  fluentTestnet,  
   mainnet,
 ];
 
