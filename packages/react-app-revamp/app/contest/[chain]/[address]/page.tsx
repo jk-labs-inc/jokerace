@@ -1,3 +1,4 @@
+import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
 import { chains, serverConfig } from "@config/wagmi/server";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContracts } from "@wagmi/core";
@@ -65,10 +66,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   try {
     const contestDetails = await getContestDetails(address, chain);
-    const prompt = contestDetails[1].result as string;
-    const contestDescriptionRaw = prompt.split("|")[2] || "";
-
     const contestTitle = contestDetails[0].result as string;
+    const prompt = contestDetails[1].result as string;
+    const contestPrompt = parsePrompt(prompt);
+
+    const contestDescriptionRaw =
+      contestPrompt.contestSummary + contestPrompt.contestEvaluate + contestPrompt.contestContactDetails;
+
     const contestDescription = parse(contestDescriptionRaw).textContent;
 
     return {
