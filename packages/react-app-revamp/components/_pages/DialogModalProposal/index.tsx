@@ -19,6 +19,7 @@ import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
 import { FC, useEffect } from "react";
 import { useAccount } from "wagmi";
 import ListProposalVotes from "../ListProposalVotes";
+import { LINK_BRIDGE_DOCS } from "@config/links";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -194,9 +195,13 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                       feel free to try connecting another wallet to see if it has more votes!
                     </p>
                   ) : isAnyoneCanVote ? (
-                    <p className="text-[16px] text-negative-11 font-bold">
+                    <a
+                      href={LINK_BRIDGE_DOCS}
+                      target="_blank"
+                      className="text-[16px] text-negative-11 font-bold underline"
+                    >
                       add {chainCurrencySymbol} to {contestInfo.chain} to get votes
-                    </p>
+                    </a>
                   ) : (
                     <p className="text-[16px] text-neutral-11">
                       unfortunately your wallet didn't qualify to vote in this contest <br />
