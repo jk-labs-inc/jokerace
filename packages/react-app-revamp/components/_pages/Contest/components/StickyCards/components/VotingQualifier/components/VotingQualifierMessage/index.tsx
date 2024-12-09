@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+import { LINK_BRIDGE_DOCS } from "@config/links";
 import { chains } from "@config/wagmi";
 import { formatBalance } from "@helpers/formatBalance";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
@@ -116,9 +117,13 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
 
   if (zeroVotesOnAnyoneCanVote) {
     return (
-      <p className="text-[16px] text-negative-11 font-bold leading-loose">
+      <a
+        href={LINK_BRIDGE_DOCS}
+        target="_blank"
+        className="text-[16px] text-negative-11 font-bold leading-loose underline"
+      >
         add {chainCurrencySymbol} to {chainName} to get votes{" "}
-      </p>
+      </a>
     );
   }
 

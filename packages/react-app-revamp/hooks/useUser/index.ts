@@ -268,7 +268,7 @@ export function useUser() {
 
       // safety check for valid BigInt values
       if (!userBalanceResult.value || !gasPriceResult || !costToVoteResult) {
-        setUserVoteQualification(0, 0, false, false, true);
+        setUserVoteQualification(0, 0, true, false, false);
         return;
       }
 
