@@ -33,10 +33,8 @@ const CreateSubmissionPeriod = () => {
       const newVotingOpen = new Date(value.getTime() + 60 * 60 * 1000);
       setVotingOpen(newVotingOpen);
 
-      if (votingPeriodTimingOption.value !== TimingPeriod.Custom) {
-        const votingCloseDate = addTimeBasedOnPeriod(newVotingOpen, votingPeriodTimingOption.value as TimingPeriod);
-        setVotingClose(votingCloseDate);
-      }
+      // update voting close based on timing period
+      updateVotingCloseTime(newVotingOpen);
     }
   };
 
@@ -48,30 +46,29 @@ const CreateSubmissionPeriod = () => {
         value: "custom",
       });
 
-      // check if the new voting open time is after the current voting close time
-      if (value >= votingClose) {
-        // Set voting close to 1 hour after the new voting open time
-        const newVotingClose = new Date(value.getTime() + 60 * 60 * 1000);
-        setVotingClose(newVotingClose);
-        setVotingPeriodTimingOption({
-          label: "custom",
-          value: "custom",
-        });
-      }
+      // update voting close based on timing period
+      updateVotingCloseTime(value);
     } else {
       const newVotingOpen = new Date(submissionOpen.getTime() + 60000);
       setVotingOpen(newVotingOpen);
 
-      // check if the adjusted voting open time is after the current voting close time
+      // update voting close based on timing period
+      updateVotingCloseTime(newVotingOpen);
+    }
+  };
+
+  // helper function to consistently update voting close time
+  const updateVotingCloseTime = (newVotingOpen: Date) => {
+    if (votingPeriodTimingOption.value === TimingPeriod.Custom) {
+      // if custom and new voting open is after current close, adjust close time
       if (newVotingOpen >= votingClose) {
-        // set voting close to 1 hour after the new voting open time
         const newVotingClose = new Date(newVotingOpen.getTime() + 60 * 60 * 1000);
         setVotingClose(newVotingClose);
-        setVotingPeriodTimingOption({
-          label: "custom",
-          value: "custom",
-        });
       }
+    } else {
+      // for non-custom periods, always calculate based on the timing option
+      const votingCloseDate = addTimeBasedOnPeriod(newVotingOpen, votingPeriodTimingOption.value as TimingPeriod);
+      setVotingClose(votingCloseDate);
     }
   };
 
