@@ -17527,10 +17527,10 @@ w3c-keyname@^2.2.0:
   resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.8.tgz#7b17c8c6883d4e8b86ac8aba79d39e880f8869c5"
   integrity sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==
 
-wagmi@2.13.4:
-  version "2.13.4"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.13.4.tgz#5b2f11e907f4f66d5c22ebda113047643622ed9f"
-  integrity sha512-3/a6AZEZEJIZvxqHDv9e7R/pYYbi/oABogVOYnYN/ijI2WILD/09TjVYWXEzQCXtiNnimaTIWuGW6u/NKSAzFA==
+wagmi@2.13.5:
+  version "2.13.5"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.13.5.tgz#3466f408012d882ed333eed82b3e45a122dfb17b"
+  integrity sha512-jeW6UFIcmMJjtcFF3K18X7xYzwmR/fxs4sGxKFSCqyY90zoOQ6jorwnv/PwCaJnzHyBBtSlWILvPqU/D9MEWCA==
   dependencies:
     "@wagmi/connectors" "5.5.3"
     "@wagmi/core" "2.15.2"
