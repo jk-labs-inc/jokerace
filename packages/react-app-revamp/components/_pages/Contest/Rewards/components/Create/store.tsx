@@ -20,7 +20,7 @@ export enum CreationStep {
 export interface Recipient {
   id: number;
   place: number;
-  proportion: number;
+  proportion: number | null;
 }
 
 export interface ValidationError {
