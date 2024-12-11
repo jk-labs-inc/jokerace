@@ -313,6 +313,11 @@ module.exports = {
             opacity: "1",
           },
         },
+        "flicker-number": {
+          "0%": { opacity: "1" },
+          "50%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
       },
       scale: {
         120: "1.1",
@@ -335,6 +340,7 @@ module.exports = {
         flicker: "flicker 1s linear",
         "flicker-infinite": "flicker 1s linear infinite",
         reveal: "reveal 1s ease-in-out",
+        "flicker-number": "flicker-number 0.5s infinite",
       },
 
       height: {

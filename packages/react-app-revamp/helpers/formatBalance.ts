@@ -1,5 +1,7 @@
 import BigNumber from "bignumber.js";
 
+const MIN_VALUE_FOR_COMMA_SEPARATION = 1000;
+
 export function formatBalance(balance: string): string {
   const num = new BigNumber(balance);
 
@@ -19,6 +21,12 @@ export function formatBalance(balance: string): string {
   }
 
   // handle numbers >= 0.001
-  // truncate to 3 decimal places without rounding
-  return num.decimalPlaces(3, BigNumber.ROUND_FLOOR).toString();
+  const truncated = num.decimalPlaces(3, BigNumber.ROUND_FLOOR);
+
+  // add comma separators only for numbers >= 1000
+  if (truncated.abs().isGreaterThanOrEqualTo(MIN_VALUE_FOR_COMMA_SEPARATION)) {
+    return truncated.toFormat();
+  }
+
+  return truncated.toString();
 }
