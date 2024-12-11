@@ -17,10 +17,10 @@ const TotalRewardsInfo: FC<TotalRewardsInfoProps> = ({ totalRewards }) => {
         setCurrentIndex(prevIndex => {
           const nextIndex = (prevIndex + 1) % totalRewards.length;
           setAnimate(true);
-          setTimeout(() => setAnimate(false), 1000);
+          setTimeout(() => setAnimate(false), 500);
           return nextIndex;
         });
-      }, 1500);
+      }, 1000);
 
       return () => clearInterval(interval);
     } else if (totalRewards.length === 1) {
@@ -33,7 +33,7 @@ const TotalRewardsInfo: FC<TotalRewardsInfoProps> = ({ totalRewards }) => {
   return (
     <div className="w-fit max-w-full">
       <div className="flex h-8 px-2 md:px-4 items-center bg-transparent border border-neutral-10 rounded-[10px] text-[16px] font-bold text-positive-11">
-        <div className={`flex items-center gap-1 ${animate ? "animate-reveal" : ""}`}>
+        <div className={`flex items-center gap-1 ${animate ? "animate-flicker-number" : ""}`}>
           <p>{formatBalance(formatUnits(currentReward.totalAmount, currentReward.decimals).toString())}</p>{" "}
           <p className="uppercase">${currentReward.symbol}</p>
         </div>
