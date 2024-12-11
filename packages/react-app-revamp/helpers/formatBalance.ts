@@ -1,5 +1,7 @@
 import BigNumber from "bignumber.js";
 
+const MIN_VALUE_FOR_COMMA_SEPARATION = 1000;
+
 export function formatBalance(balance: string): string {
   const num = new BigNumber(balance);
 
@@ -22,7 +24,7 @@ export function formatBalance(balance: string): string {
   const truncated = num.decimalPlaces(3, BigNumber.ROUND_FLOOR);
 
   // add comma separators only for numbers >= 1000
-  if (truncated.abs().isGreaterThanOrEqualTo(1000)) {
+  if (truncated.abs().isGreaterThanOrEqualTo(MIN_VALUE_FOR_COMMA_SEPARATION)) {
     return truncated.toFormat();
   }
 
