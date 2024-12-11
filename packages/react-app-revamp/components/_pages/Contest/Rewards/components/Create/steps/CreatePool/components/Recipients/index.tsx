@@ -24,10 +24,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
   const rankOptions = generateRankOptions(RANK_LIMIT);
 
   const validateRecipients = (recipients: Recipient[]) => {
-    const totalProportion = recipients.reduce(
-      (sum, recipient) => sum + (isNaN(recipient.proportion) ? 0 : recipient.proportion),
-      0,
-    );
+    const totalProportion = recipients.reduce((sum, recipient) => sum + (recipient.proportion ?? 0), 0);
 
     const error: ValidationError = {};
 
@@ -49,7 +46,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
       ...prevData,
       recipients,
       rankings: recipients.map(recipient => recipient.place),
-      shareAllocations: recipients.map(recipient => recipient.proportion),
+      shareAllocations: recipients.map(recipient => recipient.proportion ?? 0),
       validationError: error,
     }));
   };
@@ -75,8 +72,17 @@ const CreateRewardsPoolRecipients: React.FC = () => {
   };
 
   const handleProportionChange = (event: React.ChangeEvent<HTMLInputElement>, id: number) => {
-    let { value } = event.target;
-    let updatedProportion = parseFloat(value);
+    const { value } = event.target;
+
+    if (value === "") {
+      const newRecipients = rewardPoolData.recipients.map(recipient =>
+        recipient.id === id ? { ...recipient, proportion: null } : recipient,
+      );
+      validateRecipients(newRecipients);
+      return;
+    }
+
+    let updatedProportion = parseInt(value, 10);
 
     if (updatedProportion > 100) {
       updatedProportion = 100;
@@ -87,6 +93,15 @@ const CreateRewardsPoolRecipients: React.FC = () => {
     );
 
     validateRecipients(newRecipients);
+  };
+  const handleInput: React.ChangeEventHandler<HTMLInputElement> = event => {
+    event.target.value = event.target.value.replace(/[^0-9]*/g, "");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === ".") {
+      e.preventDefault();
+    }
   };
 
   const handlePlaceChange = (value: string, id: number) => {
@@ -99,10 +114,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
     validateRecipients(newRecipients);
   };
 
-  const totalProportion = rewardPoolData.recipients.reduce(
-    (sum, recipient) => sum + (isNaN(recipient.proportion) ? 0 : recipient.proportion),
-    0,
-  );
+  const totalProportion = rewardPoolData.recipients.reduce((sum, recipient) => sum + (recipient.proportion ?? 0), 0);
   const proportionError = totalProportion > 100 ? "over" : totalProportion < 100 ? "under" : null;
 
   const formatProportion = (proportion: number) => {
@@ -145,10 +157,11 @@ const CreateRewardsPoolRecipients: React.FC = () => {
                       <input
                         className="w-[120px] h-8 bg-neutral-9  text-true-black rounded-[8px] font-bold text-center appearance-none focus:outline-none"
                         type="number"
-                        min="1"
                         max="100"
-                        value={recipient.proportion}
+                        value={recipient.proportion === null ? "" : recipient.proportion}
                         onChange={event => handleProportionChange(event, recipient.id)}
+                        onInput={handleInput}
+                        onKeyDown={handleKeyDown}
                       />
                       <span className="text-[16px] absolute inset-y-1 right-2 text-primary-5 font-bold">%</span>
                     </div>
