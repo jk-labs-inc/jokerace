@@ -110,6 +110,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
               <div className="flex gap-2 items-center">
                 <p className="text-[16px] text-neutral-11 font-bold normal-case">{entryTitle}</p>
                 <Link
+                  scroll={false}
                   href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
                   className="w-4 h-4 flex justify-center items-center rounded-full border text-positive-11 border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out group"
                 >

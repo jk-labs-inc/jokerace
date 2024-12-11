@@ -78,6 +78,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 
   return (
     <Link
+      scroll={false}
       href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
       className="flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out"
     >
