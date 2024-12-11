@@ -81,10 +81,10 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
         setCurrentIndex(prevIndex => {
           const nextIndex = (prevIndex + 1) % flattenedRewards.length;
           setAnimate(true);
-          setTimeout(() => setAnimate(false), 1000);
+          setTimeout(() => setAnimate(false), 500);
           return nextIndex;
         });
-      }, 1500);
+      }, 1000);
 
       return () => clearInterval(interval);
     } else if (flattenedRewards.length === 1) {
@@ -117,7 +117,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
       className={`flex shrink-0 h-8 min-w-60 p-4 justify-center items-center bg-transparent border border-neutral-10 rounded-[10px] text-[16px] font-bold text-positive-11 overflow-hidden`}
     >
       <span className="truncate flex items-center">
-        <div className={`flex items-center ${animate ? "animate-reveal" : ""}`}>
+        <div className={`flex items-center ${animate ? "animate-flicker-number" : ""}`}>
           {formatBalance(currentRewardAmount)} $
           <span className="uppercase mr-1 truncate inline-block overflow-hidden">{currentReward.symbol}</span>
         </div>
