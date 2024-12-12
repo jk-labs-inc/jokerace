@@ -11,7 +11,9 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
+import VotingWidgetMobile from "./components/Mobile";
 
 interface VotingWidgetProps {
   proposalId: string;
@@ -22,6 +24,7 @@ interface VotingWidgetProps {
 
 const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvoteAllowed, onVote }) => {
   const { charge } = useContestStore(state => state);
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const asPath = usePathname();
   const { chainId: accountChainId } = useAccount();
   const { chainName } = extractPathSegments(asPath ?? "");
@@ -114,6 +117,32 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
   };
 
   if (isContestCanceled) return null;
+
+  if (isMobile) {
+    return (
+      <VotingWidgetMobile
+        amount={amount}
+        inputRef={inputRef}
+        sliderValue={sliderValue}
+        isUpvote={isUpvote}
+        handleVote={handleVote}
+        chainId={chainId}
+        charge={charge}
+        amountOfVotes={amountOfVotes}
+        downvoteAllowed={downvoteAllowed ?? false}
+        isFocused={isFocused}
+        setIsFocused={setIsFocused}
+        isInvalid={isInvalid}
+        voteDisabled={voteDisabled}
+        handleClick={handleClick}
+        handleSliderChange={handleSliderChange}
+        handleChange={handleChange}
+        handleKeyDownSlider={handleKeyDownSlider}
+        handleKeyDownInput={handleKeyDownInput}
+        handleInput={handleInput}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col gap-8">

@@ -62,7 +62,7 @@ const StepSlider: FC<StepSliderProps> = ({
   };
 
   return (
-    <div onKeyDown={onKeyDown} tabIndex={0} className="p-4 md:p-0">
+    <div onKeyDown={onKeyDown} tabIndex={0}>
       <Slider
         className="w-60"
         min={min}
