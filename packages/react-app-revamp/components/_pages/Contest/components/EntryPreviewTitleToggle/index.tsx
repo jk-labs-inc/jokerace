@@ -16,7 +16,7 @@ const EntryPreviewTitleToggle: FC = () => {
   if (!enabledPreview || enabledPreview !== EntryPreview.TITLE) return null;
 
   return (
-    <div className="flex gap-4 items-center">
+    <div className="hidden md:flex gap-4 items-center">
       <Switch
         checked={isExpanded}
         onChange={setIsExpanded}
