@@ -1,6 +1,6 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { Charge } from "@hooks/useDeployContest/types";
+import { Charge, VoteType } from "@hooks/useDeployContest/types";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { formatEther } from "viem";
@@ -27,7 +27,7 @@ const TotalCharge: React.FC<TotalChargeProps> = ({ charge: contestCharge, amount
       return;
     }
 
-    if (contestCharge.voteType === "PerVote") {
+    if (contestCharge.voteType === VoteType.PerVote) {
       const chargeAmount = parseFloat(formatEther(BigInt(contestCharge.type.costToVote)));
       const multipliedCharge = chargeAmount * amountOfVotes;
       const charge = +multipliedCharge.toFixed(6);
@@ -36,6 +36,10 @@ const TotalCharge: React.FC<TotalChargeProps> = ({ charge: contestCharge, amount
       setTotalCharge(formatEther(BigInt(contestCharge.type.costToVote)));
     }
   }, [contestCharge, amountOfVotes]);
+
+  if (contestCharge.voteType === VoteType.PerTransaction) {
+    return null;
+  }
 
   return (
     <div className="flex items-center justify-between text-neutral-11 text-[16px]">

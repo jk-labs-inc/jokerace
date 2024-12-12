@@ -28,7 +28,9 @@ const ChargeInfo: React.FC<ChargeInfoProps> = ({ charge }) => {
   }
 
   return (
-    <div className="flex justify-between text-neutral-9 text-[16px]">
+    <div
+      className={`flex justify-between ${charge.voteType === VoteType.PerTransaction ? "text-neutral-11" : "text-neutral-9"} text-[16px]`}
+    >
       <p>{chargeLabel}:</p>
       <p>
         {entryChargeFormatted} {chainUnitLabel}

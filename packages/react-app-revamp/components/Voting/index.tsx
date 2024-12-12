@@ -33,7 +33,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
   const [isFocused, setIsFocused] = useState(true);
   const voteDisabled = isLoading || amount === 0 || isInvalid || isNaN(amount);
   const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
   const isCorrectNetwork = chainId === accountChainId;
   const { contestState } = useContestStateStore(state => state);
@@ -105,16 +105,12 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
     }
   };
 
-  const handleVote = () => {
-    if (isCorrectNetwork) {
-      onVote?.(amount, isUpvote);
-    } else {
-      onSwitchNetwork();
+  const handleVote = async () => {
+    if (!isCorrectNetwork) {
+      await switchChain(config, { chainId });
     }
-  };
 
-  const onSwitchNetwork = async () => {
-    await switchChain(config, { chainId });
+    onVote?.(amount, isUpvote);
   };
 
   if (isContestCanceled) return null;
@@ -142,57 +138,50 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
             </div>
           </div>
         ) : null}
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2">
-            <MyVotes amountOfVotes={amountOfVotes} charge={charge} chainId={chainId} />
-            {charge ? <ChargeInfo charge={charge} /> : null}
-          </div>
-          <div
-            className={`relative flex w-full md:w-80 h-16 items-center px-8 text-[16px] bg-transparent font-bold ${
-              isInvalid ? "text-negative-11" : "text-neutral-11"
-            } border-2 ${isFocused && !isInvalid ? "border-neutral-11" : isInvalid ? "border-negative-11" : "border-neutral-10"} rounded-[40px] transition-colors duration-300`}
-          >
-            <input
-              ref={inputRef}
-              type="number"
-              value={amount || ""}
-              onChange={e => handleChange(e.target.value)}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              placeholder="0.00"
-              max={amountOfVotes}
-              onKeyDown={handleKeyDownInput}
-              onInput={handleInput}
-              className="w-full text-[32px] bg-transparent outline-none placeholder-primary-5"
-            />
-            <span className="absolute right-4 text-neutral-9 text-[16px] font-bold">vote{amount !== 1 ? "s" : ""}</span>
+        <div className="flex flex-col gap-12">
+          <div className="flex flex-col gap-6">
+            <div
+              className={`relative flex w-full md:w-80 h-16 items-center px-8 text-[16px] bg-transparent font-bold ${
+                isInvalid ? "text-negative-11" : "text-neutral-11"
+              } border-2 ${isFocused && !isInvalid ? "border-neutral-11" : isInvalid ? "border-negative-11" : "border-neutral-10"} rounded-[40px] transition-colors duration-300`}
+            >
+              <input
+                ref={inputRef}
+                type="number"
+                value={amount || ""}
+                onChange={e => handleChange(e.target.value)}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                placeholder="0.00"
+                max={amountOfVotes}
+                onKeyDown={handleKeyDownInput}
+                onInput={handleInput}
+                className="w-full text-[32px] bg-transparent outline-none placeholder-primary-5"
+              />
+              <span className="absolute right-4 text-neutral-9 text-[16px] font-bold">
+                vote{amount !== 1 ? "s" : ""}
+              </span>
+            </div>
+            <StepSlider val={sliderValue} onChange={handleSliderChange} onKeyDown={handleKeyDownSlider} />
           </div>
           <div className="flex flex-col gap-4">
-            <StepSlider val={sliderValue} onChange={handleSliderChange} onKeyDown={handleKeyDownSlider} />
+            <div className="flex flex-col gap-2">
+              <MyVotes amountOfVotes={amountOfVotes} charge={charge} chainId={chainId} />
+              {charge ? <ChargeInfo charge={charge} /> : null}
+            </div>
             {charge ? <TotalCharge charge={charge} amountOfVotes={amount} /> : null}
           </div>
+          <ButtonV3
+            type={ButtonType.TX_ACTION}
+            isDisabled={voteDisabled}
+            colorClass="px-[20px] bg-gradient-purple rounded-[40px] w-full"
+            size={ButtonSize.FULL}
+            onClick={handleVote}
+          >
+            <span className="w-full text-center">add votes to entry</span>
+          </ButtonV3>
         </div>
       </div>
-      {isCorrectNetwork ? (
-        <ButtonV3
-          type={ButtonType.TX_ACTION}
-          isDisabled={voteDisabled}
-          colorClass="px-[20px] bg-gradient-purple rounded-[40px] w-full"
-          size={ButtonSize.FULL}
-          onClick={() => onVote?.(amount, isUpvote)}
-        >
-          <span className="w-full text-center">add votes to entry</span>
-        </ButtonV3>
-      ) : (
-        <ButtonV3
-          type={ButtonType.TX_ACTION}
-          colorClass="flex items-center justify-center bg-gradient-vote rounded-[40px] w-full"
-          size={ButtonSize.FULL}
-          onClick={onSwitchNetwork}
-        >
-          switch network
-        </ButtonV3>
-      )}
     </div>
   );
 };
