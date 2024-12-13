@@ -4389,44 +4389,12 @@
     utf-8-validate "^5.0.2"
     uuid "^8.3.2"
 
-"@metamask/sdk-install-modal-web@0.31.1":
-  version "0.31.1"
-  resolved "https://registry.yarnpkg.com/@metamask/sdk-install-modal-web/-/sdk-install-modal-web-0.31.1.tgz#c08ddeb6d8e5a21344477a3f395ebc66952f0bcd"
-  integrity sha512-J83K6jN2V3xkTb+/5eyASatlgqHdpzjkTVU6cC+Z/YA9cE32zX8vE0EQweGmExgv+kJ5zz/BiqSZZbMfuilRfQ==
-  dependencies:
-    "@paulmillr/qr" "^0.2.1"
-
 "@metamask/sdk-install-modal-web@0.31.2":
   version "0.31.2"
   resolved "https://registry.yarnpkg.com/@metamask/sdk-install-modal-web/-/sdk-install-modal-web-0.31.2.tgz#bb8c92a6844a632be8525e7bb5a35924a926d6cd"
   integrity sha512-KPv36kQjmTwErU8g2neuHHSgkD5+1hp4D6ERfk5Kc2r73aOYNCdG9wDGRUmFmcY2MKkeK1EuDyZfJ4FPU30fxQ==
   dependencies:
     "@paulmillr/qr" "^0.2.1"
-
-"@metamask/sdk@0.31.1":
-  version "0.31.1"
-  resolved "https://registry.yarnpkg.com/@metamask/sdk/-/sdk-0.31.1.tgz#111f2eeba9f40d1bc358b4bd60bdf5b423d78daf"
-  integrity sha512-olU3TYRAxIZP5ZXDmi5Y53zXikkPySNiTuBI4QD+2hWYomVlMV2SjOKHSRR6gPuI+fFEg/Z+ImrxDthQfMODwA==
-  dependencies:
-    "@babel/runtime" "^7.26.0"
-    "@metamask/onboarding" "^1.0.1"
-    "@metamask/providers" "16.1.0"
-    "@metamask/sdk-communication-layer" "0.31.0"
-    "@metamask/sdk-install-modal-web" "0.31.1"
-    "@paulmillr/qr" "^0.2.1"
-    bowser "^2.9.0"
-    cross-fetch "^4.0.0"
-    debug "^4.3.4"
-    eciesjs "^0.4.11"
-    eth-rpc-errors "^4.0.3"
-    eventemitter2 "^6.4.9"
-    obj-multiplex "^1.0.0"
-    pump "^3.0.0"
-    readable-stream "^3.6.2"
-    socket.io-client "^4.5.1"
-    tslib "^2.6.0"
-    util "^0.12.4"
-    uuid "^8.3.2"
 
 "@metamask/sdk@0.31.2":
   version "0.31.2"
@@ -8125,18 +8093,6 @@
     loupe "^2.3.7"
     pretty-format "^29.7.0"
 
-"@wagmi/connectors@5.5.3":
-  version "5.5.3"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.5.3.tgz#0bf4778ce66f0bd646f86b4479ef24054e409ebd"
-  integrity sha512-ADXcNuNtONh4PNzs5tWiYzl77P4UohXC7ozYecGvbn3Fkdk6x4tfsF9Wy3Ag5WcVbbp89MPpJ2+VK2ckBgtLAg==
-  dependencies:
-    "@coinbase/wallet-sdk" "4.2.3"
-    "@metamask/sdk" "0.31.1"
-    "@safe-global/safe-apps-provider" "0.18.4"
-    "@safe-global/safe-apps-sdk" "9.1.0"
-    "@walletconnect/ethereum-provider" "2.17.0"
-    cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
-
 "@wagmi/connectors@5.6.1":
   version "5.6.1"
   resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.6.1.tgz#948ca387916136501da80989f3eba351b0c6a595"
@@ -8153,6 +8109,15 @@
   version "2.15.2"
   resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.15.2.tgz#5bc934b4bca0d7fac1062c920a5366716f069613"
   integrity sha512-4Bu1JA3HqtKvmBBsesvJ3HyqyLk69XYP0lwmG8jFqa5osfqn9iD8pvjsq5VHbIus+ZFM/UL6ydp9WWdtPNjH7w==
+  dependencies:
+    eventemitter3 "5.0.1"
+    mipd "0.0.7"
+    zustand "5.0.0"
+
+"@wagmi/core@2.16.0":
+  version "2.16.0"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.16.0.tgz#b997b2544cd80b4aac4df25ccb2436bf77f9fbe1"
+  integrity sha512-sy4n7Jv6YCbT2jp4zQ/9H6l0A8StsN7P8mm2BRuODgW2w6Fj4j6h2xgYJD2tIjJHkLU/nvPJ7audZ55X7XQU/g==
   dependencies:
     eventemitter3 "5.0.1"
     mipd "0.0.7"
@@ -17571,13 +17536,13 @@ w3c-keyname@^2.2.0:
   resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.8.tgz#7b17c8c6883d4e8b86ac8aba79d39e880f8869c5"
   integrity sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==
 
-wagmi@2.13.5:
-  version "2.13.5"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.13.5.tgz#3466f408012d882ed333eed82b3e45a122dfb17b"
-  integrity sha512-jeW6UFIcmMJjtcFF3K18X7xYzwmR/fxs4sGxKFSCqyY90zoOQ6jorwnv/PwCaJnzHyBBtSlWILvPqU/D9MEWCA==
+wagmi@2.14.1:
+  version "2.14.1"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.14.1.tgz#8c6e1e389f8dab7c21d1c91e3c2fba4815c4fbdb"
+  integrity sha512-Lq/UFJVorjwJlFjXbU+Jtfo64PObNfUCPtwgqi+q/WGBWzG7CL0xmCsB3wPc+YZYwD8O9OqFDHfcggUi0qwcGA==
   dependencies:
-    "@wagmi/connectors" "5.5.3"
-    "@wagmi/core" "2.15.2"
+    "@wagmi/connectors" "5.6.1"
+    "@wagmi/core" "2.16.0"
     use-sync-external-store "1.2.0"
 
 walker@^1.0.7:
