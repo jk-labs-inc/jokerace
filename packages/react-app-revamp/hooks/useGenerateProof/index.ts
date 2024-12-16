@@ -23,10 +23,7 @@ export function useGenerateProof() {
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { contestAbi: abi, anyoneCanVote } = useContestStore(state => state);
-  const { connector } = useAccount();
-  const [chainId, setChainId] = useState(
-    chains.filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id,
-  );
+  const chainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
 
   async function getContractConfig() {
     return {
@@ -144,24 +141,6 @@ export function useGenerateProof() {
 
     return recipients;
   }
-
-  useEffect(() => {
-    const handleChange = (data: { accounts?: readonly Address[]; chainId?: number }) => {
-      if (data.chainId === undefined) return;
-
-      setChainId(data.chainId);
-    };
-
-    if (connector && connector.emitter) {
-      connector.emitter.on("change", handleChange);
-    }
-
-    return () => {
-      if (connector && connector.emitter) {
-        connector.emitter.off("change", handleChange);
-      }
-    };
-  }, [connector]);
 
   return {
     getProofs,
