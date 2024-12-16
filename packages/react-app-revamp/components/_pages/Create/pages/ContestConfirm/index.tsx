@@ -19,6 +19,7 @@ import CreateContestConfirmTag from "./components/Tag";
 import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
 import CreateContestConfirmPreview from "./components/Preview";
+import CreateContestConfirmImage from "./components/Image";
 
 export enum Steps {
   ContestTitle = 0,
@@ -105,6 +106,13 @@ const CreateContestConfirm = () => {
             onClick={step => onNavigateToStep(step)}
           />
           <CreateContestConfirmTag step={Steps.ContestTag} tag={state.type} onClick={step => onNavigateToStep(step)} />
+          {state.prompt.imageUrl ? (
+            <CreateContestConfirmImage
+              step={Steps.ContestTitle}
+              imageUrl={state.prompt.imageUrl}
+              onClick={step => onNavigateToStep(step)}
+            />
+          ) : null}
           <CreateContestConfirmDescription
             step={Steps.ContestDescription}
             prompt={state.prompt}

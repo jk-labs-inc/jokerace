@@ -1,5 +1,5 @@
 import CreateFlowPromptPreview from "@components/_pages/Create/components/PromptPreview";
-import CreateFlowPromptPreviewToggle from "@components/_pages/Create/components/PromptPreviewToggle";
+import CreateFlowPreviewToggle from "@components/_pages/Create/components/PreviewToggle";
 import DialogModalV4 from "@components/UI/DialogModalV4";
 import ImageUpload from "@components/UI/ImageUpload";
 import { ACCEPTED_FILE_TYPES } from "@components/UI/ImageUpload/utils";
@@ -154,7 +154,7 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
         <div className="flex w-full justify-between items-center">
           <div className=" flex items-center justify-between w-full md:w-[656px]">
             <p className="text-[24px] text-neutral-11 font-bold">edit prompt</p>
-            <CreateFlowPromptPreviewToggle onClick={() => setIsPreviewOpen(!isPreviewOpen)} />
+            <CreateFlowPreviewToggle onClick={() => setIsPreviewOpen(!isPreviewOpen)} />
           </div>
           <img
             src="/modal/modal_close.svg"

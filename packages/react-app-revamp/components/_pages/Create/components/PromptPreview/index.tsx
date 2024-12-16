@@ -26,7 +26,6 @@ const CreateFlowPromptPreview: FC<CreateFlowPromptPreviewProps> = ({
 
   return (
     <div className="prose prose-invert flex flex-col">
-      {imageUrl && <img src={imageUrl} alt="preview" className="w-full h-auto" />}
       <Interweave content={summarize.content} matchers={[new UrlMatcher("url")]} />
       {!evaluateVoters.isEmpty && (
         <>

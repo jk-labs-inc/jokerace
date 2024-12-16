@@ -8,13 +8,10 @@ import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
 import MobileStepper from "../../components/MobileStepper";
+import CreateFlowPromptPreview from "../../components/PromptPreview";
+import CreateFlowPreviewToggle from "../../components/PreviewToggle";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
-import CreateFlowPromptPreview from "../../components/PromptPreview";
-import CreateFlowPromptPreviewToggle from "../../components/PromptPreviewToggle";
-import ImageUpload from "@components/UI/ImageUpload";
-import { ACCEPTED_FILE_TYPES } from "@components/UI/ImageUpload/utils";
-import { useUploadImageStore } from "@hooks/useUploadImage";
 
 const CreateContestPrompt = () => {
   const { step, prompt, setPrompt, errors } = useDeployContestStore(state => state);
@@ -24,9 +21,6 @@ const CreateContestPrompt = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const title = isMobile ? "description" : "now for the description";
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
-  const [uploadError, setUploadError] = useState("");
-  const { uploadImage } = useUploadImageStore();
 
   const editorSummarize = useEditor({
     ...createEditorConfig({
@@ -82,54 +76,6 @@ const CreateContestPrompt = () => {
     onFocus: () => setActiveEditor(editorContactDetails),
   });
 
-  const validateFile = (file: File): boolean => {
-    if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
-      setUploadError("Please upload a valid image/gif file (JPEG, JPG, PNG, JFIF, GIF, or WebP)");
-      return false;
-    }
-
-    const maxSize = 20 * 1024 * 1024; // 20MB in bytes
-    if (file.size > maxSize) {
-      setUploadError("File size should be less than 20MB");
-      return false;
-    }
-
-    return true;
-  };
-
-  const onFileSelectHandler = async (file: File | null) => {
-    if (!file) {
-      setUploadError("");
-      setPrompt({
-        ...prompt,
-        imageUrl: "",
-      });
-      return;
-    }
-
-    if (!validateFile(file)) {
-      return;
-    }
-
-    try {
-      const imageUrl = await uploadImageToServer(file);
-
-      setUploadSuccess(true);
-      setUploadError("");
-      setPrompt({
-        ...prompt,
-        imageUrl: imageUrl,
-      });
-    } catch (error) {
-      setUploadError("Failed to upload image. Please try again.");
-    }
-  };
-
-  const uploadImageToServer = async (file: File): Promise<string> => {
-    const img = await uploadImage(file);
-    return img ?? "";
-  };
-
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
@@ -140,7 +86,7 @@ const CreateContestPrompt = () => {
         <div className="col-span-2 ml-10">
           <div className="flex justify-between w-full md:w-[650px]">
             <p className="text-[24px] text-neutral-11 font-bold">{title}</p>
-            <CreateFlowPromptPreviewToggle onClick={() => setIsPreviewOpen(!isPreviewOpen)} />
+            <CreateFlowPreviewToggle onClick={() => setIsPreviewOpen(!isPreviewOpen)} />
           </div>
         </div>
         {isPreviewOpen ? (
@@ -158,17 +104,6 @@ const CreateContestPrompt = () => {
               <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
             </div>
             <div className="flex flex-col gap-8">
-              <div className="flex flex-col gap-4">
-                <p className="text-neutral-11 text-[20px] font-bold">
-                  add a pic <span className="font-normal">(optional)</span>
-                </p>
-                <ImageUpload
-                  onFileSelect={onFileSelectHandler}
-                  isSuccess={uploadSuccess}
-                  initialImageUrl={prompt.imageUrl}
-                />
-                {uploadError && <p className="text-[12px] text-negative-11 font-bold">{uploadError}</p>}
-              </div>
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-4">
                   <p className="text-neutral-11 text-[20px] font-bold">

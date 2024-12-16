@@ -1,11 +1,11 @@
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { FC, useState } from "react";
 
-interface CreateFlowPromptPreviewToggleProps {
+interface CreateFlowPreviewToggleProps {
   onClick?: () => void;
 }
 
-const CreateFlowPromptPreviewToggle: FC<CreateFlowPromptPreviewToggleProps> = ({ onClick }) => {
+const CreateFlowPreviewToggle: FC<CreateFlowPreviewToggleProps> = ({ onClick }) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const buttonText = isPreviewOpen ? "close preview" : "show preview";
 
@@ -27,4 +27,4 @@ const CreateFlowPromptPreviewToggle: FC<CreateFlowPromptPreviewToggleProps> = ({
   );
 };
 
-export default CreateFlowPromptPreviewToggle;
+export default CreateFlowPreviewToggle;

@@ -46,7 +46,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
       </MediaQuery>
       <MediaQuery minWidth={769}>
         <MenuButton className="p-4 h-8 flex items-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[10px] border border-neutral-11">
-          Share <img src="/forward.svg" alt="share" className="ml-1" width={20} height={20} />
+          <img src="/forward.svg" alt="share" className="ml-1" width={20} height={20} />
         </MenuButton>
       </MediaQuery>
 
