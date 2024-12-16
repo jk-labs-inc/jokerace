@@ -177,10 +177,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
             ) : null}
             {contestStatus === ContestStatus.VotingOpen && (
               <div className="flex flex-col gap-4 md:gap-8 md:w-80">
-                <div className="flex flex-col gap-4">
-                  <hr className="block border border-neutral-9" />
-                  <p className="text-neutral-11 font-bold text-[20px]">add votes</p>
-                </div>
+                <hr className="block border border-neutral-2" />
                 {isConnected ? (
                   currentUserAvailableVotesAmount > 0 ? (
                     <VotingWidget
