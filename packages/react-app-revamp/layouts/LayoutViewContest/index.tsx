@@ -224,7 +224,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                         ethereumAddress={contestAuthorEthereumAddress}
                         shortenOnFallback
                         textualVersion={isMobile}
-                        size="small"
+                        size={isMobile ? "extraSmall" : "small"}
                       />
                       {rewardsModuleAddress && rewardsAbi ? (
                         isMobile ? (

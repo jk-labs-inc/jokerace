@@ -8,7 +8,7 @@ interface GradientTextProps {
 const GradientText: FC<GradientTextProps> = ({ text, isStrikethrough }) => {
   return (
     <div className="relative inline-block">
-      <span className="text-[16px] md:text-[24px] font-sabo inline-block">
+      <span className="text-[16px] md:text-[31px] font-sabo inline-block">
         {isStrikethrough && (
           <span className="absolute inset-0 flex items-center overflow-hidden">
             <span className="w-full h-0.5 bg-gradient-purple"></span>
