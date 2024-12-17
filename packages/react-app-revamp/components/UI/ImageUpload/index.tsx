@@ -98,7 +98,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ onFileSelect, step, isSuccess, init
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       onDragLeave={handleDragLeave}
-      className={`relative flex shadow-file-upload m-auto md:m-0 flex-col w-full h-40 md:w-[344px] md:h-32 justify-center items-center border border-transparent hover:border-positive-11 gap-4 py-6 px-10 rounded-[32px] cursor-pointer transition-all duration-300 ease-in-out ${borderStyles}`}
+      className={`relative flex shadow-file-upload m-auto md:m-0 flex-col w-full h-40 md:w-[376px] md:h-36 justify-center items-center border border-transparent hover:border-positive-11 gap-4 py-6 px-10 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out ${borderStyles}`}
       style={{
         backgroundImage: selectedImage ? `url(${selectedImage})` : "none",
         backgroundSize: "cover",
@@ -113,7 +113,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ onFileSelect, step, isSuccess, init
           onClick={handleRemoveImage}
           className="absolute top-2 right-2 bg-true-black rounded-full p-1 shadow-md hover:bg-neutral-3 transition-colors duration-200"
         >
-          <XMarkIcon className="w-4 h-4 text-neutral-11" />
+          <XMarkIcon className="w-6 h-6 text-neutral-11" />
         </button>
       )}
       <div className={`text-[16px] flex flex-col ${isSuccess ? "gap-3" : "gap-0"}`}>

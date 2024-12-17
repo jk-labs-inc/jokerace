@@ -14,7 +14,6 @@ export interface EditPrompt {
   contestSummary: string;
   contestEvaluate: string;
   contestContactDetails: string;
-  contestImageUrl: string;
 }
 
 interface EditContestPromptModalProps {
@@ -34,9 +33,6 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
 }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
-  const [uploadError, setUploadError] = useState("");
-  const [uploadSuccess, setUploadSuccess] = useState(false);
-  const { uploadImage } = useUploadImageStore();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const editorSummarize = useEditor({
@@ -100,54 +96,6 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
     setIsCloseModal?.(false);
   };
 
-  const validateFile = (file: File): boolean => {
-    if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
-      setUploadError("Please upload a valid image/gif file (JPEG, JPG, PNG, JFIF, GIF, or WebP)");
-      return false;
-    }
-
-    const maxSize = 20 * 1024 * 1024; // 20MB in bytes
-    if (file.size > maxSize) {
-      setUploadError("File size should be less than 20MB");
-      return false;
-    }
-
-    return true;
-  };
-
-  const onFileSelectHandler = async (file: File | null) => {
-    if (!file) {
-      setUploadError("");
-      handleEditPrompt?.({
-        ...prompt,
-        contestImageUrl: "",
-      });
-      return;
-    }
-
-    if (!validateFile(file)) {
-      return;
-    }
-
-    try {
-      const imageUrl = await uploadImageToServer(file);
-
-      setUploadSuccess(true);
-      setUploadError("");
-      handleEditPrompt?.({
-        ...prompt,
-        contestImageUrl: imageUrl,
-      });
-    } catch (error) {
-      setUploadError("Failed to upload image. Please try again.");
-    }
-  };
-
-  const uploadImageToServer = async (file: File): Promise<string> => {
-    const img = await uploadImage(file);
-    return img ?? "";
-  };
-
   return (
     <DialogModalV4 isOpen={isOpen} onClose={() => setIsCloseModal?.(false)}>
       <div className="flex flex-col gap-14 py-6 md:py-16 pl-8 md:pl-32 pr-4 md:pr-16 max-h-screen overflow-y-auto">
@@ -174,7 +122,6 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
                 content: prompt.contestContactDetails ?? "",
                 isEmpty: editorContactDetails?.isEmpty ?? true,
               }}
-              imageUrl={prompt.contestImageUrl}
             />
           </div>
         ) : (
@@ -188,17 +135,7 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
               >
                 <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
               </div>
-              <div className="flex flex-col gap-4">
-                <p className="text-neutral-11 text-[20px] font-bold">
-                  add a pic <span className="font-normal">(optional)</span>
-                </p>
-                <ImageUpload
-                  onFileSelect={onFileSelectHandler}
-                  isSuccess={uploadSuccess}
-                  initialImageUrl={prompt.contestImageUrl}
-                />
-                {uploadError && <p className="text-[12px] text-negative-11 font-bold">{uploadError}</p>}
-              </div>
+
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-4">
                   <p className="text-neutral-11 text-[20px] font-bold">

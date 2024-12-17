@@ -1,5 +1,4 @@
 import { FC } from "react";
-import { parsePrompt } from "../Prompt/utils";
 
 interface ContestImageProps {
   imageUrl: string;
@@ -7,8 +6,8 @@ interface ContestImageProps {
 
 const ContestImage: FC<ContestImageProps> = ({ imageUrl }) => {
   return (
-    <div className="gradient-border p-4">
-      <img src={imageUrl} alt="contest" className="w-full h-auto max-h-[300px] radial-mask" />
+    <div className="w-full h-[296px] bg-true-black rounded-[16px] border-true-black shadow-file-upload p-4">
+      <img src={imageUrl} alt="contest" className="w-full h-auto max-h-[264px] rounded-lg" />
     </div>
   );
 };

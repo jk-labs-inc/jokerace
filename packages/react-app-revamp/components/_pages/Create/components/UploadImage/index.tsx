@@ -61,7 +61,7 @@ const CreateUploadImage = () => {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-neutral-11 text-[20px] font-bold">
-        add a pic <span className="font-normal">(optional)</span>
+        preview image <span className="font-normal">(optional)</span>
       </p>
       <ImageUpload onFileSelect={onFileSelectHandler} isSuccess={uploadSuccess} initialImageUrl={prompt.imageUrl} />
       {uploadError && <p className="text-[12px] text-negative-11 font-bold">{uploadError}</p>}

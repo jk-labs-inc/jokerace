@@ -207,7 +207,11 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                 <div className="animate-reveal pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
                     <div className="flex flex-col gap-2">
-                      <ContestName contestName={contestName} canEditTitle={canEditTitleAndDescription} />
+                      <ContestName
+                        contestName={contestName}
+                        contestPrompt={contestPrompt}
+                        canEditTitle={canEditTitleAndDescription}
+                      />
                       {contestImageUrl ? <ContestImage imageUrl={contestImageUrl} /> : null}
                     </div>
 

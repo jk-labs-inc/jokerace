@@ -283,18 +283,6 @@ li {
   max-width: 100%;
 }
 
-.gradient-border {
-  border-image: linear-gradient(to right, rgba(187, 101, 255, 0.3) 0%, rgba(229, 229, 229, 0.2) 100%) 1;
-  border-width: 1px;
-  border-style: solid;
-  padding: 2px;
-}
-
-.radial-mask {
-  -webkit-mask-image: radial-gradient(ellipse 70% 70% at center, black 60%, transparent 100%);
-  mask-image: radial-gradient(ellipse 70% 70% at center, black 60%, transparent 100%);
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

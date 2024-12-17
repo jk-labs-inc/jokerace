@@ -11,15 +11,9 @@ interface CreateFlowPromptPreviewProps {
   summarize: Prompt;
   evaluateVoters: Prompt;
   contactDetails: Prompt;
-  imageUrl?: string;
 }
 
-const CreateFlowPromptPreview: FC<CreateFlowPromptPreviewProps> = ({
-  summarize,
-  evaluateVoters,
-  contactDetails,
-  imageUrl,
-}) => {
+const CreateFlowPromptPreview: FC<CreateFlowPromptPreviewProps> = ({ summarize, evaluateVoters, contactDetails }) => {
   if (summarize.isEmpty && evaluateVoters.isEmpty && contactDetails.isEmpty) {
     return <p className="text-neutral-11 font-bold">no content!</p>;
   }
