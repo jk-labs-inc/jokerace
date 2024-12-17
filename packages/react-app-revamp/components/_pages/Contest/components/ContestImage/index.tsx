@@ -6,8 +6,8 @@ interface ContestImageProps {
 
 const ContestImage: FC<ContestImageProps> = ({ imageUrl }) => {
   return (
-    <div className="w-full h-[296px] bg-true-black rounded-[16px] border-true-black shadow-file-upload p-4">
-      <img src={imageUrl} alt="contest" className="w-full h-auto max-h-[264px] rounded-lg" />
+    <div className="w-full min-h-[296px] bg-true-black rounded-[16px] border-true-black shadow-file-upload p-4">
+      <img src={imageUrl} alt="contest" className="w-full max-h-[264px] rounded-2xl object-fill" />
     </div>
   );
 };
