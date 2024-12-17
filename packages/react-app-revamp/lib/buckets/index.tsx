@@ -90,7 +90,7 @@ export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions
     await s3.send(command);
 
     const originalUrl = `${IMAGE_PUBLIC_URL}/${fileId}`;
-    toastSuccess("Image uploaded successfully! Resized versions will be available shortly.");
+    toastSuccess("Image uploaded successfully!");
     return originalUrl;
   } catch (error: any) {
     toastError("Failed to upload an image, please try again.");

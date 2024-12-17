@@ -3,7 +3,7 @@
 import ShareDropdown from "@components/Share";
 import ButtonV3 from "@components/UI/ButtonV3";
 import Loader from "@components/UI/Loader";
-import UserProfileDisplay from "@components/UI/UserProfileDisplay";
+import UserProfileDisplay, { SIZES } from "@components/UI/UserProfileDisplay";
 import ContestTab from "@components/_pages/Contest/Contest";
 import ContestExtensions from "@components/_pages/Contest/Extensions";
 import ContestParameters from "@components/_pages/Contest/Parameters";
@@ -33,6 +33,8 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import LayoutViewContestError from "./components/Error";
+import ContestImage from "@components/_pages/Contest/components/ContestImage";
+import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -52,6 +54,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     rewardsModuleAddress,
     rewardsAbi,
     contestAbi,
+    contestPrompt,
     canEditTitleAndDescription,
     version,
   } = useContestStore(state => state);
@@ -60,6 +63,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const { setContestStatus } = useContestStatusStore(state => state);
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const isMobile = useMediaQuery({ maxWidth: 768 });
+  const { contestImageUrl } = parsePrompt(contestPrompt || "");
   const bugReportLink = populateBugReportLink(url?.href ?? "", accountAddress ?? "", error ?? "");
 
   useAccountEffect({
@@ -203,7 +207,16 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                 <div className="animate-reveal pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
                     <div className="flex flex-col gap-2">
-                      <ContestName contestName={contestName} canEditTitle={canEditTitleAndDescription} />
+                      <ContestName
+                        contestName={contestName}
+                        contestPrompt={contestPrompt}
+                        canEditTitle={canEditTitleAndDescription}
+                      />
+                      {contestImageUrl ? (
+                        <div className="hidden md:block">
+                          <ContestImage imageUrl={contestImageUrl} />
+                        </div>
+                      ) : null}
                     </div>
 
                     <div className={`flex flex-row gap-3 md:gap-4 items-center`}>
@@ -211,6 +224,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                         ethereumAddress={contestAuthorEthereumAddress}
                         shortenOnFallback
                         textualVersion={isMobile}
+                        size={isMobile ? "extraSmall" : "small"}
                       />
                       {rewardsModuleAddress && rewardsAbi ? (
                         isMobile ? (

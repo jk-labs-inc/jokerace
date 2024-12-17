@@ -9,10 +9,11 @@ import EditContestName from "./components/EditContestName";
 
 interface ContestNameProps {
   contestName: string;
+  contestPrompt: string;
   canEditTitle: boolean;
 }
 
-const ContestName: FC<ContestNameProps> = ({ contestName, canEditTitle }) => {
+const ContestName: FC<ContestNameProps> = ({ contestName, contestPrompt, canEditTitle }) => {
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
@@ -24,7 +25,7 @@ const ContestName: FC<ContestNameProps> = ({ contestName, canEditTitle }) => {
       <div className="flex items-center justify-between w-full">
         <GradientText text={contestName} isStrikethrough={isContestCanceled} />
         <div className="flex items-center gap-2">
-          <EditContestName contestName={contestName} canEditTitle={canEditTitle} />
+          <EditContestName contestName={contestName} contestPrompt={contestPrompt} canEditTitle={canEditTitle} />
           <CancelContest />
           <BurgerMenu>
             <div className="flex justify-end flex-col gap-2">
@@ -50,7 +51,7 @@ const ContestName: FC<ContestNameProps> = ({ contestName, canEditTitle }) => {
     <div className="flex items-center justify-between w-full">
       <GradientText text={contestName} isStrikethrough={isContestCanceled} />
       <div className="flex items-center gap-2 justify-end">
-        <EditContestName contestName={contestName} canEditTitle={canEditTitle} />
+        <EditContestName contestName={contestName} contestPrompt={contestPrompt} canEditTitle={canEditTitle} />
         <CancelContest />
       </div>
     </div>

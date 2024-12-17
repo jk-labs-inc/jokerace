@@ -35,20 +35,29 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
   };
 
   return (
-    <input
-      ref={inputRef}
-      value={value}
-      type="text"
-      onClick={onClick}
-      className={`border-b border-neutral-11 rounded-none bg-transparent outline-none placeholder-neutral-10 placeholder-bold pb-2 ${className}`}
-      placeholder={placeholder}
-      readOnly={readOnly}
-      min={min}
-      max={max}
-      maxLength={maxLength}
-      minLength={minLength}
-      onChange={handleChange}
-    />
+    <div className="flex flex-col gap-2">
+      <p className="text-[20px] font-bold text-neutral-11">
+        contest title <span className="font-normal">(required)</span>
+      </p>
+      <div
+        className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black md:shadow-file-upload md:p-2`}
+      >
+        <input
+          ref={inputRef}
+          value={value}
+          type="text"
+          onClick={onClick}
+          className="text-[16px] bg-secondary-1 outline-none rounded-[16px] placeholder-neutral-10 w-full h-12 indent-4 focus:outline-none"
+          placeholder={placeholder}
+          readOnly={readOnly}
+          min={min}
+          max={max}
+          maxLength={maxLength}
+          minLength={minLength}
+          onChange={handleChange}
+        />
+      </div>
+    </div>
   );
 };
 

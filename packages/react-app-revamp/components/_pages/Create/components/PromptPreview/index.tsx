@@ -11,22 +11,15 @@ interface CreateFlowPromptPreviewProps {
   summarize: Prompt;
   evaluateVoters: Prompt;
   contactDetails: Prompt;
-  imageUrl?: string;
 }
 
-const CreateFlowPromptPreview: FC<CreateFlowPromptPreviewProps> = ({
-  summarize,
-  evaluateVoters,
-  contactDetails,
-  imageUrl,
-}) => {
+const CreateFlowPromptPreview: FC<CreateFlowPromptPreviewProps> = ({ summarize, evaluateVoters, contactDetails }) => {
   if (summarize.isEmpty && evaluateVoters.isEmpty && contactDetails.isEmpty) {
     return <p className="text-neutral-11 font-bold">no content!</p>;
   }
 
   return (
     <div className="prose prose-invert flex flex-col">
-      {imageUrl && <img src={imageUrl} alt="preview" className="w-full h-auto" />}
       <Interweave content={summarize.content} matchers={[new UrlMatcher("url")]} />
       {!evaluateVoters.isEmpty && (
         <>

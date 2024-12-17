@@ -38,7 +38,6 @@ const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }
     contestSummary,
     contestEvaluate,
     contestContactDetails,
-    contestImageUrl: contestImageUrl ?? "",
   });
 
   if (!shouldRender) return null;
@@ -56,10 +55,10 @@ const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }
 
     const formattedPrompt = new URLSearchParams({
       type: contestType,
+      imageUrl: contestImageUrl ?? "",
       summarize: newPrompt.contestSummary,
       evaluateVoters: newPrompt.contestEvaluate,
       contactDetails: newPrompt.contestContactDetails ?? "",
-      imageUrl: newPrompt.contestImageUrl ?? "",
     }).toString();
 
     editPrompt(formattedPrompt);
