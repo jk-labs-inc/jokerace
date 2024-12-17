@@ -95,7 +95,6 @@ const CreateContestPrompt = () => {
               summarize={{ content: prompt.summarize, isEmpty: editorSummarize?.isEmpty ?? true }}
               evaluateVoters={{ content: prompt.evaluateVoters, isEmpty: editorEvaluateVoters?.isEmpty ?? true }}
               contactDetails={{ content: prompt.contactDetails ?? "", isEmpty: editorContactDetails?.isEmpty ?? true }}
-              imageUrl={prompt.imageUrl}
             />
           </div>
         ) : (

@@ -212,7 +212,11 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                         contestPrompt={contestPrompt}
                         canEditTitle={canEditTitleAndDescription}
                       />
-                      {contestImageUrl ? <ContestImage imageUrl={contestImageUrl} /> : null}
+                      {contestImageUrl ? (
+                        <div className="hidden md:block">
+                          <ContestImage imageUrl={contestImageUrl} />
+                        </div>
+                      ) : null}
                     </div>
 
                     <div className={`flex flex-row gap-3 md:gap-4 items-center`}>
