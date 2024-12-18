@@ -33,7 +33,6 @@ const useEditContestTitleAndImage = ({ contestAbi, contestAddress }: UseEditCont
     ];
 
     const updateTitle = async () => {
-      console.log("updating title");
       const { request } = await simulateContract(config, {
         abi: contestAbi,
         address: contestAddress as `0x${string}`,
@@ -48,7 +47,6 @@ const useEditContestTitleAndImage = ({ contestAbi, contestAddress }: UseEditCont
     };
 
     const updatePrompt = async () => {
-      console.log("updating prompt");
       const { request } = await simulateContract(config, {
         abi: contestAbi,
         address: contestAddress as `0x${string}`,
