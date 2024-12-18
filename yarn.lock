@@ -6406,14 +6406,6 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.7.2.tgz#2d4260033e199b3032a08b41348ac10de21c47e9"
   integrity sha512-RbhOOTCNoCrbfkRyoXODZp75MlpiHMgbE5MEBZAnnnLyQNgrigEj4p0lzsMDyc1zVsJDLrivB58tgg3emX0eEA==
 
-"@safe-global/safe-apps-provider@0.18.4":
-  version "0.18.4"
-  resolved "https://registry.yarnpkg.com/@safe-global/safe-apps-provider/-/safe-apps-provider-0.18.4.tgz#53df912aa20d933f6b14c5bcb0737a8cd47def57"
-  integrity sha512-SWYeG3gyTO6wGHMSokfHakZ9isByn2mHsM0VohIorYFFEyGGmJ89btnTm+DqDUSoQtvWAatZB7XNy6CaYMvqtg==
-  dependencies:
-    "@safe-global/safe-apps-sdk" "^9.1.0"
-    events "^3.3.0"
-
 "@safe-global/safe-apps-provider@0.18.5":
   version "0.18.5"
   resolved "https://registry.yarnpkg.com/@safe-global/safe-apps-provider/-/safe-apps-provider-0.18.5.tgz#745a932bda3739a8a298ae44ec6c465f6c4773b7"
@@ -8100,18 +8092,6 @@
     estree-walker "^3.0.3"
     loupe "^2.3.7"
     pretty-format "^29.7.0"
-
-"@wagmi/connectors@5.6.1":
-  version "5.6.1"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.6.1.tgz#948ca387916136501da80989f3eba351b0c6a595"
-  integrity sha512-6nGxKSDtT6udnrW21SPqP7gcaZFpyRAz7Ecf2DelYh5OHpGk/FBNB8mtB/w0AVSCH6XRIpVK81pO412pPBiEYg==
-  dependencies:
-    "@coinbase/wallet-sdk" "4.2.3"
-    "@metamask/sdk" "0.31.2"
-    "@safe-global/safe-apps-provider" "0.18.4"
-    "@safe-global/safe-apps-sdk" "9.1.0"
-    "@walletconnect/ethereum-provider" "2.17.0"
-    cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
 
 "@wagmi/connectors@5.7.0":
   version "5.7.0"
@@ -17547,12 +17527,12 @@ w3c-keyname@^2.2.0:
   resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.8.tgz#7b17c8c6883d4e8b86ac8aba79d39e880f8869c5"
   integrity sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==
 
-wagmi@2.14.1:
-  version "2.14.1"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.14.1.tgz#8c6e1e389f8dab7c21d1c91e3c2fba4815c4fbdb"
-  integrity sha512-Lq/UFJVorjwJlFjXbU+Jtfo64PObNfUCPtwgqi+q/WGBWzG7CL0xmCsB3wPc+YZYwD8O9OqFDHfcggUi0qwcGA==
+wagmi@2.14.3:
+  version "2.14.3"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.14.3.tgz#3abfe5e9f796890d75d1b7d506e9dccd6b87f254"
+  integrity sha512-sr8o7+EBw22GhieDyXLv8Zr2vgC6xKrYoSuUIpq0xOqEhvMP1q880VtR4lFG1capc2QEWvK72pJ/+jpsEQcMYQ==
   dependencies:
-    "@wagmi/connectors" "5.6.1"
+    "@wagmi/connectors" "5.7.0"
     "@wagmi/core" "2.16.0"
     use-sync-external-store "1.2.0"
 
