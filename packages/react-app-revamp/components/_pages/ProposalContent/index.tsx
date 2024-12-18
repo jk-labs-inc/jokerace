@@ -23,6 +23,7 @@ import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
 import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
 import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
 import ProposalLayoutTweet from "./components/ProposalLayout/Tweet";
+import { LINK_BRIDGE_DOCS } from "@config/links";
 
 export interface Proposal {
   id: string;
@@ -98,7 +99,16 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
     if (!canVote) {
       if (charge?.voteType === VoteType.PerVote) {
-        toastInfo(`add ${chainCurrencySymbol} to ${chainName} to get votes`);
+        toastInfo(
+          <a
+            href={LINK_BRIDGE_DOCS}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-true-black hover:text-neutral-2 transition-colors duration-300 border-b border-true-black"
+          >
+            add {chainCurrencySymbol} to {chainName} to get votes
+          </a>,
+        );
         return;
       }
       toastInfo("You need to be allowlisted to vote for this contest.");
