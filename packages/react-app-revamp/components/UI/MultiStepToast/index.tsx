@@ -30,11 +30,9 @@ const MultiStepToast: FC<MultiStepToastProps> = ({ messages, promises, toastIdRe
           messages[i].status = "completed";
           messages[i].message = messages[i].successMessage;
         } catch (error) {
-          console.log("error", error);
           toast.dismiss(toastIdRef.current);
           return;
         } finally {
-          console.log("finally");
           // Only set loading to false and step to the next if no error occurred
           if (messages[i].status !== "error") {
             setLoading(false);
