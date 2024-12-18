@@ -9,8 +9,17 @@ import { Abi } from "viem";
 
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
-type Props = {
-  params: { chain: string; address: string };
+const defaultMetadata = {
+  title: "Contest",
+  description: "",
+  openGraph: {
+    title: "Contest",
+    description: "",
+  },
+  twitter: {
+    title: "Contest",
+    description: "",
+  },
 };
 
 async function getContestDetails(address: string, chainName: string) {
@@ -42,27 +51,19 @@ async function getContestDetails(address: string, chainName: string) {
     return results;
   } catch (error) {
     console.error("failed to fetch contest details:", error);
-    return [
-      { result: "" }, // empty name
-      { result: "||" }, // empty prompt with minimum required delimiters
-    ];
+    return [{ result: "" }, { result: "||" }];
   }
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: {
+  params: Promise<{ chain: string; address: string }>;
+}): Promise<Metadata> {
+  const params = await props.params;
   const { chain, address } = params;
-  const defaultMetadata = {
-    title: "Contest",
-    description: "",
-    openGraph: {
-      title: "Contest",
-      description: "",
-    },
-    twitter: {
-      title: "Contest",
-      description: "",
-    },
-  };
+
+  if (!address || address === "undefined" || !chain) {
+    return defaultMetadata;
+  }
 
   try {
     const contestDetails = await getContestDetails(address, chain);
@@ -93,13 +94,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-const Page = ({ params }: Props) => {
+const Page = async (props: { params: Promise<{ chain: string; address: string }> }) => {
+  const params = await props.params;
   const { chain, address } = params;
 
-  if (
-    !REGEX_ETHEREUM_ADDRESS.test(address) ||
-    chains.filter((c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain).length === 0
-  ) {
+  if (!REGEX_ETHEREUM_ADDRESS.test(address)) {
+    return notFound();
+  }
+
+  const isValidChain = chains.some(
+    (c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain.toLowerCase(),
+  );
+
+  if (!isValidChain) {
     return notFound();
   }
 };
