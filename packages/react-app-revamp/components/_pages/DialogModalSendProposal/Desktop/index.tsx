@@ -3,7 +3,7 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
-import { FOOTER_LINKS } from "@config/links";
+import { FOOTER_LINKS, LINK_BRIDGE_DOCS } from "@config/links";
 import { Switch } from "@headlessui/react";
 import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
@@ -14,13 +14,14 @@ import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
-import { FC, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 import DialogModalSendProposalEditor from "../components/Editor";
 import DialogModalSendProposalEmailSubscription from "../components/EmailSubscription";
 import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
 import { isEntryPreviewPrompt } from "../utils";
+import { chains } from "@config/wagmi";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -76,7 +77,8 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const showEntryCharge = charge && charge.type.costToPropose && accountData && isCorrectNetwork;
   const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields();
   const { fields: metadataFields } = useMetadataStore(state => state);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ReactNode | null>(null);
+  const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
   const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);
 
   const handleCheckboxChange = (checked: boolean) => {
@@ -100,18 +102,30 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
 
     if (metadataFields.length > 0) {
       if (isAnyMetadataFieldEmpty()) {
-        setError("Please fill in all additional fields before submitting.");
+        setError(
+          <p className="text-negative-11 font-bold text-[12px]">
+            Please fill in all additional fields before submitting.
+          </p>,
+        );
         return;
       }
     } else {
       if (!proposal.length || editorProposal?.isEmpty) {
-        setError("Please fill in your proposal.");
+        setError(<p className="text-negative-11 font-bold text-[12px]">Please fill in your proposal.</p>);
         return;
       }
     }
 
     if (insufficientBalance) {
-      setError("Insufficient balance to submit a proposal.");
+      setError(
+        <a
+          href={LINK_BRIDGE_DOCS}
+          target="_blank"
+          className="text-[12px] text-negative-11 font-bold leading-loose underline"
+        >
+          add {chainCurrencySymbol} to {chainName} to enter contest.
+        </a>,
+      );
       return;
     }
 
@@ -226,7 +240,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                   >
                     submit
                   </ButtonV3>
-                  {error && <p className="text-negative-11 text-[14px] font-bold">{error}</p>}
+                  {error && <>{error}</>}
                 </div>
               ) : (
                 <ButtonV3

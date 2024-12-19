@@ -41,7 +41,12 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
         <DialogModalSendProposalSuccessLayout proposalId={proposalId} chainName={chainName} contestId={contestId} />
       );
     return (
-      <SendProposalMobileLayoutConfirmInitialContent onConfirm={onConfirm} charge={charge} accountData={accountData} />
+      <SendProposalMobileLayoutConfirmInitialContent
+        onConfirm={onConfirm}
+        charge={charge}
+        accountData={accountData}
+        chainName={chainName}
+      />
     );
   };
 
