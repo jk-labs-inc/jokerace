@@ -94,25 +94,27 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
         />
       )}
       <div className="w-full flex flex-col min-h-16 gap-6 bg-true-black shadow-entry-card px-8 py-6 rounded-2xl border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out">
-        <div className={`flex gap-10 ${isContentHidden ? "items-center" : ""}`}>
+        <div className={`flex gap-6 ${isContentHidden ? "items-center" : ""}`}>
           <div className={`${isContentHidden ? "" : "-mt-1"}`}>
             <ProposalLayoutLeaderboardRankOrPlaceholder proposal={proposal} contestStatus={contestStatus} />
           </div>
           <div className="flex flex-col gap-8 w-full">
-            <div className="grid grid-cols-[200px_1fr_auto] items-center gap-12">
-              <ProposalContentProfile
-                name={proposalAuthorData.name}
-                avatar={proposalAuthorData.avatar}
-                isLoading={proposalAuthorData.isLoading}
-                isError={proposalAuthorData.isError}
-                textColor="text-neutral-10"
-              />
-              <div className="flex gap-2 items-center">
-                <p className="text-[16px] text-neutral-11 font-bold normal-case">{entryTitle}</p>
+            <div className="grid grid-cols-[200px_1fr_auto] items-center gap-6">
+              <div className="flex items-center gap-4">
+                <ProposalContentProfile
+                  name={proposalAuthorData.name}
+                  avatar={proposalAuthorData.avatar}
+                  isLoading={proposalAuthorData.isLoading}
+                  isError={proposalAuthorData.isError}
+                  textColor="text-neutral-10"
+                />
+              </div>
+              <div className="flex gap-2 items-center min-w-0">
+                <p className="text-[16px] text-neutral-11 font-bold normal-case truncate">{entryTitle}</p>
                 <Link
                   scroll={false}
                   href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
-                  className="w-4 h-4 flex justify-center items-center rounded-full border text-positive-11 border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out group"
+                  className="flex-shrink-0 w-4 h-4 flex justify-center items-center rounded-full border text-positive-11 border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out group"
                 >
                   <ChevronRightIcon className="w-4 h-4 group-hover:brightness-0 group-hover:saturate-0" />
                 </Link>

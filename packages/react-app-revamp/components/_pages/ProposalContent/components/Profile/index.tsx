@@ -29,12 +29,12 @@ const ProposalContentProfile: FC<ProposalContentProfileProps> = ({
       ) : isError ? (
         <p className="text-negative-11 font-bold text-[12px]">ruh-roh, couldn't load creator name!</p>
       ) : (
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center min-w-0">
           {avatar ? <Avatar src={avatar} size={size} /> : null}
           <p
-            className={`font-bold ${SIZES[size].textSizeClass} ${textColor ? textColor : "text-neutral-11"} ${
-              dropShadow ? "drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]" : ""
-            }`}
+            className={`font-bold truncate max-w-[200px] ${SIZES[size].textSizeClass} ${
+              textColor ? textColor : "text-neutral-11"
+            } ${dropShadow ? "drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]" : ""}`}
           >
             {name}
           </p>
