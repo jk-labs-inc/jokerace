@@ -1,7 +1,8 @@
 import DialogModalSendProposalEmailSubscription from "@components/_pages/DialogModalSendProposal/components/EmailSubscription";
 import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { FOOTER_LINKS } from "@config/links";
+import { FOOTER_LINKS, LINK_BRIDGE_DOCS } from "@config/links";
+import { chains } from "@config/wagmi";
 import { Switch } from "@headlessui/react";
 import { emailRegex } from "@helpers/regex";
 import { Charge } from "@hooks/useDeployContest/types";
@@ -12,12 +13,14 @@ import { FC, useState } from "react";
 interface SendProposalMobileLayoutConfirmInitialContentProps {
   charge: Charge | null;
   accountData: GetBalanceReturnType | undefined;
+  chainName: string;
   onConfirm?: () => void;
 }
 
 const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayoutConfirmInitialContentProps> = ({
   charge,
   accountData,
+  chainName,
   onConfirm,
 }) => {
   const { wantsSubscription, emailForSubscription, setWantsSubscription, setEmailForSubscription, emailAlreadyExists } =
@@ -25,6 +28,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   const [emailError, setEmailError] = useState<string | null>(null);
   const insufficientBalance = (accountData?.value ?? 0) < (charge?.type.costToPropose ?? 0);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
+  const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
 
   const handleCheckboxChange = (checked: boolean) => {
     setWantsSubscription(checked);
@@ -91,7 +95,16 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
         <ChargeLayoutSubmission charge={charge} accountData={accountData} />
       ) : null}
 
-      <div className="mt-12">
+      <div className="flex flex-col gap-2 mt-12">
+        {insufficientBalance ? (
+          <a
+            href={LINK_BRIDGE_DOCS}
+            target="_blank"
+            className="text-[12px] text-center text-negative-11 font-bold leading-loose underline"
+          >
+            add {chainCurrencySymbol} to {chainName} to enter contest.
+          </a>
+        ) : null}
         <ButtonV3
           colorClass="bg-gradient-vote rounded-[40px]"
           size={ButtonSize.FULL}

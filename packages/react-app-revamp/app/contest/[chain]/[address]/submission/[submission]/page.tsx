@@ -8,12 +8,17 @@ import Submission from "./submission";
 
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
-type Props = {
-  params: {
-    chain: string;
-    address: string;
-    submission: string;
-  };
+const defaultMetadata = {
+  title: "Contest Entry on JokeRace",
+  description: "Contest Entry on JokeRace",
+  openGraph: {
+    title: "Contest Entry on JokeRace",
+    description: "Contest Entry on JokeRace",
+  },
+  twitter: {
+    title: "Contest Entry on JokeRace",
+    description: "Contest Entry on JokeRace",
+  },
 };
 
 async function getContestDetails(address: string, chainName: string) {
@@ -34,28 +39,23 @@ async function getContestDetails(address: string, chainName: string) {
     return result as string;
   } catch (error) {
     console.error("failed to fetch contest details:", error);
-    return "contest"; // safe fallback value
+    return "contest";
   }
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const defaultMetadata = {
-    title: "Contest Entry on JokeRace",
-    description: "Contest Entry on JokeRace",
-    openGraph: {
-      title: "Contest Entry on JokeRace",
-      description: "Contest Entry on JokeRace",
-    },
-    twitter: {
-      title: "Contest Entry on JokeRace",
-      description: "Contest Entry on JokeRace",
-    },
-  };
+export async function generateMetadata(props: {
+  params: Promise<{ chain: string; address: string; submission: string }>;
+}): Promise<Metadata> {
+  const params = await props.params;
+  const { chain, address } = params;
+
+  if (!address || address === "undefined" || !chain) {
+    console.error("invalid params received:", { chain, address });
+    return defaultMetadata;
+  }
 
   try {
-    const { chain, address } = params;
     const contestName = await getContestDetails(address, chain);
-
     const title = `Entry for ${contestName} contest on JokeRace`;
     const description = `Entry for ${contestName} contest on JokeRace`;
 
@@ -77,17 +77,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-const Page = async ({ params }: Props) => {
+const Page = async (props: { params: Promise<{ chain: string; address: string; submission: string }> }) => {
+  const params = await props.params;
+  const { chain, address, submission } = params;
+
   try {
-    const { chain, address, submission } = params;
-    const chainId = chains.find((c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain)?.id;
+    const chainId = chains.find(
+      (c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain.toLowerCase(),
+    )?.id;
     const { abi, version } = await getContestContractVersion(address, chainId ?? 1);
 
-    if (
-      !REGEX_ETHEREUM_ADDRESS.test(address) ||
-      !chains.some((c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain) ||
-      !submission
-    ) {
+    if (!REGEX_ETHEREUM_ADDRESS.test(address)) {
       return notFound();
     }
 

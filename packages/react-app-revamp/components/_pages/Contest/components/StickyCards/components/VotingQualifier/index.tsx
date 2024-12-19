@@ -80,9 +80,12 @@ const VotingContestQualifier = () => {
           />
         )
       ) : (
-        <p className="text-[16px] md:text-[24px] text-positive-11 font-bold cursor-pointer" onClick={openConnectModal}>
-          {isMobile ? "connect wallet to see" : "connect wallet to see votes"}
-        </p>
+        <button
+          className="w-48 h-8 text-[16px] font-bold bg-true-black text-neutral-11 rounded-[40px] border border-neutral-11 hover:bg-neutral-11 hover:text-true-black transition-all duration-300"
+          onClick={openConnectModal}
+        >
+          connect wallet
+        </button>
       )}
     </div>
   );

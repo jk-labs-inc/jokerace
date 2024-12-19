@@ -14,10 +14,9 @@ const MAX_LENGTH = 200;
 
 const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt, canEditTitleAndDescription }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [imageHeight, setImageHeight] = useState<number | null>(null);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
-  const { contestSummary, contestEvaluate, contestContactDetails, contestImageUrl } = parsePrompt(prompt);
+  const { contestSummary, contestEvaluate, contestContactDetails } = parsePrompt(prompt);
 
   const shouldDisplayReadMore = () => {
     const totalLength = contestSummary.length + (contestEvaluate?.length || 0) + (contestContactDetails?.length || 0);
@@ -73,48 +72,34 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
     setIsExpanded(!isExpanded);
   };
 
-  const handleImageLoad = (event: React.SyntheticEvent<HTMLImageElement>) => {
-    setImageHeight(event.currentTarget.height);
-  };
-
   return (
     <div className="flex items-start w-full">
       <div className="flex flex-col gap-2 md:gap-4 w-80 xs:w-[460px] sm:w-[560px]">
         <div
           className={`overflow-hidden ${isContestCanceled ? "line-through" : ""}`}
           style={{
-            maxHeight: isExpanded ? "none" : contestImageUrl ? (imageHeight ? `${imageHeight}px` : "auto") : "150px",
+            maxHeight: isExpanded ? "none" : "150px",
           }}
         >
           <div className="prose prose-invert flex flex-col">
-            {contestImageUrl && (
-              <img
-                src={contestImageUrl}
-                alt="preview"
-                className="w-full h-auto rounded-2xl !mb-8"
-                onLoad={handleImageLoad}
-              />
-            )}
-            {(!contestImageUrl || isExpanded) && (
-              <>
-                <Interweave content={summaryContent} matchers={[new UrlMatcher("url")]} />
-                {shouldDisplayEvaluate && (
-                  <>
-                    <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
-                    <Interweave content={evaluateContent} matchers={[new UrlMatcher("url")]} />
-                  </>
-                )}
-                {shouldDisplayContactDetails && (
-                  <div>
-                    <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
-                    <Interweave content={contactDetailsContent} matchers={[new UrlMatcher("url")]} />
-                  </div>
-                )}
-              </>
-            )}
+            <>
+              <Interweave content={summaryContent} matchers={[new UrlMatcher("url")]} />
+              {shouldDisplayEvaluate && (
+                <>
+                  <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
+                  <Interweave content={evaluateContent} matchers={[new UrlMatcher("url")]} />
+                </>
+              )}
+              {shouldDisplayContactDetails && (
+                <div>
+                  <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
+                  <Interweave content={contactDetailsContent} matchers={[new UrlMatcher("url")]} />
+                </div>
+              )}
+            </>
           </div>
         </div>
-        {(shouldDisplayReadMore() || contestImageUrl) && (
+        {shouldDisplayReadMore() && (
           <div className="flex gap-1 items-center cursor-pointer" onClick={handleToggle}>
             <p className="text-[16px] text-positive-11">{isExpanded ? "less description" : "full description"}</p>
             <img

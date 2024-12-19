@@ -35,7 +35,7 @@ export const ConnectButtonCustom: FC<ConnectButtonCustomProps> = ({ displayOptio
                   <button
                     onClick={openConnectModal}
                     type="button"
-                    className="w-40 h-10 text-center bg-gradient-create rounded-2xl text-true-black font-bold text-[20px]"
+                    className="w-48 h-10 text-center bg-gradient-create rounded-[40px] text-true-black font-bold text-[16px]"
                   >
                     connect wallet
                   </button>
@@ -45,7 +45,7 @@ export const ConnectButtonCustom: FC<ConnectButtonCustomProps> = ({ displayOptio
                 <div className="flex gap-3">
                   <button
                     onClick={openChainModal}
-                    className="flex items-center gap-1 py-2 px-3 bg-neutral-2 rounded-2xl text-[18px] font-bold"
+                    className="flex items-center gap-1 py-2 px-3 bg-neutral-2 rounded-[40px] text-[16px] font-bold"
                     type="button"
                   >
                     {chain.hasIcon && (
@@ -68,7 +68,7 @@ export const ConnectButtonCustom: FC<ConnectButtonCustomProps> = ({ displayOptio
                     <button
                       onClick={openAccountModal}
                       type="button"
-                      className="flex items-center py-2 px-3 bg-neutral-2 rounded-2xl font-bold text-[18px]"
+                      className="flex items-center py-2 px-3 bg-neutral-2 rounded-[40px] font-bold text-[16px]"
                     >
                       {account.displayName}
                       <ChevronDownIcon className="w-6 ml-1" />

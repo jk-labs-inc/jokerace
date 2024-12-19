@@ -9,15 +9,21 @@ import { usePathname } from "next/navigation";
 import { extractPathSegments } from "@helpers/extractPath";
 import { switchChain } from "@wagmi/core";
 import { chains, config } from "@config/wagmi";
+import useEditContestPrompt from "@hooks/useEditContestPrompt";
+import { parsePrompt } from "../../../Prompt/utils";
+import useEditContestTitleAndImage from "@hooks/useEditContestTitleAndImage";
 
 interface EditContestNameProps {
   contestName: string;
+  contestPrompt: string;
   canEditTitle: boolean;
 }
 
-const EditContestName: FC<EditContestNameProps> = ({ contestName, canEditTitle }) => {
+const EditContestName: FC<EditContestNameProps> = ({ contestName, contestPrompt, canEditTitle }) => {
   const { address, chain: accountChain } = useAccount();
   const pathname = usePathname();
+  const { contestType, contestSummary, contestEvaluate, contestContactDetails, contestImageUrl } =
+    parsePrompt(contestPrompt);
   const { address: contestAddress, chainName: contestChainName } = extractPathSegments(pathname ?? "");
   const isOnCorrectChain = accountChain?.name.toLowerCase() === contestChainName.toLowerCase();
   const contestChainId = chains.find(chain => chain.name.toLowerCase() === contestChainName.toLowerCase())?.id;
@@ -32,16 +38,59 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, canEditTitle }
     contestAbi,
     contestAddress,
   });
+  const { editPrompt } = useEditContestPrompt({
+    contestAbi,
+    contestAddress,
+  });
+  const { updateContestTitleAndImage } = useEditContestTitleAndImage({
+    contestAbi,
+    contestAddress,
+  });
 
   if (!shouldRender) return null;
 
   const handleOpenModal = () => setIsEditContestNameModalOpen(true);
 
-  const handleEditContestName = async (value: string) => {
+  const handleEditContestNameAndImage = async (value: string, imageValue?: string) => {
+    // early returns for validation
     if (!contestChainId) return;
 
-    if (!isOnCorrectChain) await switchChain(config, { chainId: contestChainId });
-    editTitle(value);
+    // ensure correct chain
+    if (!isOnCorrectChain) {
+      await switchChain(config, { chainId: contestChainId });
+    }
+
+    // create formatted prompt if image is being updated
+    const getFormattedPrompt = (newImageUrl: string) => {
+      return new URLSearchParams({
+        type: contestType,
+        imageUrl: newImageUrl,
+        summarize: contestSummary,
+        evaluateVoters: contestEvaluate,
+        contactDetails: contestContactDetails,
+      }).toString();
+    };
+
+    const isTitleChanged = value !== contestName;
+    const isImageChanged = imageValue !== contestImageUrl;
+
+    // handle both title and image changes
+    if (isTitleChanged && isImageChanged) {
+      const formattedPrompt = getFormattedPrompt(imageValue ?? "");
+      await updateContestTitleAndImage(value, formattedPrompt);
+
+      return;
+    }
+
+    // handle individual changes
+    if (isTitleChanged) {
+      await editTitle(value);
+    }
+
+    if (isImageChanged) {
+      const formattedPrompt = getFormattedPrompt(imageValue ?? "");
+      await editPrompt(formattedPrompt);
+    }
   };
 
   return (
@@ -52,9 +101,10 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, canEditTitle }
 
       <EditContestNameModal
         contestName={contestName}
+        contestImageUrl={contestImageUrl}
         isOpen={isEditContestNameModalOpen}
         setIsCloseModal={setIsEditContestNameModalOpen}
-        handleEditContestName={handleEditContestName}
+        handleEditContestNameAndImage={handleEditContestNameAndImage}
       />
     </>
   );
