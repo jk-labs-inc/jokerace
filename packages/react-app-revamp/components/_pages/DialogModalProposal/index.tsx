@@ -20,6 +20,7 @@ import { FC, useEffect } from "react";
 import { useAccount } from "wagmi";
 import ListProposalVotes from "../ListProposalVotes";
 import { LINK_BRIDGE_DOCS } from "@config/links";
+import EntryNavigation from "./components/EntryNavigation";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -101,43 +102,18 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
       title="Proposal"
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      className="xl:w-[1110px] 3xl:w-[1300px]"
+      className="w-[1200px] h-[600px]"
       onClose={onClose}
     >
-      <div
-        className="flex flex-col gap-8 md:pl-[50px] lg:pl-[100px] mt-[20px] md:mt-[60px] pb-[60px]"
-        id="custom-modal"
-      >
-        <ContestPrompt type="modal" prompt={prompt} hidePrompt />
+      <div className="flex flex-col gap-8 px-8" id="custom-modal">
         <div className={`${totalProposals > 1 ? "flex" : "hidden"} gap-4`}>
-          {currentIndex !== 0 && (
-            <ButtonV3
-              colorClass="bg-primary-2"
-              textColorClass="flex items-center justify-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[40px] group transform transition-transform duration-200 active:scale-95"
-              size={ButtonSize.LARGE}
-              onClick={onPreviousEntry}
-              isDisabled={isProposalLoading}
-            >
-              <div className="transition-transform duration-200 group-hover:-translate-x-1">
-                <img src="/contest/previous-entry.svg" alt="prev-entry" width={16} height={14} className="mt-1" />
-              </div>
-              previous entry
-            </ButtonV3>
-          )}
-          {currentIndex !== totalProposals - 1 && (
-            <ButtonV3
-              colorClass="bg-primary-2"
-              textColorClass="flex items-center justify-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[40px] group transform transition-transform duration-200 active:scale-95"
-              size={ButtonSize.LARGE}
-              onClick={onNextEntry}
-              isDisabled={isProposalLoading}
-            >
-              next entry
-              <div className="transition-transform duration-200 group-hover:translate-x-1">
-                <img src="/contest/next-entry.svg" alt="prev-entry" width={16} height={14} className="mt-[3px]" />
-              </div>
-            </ButtonV3>
-          )}
+          <EntryNavigation
+            currentIndex={currentIndex}
+            totalProposals={totalProposals}
+            isProposalLoading={isProposalLoading}
+            onPreviousEntry={onPreviousEntry}
+            onNextEntry={onNextEntry}
+          />
         </div>
 
         {isProposalLoading ? (
