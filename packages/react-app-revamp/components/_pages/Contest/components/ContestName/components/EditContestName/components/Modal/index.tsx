@@ -129,7 +129,6 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
             isError={!!uploadError}
             isSuccess={uploadSuccess}
             onFileSelect={onFileSelectHandler}
-            isContestPreviewImage
           />
           <div className="bg-true-black w-full md:w-[700px] rounded-[16px] border-true-black md:shadow-file-upload md:p-4">
             <div className="bg-secondary-1 w-full rounded-[16px] outline-none p-4">
