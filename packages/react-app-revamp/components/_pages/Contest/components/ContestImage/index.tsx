@@ -6,8 +6,19 @@ interface ContestImageProps {
 
 const ContestImage: FC<ContestImageProps> = ({ imageUrl }) => {
   return (
-    <div className="w-full min-h-[296px] bg-true-black rounded-[16px] border-true-black shadow-file-upload p-4">
-      <img src={imageUrl} alt="contest" className="w-full max-h-[264px] rounded-2xl object-fill" />
+    <div className="w-full h-[294px] rounded-2xl shadow-file-upload relative overflow-hidden">
+      {/* background blurred layer */}
+      <div
+        className="absolute inset-[-20px] bg-cover bg-center opacity-80 blur-[30px]"
+        style={{
+          backgroundImage: `url(${imageUrl})`,
+        }}
+      />
+
+      {/* centered main image container using full width */}
+      <div className="relative h-full w-full flex items-center justify-center">
+        <img src={imageUrl} alt="contest" className="max-w-[760px] max-h-[294px] w-auto h-auto object-contain" />
+      </div>
     </div>
   );
 };

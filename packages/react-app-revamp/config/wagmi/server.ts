@@ -5,6 +5,7 @@ import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
+import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { cyber } from "./custom-chains/cyber";
 import { forma } from "./custom-chains/forma";
@@ -42,6 +43,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   cyber,
   metis,
   forma,
+  bnb,
   sepolia,
   baseTestnet,
   mainnet,
