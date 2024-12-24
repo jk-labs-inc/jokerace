@@ -14,8 +14,8 @@ const DUNE_EXTENSIONS: Extension = {
 };
 
 const DUNE_EXTENSION_LINK = "https://dune.com/socialgraphvc/jokerace-creator";
-const DUNE_CONTRACT_ADDRESS_PARAM = "contract_address_t8c4a9";
-const DUNE_CHAIN_NAME_PARAM = "chain_name_t9b433";
+const DUNE_CONTRACT_ADDRESS_PARAM = "contract_address";
+const DUNE_CHAIN_NAME_PARAM = "chain_name";
 
 const DuneExtension = () => {
   const asPath = usePathname();
