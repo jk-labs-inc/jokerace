@@ -1,3 +1,4 @@
+import { chains } from "@config/wagmi";
 import { ContractFunctionExecutionError, EstimateGasExecutionError } from "viem";
 
 export enum ErrorCodes {
@@ -15,7 +16,6 @@ export enum ErrorCodes {
 
 const errorMessages: { [key in ErrorCodes]?: string } = {
   [ErrorCodes.CALL_EXCEPTION]: "A contract call failed. Check the contract's conditions or requirements.",
-  [ErrorCodes.INSUFFICIENT_FUNDS]: "You don't have enough funds for this transaction! Consider gas and data costs.",
   [ErrorCodes.MISSING_NEW]: "The 'new' keyword is missing in contract deployment.",
   [ErrorCodes.NONCE_EXPIRED]: "This nonce has been used before. Please try with a fresh nonce.",
   [ErrorCodes.NUMERIC_FAULT]: "A numeric operation resulted in an overflow or underflow.",
@@ -25,10 +25,10 @@ const errorMessages: { [key in ErrorCodes]?: string } = {
     "This transaction was replaced by another with the same nonce, maybe due to a higher gas price.",
   [ErrorCodes.UNPREDICTABLE_GAS_LIMIT]:
     "Gas estimation failed. Consider setting a gas limit manually, or ensure the transaction is valid.",
-  [ErrorCodes.EXECUTION_REVERTED]:
-    "Execution reverted, which could be due to the function call failing its requirements or the transaction running out of gas.",
   [ErrorCodes.DUPLICATE_PROPOSAL]: "Duplicate proposals are not allowed. Please check your proposal details.",
 };
+
+const dynamicMessageCodes: readonly ErrorCodes[] = [ErrorCodes.EXECUTION_REVERTED, ErrorCodes.INSUFFICIENT_FUNDS];
 
 function handleContractFunctionExecutionError(error: any): { message: string; codeFound: boolean } {
   if (error.message.includes("duplicate proposals not allowed")) {
@@ -36,6 +36,23 @@ function handleContractFunctionExecutionError(error: any): { message: string; co
   }
 
   return { message: error.message, codeFound: false };
+}
+
+function customCodeMessage(code: ErrorCodes, error: any, chainName?: string) {
+  if (dynamicMessageCodes.includes(code)) {
+    const chainNativeCurrency = chains.find(
+      chain => chain.name.toLowerCase() === chainName?.toLowerCase(),
+    )?.nativeCurrency;
+
+    if (chainNativeCurrency) {
+      return {
+        message: `please make sure you have enough ${chainNativeCurrency.symbol} on ${chainName}`,
+        codeFound: false,
+      };
+    }
+  }
+
+  return { message: errorMessages[code]!, codeFound: true };
 }
 
 export function didUserReject(error: any): boolean {
@@ -50,12 +67,12 @@ export function didUserReject(error: any): boolean {
   );
 }
 
-export function handleError(error: any): { message: string; codeFound: boolean } {
+export function handleError(error: any, chainName?: string): { message: string; codeFound: boolean } {
   const code = error.code as ErrorCodes;
 
   // check for the specific insufficient funds error from simulation
   if (error.message && error.message.includes("insufficient funds for gas * price + value")) {
-    return { message: errorMessages[ErrorCodes.INSUFFICIENT_FUNDS]!, codeFound: true };
+    return customCodeMessage(ErrorCodes.INSUFFICIENT_FUNDS, error, chainName);
   }
 
   const isInsufficientFundsError =
@@ -66,16 +83,16 @@ export function handleError(error: any): { message: string; codeFound: boolean }
   }
 
   if (isInsufficientFundsError) {
-    return { message: errorMessages[ErrorCodes.INSUFFICIENT_FUNDS]!, codeFound: true };
+    return customCodeMessage(ErrorCodes.INSUFFICIENT_FUNDS, error, chainName);
   }
 
-  // Check for revert reason ( for now out of gas )
+  // check for revert reason
   if (error.message && (error.message.includes("execution reverted") || error.message.includes("out of gas"))) {
-    return { message: errorMessages[ErrorCodes.EXECUTION_REVERTED]!, codeFound: true };
+    return customCodeMessage(ErrorCodes.EXECUTION_REVERTED, error, chainName);
   }
 
-  if (code in errorMessages) {
-    return { message: errorMessages[code]!, codeFound: true };
+  if (code in errorMessages || dynamicMessageCodes.includes(code)) {
+    return customCodeMessage(code, error, chainName);
   }
 
   return { message: error.message ?? error.reason, codeFound: false };
