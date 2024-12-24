@@ -8093,18 +8093,6 @@
     loupe "^2.3.7"
     pretty-format "^29.7.0"
 
-"@wagmi/connectors@5.7.1":
-  version "5.7.1"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.7.1.tgz#31e38ef08fe27c5374b20534759936d8bbc19927"
-  integrity sha512-7K8zKzxKrZRFbJL8vG9qGhYGQ/2Ce534j8ByOABeXWQmXaVSf862v8KiLUUwDlUMktGW9EAjCTrv1ceUWdwgpg==
-  dependencies:
-    "@coinbase/wallet-sdk" "4.2.3"
-    "@metamask/sdk" "0.31.4"
-    "@safe-global/safe-apps-provider" "0.18.5"
-    "@safe-global/safe-apps-sdk" "9.1.0"
-    "@walletconnect/ethereum-provider" "2.17.0"
-    cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
-
 "@wagmi/connectors@5.7.2":
   version "5.7.2"
   resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.7.2.tgz#d4b1fdfd90df283e169686a175a3111c30d63145"
@@ -8117,10 +8105,31 @@
     "@walletconnect/ethereum-provider" "2.17.0"
     cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
 
+"@wagmi/connectors@5.7.3":
+  version "5.7.3"
+  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.7.3.tgz#0e6d274d4734cbfeb8ad964b63b1edcfade42c63"
+  integrity sha512-i7Gk5M/Fc9gMvkVHbqw2kGtXvY8POsSY798/9I5npyglVjBddxoVk3xTYmcYTB1VIa4Fi0T2gLTHpQnpLrq1CQ==
+  dependencies:
+    "@coinbase/wallet-sdk" "4.2.3"
+    "@metamask/sdk" "0.31.4"
+    "@safe-global/safe-apps-provider" "0.18.5"
+    "@safe-global/safe-apps-sdk" "9.1.0"
+    "@walletconnect/ethereum-provider" "2.17.0"
+    cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
+
 "@wagmi/core@2.16.1":
   version "2.16.1"
   resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.16.1.tgz#fb4ccd2be30d550b051f7e1833c5597acd6bef38"
   integrity sha512-PFP43jEeyzCp9ZKM+G/H50Gb68XT9J9xLIHvznTvPZOphlnVOVMpZTUARukOQZvmZXZoD2CUTJxT820YrZfjcw==
+  dependencies:
+    eventemitter3 "5.0.1"
+    mipd "0.0.7"
+    zustand "5.0.0"
+
+"@wagmi/core@2.16.3":
+  version "2.16.3"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.16.3.tgz#abbff0a19e75beaad56ffb90da772641552d49c3"
+  integrity sha512-SVovoWHaQ2AIkmGf+ucNijT6AHXcTMffFcLmcFF6++y21x+ge7Gkh3UoJiU91SDDv8n08eTQ9jbyia3GEgU5jQ==
   dependencies:
     eventemitter3 "5.0.1"
     mipd "0.0.7"
@@ -17539,13 +17548,13 @@ w3c-keyname@^2.2.0:
   resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.8.tgz#7b17c8c6883d4e8b86ac8aba79d39e880f8869c5"
   integrity sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==
 
-wagmi@2.14.4:
-  version "2.14.4"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.14.4.tgz#ec617c0358fbc502ca603739ecd115ed146d69f8"
-  integrity sha512-Yg5Vic+k0Y2Dt1GdLTUi/Gmw3afRer1o+p0bqvn1kpjWVJZd2+YfHQLY54yeKdDw6uFaWGYxp3JWKz6iILYfuw==
+wagmi@2.14.6:
+  version "2.14.6"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.14.6.tgz#046db4c119f53c276c9f2d4b0034fe2ebc3ff05c"
+  integrity sha512-h8KDjPiXywZcKAbGttGDlZpwabZynR4lZ8eDO63tNgfxiMyhld0M5bMcB/u7XnH2xFgd0gq7PA2RVz96XMjazw==
   dependencies:
-    "@wagmi/connectors" "5.7.1"
-    "@wagmi/core" "2.16.1"
+    "@wagmi/connectors" "5.7.3"
+    "@wagmi/core" "2.16.3"
     use-sync-external-store "1.2.0"
 
 walker@^1.0.7:
