@@ -47,7 +47,7 @@ function customCodeMessage(code: ErrorCodes, error: any, chainName?: string) {
     if (chainNativeCurrency) {
       return {
         message: `please make sure you have enough ${chainNativeCurrency.symbol} on ${chainName}`,
-        codeFound: false,
+        codeFound: true,
       };
     }
   }
