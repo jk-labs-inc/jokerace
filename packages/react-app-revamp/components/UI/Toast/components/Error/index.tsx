@@ -33,38 +33,30 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
     <div className="flex gap-4 items-center pl-3 md:pl-6">
       <img className="hidden md:block" src="/toast/sadboi.png" width={40} height={40} alt="error" />
       <div className="flex flex-col gap-4 pl-1">
-        <div className="flex flex-col max-w-[350px] md:max-w-full">
+        <div className="flex gap-1 flex-col max-w-[350px] md:max-w-full">
           <p className="text-[14px] font-medium">{messageToShow}</p>
-          {messageToCopy && (
-            <p className="text-[10px]">
-              Note: The issue might be with your wallet or browser—please consider trying different ones if possible.
-            </p>
-          )}
-        </div>
-        {messageToCopy ? (
-          <div className="flex flex-col gap-4">
-            <div className="flex gap-1 items-center">
-              <ClipboardIcon className="w-4 h-4" />
-              <p
-                className="text-[10px] text-true-black uppercase hover:text-neutral-0 cursor-pointer"
-                onClick={copyToClipboard}
-              >
-                {copySuccess ? "Copied!" : "copy full error details"}
-              </p>
-            </div>
+          <p className="text-[11px]">
+            note: retry with a different wallet and browser. you can file a bug report{" "}
             <a
               href={bugReportLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex gap-1 items-center cursor-pointer"
               onClick={e => e.stopPropagation()}
+              className="underline uppercase text-secondary-5"
             >
-              <FlagIcon className="w-4 h-4" />
-              <p className="text-[11px] text-true-black uppercase font-bold hover:text-neutral-0">
-                please file a <span className="underline uppercase text-secondary-5">bug report</span> so we can look
-                into this
-              </p>
+              here
             </a>
+          </p>
+        </div>
+        {messageToCopy ? (
+          <div className="flex gap-1 items-center">
+            <ClipboardIcon className="w-4 h-4" />
+            <p
+              className="text-[11px] text-true-black uppercase hover:text-neutral-0 cursor-pointer"
+              onClick={copyToClipboard}
+            >
+              {copySuccess ? "Copied!" : "copy full error details"}
+            </p>
           </div>
         ) : null}
       </div>
