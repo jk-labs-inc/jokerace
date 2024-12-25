@@ -7323,10 +7323,10 @@
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.62.9.tgz#94231ffea5de086b5e6c0f1e527cda5650cb1849"
   integrity sha512-lwePd8hNYhyQ4nM/iRQ+Wz2cDtspGeZZHFZmCzHJ7mfKXt+9S301fULiY2IR2byJYY6Z03T427E5PoVfMexHjw==
 
-"@tanstack/react-query@5.62.9":
-  version "5.62.9"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.62.9.tgz#94bc4e00092f5dff2b93297e31b7e5d9946464a5"
-  integrity sha512-jFUH9pOsOyN2ugGIR8tjz2+bRC0PEp25LvpNvYIgiEegP5Xbfi9phuNOMnjFugyg3GM0WI/HfUEE7eM2vmcbxg==
+"@tanstack/react-query@5.62.10":
+  version "5.62.10"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.62.10.tgz#3ce92c29a46f2f7f1af5c2cb23f06d582f4b4495"
+  integrity sha512-1e1WpHM5oGf27nWM/NWLY62/X9pbMBWa6ErWYmeuK0OqB9/g9UzA59ogiWbxCmS2wtAFQRhOdHhfSofrkhPl2g==
   dependencies:
     "@tanstack/query-core" "5.62.9"
 
@@ -8104,15 +8104,6 @@
     "@safe-global/safe-apps-sdk" "9.1.0"
     "@walletconnect/ethereum-provider" "2.17.0"
     cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
-
-"@wagmi/core@2.16.1":
-  version "2.16.1"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.16.1.tgz#fb4ccd2be30d550b051f7e1833c5597acd6bef38"
-  integrity sha512-PFP43jEeyzCp9ZKM+G/H50Gb68XT9J9xLIHvznTvPZOphlnVOVMpZTUARukOQZvmZXZoD2CUTJxT820YrZfjcw==
-  dependencies:
-    eventemitter3 "5.0.1"
-    mipd "0.0.7"
-    zustand "5.0.0"
 
 "@wagmi/core@2.16.2":
   version "2.16.2"
