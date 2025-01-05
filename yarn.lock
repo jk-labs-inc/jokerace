@@ -3475,10 +3475,10 @@
     "@floating-ui/utils" "^0.2.3"
     tabbable "^6.0.0"
 
-"@floating-ui/react@^0.26.23":
-  version "0.26.24"
-  resolved "https://registry.yarnpkg.com/@floating-ui/react/-/react-0.26.24.tgz#072b9dfeca4e79ef4e3000ef1c28e0ffc86f4ed4"
-  integrity sha512-2ly0pCkZIGEQUq5H8bBK0XJmc1xIK/RM3tvVzY3GBER7IOD1UgmC2Y2tjj4AuS+TC+vTE1KJv2053290jua0Sw==
+"@floating-ui/react@^0.27.0":
+  version "0.27.2"
+  resolved "https://registry.yarnpkg.com/@floating-ui/react/-/react-0.27.2.tgz#901a04e93061c427d45b69a29c99f641a8b3a7bc"
+  integrity sha512-k/yP6a9K9QwhLfIu87iUZxCH6XN5z5j/VUHHq0dEnbZYY2Y9jz68E/LXFtK8dkiaYltS2WYohnyKC0VcwVneVg==
   dependencies:
     "@floating-ui/react-dom" "^2.1.2"
     "@floating-ui/utils" "^0.2.8"
@@ -15213,15 +15213,14 @@ react-csv@2.2.2:
   resolved "https://registry.yarnpkg.com/react-csv/-/react-csv-2.2.2.tgz#5bbf0d72a846412221a14880f294da9d6def9bfb"
   integrity sha512-RG5hOcZKZFigIGE8LxIEV/OgS1vigFQT4EkaHeKgyuCbUAu9Nbd/1RYq++bJcJJ9VOqO/n9TZRADsXNDR4VEpw==
 
-react-datepicker@7.5.0:
-  version "7.5.0"
-  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-7.5.0.tgz#e7b1014a6dbd3b314839a5c57a6dacfbb16074e4"
-  integrity sha512-6MzeamV8cWSOcduwePHfGqY40acuGlS1cG//ePHT6bVbLxWyqngaStenfH03n1wbzOibFggF66kWaBTb1SbTtQ==
+react-datepicker@7.6.0:
+  version "7.6.0"
+  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-7.6.0.tgz#6171988c6a9dbd4f49a45a06e3510035884b6b74"
+  integrity sha512-9cQH6Z/qa4LrGhzdc3XoHbhrxNcMi9MKjZmYgF/1MNNaJwvdSjv3Xd+jjvrEEbKEf71ZgCA3n7fQbdwd70qCRw==
   dependencies:
-    "@floating-ui/react" "^0.26.23"
+    "@floating-ui/react" "^0.27.0"
     clsx "^2.1.1"
     date-fns "^3.6.0"
-    prop-types "^15.8.1"
 
 react-device-detect@2.2.3:
   version "2.2.3"
