@@ -46,13 +46,7 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
   };
 
   return (
-    <div className="flex flex-col gap-12 w-full md:w-[660px]" id="comments" ref={commentsRef}>
-      <CommentsForm
-        contestChainId={contestChainId}
-        onSend={addComment}
-        isAddingSuccess={isAddingSuccess}
-        isAdding={isAdding}
-      />
+    <div className="flex flex-col justify-between w-full h-full" id="comments" ref={commentsRef}>
       <CommentsList
         comments={comments}
         isLoading={isLoading}
@@ -64,6 +58,12 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
         onDeleteSelectedComments={selectedCommentsIds => deleteComments(selectedCommentsIds)}
         onLoadMoreComments={onLoadMoreComments}
         numberOfComments={numberOfComments}
+      />
+      <CommentsForm
+        contestChainId={contestChainId}
+        onSend={addComment}
+        isAddingSuccess={isAddingSuccess}
+        isAdding={isAdding}
       />
     </div>
   );

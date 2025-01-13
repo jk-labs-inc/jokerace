@@ -125,14 +125,14 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
       ref={containerRef}
       className={`flex ${
         containerHeight > 48 ? "items-end" : "items-center"
-      } p-2 gap-3 w-full md:w-[660px] rounded-[10px] bg-primary-2`}
+      } p-2 gap-3 w-full rounded-[10px] bg-primary-2`}
     >
       <div>
         <UserProfileDisplay avatarVersion ethereumAddress={address ?? ""} shortenOnFallback />
       </div>
       <EditorContent
         editor={commentEditor}
-        className="bg-transparent outline-none w-full md:w-[660px] overflow-y-auto max-h-[300px] "
+        className="bg-transparent outline-none w-full overflow-y-auto max-h-[300px] "
         onKeyDown={handleKeyDown}
       />
       <CommentFormInputSubmitButton

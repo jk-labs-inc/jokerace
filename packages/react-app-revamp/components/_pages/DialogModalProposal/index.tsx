@@ -16,11 +16,12 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { compareVersions } from "compare-versions";
 import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import ListProposalVotes from "../ListProposalVotes";
 import { LINK_BRIDGE_DOCS } from "@config/links";
 import EntryNavigation from "./components/EntryNavigation";
+import { ChevronRightIcon } from "@heroicons/react/24/solid";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -71,6 +72,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;
   const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
   const isAnyoneCanVote = charge?.voteType === VoteType.PerVote;
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
   useEffect(() => {
     if (isSuccess) setIsOpen?.(false);
@@ -82,10 +84,10 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
         title="Proposal"
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        className="xl:w-[1110px] 3xl:w-[1300px]"
+        className="xl:w-[1000px] 3xl:w-[1200px]"
         onClose={onClose}
       >
-        <div
+    æ    <div
           className="flex flex-col gap-8 md:pl-[50px] lg:pl-[100px] mt-[20px] md:mt-[60px] pb-[60px]"
           id="custom-modal"
         >
@@ -98,42 +100,25 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   }
 
   return (
-    <DialogModalV3
-      title="Proposal"
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      className="w-[1200px] h-[600px]"
-      onClose={onClose}
-    >
-      <div className="flex flex-col gap-8 px-8" id="custom-modal">
-        <div className={`${totalProposals > 1 ? "flex" : "hidden"} gap-4`}>
-          <EntryNavigation
-            currentIndex={currentIndex}
-            totalProposals={totalProposals}
-            isProposalLoading={isProposalLoading}
-            onPreviousEntry={onPreviousEntry}
-            onNextEntry={onNextEntry}
-          />
-        </div>
-
-        {isProposalLoading ? (
-          <p className="loadingDots font-sabo text-[18px] mt-8 text-neutral-9">loading submission info</p>
-        ) : (
-          <div className="animate-reveal flex flex-col gap-12">
-            {proposalData?.proposal ? (
-              <div className="flex gap-2 items-center">
+    <DialogModalV3 title="Proposal" isOpen={isOpen} setIsOpen={setIsOpen} className="w-[1200px]" onClose={onClose}>
+      <div className="flex flex-col h-full" id="custom-modal">
+        <div className="flex items-center justify-between px-8 py-4 border-b border-neutral-2">
+          {isProposalLoading ? (
+            <p className="loadingDots font-sabo text-[18px] text-neutral-9">loading submission info</p>
+          ) : proposalData?.proposal ? (
+            <>
+              <div className="flex items-center gap-4">
                 <UserProfileDisplay
                   ethereumAddress={proposalData.proposal.authorEthereumAddress}
                   shortenOnFallback={true}
                 />
                 {proposalData.proposal.rank > 0 && (
                   <div className="flex gap-2 items-center">
-                    <span className="text-neutral-11">&#8226;</span>{" "}
                     <p className="text-[16px] font-bold text-neutral-11">
                       {formatNumberAbbreviated(proposalData.proposal.votes)} vote
                       {proposalData.proposal.votes > 1 ? "s" : ""}
                     </p>
-                    <span className="text-neutral-9">&#8226;</span>{" "}
+                    <span className="text-neutral-9">•</span>
                     <p className="text-[16px] font-bold text-neutral-9">
                       {ordinalize(proposalData.proposal.rank).label} place{" "}
                       {proposalData.proposal.isTied ? "(tied)" : ""}
@@ -141,68 +126,104 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                   </div>
                 )}
               </div>
-            ) : null}
-
-            {proposalData?.proposal ? (
-              <ContestProposal
-                proposal={proposalData.proposal}
-                contestStatus={contestStatus}
-                proposalId={proposalId}
-                displaySocials
-              />
-            ) : null}
-            {contestStatus === ContestStatus.VotingOpen && (
-              <div className="flex flex-col gap-4 md:gap-8 md:w-80">
-                <hr className="block border border-neutral-2" />
-                {isConnected ? (
-                  currentUserAvailableVotesAmount > 0 ? (
-                    <VotingWidget
-                      proposalId={proposalId}
-                      amountOfVotes={currentUserAvailableVotesAmount}
-                      onVote={onVote}
-                      downvoteAllowed={downvotingAllowed}
-                    />
-                  ) : outOfVotes ? (
-                    <p className="text-[16px] text-neutral-11">
-                      looks like you've used up all your votes this contest <br />
-                      feel free to try connecting another wallet to see if it has more votes!
-                    </p>
-                  ) : isAnyoneCanVote ? (
-                    <a
-                      href={LINK_BRIDGE_DOCS}
-                      target="_blank"
-                      className="text-[16px] text-negative-11 font-bold underline"
-                    >
-                      add {chainCurrencySymbol} to {contestInfo.chain} to get votes
-                    </a>
-                  ) : (
-                    <p className="text-[16px] text-neutral-11">
-                      unfortunately your wallet didn't qualify to vote in this contest <br />
-                      feel free to try connecting another wallet!
-                    </p>
-                  )
-                ) : (
-                  <p className="text-[16px] text-neutral-11 font-bold">
-                    <span className="text-positive-11 cursor-pointer text-[16px]" onClick={onConnectWallet}>
-                      connect wallet
-                    </span>{" "}
-                    to see if you qualify
-                  </p>
+              <div className="flex items-center gap-2">
+                {totalProposals > 1 && (
+                  <EntryNavigation
+                    currentIndex={currentIndex}
+                    totalProposals={totalProposals}
+                    isProposalLoading={isProposalLoading}
+                    onPreviousEntry={onPreviousEntry}
+                    onNextEntry={onNextEntry}
+                  />
                 )}
               </div>
-            )}
+            </>
+          ) : null}
+        </div>
 
-            {proposalData && proposalData.proposal && proposalData.proposal.votes > 0 && (
-              <ListProposalVotes proposalId={proposalId} votedAddresses={proposalData.votedAddresses} />
+        <div className="flex flex-1">
+          <div className="flex-1">
+            <div className="h-[calc(90vh-180px)] overflow-y-auto">
+              <div className="p-8">
+                {proposalData?.proposal && (
+                  <ContestProposal
+                    proposal={proposalData.proposal}
+                    contestStatus={contestStatus}
+                    proposalId={proposalId}
+                    displaySocials
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+            className="px-2 hover:bg-neutral-2 transition-colors"
+          >
+            <ChevronRightIcon className={`w-4 h-4 transition-transform ${isSidebarVisible ? "rotate-180" : ""}`} />
+          </button>
+
+          <div
+            className={`transition-all duration-300 border-l border-neutral-2 flex flex-col
+              ${isSidebarVisible ? "w-[300px]" : "w-0 overflow-hidden"}`}
+          >
+            <div className="h-1/2 overflow-y-auto">
+              <div className="p-4">
+                {proposalData && proposalData.proposal && proposalData.proposal.votes > 0 && (
+                  <ListProposalVotes proposalId={proposalId} votedAddresses={proposalData.votedAddresses} />
+                )}
+              </div>
+            </div>
+
+            <div className="h-1/2 overflow-y-auto border-t border-neutral-2">
+              <div className="p-4">
+                {commentsAllowed && proposalData && (
+                  <Comments
+                    contestAddress={contestInfo.address}
+                    contestChainId={contestInfo.chainId}
+                    proposalId={proposalId}
+                    numberOfComments={proposalData?.numberOfComments}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {contestStatus === ContestStatus.VotingOpen && (
+          <div className="border-t border-neutral-2 p-4">
+            {isConnected ? (
+              currentUserAvailableVotesAmount > 0 ? (
+                <VotingWidget
+                  proposalId={proposalId}
+                  amountOfVotes={currentUserAvailableVotesAmount}
+                  onVote={onVote}
+                  downvoteAllowed={downvotingAllowed}
+                />
+              ) : outOfVotes ? (
+                <p className="text-[16px] text-neutral-11">
+                  looks like you've used up all your votes this contest <br />
+                  feel free to try connecting another wallet to see if it has more votes!
+                </p>
+              ) : isAnyoneCanVote ? (
+                <a href={LINK_BRIDGE_DOCS} target="_blank" className="text-[16px] text-negative-11 font-bold underline">
+                  add {chainCurrencySymbol} to {contestInfo.chain} to get votes
+                </a>
+              ) : (
+                <p className="text-[16px] text-neutral-11">
+                  unfortunately your wallet didn't qualify to vote in this contest <br />
+                  feel free to try connecting another wallet!
+                </p>
+              )
+            ) : (
+              <p className="text-[16px] text-neutral-11 font-bold">
+                <span className="text-positive-11 cursor-pointer text-[16px]" onClick={onConnectWallet}>
+                  connect wallet
+                </span>{" "}
+                to see if you qualify
+              </p>
             )}
-            {commentsAllowed && proposalData ? (
-              <Comments
-                contestAddress={contestInfo.address}
-                contestChainId={contestInfo.chainId}
-                proposalId={proposalId}
-                numberOfComments={proposalData?.numberOfComments}
-              />
-            ) : null}
           </div>
         )}
       </div>

@@ -51,16 +51,11 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
     onLoadMoreCalledRef.current && votedAddresses ? votedAddresses.length - currentPage * VOTES_PER_PAGE : 0;
   const count =
     isLoading && onLoadMoreCalledRef.current ? Math.min(remainingItems, VOTES_PER_PAGE) : initialSkeletonCount;
-  const [isVotersOpen, setIsVotersOpen] = useState(true);
   const showLoadMore = currentPage < totalPages - 1;
 
   useEffect(() => {
     onLoadMoreCalledRef.current = false;
   }, [proposalId]);
-
-  const toggleVotersOpen = useCallback(() => {
-    setIsVotersOpen(prev => !prev);
-  }, []);
 
   const onLoadMore = () => {
     if (currentPage < totalPages - 1) {
@@ -81,62 +76,48 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
       <div className="flex gap-4 items-center">
         <p className="text-[24px] text-neutral-11 font-bold">voters ({addressesVoted.length})</p>
-        <button
-          onClick={toggleVotersOpen}
-          className={`transition-transform duration-500 ease-in-out transform ${isVotersOpen ? "" : "rotate-180"}`}
-        >
-          <ChevronUpIcon height={30} />
-        </button>
-
-        {isVotersOpen ? (
-          <div onClick={onRefreshData} className="standalone-pwa cursor-pointer">
-            <ArrowPathIcon className="w-6 h-6 m-auto" />
-          </div>
-        ) : null}
       </div>
-      <Collapsible isOpen={isVotersOpen}>
-        <div className="flex flex-col gap-5">
-          {votedAddresses ? (
-            <>
-              <div className="md:w-[400px] max-h-[400px] overflow-auto">
-                {isLoading && !onLoadMoreCalledRef.current ? (
-                  <LoadingSkeleton count={count} />
-                ) : (
-                  <AutoSizer disableHeight>
-                    {({ width }: { width: number }) => (
-                      <List
-                        height={Math.min(addresses.length * 50, 400)}
-                        itemCount={addresses.length}
-                        itemSize={50}
-                        width={width}
-                        itemData={{ votesPerAddress: accumulatedVotesData, addresses }}
-                      >
-                        {VoterRow}
-                      </List>
-                    )}
-                  </AutoSizer>
-                )}
-                {isLoading && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
-              </div>
-              {showLoadMore && (
-                <div className="flex gap-2 items-center cursor-pointer" onClick={onLoadMore}>
-                  <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
-                  <button
-                    className="transition-transform duration-500 ease-in-out transform 
-            rotate-180"
-                  >
-                    <ChevronUpIcon height={20} className="text-positive-11" />
-                  </button>
-                </div>
+      <div className="flex flex-col gap-5">
+        {votedAddresses ? (
+          <>
+            <div className="overflow-auto">
+              {isLoading && !onLoadMoreCalledRef.current ? (
+                <LoadingSkeleton count={count} />
+              ) : (
+                <AutoSizer disableHeight>
+                  {({ width }: { width: number }) => (
+                    <List
+                      height={Math.min(addresses.length * 50, 400)}
+                      itemCount={addresses.length}
+                      itemSize={50}
+                      width={width}
+                      itemData={{ votesPerAddress: accumulatedVotesData, addresses }}
+                    >
+                      {VoterRow}
+                    </List>
+                  )}
+                </AutoSizer>
               )}
-            </>
-          ) : (
-            <p className="text-[16px] text-negative-11 font-bold">
-              ruh-roh! an error occurred when retrieving votes for this proposal; try refreshing the page.
-            </p>
-          )}
-        </div>
-      </Collapsible>
+              {isLoading && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
+            </div>
+            {showLoadMore && (
+              <div className="flex gap-2 items-center cursor-pointer" onClick={onLoadMore}>
+                <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
+                <button
+                  className="transition-transform duration-500 ease-in-out transform 
+            rotate-180"
+                >
+                  <ChevronUpIcon height={20} className="text-positive-11" />
+                </button>
+              </div>
+            )}
+          </>
+        ) : (
+          <p className="text-[16px] text-negative-11 font-bold">
+            ruh-roh! an error occurred when retrieving votes for this proposal; try refreshing the page.
+          </p>
+        )}
+      </div>
     </SkeletonTheme>
   );
 };
