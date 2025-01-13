@@ -9,6 +9,7 @@ const LINK_FAQ = "https://docs.jokerace.io/faq";
 const LINK_TOS = "https://github.com/jk-labs-inc/jokerace/blob/main/TOS.pdf";
 const LINK_TELEGRAM = "https://t.me/+rW5X0MqnTXBkOGIx";
 const LINK_MEDIA_KIT = "https://drive.google.com/drive/folders/10BVM0YtoyCuCG8y70br_9aBRieBNmnlQ";
+const LINK_SUBSTACK = "https://jokestack.substack.com/";
 
 export const LINK_BRIDGE_DOCS = "https://docs.jokerace.io/user-how-tos/bridging";
 
@@ -28,6 +29,10 @@ export const FOOTER_LINKS = [
   {
     label: "Github",
     href: LINK_GITHUB,
+  },
+  {
+    label: "Substack",
+    href: LINK_SUBSTACK,
   },
   {
     label: "Request a feature",
