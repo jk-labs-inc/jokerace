@@ -16,6 +16,8 @@ export const parsePrompt = (prompt: string): ParsedPrompt => {
     contestContactDetails: "",
   };
 
+  if (!prompt) return defaultPrompt;
+
   try {
     const params = new URLSearchParams(prompt);
     if (params.has("type") && params.has("summarize") && params.has("evaluateVoters")) {
