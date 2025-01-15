@@ -19,7 +19,7 @@
     "@lens-protocol/client": "2.3.2",
     "@lens-protocol/metadata": "1.2.0",
     "@next/third-parties": "14.2.23",
-    "@rainbow-me/rainbowkit": "2.2.1",
+    "@rainbow-me/rainbowkit": "2.2.2",
     "@supabase/supabase-js": "2.47.12",
     "@tailwindcss/line-clamp": "0.4.4",
     "@tailwindcss/typography": "0.5.16",
