@@ -22,6 +22,7 @@ import { scroll } from "./custom-chains/scroll";
 import { sei } from "./custom-chains/sei";
 import { sepolia } from "./custom-chains/sepolia";
 import { zora } from "./custom-chains/zora";
+import { lukso } from "./custom-chains/lukso";
 
 type Transports = Record<Chain["id"], Transport>;
 
@@ -44,6 +45,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   metis,
   forma,
   bnb,
+  lukso,
   sepolia,
   baseTestnet,
   mainnet,
