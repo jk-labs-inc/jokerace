@@ -49,7 +49,7 @@ const ContestTab = () => {
       return (
         <ButtonV3
           colorClass="bg-gradient-vote rounded-[40px]"
-          size={isMobile ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG}
+          size={isMobile ? ButtonSize.EXTRA_LARGE_LONG_MOBILE : ButtonSize.EXTRA_LARGE_LONG}
           onClick={openConnectModal}
         >
           connect wallet to enter contest
@@ -64,7 +64,7 @@ const ContestTab = () => {
         <ButtonV3
           colorClass="bg-gradient-purple rounded-[40px]"
           textColorClass="text-[16px] md:text-[20px] font-bold text-true-black"
-          size={isMobile ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG}
+          size={isMobile ? ButtonSize.EXTRA_LARGE_LONG_MOBILE : ButtonSize.EXTRA_LARGE_LONG}
           onClick={() => {
             setIsSubmitProposalSuccess(false);
             setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen);
@@ -93,7 +93,11 @@ const ContestTab = () => {
           <ContestPrompt prompt={contestPrompt} type="page" />
         </div>
       </div>
-      {contestStatus === ContestStatus.SubmissionOpen && <div className="mt-8">{renderSubmitButton()}</div>}
+      {contestStatus === ContestStatus.SubmissionOpen && (
+        <div className="fixed z-50 bottom-20 left-0 right-0 flex w-full justify-center md:justify-normal md:static md:mt-8">
+          {renderSubmitButton()}
+        </div>
+      )}
       <ContestStickyCards />
 
       <div className={`mt-4 ${isInPwaMode ? "mb-12" : "mb-0"}`}>
@@ -106,7 +110,7 @@ const ContestTab = () => {
           )}
 
           {!isContestLoading && !isListProposalsLoading && isContestSuccess && isListProposalsSuccess && (
-            <div className={`animate-reveal ${contestStatus !== ContestStatus.SubmissionOpen ? "mt-4" : "mt-0"}`}>
+            <div className="animate-reveal">
               <ListProposals />
             </div>
           )}

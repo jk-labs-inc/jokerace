@@ -1,16 +1,15 @@
 "use client";
 /* eslint-disable react-hooks/exhaustive-deps */
-import ShareDropdown from "@components/Share";
-import ButtonV3 from "@components/UI/ButtonV3";
 import Loader from "@components/UI/Loader";
-import UserProfileDisplay, { SIZES } from "@components/UI/UserProfileDisplay";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestTab from "@components/_pages/Contest/Contest";
 import ContestExtensions from "@components/_pages/Contest/Extensions";
 import ContestParameters from "@components/_pages/Contest/Parameters";
 import ContestRewards from "@components/_pages/Contest/Rewards";
+import ContestImage from "@components/_pages/Contest/components/ContestImage";
 import ContestName from "@components/_pages/Contest/components/ContestName";
+import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
 import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
-import ContestRewardsInfoMobile from "@components/_pages/Contest/components/RewardsInfo/Mobile";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
@@ -18,7 +17,6 @@ import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { populateBugReportLink } from "@helpers/githubIssue";
-import { generateUrlContest } from "@helpers/share";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
@@ -33,8 +31,6 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import LayoutViewContestError from "./components/Error";
-import ContestImage from "@components/_pages/Contest/components/ContestImage";
-import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -206,55 +202,36 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
               <>
                 <div className="animate-reveal pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
-                    <div className="flex flex-col gap-2">
-                      <ContestName
-                        contestName={contestName}
-                        contestPrompt={contestPrompt}
-                        canEditTitle={canEditTitleAndDescription}
-                      />
+                    <div className="flex flex-col gap-8">
                       {contestImageUrl ? (
                         <div className="hidden md:block">
                           <ContestImage imageUrl={contestImageUrl} />
                         </div>
                       ) : null}
+                      <ContestName
+                        contestName={contestName}
+                        contestAddress={address}
+                        chainName={chainName}
+                        contestPrompt={contestPrompt}
+                        canEditTitle={canEditTitleAndDescription}
+                      />
                     </div>
 
                     <div className={`flex flex-row gap-3 md:gap-4 items-center`}>
-                      <UserProfileDisplay
-                        ethereumAddress={contestAuthorEthereumAddress}
-                        shortenOnFallback
-                        textualVersion={isMobile}
-                        size={isMobile ? "extraSmall" : "small"}
-                      />
-                      {rewardsModuleAddress && rewardsAbi ? (
-                        isMobile ? (
-                          <ContestRewardsInfoMobile
-                            rewardsModuleAddress={rewardsModuleAddress}
-                            rewardsAbi={rewardsAbi}
-                            version={version}
-                          />
-                        ) : (
+                      <div className="flex items-center gap-4">
+                        <UserProfileDisplay
+                          ethereumAddress={contestAuthorEthereumAddress}
+                          shortenOnFallback
+                          size={isMobile ? "extraSmall" : "small"}
+                        />
+                        {rewardsModuleAddress && rewardsAbi ? (
                           <ContestRewardsInfo
                             rewardsModuleAddress={rewardsModuleAddress}
                             rewardsAbi={rewardsAbi}
                             version={version}
                           />
-                        )
-                      ) : null}
-                      {isMobile ? (
-                        <div
-                          className="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-[10px] border border-neutral-11 cursor-pointer"
-                          onClick={() =>
-                            navigator.share({
-                              url: generateUrlContest(address, chainName),
-                            })
-                          }
-                        >
-                          <img src="/forward.svg" alt="share" width={15} height={13} />
-                        </div>
-                      ) : (
-                        <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
-                      )}
+                        ) : null}
+                      </div>
 
                       <div
                         className="standalone-pwa w-8 h-8 items-center rounded-[10px] border border-neutral-11 cursor-pointer"
