@@ -106,7 +106,7 @@ const ContestTab = () => {
           )}
 
           {!isContestLoading && !isListProposalsLoading && isContestSuccess && isListProposalsSuccess && (
-            <div className={`animate-reveal ${contestStatus !== ContestStatus.SubmissionOpen ? "mt-4" : "mt-0"}`}>
+            <div className="animate-reveal">
               <ListProposals />
             </div>
           )}

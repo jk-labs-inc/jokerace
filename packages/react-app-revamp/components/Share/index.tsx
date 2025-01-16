@@ -38,14 +38,14 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
   };
 
   return (
-    <Menu as="div" className="relative inline-block text-left">
+    <Menu as="div" className="hidden relative md:inline-block text-left">
       <MediaQuery maxWidth={768}>
         <MenuButton className="w-8 h-8 flex items-center rounded-[10px] border border-neutral-11">
           <img src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
         </MenuButton>
       </MediaQuery>
       <MediaQuery minWidth={769}>
-        <MenuButton className="p-4 h-8 flex items-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[10px] border border-neutral-11">
+        <MenuButton className="p-2 h-8 flex items-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[10px] border border-neutral-11">
           <p className="text-neutral-11 text-[16px] font-bold">share</p>
           <img src="/forward.svg" alt="share" className="ml-1" width={16} height={16} />
         </MenuButton>

@@ -6,14 +6,17 @@ import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 import CancelContest from "../CancelContest";
 import EditContestName from "./components/EditContestName";
+import ShareDropdown from "@components/Share";
 
 interface ContestNameProps {
+  contestAddress: string;
+  chainName: string;
   contestName: string;
   contestPrompt: string;
   canEditTitle: boolean;
 }
 
-const ContestName: FC<ContestNameProps> = ({ contestName, contestPrompt, canEditTitle }) => {
+const ContestName: FC<ContestNameProps> = ({ contestName, contestAddress, chainName, contestPrompt, canEditTitle }) => {
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
@@ -48,11 +51,14 @@ const ContestName: FC<ContestNameProps> = ({ contestName, contestPrompt, canEdit
   }
 
   return (
-    <div className="flex items-center justify-between w-full">
-      <GradientText text={contestName} isStrikethrough={isContestCanceled} />
-      <div className="flex items-center gap-2 justify-end">
+    <div className="flex items-center relative w-full">
+      <div className="absolute left-0 -translate-x-full -ml-4 flex items-center gap-2">
         <EditContestName contestName={contestName} contestPrompt={contestPrompt} canEditTitle={canEditTitle} />
         <CancelContest />
+      </div>
+      <div className="flex items-center justify-between w-full">
+        <GradientText text={contestName} isStrikethrough={isContestCanceled} />
+        <ShareDropdown contestAddress={contestAddress} chain={chainName} contestName={contestName} />
       </div>
     </div>
   );
