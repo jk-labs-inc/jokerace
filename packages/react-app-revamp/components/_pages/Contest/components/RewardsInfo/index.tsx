@@ -117,7 +117,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
       <div className="h-4 w-[2px] bg-primary-2"></div>
       <div className="flex items-baseline">
         <div className={`flex items-baseline gap-1 ${animate ? "animate-flicker-number" : ""}`}>
-          <p className="text-[16px] md:text-[24px] font-bold text-neutral-11">{formatBalance(currentRewardAmount)}</p>
+          <p className="text-[14px] md:text-[24px] font-bold text-neutral-11">{formatBalance(currentRewardAmount)}</p>
           <p className="uppercase text-[12px] md:text-[16px] font-bold text-neutral-11">${currentReward.symbol}</p>
         </div>
         <span className="text-[12px] md:text-[16px] font-bold text-neutral-11 ml-1">
