@@ -113,21 +113,20 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
   ).toString();
 
   return (
-    <div
-      className={`flex shrink-0 h-8 min-w-60 p-4 justify-center items-center bg-transparent border border-neutral-10 rounded-[10px] text-[16px] font-bold text-positive-11 overflow-hidden`}
-    >
-      <span className="truncate flex items-center">
-        <div className={`flex items-center gap-1 ${animate ? "animate-flicker-number" : ""}`}>
-          <p>{formatBalance(currentRewardAmount)}</p>
-          <p className="uppercase">${currentReward.symbol}</p>
+    <>
+      <div className="h-4 w-[2px] bg-primary-2"></div>
+      <div className="flex items-baseline">
+        <div className={`flex items-baseline gap-1 ${animate ? "animate-flicker-number" : ""}`}>
+          <p className="text-[16px] md:text-[24px] font-bold text-neutral-11">{formatBalance(currentRewardAmount)}</p>
+          <p className="uppercase text-[12px] md:text-[16px] font-bold text-neutral-11">${currentReward.symbol}</p>
         </div>
-        <span className="ml-1">
+        <span className="text-[12px] md:text-[16px] font-bold text-neutral-11 ml-1">
           {currentReward.isReleased ? "paid to" : "to"} {currentReward.ranking}
-          {returnOnlySuffix(currentReward.ranking)}
-        </span>{" "}
-        <span className="ml-1">place</span>
-      </span>
-    </div>
+          <sup>{returnOnlySuffix(currentReward.ranking)}</sup>
+        </span>
+        <span className="text-[12px] md:text-[16px] font-bold text-neutral-11 ml-1">place</span>
+      </div>
+    </>
   );
 };
 
