@@ -9,8 +9,8 @@
     "start": "next start"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.729.0",
-    "@aws-sdk/s3-request-presigner": "3.729.0",
+    "@aws-sdk/client-s3": "3.730.0",
+    "@aws-sdk/s3-request-presigner": "3.730.0",
     "@babel/core": "7.26.0",
     "@babel/preset-env": "7.26.0",
     "@clustersxyz/sdk": "0.4.3",
@@ -20,7 +20,7 @@
     "@lens-protocol/metadata": "1.2.0",
     "@next/third-parties": "14.2.23",
     "@rainbow-me/rainbowkit": "2.2.2",
-    "@supabase/supabase-js": "2.47.14",
+    "@supabase/supabase-js": "2.47.15",
     "@tailwindcss/line-clamp": "0.4.4",
     "@tailwindcss/typography": "0.5.16",
     "@tanstack/react-query": "5.64.1",
@@ -105,7 +105,7 @@
     "underscore": "1.13.7",
     "uuid": "10.0.0",
     "valibot": "0.42.1",
-    "viem": "2.22.8",
+    "viem": "2.22.9",
     "wagmi": "2.14.8",
     "webpack": "5.97.1",
     "zod": "3.24.1",
