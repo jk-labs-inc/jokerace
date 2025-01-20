@@ -39,38 +39,33 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-[20px] font-bold text-neutral-11">
-        contest title <span className="font-normal">(required)</span>
-      </p>
-      <div
-        className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black md:shadow-file-upload md:p-2 relative`}
-      >
-        <input
-          ref={inputRef}
-          value={value}
-          type="text"
-          onClick={onClick}
-          className={`text-[16px] bg-secondary-1 outline-none rounded-[16px] placeholder-neutral-10 w-full h-12 indent-4 focus:outline-none ${
-            showChevron ? "pr-10" : ""
+    <div
+      className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black md:shadow-file-upload md:p-2 relative`}
+    >
+      <input
+        ref={inputRef}
+        value={value}
+        type="text"
+        onClick={onClick}
+        className={`text-[16px] bg-secondary-1 outline-none rounded-[16px] placeholder-neutral-10 w-full h-12 indent-4 focus:outline-none ${
+          showChevron ? "pr-10" : ""
+        }`}
+        placeholder={placeholder}
+        readOnly={readOnly}
+        min={min}
+        max={max}
+        maxLength={maxLength}
+        minLength={minLength}
+        onChange={handleChange}
+      />
+      {showChevron && (
+        <ChevronDownIcon
+          className={`w-5 cursor-pointer absolute right-4 top-1/2 -translate-y-1/2 transition-transform duration-200 ${
+            isChevronUp ? "rotate-180" : "rotate-0"
           }`}
-          placeholder={placeholder}
-          readOnly={readOnly}
-          min={min}
-          max={max}
-          maxLength={maxLength}
-          minLength={minLength}
-          onChange={handleChange}
+          onClick={onClick}
         />
-        {showChevron && (
-          <ChevronDownIcon
-            className={`w-5 cursor-pointer absolute right-4 top-1/2 -translate-y-1/2 transition-transform duration-200 ${
-              isChevronUp ? "rotate-180" : "rotate-0"
-            }`}
-            onClick={onClick}
-          />
-        )}
-      </div>
+      )}
     </div>
   );
 };
