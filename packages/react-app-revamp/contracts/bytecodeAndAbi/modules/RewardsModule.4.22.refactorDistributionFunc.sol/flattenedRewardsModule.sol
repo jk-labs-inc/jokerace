@@ -1948,7 +1948,7 @@ abstract contract GovernorSorting {
     // The equation to calcluate how many rankings this contract will actually be able to track is:
     // # of rankings GovernorSorting can track for a given contest = RANK_LIMIT - WBs - TTDs
     //
-    // With this in mind, it is strongly reccomended to set RANK_LIMIT sufficiently high to create a buffer for
+    // With this in mind, it is strongly recommended to set RANK_LIMIT sufficiently high to create a buffer for
     // WBs and TTDs that may occur in your contest. The thing to consider with regard to making it too high is just
     // that it is more gas for users on average the higher that RANK_LIMIT is set.
 
