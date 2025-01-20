@@ -35,6 +35,9 @@ const CreateContestTitle = () => {
           <CreateUploadImage />
 
           <div className="flex flex-col gap-2">
+            <p className="text-[20px] font-bold text-neutral-11">
+              contest title <span className="font-normal">(required)</span>
+            </p>
             <CreateTextInput
               className="w-full md:w-[600px] text-[20px]"
               value={title}
