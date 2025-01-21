@@ -237,7 +237,8 @@ export function useSubmitProposal() {
   }
 
   async function performAnalytics(params: CombinedAnalyticsParams) {
-    await Promise.all([addUserActionAnalytics(params), updateRewardAnalyticsIfNeeded(params)]);
+    await addUserActionAnalytics(params);
+    await updateRewardAnalyticsIfNeeded(params);
   }
 
   return {
