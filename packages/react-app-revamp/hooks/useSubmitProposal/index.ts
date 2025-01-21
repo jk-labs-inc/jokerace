@@ -237,8 +237,12 @@ export function useSubmitProposal() {
   }
 
   async function performAnalytics(params: CombinedAnalyticsParams) {
-    await addUserActionAnalytics(params);
-    await updateRewardAnalyticsIfNeeded(params);
+    try {
+      await addUserActionAnalytics(params);
+      await updateRewardAnalyticsIfNeeded(params);
+    } catch (error) {
+      console.error("Error in performAnalytics:", error);
+    }
   }
 
   return {
