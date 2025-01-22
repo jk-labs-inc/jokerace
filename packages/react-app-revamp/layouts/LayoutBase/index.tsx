@@ -10,7 +10,7 @@ interface LayoutBaseProps {
 const LayoutBase = (props: LayoutBaseProps) => {
   const pathname = usePathname();
   const { children } = props;
-  const allowedLinks = ["Github", "Twitter", "Report a bug", "Terms", "Telegram", "Media Kit", "FAQ"];
+  const allowedLinks = ["Github", "Twitter", "Report a bug", "Terms", "Telegram", "Media Kit", "FAQ", "Substack"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const isCreateFlow = pathname?.includes("/new");
 

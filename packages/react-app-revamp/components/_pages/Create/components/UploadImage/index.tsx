@@ -63,12 +63,7 @@ const CreateUploadImage = () => {
       <p className="text-neutral-11 text-[20px] font-bold">
         preview image <span className="font-normal">(optional)</span>
       </p>
-      <ImageUpload
-        onFileSelect={onFileSelectHandler}
-        isSuccess={uploadSuccess}
-        initialImageUrl={prompt.imageUrl}
-        isContestPreviewImage
-      />
+      <ImageUpload onFileSelect={onFileSelectHandler} isSuccess={uploadSuccess} initialImageUrl={prompt.imageUrl} />
       {uploadError && <p className="text-[12px] text-negative-11 font-bold">{uploadError}</p>}
     </div>
   );

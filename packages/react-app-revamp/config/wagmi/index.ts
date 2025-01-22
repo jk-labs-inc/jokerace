@@ -27,6 +27,7 @@ import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
+import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { cyber } from "./custom-chains/cyber";
 import { forma } from "./custom-chains/forma";
@@ -43,6 +44,7 @@ import { scroll } from "./custom-chains/scroll";
 import { sei } from "./custom-chains/sei";
 import { sepolia } from "./custom-chains/sepolia";
 import { zora } from "./custom-chains/zora";
+import { lukso } from "./custom-chains/lukso";
 
 declare module "wagmi";
 
@@ -70,6 +72,8 @@ export const chains: readonly [Chain, ...Chain[]] = [
   cyber,
   metis,
   forma,
+  bnb,
+  lukso,
   sepolia,
   baseTestnet,
   mainnet,
@@ -80,7 +84,7 @@ const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 const appName = "jokerace";
 const projectId = WALLETCONECT_PROJECT_ID;
 
-coinbaseWallet.preference = 'smartWalletOnly';
+coinbaseWallet.preference = "smartWalletOnly";
 
 const connectors = connectorsForWallets(
   [

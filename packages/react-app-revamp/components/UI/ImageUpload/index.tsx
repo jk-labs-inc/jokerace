@@ -8,17 +8,10 @@ interface ImageUploadProps {
   isSuccess?: boolean;
   isError?: boolean;
   initialImageUrl?: string;
-  isContestPreviewImage?: boolean;
   onFileSelect?: (file: File | null) => void;
 }
 
-const ImageUpload: FC<ImageUploadProps> = ({
-  onFileSelect,
-  step,
-  isSuccess,
-  initialImageUrl,
-  isContestPreviewImage,
-}) => {
+const ImageUpload: FC<ImageUploadProps> = ({ onFileSelect, step, isSuccess, initialImageUrl }) => {
   const { errors } = useDeployContestStore(state => state);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
@@ -105,7 +98,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       onDragLeave={handleDragLeave}
-      className={`relative flex shadow-file-upload m-auto md:m-0 flex-col w-full h-40 md:w-[376px] md:h-36 justify-between items-center border border-transparent hover:border-positive-11 gap-2 py-2 px-10 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out ${borderStyles}`}
+      className={`relative flex shadow-file-upload m-auto md:m-0 flex-col w-full h-40 md:w-[376px] md:h-36 justify-center items-center border border-transparent hover:border-positive-11 gap-2 py-2 px-10 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out ${borderStyles}`}
       style={{
         backgroundImage: selectedImage ? `url(${selectedImage})` : "none",
         backgroundSize: "cover",
@@ -125,9 +118,6 @@ const ImageUpload: FC<ImageUploadProps> = ({
               </span>
             </div>
           </div>
-          {isContestPreviewImage ? (
-            <span className="text-neutral-11 text-[12px] font-normal">728 x 264 px recommended</span>
-          ) : null}
         </>
       )}
       {selectedImage && (

@@ -17,6 +17,7 @@ export enum ButtonSize {
   LARGE = "large",
   EXTRA_LARGE = "extraLarge",
   EXTRA_LARGE_LONG = "extraLargeLong",
+  EXTRA_LARGE_LONG_MOBILE = "extraLargeLongMobile",
   FULL = "full",
 }
 
@@ -40,6 +41,7 @@ const sizeClasses = {
   [ButtonSize.LARGE]: "w-40 h-[40px]",
   [ButtonSize.EXTRA_LARGE]: "w-[216px] h-[40px]",
   [ButtonSize.EXTRA_LARGE_LONG]: "w-[240px] h-[40px]",
+  [ButtonSize.EXTRA_LARGE_LONG_MOBILE]: "w-[312px] h-[40px]",
   [ButtonSize.FULL]: "w-full h-[40px]",
 };
 

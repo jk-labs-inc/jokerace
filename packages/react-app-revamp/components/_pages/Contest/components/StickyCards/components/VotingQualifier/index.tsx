@@ -81,7 +81,7 @@ const VotingContestQualifier = () => {
         )
       ) : (
         <button
-          className="w-48 h-8 text-[16px] font-bold bg-true-black text-neutral-11 rounded-[40px] border border-neutral-11 hover:bg-neutral-11 hover:text-true-black transition-all duration-300"
+          className="w-32 md:w-48 h-8 text-[16px] font-bold bg-true-black text-positive-11 md:text-neutral-11 rounded-[40px] border border-positive-11 md:border-neutral-11 hover:bg-neutral-11 hover:text-true-black transition-all duration-300"
           onClick={openConnectModal}
         >
           connect wallet

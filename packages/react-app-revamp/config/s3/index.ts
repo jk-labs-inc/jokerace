@@ -7,4 +7,6 @@ export const s3 = new S3Client({
     accessKeyId: process.env.NEXT_PUBLIC_R2_ACCESS_KEY_ID as string,
     secretAccessKey: process.env.NEXT_PUBLIC_R2_SECRET_ACCESS_KEY as string,
   },
+  requestChecksumCalculation: "WHEN_REQUIRED",
+  responseChecksumValidation: "WHEN_REQUIRED",
 });
