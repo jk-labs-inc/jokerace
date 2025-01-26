@@ -20,7 +20,7 @@
     "@lens-protocol/metadata": "1.2.0",
     "@next/third-parties": "14.2.23",
     "@rainbow-me/rainbowkit": "2.2.3",
-    "@supabase/supabase-js": "2.48.0",
+    "@supabase/supabase-js": "2.48.1",
     "@tailwindcss/line-clamp": "0.4.4",
     "@tailwindcss/typography": "0.5.16",
     "@tanstack/react-query": "5.64.2",
