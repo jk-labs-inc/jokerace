@@ -65,7 +65,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
             {isLoading && !onLoadMoreCalledRef.current ? (
               <LoadingSkeleton count={count} />
             ) : (
-              <div style={{ height: Math.min(addresses.length * 50, 450) }}>
+              <div style={{ height: Math.min(addresses.length * 50, 500) }}>
                 <SimpleBar style={{ maxHeight: "100%", height: "100%" }} autoHide={false}>
                   <div className="flex flex-col gap-4 pr-6">
                     {addresses.map(address => (

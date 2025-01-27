@@ -146,10 +146,10 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
             </div>
           </div>
 
-          <div className="w-[400px] border-l border-neutral-2">
+          <div className="w-[350px] border-l border-neutral-2">
             <div className="flex flex-col">
               {contestStatus === ContestStatus.VotingOpen ? (
-                <div className="border-b border-neutral-2 p-4">
+                <div className="border-b border-neutral-2 py-4 pl-4">
                   {isConnected ? (
                     currentUserAvailableVotesAmount > 0 ? (
                       <VotingWidget

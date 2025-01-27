@@ -38,8 +38,6 @@ const DialogModalProposalHeader: FC<DialogModalProposalHeaderProps> = ({
     const { stringArray } = proposalData.proposal.metadataFields;
     const params = new URLSearchParams(stringArray[0]);
 
-    if (params.get("JOKERACE_IMAGE_PREVIEW") || params.get("JOKERACE_TWEET_PREVIEW")) return;
-
     const title = params.get("JOKERACE_IMG_TITLE") ?? stringArray[0];
     setEntryTitle(title);
   };

@@ -93,7 +93,7 @@ const CommentsList: FC<CommentsListProps> = ({
     onLoadMoreComments?.();
   };
 
-  const containerHeight = Math.min((isLoading ? initialSkeletonCount : comments.length) * 120 + 20, 400);
+  const containerHeight = Math.min((isLoading ? initialSkeletonCount : comments.length) * 120 + 20, 450);
 
   if (numberOfComments === null) {
     return (
