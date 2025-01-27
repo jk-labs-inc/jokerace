@@ -14,7 +14,6 @@ import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import { ProposalState } from "lib/proposal";
-import moment from "moment";
 import { usePathname } from "next/navigation";
 import { FC, ReactNode } from "react";
 import { Tweet } from "react-tweet";
@@ -70,11 +69,10 @@ const transform = (node: HTMLElement): ReactNode => {
 const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, contestStatus, displaySocials }) => {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
-  const { votesOpen, contestName } = useContestStore(state => state);
-  const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
+  const { contestName } = useContestStore(state => state);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col justify-between h-full">
       {proposal.content === ProposalState.Deleted ? (
         <p className="text-[16px] text-neutral-11">{ProposalState.Deleted}</p>
       ) : (
@@ -85,6 +83,81 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
           transform={transform}
         />
       )}
+
+      {displaySocials && proposalId ? (
+        <div className="hidden md:flex gap-2">
+          <a
+            className={`flex items-center  bg-neutral-12 rounded-full overflow-hidden w-8 h-8`}
+            href={generateLensShareUrlForSubmission(address, chainName, proposalId)}
+            target="_blank"
+          >
+            <img
+              width={32}
+              height={32}
+              className="object-cover m-auto grayscale"
+              src="/socials/lens-leaf.svg"
+              alt="avatar"
+            />
+          </a>
+          <a
+            className={`flex items-center  bg-neutral-13 rounded-full overflow-hidden w-8 h-8`}
+            href={generateTwitterShareUrlForSubmission(address, chainName, proposalId)}
+            target="_blank"
+          >
+            <img width={28} height={28} className="object-cover m-auto" src="/socials/twitter-light.svg" alt="avatar" />
+          </a>
+          <a
+            className={`flex items-center  bg-neutral-13 rounded-full overflow-hidden w-8 h-8`}
+            href={generateFarcasterShareUrlForSubmission(contestName, address, chainName, proposalId)}
+            target="_blank"
+          >
+            <img
+              width={28}
+              height={28}
+              className="object-cover m-auto"
+              src="/socials/farcaster-light.svg"
+              alt="avatar"
+            />
+          </a>
+          <a
+            className={`flex items-center rounded-full overflow-hidden w-8 h-8`}
+            href={generateFacebookShareUrlForSubmission(address, chainName, proposalId)}
+            target="_blank"
+          >
+            <img
+              width={30}
+              height={30}
+              className="object-cover m-auto grayscale"
+              src="/socials/share-submission/facebook.svg"
+              alt="avatar"
+            />
+          </a>
+          <a
+            className={`flex items-center   rounded-full overflow-hidden w-8 h-8`}
+            href={generateLinkedInShareUrlForSubmission(address, chainName, proposalId)}
+            target="_blank"
+          >
+            <img
+              width={34}
+              height={34}
+              className="object-cover m-auto grayscale"
+              src="/socials/share-submission/linkedin.svg"
+              alt="avatar"
+            />
+          </a>
+
+          <div
+            className={`flex items-center bg-true-black rounded-full border-neutral-11 border overflow-hidden w-8 h-8 cursor-pointer`}
+            onClick={() =>
+              navigator.share({
+                url: generateUrlSubmissions(address, chainName, ""),
+              })
+            }
+          >
+            <img src="/forward.svg" alt="share" className="object-cover m-auto" width={15} height={13} />
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };

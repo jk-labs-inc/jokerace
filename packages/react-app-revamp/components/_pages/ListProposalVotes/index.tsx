@@ -1,13 +1,11 @@
-import Collapsible from "@components/UI/Collapsible";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { ArrowPathIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
+import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { VOTES_PER_PAGE, useProposalVotes } from "@hooks/useProposalVotes";
 import { usePathname } from "next/navigation";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import AutoSizer from "react-virtualized-auto-sizer";
-import { FixedSizeList as List } from "react-window";
+import SimpleBar from "simplebar-react";
 import VoterRow from "./components/VoterRow";
 
 interface ListProposalVotesProps {
@@ -65,58 +63,56 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
     }
   };
 
-  const onRefreshData = () => {
-    onLoadMoreCalledRef.current = false;
-    refreshData();
-  };
-
   const addresses = Object.keys(accumulatedVotesData);
 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
-      <div className="flex gap-4 items-center">
-        <p className="text-[24px] text-neutral-11 font-bold">voters ({addressesVoted.length})</p>
-      </div>
-      <div className="flex flex-col gap-5">
-        {votedAddresses ? (
-          <>
-            <div className="overflow-auto">
+      <div className="flex flex-col gap-4 overflow-hidden">
+        <p className="text-[24px] text-neutral-11 font-bold">
+          voters <span className="text-[16px]">({addressesVoted.length})</span>
+        </p>
+
+        <div className="flex flex-col gap-5">
+          {votedAddresses ? (
+            <>
               {isLoading && !onLoadMoreCalledRef.current ? (
                 <LoadingSkeleton count={count} />
               ) : (
-                <AutoSizer disableHeight>
-                  {({ width }: { width: number }) => (
-                    <List
-                      height={Math.min(addresses.length * 50, 400)}
-                      itemCount={addresses.length}
-                      itemSize={50}
-                      width={width}
-                      itemData={{ votesPerAddress: accumulatedVotesData, addresses }}
-                    >
-                      {VoterRow}
-                    </List>
-                  )}
-                </AutoSizer>
+                <div style={{ height: Math.min(addresses.length * 50, 450) }}>
+                  <SimpleBar style={{ maxHeight: "100%", height: "100%" }} autoHide={false}>
+                    <div className="flex flex-col gap-4 pr-6">
+                      {addresses.map(address => (
+                        <VoterRow
+                          key={address}
+                          data={{
+                            votesPerAddress: accumulatedVotesData,
+                            addresses: [address],
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </SimpleBar>
+                </div>
               )}
               {isLoading && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
-            </div>
-            {showLoadMore && (
-              <div className="flex gap-2 items-center cursor-pointer" onClick={onLoadMore}>
-                <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
-                <button
-                  className="transition-transform duration-500 ease-in-out transform 
+              {showLoadMore && (
+                <div className="flex gap-2 items-center cursor-pointer" onClick={onLoadMore}>
+                  <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
+                  <button
+                    className="transition-transform duration-500 ease-in-out transform 
             rotate-180"
-                >
-                  <ChevronUpIcon height={20} className="text-positive-11" />
-                </button>
-              </div>
-            )}
-          </>
-        ) : (
-          <p className="text-[16px] text-negative-11 font-bold">
-            ruh-roh! an error occurred when retrieving votes for this proposal; try refreshing the page.
-          </p>
-        )}
+                  >
+                    <ChevronUpIcon height={20} className="text-positive-11" />
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <p className="text-[16px] text-negative-11 font-bold">
+              ruh-roh! an error occurred when retrieving votes for this proposal; try refreshing the page.
+            </p>
+          )}
+        </div>
       </div>
     </SkeletonTheme>
   );

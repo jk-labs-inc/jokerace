@@ -170,7 +170,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
         <div className="flex flex-col gap-12">
           <div className="flex flex-col gap-6">
             <div
-              className={`relative flex w-full md:w-80 h-16 items-center px-8 text-[16px] bg-transparent font-bold ${
+              className={`relative flex w-full  h-16 items-center px-8 text-[16px] bg-transparent font-bold ${
                 isInvalid ? "text-negative-11" : "text-neutral-11"
               } border-2 ${isFocused && !isInvalid ? "border-neutral-11" : isInvalid ? "border-negative-11" : "border-neutral-10"} rounded-[40px] transition-colors duration-300`}
             >

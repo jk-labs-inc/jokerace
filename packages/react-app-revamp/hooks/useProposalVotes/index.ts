@@ -5,7 +5,7 @@ import { readContract } from "@wagmi/core";
 import { utils } from "ethers";
 import { useEffect, useState } from "react";
 
-export const VOTES_PER_PAGE = 5;
+export const VOTES_PER_PAGE = 10;
 
 interface VoteEntry {
   address: string;
@@ -14,7 +14,7 @@ interface VoteEntry {
 
 type VotesArray = VoteEntry[];
 
-export function useProposalVotes(contractAddress: string, proposalId: string, chainId: number, addressPerPage = 5) {
+export function useProposalVotes(contractAddress: string, proposalId: string, chainId: number, addressPerPage = 10) {
   const { contestAbi: abi } = useContestStore(state => state);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
