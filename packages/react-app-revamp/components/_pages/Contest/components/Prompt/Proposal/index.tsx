@@ -72,7 +72,7 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
   const { contestName } = useContestStore(state => state);
 
   return (
-    <div className="flex flex-col justify-between h-full">
+    <div className="flex flex-col gap-4 justify-between h-full">
       {proposal.content === ProposalState.Deleted ? (
         <p className="text-[16px] text-neutral-11">{ProposalState.Deleted}</p>
       ) : (

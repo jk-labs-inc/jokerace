@@ -46,31 +46,26 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <p className="text-[24px] text-neutral-11 font-bold">
-        comments <span className="text-[16px]">({numberOfComments})</span>
-      </p>
-      <div className="flex flex-col w-full relative" id="comments" ref={commentsRef}>
-        <CommentsList
-          comments={comments}
-          isLoading={isLoading}
-          isPaginating={isPaginating}
-          isDeleting={isDeleting}
-          isDeletingSuccess={isDeletingSuccess}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onDeleteSelectedComments={selectedCommentsIds => deleteComments(selectedCommentsIds)}
-          onLoadMoreComments={onLoadMoreComments}
-          numberOfComments={numberOfComments}
+    <div className="flex flex-col w-full relative" id="comments" ref={commentsRef}>
+      <CommentsList
+        comments={comments}
+        isLoading={isLoading}
+        isPaginating={isPaginating}
+        isDeleting={isDeleting}
+        isDeletingSuccess={isDeletingSuccess}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onDeleteSelectedComments={selectedCommentsIds => deleteComments(selectedCommentsIds)}
+        onLoadMoreComments={onLoadMoreComments}
+        numberOfComments={numberOfComments}
+      />
+      <div className="sticky bottom-0 left-0 right-0 bg-neutral-1">
+        <CommentsForm
+          contestChainId={contestChainId}
+          onSend={addComment}
+          isAddingSuccess={isAddingSuccess}
+          isAdding={isAdding}
         />
-        <div className="sticky bottom-0 left-0 right-0 bg-neutral-1">
-          <CommentsForm
-            contestChainId={contestChainId}
-            onSend={addComment}
-            isAddingSuccess={isAddingSuccess}
-            isAdding={isAdding}
-          />
-        </div>
       </div>
     </div>
   );

@@ -33,16 +33,8 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
-  const {
-    accumulatedVotesData,
-    currentPage,
-    totalPages,
-    setCurrentPage,
-    isLoading,
-    fetchVotesPerPage,
-    addressesVoted,
-    refreshData,
-  } = useProposalVotes(address, proposalId, chainId);
+  const { accumulatedVotesData, currentPage, totalPages, setCurrentPage, isLoading, fetchVotesPerPage } =
+    useProposalVotes(address, proposalId, chainId);
   const onLoadMoreCalledRef = useRef(false);
   const initialSkeletonCount = votedAddresses ? Math.min(votedAddresses.length, VOTES_PER_PAGE) : VOTES_PER_PAGE;
   const remainingItems =
@@ -67,52 +59,46 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
-      <div className="flex flex-col gap-4 overflow-hidden">
-        <p className="text-[24px] text-neutral-11 font-bold">
-          voters <span className="text-[16px]">({addressesVoted.length})</span>
-        </p>
-
-        <div className="flex flex-col gap-5">
-          {votedAddresses ? (
-            <>
-              {isLoading && !onLoadMoreCalledRef.current ? (
-                <LoadingSkeleton count={count} />
-              ) : (
-                <div style={{ height: Math.min(addresses.length * 50, 450) }}>
-                  <SimpleBar style={{ maxHeight: "100%", height: "100%" }} autoHide={false}>
-                    <div className="flex flex-col gap-4 pr-6">
-                      {addresses.map(address => (
-                        <VoterRow
-                          key={address}
-                          data={{
-                            votesPerAddress: accumulatedVotesData,
-                            addresses: [address],
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </SimpleBar>
-                </div>
-              )}
-              {isLoading && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
-              {showLoadMore && (
-                <div className="flex gap-2 items-center cursor-pointer" onClick={onLoadMore}>
-                  <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
-                  <button
-                    className="transition-transform duration-500 ease-in-out transform 
+      <div className="flex flex-col gap-5">
+        {votedAddresses ? (
+          <>
+            {isLoading && !onLoadMoreCalledRef.current ? (
+              <LoadingSkeleton count={count} />
+            ) : (
+              <div style={{ height: Math.min(addresses.length * 50, 450) }}>
+                <SimpleBar style={{ maxHeight: "100%", height: "100%" }} autoHide={false}>
+                  <div className="flex flex-col gap-4 pr-6">
+                    {addresses.map(address => (
+                      <VoterRow
+                        key={address}
+                        data={{
+                          votesPerAddress: accumulatedVotesData,
+                          addresses: [address],
+                        }}
+                      />
+                    ))}
+                  </div>
+                </SimpleBar>
+              </div>
+            )}
+            {isLoading && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
+            {showLoadMore && (
+              <div className="flex gap-2 items-center cursor-pointer" onClick={onLoadMore}>
+                <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
+                <button
+                  className="transition-transform duration-500 ease-in-out transform 
             rotate-180"
-                  >
-                    <ChevronUpIcon height={20} className="text-positive-11" />
-                  </button>
-                </div>
-              )}
-            </>
-          ) : (
-            <p className="text-[16px] text-negative-11 font-bold">
-              ruh-roh! an error occurred when retrieving votes for this proposal; try refreshing the page.
-            </p>
-          )}
-        </div>
+                >
+                  <ChevronUpIcon height={20} className="text-positive-11" />
+                </button>
+              </div>
+            )}
+          </>
+        ) : (
+          <p className="text-[16px] text-negative-11 font-bold">
+            ruh-roh! an error occurred when retrieving votes for this proposal; try refreshing the page.
+          </p>
+        )}
       </div>
     </SkeletonTheme>
   );

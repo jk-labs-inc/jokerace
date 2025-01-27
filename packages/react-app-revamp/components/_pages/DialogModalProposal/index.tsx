@@ -18,6 +18,8 @@ import { useAccount } from "wagmi";
 import ListProposalVotes from "../ListProposalVotes";
 import DialogModalProposalHeader from "./components/Header";
 import DialogModalProposalVoteCountdown from "./components/VoteCountdown";
+import Tabs from "@components/UI/Tabs";
+import { useProposalVotes } from "@hooks/useProposalVotes";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -74,6 +76,13 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
   const isAnyoneCanVote = charge?.voteType === VoteType.PerVote;
   const [activeTab, setActiveTab] = useState<DialogTab>(DialogTab.Voters);
+  const dialogTabs = Object.values(DialogTab);
+  const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
+
+  const tabsOptionalInfo = {
+    ...(addressesVoted?.length > 0 && { [DialogTab.Voters]: addressesVoted.length }),
+    ...(proposalData?.numberOfComments && { [DialogTab.Comments]: proposalData.numberOfComments }),
+  };
 
   useEffect(() => {
     if (isSuccess) setIsOpen?.(false);
@@ -183,23 +192,16 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
               )}
 
               <div className="flex-1">
-                <div className="border-b border-neutral-2">
-                  <div className="flex">
-                    {Object.values(DialogTab).map(tab => (
-                      <div
-                        key={tab}
-                        className={`py-3 px-4 cursor-pointer text-[24px] font-bold ${
-                          activeTab === tab ? "text-neutral-11 border-b-2 border-positive-11" : "text-neutral-10"
-                        }`}
-                        onClick={() => setActiveTab(tab)}
-                      >
-                        {tab}
-                      </div>
-                    ))}
-                  </div>
+                <div className="pt-4 pl-4">
+                  <Tabs
+                    tabs={dialogTabs}
+                    activeTab={activeTab}
+                    onChange={tab => setActiveTab(tab as DialogTab)}
+                    optionalInfo={Object.keys(tabsOptionalInfo).length > 0 ? tabsOptionalInfo : undefined}
+                  />
                 </div>
 
-                <div className="py-4 pl-4">
+                <div className="pt-4 pl-4">
                   {activeTab === DialogTab.Voters &&
                     proposalData?.proposal?.votes &&
                     proposalData?.proposal?.votes > 0 && (
