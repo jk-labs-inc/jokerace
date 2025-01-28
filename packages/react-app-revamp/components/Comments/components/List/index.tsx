@@ -93,7 +93,7 @@ const CommentsList: FC<CommentsListProps> = ({
     onLoadMoreComments?.();
   };
 
-  const containerHeight = Math.min((isLoading ? initialSkeletonCount : comments.length) * 120 + 20, 450);
+  const containerHeight = Math.min((isLoading ? initialSkeletonCount : 5) * 180, 5 * 180);
 
   if (numberOfComments === null) {
     return (
@@ -110,8 +110,8 @@ const CommentsList: FC<CommentsListProps> = ({
 
   return (
     <div className="flex flex-col" ref={commentsRef}>
-      <div style={{ height: `${containerHeight}px` }}>
-        <SimpleBar style={{ maxHeight: "100%", height: "100%" }}>
+      <div style={{ height: `${Math.min(comments.length, 5) * 40}px` }}>
+        <SimpleBar style={{ maxHeight: "100%", height: "100%" }} autoHide={false}>
           <div className="flex flex-col gap-10 pr-6">
             {comments.map(comment => {
               if (selectedCommentIds.includes(comment.id) && isDeleting) {

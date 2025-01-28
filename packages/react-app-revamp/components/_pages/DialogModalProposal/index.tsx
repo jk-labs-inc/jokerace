@@ -78,6 +78,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const [activeTab, setActiveTab] = useState<DialogTab>(DialogTab.Voters);
   const dialogTabs = Object.values(DialogTab);
   const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
+  const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
 
   const tabsOptionalInfo = {
     ...(addressesVoted?.length > 0 && { [DialogTab.Voters]: addressesVoted.length }),
@@ -146,7 +147,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
             </div>
           </div>
 
-          <div className="w-[350px] border-l border-neutral-2">
+          <div className="w-[400px] h-[calc(90vh-180px)] overflow-hidden border-l border-neutral-2">
             <div className="flex flex-col">
               {contestStatus === ContestStatus.VotingOpen ? (
                 <div className="border-b border-neutral-2 py-4 pl-4">
@@ -202,19 +203,34 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                 </div>
 
                 <div className="pt-4 pl-4">
-                  {activeTab === DialogTab.Voters &&
-                    proposalData?.proposal?.votes &&
-                    proposalData?.proposal?.votes > 0 && (
-                      <ListProposalVotes proposalId={proposalId} votedAddresses={proposalData?.votedAddresses} />
-                    )}
+                  {activeTab === DialogTab.Voters && (
+                    <div>
+                      {proposalData?.proposal?.votes && proposalData?.proposal?.votes > 0 ? (
+                        <ListProposalVotes
+                          proposalId={proposalId}
+                          votedAddresses={proposalData?.votedAddresses}
+                          isAnyoneCanVote={isAnyoneCanVote}
+                          isVotingOpen={isVotingOpen}
+                        />
+                      ) : (
+                        <div className="flex flex-col gap-5">
+                          <p className="text-[16px] text-neutral-11 font-bold">no one has voted on this entry yet!</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
-                  {activeTab === DialogTab.Comments && commentsAllowed && proposalData && (
-                    <Comments
-                      contestAddress={contestInfo.address}
-                      contestChainId={contestInfo.chainId}
-                      proposalId={proposalId}
-                      numberOfComments={proposalData?.numberOfComments}
-                    />
+                  {activeTab === DialogTab.Comments && (
+                    <div>
+                      {commentsAllowed && proposalData ? (
+                        <Comments
+                          contestAddress={contestInfo.address}
+                          contestChainId={contestInfo.chainId}
+                          proposalId={proposalId}
+                          numberOfComments={proposalData?.numberOfComments}
+                        />
+                      ) : null}
+                    </div>
                   )}
                 </div>
               </div>

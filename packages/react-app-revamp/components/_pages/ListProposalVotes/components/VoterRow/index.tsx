@@ -3,16 +3,16 @@ import { formatNumberAbbreviated } from "@helpers/formatNumber";
 
 interface VoterRowData {
   votesPerAddress: Record<string, number>;
-  addresses: string[];
+  address: string;
+  addressesLength: number;
 }
 
 const VoterRow = ({ data }: { data: VoterRowData }) => {
-  const { votesPerAddress, addresses } = data;
-  const address = addresses[0];
+  const { votesPerAddress, address, addressesLength } = data;
 
   return (
     <div
-      className={`flex justify-between items-center text-[16px] font-bold pb-1 ${addresses.length > 1 ? "border-b border-neutral-10" : ""}`}
+      className={`flex justify-between items-center text-[16px] font-bold pb-1 ${addressesLength > 1 ? "border-b border-neutral-2" : ""}`}
     >
       <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} />
       <p>

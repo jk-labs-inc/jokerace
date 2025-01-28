@@ -46,7 +46,7 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
   };
 
   return (
-    <div className="flex flex-col w-full relative" id="comments" ref={commentsRef}>
+    <div className="flex justify-between flex-col w-full h-full" id="comments" ref={commentsRef}>
       <CommentsList
         comments={comments}
         isLoading={isLoading}
@@ -59,7 +59,7 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
         onLoadMoreComments={onLoadMoreComments}
         numberOfComments={numberOfComments}
       />
-      <div className="sticky bottom-0 left-0 right-0 bg-neutral-1">
+      <div className="bg-neutral-1">
         <CommentsForm
           contestChainId={contestChainId}
           onSend={addComment}

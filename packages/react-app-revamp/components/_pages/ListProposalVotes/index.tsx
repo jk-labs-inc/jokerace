@@ -3,7 +3,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { VOTES_PER_PAGE, useProposalVotes } from "@hooks/useProposalVotes";
 import { usePathname } from "next/navigation";
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import SimpleBar from "simplebar-react";
 import VoterRow from "./components/VoterRow";
@@ -11,6 +11,8 @@ import VoterRow from "./components/VoterRow";
 interface ListProposalVotesProps {
   proposalId: string;
   votedAddresses: string[] | null;
+  isAnyoneCanVote: boolean;
+  isVotingOpen: boolean;
 }
 
 const LoadingSkeleton: FC<{ count: number }> = ({ count }) => (
@@ -27,7 +29,12 @@ const LoadingSkeleton: FC<{ count: number }> = ({ count }) => (
   </div>
 );
 
-export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, votedAddresses }) => {
+export const ListProposalVotes: FC<ListProposalVotesProps> = ({
+  proposalId,
+  votedAddresses,
+  isAnyoneCanVote,
+  isVotingOpen,
+}) => {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
@@ -42,6 +49,8 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
   const count =
     isLoading && onLoadMoreCalledRef.current ? Math.min(remainingItems, VOTES_PER_PAGE) : initialSkeletonCount;
   const showLoadMore = currentPage < totalPages - 1;
+  const [hasScrollbar, setHasScrollbar] = useState(false);
+  const simpleBarRef = useRef<any>(null);
 
   useEffect(() => {
     onLoadMoreCalledRef.current = false;
@@ -56,41 +65,69 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
   };
 
   const addresses = Object.keys(accumulatedVotesData);
+  const voterListHeightEqualOrMax = isAnyoneCanVote ? 40 : 50;
+  const voterListHeightMax = isAnyoneCanVote ? 230 : 250;
+  const voterListHeightCalculated = addresses.length >= 5 ? voterListHeightEqualOrMax : voterListHeightMax;
+
+  useEffect(() => {
+    const checkForScrollbar = () => {
+      if (simpleBarRef.current) {
+        const scrollElement = simpleBarRef.current.getScrollElement();
+        const hasVerticalScrollbar = scrollElement.scrollHeight > scrollElement.clientHeight;
+        setHasScrollbar(hasVerticalScrollbar);
+      }
+    };
+
+    if (simpleBarRef.current) {
+      const scrollElement = simpleBarRef.current.getScrollElement();
+      scrollElement.addEventListener("scroll", checkForScrollbar);
+      checkForScrollbar();
+    }
+
+    return () => {
+      if (simpleBarRef.current) {
+        const scrollElement = simpleBarRef.current.getScrollElement();
+        scrollElement.removeEventListener("scroll", checkForScrollbar);
+      }
+    };
+  }, [addresses]);
 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col">
         {votedAddresses ? (
           <>
             {isLoading && !onLoadMoreCalledRef.current ? (
               <LoadingSkeleton count={count} />
             ) : (
-              <div style={{ height: Math.min(addresses.length * 50, 500) }}>
-                <SimpleBar style={{ maxHeight: "100%", height: "100%" }} autoHide={false}>
-                  <div className="flex flex-col gap-4 pr-6">
-                    {addresses.map(address => (
-                      <VoterRow
-                        key={address}
-                        data={{
-                          votesPerAddress: accumulatedVotesData,
-                          addresses: [address],
-                        }}
-                      />
-                    ))}
-                  </div>
-                </SimpleBar>
-              </div>
-            )}
-            {isLoading && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
-            {showLoadMore && (
-              <div className="flex gap-2 items-center cursor-pointer" onClick={onLoadMore}>
-                <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
-                <button
-                  className="transition-transform duration-500 ease-in-out transform 
-            rotate-180"
+              <div className="flex flex-col gap-7">
+                <div
+                  style={{
+                    height: `${Math.min(addresses.length, 5) * voterListHeightCalculated}px`,
+                  }}
                 >
-                  <ChevronUpIcon height={20} className="text-positive-11" />
-                </button>
+                  <SimpleBar ref={simpleBarRef} style={{ maxHeight: "100%", height: "100%" }} autoHide={false}>
+                    <div className={`flex flex-col gap-4 ${hasScrollbar ? "pr-6" : ""}`}>
+                      {addresses.map(address => (
+                        <VoterRow
+                          key={address}
+                          data={{
+                            votesPerAddress: accumulatedVotesData,
+                            address: address,
+                            addressesLength: addresses.length,
+                          }}
+                        />
+                      ))}
+                      {isLoading && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
+                    </div>
+                  </SimpleBar>
+                </div>
+                {showLoadMore && (
+                  <button className="flex gap-2 items-center pl-2" onClick={onLoadMore}>
+                    <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
+                    <ChevronUpIcon height={20} className="text-positive-11" />
+                  </button>
+                )}
               </div>
             )}
           </>

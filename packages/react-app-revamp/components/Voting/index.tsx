@@ -167,7 +167,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
             </div>
           </div>
         ) : null}
-        <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-6">
             <div
               className={`relative flex w-full  h-16 items-center px-8 text-[16px] bg-transparent font-bold ${
@@ -181,7 +181,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
                 onChange={e => handleChange(e.target.value)}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
-                placeholder="0.00"
+                placeholder="0"
                 max={amountOfVotes}
                 onKeyDown={handleKeyDownInput}
                 onInput={handleInput}
