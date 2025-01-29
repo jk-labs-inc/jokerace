@@ -14,7 +14,6 @@ import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import { ProposalState } from "lib/proposal";
-import moment from "moment";
 import { usePathname } from "next/navigation";
 import { FC, ReactNode } from "react";
 import { Tweet } from "react-tweet";
@@ -70,11 +69,10 @@ const transform = (node: HTMLElement): ReactNode => {
 const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, contestStatus, displaySocials }) => {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
-  const { votesOpen, contestName } = useContestStore(state => state);
-  const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
+  const { contestName } = useContestStore(state => state);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 justify-between h-full">
       {proposal.content === ProposalState.Deleted ? (
         <p className="text-[16px] text-neutral-11">{ProposalState.Deleted}</p>
       ) : (
@@ -97,7 +95,7 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
               width={32}
               height={32}
               className="object-cover m-auto grayscale"
-              src="/socials/lens-light.svg"
+              src="/socials/lens-leaf.svg"
               alt="avatar"
             />
           </a>
@@ -160,10 +158,6 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
           </div>
         </div>
       ) : null}
-
-      {contestStatus === ContestStatus.SubmissionOpen && (
-        <p className="text-[16px] text-secondary-11">voting opens {formattedVotesOpen}</p>
-      )}
     </div>
   );
 };

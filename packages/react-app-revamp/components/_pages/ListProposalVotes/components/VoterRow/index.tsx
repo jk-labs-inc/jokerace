@@ -1,24 +1,23 @@
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
-import { VOTES_PER_PAGE } from "@hooks/useProposalVotes";
 
 interface VoterRowData {
   votesPerAddress: Record<string, number>;
-  addresses: string[];
+  address: string;
+  addressesLength: number;
 }
 
-const VoterRow = ({ index, style, data }: { index: number; style: React.CSSProperties; data: VoterRowData }) => {
-  const { votesPerAddress, addresses } = data;
-  const address = addresses[index];
-  const needsPadding = addresses.length > VOTES_PER_PAGE;
+const VoterRow = ({ data }: { data: VoterRowData }) => {
+  const { votesPerAddress, address, addressesLength } = data;
 
   return (
     <div
-      style={style}
-      className={`flex justify-between items-end text-[16px] font-bold pb-3 border-b border-neutral-10 ${needsPadding ? "pr-4" : ""}`}
+      className={`flex justify-between items-center text-[16px] font-bold pb-1 ${addressesLength > 1 ? "border-b border-neutral-2" : ""}`}
     >
       <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} />
-      <p>{formatNumberAbbreviated(votesPerAddress[address])} votes</p>
+      <p>
+        {formatNumberAbbreviated(votesPerAddress[address])} {votesPerAddress[address] === 1 ? "vote" : "votes"}
+      </p>
     </div>
   );
 };

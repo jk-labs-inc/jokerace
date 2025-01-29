@@ -5,6 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { FC, useEffect, useRef } from "react";
 import CommentsForm from "./components/Form";
 import CommentsList from "./components/List";
+import { useContestStatusStore } from "@hooks/useContestStatus/store";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 
 interface CommentsProps {
   contestAddress: string;
@@ -15,6 +17,9 @@ interface CommentsProps {
 
 const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalId, numberOfComments }) => {
   const query = useSearchParams();
+  const contestState = useContestStateStore(state => state.contestState);
+  const isCompletedOrCanceled =
+    contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
   const { getAllCommentsIdsPerProposal, getCommentsWithSpecificFirst, addComment, deleteComments, getCommentsPerPage } =
     useComments(contestAddress, contestChainId, proposalId);
   const {
@@ -46,25 +51,31 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
   };
 
   return (
-    <div className="flex flex-col gap-12 w-full md:w-[660px]" id="comments" ref={commentsRef}>
-      <CommentsForm
-        contestChainId={contestChainId}
-        onSend={addComment}
-        isAddingSuccess={isAddingSuccess}
-        isAdding={isAdding}
-      />
-      <CommentsList
-        comments={comments}
-        isLoading={isLoading}
-        isPaginating={isPaginating}
-        isDeleting={isDeleting}
-        isDeletingSuccess={isDeletingSuccess}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onDeleteSelectedComments={selectedCommentsIds => deleteComments(selectedCommentsIds)}
-        onLoadMoreComments={onLoadMoreComments}
-        numberOfComments={numberOfComments}
-      />
+    <div className="flex justify-between flex-col w-full h-full" id="comments" ref={commentsRef}>
+      {comments.length > 0 ? (
+        <CommentsList
+          comments={comments}
+          isLoading={isLoading}
+          isPaginating={isPaginating}
+          isDeleting={isDeleting}
+          isDeletingSuccess={isDeletingSuccess}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onDeleteSelectedComments={selectedCommentsIds => deleteComments(selectedCommentsIds)}
+          onLoadMoreComments={onLoadMoreComments}
+          numberOfComments={numberOfComments}
+        />
+      ) : null}
+      {!isCompletedOrCanceled ? (
+        <div className="bg-neutral-1 mt-auto">
+          <CommentsForm
+            contestChainId={contestChainId}
+            onSend={addComment}
+            isAddingSuccess={isAddingSuccess}
+            isAdding={isAdding}
+          />
+        </div>
+      ) : null}
     </div>
   );
 };

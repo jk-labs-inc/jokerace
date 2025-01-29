@@ -18,7 +18,7 @@ interface UserProfileDisplayProps {
 
 export const SIZES = {
   extraSmall: {
-    avatarSizeClass: "w-6 h-6",
+    avatarSizeClass: "w-8 h-8",
     textSizeClass: "text-[12px]",
   },
   small: {

@@ -26,7 +26,7 @@ const DialogModalV3: FC<DialogModalProps> = ({
   isMobile,
   disableClose,
   className,
-  closeButtonSize = { width: 33, height: 33 },
+  closeButtonSize = { width: 24, height: 24 },
 }) => {
   const handleClose = useCallback(() => {
     setIsOpen?.(false);
