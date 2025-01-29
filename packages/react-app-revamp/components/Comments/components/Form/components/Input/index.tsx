@@ -97,26 +97,22 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
     commentEditor?.commands.clearContent();
   };
 
-  const onSendCommentHandler = () => {
+  const onSendCommentHandler = async () => {
     if (!allowSend || isAdding) return;
+
+    if (!isConnected) {
+      openConnectModal?.();
+    } else if (!isUserOnCorrectNetwork) {
+      await switchChain(config, { chainId: contestChainId });
+    }
 
     onSend?.(commentContent);
   };
 
-  const onSwitchNetwork = async () => {
-    await switchChain(config, { chainId: contestChainId });
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     const allowEnter = !event.shiftKey && !isMobile;
     if (event.key === "Enter" && allowEnter) {
-      if (!isConnected) {
-        openConnectModal?.();
-      } else if (!isUserOnCorrectNetwork) {
-        onSwitchNetwork();
-      } else {
-        onSendCommentHandler();
-      }
+      onSendCommentHandler();
     }
   };
 
@@ -140,10 +136,8 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
         isAdding={isAdding}
         isMobile={isMobile}
         isConnected={isConnected}
-        isUserOnCorrectNetwork={isUserOnCorrectNetwork}
         onSend={onSendCommentHandler}
         onConnect={openConnectModal}
-        onSwitchNetwork={onSwitchNetwork}
       />
     </div>
   );

@@ -11,8 +11,6 @@ import VoterRow from "./components/VoterRow";
 interface ListProposalVotesProps {
   proposalId: string;
   votedAddresses: string[] | null;
-  isAnyoneCanVote: boolean;
-  isVotingOpen: boolean;
 }
 
 const LoadingSkeleton: FC<{ count: number }> = ({ count }) => (
@@ -29,12 +27,7 @@ const LoadingSkeleton: FC<{ count: number }> = ({ count }) => (
   </div>
 );
 
-export const ListProposalVotes: FC<ListProposalVotesProps> = ({
-  proposalId,
-  votedAddresses,
-  isAnyoneCanVote,
-  isVotingOpen,
-}) => {
+export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, votedAddresses }) => {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
@@ -65,9 +58,6 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({
   };
 
   const addresses = Object.keys(accumulatedVotesData);
-  const voterListHeightEqualOrMax = isAnyoneCanVote ? 40 : 50;
-  const voterListHeightMax = isAnyoneCanVote ? 230 : 250;
-  const voterListHeightCalculated = addresses.length >= 5 ? voterListHeightEqualOrMax : voterListHeightMax;
 
   useEffect(() => {
     const checkForScrollbar = () => {
@@ -94,40 +84,34 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({
 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
-      <div className="flex flex-col">
+      <div className="flex flex-col h-full">
         {votedAddresses ? (
           <>
             {isLoading && !onLoadMoreCalledRef.current ? (
               <LoadingSkeleton count={count} />
             ) : (
-              <div className="flex flex-col gap-7">
-                <div
-                  style={{
-                    height: `${Math.min(addresses.length, 5) * voterListHeightCalculated}px`,
-                  }}
-                >
-                  <SimpleBar ref={simpleBarRef} style={{ maxHeight: "100%", height: "100%" }} autoHide={false}>
-                    <div className={`flex flex-col gap-4 ${hasScrollbar ? "pr-6" : ""}`}>
-                      {addresses.map(address => (
-                        <VoterRow
-                          key={address}
-                          data={{
-                            votesPerAddress: accumulatedVotesData,
-                            address: address,
-                            addressesLength: addresses.length,
-                          }}
-                        />
-                      ))}
-                      {isLoading && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
-                    </div>
-                  </SimpleBar>
-                </div>
-                {showLoadMore && (
-                  <button className="flex gap-2 items-center pl-2" onClick={onLoadMore}>
-                    <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
-                    <ChevronUpIcon height={20} className="text-positive-11" />
-                  </button>
-                )}
+              <div className="min-h-[40px] h-full">
+                <SimpleBar ref={simpleBarRef} style={{ maxHeight: "100%", height: "100%" }} autoHide={false}>
+                  <div className={`flex flex-col gap-4 ${hasScrollbar ? "pr-6" : ""}`}>
+                    {addresses.map(address => (
+                      <VoterRow
+                        key={address}
+                        data={{
+                          votesPerAddress: accumulatedVotesData,
+                          address: address,
+                          addressesLength: addresses.length,
+                        }}
+                      />
+                    ))}
+                    {showLoadMore && (
+                      <button className="flex gap-2 items-center" onClick={onLoadMore}>
+                        <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
+                        <ChevronUpIcon height={20} className="text-positive-11" />
+                      </button>
+                    )}
+                    {isLoading && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
+                  </div>
+                </SimpleBar>
               </div>
             )}
           </>

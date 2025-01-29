@@ -78,7 +78,6 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const [activeTab, setActiveTab] = useState<DialogTab>(DialogTab.Voters);
   const dialogTabs = Object.values(DialogTab);
   const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
-  const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
 
   const tabsOptionalInfo = {
     ...(addressesVoted?.length > 0 && { [DialogTab.Voters]: addressesVoted.length }),
@@ -114,7 +113,11 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   return (
     <DialogModalV3 title="Proposal" isOpen={isOpen} setIsOpen={setIsOpen} className="xl:w-[1200px]" onClose={onClose}>
       <div className="flex flex-col h-full" id="custom-modal">
-        <div className="flex items-center justify-between py-4 border-b border-neutral-2">
+        <div
+          className={`flex items-center justify-between ${
+            proposalData?.proposal && proposalData?.proposal?.rank === 0 ? "mt-10" : ""
+          } py-4 border-b border-neutral-2`}
+        >
           {isProposalLoading ? (
             <p className="loadingDots font-sabo text-[18px] text-neutral-9">loading submission info</p>
           ) : (
@@ -130,7 +133,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
         </div>
 
         <div className="flex flex-1">
-          <div className="flex-1">
+          <div className="w-[60%] xl:w-[800px]">
             <div className="h-[calc(90vh-180px)] w-full">
               {proposalData?.proposal && (
                 <SimpleBar style={{ maxHeight: "100%", height: "100%" }} className="h-full" autoHide={false}>
@@ -147,8 +150,8 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
             </div>
           </div>
 
-          <div className="w-[400px] h-[calc(90vh-180px)] overflow-hidden border-l border-neutral-2">
-            <div className="flex flex-col">
+          <div className="w-[40%] xl:w-[400px] h-[calc(90vh-180px)] overflow-hidden border-l border-neutral-2">
+            <div className="flex flex-col h-full">
               {contestStatus === ContestStatus.VotingOpen ? (
                 <div className="border-b border-neutral-2 py-4 pl-4">
                   {isConnected ? (
@@ -191,8 +194,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                 contestStatus === ContestStatus.SubmissionOpen &&
                 votesOpen && <DialogModalProposalVoteCountdown votesOpen={votesOpen} />
               )}
-
-              <div className="flex-1">
+              <div className="flex flex-col flex-1 h-0 min-h-0">
                 <div className="pt-4 pl-4">
                   <Tabs
                     tabs={dialogTabs}
@@ -202,16 +204,11 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                   />
                 </div>
 
-                <div className="pt-4 pl-4">
+                <div className="flex-1 overflow-auto pt-4 pl-4">
                   {activeTab === DialogTab.Voters && (
-                    <div>
+                    <div className="h-full">
                       {proposalData?.proposal?.votes && proposalData?.proposal?.votes > 0 ? (
-                        <ListProposalVotes
-                          proposalId={proposalId}
-                          votedAddresses={proposalData?.votedAddresses}
-                          isAnyoneCanVote={isAnyoneCanVote}
-                          isVotingOpen={isVotingOpen}
-                        />
+                        <ListProposalVotes proposalId={proposalId} votedAddresses={proposalData?.votedAddresses} />
                       ) : (
                         <div className="flex flex-col gap-5">
                           <p className="text-[16px] text-neutral-11 font-bold">no one has voted on this entry yet!</p>
@@ -221,7 +218,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                   )}
 
                   {activeTab === DialogTab.Comments && (
-                    <div>
+                    <div className="h-full">
                       {commentsAllowed && proposalData ? (
                         <Comments
                           contestAddress={contestInfo.address}

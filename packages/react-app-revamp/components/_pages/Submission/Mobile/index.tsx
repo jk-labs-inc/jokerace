@@ -177,12 +177,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
 
             {proposalData && proposalData.proposal && proposalData.proposal.votes > 0 && (
               <div className="flex flex-col gap-12">
-                <ListProposalVotes
-                  proposalId={proposalId}
-                  votedAddresses={proposalData.votedAddresses}
-                  isVotingOpen={contestStatus === ContestStatus.VotingOpen}
-                  isAnyoneCanVote={isAnyoneCanVote}
-                />
+                <ListProposalVotes proposalId={proposalId} votedAddresses={proposalData.votedAddresses} />
               </div>
             )}
 
