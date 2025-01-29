@@ -44,7 +44,7 @@ const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentS
           )}
         </div>
       </div>
-      <div className="prose ml-[15px] prose-invert text-[16px] border-l-2 border-neutral-8 pl-4">
+      <div className="prose ml-[15px] prose-invert text-[16px] border-l-2 border-neutral-2 pl-4">
         <Interweave content={comment.content} matchers={[new UrlMatcher("url")]} />
       </div>
     </div>
