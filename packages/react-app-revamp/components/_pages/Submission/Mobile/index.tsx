@@ -16,6 +16,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { useProposalStore } from "@hooks/useProposal/store";
+import { useProposalVotes } from "@hooks/useProposalVotes";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { compareVersions } from "compare-versions";
@@ -68,7 +69,9 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;
   const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
+  const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
   const isAnyoneCanVote = charge?.voteType === VoteType.PerVote;
+
   if (isProposalError) {
     return (
       <DialogModalV3 isOpen={true} title="submissionMobile" isMobile>
@@ -177,17 +180,31 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
 
             {proposalData && proposalData.proposal && proposalData.proposal.votes > 0 && (
               <div className="flex flex-col gap-12">
-                <ListProposalVotes proposalId={proposalId} votedAddresses={proposalData.votedAddresses} />
+                <div className="flex flex-col gap-4">
+                  <p className="text-[24px] text-neutral-11 font-bold">
+                    voters ({addressesVoted.length > 0 ? addressesVoted.length : null})
+                  </p>
+                  <ListProposalVotes proposalId={proposalId} votedAddresses={proposalData.votedAddresses} />
+                </div>
               </div>
             )}
 
             {commentsAllowed && proposalData ? (
-              <Comments
-                contestAddress={contestInfo.address}
-                contestChainId={contestInfo.chainId}
-                proposalId={proposalId}
-                numberOfComments={proposalData?.numberOfComments}
-              />
+              <div className="flex flex-col gap-4">
+                <p className="text-[24px] text-neutral-11 font-bold">
+                  comments (
+                  {proposalData.numberOfComments && proposalData.numberOfComments > 0
+                    ? proposalData.numberOfComments
+                    : null}
+                  )
+                </p>
+                <Comments
+                  contestAddress={contestInfo.address}
+                  contestChainId={contestInfo.chainId}
+                  proposalId={proposalId}
+                  numberOfComments={proposalData?.numberOfComments}
+                />
+              </div>
             ) : null}
           </div>
         )}
