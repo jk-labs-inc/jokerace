@@ -16,18 +16,19 @@ interface CommentProps {
 const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentSelection }) => {
   const { address } = useAccount();
   const contestAuthor = useContestStore(state => state.contestAuthorEthereumAddress);
-  const localDate = moment(comment.createdAt).local().format("MMMM D, YYYY, h:mma");
-  const formattedDate = localDate.replace(/(am|pm)/, match => match.toUpperCase());
+  const timeAgo = moment(comment.createdAt).fromNow();
   const allowDelete = (address === comment.author || address === contestAuthor) && !comment.isDeleted;
   const isSelected = selectedCommentIds.includes(comment.id);
 
   return (
     <div className="flex flex-col gap-4 animate-reveal">
-      <div className="flex flex-col gap-2">
-        <div className="flex justify-between">
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-2">
           <UserProfileDisplay ethereumAddress={comment.author} shortenOnFallback />
+          <span className="text-neutral-9">•</span>
+          <span className="text-[14px] text-neutral-9">{timeAgo}</span>
           {allowDelete && (
-            <div className="cursor-pointer" onClick={() => toggleCommentSelection?.(comment.id)}>
+            <div className="ml-auto cursor-pointer" onClick={() => toggleCommentSelection?.(comment.id)}>
               <CheckIcon
                 className={`
                     ${isSelected ? "block" : "hidden"}
@@ -42,9 +43,8 @@ const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentS
             </div>
           )}
         </div>
-        <p className="text-[16px] text-neutral-10 font-bold normal-case">{formattedDate}</p>
       </div>
-      <div className="prose prose-invert">
+      <div className="prose ml-[15px] prose-invert text-[16px] border-l-2 border-neutral-2 pl-4">
         <Interweave content={comment.content} matchers={[new UrlMatcher("url")]} />
       </div>
     </div>

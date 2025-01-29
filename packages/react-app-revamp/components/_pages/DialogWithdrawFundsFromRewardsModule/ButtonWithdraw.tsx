@@ -33,11 +33,11 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
   const { isLoading } = useWithdrawRewardStore(state => state);
   const formattedAmount = formatBalance(transform(token.amount ?? 0n, token.address, token.decimals ?? 18).toString());
 
-  const onHandleWithdraw = () => {
+  const onHandleWithdraw = async () => {
     if (!chainId) return;
 
     if (!isConnectedOnCorrectChain) {
-      switchChain(config, { chainId });
+      await switchChain(config, { chainId });
     }
 
     handleWithdraw();

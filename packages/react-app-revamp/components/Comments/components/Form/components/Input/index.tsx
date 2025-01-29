@@ -97,26 +97,22 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
     commentEditor?.commands.clearContent();
   };
 
-  const onSendCommentHandler = () => {
+  const onSendCommentHandler = async () => {
     if (!allowSend || isAdding) return;
+
+    if (!isConnected) {
+      openConnectModal?.();
+    } else if (!isUserOnCorrectNetwork) {
+      await switchChain(config, { chainId: contestChainId });
+    }
 
     onSend?.(commentContent);
   };
 
-  const onSwitchNetwork = async () => {
-    await switchChain(config, { chainId: contestChainId });
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     const allowEnter = !event.shiftKey && !isMobile;
     if (event.key === "Enter" && allowEnter) {
-      if (!isConnected) {
-        openConnectModal?.();
-      } else if (!isUserOnCorrectNetwork) {
-        onSwitchNetwork();
-      } else {
-        onSendCommentHandler();
-      }
+      onSendCommentHandler();
     }
   };
 
@@ -125,14 +121,14 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
       ref={containerRef}
       className={`flex ${
         containerHeight > 48 ? "items-end" : "items-center"
-      } p-2 gap-3 w-full md:w-[660px] rounded-[10px] bg-primary-2`}
+      } p-2 gap-3 w-full rounded-[10px] bg-primary-2`}
     >
       <div>
         <UserProfileDisplay avatarVersion ethereumAddress={address ?? ""} shortenOnFallback />
       </div>
       <EditorContent
         editor={commentEditor}
-        className="bg-transparent outline-none w-full md:w-[660px] overflow-y-auto max-h-[300px] "
+        className="bg-transparent outline-none w-full overflow-y-auto max-h-[300px] "
         onKeyDown={handleKeyDown}
       />
       <CommentFormInputSubmitButton
@@ -140,10 +136,8 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
         isAdding={isAdding}
         isMobile={isMobile}
         isConnected={isConnected}
-        isUserOnCorrectNetwork={isUserOnCorrectNetwork}
         onSend={onSendCommentHandler}
         onConnect={openConnectModal}
-        onSwitchNetwork={onSwitchNetwork}
       />
     </div>
   );

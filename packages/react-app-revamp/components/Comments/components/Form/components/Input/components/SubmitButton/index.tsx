@@ -6,9 +6,7 @@ interface CommentFormInputSubmitButtonProps {
   isAdding: boolean;
   isMobile: boolean;
   isConnected: boolean;
-  isUserOnCorrectNetwork: boolean;
   onSend?: () => void;
-  onSwitchNetwork?: () => void;
   onConnect?: () => void;
 }
 
@@ -17,16 +15,12 @@ const CommentFormInputSubmitButton: FC<CommentFormInputSubmitButtonProps> = ({
   isAdding,
   isMobile,
   isConnected,
-  isUserOnCorrectNetwork,
   onSend,
-  onSwitchNetwork,
   onConnect,
 }) => {
   const onSendFromMobile = () => {
     if (!isConnected) {
       onConnect?.();
-    } else if (!isUserOnCorrectNetwork) {
-      onSwitchNetwork?.();
     } else {
       onSend?.();
     }
@@ -43,14 +37,6 @@ const CommentFormInputSubmitButton: FC<CommentFormInputSubmitButtonProps> = ({
       height={32}
       onClick={onSendFromMobile}
     />
-  ) : !isConnected ? (
-    <ButtonV3 colorClass="bg-gradient-vote rounded-[40px]" size={ButtonSize.SMALL_LONG} onClick={onConnect}>
-      {isMobile ? "connect" : "connect wallet"}
-    </ButtonV3>
-  ) : !isUserOnCorrectNetwork ? (
-    <ButtonV3 colorClass="bg-gradient-create rounded-[40px]" size={ButtonSize.SMALL_LONG} onClick={onSwitchNetwork}>
-      {isMobile ? "switch chain" : "switch network"}
-    </ButtonV3>
   ) : (
     <img
       className={`ml-auto pr-1 transition-all duration-300 ${allowSend ? "filter-send-commment-icon" : ""} ${

@@ -6,6 +6,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import Comment from "../Comment";
 import { useSearchParams } from "next/navigation";
+import SimpleBar from "simplebar-react";
 
 interface CommentsListProps {
   comments: CommentType[];
@@ -101,39 +102,39 @@ const CommentsList: FC<CommentsListProps> = ({
   }
 
   if (isLoading) {
-    if (numberOfComments === 0) return null;
-
     return <CommentsSkeleton length={initialSkeletonCount} />;
   }
 
   return (
-    <div className="flex flex-col gap-10" ref={commentsRef}>
-      {comments.map(comment => {
-        if (selectedCommentIds.includes(comment.id) && isDeleting) {
-          return <CommentsSkeleton key={comment.id} length={1} highlightColor="#FF78A9" />;
-        }
+    <div className="flex flex-col min-h-0 pb-4" ref={commentsRef}>
+      <SimpleBar style={{ maxHeight: "100%", height: "100%" }} autoHide={false}>
+        <div className="flex flex-col gap-4 pr-6">
+          {comments.map(comment => {
+            if (selectedCommentIds.includes(comment.id) && isDeleting) {
+              return <CommentsSkeleton key={comment.id} length={1} highlightColor="#FF78A9" />;
+            }
+            return (
+              <Comment
+                key={comment.id}
+                comment={comment}
+                selectedCommentIds={selectedCommentIds}
+                toggleCommentSelection={toggleCommentSelection}
+              />
+            );
+          })}
+          {isPaginating && <CommentsSkeleton length={skeletonRemainingLoaderCount} />}
 
-        return (
-          <Comment
-            key={comment.id}
-            comment={comment}
-            selectedCommentIds={selectedCommentIds}
-            toggleCommentSelection={toggleCommentSelection}
-          />
-        );
-      })}
-      {isPaginating && <CommentsSkeleton length={skeletonRemainingLoaderCount} />}
-      {currentPage < totalPages && !isLoading && (
-        <div className="flex gap-2 items-center mb-8 cursor-pointer" onClick={onLoadMoreCommentsHandler}>
-          <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
-          <button
-            className="transition-transform duration-500 ease-in-out transform 
-            rotate-180"
-          >
-            <ChevronUpIcon height={20} className="text-positive-11" />
-          </button>
+          {currentPage < totalPages && !isLoading && (
+            <div className="flex gap-2 items-center py-4 cursor-pointer" onClick={onLoadMoreCommentsHandler}>
+              <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
+              <button className="transition-transform duration-500 ease-in-out transform rotate-180">
+                <ChevronUpIcon height={20} className="text-positive-11" />
+              </button>
+            </div>
+          )}
         </div>
-      )}
+      </SimpleBar>
+
       {showDeleteButton && (
         <div className="flex sticky bottom-0 left-0 right-0 bg-white shadow-lg">
           <ButtonV3
