@@ -2,32 +2,24 @@ import { MAX_SUBMISSIONS_LIMIT } from "@hooks/useDeployContest";
 import { CustomizationOptions } from "@hooks/useDeployContest/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import moment from "moment";
-import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/length";
+import { CONTEST_TITLE_MAX_LENGTH } from "../constants/length";
+import { ContestType } from "../types";
 
 export type StateKey =
+  | "contestType"
   | "title"
   | "prompt"
   | "entryPreviewConfig"
-  | "type"
   | "votingOpen"
   | "votingClose"
   | "submissionOpen"
   | "votingMerkle"
-  | "submissionMerkle"
-  | "submissionRequirements"
   | "charge"
   | "customization";
 
 const titleValidation = (title: string) => {
   if (!title || title.length > CONTEST_TITLE_MAX_LENGTH) {
     return "Contest title should be no more than 30 characters";
-  }
-  return "";
-};
-
-const typeValidation = (type: string) => {
-  if (!type || type.length > CONTEST_TYPE_MAX_LENGTH) {
-    return "tag should be no more than 20 characters";
   }
   return "";
 };
@@ -79,20 +71,6 @@ const votingRequirementsValidation = (allowList: { records: Record<string, numbe
   return "";
 };
 
-const submissionMerkleValidation = (allowList: Record<string, number>) => {
-  if (Object.keys(allowList).length === 0) {
-    return "Merkle tree is empty";
-  }
-  return "";
-};
-
-const submissionRequirementsValidation = (submissionRequirements: string) => {
-  if (!submissionRequirements) {
-    return "Submission requirements should be a valid field";
-  }
-  return "";
-};
-
 const monetizationValidation = (charge: Charge) => {
   if (charge.error) return "Please enter a valid charge";
 
@@ -116,17 +94,21 @@ const entriesValidation = (entries: any) => {
   return "";
 };
 
+const contestTypeValidation = (contestType: ContestType) => {
+  // we do not need to validate contest type for now
+  return "";
+};
+
 const validationMap: Record<StateKey, (...args: any[]) => string> = {
+  contestType: contestTypeValidation,
+
   title: titleValidation,
   prompt: promptValidation,
   entryPreviewConfig: entriesValidation,
-  type: typeValidation,
   votingOpen: votingOpenValidation,
   votingClose: votingEndsValidation,
   submissionOpen: votingOpenValidation,
   votingMerkle: votingMerkleValidation,
-  submissionMerkle: submissionMerkleValidation,
-  submissionRequirements: submissionRequirementsValidation,
   charge: monetizationValidation,
   customization: customizationValidation,
 };
@@ -136,12 +118,12 @@ export const validateField = (key: StateKey, state: any): string => {
   if (!validationFunction) return "";
 
   switch (key) {
+    case "contestType":
+      return validationFunction(state.contestType);
     case "title":
       return validationFunction(state.title);
     case "prompt":
       return validationFunction(state.prompt);
-    case "type":
-      return validationFunction(state.type);
     case "submissionOpen":
       return validationFunction(state.votingOpen, state.submissionOpen);
     case "votingOpen":
@@ -149,15 +131,11 @@ export const validateField = (key: StateKey, state: any): string => {
     case "votingClose":
       return validationFunction(state.votingClose, state.votingOpen, state.submissionOpen);
     case "votingMerkle":
-    case "submissionMerkle":
       return validationFunction(state[key]);
-    case "submissionRequirements":
-      return validationFunction(state.submissionRequirements);
     case "charge":
       return validationFunction(state.charge);
     case "customization":
       return validationFunction(state.customization);
-
     default:
       return validationFunction(state[key]);
   }

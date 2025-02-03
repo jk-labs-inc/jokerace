@@ -1,10 +1,18 @@
+import { FC } from "react";
 import CreateContestTypesAdditionalInfo from "../../AdditionalInfo";
 import CreateContestTypesCard from "../../Card";
+import { ContestType } from "@components/_pages/Create/types";
 
-const CreateContestTypesEntryBased = () => {
+interface CreateContestTypesEntryBasedProps {
+  isSelected: boolean;
+  onClick?: (type: ContestType) => void;
+}
+
+const CreateContestTypesEntryBased: FC<CreateContestTypesEntryBasedProps> = ({ isSelected, onClick }) => {
   return (
-    <CreateContestTypesCard>
+    <CreateContestTypesCard isSelected={isSelected} onClick={() => onClick?.(ContestType.EntryContest)}>
       <p className="text-[20px] text-neutral-11 font-bold">entry contest ✍️</p>
+
       <div className="flex justify-between items-center relative">
         <div className="flex flex-col gap-2">
           <p className="text-[16px] text-neutral-11">anyone can enter. voting is allowlisted.</p>

@@ -1,9 +1,16 @@
+import { FC } from "react";
 import CreateContestTypesAdditionalInfo from "../../AdditionalInfo";
 import CreateContestTypesCard from "../../Card";
+import { ContestType } from "@components/_pages/Create/types";
 
-const CreateContestTypesAnyoneCanPlay = () => {
+interface CreateContestTypesAnyoneCanPlayProps {
+  isSelected: boolean;
+  onClick?: (type: ContestType) => void;
+}
+
+const CreateContestTypesAnyoneCanPlay: FC<CreateContestTypesAnyoneCanPlayProps> = ({ isSelected, onClick }) => {
   return (
-    <CreateContestTypesCard>
+    <CreateContestTypesCard isSelected={isSelected} onClick={() => onClick?.(ContestType.AnyoneCanPlay)}>
       <p className="text-[20px] text-neutral-11 font-bold">anyone can play 👯</p>
       <div className="flex justify-between items-center relative">
         <div className="flex flex-col gap-2">
