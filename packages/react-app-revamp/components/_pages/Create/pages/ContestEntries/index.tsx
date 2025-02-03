@@ -14,7 +14,7 @@ const CreateContestEntries = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { step, metadataToggle, setMetadataToggle } = useDeployContestStore(state => state);
   const onNextStep = useNextStep();
-  const stepTitle = "entries";
+  const stepTitle = "format";
 
   const toggleMetadata = () => {
     setMetadataToggle(!metadataToggle);
