@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { VotingFieldObject } from "..";
+import { VotingFieldObject } from "../../../../VotingUploadCsv/components";
 
 type TableRowProps = VotingFieldObject & {
   index: number;

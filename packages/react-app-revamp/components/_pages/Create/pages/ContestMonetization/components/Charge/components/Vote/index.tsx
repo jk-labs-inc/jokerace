@@ -73,7 +73,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                   ) : null}
                   {isAnyoneCanVote ? (
                     <p className="text-[14px] text-neutral-11">
-                      <b>note:</b> not available in anyone-can-vote contests
+                      <b>note:</b> only available in entry based contests
                     </p>
                   ) : null}
                 </div>

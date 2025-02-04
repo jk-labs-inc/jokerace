@@ -1,12 +1,10 @@
 export enum StepTitle {
   Type = "type",
-  Title = "title",
-  Description = "description",
   Entries = "entries",
   Timing = "timing",
   Voting = "voting",
   Monetization = "monetization",
-  Customization = "customization",
+  Rules = "rules",
   Confirm = "confirm!",
 }
 

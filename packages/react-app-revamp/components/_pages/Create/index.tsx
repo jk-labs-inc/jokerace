@@ -1,35 +1,15 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect } from "react";
 import Stepper from "./components/Stepper";
-import CreateContestConfirm from "./pages/ContestConfirm";
-import CreateContestEntries from "./pages/ContestEntries";
-import CreateContestMonetization from "./pages/ContestMonetization";
-import CreateContestParams from "./pages/ContestParams";
-import CreateContestPrompt from "./pages/ContestPrompt";
+import { useContestSteps } from "./hooks/useContestSteps";
 import CreateContestStart, { useCreateContestStartStore } from "./pages/ContestStart";
-import CreateContestTiming from "./pages/ContestTiming";
-import CreateContestTitle from "./pages/ContestTitle";
-import CreateContestTypes from "./pages/ContestTypes";
 import CreateContestTemplate from "./pages/ContestUseTemplate";
-import CreateContestVoting from "./pages/ContestVoting";
-import { StepTitle } from "./types";
-
-export const steps = [
-  { title: StepTitle.Type, content: <CreateContestTypes /> },
-  { title: StepTitle.Title, content: <CreateContestTitle /> },
-  { title: StepTitle.Description, content: <CreateContestPrompt /> },
-  { title: StepTitle.Entries, content: <CreateContestEntries /> },
-  { title: StepTitle.Timing, content: <CreateContestTiming /> },
-  { title: StepTitle.Voting, content: <CreateContestVoting /> },
-  { title: StepTitle.Monetization, content: <CreateContestMonetization /> },
-  { title: StepTitle.Customization, content: <CreateContestParams /> },
-  { title: StepTitle.Confirm, content: <CreateContestConfirm /> },
-];
 
 const CreateFlow = () => {
   const { startContest, startContestWithTemplate, setStartContest, setStartContestWithTemplate } =
     useCreateContestStartStore(state => state);
   const { reset } = useDeployContestStore(state => state);
+  const { steps } = useContestSteps();
 
   useEffect(() => {
     setStartContest(false);

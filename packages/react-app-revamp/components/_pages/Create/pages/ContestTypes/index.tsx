@@ -6,11 +6,12 @@ import CreateContestTypesVotingBased from "./components/Types/VotingBased";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
-import { steps } from "../..";
 import { useNextStep } from "../../hooks/useNextStep";
 import { ContestType } from "../../types";
+import { useContestSteps } from "../../hooks/useContestSteps";
 
 const CreateContestTypes = () => {
+  const { steps } = useContestSteps();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { step, setContestType, contestType } = useDeployContestStore(state => state);
   const typeTitle = isMobile ? "what type of contest?" : "what kind of contest do you want to create?";

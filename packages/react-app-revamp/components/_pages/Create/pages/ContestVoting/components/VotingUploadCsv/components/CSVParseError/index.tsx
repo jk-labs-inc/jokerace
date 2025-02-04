@@ -5,11 +5,10 @@ import { FC, ReactNode, useMemo } from "react";
 export type ParseError = "unexpectedHeaders" | "missingColumns" | "limitExceeded" | "allZero" | "";
 
 interface CSVParseErrorProps {
-  step: "voting" | "submission";
   type: ParseError;
 }
 
-const CSVParseError: FC<CSVParseErrorProps> = ({ type, step }) => {
+const CSVParseError: FC<CSVParseErrorProps> = ({ type }) => {
   const errorContent = useMemo<ReactNode>(() => {
     if (!type) return null;
 
@@ -18,30 +17,18 @@ const CSVParseError: FC<CSVParseErrorProps> = ({ type, step }) => {
       case "unexpectedHeaders":
         return (
           <div className="flex flex-col text-[16px] animate-reveal">
-            {step === "voting" ? (
-              <p className=" text-negative-11">
-                Ruh-roh! CSV couldn’t be imported.{" "}
-                <span className="font-bold">
-                  Make sure there are no headers or additional <br />
-                  columns.
-                </span>{" "}
-                CSV should have 1) only two columns, 2) a first column containing <span className="italic">
-                  only
-                </span>{" "}
-                valid <br />
-                EVM addresses, and 3) a second column containing number of votes.
-              </p>
-            ) : (
-              <p className=" text-negative-11">
-                ruh-roh! csv couldn’t be imported.{" "}
-                <span className="font-bold">
-                  make sure there are no headers or additional <br />
-                  columns.
-                </span>{" "}
-                csv should have 1) only one column, 2) a column containing <span className="italic">only</span> valid
-                <br /> EVM addresses
-              </p>
-            )}
+            <p className=" text-negative-11">
+              Ruh-roh! CSV couldn’t be imported.{" "}
+              <span className="font-bold">
+                Make sure there are no headers or additional <br />
+                columns.
+              </span>{" "}
+              CSV should have 1) only two columns, 2) a first column containing <span className="italic">
+                only
+              </span>{" "}
+              valid <br />
+              EVM addresses, and 3) a second column containing number of votes.
+            </p>
           </div>
         );
       case "limitExceeded":
@@ -65,7 +52,7 @@ const CSVParseError: FC<CSVParseErrorProps> = ({ type, step }) => {
       default:
         return null;
     }
-  }, [step, type]);
+  }, [type]);
 
   return <>{errorContent}</>;
 };

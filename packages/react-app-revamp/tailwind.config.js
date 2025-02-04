@@ -362,6 +362,7 @@ module.exports = {
         "gradient-purple-white": "linear-gradient(90deg, #C293FF 0%, #FFFFFF 100%)",
         "gradient-gray": "linear-gradient(90deg, #A1A1A1 0%, #E5E5E5 100%)",
         "gradient-light-pink": "linear-gradient(90deg, #FF78A9 0%, #E5E5E5 100%)",
+        "gradient-title": "linear-gradient(180deg, #FFFFFF 0%, #A1A1A1 100%)",
       },
       boxShadow: {
         "create-header": "0 3px 4px 0 rgba(106, 106, 106, 1)",

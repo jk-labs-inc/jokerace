@@ -1,7 +1,6 @@
 import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
 import { metadataFields } from "@components/_pages/Create/pages/ContestParams/components/Metadata/components/Fields/utils";
-import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
 import { ContestType } from "@components/_pages/Create/types";
 import { StateKey } from "@components/_pages/Create/utils/validation";
 import { ReactNode } from "react";
@@ -41,7 +40,7 @@ export type CustomizationOptions = {
   maxSubmissions: number;
 };
 
-export type MerkleKey = "manual" | "prefilled" | "csv";
+export type MerkleKey = "prefilled" | "csv";
 
 export interface MetadataField {
   elementType: "string" | "number";
@@ -96,7 +95,6 @@ export interface DeployContestState {
     csv: VotingMerkle | null;
     prefilled: VotingMerkle | null;
   };
-  votingAllowlistFields: VotingFieldObject[];
   submissionMerkle: SubmissionMerkle | null;
   customization: CustomizationOptions;
   advancedOptions: AdvancedOptions;
@@ -133,7 +131,6 @@ export interface DeployContestState {
   setVotingRequirementsOption: (votingRequirementsOption: Option) => void;
   setVotingAllowlist: (type: MerkleKey, votingAllowlist: Record<string, number>) => void;
   setVotingMerkle: (type: MerkleKey, votingMerkle: VotingMerkle | null) => void;
-  setVotingAllowlistFields: (votingAllowlistFields: VotingFieldObject[]) => void;
   setSubmissionMerkle: (submissionMerkle: SubmissionMerkle | null) => void;
   setCustomization: (customization: CustomizationOptions) => void;
   setAdvancedOptions: (advancedOptions: AdvancedOptions) => void;
@@ -180,15 +177,15 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     votingOpen: initialVotingOpen,
     votingClose: initialVotingClose,
     votingRequirementsOption: {
-      value: "anyone",
-      label: "anyone",
+      value: "erc20",
+      label: "token holders",
     },
+
     votingAllowlist: {
       manual: {},
       csv: {},
       prefilled: {},
     },
-    votingAllowlistFields: Array(15).fill(EMPTY_FIELDS_VOTING),
     votingMerkle: {
       manual: null,
       csv: null,
@@ -225,7 +222,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     prevChainRefInCharge: "",
     customization: {
-      allowedSubmissionsPerUser: 2,
+      allowedSubmissionsPerUser: 3,
       maxSubmissions: DEFAULT_SUBMISSIONS,
     },
     advancedOptions: {
@@ -292,7 +289,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
 
     setVotingRequirements: (votingRequirements: VotingRequirements) => set({ votingRequirements }),
-    setSubmissionMerkle: (submissionMerkle: SubmissionMerkle) => set({ submissionMerkle }),
+    setSubmissionMerkle: (submissionMerkle: SubmissionMerkle | null) => set({ submissionMerkle }),
     setCustomization: (customization: CustomizationOptions) => set({ customization }),
     setAdvancedOptions: (advancedOptions: AdvancedOptions) => set({ advancedOptions }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),

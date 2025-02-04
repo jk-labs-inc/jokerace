@@ -30,14 +30,14 @@ export const useNextStep = () => {
   const onNextStep = useCallback(
     (targetStep?: number) => {
       const finalStep = targetStep ?? currentStep + 1;
-      const error = validateSteps(currentStep, finalStep - 1, state);
+      // const error = validateSteps(currentStep, finalStep - 1, state);
 
-      if (error) {
-        setError(error.step, error);
-      } else {
-        setError(currentStep, { step: currentStep, message: "" });
-        setStep(finalStep);
-      }
+      // if (error) {
+      //     setError(error.step, error);
+      //   } else {
+      // setError(currentStep, { step: currentStep, message: "" });
+      setStep(finalStep);
+      // }
     },
     [currentStep, state, setError, setStep, validateSteps],
   );
