@@ -83,10 +83,11 @@ export function useDeployContest() {
         imageUrl: prompt.imageUrl ?? "",
       }).toString();
 
-      const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled || votingMerkleData.csv;
-      const submissionMerkle = submissionMerkleData.manual;
+      const votingMerkle = votingMerkleData.prefilled || votingMerkleData.csv;
+      const submissionMerkle = submissionMerkleData;
       const { type: chargeType, percentageToCreator } = charge;
       const { merkleRoot: submissionMerkleRoot = EMPTY_ROOT } = submissionMerkle || {};
+
       const { merkleRoot: votingMerkleRoot = EMPTY_ROOT } = votingMerkle || {};
       const { allowedSubmissionsPerUser, maxSubmissions } = customization;
       let jkLabsSplitDestination = "";
@@ -116,8 +117,8 @@ export function useDeployContest() {
         votingPeriod: differenceInSeconds(votingClose, votingOpen),
         numAllowedProposalSubmissions: finalAllowedSubmissionsPerUser,
         maxProposalCount: finalMaxSubmissions,
-        downvotingAllowed: advancedOptions.downvote ? 1 : 0,
-        sortingEnabled: !advancedOptions.downvote ? 1 : 0,
+        downvotingAllowed: 0,
+        sortingEnabled: 1,
         rankLimit: advancedOptions.rankLimit,
         percentageToCreator: percentageToCreator,
         costToPropose: parseEther(chargeType.costToPropose.toString()),
@@ -162,7 +163,6 @@ export function useDeployContest() {
         chain?.id ?? 0,
         receiptDeployContest.transactionHash,
         contractContest.address.toLowerCase(),
-        advancedOptions.downvote,
         sortingEnabled,
       );
 
@@ -317,8 +317,8 @@ export function useDeployContest() {
   }
 
   async function checkForSpoofing(address: string) {
-    const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled || votingMerkleData.csv;
-    const submissionMerkle = submissionMerkleData.manual;
+    const votingMerkle = votingMerkleData.prefilled || votingMerkleData.csv;
+    const submissionMerkle = submissionMerkleData;
 
     const exceedsVotingMaxRows = votingMerkle && votingMerkle.voters.length > MAX_ROWS;
     const exceedsSubmissionMaxRows = submissionMerkle && submissionMerkle.submitters.length > MAX_ROWS;

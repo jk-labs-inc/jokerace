@@ -20,10 +20,17 @@ const CreateContestRulesDescription = () => {
       onUpdate: ({ editor }: { editor: Editor }) => {
         const content = editor.getHTML();
 
-        setPrompt({
-          ...prompt,
-          summarize: content,
-        });
+        if (editor.isEmpty) {
+          setPrompt({
+            ...prompt,
+            summarize: "",
+          });
+        } else {
+          setPrompt({
+            ...prompt,
+            summarize: content,
+          });
+        }
       },
     }),
     onFocus: () => setActiveEditor(editorSummarize),
@@ -38,10 +45,17 @@ const CreateContestRulesDescription = () => {
       onUpdate: ({ editor }: { editor: Editor }) => {
         const content = editor.getHTML();
 
-        setPrompt({
-          ...prompt,
-          evaluateVoters: content,
-        });
+        if (editor.isEmpty) {
+          setPrompt({
+            ...prompt,
+            evaluateVoters: "",
+          });
+        } else {
+          setPrompt({
+            ...prompt,
+            evaluateVoters: content,
+          });
+        }
       },
     }),
     onFocus: () => setActiveEditor(editorEvaluateVoters),

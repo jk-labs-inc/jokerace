@@ -25,11 +25,9 @@ const CreateContestRulesTitleAndImage = () => {
           maxLength={CONTEST_TITLE_MAX_LENGTH}
           onChange={value => handleTitleChange(value)}
         />
-        <span
-          className={`text-[16px] text-neutral-11 ${title.length === CONTEST_TITLE_MAX_LENGTH ? "text-negative-11" : "text-neutral-11"}`}
-        >
+        <CreateGradientTitle textSize="small">
           {title.length}/{CONTEST_TITLE_MAX_LENGTH} characters
-        </span>
+        </CreateGradientTitle>
       </div>
     </div>
   );

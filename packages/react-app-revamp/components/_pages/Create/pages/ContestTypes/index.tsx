@@ -17,6 +17,7 @@ const CreateContestTypes = () => {
   const typeTitle = isMobile ? "what type of contest?" : "what kind of contest do you want to create?";
   const onNextStep = useNextStep();
 
+  console.log({ step });
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}

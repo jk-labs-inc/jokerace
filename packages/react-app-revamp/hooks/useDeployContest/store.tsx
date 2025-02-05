@@ -1,8 +1,6 @@
 import { Option } from "@components/_pages/Create/components/DefaultDropdown";
-import { EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
 import { metadataFields } from "@components/_pages/Create/pages/ContestParams/components/Metadata/components/Fields/utils";
 import { ContestType } from "@components/_pages/Create/types";
-import { StateKey } from "@components/_pages/Create/utils/validation";
 import { ReactNode } from "react";
 import { create } from "zustand";
 import { Charge, SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle, VotingRequirements } from "./types";
@@ -10,11 +8,6 @@ import { Charge, SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerk
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
 
 const DEFAULT_SUBMISSIONS = 1000;
-
-type ContestDeployError = {
-  step: number;
-  message: string;
-};
 
 export type Prompt = {
   summarize: string;
@@ -29,7 +22,6 @@ export enum ContestVisibility {
 }
 
 export type AdvancedOptions = {
-  downvote: boolean;
   sorting: boolean;
   rankLimit: number;
   contestVisibility: ContestVisibility;
@@ -64,18 +56,12 @@ export interface EntryPreviewConfig {
   isAdditionalDescriptionEnabled: boolean;
 }
 
-type StepConfig = {
-  key: string;
-  fields: StateKey[];
-};
-
 export interface DeployContestState {
   deployContestData: {
     chain: string;
     chainId: number;
     hash: string;
     address: string;
-    downvote: boolean;
     sortingEnabled: boolean;
   };
   title: string;
@@ -86,12 +72,10 @@ export interface DeployContestState {
   votingRequirements: VotingRequirements;
   votingRequirementsOption: Option;
   votingAllowlist: {
-    manual: Record<string, number>;
     csv: Record<string, number>;
     prefilled: Record<string, number>;
   };
   votingMerkle: {
-    manual: VotingMerkle | null;
     csv: VotingMerkle | null;
     prefilled: VotingMerkle | null;
   };
@@ -100,7 +84,7 @@ export interface DeployContestState {
   advancedOptions: AdvancedOptions;
   isLoading: boolean;
   isSuccess: boolean;
-  errors: ContestDeployError[];
+  errors: number[];
   step: number;
   votingTab: number;
   charge: Charge;
@@ -109,7 +93,6 @@ export interface DeployContestState {
     minCostToVote: number;
   };
   prevChainRefInCharge: string;
-  stepConfig: StepConfig[];
   metadataToggle: boolean;
   metadataFields: MetadataField[];
   entryPreviewConfig: EntryPreviewConfig;
@@ -119,10 +102,10 @@ export interface DeployContestState {
     chainId: number,
     hash: string,
     address: string,
-    downvote: boolean,
     sortingEnabled: boolean,
   ) => void;
   setTitle: (title: string) => void;
+
   setPrompt: (prompt: Prompt) => void;
   setSubmissionOpen: (submissionOpen: Date) => void;
   setVotingOpen: (votingOpen: Date) => void;
@@ -136,14 +119,13 @@ export interface DeployContestState {
   setAdvancedOptions: (advancedOptions: AdvancedOptions) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
-  setError: (step: number, error: ContestDeployError) => void;
+  setError: (step: number, hasError: boolean) => void;
   setStep: (step: number) => void;
   setVotingTab: (tab: number) => void;
   setCharge: (charge: Charge) => void;
   setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => void;
   setPrevChainRefInCharge: (chain: string) => void;
   reset: () => void;
-  setStepConfig: (stepConfig: StepConfig[]) => void;
   setMetadataToggle: (toggle: boolean) => void;
   setMetadataFields: (data: ReactStyleStateSetter<MetadataField[]>) => void;
   setEntryPreviewConfig: (data: ReactStyleStateSetter<EntryPreviewConfig>) => void;
@@ -164,7 +146,6 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       chainId: 0,
       hash: "",
       address: "",
-      downvote: false,
       sortingEnabled: false,
     },
     title: "",
@@ -180,14 +161,11 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       value: "erc20",
       label: "token holders",
     },
-
     votingAllowlist: {
-      manual: {},
       csv: {},
       prefilled: {},
     },
     votingMerkle: {
-      manual: null,
       csv: null,
       prefilled: null,
     },
@@ -226,7 +204,6 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       maxSubmissions: DEFAULT_SUBMISSIONS,
     },
     advancedOptions: {
-      downvote: false,
       sorting: true,
       rankLimit: 250,
       contestVisibility: ContestVisibility.Public,
@@ -247,26 +224,11 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
 
   return {
     ...initialState,
-    stepConfig: [
-      { key: "contestType", fields: ["contestType"] },
-      { key: "title", fields: ["title"] },
-      { key: "prompt", fields: ["prompt"] },
-      { key: "entryPreviewConfig", fields: ["entryPreviewConfig"] },
-      { key: "dates", fields: ["votingOpen", "votingClose", "submissionOpen"] },
-      { key: "votingRequirements", fields: ["votingMerkle"] },
-      { key: "charge", fields: ["charge"] },
-      { key: "customization", fields: ["customization"] },
-    ],
-    setDeployContestData: (
-      chain: string,
-      chainId: number,
-      hash: string,
-      address: string,
-      downvote: boolean,
-      sortingEnabled: boolean,
-    ) => set({ deployContestData: { chain, chainId, hash, address, downvote, sortingEnabled } }),
+    setDeployContestData: (chain: string, chainId: number, hash: string, address: string, sortingEnabled: boolean) =>
+      set({ deployContestData: { chain, chainId, hash, address, sortingEnabled } }),
     setTitle: (title: string) => set({ title }),
     setPrompt: (prompt: Prompt) => set({ prompt }),
+
     setSubmissionOpen: (submissionOpen: Date) => set({ submissionOpen }),
     setVotingOpen: (votingOpen: Date) => set({ votingOpen }),
     setVotingClose: (votingClose: Date) => set({ votingClose }),
@@ -294,16 +256,21 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setAdvancedOptions: (advancedOptions: AdvancedOptions) => set({ advancedOptions }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),
     setIsSuccess: (isSuccess: boolean) => set({ isSuccess }),
-    setError: (step: number, error: ContestDeployError) => {
-      let errorsCopy = [...get().errors];
+    setError: (step: number, hasError: boolean) => {
+      const currentErrors = [...get().errors];
 
-      errorsCopy = errorsCopy.filter(error => error.step !== step);
-
-      if (error.message) {
-        errorsCopy.push(error);
+      if (hasError) {
+        if (!currentErrors.includes(step)) {
+          currentErrors.push(step);
+        }
+      } else {
+        const index = currentErrors.indexOf(step);
+        if (index > -1) {
+          currentErrors.splice(index, 1);
+        }
       }
 
-      set({ errors: errorsCopy });
+      set({ errors: currentErrors });
     },
     setStep: (step: number) => set({ step }),
     setVotingTab: (votingTab: number) => set({ votingTab }),
@@ -311,7 +278,6 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => set({ minCharge }),
     setPrevChainRefInCharge: (chain: string) => set({ prevChainRefInCharge: chain }),
     reset: () => set({ ...initialState }),
-    setStepConfig: (stepConfig: StepConfig[]) => set({ stepConfig }),
     setMetadataFields: (data: ReactStyleStateSetter<MetadataField[]>) =>
       set(state => ({
         metadataFields: typeof data === "function" ? data(state.metadataFields) : data,

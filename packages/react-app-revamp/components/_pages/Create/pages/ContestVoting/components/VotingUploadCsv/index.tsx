@@ -1,11 +1,10 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { VoteType, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
-import VotingCSVFileUploader, { VotingFieldObject } from "./components";
 import { FC, useEffect } from "react";
+import VotingCSVFileUploader, { VotingFieldObject } from "./components";
 
 type WorkerMessageData = {
   merkleRoot: string;
@@ -24,6 +23,7 @@ const CreateVotingCSVUploader: FC<CreateVotingCSVUploaderProps> = ({ isNextClick
     setVotingAllowlist,
     votingAllowlist,
     votingRequirements,
+    votingMerkle,
     setVotingRequirements,
     setCharge,
     charge,
@@ -61,7 +61,6 @@ const CreateVotingCSVUploader: FC<CreateVotingCSVUploaderProps> = ({ isNextClick
 
     setVotingMerkle("csv", { merkleRoot, voters: recipients });
     onNextStep();
-    setError(step + 1, { step: step + 1, message: "" });
     toastSuccess("allowlist processed successfully.");
     resetPrefilledAllowlist();
     terminateWorker(event.target as Worker);
@@ -70,7 +69,6 @@ const CreateVotingCSVUploader: FC<CreateVotingCSVUploaderProps> = ({ isNextClick
   const handleWorkerError = (error: ErrorEvent): void => {
     console.error("Worker error:", error);
     toastError("something went wrong, please try again.");
-
     terminateWorker(error.target as Worker);
   };
 
@@ -81,6 +79,7 @@ const CreateVotingCSVUploader: FC<CreateVotingCSVUploaderProps> = ({ isNextClick
   };
 
   const handleNextStep = () => {
+    console.log("votingAllowlist.csv", votingAllowlist.csv);
     if (Object.keys(votingAllowlist.csv).length === 0) {
       onNextStep();
       return;

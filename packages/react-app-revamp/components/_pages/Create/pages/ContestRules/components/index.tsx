@@ -13,10 +13,13 @@ export const VOTING_STEP = 6;
 
 const CreateContestRules = () => {
   const { steps } = useContestSteps();
-  const { step } = useDeployContestStore(state => state);
+  const { step, title, prompt } = useDeployContestStore(state => state);
   const onNextStep = useNextStep();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const customizeTitle = isMobile ? "setting the rules" : "finally, let’s set the rules";
+  const isDisabled = !title || !prompt.summarize || !prompt.evaluateVoters;
+
+  console.log(prompt.summarize, prompt.evaluateVoters);
 
   return (
     <div className="flex flex-col">
@@ -33,7 +36,7 @@ const CreateContestRules = () => {
           <CreateContestRulesDescription />
           <CreateContestRulesAdvancedSettings />
           <div className="mt-8">
-            <CreateNextButton step={step} onClick={() => onNextStep()} />
+            <CreateNextButton step={step} onClick={() => onNextStep()} isDisabled={isDisabled} />
           </div>
         </div>
       </div>

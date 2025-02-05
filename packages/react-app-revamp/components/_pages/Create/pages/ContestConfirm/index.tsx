@@ -1,25 +1,20 @@
 import EthereumDeploymentModal from "@components/UI/Deployment/Ethereum";
-import { toastError } from "@components/UI/Toast";
 import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { fetchChargeDetails } from "lib/monetization";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
-import { steps } from "../..";
 import CreateContestButton from "../../components/Buttons/Submit";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
-import { VOTING_STEP } from "../ContestParams";
-import CreateContestConfirmAllowlists from "./components/Allowlists";
+import { useContestSteps } from "../../hooks/useContestSteps";
 import CreateContestConfirmCustomization from "./components/Customization";
 import CreateContestConfirmDescription from "./components/Description";
+import CreateContestConfirmImage from "./components/Image";
 import CreateContestConfirmMonetization from "./components/Monetization";
-import CreateContestConfirmTag from "./components/Tag";
+import CreateContestConfirmPreview from "./components/Preview";
 import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
-import CreateContestConfirmPreview from "./components/Preview";
-import CreateContestConfirmImage from "./components/Image";
 
 export enum Steps {
   ContestTitle = 0,
@@ -37,6 +32,7 @@ const ETHEREUM_MAINNET_CHAIN_ID = 1;
 
 const CreateContestConfirm = () => {
   const { chainId, chain } = useAccount();
+  const { steps } = useContestSteps();
   const { ...state } = useDeployContestStore(state => state);
   const { deployContest } = useDeployContest();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
@@ -51,39 +47,6 @@ const CreateContestConfirm = () => {
       deployContest();
     }
   }, [chainId, deployContest]);
-
-  const fetchAndValidateChainDetails = useCallback(async () => {
-    if (!chain) return;
-
-    setIsChainDetailsLoading(true);
-    try {
-      const { isError, minCostToPropose, minCostToVote } = await fetchChargeDetails(chain.name.toLowerCase());
-
-      const allMerkleRootsNull =
-        state.votingMerkle.csv === null && state.votingMerkle.manual === null && state.votingMerkle.prefilled === null;
-
-      if (allMerkleRootsNull && (!minCostToPropose || !minCostToVote)) {
-        toastError(`${chain.name} chain is not supported for anyone to vote.`);
-        state.setStep(VOTING_STEP);
-        return;
-      }
-
-      if (isError) {
-        toastError(`Error fetching charge details for ${chain.name} chain.`);
-        state.setStep(VOTING_STEP);
-      }
-    } catch (error) {
-      console.error("Error fetching chain details:", error);
-      toastError(`Error occurred while fetching chain details.`);
-      state.setStep(VOTING_STEP);
-    } finally {
-      setIsChainDetailsLoading(false);
-    }
-  }, [chain, state.votingMerkle, state.setStep]);
-
-  useEffect(() => {
-    fetchAndValidateChainDetails();
-  }, [fetchAndValidateChainDetails]);
 
   const onNavigateToStep = (step: Steps) => {
     state.setStep(step);
@@ -105,7 +68,6 @@ const CreateContestConfirm = () => {
             title={state.title}
             onClick={step => onNavigateToStep(step)}
           />
-          <CreateContestConfirmTag step={Steps.ContestTag} tag={state.type} onClick={step => onNavigateToStep(step)} />
           {state.prompt.imageUrl ? (
             <CreateContestConfirmImage
               step={Steps.ContestTitle}
@@ -132,7 +94,7 @@ const CreateContestConfirm = () => {
               votingClose: state.votingClose,
             }}
           />
-          <CreateContestConfirmAllowlists
+          {/* <CreateContestConfirmAllowlists
             step={Steps.ContestSubmissions}
             onClick={step => onNavigateToStep(step)}
             allowlists={{
@@ -143,7 +105,7 @@ const CreateContestConfirm = () => {
               submissionTypeOption: state.submissionTypeOption,
               submissionRequirementsOption: state.submissionRequirementsOption,
             }}
-          />
+          /> */}
           <CreateContestConfirmMonetization
             step={Steps.ContestMonetization}
             charge={state.charge}

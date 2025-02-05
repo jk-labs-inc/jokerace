@@ -85,7 +85,6 @@ const CreateVotingRequirements: FC<CreateVotingRequirementsProps> = ({ isNextCli
       ...votingRequirements,
       timestamp: Date.now(),
     });
-    setError(step + 1, { step: step + 1, message: "" });
     onNextStep();
     toastSuccess("allowlist processed successfully.");
     resetManualAllowlist();

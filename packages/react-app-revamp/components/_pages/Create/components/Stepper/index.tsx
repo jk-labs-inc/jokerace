@@ -49,7 +49,8 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
             {steps.map((step, index) => (
               <div
                 key={index}
-                onClick={() => handleStepClick(index)}
+                // todo: re-enable this after validation is done
+                // onClick={() => handleStepClick(index)}
                 onMouseEnter={() => setHoveredStep(index)}
                 onMouseLeave={() => setHoveredStep(null)}
                 className="flex flex-col items-center text-[16px] 3xl:text-[18px] 4xl:text-[20px] font-bold cursor-pointer relative"

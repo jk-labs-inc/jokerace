@@ -36,7 +36,6 @@ const CreateContestConfirmCustomization: FC<CreateContestConfirmCustomizationPro
             {formatNumber(customizationOptions.allowedSubmissionsPerUser)}{" "}
             {customizationOptions.allowedSubmissionsPerUser !== 1 ? "entries" : "entry"} per address
           </li>
-          <li className="text-[16px] list-disc">downvoting {advancedOptions.downvote ? "enabled" : "not enabled"}</li>
           <li className="text-[16px] list-disc">
             {advancedOptions.contestVisibility === ContestVisibility.Public ? "public contest" : "unlisted contest"}
           </li>
