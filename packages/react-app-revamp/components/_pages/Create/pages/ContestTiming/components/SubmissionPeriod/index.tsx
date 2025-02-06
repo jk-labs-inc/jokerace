@@ -1,7 +1,6 @@
 import CreateDatePicker from "@components/_pages/Create/components/DatePicker";
 import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultDropdown";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useState } from "react";
 import {
   TimingPeriod,
   addTimeBasedOnPeriod,

@@ -3,6 +3,7 @@ import { ACCEPTED_FILE_TYPES } from "@components/UI/ImageUpload/utils";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useUploadImageStore } from "@hooks/useUploadImage";
 import { useState } from "react";
+import CreateGradientTitle from "../GradientTitle";
 
 const CreateUploadImage = () => {
   const { prompt, setPrompt } = useDeployContestStore(state => state);
@@ -60,9 +61,7 @@ const CreateUploadImage = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-neutral-11 text-[20px] font-bold">
-        preview image <span className="font-normal">(optional)</span>
-      </p>
+      <CreateGradientTitle additionalInfo="recommended">preview image</CreateGradientTitle>
       <ImageUpload onFileSelect={onFileSelectHandler} isSuccess={uploadSuccess} initialImageUrl={prompt.imageUrl} />
       {uploadError && <p className="text-[12px] text-negative-11 font-bold">{uploadError}</p>}
     </div>

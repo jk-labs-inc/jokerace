@@ -6,7 +6,7 @@ import { EntryPreview } from "@hooks/useDeployContest/store";
 
 export const demoDayConfig: TemplateConfig = {
   type: TemplateType.demoDay,
-  stepsToFulfill: [StepTitle.Title, StepTitle.Entries, StepTitle.Timing, StepTitle.Confirm],
+  stepsToFulfill: [StepTitle.Rules, StepTitle.Entries, StepTitle.Timing, StepTitle.Confirm],
   data: {
     prompt: {
       summarize:
@@ -18,7 +18,6 @@ export const demoDayConfig: TemplateConfig = {
       preview: EntryPreview.TITLE,
       isAdditionalDescriptionEnabled: true,
     },
-    type: "demo day",
     submissionOpen: moment().toDate(),
     votingOpen: moment().add(1, "days").toDate(),
     votingClose: moment().add(1, "days").add(1, "day").toDate(),

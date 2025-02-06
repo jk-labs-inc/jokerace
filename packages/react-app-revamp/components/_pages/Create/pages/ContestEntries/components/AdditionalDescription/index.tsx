@@ -26,7 +26,7 @@ const ContestEntriesAdditionalDescription = () => {
                   }`}
                 ></div>
                 <div className="flex flex-col gap-4">
-                  <p className={`text-[20px] ${checked ? "text-secondary-11" : "text-neutral-9"}`}>yes (recommended)</p>
+                  <p className={`text-[20px] ${checked ? "text-neutral-11" : "text-neutral-9"}`}>yes (recommended)</p>
                 </div>
               </div>
             )}
@@ -40,7 +40,7 @@ const ContestEntriesAdditionalDescription = () => {
                   }`}
                 ></div>
                 <div className="flex flex-col gap-4">
-                  <p className={`text-[20px] ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                  <p className={`text-[20px] ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
                     no{" "}
                     {isMobile
                       ? ""

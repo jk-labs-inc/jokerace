@@ -15,7 +15,6 @@ export enum TemplateType {
 interface ContestData {
   prompt: Prompt;
   entryPreviewConfig: EntryPreviewConfig;
-  type: string;
   submissionOpen: Date;
   votingOpen: Date;
   votingClose: Date;

@@ -1,25 +1,20 @@
 import EthereumDeploymentModal from "@components/UI/Deployment/Ethereum";
-import { toastError } from "@components/UI/Toast";
+import GradientText from "@components/UI/GradientText";
 import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { fetchChargeDetails } from "lib/monetization";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
-import { steps } from "../..";
 import CreateContestButton from "../../components/Buttons/Submit";
 import MobileStepper from "../../components/MobileStepper";
-import StepCircle from "../../components/StepCircle";
-import { VOTING_STEP } from "../ContestParams";
-import CreateContestConfirmAllowlists from "./components/Allowlists";
+import { useContestSteps } from "../../hooks/useContestSteps";
 import CreateContestConfirmCustomization from "./components/Customization";
 import CreateContestConfirmDescription from "./components/Description";
 import CreateContestConfirmMonetization from "./components/Monetization";
-import CreateContestConfirmTag from "./components/Tag";
+import CreateContestConfirmPreview from "./components/Preview";
 import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
-import CreateContestConfirmPreview from "./components/Preview";
-import CreateContestConfirmImage from "./components/Image";
+import CreateContestConfirmType from "./components/Type";
 
 export enum Steps {
   ContestTitle = 0,
@@ -31,18 +26,18 @@ export enum Steps {
   ContestVoting = 6,
   ContestMonetization = 7,
   ContestCustomization = 8,
+  ContestType = 9,
 }
 
 const ETHEREUM_MAINNET_CHAIN_ID = 1;
 
 const CreateContestConfirm = () => {
   const { chainId, chain } = useAccount();
+  const { steps } = useContestSteps();
   const { ...state } = useDeployContestStore(state => state);
   const { deployContest } = useDeployContest();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const title = isMobile ? "let’s confirm" : "finally, let’s confirm";
   const [isEthereumDeploymentModalOpen, setIsEthereumDeploymentModalOpen] = useState(false);
-  const [isChainDetailsLoading, setIsChainDetailsLoading] = useState(false);
 
   const onDeployHandler = useCallback(() => {
     if (chainId === ETHEREUM_MAINNET_CHAIN_ID) {
@@ -52,75 +47,47 @@ const CreateContestConfirm = () => {
     }
   }, [chainId, deployContest]);
 
-  const fetchAndValidateChainDetails = useCallback(async () => {
-    if (!chain) return;
-
-    setIsChainDetailsLoading(true);
-    try {
-      const { isError, minCostToPropose, minCostToVote } = await fetchChargeDetails(chain.name.toLowerCase());
-
-      const allMerkleRootsNull =
-        state.votingMerkle.csv === null && state.votingMerkle.manual === null && state.votingMerkle.prefilled === null;
-
-      if (allMerkleRootsNull && (!minCostToPropose || !minCostToVote)) {
-        toastError(`${chain.name} chain is not supported for anyone to vote.`);
-        state.setStep(VOTING_STEP);
-        return;
-      }
-
-      if (isError) {
-        toastError(`Error fetching charge details for ${chain.name} chain.`);
-        state.setStep(VOTING_STEP);
-      }
-    } catch (error) {
-      console.error("Error fetching chain details:", error);
-      toastError(`Error occurred while fetching chain details.`);
-      state.setStep(VOTING_STEP);
-    } finally {
-      setIsChainDetailsLoading(false);
-    }
-  }, [chain, state.votingMerkle, state.setStep]);
-
-  useEffect(() => {
-    fetchAndValidateChainDetails();
-  }, [fetchAndValidateChainDetails]);
-
   const onNavigateToStep = (step: Steps) => {
     state.setStep(step);
   };
 
+  console.log(state.submissionMerkle);
+
+  // todo: adjust steps to be based on the contest type
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={state.step} totalSteps={steps.length} /> : null}
       <div className="full-width-create-flow-grid mt-12 lg:mt-[70px] animate-swingInLeft">
-        <div className="col-span-1">
-          <StepCircle step={state.step + 1} />
-        </div>
-        <div className="col-span-2 ml-10">
-          <p className="text-[24px] text-neutral-11 font-bold">{title}</p>
-        </div>
-        <div className="grid gap-4 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-4">
+        <div className="flex flex-col gap-8 md:ml-10">
+          <GradientText
+            text="let’s confirm"
+            isStrikethrough={false}
+            textSizeClassName="text-[24px] font-bold"
+            isFontSabo={false}
+          />
           <CreateContestConfirmTitle
             step={Steps.ContestTitle}
             title={state.title}
             onClick={step => onNavigateToStep(step)}
           />
-          <CreateContestConfirmTag step={Steps.ContestTag} tag={state.type} onClick={step => onNavigateToStep(step)} />
-          {state.prompt.imageUrl ? (
-            <CreateContestConfirmImage
-              step={Steps.ContestTitle}
-              imageUrl={state.prompt.imageUrl}
-              onClick={step => onNavigateToStep(step)}
-            />
-          ) : null}
+
           <CreateContestConfirmDescription
             step={Steps.ContestDescription}
             prompt={state.prompt}
+            imageUrl={state.prompt.imageUrl}
+            onClick={step => onNavigateToStep(step)}
+          />
+          <CreateContestConfirmType
+            step={Steps.ContestType}
+            type={state.contestType}
+            votingAllowlist={state.votingAllowlist}
+            votingRequirements={state.votingRequirements}
             onClick={step => onNavigateToStep(step)}
           />
           <CreateContestConfirmPreview
             step={Steps.ContestEntries}
             entryPreviewConfig={state.entryPreviewConfig}
+            metadataFields={state.metadataFields}
             onClick={step => onNavigateToStep(step)}
           />
           <CreateContestConfirmTiming
@@ -130,18 +97,6 @@ const CreateContestConfirm = () => {
               submissionOpen: state.submissionOpen,
               votingOpen: state.votingOpen,
               votingClose: state.votingClose,
-            }}
-          />
-          <CreateContestConfirmAllowlists
-            step={Steps.ContestSubmissions}
-            onClick={step => onNavigateToStep(step)}
-            allowlists={{
-              submissionMerkle: state.submissionMerkle,
-              votingMerkle: state.votingMerkle,
-              submissionRequirements: state.submissionRequirements,
-              votingRequirements: state.votingRequirements,
-              submissionTypeOption: state.submissionTypeOption,
-              submissionRequirementsOption: state.submissionRequirementsOption,
             }}
           />
           <CreateContestConfirmMonetization
@@ -158,7 +113,7 @@ const CreateContestConfirm = () => {
             onClick={step => onNavigateToStep(step)}
           />
           <div className="mt-12">
-            <CreateContestButton step={state.step} onClick={onDeployHandler} isDisabled={isChainDetailsLoading} />
+            <CreateContestButton step={state.step} onClick={onDeployHandler} />
           </div>
         </div>
         <EthereumDeploymentModal

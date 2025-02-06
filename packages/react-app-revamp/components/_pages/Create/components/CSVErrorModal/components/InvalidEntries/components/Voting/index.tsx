@@ -1,6 +1,6 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
 import ScrollableTableBody from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor/TableBody";
+import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingUploadCsv/components";
 import { validateVotingFields } from "@components/_pages/Create/utils/csv";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { FC } from "react";

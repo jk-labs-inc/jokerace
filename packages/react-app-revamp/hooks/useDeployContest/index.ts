@@ -15,12 +15,12 @@ import { ContractFactory } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
 import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
+import { checkIfChainIsTestnet } from "lib/monetization";
 import { canUploadLargeAllowlist } from "lib/vip";
 import { Abi, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { ContestVisibility, EntryPreviewConfig, MetadataField, useDeployContestStore } from "./store";
 import { SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle } from "./types";
-import { checkIfChainIsTestnet } from "lib/monetization";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000;
 export const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c6118e8a52fa738";
@@ -31,9 +31,9 @@ export function useDeployContest() {
   const { indexContestV3 } = useV3ContestsIndex();
   const stateContestDeployment = useContractFactoryStore(state => state);
   const {
-    type,
     title,
     prompt,
+    contestType,
     submissionOpen,
     votingOpen,
     votingClose,
@@ -43,7 +43,6 @@ export function useDeployContest() {
     advancedOptions,
     setDeployContestData,
     votingRequirements,
-    submissionRequirements,
     metadataFields,
     entryPreviewConfig,
     charge,
@@ -77,18 +76,18 @@ export function useDeployContest() {
         signer,
       );
       const combinedPrompt = new URLSearchParams({
-        type: type,
+        type: contestType,
         summarize: prompt.summarize,
         evaluateVoters: prompt.evaluateVoters,
         contactDetails: prompt.contactDetails ?? "",
         imageUrl: prompt.imageUrl ?? "",
       }).toString();
 
-      const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled || votingMerkleData.csv;
-      const submissionMerkle =
-        submissionMerkleData.manual || submissionMerkleData.prefilled || submissionMerkleData.csv;
+      const votingMerkle = votingMerkleData.prefilled || votingMerkleData.csv;
+      const submissionMerkle = submissionMerkleData;
       const { type: chargeType, percentageToCreator } = charge;
       const { merkleRoot: submissionMerkleRoot = EMPTY_ROOT } = submissionMerkle || {};
+
       const { merkleRoot: votingMerkleRoot = EMPTY_ROOT } = votingMerkle || {};
       const { allowedSubmissionsPerUser, maxSubmissions } = customization;
       let jkLabsSplitDestination = "";
@@ -118,8 +117,8 @@ export function useDeployContest() {
         votingPeriod: differenceInSeconds(votingClose, votingOpen),
         numAllowedProposalSubmissions: finalAllowedSubmissionsPerUser,
         maxProposalCount: finalMaxSubmissions,
-        downvotingAllowed: advancedOptions.downvote ? 1 : 0,
-        sortingEnabled: !advancedOptions.downvote ? 1 : 0,
+        downvotingAllowed: 0,
+        sortingEnabled: 1,
         rankLimit: advancedOptions.rankLimit,
         percentageToCreator: percentageToCreator,
         costToPropose: parseEther(chargeType.costToPropose.toString()),
@@ -164,7 +163,6 @@ export function useDeployContest() {
         chain?.id ?? 0,
         receiptDeployContest.transactionHash,
         contractContest.address.toLowerCase(),
-        advancedOptions.downvote,
         sortingEnabled,
       );
 
@@ -182,19 +180,9 @@ export function useDeployContest() {
         };
       }
 
-      if (submissionMerkleData.prefilled && submissionRequirements.tokenAddress) {
-        submissionReqDatabaseEntry = {
-          type: submissionRequirements.type,
-          tokenAddress: submissionRequirements.tokenAddress,
-          chain: submissionRequirements.chain,
-          minTokensRequired: submissionRequirements.minTokensRequired,
-          timestamp: submissionRequirements.timestamp,
-        };
-      }
-
       const contestData = {
         title: title,
-        type: type,
+        type: contestType,
         prompt: combinedPrompt,
         datetimeOpeningSubmissions: submissionOpen,
         datetimeOpeningVoting: votingOpen,
@@ -205,7 +193,6 @@ export function useDeployContest() {
         authorAddress: address,
         networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
         voting_requirements: votingReqDatabaseEntry,
-        submission_requirements: submissionReqDatabaseEntry,
         cost_to_propose: chargeType.costToPropose,
         cost_to_vote: chargeType.costToVote,
         percentage_to_creator: percentageToCreator,
@@ -330,8 +317,8 @@ export function useDeployContest() {
   }
 
   async function checkForSpoofing(address: string) {
-    const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled || votingMerkleData.csv;
-    const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled || submissionMerkleData.csv;
+    const votingMerkle = votingMerkleData.prefilled || votingMerkleData.csv;
+    const submissionMerkle = submissionMerkleData;
 
     const exceedsVotingMaxRows = votingMerkle && votingMerkle.voters.length > MAX_ROWS;
     const exceedsSubmissionMaxRows = submissionMerkle && submissionMerkle.submitters.length > MAX_ROWS;

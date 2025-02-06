@@ -13,7 +13,6 @@ import CreateTextInput from "../TextInput";
 import { erc20ChainDropdownOptions, nftChainDropdownOptions, votingPowerOptions } from "./config";
 
 interface CreateRequirementsSettingsProps {
-  step: "voting" | "submission";
   settingType: string;
   chain: string;
   token: TokenDetails;
@@ -47,7 +46,6 @@ const defaultTokenDetails = {
 };
 
 const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
-  step,
   settingType,
   chain,
   token,
@@ -222,31 +220,29 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
           />
         </div>
 
-        {step === "voting" ? (
-          <div className="flex flex-col gap-4">
-            <p className="text-[16px] text-neutral-11 font-bold uppercase">voting power</p>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between md:justify-normal md:gap-3">
-                <CreateNumberInput
-                  className="text-[16px] md:text-[24px]"
-                  value={powerValue ?? 0}
-                  placeholder="100"
-                  onChange={onPowerValueChange}
-                  disableDecimals
-                  style={{ width: "100px" }}
-                />
-                <p className="text-[16px] md:text-[20px]">votes per</p>
-                <CreateDefaultDropdown
-                  defaultOption={powerTypeOption(powerType ?? "")}
-                  options={votingPowerOptions}
-                  className="w-48 text-[16px] md:text-[20px] cursor-pointer"
-                  onChange={onPowerTypeChange}
-                />
-              </div>
-              <p className="text-negative-11 text-[14px] font-bold animate-reveal">{error?.powerValueError}</p>
+        <div className="flex flex-col gap-4">
+          <p className="text-[16px] text-neutral-11 font-bold uppercase">voting power</p>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between md:justify-normal md:gap-3">
+              <CreateNumberInput
+                className="text-[16px] md:text-[24px]"
+                value={powerValue ?? 0}
+                placeholder="100"
+                onChange={onPowerValueChange}
+                disableDecimals
+                style={{ width: "100px" }}
+              />
+              <p className="text-[16px] md:text-[20px]">votes per</p>
+              <CreateDefaultDropdown
+                defaultOption={powerTypeOption(powerType ?? "")}
+                options={votingPowerOptions}
+                className="w-48 text-[16px] md:text-[20px] cursor-pointer"
+                onChange={onPowerTypeChange}
+              />
             </div>
+            <p className="text-negative-11 text-[14px] font-bold animate-reveal">{error?.powerValueError}</p>
           </div>
-        ) : null}
+        </div>
 
         {settingType === "erc721" && tokenDetails.nftTokenType === "ERC1155" ? (
           <div className="flex flex-col gap-4">

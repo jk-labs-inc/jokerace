@@ -1,12 +1,12 @@
+import { EntryPreview } from "@hooks/useDeployContest/store";
 import moment from "moment";
 import { TimingPeriod } from "../../pages/ContestTiming/utils";
 import { StepTitle } from "../../types";
 import { TemplateConfig, TemplateType } from "../types";
-import { EntryPreview } from "@hooks/useDeployContest/store";
 
 export const memeConfig: TemplateConfig = {
   type: TemplateType.memeContest,
-  stepsToFulfill: [StepTitle.Title, StepTitle.Entries, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
+  stepsToFulfill: [StepTitle.Rules, StepTitle.Entries, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
   data: {
     prompt: {
       summarize:
@@ -18,7 +18,6 @@ export const memeConfig: TemplateConfig = {
       preview: EntryPreview.IMAGE,
       isAdditionalDescriptionEnabled: true,
     },
-    type: "meme contest",
     submissionOpen: moment().toDate(),
     votingOpen: moment().add(7, "days").toDate(),
     votingClose: moment().add(7, "days").add(1, "day").toDate(),

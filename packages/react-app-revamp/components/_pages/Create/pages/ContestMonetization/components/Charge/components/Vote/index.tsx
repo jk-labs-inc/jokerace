@@ -57,7 +57,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                 <div className={`flex flex-col ${isAnyoneCanVote ? "gap-1" : "gap-4"}`}>
                   <p
                     className={`text-[20px] ${
-                      checked ? "text-secondary-11" : "text-neutral-9"
+                      checked ? "text-neutral-11" : "text-neutral-9"
                     } ${isAnyoneCanVote ? "opacity-50" : "opacity-100"}`}
                   >
                     a charge <i>each time</i> they vote {isAnyoneCanVote ? "" : "(recommended)"}
@@ -73,7 +73,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                   ) : null}
                   {isAnyoneCanVote ? (
                     <p className="text-[14px] text-neutral-11">
-                      <b>note:</b> not available in anyone-can-vote contests
+                      <b>note:</b> only available in entry based contests
                     </p>
                   ) : null}
                 </div>
@@ -89,7 +89,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                   }`}
                 ></div>
                 <div className="flex flex-col gap-4">
-                  <p className={`text-[20px] ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                  <p className={`text-[20px] ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
                     {isMobile ? (
                       <>
                         a charge for <i>each vote</i>
