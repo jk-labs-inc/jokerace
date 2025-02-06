@@ -1,24 +1,65 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useCallback } from "react";
+import { StepTitle } from "../types";
+import type { DeployContestState } from "@hooks/useDeployContest/store";
+
+const stepValidations: Record<StepTitle, (state: DeployContestState) => boolean> = {
+  [StepTitle.Type]: state => {
+    return true;
+  },
+  [StepTitle.Entries]: state => {
+    return true;
+  },
+
+  [StepTitle.Timing]: state => {
+    return true;
+  },
+  [StepTitle.Voting]: state => {
+    return !!state.votingMerkle.csv || !!state.votingMerkle.prefilled;
+  },
+
+  [StepTitle.Monetization]: state => {
+    return !!state.charge.type.costToPropose && state.charge.type.costToPropose > 0;
+  },
+  [StepTitle.Rules]: state => {
+    return !!state.title && !!state.prompt.summarize && !!state.prompt.evaluateVoters;
+  },
+
+  [StepTitle.Confirm]: state => {
+    return true;
+  },
+};
 
 export const useNextStep = () => {
-  const { step: currentStep, setStep, errors } = useDeployContestStore(state => state);
+  const { step: currentStep, setStep } = useDeployContestStore(state => state);
 
   const onNextStep = useCallback(
-    (targetStep?: number) => {
-      const finalStep = targetStep ?? currentStep + 1;
-      const isMovingForward = finalStep > currentStep;
+    (targetStep?: number, availableSteps?: StepTitle[]) => {
+      // if we're going backwards, allow without validation
+      if (targetStep !== undefined && targetStep < currentStep) {
+        setStep(targetStep);
+        return;
+      }
 
-      // console.log("errors", errors);
+      const state = useDeployContestStore.getState();
 
-      // // only check for errors when moving forward
-      // if (isMovingForward && errors.includes(currentStep)) {
-      //   return;
-      // }
+      // only validate steps that are in our current flow
+      for (let i = currentStep; i < (targetStep ?? currentStep + 1); i++) {
+        const stepToValidate = availableSteps?.[i];
+        if (!stepToValidate) continue;
 
-      setStep(finalStep);
+        const validationFn = stepValidations[stepToValidate];
+        if (!validationFn) continue;
+
+        const isValid = validationFn(state);
+        if (!isValid) {
+          return;
+        }
+      }
+
+      setStep(targetStep ?? currentStep + 1);
     },
-    [currentStep, errors, setStep],
+    [currentStep, setStep],
   );
 
   return onNextStep;

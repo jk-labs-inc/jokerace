@@ -1,5 +1,4 @@
-import { FC, useState } from "react";
-import { useMediaQuery } from "react-responsive";
+import { FC } from "react";
 import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
 
@@ -10,18 +9,12 @@ interface CreateContestConfirmTitleProps {
 }
 
 const CreateContestConfirmTitle: FC<CreateContestConfirmTitleProps> = ({ step, title, onClick }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
-
   return (
-    <CreateContestConfirmLayout onClick={() => onClick?.(step)} onHover={value => setIsHovered(value)}>
-      <p
-        className={`text-[20px] leading-normal	normal-case font-bold ${
-          isHovered || isMobileOrTablet ? "text-neutral-11" : "text-neutral-14"
-        } transition-color duration-300`}
-      >
-        {title}
-      </p>
+    <CreateContestConfirmLayout onClick={() => onClick?.(step)}>
+      <div className="flex flex-col gap-2">
+        <p className="text-neutral-9 text-[12px] font-bold uppercase">title</p>
+        <p className="text-[20px] text-neutral-11 leading-normal normal-case font-bold">{title}</p>
+      </div>
     </CreateContestConfirmLayout>
   );
 };

@@ -79,7 +79,6 @@ const CreateVotingCSVUploader: FC<CreateVotingCSVUploaderProps> = ({ isNextClick
   };
 
   const handleNextStep = () => {
-    console.log("votingAllowlist.csv", votingAllowlist.csv);
     if (Object.keys(votingAllowlist.csv).length === 0) {
       onNextStep();
       return;

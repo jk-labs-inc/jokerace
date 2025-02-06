@@ -105,7 +105,6 @@ export interface DeployContestState {
     sortingEnabled: boolean,
   ) => void;
   setTitle: (title: string) => void;
-
   setPrompt: (prompt: Prompt) => void;
   setSubmissionOpen: (submissionOpen: Date) => void;
   setVotingOpen: (votingOpen: Date) => void;
@@ -228,7 +227,6 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       set({ deployContestData: { chain, chainId, hash, address, sortingEnabled } }),
     setTitle: (title: string) => set({ title }),
     setPrompt: (prompt: Prompt) => set({ prompt }),
-
     setSubmissionOpen: (submissionOpen: Date) => set({ submissionOpen }),
     setVotingOpen: (votingOpen: Date) => set({ votingOpen }),
     setVotingClose: (votingClose: Date) => set({ votingClose }),

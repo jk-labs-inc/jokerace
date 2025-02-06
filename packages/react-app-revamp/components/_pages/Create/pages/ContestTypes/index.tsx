@@ -1,14 +1,19 @@
-import CreateNextButton from "../../components/Buttons/Next";
-import { useMediaQuery } from "react-responsive";
-import CreateContestTypesAnyoneCanPlay from "./components/Types/AnyoneCanPlay";
-import CreateContestTypesEntryBased from "./components/Types/EntryBased";
-import CreateContestTypesVotingBased from "./components/Types/VotingBased";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { useEffect } from "react";
+import { useMediaQuery } from "react-responsive";
+import CreateNextButton from "../../components/Buttons/Next";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
-import { useNextStep } from "../../hooks/useNextStep";
-import { ContestType } from "../../types";
 import { useContestSteps } from "../../hooks/useContestSteps";
+import { useNextStep } from "../../hooks/useNextStep";
+import useSetContestTypeConfig from "../../hooks/useSetContestTypeConfig";
+import { ContestType } from "../../types";
+import CreateContestTypesAnyoneCanPlay from "./components/Types/AnyoneCanPlay";
+import { anyoneCanPlayConfig } from "./components/Types/AnyoneCanPlay/config";
+import CreateContestTypesEntryBased from "./components/Types/EntryBased";
+import entryBasedConfig from "./components/Types/EntryBased/config";
+import CreateContestTypesVotingBased from "./components/Types/VotingBased";
+import votingBasedConfig from "./components/Types/VotingBased/config";
 
 const CreateContestTypes = () => {
   const { steps } = useContestSteps();
@@ -16,8 +21,29 @@ const CreateContestTypes = () => {
   const { step, setContestType, contestType } = useDeployContestStore(state => state);
   const typeTitle = isMobile ? "what type of contest?" : "what kind of contest do you want to create?";
   const onNextStep = useNextStep();
+  const setContestTypeConfig = useSetContestTypeConfig();
 
-  console.log({ step });
+  const handleTypeSelection = (type: ContestType) => {
+    setContestType(type);
+    if (type === ContestType.AnyoneCanPlay) {
+      setContestTypeConfig(anyoneCanPlayConfig);
+    } else if (type === ContestType.EntryContest) {
+      setContestTypeConfig(entryBasedConfig);
+    } else if (type === ContestType.VotingContest) {
+      setContestTypeConfig(votingBasedConfig);
+    }
+  };
+
+  useEffect(() => {
+    if (contestType === ContestType.AnyoneCanPlay) {
+      setContestTypeConfig(anyoneCanPlayConfig);
+    } else if (contestType === ContestType.EntryContest) {
+      setContestTypeConfig(entryBasedConfig);
+    } else if (contestType === ContestType.VotingContest) {
+      setContestTypeConfig(votingBasedConfig);
+    }
+  }, []);
+
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
@@ -32,15 +58,15 @@ const CreateContestTypes = () => {
         <div className="grid gap-6 col-start-1 md:col-start-2 col-span-3 md:col-span-2 md:ml-10 mt-8 md:mt-6">
           <CreateContestTypesAnyoneCanPlay
             isSelected={contestType === ContestType.AnyoneCanPlay}
-            onClick={type => setContestType(type)}
+            onClick={type => handleTypeSelection(type)}
           />
           <CreateContestTypesEntryBased
             isSelected={contestType === ContestType.EntryContest}
-            onClick={type => setContestType(type)}
+            onClick={type => handleTypeSelection(type)}
           />
           <CreateContestTypesVotingBased
             isSelected={contestType === ContestType.VotingContest}
-            onClick={type => setContestType(type)}
+            onClick={type => handleTypeSelection(type)}
           />
           <div className="mt-4">
             <CreateNextButton step={step + 1} onClick={() => onNextStep()} />

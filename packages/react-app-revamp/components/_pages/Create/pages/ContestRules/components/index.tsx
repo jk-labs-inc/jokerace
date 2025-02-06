@@ -19,8 +19,6 @@ const CreateContestRules = () => {
   const customizeTitle = isMobile ? "setting the rules" : "finally, let’s set the rules";
   const isDisabled = !title || !prompt.summarize || !prompt.evaluateVoters;
 
-  console.log(prompt.summarize, prompt.evaluateVoters);
-
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
