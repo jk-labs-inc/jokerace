@@ -1,9 +1,8 @@
-import { AdvancedOptions, ContestVisibility, CustomizationOptions } from "@hooks/useDeployContest/store";
-import { Steps } from "../..";
-import { FC, useState } from "react";
-import CreateContestConfirmLayout from "../Layout";
 import { formatNumber } from "@helpers/formatNumber";
-import { useMediaQuery } from "react-responsive";
+import { AdvancedOptions, ContestVisibility, CustomizationOptions } from "@hooks/useDeployContest/store";
+import { FC } from "react";
+import { Steps } from "../..";
+import CreateContestConfirmLayout from "../Layout";
 
 interface CreateContestConfirmCustomizationProps {
   customization: {
@@ -20,11 +19,9 @@ const CreateContestConfirmCustomization: FC<CreateContestConfirmCustomizationPro
   onClick,
 }) => {
   const { customization: customizationOptions, advancedOptions } = customization;
-  const [isHovered, setIsHovered] = useState(false);
-  const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
 
   return (
-    <CreateContestConfirmLayout onClick={() => onClick?.(step)} onHover={value => setIsHovered(value)}>
+    <CreateContestConfirmLayout onClick={() => onClick?.(step)}>
       <div className="flex flex-col gap-2">
         <p className="text-neutral-9 text-[12px] font-bold uppercase">parameters</p>
         <ul className="flex flex-col pl-6 list-disc">

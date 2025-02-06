@@ -12,7 +12,7 @@ import CreateContestCharge from "./components/Charge";
 import CreateContestChargeUnconnectedAccount from "./components/UnconnectedAccount";
 
 const CreateContestMonetization = () => {
-  const { step, votingRequirementsOption, setError } = useDeployContestStore(state => state);
+  const { step, votingRequirementsOption } = useDeployContestStore(state => state);
   const { steps } = useContestSteps();
   const { isConnected, chain } = useAccount();
   const [disableNextStep, setDisableNextStep] = useState(false);
@@ -31,11 +31,10 @@ const CreateContestMonetization = () => {
         chain={chain?.name.toLowerCase() ?? ""}
         onError={hasError => {
           setDisableNextStep(hasError);
-          setError(step, hasError);
         }}
       />
     );
-  }, [chain?.name, onPreviousStep, votingRequirementsOption.value, step, setError]);
+  }, [chain?.name, onPreviousStep, votingRequirementsOption.value, step]);
 
   return (
     <div className="flex flex-col">

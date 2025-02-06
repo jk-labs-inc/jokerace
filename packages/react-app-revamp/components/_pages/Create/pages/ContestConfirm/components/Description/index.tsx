@@ -1,13 +1,13 @@
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
+import ContestImage from "@components/_pages/Contest/components/ContestImage";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { Prompt } from "@hooks/useDeployContest/store";
+import { useLineCount } from "@hooks/useLineCount";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
-import { useLineCount } from "@hooks/useLineCount";
-import ContestImage from "@components/_pages/Contest/components/ContestImage";
 interface CreateContestConfirmDescriptionProps {
   prompt: Prompt;
   step: Steps;
@@ -21,15 +21,13 @@ const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> 
   imageUrl,
   onClick,
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
   const { elementRef, lineCount } = useLineCount();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const shouldShowReadMore = lineCount > 5;
 
   return (
-    <CreateContestConfirmLayout onClick={() => onClick?.(step)} onHover={value => setIsHovered(value)}>
+    <CreateContestConfirmLayout onClick={() => onClick?.(step)}>
       <div className="flex flex-col gap-2">
         <div className="text-[12px] uppercase font-bold text-neutral-9">Description</div>
         <div className="flex flex-col gap-4">

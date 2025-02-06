@@ -1,6 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
 import { chains } from "@config/wagmi";
-import { addressRegex } from "@helpers/regex";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";

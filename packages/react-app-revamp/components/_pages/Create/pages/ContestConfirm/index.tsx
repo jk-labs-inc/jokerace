@@ -51,6 +51,7 @@ const CreateContestConfirm = () => {
     state.setStep(step);
   };
 
+  // todo: adjust steps to be based on the contest type
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={state.step} totalSteps={steps.length} /> : null}

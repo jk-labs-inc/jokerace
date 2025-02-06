@@ -9,6 +9,11 @@ type ReactStyleStateSetter<T> = T | ((prev: T) => T);
 
 const DEFAULT_SUBMISSIONS = 1000;
 
+type ContestDeployError = {
+  step: number;
+  message: string;
+};
+
 export type Prompt = {
   summarize: string;
   evaluateVoters: string;
@@ -84,10 +89,11 @@ export interface DeployContestState {
   advancedOptions: AdvancedOptions;
   isLoading: boolean;
   isSuccess: boolean;
-  errors: number[];
+  errors: ContestDeployError[];
   step: number;
   votingTab: number;
   charge: Charge;
+
   minCharge: {
     minCostToPropose: number;
     minCostToVote: number;
@@ -118,7 +124,7 @@ export interface DeployContestState {
   setAdvancedOptions: (advancedOptions: AdvancedOptions) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
-  setError: (step: number, hasError: boolean) => void;
+  setError: (step: number, error: ContestDeployError) => void;
   setStep: (step: number) => void;
   setVotingTab: (tab: number) => void;
   setCharge: (charge: Charge) => void;
@@ -254,21 +260,16 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setAdvancedOptions: (advancedOptions: AdvancedOptions) => set({ advancedOptions }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),
     setIsSuccess: (isSuccess: boolean) => set({ isSuccess }),
-    setError: (step: number, hasError: boolean) => {
-      const currentErrors = [...get().errors];
+    setError: (step: number, error: ContestDeployError) => {
+      let errorsCopy = [...get().errors];
 
-      if (hasError) {
-        if (!currentErrors.includes(step)) {
-          currentErrors.push(step);
-        }
-      } else {
-        const index = currentErrors.indexOf(step);
-        if (index > -1) {
-          currentErrors.splice(index, 1);
-        }
+      errorsCopy = errorsCopy.filter(error => error.step !== step);
+
+      if (error.message) {
+        errorsCopy.push(error);
       }
 
-      set({ errors: currentErrors });
+      set({ errors: errorsCopy });
     },
     setStep: (step: number) => set({ step }),
     setVotingTab: (votingTab: number) => set({ votingTab }),

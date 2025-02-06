@@ -1,6 +1,5 @@
 import moment from "moment-timezone";
-import { FC, useMemo, useState } from "react";
-import { useMediaQuery } from "react-responsive";
+import { FC, useMemo } from "react";
 import { Steps } from "../..";
 import {
   TimingPeriod,
@@ -21,10 +20,8 @@ interface CreateContestConfirmTimingProps {
 
 const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timing, step, onClick }) => {
   const { submissionOpen, votingOpen, votingClose } = timing;
-  const [isHovered, setIsHovered] = useState(false);
   const timingOptionForSubmissionPeriod = useTimingOptionForSubmissionPeriod(state => state.timingOption);
   const timingOptionForVotingPeriod = useTimingOptionForVotingPeriod(state => state.timingOption);
-  const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
 
   const formattedSubmissionOpen =
     moment(submissionOpen).format("MMMM D, YYYY h:mmA") + " " + moment.tz(moment.tz.guess()).zoneAbbr();
@@ -68,7 +65,7 @@ const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timin
   }, [formattedVotesClose, formattedVoteOpen, timingOptionForVotingPeriod]);
 
   return (
-    <CreateContestConfirmLayout onClick={() => onClick?.(step)} onHover={value => setIsHovered(value)}>
+    <CreateContestConfirmLayout onClick={() => onClick?.(step)}>
       <div className="flex flex-col gap-2">
         <p className="text-neutral-9 text-[12px] font-bold uppercase">timing</p>
         <ul className="flex flex-col pl-6 list-disc">

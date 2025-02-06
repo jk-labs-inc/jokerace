@@ -21,7 +21,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
 
   useEffect(() => {
     // If there's an error for the current step, shake the button
-    if (errors.includes(step - 1)) {
+    if (errors.find(error => error.step === step - 1)) {
       setShake(true);
     } else {
       setShake(false);
@@ -30,7 +30,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     // If there's an error, shake the button
-    if (errors.includes(step - 1)) {
+    if (errors.find(error => error.step === step - 1)) {
       setShake(true);
     }
 
