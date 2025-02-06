@@ -12,7 +12,7 @@ const CreateVotingRadioGroup = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const [isNextClicked, setIsNextClicked] = useState(false);
 
-  const onVotingTabChange = (value: number) => {
+  const onVotingRadioChange = (value: number) => {
     setVotingTab(value);
     setAllVotingMerkles(null);
     setIsNextClicked(false);
@@ -38,7 +38,7 @@ const CreateVotingRadioGroup = () => {
 
   return (
     <div className="flex flex-col gap-16">
-      <RadioGroup value={votingTab} onChange={onVotingTabChange}>
+      <RadioGroup value={votingTab} onChange={onVotingRadioChange}>
         <div className="flex flex-col gap-6">
           {tabOptions.map((option, index) => (
             <Radio key={index} value={index}>

@@ -7,7 +7,7 @@ const CreateContestRulesAdvancedSettings = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <button onClick={() => setIsExpanded(!isExpanded)} className="flex gap-1 items-center cursor-pointer">
+      <button onClick={() => setIsExpanded(!isExpanded)} className="flex gap-4 items-center cursor-pointer">
         <p className="text-[20px] text-positive-11">advanced settings</p>
         <ChevronDownIcon
           className={`w-6 h-6 text-positive-11 mt-1 transition-transform ${isExpanded ? "rotate-180" : ""}`}

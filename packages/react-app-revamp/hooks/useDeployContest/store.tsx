@@ -61,6 +61,21 @@ export interface EntryPreviewConfig {
   isAdditionalDescriptionEnabled: boolean;
 }
 
+export const emptyVotingRequirements = {
+  type: "erc20",
+  nftType: "erc721",
+  chain: "mainnet",
+  tokenAddress: "",
+  minTokensRequired: 0.01,
+  powerType: "token",
+  powerValue: 100,
+  timestamp: Date.now(),
+  name: "",
+  symbol: "",
+  logo: "",
+  nftTokenId: "",
+};
+
 export interface DeployContestState {
   deployContestData: {
     chain: string;
@@ -93,7 +108,6 @@ export interface DeployContestState {
   step: number;
   votingTab: number;
   charge: Charge;
-
   minCharge: {
     minCostToPropose: number;
     minCostToVote: number;
@@ -174,20 +188,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       csv: null,
       prefilled: null,
     },
-    votingRequirements: {
-      type: "erc20",
-      nftType: "erc721",
-      chain: "mainnet",
-      tokenAddress: "",
-      minTokensRequired: 0.01,
-      powerType: "token",
-      powerValue: 100,
-      timestamp: Date.now(),
-      name: "",
-      symbol: "",
-      logo: "",
-      nftTokenId: "",
-    },
+    votingRequirements: emptyVotingRequirements,
     submissionMerkle: null,
     charge: {
       percentageToCreator: 50,

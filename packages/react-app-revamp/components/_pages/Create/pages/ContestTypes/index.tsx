@@ -1,6 +1,8 @@
+import { toastInfo } from "@components/UI/Toast";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
+import { useAccount } from "wagmi";
 import CreateNextButton from "../../components/Buttons/Next";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
@@ -15,8 +17,15 @@ import entryBasedConfig from "./components/Types/EntryBased/config";
 import CreateContestTypesVotingBased from "./components/Types/VotingBased";
 import votingBasedConfig from "./components/Types/VotingBased/config";
 
+const contestTypeConfigs = {
+  [ContestType.AnyoneCanPlay]: anyoneCanPlayConfig,
+  [ContestType.EntryContest]: entryBasedConfig,
+  [ContestType.VotingContest]: votingBasedConfig,
+} as const;
+
 const CreateContestTypes = () => {
   const { steps } = useContestSteps();
+  const { address } = useAccount();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { step, setContestType, contestType } = useDeployContestStore(state => state);
   const typeTitle = isMobile ? "what type of contest?" : "what kind of contest do you want to create?";
@@ -24,23 +33,18 @@ const CreateContestTypes = () => {
   const setContestTypeConfig = useSetContestTypeConfig();
 
   const handleTypeSelection = (type: ContestType) => {
-    setContestType(type);
-    if (type === ContestType.AnyoneCanPlay) {
-      setContestTypeConfig(anyoneCanPlayConfig);
-    } else if (type === ContestType.EntryContest) {
-      setContestTypeConfig(entryBasedConfig);
-    } else if (type === ContestType.VotingContest) {
-      setContestTypeConfig(votingBasedConfig);
+    if (type === ContestType.VotingContest && !address) {
+      toastInfo("please connect your wallet first");
+      return;
     }
+
+    setContestType(type);
+    setContestTypeConfig(type, contestTypeConfigs[type]);
   };
 
   useEffect(() => {
-    if (contestType === ContestType.AnyoneCanPlay) {
-      setContestTypeConfig(anyoneCanPlayConfig);
-    } else if (contestType === ContestType.EntryContest) {
-      setContestTypeConfig(entryBasedConfig);
-    } else if (contestType === ContestType.VotingContest) {
-      setContestTypeConfig(votingBasedConfig);
+    if (contestType) {
+      setContestTypeConfig(contestType, contestTypeConfigs[contestType]);
     }
   }, []);
 

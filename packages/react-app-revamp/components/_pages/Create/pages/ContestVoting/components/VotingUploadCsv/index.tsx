@@ -1,6 +1,6 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
-import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { emptyVotingRequirements, MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { VoteType, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { FC, useEffect } from "react";
@@ -17,13 +17,11 @@ interface CreateVotingCSVUploaderProps {
 
 const CreateVotingCSVUploader: FC<CreateVotingCSVUploaderProps> = ({ isNextClicked }) => {
   const {
-    step,
     setVotingMerkle,
-    setError,
+    votingTab,
     setVotingAllowlist,
     votingAllowlist,
-    votingRequirements,
-    votingMerkle,
+    setVotingRequirementsOption,
     setVotingRequirements,
     setCharge,
     charge,
@@ -60,9 +58,11 @@ const CreateVotingCSVUploader: FC<CreateVotingCSVUploaderProps> = ({ isNextClick
     const { merkleRoot, recipients } = event.data;
 
     setVotingMerkle("csv", { merkleRoot, voters: recipients });
-    onNextStep();
     toastSuccess("allowlist processed successfully.");
     resetPrefilledAllowlist();
+
+    onNextStep();
+
     terminateWorker(event.target as Worker);
   };
 
@@ -98,33 +98,31 @@ const CreateVotingCSVUploader: FC<CreateVotingCSVUploaderProps> = ({ isNextClick
     });
   };
 
-  const setBothVotingMerkles = (value: VotingMerkle | null) => {
+  const setPrefilledVotingMerkle = (value: VotingMerkle | null) => {
     const keys: MerkleKey[] = ["prefilled"];
     keys.forEach(key => setVotingMerkle(key, value));
   };
 
-  const setBothAllowlists = (value: Record<string, number>) => {
+  const setPrefilledAllowlist = (value: Record<string, number>) => {
     const keys: MerkleKey[] = ["prefilled"];
     keys.forEach(key => setVotingAllowlist(key, value));
   };
 
   const resetPrefilledAllowlist = () => {
-    setBothVotingMerkles(null);
-    setBothAllowlists({});
-    setVotingRequirements({
-      ...votingRequirements,
-      chain: "mainnet",
-      tokenAddress: "",
-      powerValue: 100,
-      powerType: "token",
+    setPrefilledVotingMerkle(null);
+    setPrefilledAllowlist({});
+    setVotingRequirements(emptyVotingRequirements);
+    setVotingRequirementsOption({
+      value: "erc20",
+      label: "token holders",
     });
   };
 
   useEffect(() => {
-    if (isNextClicked) {
+    if (isNextClicked && votingTab === 0) {
       handleNextStep();
     }
-  }, [isNextClicked]);
+  }, [isNextClicked, votingTab]);
 
   return (
     <div className="flex flex-col gap-10">

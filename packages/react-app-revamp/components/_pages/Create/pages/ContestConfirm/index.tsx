@@ -51,6 +51,8 @@ const CreateContestConfirm = () => {
     state.setStep(step);
   };
 
+  console.log(state.submissionMerkle);
+
   // todo: adjust steps to be based on the contest type
   return (
     <div className="flex flex-col">
@@ -78,6 +80,8 @@ const CreateContestConfirm = () => {
           <CreateContestConfirmType
             step={Steps.ContestType}
             type={state.contestType}
+            votingAllowlist={state.votingAllowlist}
+            votingRequirements={state.votingRequirements}
             onClick={step => onNavigateToStep(step)}
           />
           <CreateContestConfirmPreview

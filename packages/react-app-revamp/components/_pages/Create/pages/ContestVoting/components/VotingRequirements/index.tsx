@@ -28,10 +28,9 @@ interface CreateVotingRequirementsProps {
 
 const CreateVotingRequirements: FC<CreateVotingRequirementsProps> = ({ isNextClicked }) => {
   const {
-    step,
     setVotingMerkle,
-    setError,
     setVotingAllowlist,
+    votingTab,
     votingRequirements,
     setVotingRequirements,
     setVotingRequirementsOption,
@@ -85,9 +84,9 @@ const CreateVotingRequirements: FC<CreateVotingRequirementsProps> = ({ isNextCli
       ...votingRequirements,
       timestamp: Date.now(),
     });
-    onNextStep();
     toastSuccess("allowlist processed successfully.");
-    resetManualAllowlist();
+    resetUploadedAllowlist();
+    onNextStep();
     terminateWorker(event.target as Worker);
   };
 
@@ -182,31 +181,26 @@ const CreateVotingRequirements: FC<CreateVotingRequirementsProps> = ({ isNextCli
     fetchRequirementsMerkleData(votingRequirementsOption.value);
   };
 
-  const setAllVotingMerkles = (value: VotingMerkle | null) => {
-    const keys: MerkleKey[] = ["csv", "prefilled"];
-    keys.forEach(key => setVotingMerkle(key, value));
-  };
-
-  const setBothVotingMerkles = (value: VotingMerkle | null) => {
+  const setUploadedVotingMerkle = (value: VotingMerkle | null) => {
     const keys: MerkleKey[] = ["csv"];
     keys.forEach(key => setVotingMerkle(key, value));
   };
 
-  const setBothAllowlists = (value: Record<string, number>) => {
+  const setUploadedAllowlist = (value: Record<string, number>) => {
     const keys: MerkleKey[] = ["csv"];
     keys.forEach(key => setVotingAllowlist(key, value));
   };
 
-  const resetManualAllowlist = () => {
-    setBothVotingMerkles(null);
-    setBothAllowlists({});
+  const resetUploadedAllowlist = () => {
+    setUploadedVotingMerkle(null);
+    setUploadedAllowlist({});
   };
 
   useEffect(() => {
-    if (isNextClicked) {
+    if (isNextClicked && votingTab === 1) {
       handleNextStep();
     }
-  }, [isNextClicked]);
+  }, [isNextClicked, votingTab]);
 
   return (
     <div className="flex flex-col gap-16">
