@@ -26,8 +26,6 @@ export const useCreateContestStartStore = create<CreateContestStartState>(set =>
 const CreateContestStart: FC<CreateContestStartProps> = ({ onCreateContest, onCreateContestWithTemplate }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const stepTitle = isMobile ? "create a contest" : "let's create a contest";
-  const descriptionText = isMobile ? "how the contest works" : "about how the contest works";
-  const timingText = isMobile ? "of the entry/voting periods" : "of the entry and voting periods";
 
   const onCreateContestHandler = () => {
     onCreateContest?.(true);

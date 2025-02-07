@@ -5,10 +5,11 @@ import { ContestType } from "@components/_pages/Create/types";
 
 interface CreateContestTypesEntryBasedProps {
   isSelected: boolean;
+  faqLink?: string;
   onClick?: (type: ContestType) => void;
 }
 
-const CreateContestTypesEntryBased: FC<CreateContestTypesEntryBasedProps> = ({ isSelected, onClick }) => {
+const CreateContestTypesEntryBased: FC<CreateContestTypesEntryBasedProps> = ({ isSelected, onClick, faqLink }) => {
   return (
     <CreateContestTypesCard isSelected={isSelected} onClick={() => onClick?.(ContestType.EntryContest)}>
       <p className="text-[20px] text-neutral-11 font-bold">entry contest ✍️</p>
@@ -45,7 +46,10 @@ const CreateContestTypesEntryBased: FC<CreateContestTypesEntryBasedProps> = ({ i
           </li>
 
           <li>
-            read more in our <span className="text-positive-11">faq</span>
+            read more in our{" "}
+            <a href={faqLink} target="_blank" rel="noopener noreferrer" className="text-positive-11">
+              faq
+            </a>
           </li>
         </ul>
       </CreateContestTypesAdditionalInfo>

@@ -16,6 +16,7 @@ import CreateContestTypesEntryBased from "./components/Types/EntryBased";
 import entryBasedConfig from "./components/Types/EntryBased/config";
 import CreateContestTypesVotingBased from "./components/Types/VotingBased";
 import votingBasedConfig from "./components/Types/VotingBased/config";
+import { FOOTER_LINKS } from "@config/links";
 
 const contestTypeConfigs = {
   [ContestType.AnyoneCanPlay]: anyoneCanPlayConfig,
@@ -31,6 +32,7 @@ const CreateContestTypes = () => {
   const typeTitle = isMobile ? "what type of contest?" : "what kind of contest do you want to create?";
   const onNextStep = useNextStep();
   const setContestTypeConfig = useSetContestTypeConfig();
+  const faqLink = FOOTER_LINKS.find(link => link.label === "FAQ")?.href;
 
   const handleTypeSelection = (type: ContestType) => {
     if (type === ContestType.VotingContest && !address) {
@@ -63,6 +65,7 @@ const CreateContestTypes = () => {
           <CreateContestTypesAnyoneCanPlay
             isSelected={contestType === ContestType.AnyoneCanPlay}
             onClick={type => handleTypeSelection(type)}
+            faqLink={faqLink}
           />
           <CreateContestTypesEntryBased
             isSelected={contestType === ContestType.EntryContest}

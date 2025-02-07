@@ -41,11 +41,9 @@ const useSetContestTypeConfig = () => {
   const { setTimingOption: setVotingTimingOption } = useTimingOptionForVotingPeriod(state => state);
 
   const setContestTypeConfig = (type: ContestType, config: ContestTypeConfig) => {
-    console.log("type", type);
     if (type === ContestType.VotingContest) {
       processCreatorAllowlist(address);
     } else {
-      console.log("setting submission merkle to null");
       setSubmissionMerkle(null);
     }
 

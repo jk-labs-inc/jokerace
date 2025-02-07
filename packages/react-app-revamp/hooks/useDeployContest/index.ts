@@ -21,6 +21,7 @@ import { Abi, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { ContestVisibility, EntryPreviewConfig, MetadataField, useDeployContestStore } from "./store";
 import { SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle } from "./types";
+import useEmailSignup from "@hooks/useEmailSignup";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000;
 export const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c6118e8a52fa738";
@@ -29,6 +30,7 @@ const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000
 
 export function useDeployContest() {
   const { indexContestV3 } = useV3ContestsIndex();
+  const { subscribeUser, checkIfEmailExists } = useEmailSignup();
   const stateContestDeployment = useContractFactoryStore(state => state);
   const {
     title,
@@ -45,6 +47,7 @@ export function useDeployContest() {
     votingRequirements,
     metadataFields,
     entryPreviewConfig,
+    emailSubscriptionAddress,
     charge,
     setIsLoading,
     setIsSuccess,
@@ -199,6 +202,7 @@ export function useDeployContest() {
         hidden: advancedOptions.contestVisibility === ContestVisibility.Public ? false : true,
       };
 
+      await subscribeToEmail(emailSubscriptionAddress);
       await saveFilesToBucket(votingMerkle, submissionMerkle);
       await indexContest(contestData, votingMerkle, submissionMerkle);
 
@@ -249,6 +253,24 @@ export function useDeployContest() {
       setIsLoading(false);
       throw e;
     }
+  }
+
+  async function subscribeToEmail(emailAddress: string) {
+    if (!isSupabaseConfigured) {
+      throw new Error("Supabase is not configured");
+    }
+
+    if (!emailAddress) {
+      return;
+    }
+
+    const emailExists = await checkIfEmailExists(emailAddress, false);
+
+    if (emailExists) {
+      return;
+    }
+
+    await subscribeUser(emailAddress, address, false);
   }
 
   async function checkExistingFileInBucket(fileId: string): Promise<boolean> {

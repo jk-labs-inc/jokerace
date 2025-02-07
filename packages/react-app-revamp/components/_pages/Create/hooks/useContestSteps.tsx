@@ -11,6 +11,16 @@ import { ContestType, StepTitle } from "../types";
 export const useContestSteps = () => {
   const { contestType } = useDeployContestStore(state => state);
 
+  const stepReferences = {
+    ContestType: 0,
+    ContestVoting: 1,
+    ContestMonetization: contestType === ContestType.EntryContest ? 2 : 1,
+    ContestTiming: contestType === ContestType.EntryContest ? 3 : 2,
+    ContestEntries: contestType === ContestType.EntryContest ? 4 : 3,
+    ContestRules: contestType === ContestType.EntryContest ? 5 : 4,
+    Confirm: contestType === ContestType.EntryContest ? 6 : 5,
+  };
+
   const getStepsForContestType = () => {
     const baseSteps = [
       { title: StepTitle.Type, content: <CreateContestTypes /> },
@@ -30,5 +40,6 @@ export const useContestSteps = () => {
 
   return {
     steps: getStepsForContestType(),
+    stepReferences,
   };
 };

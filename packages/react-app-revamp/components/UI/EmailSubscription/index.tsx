@@ -1,14 +1,14 @@
 import { FC } from "react";
 
-interface DialogModalSendProposalEmailSubscriptionProps {
+interface EmailSubscriptionProps {
   emailForSubscription: string;
-  emailError: string | null;
-  emailAlreadyExists: boolean;
-  tosHref: string;
+  emailError?: string | null;
+  emailAlreadyExists?: boolean;
+  tosHref?: string;
   handleEmailChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const DialogModalSendProposalEmailSubscription: FC<DialogModalSendProposalEmailSubscriptionProps> = ({
+const EmailSubscription: FC<EmailSubscriptionProps> = ({
   emailForSubscription,
   emailError,
   emailAlreadyExists,
@@ -50,4 +50,4 @@ const DialogModalSendProposalEmailSubscription: FC<DialogModalSendProposalEmailS
   );
 };
 
-export default DialogModalSendProposalEmailSubscription;
+export default EmailSubscription;

@@ -5,10 +5,15 @@ import { ContestType } from "@components/_pages/Create/types";
 
 interface CreateContestTypesAnyoneCanPlayProps {
   isSelected: boolean;
+  faqLink?: string;
   onClick?: (type: ContestType) => void;
 }
 
-const CreateContestTypesAnyoneCanPlay: FC<CreateContestTypesAnyoneCanPlayProps> = ({ isSelected, onClick }) => {
+const CreateContestTypesAnyoneCanPlay: FC<CreateContestTypesAnyoneCanPlayProps> = ({
+  isSelected,
+  onClick,
+  faqLink,
+}) => {
   return (
     <CreateContestTypesCard isSelected={isSelected} onClick={() => onClick?.(ContestType.AnyoneCanPlay)}>
       <p className="text-[20px] text-neutral-11 font-bold">anyone can play 👯</p>
@@ -44,7 +49,10 @@ const CreateContestTypesAnyoneCanPlay: FC<CreateContestTypesAnyoneCanPlayProps> 
 
           {/* todo: add faq link later */}
           <li>
-            read more in our <a className="text-positive-11">faq</a>
+            read more in our{" "}
+            <a href={faqLink} target="_blank" rel="noopener noreferrer" className="text-positive-11">
+              faq
+            </a>
           </li>
         </ul>
       </CreateContestTypesAdditionalInfo>

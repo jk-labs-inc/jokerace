@@ -5,10 +5,11 @@ import { ContestType } from "@components/_pages/Create/types";
 
 interface CreateContestTypesVotingBasedProps {
   isSelected: boolean;
+  faqLink?: string;
   onClick?: (type: ContestType) => void;
 }
 
-const CreateContestTypesVotingBased: FC<CreateContestTypesVotingBasedProps> = ({ isSelected, onClick }) => {
+const CreateContestTypesVotingBased: FC<CreateContestTypesVotingBasedProps> = ({ isSelected, onClick, faqLink }) => {
   return (
     <CreateContestTypesCard isSelected={isSelected} onClick={() => onClick?.(ContestType.VotingContest)}>
       <p className="text-[20px] text-neutral-11 font-bold">voting contest 🗳️</p>
@@ -52,7 +53,10 @@ const CreateContestTypesVotingBased: FC<CreateContestTypesVotingBasedProps> = ({
           </li>
 
           <li>
-            read more in our <span className="text-positive-11">faq</span>
+            read more in our{" "}
+            <a href={faqLink} target="_blank" rel="noopener noreferrer" className="text-positive-11">
+              faq
+            </a>
           </li>
         </ul>
       </CreateContestTypesAdditionalInfo>

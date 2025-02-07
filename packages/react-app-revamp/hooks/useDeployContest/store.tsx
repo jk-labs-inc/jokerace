@@ -117,6 +117,7 @@ export interface DeployContestState {
   metadataFields: MetadataField[];
   entryPreviewConfig: EntryPreviewConfig;
   contestType: ContestType;
+  emailSubscriptionAddress: string;
   setDeployContestData: (
     chain: string,
     chainId: number,
@@ -149,6 +150,7 @@ export interface DeployContestState {
   setMetadataFields: (data: ReactStyleStateSetter<MetadataField[]>) => void;
   setEntryPreviewConfig: (data: ReactStyleStateSetter<EntryPreviewConfig>) => void;
   setContestType: (contestType: ContestType) => void;
+  setEmailSubscriptionAddress: (emailSubscriptionAddress: string) => void;
 }
 export const useDeployContestStore = create<DeployContestState>((set, get) => {
   const initialSubmissionOpen: Date = new Date();
@@ -226,6 +228,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       isAdditionalDescriptionEnabled: true,
     },
     contestType: ContestType.AnyoneCanPlay,
+    emailSubscriptionAddress: "",
   };
 
   return {
@@ -288,5 +291,6 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
         entryPreviewConfig: typeof data === "function" ? data(state.entryPreviewConfig) : data,
       })),
     setContestType: (contestType: ContestType) => set({ contestType }),
+    setEmailSubscriptionAddress: (emailSubscriptionAddress: string) => set({ emailSubscriptionAddress }),
   };
 });
