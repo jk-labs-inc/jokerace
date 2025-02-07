@@ -66,6 +66,19 @@ abstract contract GovernorCountingSimple is Governor {
     }
 
     /**
+     * @dev Retrieve the array of VoteCounts objects for an array of userAddresses for a given proposal.
+     */
+    function getProposalAddressesVotes(uint256 proposalId, address[] memory userAddresses) public view returns (VoteCounts[] memory) {
+        VoteCounts[] memory voteCountsArray = new VoteCounts[](userAddresses.length);
+        for (uint256 i = 0; i < userAddresses.length; i++) {
+            voteCountsArray[i] = proposalVotesStructs[proposalId].addressVoteCounts[userAddresses[i]];
+        }
+
+        return voteCountsArray;
+    }
+
+
+    /**
      * @dev Accessor to which addresses have cast a vote for a given proposal.
      */
     function proposalAddressesHaveVoted(uint256 proposalId) public view returns (address[] memory) {
@@ -81,7 +94,7 @@ abstract contract GovernorCountingSimple is Governor {
     }
 
     /**
-     * @dev Accessor to the internal vote counts for a given proposal.
+     * @dev Get the array of proposalIds and the array of their respective VoteCounts objects.
      */
     function allProposalTotalVotes()
         public

@@ -291,6 +291,18 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     /**
+     * @dev Retrieve the data of an array of proposalIds.
+     */
+    function getProposals(uint256[] memory inputProposalIds) public view returns (ProposalCore[] memory) {
+        ProposalCore[] memory proposalCoresArray = new ProposalCore[](inputProposalIds.length);
+        for (uint256 i = 0; i < inputProposalIds.length; i++) {
+            proposalCoresArray[i] = proposals[inputProposalIds[i]];
+        }
+
+        return proposalCoresArray;
+    }
+
+    /**
      * @dev Set the contest name.
      */
     function setName(string memory newName) public returns (string memory) {

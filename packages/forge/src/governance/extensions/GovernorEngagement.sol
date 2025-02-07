@@ -62,6 +62,19 @@ abstract contract GovernorEngagement is Governor {
     }
 
     /**
+     * @dev Retrieve the data of an array of commentIds.
+     */
+    function getComments(uint256[] memory inputCommentIds) public view returns (CommentCore[] memory) {
+        CommentCore[] memory commentCoresArray = new CommentCore[](inputCommentIds.length);
+        for (uint256 i = 0; i < inputCommentIds.length; i++) {
+            commentCoresArray[i] = comments[inputCommentIds[i]];
+        }
+
+        return commentCoresArray;
+    }
+
+
+    /**
      * @dev Return the array of commentIds on a given proposalId.
      */
     function getProposalComments(uint256 proposalId) public view returns (uint256[] memory) {
