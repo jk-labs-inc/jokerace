@@ -34,15 +34,19 @@ const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timin
 
     switch (timingOption) {
       case TimingPeriod.OneDay:
-        return `one day to enter: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+        return `open to enter for one day: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+      case TimingPeriod.TwoDays:
+        return `open to enter for two days: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+      case TimingPeriod.ThreeDays:
+        return `open to enter for three days: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
       case TimingPeriod.OneHour:
-        return `one hour to enter: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+        return `open to enter for one hour: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
       case TimingPeriod.OneWeek:
-        return `one week to enter: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+        return `open to enter for one week: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
       case TimingPeriod.OneMonth:
-        return `one month to enter: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+        return `open to enter for one month: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
       default:
-        return `enter contest within ${formattedSubmissionOpen} - ${formattedVoteOpen}`;
+        return `open to enter: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
     }
   }, [formattedSubmissionOpen, formattedVoteOpen, timingOptionForSubmissionPeriod]);
 
@@ -51,15 +55,19 @@ const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timin
 
     switch (timingOption) {
       case TimingPeriod.OneDay:
-        return `one day to vote: ${formattedVoteOpen} to ${formattedVotesClose}`;
+        return `open to vote for one day: ${formattedVoteOpen} to ${formattedVotesClose}`;
+      case TimingPeriod.TwoDays:
+        return `open to vote for two days: ${formattedVoteOpen} to ${formattedVotesClose}`;
+      case TimingPeriod.ThreeDays:
+        return `open to vote for three days: ${formattedVoteOpen} to ${formattedVotesClose}`;
       case TimingPeriod.OneHour:
-        return `one hour to vote: ${formattedVoteOpen} to ${formattedVotesClose}`;
+        return `open to vote for one hour: ${formattedVoteOpen} to ${formattedVotesClose}`;
       case TimingPeriod.OneWeek:
-        return `one week to vote: ${formattedVoteOpen} to ${formattedVotesClose}`;
+        return `open to vote for one week: ${formattedVoteOpen} to ${formattedVotesClose}`;
       case TimingPeriod.OneMonth:
-        return `one month to vote: ${formattedVoteOpen} to ${formattedVotesClose}`;
+        return `open to vote for one month: ${formattedVoteOpen} to ${formattedVotesClose}`;
       default:
-        return `vote within ${formattedVoteOpen} - ${formattedVotesClose}`;
+        return `open to vote: ${formattedVoteOpen} to ${formattedVotesClose}`;
     }
   }, [formattedVotesClose, formattedVoteOpen, timingOptionForVotingPeriod]);
 
