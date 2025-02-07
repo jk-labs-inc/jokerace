@@ -49,8 +49,8 @@ abstract contract GovernorCountingSimple is Governor {
      * @dev Accessor to which addresses have cast a vote for a given proposal.
      */
     function proposalAddressesHaveVoted(uint256 proposalId) public view returns (address[] memory) {
-        ProposalVote storage proposalvote = proposalVoteStructs[proposalId];
-        return proposalvote.addressesVoted;
+        ProposalVote storage proposalVote = proposalVoteStructs[proposalId];
+        return proposalVote.addressesVoted;
     }
 
     /**
@@ -189,26 +189,26 @@ abstract contract GovernorCountingSimple is Governor {
         internal
         override
     {
-        ProposalVote storage proposalvote = proposalVoteStructs[proposalId];
+        ProposalVote storage proposalVote = proposalVoteStructs[proposalId];
 
         if ((votingMerkleRoot != 0) && (numVotes > (totalVotes - addressTotalCastVoteCount[account]))) {
             revert NotEnoughVotesLeft();
         }
 
-        bool firstTimeVoting = (proposalvote.addressVoteCount[account] == 0);
+        bool firstTimeVoting = (proposalVote.addressVoteCount[account] == 0);
 
-        proposalvote.proposalVoteCount += numVotes;
-        proposalvote.addressVoteCount[account] += numVotes;
+        proposalVote.proposalVoteCount += numVotes;
+        proposalVote.addressVoteCount[account] += numVotes;
        
         if (firstTimeVoting) {
-            proposalvote.addressesVoted.push(account);
+            proposalVote.addressesVoted.push(account);
         }
         addressTotalCastVoteCount[account] += numVotes;
         totalVotesCast += numVotes;
 
         // sorting and consequently rewards module compatibility is only available if downvoting is disabled and sorting enabled
         if (sortingEnabled == 1) {
-            uint256 newVotes = proposalvote.proposalVoteCount; // only check state var once to save on gas
+            uint256 newVotes = proposalVote.proposalVoteCount; // only check state var once to save on gas
             uint256 oldVotes = newVotes - numVotes;
 
             // update map of forVotes => proposalId[] to be able to go from rank => proposalId.
