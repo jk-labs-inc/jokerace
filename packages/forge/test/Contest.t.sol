@@ -317,7 +317,7 @@ contract ContestTest is Test {
     function testProposeAnyoneCanCostIsOneEtherNoMsgValue() public {
         vm.warp(1681650001);
         vm.prank(UNPERMISSIONED_ADDRESS_1);
-        vm.expectRevert(abi.encodeWithSelector(Governor.IncorrectCostSent.selector, 1 ether));
+        vm.expectRevert(abi.encodeWithSelector(Governor.IncorrectCostSent.selector, 0, 1 ether));
         anyoneCanSubmitCostsAnEthContest.propose(unpermissionedAuthorProposal1, proof0);
     }
 
