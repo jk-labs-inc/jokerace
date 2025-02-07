@@ -80,7 +80,7 @@ export async function getContestContractVersion(address: string, chainId: number
     const defaultReturn = { abi: null, version: "unknown" };
     if (version === "5.1") {
       return { abi: RmDownvotingContract.abi, version }; 
-    }else if (version === "4.37") {
+    } else if (version === "4.37") {
       return { abi: EditTitleDescContract.abi, version }; 
     } else if (version === "4.36") {
       return { abi: NoCommentAfterCloseContract.abi, version }; 
