@@ -5,7 +5,7 @@ import { readContract } from "@wagmi/core";
 import { utils } from "ethers";
 import { useEffect, useState } from "react";
 
-export const VOTES_PER_PAGE = 5;
+export const VOTES_PER_PAGE = 4;
 
 interface VoteEntry {
   address: string;
