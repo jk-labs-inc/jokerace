@@ -4,11 +4,6 @@ import moment from "moment";
 
 export const anyoneCanPlayConfig: ContestTypeConfig = {
   data: {
-    prompt: {
-      evaluateVoters: "Voters should evaluate based on 50% relevance to the prompt and 50% originality.",
-      contactDetails: "Join the JokeRace telegram: https://t.co/j7Fp3u7pqS.",
-      summarize: "",
-    },
     submissionOpen: new Date(),
     votingOpen: moment().add(7, "days").toDate(),
     votingClose: moment().add(7, "days").add(3, "days").toDate(),

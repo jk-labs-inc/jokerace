@@ -1,7 +1,6 @@
 import { formatNumber } from "@helpers/formatNumber";
 import { AdvancedOptions, ContestVisibility, CustomizationOptions } from "@hooks/useDeployContest/store";
 import { FC } from "react";
-import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
 
 interface CreateContestConfirmCustomizationProps {
@@ -9,8 +8,8 @@ interface CreateContestConfirmCustomizationProps {
     customization: CustomizationOptions;
     advancedOptions: AdvancedOptions;
   };
-  step: Steps;
-  onClick?: (step: Steps) => void;
+  step: number;
+  onClick?: (stepIndex: number) => void;
 }
 
 const CreateContestConfirmCustomization: FC<CreateContestConfirmCustomizationProps> = ({

@@ -1,19 +1,18 @@
-import { FC, useMemo } from "react";
-import CreateContestConfirmLayout from "../Layout";
-import { Steps } from "../..";
 import { ContestType } from "@components/_pages/Create/types";
 import { VotingRequirements } from "@hooks/useDeployContest/types";
+import { FC, useMemo } from "react";
+import CreateContestConfirmLayout from "../Layout";
 import CreateContestConfirmEntryContestVoting from "./components/EntryContestVoting";
 
 interface CreateContestConfirmTypeProps {
   type: ContestType;
-  step: Steps;
+  step: number;
   votingAllowlist: {
     csv: Record<string, number>;
     prefilled: Record<string, number>;
   };
   votingRequirements: VotingRequirements;
-  onClick?: (step: Steps) => void;
+  onClick?: (stepIndex: number) => void;
 }
 
 const CreateContestConfirmType: FC<CreateContestConfirmTypeProps> = ({

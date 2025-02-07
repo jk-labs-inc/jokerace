@@ -19,6 +19,7 @@ import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
 import CreateContestConfirmType from "./components/Type";
 import { ContestType } from "../../types";
+import useChargeDetails from "@hooks/useChargeDetails";
 
 const ETHEREUM_MAINNET_CHAIN_ID = 1;
 

@@ -25,7 +25,7 @@ const emptyVotingRequirements = {
 const useSetContestTypeConfig = () => {
   const { address } = useAccount();
   const {
-    setPrompt,
+    contestType,
     setSubmissionOpen,
     setVotingOpen,
     setVotingClose,
@@ -41,13 +41,16 @@ const useSetContestTypeConfig = () => {
   const { setTimingOption: setVotingTimingOption } = useTimingOptionForVotingPeriod(state => state);
 
   const setContestTypeConfig = (type: ContestType, config: ContestTypeConfig) => {
+    if (type === contestType) {
+      return;
+    }
+
     if (type === ContestType.VotingContest) {
       processCreatorAllowlist(address);
     } else {
       setSubmissionMerkle(null);
     }
 
-    setPrompt(config.data.prompt);
     setSubmissionOpen(config.data.submissionOpen);
     setVotingOpen(config.data.votingOpen);
     setVotingClose(config.data.votingClose);

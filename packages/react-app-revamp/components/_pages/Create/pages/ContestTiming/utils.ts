@@ -44,7 +44,7 @@ export const useTimingOptionForSubmissionPeriod = create<StoreState>(set => ({
 }));
 
 export const useTimingOptionForVotingPeriod = create<StoreState>(set => ({
-  timingOption: timingPeriodsOptions[0],
+  timingOption: timingPeriodsOptions[timingPeriodsOptions.length - 1],
   setTimingOption: timingOption => set({ timingOption }),
 }));
 

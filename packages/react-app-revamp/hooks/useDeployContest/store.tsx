@@ -4,6 +4,7 @@ import { ContestType } from "@components/_pages/Create/types";
 import { ReactNode } from "react";
 import { create } from "zustand";
 import { Charge, SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle, VotingRequirements } from "./types";
+import moment from "moment";
 
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
 
@@ -155,11 +156,8 @@ export interface DeployContestState {
 export const useDeployContestStore = create<DeployContestState>((set, get) => {
   const initialSubmissionOpen: Date = new Date();
 
-  const initialVotingOpen: Date = new Date();
-  initialVotingOpen.setDate(initialVotingOpen.getDate() + 7);
-
-  const initialVotingClose: Date = new Date();
-  initialVotingClose.setDate(initialVotingClose.getDate() + 14);
+  const initialVotingOpen: Date = moment().add(7, "days").toDate();
+  const initialVotingClose: Date = moment().add(7, "days").add(3, "days").toDate();
 
   const initialState = {
     deployContestData: {
@@ -172,7 +170,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     title: "",
     prompt: {
       summarize: "",
-      evaluateVoters: "",
+      evaluateVoters: "Voters should evaluate based on 50% relevance to the prompt and 50% originality.",
+      contactDetails: "Join the JokeRace telegram: https://t.co/j7Fp3u7pqS.",
     },
 
     submissionOpen: initialSubmissionOpen,

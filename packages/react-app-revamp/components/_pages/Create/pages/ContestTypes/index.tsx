@@ -70,7 +70,9 @@ const CreateContestTypes = () => {
           <CreateContestTypesEntryBased
             isSelected={contestType === ContestType.EntryContest}
             onClick={type => handleTypeSelection(type)}
+            faqLink={faqLink}
           />
+
           <CreateContestTypesVotingBased
             isSelected={contestType === ContestType.VotingContest}
             onClick={type => handleTypeSelection(type)}

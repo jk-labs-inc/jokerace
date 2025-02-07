@@ -1,5 +1,5 @@
 import { Prompt } from "@hooks/useDeployContest/store";
-import { VotingMerkle } from "@hooks/useDeployContest/types";
+import { Charge, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Option } from "./components/DefaultDropdown";
 
 export enum StepTitle {
@@ -19,7 +19,6 @@ export enum ContestType {
 }
 
 export interface ContestDataForType {
-  prompt: Prompt;
   submissionOpen: Date;
   votingOpen: Date;
   votingClose: Date;

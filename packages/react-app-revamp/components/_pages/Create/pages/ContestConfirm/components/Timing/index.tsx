@@ -1,6 +1,5 @@
 import moment from "moment-timezone";
 import { FC, useMemo } from "react";
-import { Steps } from "../..";
 import {
   TimingPeriod,
   useTimingOptionForSubmissionPeriod,
@@ -14,8 +13,8 @@ interface CreateContestConfirmTimingProps {
     votingOpen: Date;
     votingClose: Date;
   };
-  step: Steps;
-  onClick?: (step: Steps) => void;
+  step: number;
+  onClick?: (stepIndex: number) => void;
 }
 
 const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timing, step, onClick }) => {

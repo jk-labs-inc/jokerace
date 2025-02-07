@@ -7,13 +7,12 @@ import { Charge, SplitFeeDestinationType, VoteType } from "@hooks/useDeployConte
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
-import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
 
 interface CreateContestConfirmMonetizationProps {
   charge: Charge;
-  step: Steps;
-  onClick?: (step: Steps) => void;
+  step: number;
+  onClick?: (stepIndex: number) => void;
 }
 
 const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps> = ({ charge, step, onClick }) => {

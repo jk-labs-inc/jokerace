@@ -1,7 +1,7 @@
 import CreateNumberInput from "@components/_pages/Create/components/NumberInput";
 import { Radio, RadioGroup } from "@headlessui/react";
 import { VoteType } from "@hooks/useDeployContest/types";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
 interface ContestParamsChargeVoteProps {
@@ -25,6 +25,14 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
 }) => {
   const [selected, setSelected] = useState<VoteType>(type);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+
+  useEffect(() => {
+    if (isAnyoneCanVote) {
+      setSelected(VoteType.PerVote);
+    } else {
+      setSelected(VoteType.PerTransaction);
+    }
+  }, [isAnyoneCanVote]);
 
   const handleVoteTypeChange = (value: VoteType) => {
     setSelected(value);
@@ -73,7 +81,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                   ) : null}
                   {isAnyoneCanVote ? (
                     <p className="text-[14px] text-neutral-11">
-                      <b>note:</b> only available in entry based contests
+                      <b>note:</b> only available in entry contest type
                     </p>
                   ) : null}
                 </div>

@@ -1,12 +1,11 @@
 import { EntryPreview, EntryPreviewConfig, MetadataField } from "@hooks/useDeployContest/store";
 import { FC, useMemo } from "react";
-import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
 interface CreateContestConfirmPreviewProps {
   entryPreviewConfig: EntryPreviewConfig;
   metadataFields: MetadataField[];
-  step: Steps;
-  onClick?: (step: Steps) => void;
+  step: number;
+  onClick?: (stepIndex: number) => void;
 }
 
 const CreateContestConfirmPreview: FC<CreateContestConfirmPreviewProps> = ({

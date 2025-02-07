@@ -1,11 +1,10 @@
 import { FC } from "react";
-import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
 
 interface CreateContestConfirmTitleProps {
   title: string;
-  step: Steps;
-  onClick?: (step: Steps) => void;
+  step: number;
+  onClick?: (stepIndex: number) => void;
 }
 
 const CreateContestConfirmTitle: FC<CreateContestConfirmTitleProps> = ({ step, title, onClick }) => {

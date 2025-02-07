@@ -6,13 +6,13 @@ import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
+
 interface CreateContestConfirmDescriptionProps {
   prompt: Prompt;
-  step: Steps;
+  step: number;
   imageUrl?: string;
-  onClick?: (step: Steps) => void;
+  onClick?: (stepIndex: number) => void;
 }
 
 const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> = ({
