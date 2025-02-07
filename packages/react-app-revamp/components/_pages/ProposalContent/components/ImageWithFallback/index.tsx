@@ -38,7 +38,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ mediumSrc, fullSr
       <img
         src={isLoading ? fullSrc : currentImage.img.src}
         alt={alt}
-        className="rounded-[16px] w-full h-full object-cover"
+        className="rounded-[16px] w-full h-full min-h-52 object-contain"
       />
     </div>
   );
