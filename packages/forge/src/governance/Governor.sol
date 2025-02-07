@@ -98,7 +98,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant MAX_FIELDS_METADATA_LENGTH = 10;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // our hot wallet that we collect revenue to
-    string private constant VERSION = "4.37"; // Private as to not clutter the ABI
+    string private constant VERSION = "5.1"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
     string public prompt;
@@ -323,9 +323,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      *
      * Note: Support is generic and can represent various things depending on the voting system used.
      */
-    function _countVote(uint256 proposalId, address account, uint256 numVotes, uint256 totalVotes)
-        internal
-        virtual;
+    function _countVote(uint256 proposalId, address account, uint256 numVotes, uint256 totalVotes) internal virtual;
 
     /**
      * @dev Verifies that `account` is permissioned to propose via merkle proof.
@@ -547,11 +545,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     /**
      * @dev Cast a vote without a proof if you have already voted with a proof.
      */
-    function castVoteWithoutProof(uint256 proposalId, uint256 numVotes)
-        public
-        payable
-        returns (uint256)
-    {
+    function castVoteWithoutProof(uint256 proposalId, uint256 numVotes) public payable returns (uint256) {
         uint256 actionCost = _determineCorrectAmountSent(Actions.Vote, numVotes);
 
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
@@ -568,10 +562,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      *
      * Emits a {IGovernor-VoteCast} event.
      */
-    function _castVote(uint256 proposalId, address account, uint256 numVotes)
-        internal
-        returns (uint256)
-    {
+    function _castVote(uint256 proposalId, address account, uint256 numVotes) internal returns (uint256) {
         if (state() != ContestState.Active) revert ContestMustBeActiveToVote(state());
         if (numVotes == 0) revert NeedAtLeastOneVoteToVote();
 

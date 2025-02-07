@@ -37,11 +37,7 @@ abstract contract GovernorCountingSimple is Governor {
     /**
      * @dev Accessor to how many votes an address has cast for a given proposal.
      */
-    function proposalAddressVotes(uint256 proposalId, address userAddress)
-        public
-        view
-        returns (uint256 voteCount)
-    {
+    function proposalAddressVotes(uint256 proposalId, address userAddress) public view returns (uint256 voteCount) {
         return proposalVoteStructs[proposalId].addressVoteCount[userAddress];
     }
 
@@ -183,12 +179,9 @@ abstract contract GovernorCountingSimple is Governor {
     }
 
     /**
-     * @dev See {Governor-_countVote}. 
+     * @dev See {Governor-_countVote}.
      */
-    function _countVote(uint256 proposalId, address account, uint256 numVotes, uint256 totalVotes)
-        internal
-        override
-    {
+    function _countVote(uint256 proposalId, address account, uint256 numVotes, uint256 totalVotes) internal override {
         ProposalVote storage proposalVote = proposalVoteStructs[proposalId];
 
         if ((votingMerkleRoot != 0) && (numVotes > (totalVotes - addressTotalCastVoteCount[account]))) {
@@ -199,7 +192,7 @@ abstract contract GovernorCountingSimple is Governor {
 
         proposalVote.proposalVoteCount += numVotes;
         proposalVote.addressVoteCount[account] += numVotes;
-       
+
         if (firstTimeVoting) {
             proposalVote.addressesVoted.push(account);
         }
