@@ -6,7 +6,7 @@ import { EntryPreview } from "@hooks/useDeployContest/store";
 
 export const grantsRoundConfig: TemplateConfig = {
   type: TemplateType.grantsRound,
-  stepsToFulfill: [StepTitle.Title, StepTitle.Entries, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
+  stepsToFulfill: [StepTitle.Rules, StepTitle.Entries, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
   data: {
     prompt: {
       summarize:
@@ -18,7 +18,6 @@ export const grantsRoundConfig: TemplateConfig = {
       preview: EntryPreview.TITLE,
       isAdditionalDescriptionEnabled: true,
     },
-    type: "grants round",
     submissionOpen: moment().toDate(),
     votingOpen: moment().add(7, "days").toDate(),
     votingClose: moment().add(7, "days").add(1, "day").toDate(),

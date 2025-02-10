@@ -1,6 +1,6 @@
-import DialogModalSendProposalEmailSubscription from "@components/_pages/DialogModalSendProposal/components/EmailSubscription";
 import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import EmailSubscription from "@components/UI/EmailSubscription";
 import { FOOTER_LINKS, LINK_BRIDGE_DOCS } from "@config/links";
 import { chains } from "@config/wagmi";
 import { Switch } from "@headlessui/react";
@@ -82,7 +82,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
           <p className="text-[16px] text-neutral-11 font-bold">get updates on contests</p>
         </div>
         {wantsSubscription ? (
-          <DialogModalSendProposalEmailSubscription
+          <EmailSubscription
             emailAlreadyExists={emailAlreadyExists ?? false}
             emailError={emailError}
             emailForSubscription={emailForSubscription ?? ""}

@@ -6,8 +6,13 @@ import { parseCsvVoting } from "@helpers/parseVotingCsv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
-import { VotingFieldObject } from "../../VotingAllowlist/components/CSVEditor";
-import CSVParseError, { ParseError } from "../../VotingAllowlist/components/CSVEditor/CSVParseError";
+import CSVParseError, { ParseError } from "./CSVParseError";
+
+export type VotingFieldObject = {
+  address: string;
+  votes: string;
+  error: "address" | "votes" | "both" | "exceededLimit" | null;
+};
 
 interface VotingCSVFileUploaderProps {
   onChange?: (fields: Array<VotingFieldObject>) => void;
@@ -98,7 +103,7 @@ const VotingCSVFileUploader: FC<VotingCSVFileUploaderProps> = ({ onChange, onNex
   return (
     <div className="flex flex-col gap-4">
       <FileUpload onFileSelect={onFileSelectHandler} type="csv" isSuccess={uploadSuccess} />
-      <CSVParseError type={parseError} step="voting" />
+      <CSVParseError type={parseError} />
       <CSVErrorModalDuplicates
         addresses={duplicateAddresses}
         isOpen={isDuplicatesModalOpen}

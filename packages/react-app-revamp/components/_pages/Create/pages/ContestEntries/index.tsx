@@ -1,20 +1,21 @@
+import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useMediaQuery } from "react-responsive";
-import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
+import { useContestSteps } from "../../hooks/useContestSteps";
 import { useNextStep } from "../../hooks/useNextStep";
-import ContestEntriesPreview from "./components/Preview";
-import ContestEntriesAdditionalDescription from "./components/AdditionalDescription";
-import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import ContestParamsMetadata from "../ContestParams/components/Metadata";
+import ContestEntriesAdditionalDescription from "./components/AdditionalDescription";
+import ContestEntriesPreview from "./components/Preview";
 
 const CreateContestEntries = () => {
+  const { steps } = useContestSteps();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { step, metadataToggle, setMetadataToggle } = useDeployContestStore(state => state);
   const onNextStep = useNextStep();
-  const stepTitle = "entries";
+  const stepTitle = "format";
 
   const toggleMetadata = () => {
     setMetadataToggle(!metadataToggle);

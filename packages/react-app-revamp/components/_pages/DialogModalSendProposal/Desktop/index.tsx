@@ -1,9 +1,11 @@
 import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
+import EmailSubscription from "@components/UI/EmailSubscription";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { FOOTER_LINKS, LINK_BRIDGE_DOCS } from "@config/links";
+import { chains } from "@config/wagmi";
 import { Switch } from "@headlessui/react";
 import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
@@ -16,12 +18,10 @@ import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, ReactNode, useState } from "react";
 import DialogModalSendProposalEditor from "../components/Editor";
-import DialogModalSendProposalEmailSubscription from "../components/EmailSubscription";
 import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
 import { isEntryPreviewPrompt } from "../utils";
-import { chains } from "@config/wagmi";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -217,7 +217,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                   <p className="text-[16px] text-neutral-11 font-bold">get updates on contests</p>
                 </div>
                 {wantsSubscription ? (
-                  <DialogModalSendProposalEmailSubscription
+                  <EmailSubscription
                     emailAlreadyExists={emailAlreadyExists ?? false}
                     emailError={emailError}
                     emailForSubscription={emailForSubscription ?? ""}

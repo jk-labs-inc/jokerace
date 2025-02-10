@@ -2,15 +2,16 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
-import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
 import CreateSubmissionPeriod from "./components/SubmissionPeriod";
 import CreateVotingPeriod from "./components/VotingPeriod";
+import { useContestSteps } from "../../hooks/useContestSteps";
 
 const CreateContestTiming = () => {
+  const { steps } = useContestSteps();
   const { step, submissionOpen, setSubmissionOpen } = useDeployContestStore(state => state);
   const onNextStep = useNextStep();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
