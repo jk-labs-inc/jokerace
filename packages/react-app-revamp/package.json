@@ -57,7 +57,7 @@
     "fuse.js": "7.1.0",
     "i18next": "23.16.8",
     "interweave": "13.1.1",
-    "interweave-autolink": "5.1.1",
+    "interweave-autolink": "5.1.2",
     "interweave-ssr": "2.0.0",
     "lodash": "4.17.21",
     "lokijs": "1.5.12",
