@@ -49,20 +49,22 @@ const LandingPageExplainer = () => {
       titleFontSize: "text-[20px] md:text-[24px]",
       content: (
         <>
-          <ul className="flex flex-col pl-8 gap-2">
-            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+          <ul className="flex flex-col pl-4 gap-2">
+            <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
               {isMobile
                 ? "make a contest, make money: we split all charges 50/50"
                 : "make a contest, make money: we split entry and voting charges"}
             </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+            <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
               let anyone vote—or allowlist. the choice is yours, and it’s anti-bot.
             </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">create a rewards pool for winners</li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+            <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
+              create a rewards pool for winners
+            </li>
+            <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
               keep the money you earn, or put it back into rewards pool
             </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+            <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
               give players rewards, points, credentials—all data is onchain
             </li>
           </ul>
@@ -77,18 +79,20 @@ const LandingPageExplainer = () => {
         <>
           <div className="flex flex-col gap-4 mdgap-6">
             <p className="text-neutral-11 text-[16px] md:text-[20px] font-bold">to create a contest:</p>
-            <ul className="flex flex-col pl-8 gap-2">
-              <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+            <ul className="flex flex-col pl-4 gap-2">
+              <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
                 pick your contest type: who can enter? who can vote?
               </li>
-              <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">pick a gallery view or text view</li>
-              <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+              <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
+                pick a gallery view or text view
+              </li>
+              <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
                 set duration for entry and voting periods
               </li>
-              <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+              <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
                 set charges for entering and voting
               </li>
-              <li className="text-[16px] md:text-[20px] mt-4 md:mt-6 text-neutral-11 list-disc">
+              <li className="text-[16px] md:text-[20px] mt-4 md:mt-6 text-neutral-11 list-none before:content-['>'] before:mr-2">
                 <i>bonus: add a rewards pool. fund it yourself—or with money you earn from the contest.</i>
               </li>
             </ul>
@@ -111,14 +115,14 @@ const LandingPageExplainer = () => {
       titleFontSize: "text-[16px] md:text-[20px]",
       content: (
         <>
-          <ul className="flex flex-col pl-8 gap-2">
-            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+          <ul className="flex flex-col pl-4 gap-2">
+            <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
               submit entries during the entry period
             </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+            <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
               vote on entries during the voting period
             </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+            <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
               {isMobile
                 ? "earn rewards, attestations, points, credentials"
                 : "earn rewards, attestations, points, credentials, and more."}
@@ -139,13 +143,13 @@ const LandingPageExplainer = () => {
       titleFontSize: "text-[16px] md:text-[20px]",
       content: (
         <>
-          <ul className="flex flex-col pl-8 gap-2">
-            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+          <ul className="flex flex-col pl-4 gap-2">
+            <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
               {isMobile
                 ? "it's permissionless: we're open source onchain"
                 : "we're open source and onchain—so anyone can build on us"}
             </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+            <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
               {isMobile ? (
                 "build an extension to extend contest features and drive users to your service"
               ) : (
@@ -155,7 +159,7 @@ const LandingPageExplainer = () => {
                 </>
               )}
             </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+            <li className="text-[16px] md:text-[20px] text-neutral-11 list-none before:content-['>'] before:mr-2">
               {isMobile ? (
                 "build a circuit: a smart contract that lets players perform any action with their fees"
               ) : (
