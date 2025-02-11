@@ -126,7 +126,7 @@ const CreateContestRulesDescription = () => {
             >
               <EditorContent
                 editor={editorContactDetails}
-                className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-14 md:h-20"
+                className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-20"
               />
             </div>
           </div>

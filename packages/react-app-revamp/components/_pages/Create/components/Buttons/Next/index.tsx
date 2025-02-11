@@ -56,6 +56,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
             back
           </p>
           <ButtonV3
+            isDisabled={isDisabled}
             onClick={handleClick}
             colorClass="text-[20px] bg-gradient-purple rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           >
