@@ -20,6 +20,7 @@ import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
 import CreateContestConfirmPreview from "./components/Preview";
 import CreateContestConfirmImage from "./components/Image";
+import TestnetDeploymentModal from "@components/UI/Deployment/Testnet";
 
 export enum Steps {
   ContestTitle = 0,
@@ -42,11 +43,14 @@ const CreateContestConfirm = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const title = isMobile ? "let’s confirm" : "finally, let’s confirm";
   const [isEthereumDeploymentModalOpen, setIsEthereumDeploymentModalOpen] = useState(false);
+  const [isTestnetDeploymentModalOpen, setIsTestnetDeploymentModalOpen] = useState(false);
   const [isChainDetailsLoading, setIsChainDetailsLoading] = useState(false);
 
   const onDeployHandler = useCallback(() => {
     if (chainId === ETHEREUM_MAINNET_CHAIN_ID) {
       setIsEthereumDeploymentModalOpen(true);
+    } else if (chain?.testnet) {
+      setIsTestnetDeploymentModalOpen(true);
     } else {
       deployContest();
     }
@@ -164,6 +168,11 @@ const CreateContestConfirm = () => {
         <EthereumDeploymentModal
           isOpen={isEthereumDeploymentModalOpen}
           setIsOpen={value => setIsEthereumDeploymentModalOpen(value)}
+          onDeploy={deployContest}
+        />
+        <TestnetDeploymentModal
+          isOpen={isTestnetDeploymentModalOpen}
+          setIsOpen={value => setIsTestnetDeploymentModalOpen(value)}
           onDeploy={deployContest}
         />
       </div>
