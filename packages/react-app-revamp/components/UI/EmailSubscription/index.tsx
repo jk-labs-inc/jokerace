@@ -41,7 +41,7 @@ const EmailSubscription: FC<EmailSubscriptionProps> = ({
               rel="nofollow noreferrer"
               target="_blank"
             >
-              our privacy policy
+              our terms of service
             </a>
           </p>
         )}
