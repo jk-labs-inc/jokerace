@@ -45,44 +45,26 @@ const LandingPageExplainer = () => {
 
   const sectionContent = [
     {
-      title: "why JokeRace?",
+      title: "why launch contests with JokeRace?",
       titleFontSize: "text-[20px] md:text-[24px]",
       content: (
         <>
           <ul className="flex flex-col pl-8 gap-2">
             <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
               {isMobile
-                ? "contest creators make money: we split charges"
-                : "contest creators make money: we split all charges 50/50"}
+                ? "make a contest, make money: we split all charges 50/50"
+                : "make a contest, make money: we split entry and voting charges"}
             </li>
             <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
-              {isMobile
-                ? "players can earn rewards, points, credentials, etc"
-                : "players can earn rewards, points, credentials, and more"}
+              let anyone vote—or allowlist. the choice is yours, and it’s anti-bot.
+            </li>
+            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">create a rewards pool for winners</li>
+            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+              keep the money you earn, or put it back into rewards pool
             </li>
             <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
-              {isMobile
-                ? "rewards are programmable & verifiable onchain"
-                : "rewards are fully programmable and verifiable onchain"}
+              give players rewards, points, credentials—all data is onchain
             </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
-              anyone can build and access extensions on us
-            </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
-              {isMobile
-                ? "players' fees can perform any onchain action"
-                : "players can perform any onchain action with their fees"}
-            </li>
-            {!isMobile && (
-              <>
-                <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
-                  players build out social graphs of taste and attestations
-                </li>
-                <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
-                  contests are optimized to be <i>social</i>
-                </li>
-              </>
-            )}
           </ul>
           <Subscribe />
         </>
@@ -97,48 +79,22 @@ const LandingPageExplainer = () => {
             <p className="text-neutral-11 text-[16px] md:text-[20px] font-bold">to create a contest:</p>
             <ul className="flex flex-col pl-8 gap-2">
               <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
-                {isMobile
-                  ? "let anyone submit and vote—or use allowlists"
-                  : "let anyone submit and vote on entries—or use allowlists"}
+                pick your contest type: who can enter? who can vote?
+              </li>
+              <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">pick a gallery view or text view</li>
+              <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
+                set duration for entry and voting periods
               </li>
               <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
-                set the duration for entries and voting
-              </li>
-              <li className="text-[16px] md:text-[20px] text-neutral-11 list-disc">
-                (optional) add rewards for winners
+                set charges for entering and voting
               </li>
               <li className="text-[16px] md:text-[20px] mt-4 md:mt-6 text-neutral-11 list-disc">
-                {isMobile ? (
-                  <>
-                    <b>
-                      <i>that's it.</i>
-                    </b>{" "}
-                    you just pay the cost to deploy
-                  </>
-                ) : (
-                  <>
-                    <b>
-                      <i>that's it.</i>
-                    </b>{" "}
-                    you just pay the cost to deploy (often just cents).
-                  </>
-                )}
+                <i>bonus: add a rewards pool. fund it yourself—or with money you earn from the contest.</i>
               </li>
             </ul>
           </div>
           <p className="text-neutral-11 text-[16px] md:text-[20px]">
-            {isMobile ? (
-              <>
-                <i>tip:</i> first run a contest for a jury to pick top finalists; then run one for anyone to vote on the
-                winner.
-              </>
-            ) : (
-              <>
-                {" "}
-                <i>pro tip:</i> run a <i>quality</i> contest for a jury to pick finalists; then run <br />
-                an <i>engagement</i> contest for anyone to vote on the winner.
-              </>
-            )}
+            <b>and it’s free.</b> you just pay the cost to deploy (often just cents).
           </p>
           <Link
             href={ROUTE_CREATE_CONTEST}
