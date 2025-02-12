@@ -7,13 +7,12 @@ import { Charge, SplitFeeDestinationType, VoteType } from "@hooks/useDeployConte
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
-import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
 
 interface CreateContestConfirmMonetizationProps {
   charge: Charge;
-  step: Steps;
-  onClick?: (step: Steps) => void;
+  step: number;
+  onClick?: (stepIndex: number) => void;
 }
 
 const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps> = ({ charge, step, onClick }) => {
@@ -74,27 +73,25 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
   return (
     <CreateContestConfirmLayout onClick={() => onClick?.(step)} onHover={value => setIsHovered(value)}>
       <div
-        className={`flex flex-col gap-4 ${highlightChainChange && !isLoading ? "text-negative-11 animate-pulse" : isHovered || isMobileOrTablet ? "text-neutral-11" : "text-neutral-14"} transition-all duration-300`}
+        className={`flex flex-col gap-2 ${highlightChainChange && !isLoading ? "text-negative-11 animate-pulse" : "text-neutral-11"} transition-all duration-300`}
       >
-        <p className="text-[16px] font-bold">
-          monetization:
-          {!chargeEnabled ? <b className="uppercase"> OFF</b> : null}
-        </p>
+        <p className="text-neutral-9 text-[12px] font-bold uppercase">monetization</p>
         {isLoading ? (
           <p className="loadingDots font-sabo text-[14px]  text-neutral-14">loading charge fees</p>
         ) : chargeEnabled ? (
-          <ul className="flex flex-col pl-8">
-            <li className={`text-[16px] list-disc`}>
+          <ul className="flex flex-col pl-6 list-disc">
+            <li className="text-[16px]">
               {charge.type.costToPropose} <span className="uppercase">${nativeCurrencySymbol}</span> to enter
             </li>
-            <li className={`text-[16px] list-disc`}>
+            <li className="text-[16px]">
               {charge.type.costToVote} <span className="uppercase">${nativeCurrencySymbol}</span>{" "}
               {charge.voteType === VoteType.PerVote ? "for each" : "to"} vote
             </li>
+
             {renderEarningsSplitMessage()}
             {splitFeeDestination.type === SplitFeeDestinationType.AnotherWallet ||
             splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet ? (
-              <li className="text-[16px] list-disc">
+              <li className="text-[16px]">
                 creator charges go to{" "}
                 <a className="underline cursor-pointer" target="_blank" href={blockExplorerAddressUrl}>
                   {shortenEthereumAddress(

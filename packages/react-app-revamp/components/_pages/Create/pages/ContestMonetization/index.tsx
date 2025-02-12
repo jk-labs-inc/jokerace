@@ -1,47 +1,40 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
-import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
+import { useContestSteps } from "../../hooks/useContestSteps";
 import { useNextStep } from "../../hooks/useNextStep";
 import { usePreviousStep } from "../../hooks/usePreviousStep";
 import CreateContestCharge from "./components/Charge";
 import CreateContestChargeUnconnectedAccount from "./components/UnconnectedAccount";
-import CreateContestChargeUnsupportedChain from "./components/UnsupportedChain";
 
 const CreateContestMonetization = () => {
   const { step, votingRequirementsOption } = useDeployContestStore(state => state);
-  const { isConnected, chain, address } = useAccount();
+  const { steps } = useContestSteps();
+  const { isConnected, chain } = useAccount();
   const [disableNextStep, setDisableNextStep] = useState(false);
-  const [unsupportedChain, setUnsupportedChain] = useState(false);
   const onNextStep = useNextStep();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const monetizeTitle = isMobile ? `charges` : `let’s monetize this puppy`;
+  const monetizeTitle = isMobile ? `charges` : `let's monetize this puppy`;
   const onPreviousStep = usePreviousStep();
-
-  useEffect(() => {
-    setUnsupportedChain(false);
-  }, [chain]);
 
   const switchLayout = useMemo<JSX.Element>(() => {
     if (!isConnected) {
       return <CreateContestChargeUnconnectedAccount />;
-    } else if (unsupportedChain) {
-      return <CreateContestChargeUnsupportedChain />;
     }
 
     return (
       <CreateContestCharge
-        isConnected={isConnected}
         chain={chain?.name.toLowerCase() ?? ""}
-        onError={value => setDisableNextStep(value)}
-        onUnsupportedChain={value => setUnsupportedChain(value)}
+        onError={hasError => {
+          setDisableNextStep(hasError);
+        }}
       />
     );
-  }, [chain?.name, isConnected, onPreviousStep, unsupportedChain, votingRequirementsOption.value]);
+  }, [chain?.name, onPreviousStep, votingRequirementsOption.value, step]);
 
   return (
     <div className="flex flex-col">

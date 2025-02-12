@@ -78,7 +78,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                     }`}
                   ></div>
                   <div className="flex flex-col gap-4">
-                    <p className={`text-[20px] ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                    <p className={`text-[20px] ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
                       my wallet ({isMobile ? "i earn" : "i want to earn"})
                     </p>
                   </div>
@@ -94,9 +94,10 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                     } `}
                   ></div>
                   <div className="flex flex-col gap-2">
-                    <p className={`text-[20px] ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                    <p className={`text-[20px] ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
                       another wallet ({isMobile ? "they earn" : "i want someone else to earn"})
                     </p>
+
                     {checked ? (
                       <>
                         <input
@@ -129,7 +130,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                     }`}
                   ></div>
                   <div className="flex flex-col gap-4">
-                    <p className={`text-[20px] normal-case ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                    <p className={`text-[20px] normal-case ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
                       {isMobile ? "nobody (JokeRace earns)" : "i prefer to take 0%  (i want JokeRace to earn)"}
                     </p>
                   </div>
@@ -215,7 +216,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                       }`}
                     ></div>
                     <div className="flex flex-col gap-4">
-                      <p className={`text-[20px] ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                      <p className={`text-[20px] ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
                         {isMobile ? "rewards pool (winners earn)" : "the rewards pool (i want winners to earn)"}
                       </p>
                     </div>
