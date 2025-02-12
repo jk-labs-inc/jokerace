@@ -12,7 +12,7 @@ const ContestEntriesPreview = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-[20px] text-neutral-11 font-bold">what should a player input as a preview for their entry?</p>
+      <p className="text-[20px] text-neutral-11 font-bold">what kind of preview should a player enter?</p>
       <RadioGroup value={entryPreviewConfig.preview} onChange={handlePreviewChange}>
         <div className="flex flex-col gap-4">
           <Radio value={EntryPreview.TITLE}>
@@ -24,7 +24,7 @@ const ContestEntriesPreview = () => {
                   }`}
                 ></div>
                 <div className="flex flex-col gap-4">
-                  <p className={`text-[20px] ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                  <p className={`text-[20px] ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
                     a title (recommended for most contests)
                   </p>
                 </div>
@@ -40,7 +40,7 @@ const ContestEntriesPreview = () => {
                   }`}
                 ></div>
                 <div className="flex flex-col gap-4">
-                  <p className={`text-[20px] ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                  <p className={`text-[20px] ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
                     an image {isMobile ? "" : "(recommended for meme contests, art contests, design contests, etc)"}
                   </p>
                 </div>
@@ -56,7 +56,7 @@ const ContestEntriesPreview = () => {
                   }`}
                 ></div>
                 <div className="flex flex-col gap-4">
-                  <p className={`text-[20px] ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                  <p className={`text-[20px] ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
                     an image + title {isMobile ? "" : "(recommended for competitions between projects with logos)"}
                   </p>
                 </div>
@@ -72,7 +72,7 @@ const ContestEntriesPreview = () => {
                   }`}
                 ></div>
                 <div className="flex flex-col gap-4">
-                  <p className={`text-[20px] ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                  <p className={`text-[20px] ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
                     a tweet {isMobile ? "" : "(recommended for contests on x.com posts)"}
                   </p>
                 </div>

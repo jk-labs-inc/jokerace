@@ -57,7 +57,6 @@ const CreateVotingRequirementsTokenSettings: FC<CreateVotingRequirementsTokenSet
 
   return (
     <CreateRequirementsSettings
-      step="voting"
       settingType={votingRequirements.type}
       chain={votingRequirements.chain}
       error={error}

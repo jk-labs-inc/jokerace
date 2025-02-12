@@ -11,6 +11,8 @@ export enum TimingPeriod {
   OneWeek = "1w",
   OneHour = "1hr",
   OneDay = "1d",
+  TwoDays = "2d",
+  ThreeDays = "3d",
   OneMonth = "1m",
   Custom = "custom",
 }
@@ -29,6 +31,14 @@ export const timingPeriodsOptions = [
     label: "one day",
   },
   {
+    value: TimingPeriod.TwoDays,
+    label: "two days",
+  },
+  {
+    value: TimingPeriod.ThreeDays,
+    label: "three days",
+  },
+  {
     value: TimingPeriod.OneMonth,
     label: "one month",
   },
@@ -39,12 +49,12 @@ export const timingPeriodsOptions = [
 ];
 
 export const useTimingOptionForSubmissionPeriod = create<StoreState>(set => ({
-  timingOption: timingPeriodsOptions[0],
+  timingOption: timingPeriodsOptions[0], // one week
   setTimingOption: timingOption => set({ timingOption }),
 }));
 
 export const useTimingOptionForVotingPeriod = create<StoreState>(set => ({
-  timingOption: timingPeriodsOptions[0],
+  timingOption: timingPeriodsOptions[4], // three days
   setTimingOption: timingOption => set({ timingOption }),
 }));
 
@@ -56,8 +66,13 @@ export const addTimeBasedOnPeriod = (startDate: Date, period: TimingPeriod): Dat
       return moment(startDate).add(1, "hours").toDate();
     case TimingPeriod.OneDay:
       return moment(startDate).add(1, "days").toDate();
+    case TimingPeriod.TwoDays:
+      return moment(startDate).add(2, "days").toDate();
+    case TimingPeriod.ThreeDays:
+      return moment(startDate).add(3, "days").toDate();
     case TimingPeriod.OneMonth:
       return moment(startDate).add(1, "months").toDate();
+
     default:
       return startDate;
   }

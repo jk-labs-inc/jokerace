@@ -6,7 +6,7 @@ import { EntryPreview } from "@hooks/useDeployContest/store";
 
 export const karaokeChallengeConfig: TemplateConfig = {
   type: TemplateType.karaokeChallenge,
-  stepsToFulfill: [StepTitle.Title, StepTitle.Entries, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
+  stepsToFulfill: [StepTitle.Rules, StepTitle.Entries, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
   data: {
     prompt: {
       summarize:
@@ -18,7 +18,6 @@ export const karaokeChallengeConfig: TemplateConfig = {
       preview: EntryPreview.TITLE,
       isAdditionalDescriptionEnabled: true,
     },
-    type: "karaoke challenge",
     submissionOpen: moment().toDate(),
     votingOpen: moment().add(15, "minutes").toDate(),
     votingClose: moment().add(15, "minutes").add(2, "hours").add(45, "minutes").toDate(),

@@ -1,7 +1,7 @@
 import CreateNumberInput from "@components/_pages/Create/components/NumberInput";
 import { Radio, RadioGroup } from "@headlessui/react";
 import { VoteType } from "@hooks/useDeployContest/types";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
 interface ContestParamsChargeVoteProps {
@@ -25,6 +25,14 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
 }) => {
   const [selected, setSelected] = useState<VoteType>(type);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+
+  useEffect(() => {
+    if (isAnyoneCanVote) {
+      setSelected(VoteType.PerVote);
+    } else {
+      setSelected(VoteType.PerTransaction);
+    }
+  }, [isAnyoneCanVote]);
 
   const handleVoteTypeChange = (value: VoteType) => {
     setSelected(value);
@@ -57,7 +65,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                 <div className={`flex flex-col ${isAnyoneCanVote ? "gap-1" : "gap-4"}`}>
                   <p
                     className={`text-[20px] ${
-                      checked ? "text-secondary-11" : "text-neutral-9"
+                      checked ? "text-neutral-11" : "text-neutral-9"
                     } ${isAnyoneCanVote ? "opacity-50" : "opacity-100"}`}
                   >
                     a charge <i>each time</i> they vote {isAnyoneCanVote ? "" : "(recommended)"}
@@ -73,7 +81,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                   ) : null}
                   {isAnyoneCanVote ? (
                     <p className="text-[14px] text-neutral-11">
-                      <b>note:</b> not available in anyone-can-vote contests
+                      <b>note:</b> only available in entry contest type
                     </p>
                   ) : null}
                 </div>
@@ -89,7 +97,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                   }`}
                 ></div>
                 <div className="flex flex-col gap-4">
-                  <p className={`text-[20px] ${checked ? "text-secondary-11" : "text-neutral-9"}`}>
+                  <p className={`text-[20px] ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
                     {isMobile ? (
                       <>
                         a charge for <i>each vote</i>
