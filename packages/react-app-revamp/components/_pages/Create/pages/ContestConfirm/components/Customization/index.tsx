@@ -1,17 +1,15 @@
-import { AdvancedOptions, ContestVisibility, CustomizationOptions } from "@hooks/useDeployContest/store";
-import { Steps } from "../..";
-import { FC, useState } from "react";
-import CreateContestConfirmLayout from "../Layout";
 import { formatNumber } from "@helpers/formatNumber";
-import { useMediaQuery } from "react-responsive";
+import { AdvancedOptions, ContestVisibility, CustomizationOptions } from "@hooks/useDeployContest/store";
+import { FC } from "react";
+import CreateContestConfirmLayout from "../Layout";
 
 interface CreateContestConfirmCustomizationProps {
   customization: {
     customization: CustomizationOptions;
     advancedOptions: AdvancedOptions;
   };
-  step: Steps;
-  onClick?: (step: Steps) => void;
+  step: number;
+  onClick?: (stepIndex: number) => void;
 }
 
 const CreateContestConfirmCustomization: FC<CreateContestConfirmCustomizationProps> = ({
@@ -20,15 +18,13 @@ const CreateContestConfirmCustomization: FC<CreateContestConfirmCustomizationPro
   onClick,
 }) => {
   const { customization: customizationOptions, advancedOptions } = customization;
-  const [isHovered, setIsHovered] = useState(false);
-  const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
 
   return (
-    <CreateContestConfirmLayout onClick={() => onClick?.(step)} onHover={value => setIsHovered(value)}>
-      <div className={`flex flex-col gap-4 ${isHovered || isMobileOrTablet ? "text-neutral-11" : "text-neutral-14"}`}>
-        <p className="text-[16px] font-bold">parameters:</p>
-        <ul className="flex flex-col pl-8">
-          <li className="text-[16px] list-disc">
+    <CreateContestConfirmLayout onClick={() => onClick?.(step)}>
+      <div className="flex flex-col gap-2">
+        <p className="text-neutral-9 text-[12px] font-bold uppercase">parameters</p>
+        <ul className="flex flex-col pl-6 list-disc">
+          <li className="text-[16px]">
             {formatNumber(customizationOptions.maxSubmissions)}{" "}
             {customizationOptions.maxSubmissions !== 1 ? "entries" : "entry"} allowed
           </li>
@@ -36,7 +32,6 @@ const CreateContestConfirmCustomization: FC<CreateContestConfirmCustomizationPro
             {formatNumber(customizationOptions.allowedSubmissionsPerUser)}{" "}
             {customizationOptions.allowedSubmissionsPerUser !== 1 ? "entries" : "entry"} per address
           </li>
-          <li className="text-[16px] list-disc">downvoting {advancedOptions.downvote ? "enabled" : "not enabled"}</li>
           <li className="text-[16px] list-disc">
             {advancedOptions.contestVisibility === ContestVisibility.Public ? "public contest" : "unlisted contest"}
           </li>

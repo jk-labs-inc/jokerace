@@ -9,7 +9,7 @@ import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { Comment, CommentCore, useCommentsStore } from "./store";
 
-export const COMMENTS_PER_PAGE = 5;
+export const COMMENTS_PER_PAGE = 4;
 
 /**
  * @param address - contest address

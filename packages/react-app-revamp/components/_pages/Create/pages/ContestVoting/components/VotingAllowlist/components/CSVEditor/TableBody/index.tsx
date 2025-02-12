@@ -1,6 +1,6 @@
 import { FC } from "react";
-import { VotingFieldObject } from "..";
 import TableRow from "../TableRow";
+import { VotingFieldObject } from "../../../../VotingUploadCsv/components";
 
 type TableBodyProps = {
   fields: VotingFieldObject[];

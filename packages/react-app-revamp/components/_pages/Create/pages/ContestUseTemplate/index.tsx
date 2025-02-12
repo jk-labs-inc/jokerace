@@ -3,7 +3,6 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import useSetContestTemplate from "@hooks/useSetContestTemplate";
 import { useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { steps } from "../..";
 import MobileBottomButton from "../../components/Buttons/Mobile";
 import Stepper from "../../components/Stepper";
 import CreateTemplateDropdown, { TemplateOption } from "../../components/TemplateDropdown";
@@ -12,6 +11,7 @@ import { getTemplateConfigByType } from "../../templates/templates";
 import { TemplateType } from "../../templates/types";
 import { StepTitle } from "../../types";
 import { useCreateContestStartStore } from "../ContestStart";
+import { useContestSteps } from "../../hooks/useContestSteps";
 
 const templateOptions: TemplateOption[] = Object.values(TemplateType).map(value => ({
   value: value as TemplateType,
@@ -19,6 +19,7 @@ const templateOptions: TemplateOption[] = Object.values(TemplateType).map(value 
 }));
 
 const CreateContestTemplate = () => {
+  const { steps } = useContestSteps();
   const { setStartContestWithTemplate } = useCreateContestStartStore(state => state);
   const { step: currentStep, setStep } = useDeployContestStore(state => state);
   const setContestTemplateConfig = useSetContestTemplate();
@@ -34,7 +35,7 @@ const CreateContestTemplate = () => {
 
   const filteredSteps = useMemo(() => {
     if (!templateConfig) return steps;
-    return steps.filter(step => templateConfig.stepsToFulfill.includes(step.title as StepTitle));
+    return steps.filter(step => templateConfig.stepsToFulfill.includes(step.title));
   }, [templateConfig]);
 
   const handleNextClick = () => {

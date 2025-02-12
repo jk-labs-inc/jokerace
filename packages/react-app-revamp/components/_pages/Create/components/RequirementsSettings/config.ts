@@ -1,4 +1,4 @@
-import { Option } from "@components/_pages/Create/components/TagDropdown";
+import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 
 export const requirementsDropdownOptions: Option[] = [
   { value: "erc20", label: "token holders" },

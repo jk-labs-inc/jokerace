@@ -6,7 +6,7 @@ import { EntryPreview } from "@hooks/useDeployContest/store";
 
 export const artConfig: TemplateConfig = {
   type: TemplateType.artContest,
-  stepsToFulfill: [StepTitle.Title, StepTitle.Entries, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
+  stepsToFulfill: [StepTitle.Rules, StepTitle.Entries, StepTitle.Timing, StepTitle.Voting, StepTitle.Confirm],
   data: {
     prompt: {
       summarize:
@@ -17,7 +17,6 @@ export const artConfig: TemplateConfig = {
       preview: EntryPreview.IMAGE,
       isAdditionalDescriptionEnabled: true,
     },
-    type: "art contest",
     submissionOpen: moment().toDate(),
     votingOpen: moment().add(7, "days").toDate(),
     votingClose: moment().add(7, "days").add(1, "day").toDate(),

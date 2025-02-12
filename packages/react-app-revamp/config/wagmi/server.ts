@@ -21,6 +21,7 @@ import { polygonZk } from "./custom-chains/polygonZk";
 import { scroll } from "./custom-chains/scroll";
 import { sei } from "./custom-chains/sei";
 import { sepolia } from "./custom-chains/sepolia";
+import { soneium } from "./custom-chains/soneium";
 import { zora } from "./custom-chains/zora";
 import { lukso } from "./custom-chains/lukso";
 
@@ -46,6 +47,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   forma,
   bnb,
   lukso,
+  soneium,
   sepolia,
   baseTestnet,
   mainnet,

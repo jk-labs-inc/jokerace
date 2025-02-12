@@ -17,7 +17,7 @@ import {
   updateAndRankProposals,
 } from "./utils";
 
-export const PROPOSALS_PER_PAGE = 12;
+export const PROPOSALS_PER_PAGE = 4;
 
 export function useProposal() {
   const {

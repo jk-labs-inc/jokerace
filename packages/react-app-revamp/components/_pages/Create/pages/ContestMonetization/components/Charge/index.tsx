@@ -1,6 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
 import { chains } from "@config/wagmi";
-import { addressRegex } from "@helpers/regex";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
@@ -8,23 +7,28 @@ import { FC, useState } from "react";
 import ContestParamsSplitFeeDestination from "./components/SplitFeeDestination";
 import ContestParamsChargeSubmission from "./components/Submission";
 import ContestParamsChargeVote from "./components/Vote";
+import {
+  validateCostToPropose,
+  validateCostToVote,
+  validateSplitFeeDestination,
+  validateSplitFeeDestinationAddress,
+} from "./validation";
+import { ContestType } from "@components/_pages/Create/types";
 
 interface CreateContestChargeProps {
-  isConnected: boolean;
   chain: string;
   onError?: (value: boolean) => void;
-  onUnsupportedChain?: (value: boolean) => void;
 }
 
-const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain, onError, onUnsupportedChain }) => {
+const CreateContestCharge: FC<CreateContestChargeProps> = ({ chain, onError }) => {
   const chainUnitLabel = chains.find(c => c.name.toLowerCase() === chain.toLowerCase())?.nativeCurrency.symbol;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain);
-  const { charge, minCharge, setCharge, votingMerkle } = useDeployContestStore(state => state);
+  const { charge, minCharge, setCharge, votingMerkle, contestType } = useDeployContestStore(state => state);
   const { minCostToPropose, minCostToVote } = minCharge;
   const [costToProposeError, setCostToProposeError] = useState("");
   const [costToVoteError, setCostToVoteError] = useState("");
   const [splitFeeDestinationError, setSplitFeeDestinationError] = useState("");
-  const isAnyoneCanVote = Object.values(votingMerkle).every(value => value === null);
+  const isAnyoneCanVote = contestType === ContestType.AnyoneCanPlay || contestType === ContestType.VotingContest;
 
   if (isError) {
     onError?.(true);
@@ -42,14 +46,10 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
     return <p className="loadingDots font-sabo text-[20px] text-neutral-9">Loading charge fees</p>;
   }
 
-  if (!isConnected || minCostToPropose === 0 || minCostToVote === 0) {
-    onUnsupportedChain?.(true);
-    return null;
-  }
-
   const handleCostToProposeChange = (value: number | null) => {
-    if (value === null || value < minCostToPropose) {
-      setCostToProposeError(`must be at least ${minCostToPropose}`);
+    const error = validateCostToPropose(value, minCostToPropose);
+    if (error) {
+      setCostToProposeError(error);
       onError?.(true);
       setCharge({
         ...charge,
@@ -66,18 +66,21 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
       ...charge,
       type: {
         ...charge.type,
-        costToPropose: value,
+        costToPropose: value ?? 0,
       },
       error: false,
     });
   };
 
   const handleCostToVoteChange = (value: number | null) => {
-    if (value === null || value < minCostToVote) {
-      setCostToVoteError(`must be at least ${minCostToVote}`);
+    const error = validateCostToVote(value, minCostToVote);
+    if (error) {
+      setCostToVoteError(error);
+
       onError?.(true);
       setCharge({
         ...charge,
+
         error: true,
       });
       return;
@@ -88,44 +91,40 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
 
     setCharge({
       ...charge,
+
       type: {
         ...charge.type,
-        costToVote: value,
+        costToVote: value ?? 0,
       },
       error: false,
     });
   };
 
   const handleSplitFeeDestinationTypeChange = (type: SplitFeeDestinationType) => {
-    const isCreatorWalletOrNoSplit =
-      type === SplitFeeDestinationType.CreatorWallet || type === SplitFeeDestinationType.NoSplit;
-
     const newSplitFeeDestination = { ...charge.splitFeeDestination, type };
+    const validationError = validateSplitFeeDestination(newSplitFeeDestination);
 
-    const isValidAddress = addressRegex.test(newSplitFeeDestination.address ?? "");
-    const error = !isCreatorWalletOrNoSplit && !isValidAddress;
-
-    setSplitFeeDestinationError(isCreatorWalletOrNoSplit ? "" : error ? "invalid address" : "");
-    onError?.(error);
+    setSplitFeeDestinationError(validationError ?? "");
+    onError?.(!!validationError);
 
     setCharge({
       ...charge,
       splitFeeDestination: newSplitFeeDestination,
-      error,
+      error: !!validationError,
     });
   };
 
   const handleSplitFeeDestinationAddressChange = (address: string) => {
-    const isValidAddress = addressRegex.test(address);
     const newSplitFeeDestination = { ...charge.splitFeeDestination, address };
+    const validationError = validateSplitFeeDestinationAddress(newSplitFeeDestination);
 
-    setSplitFeeDestinationError(isValidAddress ? "" : "invalid address");
-    onError?.(!isValidAddress);
+    setSplitFeeDestinationError(validationError ?? "");
+    onError?.(!!validationError);
 
     setCharge({
       ...charge,
       splitFeeDestination: newSplitFeeDestination,
-      error: !isValidAddress,
+      error: !!validationError,
     });
   };
 
