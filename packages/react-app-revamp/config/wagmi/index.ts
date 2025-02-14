@@ -1,7 +1,6 @@
-import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import { getParaWallet } from "@getpara/rainbowkit-wallet";
 import { Environment, OAuthMethod } from "@getpara/react-sdk";
-
+import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
   bitgetWallet,
@@ -87,7 +86,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
 const PARA_API_KEY = process.env.NEXT_PUBLIC_PARA_API_KEY as string;
 
 console.log("PARA_API_KEY", PARA_API_KEY);
-const PARA_ENVIRONMENT = process.env.NODE_ENV === "development" ? Environment.BETA : Environment.BETA;
+const PARA_ENVIRONMENT = process.env.NODE_ENV === "development" ? Environment.BETA : Environment.PRODUCTION;
 
 const paraWalletOptions = {
   para: {
