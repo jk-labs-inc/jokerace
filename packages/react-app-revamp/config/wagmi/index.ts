@@ -1,4 +1,7 @@
 import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
+import { getParaWallet } from "@getpara/rainbowkit-wallet";
+import { Environment, OAuthMethod } from "@getpara/react-sdk";
+
 import {
   argentWallet,
   bitgetWallet,
@@ -80,6 +83,25 @@ export const chains: readonly [Chain, ...Chain[]] = [
   baseTestnet,
   mainnet,
 ];
+
+const PARA_API_KEY = process.env.NEXT_PUBLIC_PARA_API_KEY as string;
+
+console.log("PARA_API_KEY", PARA_API_KEY);
+const PARA_ENVIRONMENT = process.env.NODE_ENV === "development" ? Environment.BETA : Environment.BETA;
+
+const paraWalletOptions = {
+  para: {
+    apiKey: PARA_API_KEY,
+    environment: PARA_ENVIRONMENT,
+  },
+  appName: "jokerace",
+  oAuthMethods: [OAuthMethod.GOOGLE, OAuthMethod.TWITTER, OAuthMethod.DISCORD],
+};
+
+// Create Para wallet connector
+const paraWallet = getParaWallet(paraWalletOptions);
+
+console.log("paraWallet", paraWallet);
 
 const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
 

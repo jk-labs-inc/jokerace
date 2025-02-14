@@ -33,7 +33,7 @@ const nextConfig = {
       },
     ],
   },
-  transpilePackages: ["react-tweet"],
+  transpilePackages: ["react-tweet", "@getpara/rainbowkit-wallet", "@getpara/react-sdk"],
 };
 
 module.exports = withPWA({
