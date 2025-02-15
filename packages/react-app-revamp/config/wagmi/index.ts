@@ -47,6 +47,9 @@ import { sepolia } from "./custom-chains/sepolia";
 import { zora } from "./custom-chains/zora";
 import { lukso } from "./custom-chains/lukso";
 
+import { getParaWallet, GetParaOpts, OAuthMethod, AuthLayout } from "@getpara/rainbowkit-wallet";
+import { Environment } from "@getpara/web-sdk";
+
 declare module "wagmi";
 
 type ChainImages = {
@@ -88,8 +91,50 @@ const projectId = WALLETCONECT_PROJECT_ID;
 
 coinbaseWallet.preference = "smartWalletOnly";
 
+const PARA_API_KEY = "dd4d7071735029ce97dce17969e82ad6";
+
+// para modal options
+const paraWalletOpts: GetParaOpts = {
+  para: {
+    environment: Environment.BETA,
+    apiKey: PARA_API_KEY,
+  },
+  appName: "JokeRace",
+  logo: "/icon-192x192.png",
+  oAuthMethods: [
+    OAuthMethod.APPLE,
+    OAuthMethod.DISCORD,
+    OAuthMethod.FACEBOOK,
+    OAuthMethod.FARCASTER,
+    OAuthMethod.GOOGLE,
+    OAuthMethod.TWITTER,
+  ],
+  theme: {
+    foregroundColor: "#2D3648",
+    backgroundColor: "#FFFFFF",
+    accentColor: "#0066CC",
+    darkForegroundColor: "#E8EBF2",
+    darkBackgroundColor: "#1A1F2B",
+    darkAccentColor: "#4D9FFF",
+    mode: "light",
+    borderRadius: "none",
+    font: "Inter",
+  },
+  onRampTestMode: true,
+  disableEmailLogin: false,
+  disablePhoneLogin: false,
+  authLayout: [AuthLayout.AUTH_FULL],
+  recoverySecretStepEnabled: true,
+};
+
+const paraWallet = getParaWallet(paraWalletOpts);
+
 const connectors = connectorsForWallets(
   [
+    {
+      groupName: "Social Login",
+      wallets: [paraWallet],
+    },
     {
       groupName: "Wallets",
       wallets: [
