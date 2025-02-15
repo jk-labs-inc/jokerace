@@ -1,6 +1,5 @@
 import LayoutBase from "@layouts/LayoutBase";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import "@getpara/react-sdk/styles.css";
 import "@rainbow-me/rainbowkit/styles.css";
 import "@styles/globals.css";
 import { polyfill } from "interweave-ssr";

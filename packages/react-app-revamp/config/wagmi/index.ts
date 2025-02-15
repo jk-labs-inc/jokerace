@@ -35,6 +35,7 @@ import { cyber } from "./custom-chains/cyber";
 import { forma } from "./custom-chains/forma";
 import { gnosis } from "./custom-chains/gnosis";
 import { linea } from "./custom-chains/linea";
+import { lukso } from "./custom-chains/lukso";
 import { mainnet } from "./custom-chains/mainnet";
 import { mantle } from "./custom-chains/mantle";
 import { metis } from "./custom-chains/metis";
@@ -47,7 +48,6 @@ import { sei } from "./custom-chains/sei";
 import { soneium } from "./custom-chains/soneium";
 import { sepolia } from "./custom-chains/sepolia";
 import { zora } from "./custom-chains/zora";
-import { lukso } from "./custom-chains/lukso";
 
 declare module "wagmi";
 
@@ -90,7 +90,6 @@ const projectId = WALLETCONECT_PROJECT_ID;
 coinbaseWallet.preference = "smartWalletOnly";
 
 const PARA_API_KEY = process.env.NEXT_PUBLIC_PARA_API_KEY as string;
-console.log("key:", PARA_API_KEY)
 const PARA_ENVIRONMENT = process.env.NODE_ENV === "development" ? Environment.BETA : Environment.PRODUCTION;
 
 const paraWalletOpts: GetParaOpts = {
@@ -99,31 +98,10 @@ const paraWalletOpts: GetParaOpts = {
     apiKey: PARA_API_KEY,
   },
   appName: "JokeRace",
-  logo: "/icon-192x192.png",
   oAuthMethods: [
-    OAuthMethod.APPLE,
-    OAuthMethod.DISCORD,
-    OAuthMethod.FACEBOOK,
-    OAuthMethod.FARCASTER,
     OAuthMethod.GOOGLE,
     OAuthMethod.TWITTER,
   ],
-  theme: {
-    foregroundColor: "#2D3648",
-    backgroundColor: "#FFFFFF",
-    accentColor: "#0066CC",
-    darkForegroundColor: "#E8EBF2",
-    darkBackgroundColor: "#1A1F2B",
-    darkAccentColor: "#4D9FFF",
-    mode: "light",
-    borderRadius: "none",
-    font: "Inter",
-  },
-  onRampTestMode: true,
-  disableEmailLogin: false,
-  disablePhoneLogin: false,
-  authLayout: [AuthLayout.AUTH_FULL],
-  recoverySecretStepEnabled: true,
 };
 const paraWallet = getParaWallet(paraWalletOpts);
 
