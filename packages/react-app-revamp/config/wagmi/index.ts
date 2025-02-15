@@ -90,7 +90,7 @@ const projectId = WALLETCONECT_PROJECT_ID;
 coinbaseWallet.preference = "smartWalletOnly";
 
 const PARA_API_KEY = process.env.NEXT_PUBLIC_PARA_API_KEY as string;
-const PARA_ENVIRONMENT = process.env.NODE_ENV === "development" ? Environment.BETA : Environment.PRODUCTION;
+const PARA_ENVIRONMENT = process.env.NEXT_PUBLIC_PARA_ENVIRONMENT as string === "development" ? Environment.BETA : Environment.PRODUCTION;
 
 const paraWalletOpts: GetParaOpts = {
   para: {
