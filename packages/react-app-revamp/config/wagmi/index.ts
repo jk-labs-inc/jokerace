@@ -1,5 +1,5 @@
-import { getParaWallet } from "@getpara/rainbowkit-wallet";
-import { Environment, OAuthMethod } from "@getpara/react-sdk";
+import { getParaWallet, GetParaOpts, OAuthMethod, AuthLayout } from "@getpara/rainbowkit-wallet";
+import { Environment } from "@getpara/web-sdk";
 import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
@@ -83,37 +83,56 @@ export const chains: readonly [Chain, ...Chain[]] = [
   mainnet,
 ];
 
-const PARA_API_KEY = process.env.NEXT_PUBLIC_PARA_API_KEY as string;
-
-console.log("PARA_API_KEY", PARA_API_KEY);
-const PARA_ENVIRONMENT = process.env.NODE_ENV === "development" ? Environment.BETA : Environment.PRODUCTION;
-
-const paraWalletOptions = {
-  para: {
-    apiKey: PARA_API_KEY,
-    environment: PARA_ENVIRONMENT,
-  },
-  appName: "jokerace",
-  oAuthMethods: [OAuthMethod.GOOGLE, OAuthMethod.TWITTER, OAuthMethod.DISCORD],
-};
-
-// Create Para wallet connector
-const paraWallet = getParaWallet(paraWalletOptions);
-
-console.log("paraWallet", paraWallet);
-
 const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
-
 const appName = "jokerace";
 const projectId = WALLETCONECT_PROJECT_ID;
 
 coinbaseWallet.preference = "smartWalletOnly";
+
+const PARA_API_KEY = process.env.NEXT_PUBLIC_PARA_API_KEY as string;
+console.log("key:", PARA_API_KEY)
+const PARA_ENVIRONMENT = process.env.NODE_ENV === "development" ? Environment.BETA : Environment.PRODUCTION;
+
+const paraWalletOpts: GetParaOpts = {
+  para: {
+    environment: PARA_ENVIRONMENT,
+    apiKey: PARA_API_KEY,
+  },
+  appName: "JokeRace",
+  logo: "/icon-192x192.png",
+  oAuthMethods: [
+    OAuthMethod.APPLE,
+    OAuthMethod.DISCORD,
+    OAuthMethod.FACEBOOK,
+    OAuthMethod.FARCASTER,
+    OAuthMethod.GOOGLE,
+    OAuthMethod.TWITTER,
+  ],
+  theme: {
+    foregroundColor: "#2D3648",
+    backgroundColor: "#FFFFFF",
+    accentColor: "#0066CC",
+    darkForegroundColor: "#E8EBF2",
+    darkBackgroundColor: "#1A1F2B",
+    darkAccentColor: "#4D9FFF",
+    mode: "light",
+    borderRadius: "none",
+    font: "Inter",
+  },
+  onRampTestMode: true,
+  disableEmailLogin: false,
+  disablePhoneLogin: false,
+  authLayout: [AuthLayout.AUTH_FULL],
+  recoverySecretStepEnabled: true,
+};
+const paraWallet = getParaWallet(paraWalletOpts);
 
 const connectors = connectorsForWallets(
   [
     {
       groupName: "Wallets",
       wallets: [
+        paraWallet,
         metaMaskWallet,
         walletConnectWallet,
         coinbaseWallet,
