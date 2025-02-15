@@ -1,5 +1,4 @@
 import { Clusters } from "@clustersxyz/sdk";
-import { lensClient } from "@config/lens";
 import { config } from "@config/wagmi";
 import { mainnet } from "@config/wagmi/custom-chains/mainnet";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
