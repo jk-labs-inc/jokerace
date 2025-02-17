@@ -42,8 +42,9 @@ import { polygon } from "./custom-chains/polygon";
 import { polygonZk } from "./custom-chains/polygonZk";
 import { scroll } from "./custom-chains/scroll";
 import { sei } from "./custom-chains/sei";
-import { soneium } from "./custom-chains/soneium";
 import { sepolia } from "./custom-chains/sepolia";
+import { soneium } from "./custom-chains/soneium";
+import { story } from "./custom-chains/story";
 import { zora } from "./custom-chains/zora";
 import { lukso } from "./custom-chains/lukso";
 
@@ -76,6 +77,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   bnb,
   lukso,
   soneium,
+  story,
   sepolia,
   baseTestnet,
   mainnet,
