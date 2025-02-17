@@ -52,7 +52,6 @@ const fetchProfileData = async (
     etherscan: "",
     cluster: "",
   };
-  const { lensClient } = await import("@config/lens");
   const clusters = new Clusters();
 
   try {
