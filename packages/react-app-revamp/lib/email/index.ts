@@ -22,30 +22,6 @@ async function getEmailFromWalletAddress(walletAddress: string): Promise<string 
   }
 }
 
-async function findTemplateIdByType(emailType: EmailType): Promise<string | null> {
-  try {
-    const templatesResponse = await fetch("/api/brevo/get-templates");
-    const templatesData = await templatesResponse.json();
-
-    if (!templatesData.success) {
-      return null;
-    }
-
-    const templates = templatesData.templates;
-
-    if (!templates || !Array.isArray(templates)) {
-      return null;
-    }
-
-    const template = templates.find((t: { id: number }) => t.id === emailType);
-
-    return template?.id || null;
-  } catch (error) {
-    console.log("error finding template:", error);
-    return null;
-  }
-}
-
 export async function sendEmail<T extends EmailType>(
   walletAddress: string,
   emailType: T,
@@ -57,11 +33,6 @@ export async function sendEmail<T extends EmailType>(
       return false;
     }
 
-    const templateId = await findTemplateIdByType(emailType);
-    if (!templateId) {
-      return false;
-    }
-
     const response = await fetch("/api/brevo/send", {
       method: "POST",
       headers: {
@@ -69,7 +40,7 @@ export async function sendEmail<T extends EmailType>(
       },
       body: JSON.stringify({
         to: [{ email: recipientEmail }],
-        templateId,
+        templateId: emailType,
         ...(params && { params }),
       }),
     });
