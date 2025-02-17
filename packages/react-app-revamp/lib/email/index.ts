@@ -37,7 +37,7 @@ async function findTemplateIdByType(emailType: EmailType): Promise<string | null
       return null;
     }
 
-    const template = templates.find((t: { name: string }) => t.name.toLowerCase() === emailType.toLowerCase());
+    const template = templates.find((t: { id: number }) => t.id === emailType);
 
     return template?.id || null;
   } catch (error) {

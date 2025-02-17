@@ -1,7 +1,8 @@
+// these are the template ids for the emails from Brevo
 export enum EmailType {
-  SignUpConfirmation = "signup-confirmation",
-  VotingEmail = "voting-email",
-  EntryEmail = "entry-email",
+  SignUpConfirmation = 20,
+  VotingEmail = 11,
+  EntryEmail = 18,
 }
 
 export interface VotingEmailParams {
