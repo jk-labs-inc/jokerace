@@ -7628,12 +7628,24 @@
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.66.3.tgz#3ab0daa49477cfae38c45c02b8dc0bc39ec9cc5d"
   integrity sha512-+2iDxH7UFdtwcry766aJszGmbByQDIzTltJ3oQAZF9bhCxHCIN3yDwHa6qDCZxcpMGvUphCRx/RYJvLbM8mucQ==
 
+"@tanstack/query-core@5.66.4":
+  version "5.66.4"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.66.4.tgz#44b87bff289466adbfa0de8daa5756cbd2d61c61"
+  integrity sha512-skM/gzNX4shPkqmdTCSoHtJAPMTtmIJNS0hE+xwTTUVYwezArCT34NMermABmBVUg5Ls5aiUXEDXfqwR1oVkcA==
+
 "@tanstack/react-query@5.66.3":
   version "5.66.3"
   resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.66.3.tgz#287d37e2079291302b86ce2c5898f6a1a4aaeea9"
   integrity sha512-sWMvxZ5VugPDgD1CzP7f0s9yFvjcXP3FXO5IVV2ndXlYqUCwykU8U69Kk05Qn5UvGRqB/gtj4J7vcTC6vtLHtQ==
   dependencies:
     "@tanstack/query-core" "5.66.3"
+
+"@tanstack/react-query@^5.0.0":
+  version "5.66.4"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.66.4.tgz#d626997660bb4aac585037cdd85d1e8ddd77ace1"
+  integrity sha512-zLlb9Ij7msRazeJP1LUu+tkrxWnUujYanUbY0c2lFoXhRwXvRt6SIwCuwCAmYgMeEuvIlv9/zIQb7bhhGR0jhw==
+  dependencies:
+    "@tanstack/query-core" "5.66.4"
 
 "@tanstack/react-virtual@^3.8.1":
   version "3.8.1"
@@ -9984,6 +9996,11 @@ camelcase@^6.2.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-6.3.0.tgz#5685b95eb209ac9c0c177467778c9c84df58ba9a"
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
+
+camelize@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/camelize/-/camelize-1.0.1.tgz#89b7e16884056331a35d6b5ad064332c91daa6c3"
+  integrity sha512-dU+Tx2fsypxTgtLoE36npi3UqcjSSMNYfkqgmoEhtZrraP5VWq0K7FkWVTYa8eMPtnU/G2txVsfdCJTn9uzpuQ==
 
 caniuse-lite@^1.0.30001406, caniuse-lite@^1.0.30001579, caniuse-lite@^1.0.30001587, caniuse-lite@^1.0.30001646, caniuse-lite@^1.0.30001663, caniuse-lite@^1.0.30001688:
   version "1.0.30001699"
