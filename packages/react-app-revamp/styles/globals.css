@@ -664,3 +664,7 @@ li {
   @apply overflow-y-auto md:max-h-unset;
   max-height: calc(100vh - 60px);
 }
+
+#para-modal > cpsl-auth-modal {
+  z-index: 9999999999;
+}
