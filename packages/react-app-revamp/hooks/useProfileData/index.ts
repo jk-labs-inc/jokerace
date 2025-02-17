@@ -8,14 +8,12 @@ import { normalize } from "viem/ens";
 
 const DEFAULT_AVATAR_URL = "/contest/user.svg";
 const ETHERSCAN_BASE_URL = mainnet.blockExplorers?.etherscan?.url;
-const LENSFRENS_BASE_URL = "https://lensfrens.xyz";
 
 interface ProfileData {
   profileName: string;
   profileAvatar: string;
   socials: {
     etherscan: string;
-    lens: string;
     cluster: string;
   };
 }
@@ -52,7 +50,6 @@ const fetchProfileData = async (
   let profileAvatar = DEFAULT_AVATAR_URL;
   let socials = {
     etherscan: "",
-    lens: "",
     cluster: "",
   };
   const { lensClient } = await import("@config/lens");
@@ -84,38 +81,21 @@ const fetchProfileData = async (
         profileAvatar = DEFAULT_AVATAR_URL;
       }
     } else {
-      const lensProfile = await lensClient.profile.fetchDefault({ for: ethereumAddress });
-
-      if (lensProfile?.handle) {
-        const avatarFragment = lensProfile.metadata?.picture;
-        //@ts-ignore
-        let lensAvatar = avatarFragment?.raw?.uri?.replace("ipfs://", "https://lens.infura-ipfs.io/ipfs/");
+      const clusterName = await clusters.getName(ethereumAddress);
+      if (clusterName) {
         try {
-          await checkImageUrl(lensAvatar);
-          profileAvatar = lensAvatar;
+          const cluster = await clusters.getCluster(normalizeClusterName(clusterName));
+
+          await checkImageUrl(cluster?.imageUrl ?? DEFAULT_AVATAR_URL);
+          profileAvatar = cluster?.imageUrl ?? DEFAULT_AVATAR_URL;
+          profileName = normalizeClusterName(clusterName);
         } catch {
           profileAvatar = DEFAULT_AVATAR_URL;
-        }
-        profileName = lensProfile.handle?.localName ? lensProfile.handle.localName + ".lens" : profileName;
-      } else {
-        const clusterName = await clusters.getName(ethereumAddress);
-        if (clusterName) {
-          try {
-            const cluster = await clusters.getCluster(normalizeClusterName(clusterName));
-
-            await checkImageUrl(cluster?.imageUrl ?? DEFAULT_AVATAR_URL);
-            profileAvatar = cluster?.imageUrl ?? DEFAULT_AVATAR_URL;
-            profileName = normalizeClusterName(clusterName);
-          } catch {
-            profileAvatar = DEFAULT_AVATAR_URL;
-          }
         }
       }
     }
 
     if (includeSocials) {
-      const lensProfile = await lensClient.profile.fetchDefault({ for: ethereumAddress });
-      const handle = lensProfile?.handle?.localName;
       const clusterName = await clusters.getName(ethereumAddress);
       let clusterProfileUrl = "";
 
@@ -126,7 +106,6 @@ const fetchProfileData = async (
 
       socials = {
         etherscan: `${ETHERSCAN_BASE_URL}/address/${ethereumAddress}`,
-        lens: handle ? `${LENSFRENS_BASE_URL}/${handle}` : "",
         cluster: clusterProfileUrl,
       };
     }

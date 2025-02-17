@@ -98,7 +98,7 @@
     "react-virtualized-auto-sizer": "1.0.25",
     "react-window": "1.8.11",
     "safe-json-utils": "1.1.1",
-    "simplebar-react": "^3.3.0",
+    "simplebar-react": "3.3.0",
     "tailwind-scrollbar-hide": "1.1.7",
     "tailwindcss": "3.4.17",
     "tailwindcss-logical": "3.0.1",
