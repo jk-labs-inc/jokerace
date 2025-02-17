@@ -48,6 +48,7 @@ import { sei } from "./custom-chains/sei";
 import { soneium } from "./custom-chains/soneium";
 import { sepolia } from "./custom-chains/sepolia";
 import { zora } from "./custom-chains/zora";
+import { isParaWalletConfigured, paraWallet, paraWalletOpts } from "./para";
 
 declare module "wagmi";
 
@@ -89,39 +90,19 @@ const projectId = WALLETCONECT_PROJECT_ID;
 
 coinbaseWallet.preference = "smartWalletOnly";
 
-const PARA_API_KEY = process.env.NEXT_PUBLIC_PARA_API_KEY as string;
-const PARA_ENVIRONMENT = process.env.NEXT_PUBLIC_PARA_ENVIRONMENT as string === "development" ? Environment.BETA : Environment.PRODUCTION;
-
-const paraWalletOpts: GetParaOpts = {
-  para: {
-    environment: PARA_ENVIRONMENT,
-    apiKey: PARA_API_KEY,
-  },
-  appName: "JokeRace",
-  oAuthMethods: [
-    OAuthMethod.GOOGLE,
-    OAuthMethod.TWITTER,
-  ],
-  theme: {
-    foregroundColor: "#2D3648",
-    backgroundColor: "#FFFFFF",
-    accentColor: "#0066CC",
-    darkForegroundColor: "#E8EBF2",
-    darkBackgroundColor: "#1A1F2B",
-    darkAccentColor: "#4D9FFF",
-    mode: "dark",
-    borderRadius: "none",
-    font: "Inter",
-  },
-};
-const paraWallet = getParaWallet(paraWalletOpts);
-
 const connectors = connectorsForWallets(
   [
+    ...(isParaWalletConfigured
+      ? [
+          {
+            groupName: "Social Login",
+            wallets: [paraWallet],
+          },
+        ]
+      : []),
     {
       groupName: "Wallets",
       wallets: [
-        paraWallet,
         metaMaskWallet,
         walletConnectWallet,
         coinbaseWallet,
