@@ -16261,7 +16261,7 @@ simplebar-core@^1.3.0:
   dependencies:
     lodash "^4.17.21"
 
-simplebar-react@^3.3.0:
+simplebar-react@3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/simplebar-react/-/simplebar-react-3.3.0.tgz#7170f29f0ea785c6881db81a8447c408fbc9056e"
   integrity sha512-sxzy+xRuU41He4tT4QLGYutchtOuye/xxVeq7xhyOiwMiHNK1ZpvbOTyy+7P0i7gfpXLGTJ8Bep8+4Mhdgtz/g==
