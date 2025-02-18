@@ -123,14 +123,6 @@ const UserProfileDisplay = ({
                 </div>
               </a>
 
-              {socials?.lens ? (
-                <a href={socials.lens} target="_blank">
-                  <div className="w-12 h-12 flex justify-center items-center overflow-hidden rounded-full">
-                    <img className="object-cover" src="/socials/lens.svg" alt="Lens" />
-                  </div>
-                </a>
-              ) : null}
-
               {socials?.cluster ? (
                 <a href={socials.cluster} target="_blank">
                   <div className="w-6 h-6 flex justify-center items-center overflow-hidden rounded-full">

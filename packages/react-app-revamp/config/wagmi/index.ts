@@ -1,3 +1,5 @@
+import { getParaWallet, GetParaOpts, OAuthMethod, AuthLayout } from "@getpara/rainbowkit-wallet";
+import { Environment } from "@getpara/web-sdk";
 import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
@@ -33,6 +35,7 @@ import { cyber } from "./custom-chains/cyber";
 import { forma } from "./custom-chains/forma";
 import { gnosis } from "./custom-chains/gnosis";
 import { linea } from "./custom-chains/linea";
+import { lukso } from "./custom-chains/lukso";
 import { mainnet } from "./custom-chains/mainnet";
 import { mantle } from "./custom-chains/mantle";
 import { metis } from "./custom-chains/metis";
@@ -42,10 +45,11 @@ import { polygon } from "./custom-chains/polygon";
 import { polygonZk } from "./custom-chains/polygonZk";
 import { scroll } from "./custom-chains/scroll";
 import { sei } from "./custom-chains/sei";
-import { soneium } from "./custom-chains/soneium";
 import { sepolia } from "./custom-chains/sepolia";
+import { soneium } from "./custom-chains/soneium";
+import { story } from "./custom-chains/story";
 import { zora } from "./custom-chains/zora";
-import { lukso } from "./custom-chains/lukso";
+import { isParaWalletConfigured, paraWallet, paraWalletOpts } from "./para";
 
 declare module "wagmi";
 
@@ -76,13 +80,13 @@ export const chains: readonly [Chain, ...Chain[]] = [
   bnb,
   lukso,
   soneium,
+  story,
   sepolia,
   baseTestnet,
   mainnet,
 ];
 
 const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
-
 const appName = "jokerace";
 const projectId = WALLETCONECT_PROJECT_ID;
 
@@ -90,6 +94,14 @@ coinbaseWallet.preference = "smartWalletOnly";
 
 const connectors = connectorsForWallets(
   [
+    ...(isParaWalletConfigured
+      ? [
+          {
+            groupName: "Social Login",
+            wallets: [paraWallet],
+          },
+        ]
+      : []),
     {
       groupName: "Wallets",
       wallets: [
