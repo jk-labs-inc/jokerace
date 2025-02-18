@@ -6,6 +6,7 @@ import { getProposalId } from "@helpers/getProposalId";
 import { generateEntryPreviewHTML, generateFieldInputsHTML, processFieldInputs } from "@helpers/metadata";
 import { useContestStore } from "@hooks/useContest/store";
 import { Charge } from "@hooks/useDeployContest/types";
+import { useEmailSend } from "@hooks/useEmailSend";
 import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
@@ -17,6 +18,8 @@ import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
+import { EmailType } from "lib/email/types";
+import moment from "moment";
 import { usePathname } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
@@ -60,7 +63,14 @@ export function useSubmitProposal() {
   const chainId = chains.filter(chain => chain.name.toLowerCase() === chainName.toLowerCase())[0]?.id;
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
-  const { charge, contestAbi: abi, rewardsModuleAddress, rewardsAbi } = useContestStore(state => state);
+  const {
+    charge,
+    contestAbi: abi,
+    rewardsModuleAddress,
+    rewardsAbi,
+    votesOpen,
+    votesClose,
+  } = useContestStore(state => state);
   const rewardsStore = useRewardsStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
@@ -77,6 +87,9 @@ export function useSubmitProposal() {
     abi: rewardsAbi ?? [],
     rankings: rewardsStore.rewards.payees,
   });
+  const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
+  const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
+  const { sendEmail } = useEmailSend();
 
   const calculateChargeAmount = () => {
     if (!charge) return undefined;
@@ -156,6 +169,7 @@ export function useSubmitProposal() {
         });
 
         const proposalId = await getProposalId(proposalCore, contractConfig);
+        const contestEntryLink = `${window.location.origin}/contest/${chainName.toLowerCase()}/${address}/submission/${proposalId}`;
 
         setTransactionData({
           chainId: chainId,
@@ -179,6 +193,7 @@ export function useSubmitProposal() {
         setIsLoading(false);
         setIsSuccess(true);
         if (showToast) toastSuccess("proposal submitted successfully!");
+        await sendEntryEmail(contestEntryLink);
         increaseCurrentUserProposalCount();
         setSubmissionsCount(submissionsCount + 1);
         fetchSingleProposal(getContractConfig(), proposalId);
@@ -243,6 +258,14 @@ export function useSubmitProposal() {
     } catch (error) {
       console.error("Error in performAnalytics:", error);
     }
+  }
+
+  async function sendEntryEmail(contestEntryLink: string) {
+    await sendEmail(userAddress ?? "", EmailType.EntryEmail, {
+      contest_entry_link: contestEntryLink,
+      contest_voting_open_date: formattedVotesOpen,
+      contest_end_date: formattedVotesClose,
+    });
   }
 
   return {

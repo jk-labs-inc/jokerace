@@ -99,7 +99,7 @@ const LandingPage = () => {
             className="bg-gradient-green w-[300px] md:w-[320px] h-10 md:h-12 rounded-[40px] text-[20px] font-bold text-true-black text-center flex items-center justify-center transition-all duration-300 hover:opacity-90"
           >
             <span className="flex items-center normal-case">
-              Create a Contest in Seconds
+              create a contest in seconds
               <ChevronRightIcon className="w-6 h-6 ml-2 text-true-black font-bold" />
             </span>
           </Link>
