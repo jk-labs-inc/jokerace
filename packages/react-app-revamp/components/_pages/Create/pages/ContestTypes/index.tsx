@@ -76,6 +76,7 @@ const CreateContestTypes = () => {
           <CreateContestTypesVotingBased
             isSelected={contestType === ContestType.VotingContest}
             onClick={type => handleTypeSelection(type)}
+            faqLink={faqLink}
           />
           <div className="mt-4">
             <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
