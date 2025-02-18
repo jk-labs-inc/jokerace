@@ -13,6 +13,7 @@ async function getEmailFromWalletAddress(walletAddress: string): Promise<string 
       .from("email_signups")
       .select("email_address")
       .eq("user_address", walletAddress)
+      .order("date", { ascending: false })
       .limit(1)
       .single();
 
