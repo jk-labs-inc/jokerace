@@ -6,6 +6,7 @@ import { getProposalId } from "@helpers/getProposalId";
 import { generateEntryPreviewHTML, generateFieldInputsHTML, processFieldInputs } from "@helpers/metadata";
 import { useContestStore } from "@hooks/useContest/store";
 import { Charge } from "@hooks/useDeployContest/types";
+import { useEmailSend } from "@hooks/useEmailSend";
 import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
@@ -17,15 +18,13 @@ import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
+import { EmailType } from "lib/email/types";
+import moment from "moment";
 import { usePathname } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useSubmitProposalStore } from "./store";
-import moment from "moment";
-import { FOOTER_LINKS } from "@config/links";
-import { useEmailSend } from "@hooks/useEmailSend";
-import { EmailType } from "lib/email/types";
 
 const targetMetadata = {
   targetAddress: "0x0000000000000000000000000000000000000000",
@@ -170,6 +169,7 @@ export function useSubmitProposal() {
         });
 
         const proposalId = await getProposalId(proposalCore, contractConfig);
+        const contestEntryLink = `${window.location.origin}/contest/${chainName.toLowerCase()}/${address}/submission/${proposalId}`;
 
         setTransactionData({
           chainId: chainId,
@@ -193,7 +193,7 @@ export function useSubmitProposal() {
         setIsLoading(false);
         setIsSuccess(true);
         if (showToast) toastSuccess("proposal submitted successfully!");
-        await sendEntryEmail();
+        await sendEntryEmail(contestEntryLink);
         increaseCurrentUserProposalCount();
         setSubmissionsCount(submissionsCount + 1);
         fetchSingleProposal(getContractConfig(), proposalId);
@@ -260,8 +260,9 @@ export function useSubmitProposal() {
     }
   }
 
-  async function sendEntryEmail() {
+  async function sendEntryEmail(contestEntryLink: string) {
     await sendEmail(userAddress ?? "", EmailType.EntryEmail, {
+      contest_entry_link: contestEntryLink,
       contest_voting_open_date: formattedVotesOpen,
       contest_end_date: formattedVotesClose,
     });

@@ -98,7 +98,7 @@ export function useCastVotes() {
   });
   const { sendEmail } = useEmailSend();
   const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
-  const contestLink = `${window.location.origin}/contest/${contestAddress}`;
+  const contestLink = `${window.location.origin}/contest/${chainName.toLowerCase()}/${contestAddress}`;
 
   const calculateChargeAmount = (amountOfVotes: number) => {
     if (!charge) return undefined;

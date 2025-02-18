@@ -11,6 +11,7 @@ export interface VotingEmailParams {
 }
 
 export interface EntryEmailParams {
+  contest_entry_link: string;
   contest_voting_open_date: string;
   contest_end_date: string;
 }
@@ -21,8 +22,3 @@ export type EmailTypeWithParams = EmailType.VotingEmail | EmailType.EntryEmail;
 export type EmailTypeParams = {
   [K in EmailTypeWithParams]: K extends EmailType.VotingEmail ? VotingEmailParams : EntryEmailParams;
 };
-
-export interface EmailRecipient {
-  email: string;
-  name?: string;
-}
