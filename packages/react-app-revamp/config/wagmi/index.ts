@@ -34,6 +34,7 @@ import { celo } from "./custom-chains/celo";
 import { cyber } from "./custom-chains/cyber";
 import { forma } from "./custom-chains/forma";
 import { gnosis } from "./custom-chains/gnosis";
+import { ink } from "./custom-chains/ink";
 import { linea } from "./custom-chains/linea";
 import { lukso } from "./custom-chains/lukso";
 import { mainnet } from "./custom-chains/mainnet";
@@ -81,6 +82,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   lukso,
   soneium,
   story,
+  ink,
   sepolia,
   baseTestnet,
   mainnet,
@@ -102,8 +104,7 @@ const connectors = connectorsForWallets(
           },
         ]
       : []),
-    {
-      groupName: "Wallets",
+    { groupName: "Wallets",
       wallets: [
         metaMaskWallet,
         walletConnectWallet,
