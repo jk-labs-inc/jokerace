@@ -10,6 +10,7 @@ import { celo } from "./custom-chains/celo";
 import { cyber } from "./custom-chains/cyber";
 import { forma } from "./custom-chains/forma";
 import { gnosis } from "./custom-chains/gnosis";
+import { ink } from "./custom-chains/ink";
 import { linea } from "./custom-chains/linea";
 import { mainnet } from "./custom-chains/mainnet";
 import { mantle } from "./custom-chains/mantle";
@@ -50,6 +51,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   lukso,
   soneium,
   story,
+  ink,
   sepolia,
   baseTestnet,
   mainnet,
