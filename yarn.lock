@@ -8110,10 +8110,10 @@
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.3.5.tgz#45f9f87398c5dcea085b715c58ddcf1faf65f716"
   integrity sha512-P4t6saawp+b/dFrUr2cvkVsfvPguwsxtH6dNIYRllMsefqFzkZk5UIjzyDOv5g1dXIPdG4Sp1yCR4Z6RCUsG/Q==
 
-"@types/react-virtualized@9.22.0":
-  version "9.22.0"
-  resolved "https://registry.yarnpkg.com/@types/react-virtualized/-/react-virtualized-9.22.0.tgz#2ff9b3692fa04a429df24ffc7d181d9f33b3831d"
-  integrity sha512-JL/YCCFZ123za//cj10Apk54F0UGFMrjOE0QHTuXt1KBMFrzLOGv9/x6Uc/pZ0Gaf4o6w61Fostvlw0DwuPXig==
+"@types/react-virtualized@9.22.2":
+  version "9.22.2"
+  resolved "https://registry.yarnpkg.com/@types/react-virtualized/-/react-virtualized-9.22.2.tgz#97674f050a85d0f7aab827b3d894f3f1b237922a"
+  integrity sha512-0Eg/ME3OHYWGxs+/n4VelfYrhXssireZaa1Uqj5SEkTpSaBu5ctFGOCVxcOqpGXRiEdrk/7uho9tlZaryCIjHA==
   dependencies:
     "@types/prop-types" "*"
     "@types/react" "*"

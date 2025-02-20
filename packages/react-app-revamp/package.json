@@ -40,7 +40,7 @@
     "@types/react": "18.3.18",
     "@types/react-csv": "1.1.10",
     "@types/react-dom": "18.3.5",
-    "@types/react-virtualized": "9.22.0",
+    "@types/react-virtualized": "9.22.2",
     "@types/react-window": "1.8.8",
     "@types/underscore": "1.13.0",
     "@types/uuid": "10.0.0",
