@@ -3708,10 +3708,10 @@
     request "^2.81.0"
     rewire "^7.0.0"
 
-"@getpara/core-components@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-components/-/core-components-1.0.0.tgz#e3c6b5c1da55472434ab8cd6812147872cc59563"
-  integrity sha512-cauSOC15wYjhrrnBq/08Hma8pg264s/tENp5jb/pjugiySwk+TRyM7mLOKBunznYWlIOO5fT7wskJ5iJuY+K0w==
+"@getpara/core-components@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@getpara/core-components/-/core-components-1.3.1.tgz#dd0cb923df1a233045e85b9be3e590eaa3e5b07a"
+  integrity sha512-R4hFYpwz6LkCfQwrqtLLYmBvrEpqyfH1fuuVRV9E5g91TQTaxKH5VFsRbK7bxzLg3XfVsA+W1PWk9006qhCSgg==
   dependencies:
     "@stencil/core" "^4.7.0"
     color-blend "^4.0.0"
@@ -3720,37 +3720,36 @@
     inputmask "5.0.9"
     qrcode-with-logos "1.1.1"
 
-"@getpara/core-sdk@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-1.0.0.tgz#ae4d535ac23bec051ef1c9d73b3483b8b20572c4"
-  integrity sha512-JbBy4M1v5umo6QK/bjRX7S4qLnHuaGKuQbiWaIgv2f+4P/M5ffAWSu6G1H2JYxD5Y0nmjTPv8gqEbK6Db7adfA==
+"@getpara/core-sdk@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-1.3.1.tgz#50a274524a0e02ea85e67d800964facd3d2aac89"
+  integrity sha512-aqHy7Z8JZ/AqAA/iS5sdZnstobbzXpB6yONDOgWQrtBSsIdvvnmo04APN7Z5QVwBCj9u/d3lnC/4yvNmEuj+LA==
   dependencies:
     "@celo/utils" "^8.0.0"
     "@cosmjs/encoding" "^0.32.4"
-    "@getpara/user-management-client" "1.0.0"
+    "@getpara/user-management-client" "1.3.1"
     "@noble/hashes" "^1.5.0"
     base64url "^3.0.1"
-    buffer "6.0.3"
     ethereumjs-util "7.1.5"
     libphonenumber-js "1.11.2"
     node-forge "^1.3.1"
     qs "^6.12.0"
 
-"@getpara/rainbowkit-wallet@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@getpara/rainbowkit-wallet/-/rainbowkit-wallet-1.0.0.tgz#1363417b59c906c1bbd31a5cd435f6c2d1effc62"
-  integrity sha512-l9TKM97by8G6fGpHl7+uXRLYJ99ToIq8oLUoYT19wFwtKwnGbKWJb86GGskcZjgNnjUmODG+TWM0BKbaSibC/Q==
+"@getpara/rainbowkit-wallet@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@getpara/rainbowkit-wallet/-/rainbowkit-wallet-1.1.0.tgz#220debddf14466f97b3857451d2ee08afc92cd84"
+  integrity sha512-iLBPdncbk4U06ddzeOrsslZWnzq5rFg0z9gd5805PHceoH0S1hFWQZjNdKMdxHRg/AyPI3dzxd6IAGwd03Q3Bw==
   dependencies:
-    "@getpara/react-sdk" "1.0.0"
-    "@getpara/wagmi-v2-integration" "1.0.0"
+    "@getpara/react-sdk" "1.3.1"
+    "@getpara/wagmi-v2-integration" "1.3.1"
 
-"@getpara/react-common@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-1.0.0.tgz#9e4e655b5ec1d031f4322856ebc7d5a89402e1c5"
-  integrity sha512-ln8yez24yqtouwaZh3ePHYzi6VyGOqBhu4625E1TSTvSqZm8a7qxythqilqMIV5aS6bOh2QFhVoBWivBlQ7nZA==
+"@getpara/react-common@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-1.3.1.tgz#0c5c3530f7d20103316b75adf56e3c418f330ca9"
+  integrity sha512-fbTuIeksITcwnvmVNKOeledDnhsPIbH4FFg8MxgM4rnGqnlo8pCupUVcqAJn1alZ5gN06gCBfQgxbdgDBhPCdg==
   dependencies:
-    "@getpara/react-components" "1.0.0"
-    "@getpara/web-sdk" "1.0.0"
+    "@getpara/react-components" "1.3.1"
+    "@getpara/web-sdk" "1.3.1"
     "@moonpay/moonpay-react" "^1.8.3"
     "@ramp-network/ramp-instant-sdk" "^4.0.5"
     "@stripe/crypto" "^0.0.4"
@@ -3758,21 +3757,21 @@
     libphonenumber-js "^1.11.1"
     styled-components "^6.1.8"
 
-"@getpara/react-components@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-components/-/react-components-1.0.0.tgz#641b4ea870ab6b447c125973fedbca0ee673b3ed"
-  integrity sha512-P7BMZOO8/UdkOxISvB/WlVOaadnqYy/Ve/aZ12hNQDLTBV2Lj7qDya4qWjboVQvoJXb206AenMTeoC+AogncjQ==
+"@getpara/react-components@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@getpara/react-components/-/react-components-1.3.1.tgz#3907b935fb3f6c1e77f035e6c3a42ebf2c7942bb"
+  integrity sha512-IykQy2vKT/xDFX5V5UEfeo6sv0VYzRAKWFmf7bqvWJGyTVAr37+xcuMf+ncOUC8BMkknhDdLBsqMUauGmQQMjQ==
   dependencies:
-    "@getpara/core-components" "1.0.0"
+    "@getpara/core-components" "1.3.1"
 
-"@getpara/react-sdk@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-sdk/-/react-sdk-1.0.0.tgz#e6795965d5e7a85da5a90831e6e2fd1195c584f8"
-  integrity sha512-fcKc7PnT0ugkYdv6NhmsboSlp5c1xqjfr+Vmu/NOQnHeQ3ntV7HeOKMWWpgQwTjMvnUAVgT1xHp3sEGC5j6llA==
+"@getpara/react-sdk@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@getpara/react-sdk/-/react-sdk-1.3.1.tgz#69c994b19ed329f3c9e6421b3e93b4fd247dfcc4"
+  integrity sha512-eIkE/xeR11uTC8g+Vybga6QkPY4MkaL0djqZha+lApPobm54raLd5q6vtK2lFmw00JPXOF0WSb7lyFw9mDsOxQ==
   dependencies:
-    "@getpara/react-common" "1.0.0"
-    "@getpara/react-components" "1.0.0"
-    "@getpara/web-sdk" "1.0.0"
+    "@getpara/react-common" "1.3.1"
+    "@getpara/react-components" "1.3.1"
+    "@getpara/web-sdk" "1.3.1"
     "@tanstack/react-query" "^5.0.0"
     date-fns "^3.6.0"
     detect-browser "^5.3.0"
@@ -3781,37 +3780,37 @@
     styled-components "^6.1.8"
     zustand "^4.5.2"
 
-"@getpara/user-management-client@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-1.0.0.tgz#3703f77e10b881b065771ecba1903da9f17437e7"
-  integrity sha512-+iIWBv31icAYmIOsaB1HwR/bKs5UylMRWNas2FW33+IaguZNpfMii938J45TDdv2vQl9Jt8sE2DB2qjSH/F3RQ==
+"@getpara/user-management-client@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-1.3.1.tgz#0e232fd60facc716385867408d72c743fe236dad"
+  integrity sha512-qI8n4aY/gd1WAgSnQBsJN1O8LW68t8OUS3IFcAtwT/8bscfWEGBC5kUGPQmlazGJ3Wm/MJ1A+Kv4k9/vNL+wPw==
   dependencies:
     axios "^1.6.3"
     libphonenumber-js "1.11.2"
     qs "^6.12.0"
 
-"@getpara/viem-v2-integration@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-1.0.0.tgz#3e94c31840892a74be1c93fec1d64ea355e09934"
-  integrity sha512-bCJ/im+cftP42OeHkoTJIZXfn+MZCsKtWCHFDu6my7YGUF05oQtwl01V9nuaJDKQMa0fubJhH0Gppzao6M3BCg==
+"@getpara/viem-v2-integration@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-1.3.1.tgz#06594b7e90eae7746c40a2c6eaca9466b30de8b6"
+  integrity sha512-jwMcoQAnuV9VAIX19MjhfqkJPbVC602kNwcJZz4W38XkT5w81UHFrIhz/MYogF7H2wvzR4cJx3hs8ej33EFQbw==
   dependencies:
-    "@getpara/core-sdk" "1.0.0"
+    "@getpara/core-sdk" "1.3.1"
 
-"@getpara/wagmi-v2-integration@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-integration/-/wagmi-v2-integration-1.0.0.tgz#9110be1eb41dffd2f21294db740833e95e631e48"
-  integrity sha512-u9Mqy682G8BGtJuJeyoPSiL1GrrRlJkyYOEh/Dl5sYNYatgktxVS3EIKp2mrEckMAhsXXXYbEW0omVPjUmAvXA==
+"@getpara/wagmi-v2-integration@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-integration/-/wagmi-v2-integration-1.3.1.tgz#a79adf1807865a5cc81460f78ed1378fd4cd568e"
+  integrity sha512-V9LAxOZXmgugzAiaf6V2jvpYTkvRgGR0Dr7omJIqmeroJdZF6Agq7LyAsR7F0yOWruZaQeYs7PndPPbmKxAjhw==
   dependencies:
-    "@getpara/react-sdk" "1.0.0"
-    "@getpara/viem-v2-integration" "1.0.0"
+    "@getpara/react-sdk" "1.3.1"
+    "@getpara/viem-v2-integration" "1.3.1"
 
-"@getpara/web-sdk@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-1.0.0.tgz#82ad76ff78464c1248f913e0d5f8b0c9cc31d02e"
-  integrity sha512-71kW8KXtjWkLitY+jLnvDG3QhQlLBvh/BM0Ft1jSFMbRZndgzn++PJdSwqhRyQN3MEGIyBOkGPe1HRx+K7WgwQ==
+"@getpara/web-sdk@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-1.3.1.tgz#4fde307693249c7bb0e027e5ca2f63ab25218876"
+  integrity sha512-HIdK1MNKMpcT6PFItnG0ysHOqEfwipFIjbeUwUd/q3nZ5Dn900EupXP4XJboZNW/ZarhaSfRCuB4G9nAIvyhhg==
   dependencies:
-    "@getpara/core-sdk" "1.0.0"
-    "@getpara/user-management-client" "1.0.0"
+    "@getpara/core-sdk" "1.3.1"
+    "@getpara/user-management-client" "1.3.1"
     assert "^2.1.0"
     base64url "3.0.1"
     buffer "6.0.3"
