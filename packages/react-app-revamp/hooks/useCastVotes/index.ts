@@ -26,6 +26,7 @@ import { useEmailSend } from "@hooks/useEmailSend";
 import { EmailType, VotingEmailParams } from "lib/email/types";
 import { FOOTER_LINKS } from "@config/links";
 import moment from "moment";
+import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 
 interface UserAnalyticsParams {
   contestAddress: string;
@@ -117,7 +118,7 @@ export function useCastVotes() {
   };
 
   async function castVotes(amountOfVotes: number, isPositive: boolean) {
-    toastLoading("votes are deploying...");
+    toastLoading("votes are deploying...", LoadingToastMessageType.KEEP_BROWSER_OPEN);
     setIsLoading(true);
     setIsSuccess(false);
     setError("");

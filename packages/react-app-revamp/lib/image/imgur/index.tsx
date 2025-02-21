@@ -9,7 +9,7 @@ if (!IMGUR_CLIENT_ID) {
 
 export async function uploadToImgur(base64Image: string): Promise<string> {
   try {
-    toastLoading("Uploading image...", false);
+    toastLoading("Uploading image...");
 
     const response = await fetch(IMGUR_API_ENDPOINT, {
       method: "POST",

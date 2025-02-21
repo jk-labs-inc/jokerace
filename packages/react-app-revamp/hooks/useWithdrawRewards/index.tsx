@@ -1,4 +1,5 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
+import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { transform } from "@hooks/useDistributeRewards";
@@ -43,7 +44,7 @@ export const useWithdrawReward = (
 
   const handleWithdraw = async () => {
     setIsLoading(true);
-    toastLoading(`Withdrawing funds...`);
+    toastLoading(`Withdrawing funds...`, LoadingToastMessageType.KEEP_BROWSER_OPEN);
 
     try {
       const hash = await writeContract(config, {

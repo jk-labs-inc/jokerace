@@ -123,7 +123,7 @@ const CreateVotingRequirements: FC<CreateVotingRequirementsProps> = ({ isNextCli
   };
 
   const fetchRequirementsMerkleData = async (type: string) => {
-    toastLoading("processing your allowlist...", false);
+    toastLoading("processing your allowlist...");
 
     try {
       let votingAllowlist: Record<string, number> | Error;
