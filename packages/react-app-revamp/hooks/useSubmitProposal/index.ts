@@ -1,4 +1,5 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
+import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 import { chains, config } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { extractPathSegments } from "@helpers/extractPath";
@@ -15,7 +16,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { useUserStore } from "@hooks/useUser/store";
-import { waitForTransactionReceipt, writeContract, simulateContract } from "@wagmi/core";
+import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { EmailType } from "lib/email/types";
@@ -106,7 +107,7 @@ export function useSubmitProposal() {
   };
 
   async function sendProposal(proposalContent: string): Promise<{ tx: TransactionResponse; proposalId: string }> {
-    if (showToast) toastLoading("proposal is deploying...");
+    if (showToast) toastLoading("proposal is deploying...", LoadingToastMessageType.KEEP_BROWSER_OPEN);
     setIsLoading(true);
     setIsSuccess(false);
     setError("");

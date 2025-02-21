@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import ErrorToast from "./components/Error";
-import LoadingToast from "./components/Loading";
+import LoadingToast, { LoadingToastMessageType } from "./components/Loading";
 import SuccessToast from "./components/Success";
 import WarningToast from "./components/Warning";
 import InfoToast from "./components/Info";
@@ -45,8 +45,8 @@ export const toastWarning = (message: string) => {
   createToast("warning", <WarningToast message={message} />);
 };
 
-export const toastLoading = (message: string, showSignMessage: boolean = false) => {
-  createToast("info", <LoadingToast message={message} showSignMessage={showSignMessage} />, {
+export const toastLoading = (message: string, additionalMessageType?: LoadingToastMessageType) => {
+  createToast("info", <LoadingToast message={message} additionalMessageType={additionalMessageType} />, {
     autoClose: false,
   });
 };
