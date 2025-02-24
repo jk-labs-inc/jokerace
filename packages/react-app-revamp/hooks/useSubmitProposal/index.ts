@@ -1,4 +1,5 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
+import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 import { chains, config } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { extractPathSegments } from "@helpers/extractPath";
@@ -15,7 +16,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { useUserStore } from "@hooks/useUser/store";
-import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { waitForTransactionReceipt, writeContract, simulateContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { EmailType } from "lib/email/types";
@@ -106,7 +107,7 @@ export function useSubmitProposal() {
   };
 
   async function sendProposal(proposalContent: string): Promise<{ tx: TransactionResponse; proposalId: string }> {
-    if (showToast) toastLoading("proposal is deploying...");
+    if (showToast) toastLoading("proposal is deploying...", LoadingToastMessageType.KEEP_BROWSER_OPEN);
     setIsLoading(true);
     setIsSuccess(false);
     setError("");
@@ -126,17 +127,14 @@ export function useSubmitProposal() {
 
       try {
         const { proofs, isVerified } = await getProofs(userAddress ?? "", "submission", "10");
-
         const contractConfig = {
           address: address as `0x${string}`,
           abi: abi,
           chainId,
         };
 
-        let txSendProposal: TransactionResponse = {} as TransactionResponse;
         const fieldsMetadata = processFieldInputs(metadataFields);
-
-        let proposalCore = {
+        const proposalCore = {
           author: userAddress,
           exists: true,
           description: fullProposalContent,
@@ -147,20 +145,29 @@ export function useSubmitProposal() {
 
         let hash: `0x${string}`;
 
-        if (!isVerified) {
-          hash = await writeContract(config, {
-            ...contractConfig,
-            functionName: "propose",
-            args: [proposalCore, proofs],
-            value: costToPropose,
-          });
-        } else {
-          hash = await writeContract(config, {
-            ...contractConfig,
-            functionName: "proposeWithoutProof",
-            args: [proposalCore],
-            value: costToPropose,
-          });
+        // simulate the transaction first
+        try {
+          if (!isVerified) {
+            const { request } = await simulateContract(config, {
+              ...contractConfig,
+              functionName: "propose",
+              args: [proposalCore, proofs],
+              value: costToPropose,
+            });
+            // if simulation succeeds, proceed with the actual transaction
+            hash = await writeContract(config, request);
+          } else {
+            const { request } = await simulateContract(config, {
+              ...contractConfig,
+              functionName: "proposeWithoutProof",
+              args: [proposalCore],
+              value: costToPropose,
+            });
+            // if simulation succeeds, proceed with the actual transaction
+            hash = await writeContract(config, request);
+          }
+        } catch (simulationError: any) {
+          throw new Error(`transaction simulation failed: ${simulationError.message}`);
         }
 
         const receipt = await waitForTransactionReceipt(config, {
@@ -168,13 +175,17 @@ export function useSubmitProposal() {
           hash: hash,
         });
 
+        const txSendProposal = {
+          hash: receipt.transactionHash,
+        } as TransactionResponse;
+
         const proposalId = await getProposalId(proposalCore, contractConfig);
         const contestEntryLink = `${window.location.origin}/contest/${chainName.toLowerCase()}/${address}/submission/${proposalId}`;
 
         setTransactionData({
           chainId: chainId,
           hash: receipt.transactionHash,
-          transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txSendProposal?.hash}`,
+          transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${hash}`,
         });
 
         await performAnalytics({

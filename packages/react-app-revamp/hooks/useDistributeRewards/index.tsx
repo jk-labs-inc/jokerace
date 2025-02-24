@@ -1,4 +1,5 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
+import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
@@ -55,7 +56,7 @@ export const useDistributeRewards = (
 
   const handleDistributeRewards = async () => {
     setIsLoading(true);
-    toastLoading(`Distributing funds...`);
+    toastLoading(`Distributing funds...`, LoadingToastMessageType.KEEP_BROWSER_OPEN);
     const amountReleasableFormatted = transform(tokenBalance, tokenAddress, tokenDecimals);
 
     try {
