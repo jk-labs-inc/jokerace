@@ -84,7 +84,7 @@ const CreateVotingCSVUploader: FC<CreateVotingCSVUploaderProps> = ({ isNextClick
       return;
     }
 
-    toastLoading("Processing your allowlist...", false);
+    toastLoading("Processing your allowlist...");
     setCharge({
       ...charge,
       voteType: VoteType.PerTransaction,
