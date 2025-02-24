@@ -11,10 +11,12 @@ export const sepolia: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://eth-sepolia-public.unifra.io"],
+      http: ["https://eth-sepolia.public.blastapi.io"],
     },
     default: {
-      http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.ethereum-sepolia.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
+      http: [
+        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.ethereum-sepolia.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+      ],
     },
   },
   blockExplorers: {
