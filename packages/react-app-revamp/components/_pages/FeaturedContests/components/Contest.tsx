@@ -43,12 +43,12 @@ function getContestStatus(contest: Contest): { status: string; timeLeft: string 
 }
 
 function formatDuration(duration: moment.Duration): string {
-  const days = duration.days();
+  const totalDays = Math.floor(duration.asDays());
   const hours = duration.hours();
   const minutes = duration.minutes();
 
-  if (days > 0) {
-    return `${days}d ${hours}h`;
+  if (totalDays > 0) {
+    return `${totalDays}d ${hours}h`;
   } else if (hours > 0) {
     return `${hours}h ${minutes}m`;
   } else {
@@ -147,7 +147,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
         <div className="flex flex-col gap-2">
           <p className="text-[18px] font-bold text-true-white normal-case">{contestData.title}</p>
           <p className="flex items-center gap-2 text-[12px] font-bold text-neutral-11">
-            {isContestActive && (
+            {isContestActive && !contestData.isCanceled && (
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-positive-10 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-positive-11"></span>
