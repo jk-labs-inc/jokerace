@@ -74,7 +74,7 @@ export const saveFileToBucket = async ({ fileId, content }: SaveFileOptions): Pr
 };
 
 export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions): Promise<string> => {
-  toastLoading("Uploading image...", false);
+  toastLoading("Uploading image...");
   try {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
