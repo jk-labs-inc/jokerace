@@ -16571,10 +16571,10 @@ react-tooltip@5.28.0:
     "@floating-ui/dom" "^1.6.1"
     classnames "^2.3.0"
 
-react-tweet@3.2.1:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/react-tweet/-/react-tweet-3.2.1.tgz#000d9bf2b2ce919fdec0e14241f05631e8917143"
-  integrity sha512-dktP3RMuwRB4pnSDocKpSsW5Hq1IXRW6fONkHhxT5EBIXsKZzdQuI70qtub1XN2dtZdkJWWxfBm/Q+kN+vRYFA==
+react-tweet@3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/react-tweet/-/react-tweet-3.2.2.tgz#b9a8fccbab469a02d87b26f3728275024f4e9574"
+  integrity sha512-hIkxAVPpN2RqWoDEbo3TTnN/pDcp9/Jb6pTgiA4EbXa9S+m2vHIvvZKHR+eS0PDIsYqe+zTmANRa5k6+/iwGog==
   dependencies:
     "@swc/helpers" "^0.5.3"
     clsx "^2.0.0"
