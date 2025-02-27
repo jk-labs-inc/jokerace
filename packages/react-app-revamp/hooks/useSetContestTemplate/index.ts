@@ -13,7 +13,6 @@ const useSetContestTemplate = () => {
     setSubmissionOpen,
     setVotingOpen,
     setVotingClose,
-    setVotingTab,
     setEntryPreviewConfig,
   } = useDeployContestStore(state => state);
   const { setTimingOption: setSubmissionTimingOption } = useTimingOptionForSubmissionPeriod(state => state);
