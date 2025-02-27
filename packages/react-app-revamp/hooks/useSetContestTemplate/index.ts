@@ -13,19 +13,29 @@ const checkIfVotingNeeded = (steps: StepTitle[]): { isVotingNeeded: boolean } =>
 };
 
 const useSetContestTemplate = () => {
-  const { setPrompt, setSubmissionOpen, setVotingOpen, setVotingClose, setVotingTab, setEntryPreviewConfig } =
-    useDeployContestStore(state => state);
+  const {
+    setContestType,
+    setPrompt,
+    setTitle,
+    setSubmissionOpen,
+    setVotingOpen,
+    setVotingClose,
+    setVotingTab,
+    setEntryPreviewConfig,
+  } = useDeployContestStore(state => state);
   const { setTimingOption: setSubmissionTimingOption } = useTimingOptionForSubmissionPeriod(state => state);
   const { setTimingOption: setVotingTimingOption } = useTimingOptionForVotingPeriod(state => state);
 
   const setContestTemplateConfig = (config: TemplateConfig) => {
     const { isVotingNeeded } = checkIfVotingNeeded(config.stepsToFulfill);
 
-    setPrompt(config.data.prompt);
+    setContestType(config.data.contestType);
+    setTitle(config.data.rules.title);
+    setPrompt(config.data.rules.prompt);
     setSubmissionOpen(config.data.submissionOpen);
     setVotingOpen(config.data.votingOpen);
     setVotingClose(config.data.votingClose);
-    setVotingTab(isVotingNeeded ? 2 : 0);
+    setVotingTab(isVotingNeeded ? 1 : 0);
     setSubmissionTimingOption(config.data.votingOpenPeriod);
     setVotingTimingOption(config.data.votingClosePeriod);
     setEntryPreviewConfig(config.data.entryPreviewConfig);
