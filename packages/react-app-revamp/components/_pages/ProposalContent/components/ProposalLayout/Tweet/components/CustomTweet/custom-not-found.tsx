@@ -24,7 +24,9 @@ const CustomTweetNotFound: FC<CustomTweetNotFoundProps> = ({ error, onError, id 
       <div className="flex flex-col items-center justify-center p-4 gap-4 min-w-full text-neutral-9">
         <div className="flex flex-col text-center items-center justify-center gap-2">
           <p className="text-[16px] font-bold text-neutral-9">sorry, we couldn't load this tweet</p>
-          <p className="text-[14px] text-neutral-9">the tweet may have been deleted or is temporarily unavailable</p>
+          <p className="text-[14px] text-neutral-9">
+            the tweet may have been deleted or flagged as containing sensitive content
+          </p>
         </div>
 
         {tweetUrl && (
