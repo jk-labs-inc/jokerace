@@ -104,9 +104,9 @@ const ProposalContent: FC<ProposalContentProps> = ({
             href={LINK_BRIDGE_DOCS}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-true-black hover:text-neutral-2 transition-colors duration-300 border-b border-true-black"
+            className="text-positive-11 opacity-80 hover:opacity-100 transition-colors font-bold"
           >
-            add {chainCurrencySymbol} to {chainName} to get votes
+            add {chainCurrencySymbol} to {chainName} to get votes {">"}
           </a>,
         );
         return;
