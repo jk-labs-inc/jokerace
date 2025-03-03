@@ -33,6 +33,7 @@ NEXT_PUBLIC_PARA_API_KEY=
 NEXT_PUBLIC_PARA_ENVIRONMENT=
 NEXT_PUBLIC_BREVO_API_KEY=
 ```
+
 ## Getting Started
 
 First, navigate to the top directory of this repo and run the development server with
