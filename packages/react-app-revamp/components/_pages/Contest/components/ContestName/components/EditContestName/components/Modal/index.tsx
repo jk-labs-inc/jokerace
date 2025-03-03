@@ -126,7 +126,7 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
         <div className="flex flex-col gap-2">
           <ImageUpload
             initialImageUrl={contestImageUrl}
-            isError={!!uploadError}
+            errorMessage={uploadError}
             isSuccess={uploadSuccess}
             onFileSelect={onFileSelectHandler}
           />

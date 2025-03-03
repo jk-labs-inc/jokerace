@@ -4,7 +4,7 @@ import { s3 } from "@config/s3";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 
 const MERKLE_TREES_BUCKET = process.env.NEXT_PUBLIC_MERKLE_TREES_BUCKET as string;
-const IMAGE_UPLOAD_BUCKET = process.env.NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET as string;
+const IMAGE_UPLOAD_BUCKET = "kurac";
 
 const IMAGE_PUBLIC_URL = IMAGE_UPLOAD_BUCKET.includes("dev")
   ? "https://dev.images.jokerace.io"
@@ -93,7 +93,7 @@ export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions
     toastSuccess("Image uploaded successfully!");
     return originalUrl;
   } catch (error: any) {
-    toastError("Failed to upload an image, please try again.");
+    toastError("Failed to upload an image, please try again.", error.message);
     console.error("Upload error:", error);
     throw new Error(`Failed to upload image with ID ${fileId} to bucket ${IMAGE_UPLOAD_BUCKET}`);
   }

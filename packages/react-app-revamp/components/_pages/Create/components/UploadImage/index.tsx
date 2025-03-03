@@ -62,8 +62,12 @@ const CreateUploadImage = () => {
   return (
     <div className="flex flex-col gap-4">
       <CreateGradientTitle additionalInfo="recommended">preview image</CreateGradientTitle>
-      <ImageUpload onFileSelect={onFileSelectHandler} isSuccess={uploadSuccess} initialImageUrl={prompt.imageUrl} />
-      {uploadError && <p className="text-[12px] text-negative-11 font-bold">{uploadError}</p>}
+      <ImageUpload
+        onFileSelect={onFileSelectHandler}
+        isSuccess={uploadSuccess}
+        initialImageUrl={prompt.imageUrl}
+        errorMessage={uploadError}
+      />
     </div>
   );
 };

@@ -116,8 +116,7 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
       </div>
       <div className="flex flex-col gap-4">
         <p className="text-neutral-11 text-[16px] font-bold">image</p>
-        <ImageUpload onFileSelect={onFileSelectHandler} isSuccess={uploadSuccess} />
-        {uploadError && <p className="text-[12px] text-negative-11 font-bold">{uploadError}</p>}
+        <ImageUpload onFileSelect={onFileSelectHandler} isSuccess={uploadSuccess} errorMessage={uploadError} />
       </div>
     </div>
   );
