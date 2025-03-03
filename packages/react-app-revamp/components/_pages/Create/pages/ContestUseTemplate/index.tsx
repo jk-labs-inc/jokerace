@@ -68,13 +68,9 @@ const CreateContestTemplate = () => {
 
   return (
     <div className="flex flex-col gap-12 pl-4 pr-4 lg:pl-[120px] lg:pr-[60px] lg:ml-[300px] mt-8 md:mt-32 animate-reveal">
-      <GradientText
-        text="Pick a template"
-        isStrikethrough={false}
-        textSizeClassName="text-[24px] font-bold"
-        isFontSabo={false}
-      />
-
+      <GradientText isStrikethrough={false} textSizeClassName="text-[24px] font-bold" isFontSabo={false}>
+        pick a template
+      </GradientText>
       <div className="flex gap-8 flex-col">
         <div className="flex flex-col gap-4">
           <p className="text-[16px] text-neutral-11 uppercase font-bold">template</p>
