@@ -171,9 +171,9 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                       <a
                         href={LINK_BRIDGE_DOCS}
                         target="_blank"
-                        className="text-[16px] text-negative-11 font-bold underline"
+                        className="text-[16px] text-positive-11 opacity-80 hover:opacity-100 transition-colors font-bold"
                       >
-                        add {chainCurrencySymbol} to {contestInfo.chain} to get votes
+                        add {chainCurrencySymbol} to {contestInfo.chain} to get votes {">"}
                       </a>
                     ) : (
                       <p className="text-[16px] text-neutral-11">
