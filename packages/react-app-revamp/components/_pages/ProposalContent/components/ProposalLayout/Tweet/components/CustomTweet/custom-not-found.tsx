@@ -21,9 +21,9 @@ const CustomTweetNotFound: FC<CustomTweetNotFoundProps> = ({ error, onError, id 
 
   return (
     <TweetContainer className="w-full md:!w-[360px] !min-w-full !text-neutral-9 !bg-true-black !m-0 !border-primary-1">
-      <div className="flex flex-col items-center justify-center p-4 gap-4 min-w-full text-neutral-9">
-        <div className="flex flex-col text-center items-center justify-center gap-2">
-          <p className="text-[16px] font-bold text-neutral-9">sorry, we couldn't load this tweet</p>
+      <div className="flex flex-col p-4 gap-4 min-w-full text-neutral-9">
+        <div className="flex flex-col gap-2">
+          <p className="text-[16px] text-neutral-9">sorry, we couldn't load this tweet</p>
           <p className="text-[14px] text-neutral-9">
             the tweet may have been deleted or flagged as containing sensitive content
           </p>
@@ -35,12 +35,9 @@ const CustomTweetNotFound: FC<CustomTweetNotFoundProps> = ({ error, onError, id 
             onClick={navigateToTweet}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-[20px] text-positive-11 opacity-80 hover:opacity-100 transition-colors"
+            className="font-bold text-[16px] text-positive-11 opacity-80 hover:opacity-100 transition-colors"
           >
-            <span className="flex items-center gap-2 border-b border-current">
-              view on x.com
-              <LinkIcon className="h-4 w-4 text-positive-11" />
-            </span>
+            view on x.com {">"}
           </a>
         )}
       </div>
