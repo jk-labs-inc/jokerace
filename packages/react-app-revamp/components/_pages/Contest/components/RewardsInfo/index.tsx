@@ -119,7 +119,6 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
       <div className="flex items-baseline">
         <div className={`flex items-baseline gap-1 ${animate ? "animate-flicker-number" : ""}`}>
           <GradientText
-            isStrikethrough={false}
             gradientClassName="bg-gradient-create"
             textSizeClassName="text-[14px] md:text-[24px] font-bold"
             isFontSabo={false}

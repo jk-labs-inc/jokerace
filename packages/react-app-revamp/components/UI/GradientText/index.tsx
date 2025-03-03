@@ -1,7 +1,7 @@
 import React, { FC, PropsWithChildren } from "react";
 
 interface GradientTextProps {
-  isStrikethrough: boolean;
+  isStrikethrough?: boolean;
   gradientClassName?: string;
   textSizeClassName?: string;
   isFontSabo?: boolean;

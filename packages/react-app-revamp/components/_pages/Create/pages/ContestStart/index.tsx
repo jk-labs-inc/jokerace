@@ -38,7 +38,7 @@ const CreateContestStart: FC<CreateContestStartProps> = ({ onCreateContest, onCr
   return (
     <div className="flex flex-col gap-10 lg:ml-[300px] mt-6 md:mt-24 animate-reveal">
       <div className="flex flex-col gap-2">
-        <GradientText isStrikethrough={false} textSizeClassName="text-[24px] font-bold" isFontSabo={false}>
+        <GradientText textSizeClassName="text-[24px] font-bold" isFontSabo={false}>
           {stepTitle}
         </GradientText>
         <div className="flex flex-col gap-6">
