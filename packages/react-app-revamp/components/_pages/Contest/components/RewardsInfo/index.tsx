@@ -1,3 +1,4 @@
+import GradientText from "@components/UI/GradientText";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
@@ -117,8 +118,15 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
       <div className="h-4 w-[2px] bg-primary-2"></div>
       <div className="flex items-baseline">
         <div className={`flex items-baseline gap-1 ${animate ? "animate-flicker-number" : ""}`}>
-          <p className="text-[14px] md:text-[24px] font-bold text-neutral-11">{formatBalance(currentRewardAmount)}</p>
-          <p className="uppercase text-[12px] md:text-[16px] font-bold text-neutral-11">${currentReward.symbol}</p>
+          <GradientText
+            isStrikethrough={false}
+            gradientClassName="bg-gradient-create"
+            textSizeClassName="text-[14px] md:text-[24px] font-bold"
+            isFontSabo={false}
+          >
+            {formatBalance(currentRewardAmount)}{" "}
+            <span className="uppercase text-[12px] md:text-[16px] font-bold">${currentReward.symbol}</span>
+          </GradientText>
         </div>
         <span className="text-[12px] md:text-[16px] font-bold text-neutral-11 ml-1">
           {currentReward.isReleased ? "paid to" : "to"} {currentReward.ranking}

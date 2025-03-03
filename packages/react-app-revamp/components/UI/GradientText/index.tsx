@@ -1,15 +1,16 @@
-import React, { FC } from "react";
+import React, { FC, PropsWithChildren } from "react";
 
 interface GradientTextProps {
-  text: string;
   isStrikethrough: boolean;
+  gradientClassName?: string;
   textSizeClassName?: string;
   isFontSabo?: boolean;
 }
 
-const GradientText: FC<GradientTextProps> = ({
-  text,
+const GradientText: FC<PropsWithChildren<GradientTextProps>> = ({
+  children,
   isStrikethrough,
+  gradientClassName = "bg-gradient-purple",
   textSizeClassName = "text-[16px] md:text-[31px]",
   isFontSabo = true,
 }) => {
@@ -21,7 +22,9 @@ const GradientText: FC<GradientTextProps> = ({
             <span className="w-full h-0.5 bg-gradient-purple"></span>
           </span>
         )}
-        <span className="relative z-10 bg-gradient-purple text-transparent bg-clip-text inline-block">{text}</span>
+        <span className={`relative z-10 ${gradientClassName} text-transparent bg-clip-text inline-block`}>
+          {children}
+        </span>
       </span>
     </div>
   );

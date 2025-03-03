@@ -67,12 +67,9 @@ const CreateContestConfirm = () => {
       {isMobile ? <MobileStepper currentStep={state.step} totalSteps={steps.length} /> : null}
       <div className="full-width-create-flow-grid mt-12 lg:mt-[70px] animate-swingInLeft">
         <div className="flex flex-col gap-8 md:ml-10">
-          <GradientText
-            text="let's confirm"
-            isStrikethrough={false}
-            textSizeClassName="text-[24px] font-bold"
-            isFontSabo={false}
-          />
+          <GradientText isStrikethrough={false} textSizeClassName="text-[24px] font-bold" isFontSabo={false}>
+            let's confirm
+          </GradientText>
           <CreateContestConfirmTitle
             step={stepReferences.ContestRules}
             title={state.title}
