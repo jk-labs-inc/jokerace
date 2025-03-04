@@ -16725,10 +16725,10 @@ react-aria@3.37.0:
     "@react-aria/visually-hidden" "^3.8.19"
     "@react-types/shared" "^3.27.0"
 
-react-confetti@6.3.0:
-  version "6.3.0"
-  resolved "https://registry.yarnpkg.com/react-confetti/-/react-confetti-6.3.0.tgz#371d8ed9a7fffa64966af3e17efa4542ce94735e"
-  integrity sha512-/Ah3MktjQsxfxtYc8VVIS0ktZiRX9Wx8DJBNGvOiaXIwqt4zhJ2JNjJJRtPgRgqjZaLYxXSBLnh/wLyWs/I15Q==
+react-confetti@6.4.0:
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/react-confetti/-/react-confetti-6.4.0.tgz#e9416b5b3c8baf6f0bb1c5a8e1e3c89babd2c837"
+  integrity sha512-5MdGUcqxrTU26I2EU7ltkWPwxvucQTuqMm8dUz72z2YMqTD6s9vMcDUysk7n9jnC+lXuCPeJJ7Knf98VEYE9Rg==
   dependencies:
     tween-functions "^1.2.0"
 
