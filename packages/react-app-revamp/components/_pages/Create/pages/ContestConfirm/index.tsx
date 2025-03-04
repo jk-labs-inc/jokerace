@@ -1,4 +1,5 @@
 import EthereumDeploymentModal from "@components/UI/Deployment/Ethereum";
+import TestnetDeploymentModal from "@components/UI/Deployment/Testnet";
 import GradientText from "@components/UI/GradientText";
 import { FOOTER_LINKS } from "@config/links";
 import { emailRegex } from "@helpers/regex";
@@ -10,6 +11,7 @@ import { useAccount } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import MobileStepper from "../../components/MobileStepper";
 import { useContestSteps } from "../../hooks/useContestSteps";
+import { ContestType } from "../../types";
 import CreateContestConfirmCustomization from "./components/Customization";
 import CreateContestConfirmDescription from "./components/Description";
 import CreateContestConfirmEmailSubscription from "./components/EmailSubscription";
@@ -18,15 +20,12 @@ import CreateContestConfirmPreview from "./components/Preview";
 import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
 import CreateContestConfirmType from "./components/Type";
-import { ContestType } from "../../types";
-import useChargeDetails from "@hooks/useChargeDetails";
-import TestnetDeploymentModal from "@components/UI/Deployment/Testnet";
 
 const ETHEREUM_MAINNET_CHAIN_ID = 1;
 
 const CreateContestConfirm = () => {
   const { chainId, chain } = useAccount();
-  const { steps, stepReferences } = useContestSteps();
+  const { steps, stepReferences, allSteps } = useContestSteps();
   const { setEmailSubscriptionAddress, ...state } = useDeployContestStore(state => state);
   const { deployContest } = useDeployContest();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
@@ -34,7 +33,6 @@ const CreateContestConfirm = () => {
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const [emailError, setEmailError] = useState<string | null>(null);
   const [isTestnetDeploymentModalOpen, setIsTestnetDeploymentModalOpen] = useState(false);
-  const [isChainDetailsLoading, setIsChainDetailsLoading] = useState(false);
 
   const onDeployHandler = useCallback(() => {
     if (chainId === ETHEREUM_MAINNET_CHAIN_ID) {
@@ -59,7 +57,9 @@ const CreateContestConfirm = () => {
   };
 
   const onNavigateToStep = (stepIndex: number) => {
-    state.setStep(stepIndex);
+    const stepTitle = allSteps[stepIndex].title;
+    const actualStepIndex = steps.findIndex(step => step.title === stepTitle);
+    state.setStep(actualStepIndex !== -1 ? actualStepIndex : stepIndex);
   };
 
   return (

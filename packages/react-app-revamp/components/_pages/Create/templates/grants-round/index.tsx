@@ -11,7 +11,8 @@ const CreateContestGrantsRoundTemplate = () => {
       </p>
       <p>As always, you’ll keep a share of all charges.</p>
       <p>
-        <b>Default duration: 8 days.</b> Builders have one week to submit their projects, and judges one day to vote.
+        <b>Default duration: 8 days</b> <br />
+        Builders have one week to submit their projects, and judges one day to vote.
       </p>
       <p className="font-bold">You can modify any settings you like before launching the contest.</p>
     </div>
