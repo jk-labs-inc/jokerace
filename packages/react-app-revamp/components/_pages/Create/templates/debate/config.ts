@@ -24,14 +24,14 @@ export const debateConfig: TemplateConfig = {
     },
     submissionOpen: moment().toDate(),
     votingOpen: moment().add(30, "minutes").toDate(),
-    votingClose: moment().add(30, "minutes").add(2, "day").toDate(),
+    votingClose: moment().add(30, "minutes").add(47.5, "hours").toDate(),
     votingOpenPeriod: {
       value: TimingPeriod.Custom,
       label: "custom",
     },
     votingClosePeriod: {
-      value: TimingPeriod.TwoDays,
-      label: "two days",
+      value: TimingPeriod.Custom,
+      label: "custom",
     },
   },
 };
