@@ -12,7 +12,6 @@ interface CreateRewardsNavigationProps {
 }
 
 const fundPoolErrorMessage = "ruh roh! it looks like you have duplicate widgets with same token!";
-const fundPoolIsDisabledMessage = "insufficient balance";
 
 const CreateRewardsNavigation: FC<CreateRewardsNavigationProps> = ({ step, isDisabled = false, isError = false }) => {
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
@@ -35,26 +34,22 @@ const CreateRewardsNavigation: FC<CreateRewardsNavigationProps> = ({ step, isDis
     setStep(step - 1);
   };
 
-  const getButtonText = (step: number, isDisabled: boolean): string => {
-    if (step === CreationStep.FundPool && isDisabled) {
-      return fundPoolIsDisabledMessage;
-    }
-    return "next";
-  };
-
   if (isMobileOrTablet) {
     return (
       <MobileBottomButton>
         <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2 px-8`}>
-          {step > 0 && (
+          {step > 0 ? (
             <p className="text-[20px] text-neutral-11" onClick={() => onBackHandler(step)}>
               back
             </p>
+          ) : (
+            <div></div>
           )}
           <ButtonV3
+            size={ButtonSize.DEFAULT_LONG}
             isDisabled={isDisabled}
             onClick={onNextHandler}
-            colorClass="text-[20px] bg-gradient-purple rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+            colorClass="text-[20px] bg-gradient-purple rounded-[15px] font-bold text-true-black"
           >
             next
           </ButtonV3>
