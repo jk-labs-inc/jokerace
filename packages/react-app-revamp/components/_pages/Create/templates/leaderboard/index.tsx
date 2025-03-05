@@ -15,7 +15,7 @@ const CreateContestLeaderboardTemplate = () => {
 
       <p>
         <b>Default duration: 7 days</b> <br />
-        Anyone can enter their project for 5 days and vote for 2 days.
+        Anyone can enter their project for five days and vote in the following two.
       </p>
       <p className="font-bold">You can modify any settings you like before launching the contest.</p>
     </div>
