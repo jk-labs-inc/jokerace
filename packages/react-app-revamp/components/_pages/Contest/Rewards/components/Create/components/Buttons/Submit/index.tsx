@@ -25,6 +25,7 @@ const CreateRewardsSubmitButton: FC<CreateRewardsSubmitButtonProps> = ({ step, o
             back
           </p>
           <ButtonV3
+            size={ButtonSize.DEFAULT_LONG}
             onClick={onSubmit}
             colorClass="text-[20px] bg-gradient-purple rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           >
