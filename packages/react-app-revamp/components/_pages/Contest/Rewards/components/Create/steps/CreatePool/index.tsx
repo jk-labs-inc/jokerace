@@ -15,23 +15,13 @@ const CreateRewardsPool = () => {
   return (
     <div className="flex flex-col gap-12 animate-swingInLeft">
       <div className="flex flex-col gap-4">
-        <p className="text-[24px] font-bold text-true-white">rewards for winners 🤑</p>
-
+        <p className="text-[24px] font-bold text-true-white">how much does everyone get?</p>
         <p className="text-[16px] text-neutral-11">
-          a rewards pool incentivizes submissions, compensates winners, and
-          {isMobile ? " " : <br />}
-          helps showcase you to players. you can fund it with tokens in a sec.
-        </p>
-        <p className="text-[16px] text-neutral-11">
-          it’s up to you whether you want to add one—but it’s easier to attract
-          {isMobile ? " " : <br />}
-          and retain a community if you do.
+          now decide what percent of the rewards pool <br />
+          each person gets.
         </p>
       </div>
-      <div className="flex flex-col gap-8">
-        <p className="text-[20px] font-bold text-neutral-11">how should we divide winners’ rewards?</p>
-        <CreateRewardsPoolRecipients />
-      </div>
+      <CreateRewardsPoolRecipients />
 
       <CreateRewardsNavigation step={currentStep} isDisabled={isError} />
     </div>

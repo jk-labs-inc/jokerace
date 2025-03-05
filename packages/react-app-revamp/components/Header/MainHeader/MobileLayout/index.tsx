@@ -67,17 +67,17 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
   return (
     <>
       <header
-        className={`flex flex-row bottom-0 right-0 left-0 fixed items-center justify-between border-t-neutral-2 border-t-2 pt-2 ${
+        className={`h-12 flex flex-row bottom-0 right-0 left-0 fixed items-center justify-between border-t-neutral-2 border-t-2 pt-2 ${
           isClient && isInPwaMode ? "pb-8" : "pb-2"
         } px-8 mt-4 bg-true-black z-50`}
       >
         <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
-          <HomeIcon width={26} />
+          <HomeIcon width={22} />
           <p className="text-[12px]">home</p>
         </Link>
 
         <Link href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
-          <MagnifyingGlassIcon width={26} />
+          <MagnifyingGlassIcon width={22} />
           <p className="text-[12px]">search</p>
         </Link>
 
@@ -85,24 +85,24 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
           href={ROUTE_VIEW_LIVE_CONTESTS}
           className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
         >
-          <IconTrophy width={26} height={26} />
+          <IconTrophy width={22} height={22} />
           <p className="text-[12px] text-center">play</p>
         </Link>
 
         <Link href={ROUTE_CREATE_CONTEST} className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}>
-          <PencilSquareIcon width={26} />
+          <PencilSquareIcon width={22} />
           <p className="text-[12px]">create</p>
         </Link>
 
         <div className="transition-all duration-500">
           {isConnected ? (
             <div className="flex flex-col items-center" onClick={handleWalletClick}>
-              <UserCircleIcon width={26} height={26} className="text-neutral-11" />
+              <UserCircleIcon width={22} height={22} className="text-neutral-11" />
               <p className="text-[12px]">profile</p>
             </div>
           ) : (
             <div className="flex flex-col items-center" onClick={openConnectModal}>
-              <img width={26} height={26} src="/header/wallet.svg" alt="wallet" />
+              <img width={22} height={22} src="/header/wallet.svg" alt="wallet" />
               <p className="text-[12px]">wallet</p>
             </div>
           )}
