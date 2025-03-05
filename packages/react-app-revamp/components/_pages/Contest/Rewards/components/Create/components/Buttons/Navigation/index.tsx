@@ -16,10 +16,7 @@ const fundPoolIsDisabledMessage = "insufficient balance";
 
 const CreateRewardsNavigation: FC<CreateRewardsNavigationProps> = ({ step, isDisabled = false, isError = false }) => {
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
-  const tokenWidgets = useFundPoolStore(state => state.tokenWidgets);
-  const { setStep, addEarningsToRewards } = useCreateRewardsStore(state => state);
-  const isAnyTokenPositive = tokenWidgets.some(token => token.amount !== "0" && token.amount !== "");
-  const enableSkipButton = step === CreationStep.FundPool && !addEarningsToRewards && !isAnyTokenPositive;
+  const { setStep } = useCreateRewardsStore(state => state);
   const errorMessage = isError && step === CreationStep.FundPool ? fundPoolErrorMessage : "";
   const [showError, setShowError] = useState(false);
 
@@ -38,25 +35,17 @@ const CreateRewardsNavigation: FC<CreateRewardsNavigationProps> = ({ step, isDis
     setStep(step - 1);
   };
 
-  const getButtonText = (step: number, isDisabled: boolean, enableSkipButton: boolean): string => {
-    if (step === CreationStep.FundPool) {
-      if (isDisabled) {
-        return fundPoolIsDisabledMessage;
-      }
-      if (enableSkipButton) {
-        return "skip";
-      }
+  const getButtonText = (step: number, isDisabled: boolean): string => {
+    if (step === CreationStep.FundPool && isDisabled) {
+      return fundPoolIsDisabledMessage;
     }
-
     return "next";
   };
 
   if (isMobileOrTablet) {
     return (
       <MobileBottomButton>
-        <div
-          className={`flex flex-row items-center h-12 ${step === 0 && enableSkipButton ? "justify-end" : "justify-between"} border-t-neutral-2 border-t-2 px-8`}
-        >
+        <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2 px-8`}>
           {step > 0 && (
             <p className="text-[20px] text-neutral-11" onClick={() => onBackHandler(step)}>
               back
@@ -65,9 +54,9 @@ const CreateRewardsNavigation: FC<CreateRewardsNavigationProps> = ({ step, isDis
           <ButtonV3
             isDisabled={isDisabled}
             onClick={onNextHandler}
-            colorClass={`text-[20px] ${enableSkipButton ? "bg-gradient-gray" : "bg-gradient-purple"} rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out`}
+            colorClass="text-[20px] bg-gradient-purple rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           >
-            {getButtonText(step, isDisabled, enableSkipButton)}
+            next
           </ButtonV3>
           {showError && (
             <p className="text-[16px] text-negative-11 font-bold animate-appear absolute top-[-30px] left-0 right-0 text-center">
@@ -84,12 +73,12 @@ const CreateRewardsNavigation: FC<CreateRewardsNavigationProps> = ({ step, isDis
       {showError ? <p className="text-[16px] text-negative-11 font-bold animate-appear">{errorMessage}</p> : null}
       <div className="flex flex-col gap-2 items-center">
         <ButtonV3
-          colorClass={`text-[20px] ${enableSkipButton ? "bg-gradient-gray" : "bg-gradient-purple"} rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out`}
+          colorClass="text-[20px] bg-gradient-purple rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           size={ButtonSize.EXTRA_LARGE_LONG}
           onClick={onNextHandler}
           isDisabled={isDisabled}
         >
-          {getButtonText(step, isDisabled, enableSkipButton)}
+          next
         </ButtonV3>
         {step > 0 && (
           <div
