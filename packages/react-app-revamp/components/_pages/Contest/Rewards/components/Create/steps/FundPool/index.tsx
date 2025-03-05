@@ -6,8 +6,9 @@ import { useFundPoolStore } from "./store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import CreateRewardsAddEarningsToggle from "../ReviewPool/components/AddEarnings";
 import CreateRewardsAddFundsToggle from "../ReviewPool/components/AddFunds";
-
+import { useMediaQuery } from "react-responsive";
 const CreateRewardsFundPool = () => {
+  const isMobile = useMediaQuery({ maxWidth: 768 });
   const charge = useContestStore(state => state.charge);
   const contestState = useContestStateStore(state => state.contestState);
   const isContestFinishedOrCanceled =
@@ -20,8 +21,14 @@ const CreateRewardsFundPool = () => {
   return (
     <div className="flex flex-col gap-12 animate-swingInLeft">
       <div className="flex flex-col gap-4">
-        <p className="text-[24px] font-bold text-true-white">time to have fun(ds)</p>
-        <p className="text-[16px] text-neutral-11">now let’s fund your rewards pool.</p>
+        <p className="text-[24px] font-bold text-true-white">rewards for winners 🤑</p>
+        <p className="text-[16px] text-neutral-11">
+          {isMobile ? "" : "now"} let’s create a rewards pool to reward winners.
+        </p>
+        <p className="text-[16px] text-neutral-11">
+          first, let’s pick how to fund it—then decide on the <br />
+          proportions that everyone gets.
+        </p>
       </div>
 
       <div className="flex flex-col gap-8">

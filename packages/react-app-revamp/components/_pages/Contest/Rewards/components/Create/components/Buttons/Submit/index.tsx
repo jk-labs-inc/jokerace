@@ -1,6 +1,8 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { FC } from "react";
 import { useCreateRewardsStore } from "../../../store";
+import { useMediaQuery } from "react-responsive";
+import MobileBottomButton from "@components/_pages/Create/components/Buttons/Mobile";
 
 interface CreateRewardsSubmitButtonProps {
   step: number;
@@ -9,10 +11,29 @@ interface CreateRewardsSubmitButtonProps {
 
 const CreateRewardsSubmitButton: FC<CreateRewardsSubmitButtonProps> = ({ step, onSubmit }) => {
   const { setStep } = useCreateRewardsStore(state => state);
+  const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
 
   const onBackHandler = (step: number) => {
     setStep(step - 1);
   };
+
+  if (isMobileOrTablet) {
+    return (
+      <MobileBottomButton>
+        <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2 px-8`}>
+          <p className="text-[20px] text-neutral-11" onClick={() => onBackHandler(step)}>
+            back
+          </p>
+          <ButtonV3
+            onClick={onSubmit}
+            colorClass="text-[20px] bg-gradient-purple rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+          >
+            create pool
+          </ButtonV3>
+        </div>
+      </MobileBottomButton>
+    );
+  }
 
   return (
     <div className="flex gap-4 items-start">
