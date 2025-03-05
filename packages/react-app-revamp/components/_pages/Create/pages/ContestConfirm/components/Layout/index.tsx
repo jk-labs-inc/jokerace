@@ -24,7 +24,7 @@ const CreateContestConfirmLayout: FC<CreateConfirmLayoutProps> = ({ children, on
   if (isMobileOrTablet) {
     return (
       <div className="relative flex gap-2">
-        <div className={`absolute top-[4px] cursor-pointer transition-opacity duration-300`} onClick={onClick}>
+        <div className={`absolute top-0 cursor-pointer transition-opacity duration-300`} onClick={onClick}>
           <img src="/create-flow/edit.svg" height={16} width={16} alt="edit" />
         </div>
         <div className="flex ml-6">{children}</div>
@@ -35,7 +35,7 @@ const CreateContestConfirmLayout: FC<CreateConfirmLayoutProps> = ({ children, on
   return (
     <div className="relative" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <div
-        className={`absolute top-[4px] left-[-24px] cursor-pointer transition-opacity duration-300 ${
+        className={`absolute top-0 left-[-24px] cursor-pointer transition-opacity duration-300 ${
           isHovered ? "opacity-100" : "opacity-0"
         }`}
         onClick={onClick}

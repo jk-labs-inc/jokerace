@@ -14,7 +14,8 @@ const CreateContestLiveContestTemplate = () => {
       </div>
 
       <p>
-        <b>Default duration: 3 hours.</b> Anyone can enter for 30 minutes, and vote in the following 2.5 hours.
+        <b>Default duration: 3 hours</b> <br />
+        Anyone can enter for 30 minutes, and vote in the following 2.5 hours.
       </p>
       <p className="font-bold">You can modify any settings you like before launching the contest.</p>
     </div>

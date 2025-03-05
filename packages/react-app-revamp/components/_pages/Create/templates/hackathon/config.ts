@@ -16,7 +16,8 @@ export const hackathonConfig: TemplateConfig = {
           "In this hackathon, builders are invited to enter their project, and a jury of voters will vote on their favorite.",
         evaluateVoters:
           "Judges should evaluate builders’ projects based on their personal relevance, impact, importance, innovativeness, and success of what they’ve built.",
-        contactDetails: "Join the BuildProof telegram of devs: https://t.me/+_0I7UYSgaS45NmRh",
+        contactDetails:
+          "Join the JokeRace telegram: https://t.me/+rW5X0MqnTXBkOGIx \nJoin the BuildProof telegram of devs: https://t.me/+_0I7UYSgaS45NmRh",
       },
     },
     entryPreviewConfig: {

@@ -15,7 +15,8 @@ export const artConfig: TemplateConfig = {
         summarize:
           "In this art contest, anyone can enter their art below and then vote on their favorites during the voting period.",
         evaluateVoters: "Voters should evaluate art based on its originality, beauty, and use of the medium.",
-        contactDetails: "Join The Factorie telegram of creators: https://t.me/+rsiuZqcqzwpjOGYx",
+        contactDetails:
+          "Join the JokeRace telegram: https://t.me/+rW5X0MqnTXBkOGIx \nJoin The Factorie telegram of creators: https://t.me/+rsiuZqcqzwpjOGYx",
       },
     },
     entryPreviewConfig: {
