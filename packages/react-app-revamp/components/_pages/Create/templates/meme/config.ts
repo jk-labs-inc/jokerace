@@ -16,7 +16,8 @@ export const memeConfig: TemplateConfig = {
           "In this meme contest, anyone can enter their meme below and then vote on their favorites during the voting period.",
         evaluateVoters:
           "Voters should evaluate memes based on their relevance, impact, originality, and—obviously—their humor.",
-        contactDetails: "Join The Factorie telegram of creators: https://t.me/+rsiuZqcqzwpjOGYx",
+        contactDetails:
+          "Join the JokeRace telegram: https://t.me/+rW5X0MqnTXBkOGIx \nJoin The Factorie telegram of creators: https://t.me/+rsiuZqcqzwpjOGYx",
       },
     },
     entryPreviewConfig: {

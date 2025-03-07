@@ -16,7 +16,8 @@ export const demoDayConfig: TemplateConfig = {
           "In this demo day, anyone can enter their project and then vote on their favorites during the voting period. You can find voter addresses here and on the Dune Dashboards tab on the extensions tab (available on certain chains).",
         evaluateVoters:
           "Voters should evaluate builders’ projects based on their relevance, impact, originality, innovativeness, and success of what they’ve built.",
-        contactDetails: "Join the BuildProof telegram of devs: https://t.me/+_0I7UYSgaS45NmRh",
+        contactDetails:
+          "Join the JokeRace telegram: https://t.me/+rW5X0MqnTXBkOGIx \nJoin the BuildProof telegram of devs: https://t.me/+_0I7UYSgaS45NmRh",
       },
     },
     entryPreviewConfig: {

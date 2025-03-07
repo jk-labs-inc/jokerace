@@ -17,13 +17,13 @@ const CreateContestConfirmPreview: FC<CreateContestConfirmPreviewProps> = ({
   const determinePreviewText = useMemo(() => {
     switch (entryPreviewConfig.preview) {
       case EntryPreview.TITLE:
-        return "title";
+        return "all entries require a title";
       case EntryPreview.IMAGE:
-        return "image";
+        return "all entries require an image";
       case EntryPreview.IMAGE_AND_TITLE:
-        return "image and title";
+        return "all entries require an image and title";
       case EntryPreview.TWEET:
-        return "tweet";
+        return "all entries require a tweet";
     }
   }, [entryPreviewConfig.preview]);
 
