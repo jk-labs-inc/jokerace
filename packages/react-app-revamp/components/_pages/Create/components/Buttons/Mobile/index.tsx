@@ -5,7 +5,7 @@ type MobileBottomButtonProps = React.PropsWithChildren<{}>;
 
 const MobileBottomButton: React.FC<MobileBottomButtonProps> = ({ children }) => {
   return ReactDOM.createPortal(
-    <div className="fixed bottom-14 left-0 right-0 z-50 bg-true-black">{children}</div>,
+    <div className="h-12 fixed bottom-12 left-0 right-0 z-50 bg-true-black">{children}</div>,
     document.body,
   );
 };
