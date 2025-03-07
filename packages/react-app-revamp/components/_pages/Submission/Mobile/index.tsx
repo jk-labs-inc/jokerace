@@ -1,6 +1,5 @@
 import Comments from "@components/Comments";
 import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
-import DialogModalV3 from "@components/UI/DialogModalV3";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
@@ -74,17 +73,17 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
 
   if (isProposalError) {
     return (
-      <DialogModalV3 isOpen={true} title="submissionMobile" isMobile>
-        <p className="text-[16px] text-negative-11 font-bold">
+      <div className="fixed inset-0 z-50 bg-true-black overflow-y-auto">
+        <p className="text-[16px] text-negative-11 font-bold p-4">
           ruh-roh! An error occurred when retrieving this proposal; try refreshing the page.
         </p>
-      </DialogModalV3>
+      </div>
     );
   }
 
   return (
-    <DialogModalV3 isOpen={true} title="submissionMobile" isMobile>
-      <div className={`flex justify-between ${isInPwaMode ? "mt-0" : "mt-8"}`}>
+    <div className="fixed inset-0 z-50 bg-true-black overflow-y-auto">
+      <div className={`flex justify-between p-4 ${isInPwaMode ? "mt-0" : "mt-8"}`}>
         <ArrowLeftIcon width={24} onClick={onClose} />
         <div className="flex self-end">
           <div
@@ -99,7 +98,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-12 mt-9">
+      <div className="flex flex-col gap-12 mt-5 px-4 pb-32">
         <ContestPrompt type="modal" prompt={prompt} hidePrompt />
         {isProposalLoading ? (
           <p className="loadingDots font-sabo text-[18px] mt-12 text-neutral-9">loading submission info</p>
@@ -249,7 +248,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           />
         </div>
       </div>
-    </DialogModalV3>
+    </div>
   );
 };
 
