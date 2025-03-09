@@ -48,7 +48,7 @@
     "@vercel/node": "3.2.29",
     "@wagmi/connectors": "5.7.8",
     "@wagmi/core": "2.16.5",
-    "autoprefixer": "10.4.20",
+    "autoprefixer": "10.4.21",
     "cheerio": "1.0.0",
     "class-variance-authority": "0.7.1",
     "compare-versions": "6.1.1",
