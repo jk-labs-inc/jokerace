@@ -7,6 +7,7 @@ import { UrlMatcher } from "interweave-autolink";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import CreateContestConfirmLayout from "../Layout";
+import { calculateContentBreakpoint } from "@helpers/textUtils";
 
 interface CreateContestConfirmDescriptionProps {
   prompt: Prompt;
@@ -24,29 +25,48 @@ const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> 
   const [isExpanded, setIsExpanded] = useState(false);
   const { elementRef, lineCount } = useLineCount();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const shouldShowReadMore = lineCount > 5;
+  const maxVisibleLines = 6;
+  const shouldShowReadMore = lineCount > maxVisibleLines;
+
+  const breakpoint = calculateContentBreakpoint({
+    elementRef,
+    shouldShowReadMore,
+    isExpanded,
+    maxVisibleLines,
+    sections: [
+      { id: "summarize", content: prompt.summarize },
+      { id: "evaluateVoters", content: prompt.evaluateVoters },
+      { id: "contactDetails", content: prompt.contactDetails },
+    ],
+  });
+
+  const renderSection = (content: string, showDivider: boolean) => {
+    if (!content) return null;
+
+    return (
+      <>
+        {showDivider && <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6" />}
+        <Interweave content={content} matchers={[new UrlMatcher("url")]} />
+      </>
+    );
+  };
+
+  const shouldShowEvaluate = isExpanded || !shouldShowReadMore || (breakpoint && breakpoint.section !== "summarize");
+
+  const shouldShowContactDetails =
+    isExpanded || !shouldShowReadMore || (breakpoint && breakpoint.section === "contactDetails");
 
   return (
     <CreateContestConfirmLayout onClick={() => onClick?.(step)}>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 w-80 xs:w-[460px] sm:w-[560px]">
         <div className="text-[12px] uppercase font-bold text-neutral-9">Description</div>
         <div className="flex flex-col gap-4">
           {imageUrl ? <ContestImage imageUrl={imageUrl} /> : null}
           <div className="relative">
             <div ref={elementRef} className="prose prose-invert flex flex-col invisible absolute w-full">
-              <Interweave content={prompt.summarize} matchers={[new UrlMatcher("url")]} />
-              {prompt.evaluateVoters && (
-                <>
-                  <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
-                  <Interweave content={prompt.evaluateVoters} matchers={[new UrlMatcher("url")]} />
-                </>
-              )}
-              {prompt.contactDetails && (
-                <>
-                  <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
-                  <Interweave content={prompt.contactDetails} matchers={[new UrlMatcher("url")]} />
-                </>
-              )}
+              {renderSection(prompt.summarize, false)}
+              {renderSection(prompt.evaluateVoters, true)}
+              {renderSection(prompt.contactDetails || "", true)}
             </div>
 
             <div
@@ -56,28 +76,14 @@ const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> 
                   ? {
                       maskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
                       WebkitMaskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
-                      maxHeight: `${Math.min(lineCount, 5) * 1.6}em`,
+                      maxHeight: `${Math.min(lineCount, maxVisibleLines) * 1.6}em`,
                     }
                   : {}),
               }}
             >
-              <Interweave content={prompt.summarize} matchers={[new UrlMatcher("url")]} />
-              {(isExpanded || !shouldShowReadMore) && (
-                <>
-                  {prompt.evaluateVoters && (
-                    <>
-                      <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
-                      <Interweave content={prompt.evaluateVoters} matchers={[new UrlMatcher("url")]} />
-                    </>
-                  )}
-                  {prompt.contactDetails && (
-                    <>
-                      <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
-                      <Interweave content={prompt.contactDetails} matchers={[new UrlMatcher("url")]} />
-                    </>
-                  )}
-                </>
-              )}
+              {renderSection(prompt.summarize, false)}
+              {shouldShowEvaluate && renderSection(prompt.evaluateVoters, true)}
+              {shouldShowContactDetails && renderSection(prompt.contactDetails || "", true)}
             </div>
           </div>
         </div>

@@ -14,7 +14,8 @@ const CreateContestMemeTemplate = () => {
       </div>
 
       <p>
-        <b>Default duration: 9 days.</b> Anyone can enter for seven days, and vote in the following two.
+        <b>Default duration: 9 days</b> <br />
+        Anyone can enter for seven days, and vote in the following two.
       </p>
       <p className="font-bold">You can modify any settings you like before launching the contest.</p>
     </div>
