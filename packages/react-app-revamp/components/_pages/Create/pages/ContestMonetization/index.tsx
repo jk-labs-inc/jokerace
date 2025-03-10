@@ -25,6 +25,8 @@ const CreateContestMonetization = () => {
       return <CreateContestChargeUnconnectedAccount />;
     }
 
+    setDisableNextStep(false);
+
     return (
       <CreateContestCharge
         chain={chain?.name.toLowerCase() ?? ""}
