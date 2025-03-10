@@ -1,3 +1,4 @@
+import { ContestType } from "@components/_pages/Create/types";
 import { Avatar } from "@components/UI/Avatar";
 import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import useProfileData from "@hooks/useProfileData";
@@ -111,10 +112,25 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
     return ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", network_name).replace("[address]", address);
   };
 
+  const formatContestType = (type: string | null) => {
+    if (!type) return "";
+
+    switch (type) {
+      case ContestType.AnyoneCanPlay:
+        return "anyone can enter & vote";
+      case ContestType.EntryContest:
+        return "anyone can enter";
+      case ContestType.VotingContest:
+        return "anyone can vote";
+      default:
+        return type;
+    }
+  };
+
   return (
     <Link
       href={getContestUrl(contestData.network_name ?? "", contestData.address ?? "")}
-      className="animate-appear flex flex-col justify-between w-[320px] h-[216px] pt-4 pb-3 px-8 bg-gradient-radial rounded-[16px] border border-neutral-0 hover:border-neutral-10 transition-all duration-300 ease-in-out"
+      className="animate-appear flex flex-col justify-between w-[320px] h-[216px] pt-4 pb-3 px-6 bg-gradient-radial rounded-[16px] border border-neutral-0 hover:border-neutral-10 transition-all duration-300 ease-in-out"
     >
       <div className="flex flex-col gap-8">
         <div className="flex items-center gap-2">
@@ -141,7 +157,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
           ) : null}
 
           <div className="flex items-center h-6 bg-neutral-7 px-2 border-true-black border rounded-[8px]">
-            <p className="text-neutral-11 font-bold text-[12px]">{contestData.type}</p>
+            <p className="text-neutral-11 font-bold text-[12px]">{formatContestType(contestData.type)}</p>
           </div>
         </div>
         <div className="flex flex-col gap-2">
