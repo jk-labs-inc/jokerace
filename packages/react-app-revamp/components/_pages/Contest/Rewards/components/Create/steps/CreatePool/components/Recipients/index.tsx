@@ -1,6 +1,6 @@
 import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import ButtonV3 from "@components/UI/ButtonV3";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import { Recipient, ValidationError, useCreateRewardsStore } from "../../../../store";
 import CreateRewardsPoolRecipientsDropdown from "../Dropdown";
@@ -122,19 +122,27 @@ const CreateRewardsPoolRecipients: React.FC = () => {
   };
 
   return (
-    <div className="md:w-[370px]">
-      <div className="flex justify-start">
+    <div className="w-[340px] md:w-[370px]">
+      <div className="hidden justify-start md:block">
         <ButtonV3
           onClick={handleAddRecipient}
-          colorClass="bg-primary-2"
-          textColorClass="text-neutral-11 rounded-[40px] font-normal"
+          colorClass="bg-transparent"
+          textColorClass="text-neutral-11 border-neutral-11 border hover:bg-neutral-11 hover:border-true-black hover:text-true-black transition-colors duration-300 rounded-[40px] font-normal"
         >
           + Add winner
         </ButtonV3>
       </div>
       <div className="mt-4 text-[16px]">
         <div className="grid grid-cols-2 justify-between mb-3 text-neutral-10 font-bold">
-          <span className="uppercase">winner</span>
+          <div className="flex items-center gap-2">
+            <span className="uppercase">winner</span>
+            <button
+              onClick={handleAddRecipient}
+              className="md:hidden rounded-full bg-positive-11 w-6 h-6 flex items-center justify-center"
+            >
+              <PlusIcon width={16} height={16} className="text-true-black" />
+            </button>
+          </div>
           <span className="uppercase text-right">Proportion</span>
         </div>
         {rewardPoolData.recipients
@@ -169,10 +177,10 @@ const CreateRewardsPoolRecipients: React.FC = () => {
                 </div>
               </div>
               {rewardPoolData.recipients.length > 1 && (
-                <div className="absolute top-1/2 right-[-30px] transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity ease-in-out duration-300 cursor-pointer">
+                <div className="absolute top-1/2 right-[-30px] transform -translate-y-1/2 cursor-pointer">
                   <TrashIcon
-                    width={26}
-                    height={26}
+                    width={20}
+                    height={20}
                     className="text-negative-11"
                     onClick={() => handleRemoveRecipient(recipient.id)}
                   />
