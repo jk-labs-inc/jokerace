@@ -18,8 +18,8 @@ const CreateContestDebateTemplate = () => {
       </div>
 
       <p>
-        <b>Default duration: 48 hours. </b> You'll have 30 minutes to enter the contestants, and then voting will run
-        for the next 47.5 hours.
+        <b>Default duration: 48 hours</b> <br />
+        You'll have 30 minutes to enter the contestants, and then voting will run for the next 47.5 hours.
       </p>
       <p className="font-bold">You can modify any settings you like before launching the contest.</p>
     </div>

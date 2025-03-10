@@ -34,7 +34,7 @@ const CreateContestRules = () => {
           <CreateContestRulesDescription />
           <CreateContestRulesAdvancedSettings />
           <div className="mt-8">
-            <CreateNextButton step={step} onClick={() => onNextStep()} isDisabled={isDisabled} />
+            <CreateNextButton step={step + 1} onClick={() => onNextStep()} isDisabled={isDisabled} />
           </div>
         </div>
       </div>
