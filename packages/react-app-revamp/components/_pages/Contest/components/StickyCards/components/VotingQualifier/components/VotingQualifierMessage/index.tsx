@@ -120,9 +120,9 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
       <a
         href={LINK_BRIDGE_DOCS}
         target="_blank"
-        className="text-[16px] text-negative-11 font-bold leading-loose underline"
+        className="text-[16px] text-positive-11 opacity-80 hover:opacity-100 transition-colors font-bold leading-loose"
       >
-        add {chainCurrencySymbol} to {chainName} to get votes{" "}
+        add {chainCurrencySymbol} to {chainName} to get votes {">"}
       </a>
     );
   }

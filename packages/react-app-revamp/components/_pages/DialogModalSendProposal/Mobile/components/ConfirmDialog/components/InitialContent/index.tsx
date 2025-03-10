@@ -100,9 +100,9 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
           <a
             href={LINK_BRIDGE_DOCS}
             target="_blank"
-            className="text-[12px] text-center text-negative-11 font-bold leading-loose underline"
+            className="text-[12px] text-center text-positive-11 opacity-80 hover:opacity-100 transition-colors font-bold leading-loose"
           >
-            add {chainCurrencySymbol} to {chainName} to enter contest.
+            add {chainCurrencySymbol} to {chainName} to enter contest {">"}
           </a>
         ) : null}
         <ButtonV3
