@@ -100,10 +100,19 @@ const CSVErrorModalInvalidEntriesVoting: FC<CSVErrorModalInvalidEntriesVotingPro
                   </div>
                 </div>
                 <div className="flex flex-col gap-8">
-                  <p className="text-[20px] text-neutral-11">
-                    alas, addresses need to start with “0x”, followed by 40 characters <br />
-                    and votes need to be numerical (ie “69”).
-                  </p>
+                  <div className="flex flex-col gap-2">
+                    <p className="text-[20px] text-neutral-11">please make sure that:</p>
+                    <ul className="flex flex-col gap-2 pl-2">
+                      <li className="text-[16px] text-neutral-11 arrow-list-item">
+                        addresses start with "0x," followed by 40 characters, and votes are numerical (ie "69")
+                      </li>
+                      <li className="text-[16px] text-neutral-11 arrow-list-item">
+                        there are <i>no</i> additional spaces before or after characters
+                      </li>
+                      <li className="text-[16px] text-neutral-11 arrow-list-item">there are no duplicates</li>
+                    </ul>
+                  </div>
+
                   <p className="text-[20px] text-neutral-11">
                     edit or delete them below—or close this popup to reupload the csv.
                   </p>
