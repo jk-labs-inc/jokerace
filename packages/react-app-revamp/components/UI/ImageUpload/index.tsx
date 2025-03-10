@@ -1,13 +1,15 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
-import { RadioOption } from "components/_pages/Create/components/RadioButtonsGroup";
+import { RadioButtonsLabelFontSize, RadioOption } from "components/_pages/Create/components/RadioButtonsGroup";
 import CreateRadioButtonsGroup from "components/_pages/Create/components/RadioButtonsGroup";
+import CreateTextInput from "@components/_pages/Create/components/TextInput";
 
 interface ImageUploadProps {
   step?: number;
   icon?: React.ReactNode;
   isSuccess?: boolean;
   errorMessage?: string;
+  isNetworkError?: boolean;
   initialImageUrl?: string;
   onFileSelect?: (file: File | null) => void;
   onUrlSelect?: (url: string | null) => void;
@@ -20,9 +22,9 @@ const ImageUpload: FC<ImageUploadProps> = ({
   isSuccess,
   initialImageUrl,
   errorMessage,
+  isNetworkError,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const urlInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(initialImageUrl || null);
   const [inputMethod, setInputMethod] = useState<"upload" | "url">("upload");
@@ -32,6 +34,12 @@ const ImageUpload: FC<ImageUploadProps> = ({
   useEffect(() => {
     setSelectedImage(initialImageUrl || null);
   }, [initialImageUrl]);
+
+  useEffect(() => {
+    if (isNetworkError) {
+      setSelectedImage(null);
+    }
+  }, [isNetworkError]);
 
   const fileUploadIconWidth = 58;
   const fileUploadIconHeight = 34;
@@ -88,25 +96,15 @@ const ImageUpload: FC<ImageUploadProps> = ({
     onFileSelect?.(null);
   };
 
-  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImageUrl(e.target.value);
+  const handleUrlChange = (value: string) => {
+    console.log("value", value);
+    setImageUrl(value);
     if (urlError) setUrlError("");
-  };
 
-  const handleUrlSubmit = () => {
-    if (!imageUrl.trim()) {
-      setUrlError("please enter a valid URL");
-      return;
+    // Only pass the URL to the parent component, but don't clear the network error state
+    if (onUrlSelect) {
+      onUrlSelect(value || null);
     }
-
-    // simple validation - could be enhanced
-    if (!imageUrl.match(/^https?:\/\/.*\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i)) {
-      setUrlError("please enter a valid image URL");
-      return;
-    }
-
-    setSelectedImage(imageUrl);
-    onUrlSelect?.(imageUrl);
   };
 
   const Icon = useMemo<React.ReactNode>(() => {
@@ -115,21 +113,13 @@ const ImageUpload: FC<ImageUploadProps> = ({
     );
   }, [fileUploadIconHeight, fileUploadIconWidth]);
 
-  const borderStyles = errorMessage
-    ? "border-negative-11 hover:border-negative-10"
-    : isSuccess
-      ? "border-positive-11 hover:border-positive-9"
-      : isDragOver
-        ? "border-neutral-10"
-        : "border-neutral-10 hover:border-neutral-11";
-
   const renderUploadArea = () => (
     <div
       onClick={handleClick}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       onDragLeave={handleDragLeave}
-      className={`relative flex shadow-file-upload m-auto md:m-0 flex-col w-full h-40 md:w-[376px] md:h-36 justify-center items-center border border-neutral-8 hover:border-positive-11 gap-2 py-2 px-10 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out ${borderStyles}`}
+      className={`relative flex shadow-file-upload m-auto md:m-0 flex-col w-full h-40 md:w-[376px] md:h-36 justify-center items-center border border-neutral-8 hover:border-positive-11 gap-2 py-2 px-10 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out`}
     >
       <input ref={fileInputRef} type="file" style={{ display: "none" }} onChange={handleFileInput} accept="image/*" />
       <div className="flex flex-col items-center gap-1">
@@ -146,34 +136,21 @@ const ImageUpload: FC<ImageUploadProps> = ({
 
   const renderUrlInput = () => (
     <div className="flex flex-col gap-2 w-full md:w-[376px]">
-      <div className="flex w-full gap-2">
-        <input
-          ref={urlInputRef}
-          type="text"
-          value={imageUrl}
-          onChange={handleUrlChange}
-          className="flex-1 px-3 py-2 border border-neutral-8 rounded-md text-neutral-12 bg-true-black focus:outline-none focus:border-positive-9"
-          placeholder="https://example.com/image.jpg"
-        />
-        <button
-          onClick={handleUrlSubmit}
-          className="px-3 py-2 bg-positive-9 hover:bg-positive-10 text-true-black rounded-md transition-colors"
-        >
-          use
-        </button>
-      </div>
+      <CreateTextInput value={imageUrl} onChange={handleUrlChange} placeholder="https://i.imgur.com/example.jpg" />
       {urlError && <p className="text-negative-11 text-xs">{urlError}</p>}
     </div>
   );
 
-  const radioOptions: RadioOption[] = [
+  const networkErrorRadioOptions: RadioOption[] = [
     {
-      label: "upload from device",
+      label: "keep trying to upload",
       value: "upload",
+      content: renderUploadArea(),
     },
     {
-      label: "insert image url",
+      label: "insert custom image url",
       value: "url",
+      content: renderUrlInput(),
     },
   ];
 
@@ -181,7 +158,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
     <div className="flex flex-col gap-4">
       {selectedImage ? (
         <div
-          className={`relative flex shadow-file-upload m-auto md:m-0 flex-col w-full h-40 md:w-[376px] md:h-36 justify-center items-center border border-transparent hover:border-positive-11 gap-2 py-2 px-10 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out ${borderStyles}`}
+          className={`relative flex shadow-file-upload m-auto md:m-0 flex-col w-full h-40 md:w-[376px] md:h-36 justify-center items-center border border-transparent hover:border-positive-11 gap-2 py-2 px-10 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out`}
           style={{
             backgroundImage: `url(${selectedImage})`,
             backgroundSize: "cover",
@@ -196,16 +173,20 @@ const ImageUpload: FC<ImageUploadProps> = ({
             <XMarkIcon className="w-6 h-6 text-neutral-11" />
           </button>
         </div>
-      ) : errorMessage ? (
+      ) : isNetworkError ? (
         <div className="flex flex-col gap-4">
-          <p className="text-[12px] text-negative-11 font-bold">{errorMessage}</p>
           <CreateRadioButtonsGroup
-            options={radioOptions}
+            options={networkErrorRadioOptions}
             value={inputMethod}
             onChange={setInputMethod}
             className="mt-2"
+            labelFontSize={RadioButtonsLabelFontSize.SMALL}
           />
-          {inputMethod === "upload" ? renderUploadArea() : renderUrlInput()}
+        </div>
+      ) : errorMessage ? (
+        <div className="flex flex-col gap-4">
+          <p className="text-[12px] text-negative-11 font-bold">{errorMessage}</p>
+          {renderUploadArea()}
         </div>
       ) : (
         renderUploadArea()

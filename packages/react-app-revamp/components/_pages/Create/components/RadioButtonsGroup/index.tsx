@@ -9,14 +9,26 @@ export interface RadioOption {
   value: any;
 }
 
+export enum RadioButtonsLabelFontSize {
+  SMALL = "text-[16px]",
+  MEDIUM = "text-[20px]",
+}
+
 interface RadioButtonsGroupProps {
   options: RadioOption[];
   value: any;
   onChange: (value: any) => void;
   className?: string;
+  labelFontSize?: RadioButtonsLabelFontSize;
 }
 
-const CreateRadioButtonsGroup = ({ options, value, onChange, className = "" }: RadioButtonsGroupProps) => {
+const CreateRadioButtonsGroup = ({
+  options,
+  value,
+  onChange,
+  className = "",
+  labelFontSize = RadioButtonsLabelFontSize.MEDIUM,
+}: RadioButtonsGroupProps) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
   return (
@@ -40,7 +52,7 @@ const CreateRadioButtonsGroup = ({ options, value, onChange, className = "" }: R
                     )}
                   </div>
                   <div className="flex flex-col">
-                    <p className={`text-[20px] ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
+                    <p className={`${labelFontSize} ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
                       {isMobile && option.mobileLabel ? option.mobileLabel : option.label}
                     </p>
                   </div>

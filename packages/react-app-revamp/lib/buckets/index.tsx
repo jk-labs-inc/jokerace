@@ -4,7 +4,7 @@ import { s3 } from "@config/s3";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 
 const MERKLE_TREES_BUCKET = process.env.NEXT_PUBLIC_MERKLE_TREES_BUCKET as string;
-const IMAGE_UPLOAD_BUCKET = "kurac";
+const IMAGE_UPLOAD_BUCKET = "kurcina";
 
 const IMAGE_PUBLIC_URL = IMAGE_UPLOAD_BUCKET.includes("dev")
   ? "https://dev.images.jokerace.io"

@@ -19,6 +19,7 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
   const [isExceeded, setIsExceeded] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [isNetworkError, setIsNetworkError] = useState<boolean>(false);
   const { uploadImage } = useUploadImageStore();
 
   const updateCombinedValue = (newImageUrl: string = imageUrl, newInputValue: string = inputValue) => {
@@ -52,6 +53,7 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
   };
 
   const onFileSelectHandler = async (file: File | null) => {
+    setIsNetworkError(false);
     if (!file) {
       setUploadError("");
       setImageUrl("");
@@ -67,6 +69,7 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
       const newImageUrl = await uploadImageToServer(file);
       // if upload fails or returns empty string
       if (!newImageUrl) {
+        setIsNetworkError(true);
         setUploadError("Failed to get image URL");
         setImageUrl("");
         updateCombinedValue("", inputValue);
@@ -78,6 +81,7 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
       setUploadError("");
       updateCombinedValue(newImageUrl, inputValue);
     } catch (error) {
+      setIsNetworkError(true);
       setUploadError("Failed to upload image. Please try again.");
       setImageUrl("");
       updateCombinedValue("", inputValue);
@@ -89,6 +93,21 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
 
     const img = await uploadImage(file);
     return img ?? "";
+  };
+
+  const onUrlSelectHandler = (url: string | null) => {
+    console.log("url", url);
+    setIsNetworkError(false);
+    if (!url) {
+      setUploadError("");
+      setImageUrl("");
+      updateCombinedValue("", inputValue);
+      return;
+    }
+
+    console.log(url, inputValue);
+    setImageUrl(url);
+    updateCombinedValue(url, inputValue);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,7 +135,13 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
       </div>
       <div className="flex flex-col gap-4">
         <p className="text-neutral-11 text-[16px] font-bold">image</p>
-        <ImageUpload onFileSelect={onFileSelectHandler} isSuccess={uploadSuccess} errorMessage={uploadError} />
+        <ImageUpload
+          onFileSelect={onFileSelectHandler}
+          isSuccess={uploadSuccess}
+          errorMessage={uploadError}
+          isNetworkError={isNetworkError}
+          onUrlSelect={onUrlSelectHandler}
+        />
       </div>
     </div>
   );
