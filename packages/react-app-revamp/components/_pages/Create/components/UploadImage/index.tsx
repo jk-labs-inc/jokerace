@@ -7,28 +7,45 @@ import CreateGradientTitle from "../GradientTitle";
 
 const CreateUploadImage = () => {
   const { prompt, setPrompt } = useDeployContestStore(state => state);
-  const [uploadError, setUploadError] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [validationError, setValidationError] = useState<{
+    upload?: string;
+    url?: string;
+  }>({});
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [isNetworkError, setIsNetworkError] = useState(false);
   const { uploadImage } = useUploadImageStore();
 
   const validateFile = (file: File): boolean => {
     if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
-      setUploadError("Please upload a valid image/gif file (JPEG, JPG, PNG, JFIF, GIF, or WebP)");
+      setValidationError({
+        ...validationError,
+        upload: "Please upload a valid image/gif file (JPEG, JPG, PNG, JFIF, GIF, or WebP)",
+      });
       return false;
     }
 
     const maxSize = 20 * 1024 * 1024; // 20MB in bytes
     if (file.size > maxSize) {
-      setUploadError("File size should be less than 20MB");
+      setValidationError({
+        ...validationError,
+        upload: "File size should be less than 20MB",
+      });
       return false;
     }
 
+    setValidationError({
+      ...validationError,
+      upload: undefined,
+    });
     return true;
   };
 
   const onFileSelectHandler = async (file: File | null) => {
+    setIsNetworkError(false);
+    setValidationError({});
+
     if (!file) {
-      setUploadError("");
       setPrompt({
         ...prompt,
         imageUrl: "",
@@ -40,18 +57,77 @@ const CreateUploadImage = () => {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const imageUrl = await uploadImageToServer(file);
 
+      if (!imageUrl) {
+        setIsNetworkError(true);
+        setPrompt({
+          ...prompt,
+          imageUrl: "",
+        });
+        return;
+      }
+
       setUploadSuccess(true);
-      setUploadError("");
       setPrompt({
         ...prompt,
         imageUrl: imageUrl,
       });
     } catch (error) {
-      setUploadError("Failed to upload image. Please try again.");
+      setIsNetworkError(true);
+      setPrompt({
+        ...prompt,
+        imageUrl: "",
+      });
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const onUrlSelectHandler = (url: string | null) => {
+    if (!url) {
+      setValidationError({});
+      setPrompt({
+        ...prompt,
+        imageUrl: "",
+      });
+      return;
+    }
+
+    try {
+      new URL(url);
+
+      const fileExtension = url.split(".").pop()?.toLowerCase();
+      const validImageExtensions = ["jpg", "jpeg", "png", "gif", "webp", "jfif"];
+
+      if (!fileExtension || !validImageExtensions.includes(fileExtension)) {
+        setValidationError({
+          ...validationError,
+          url: "URL must point to a valid image file (JPEG, JPG, PNG, JFIF, GIF, or WebP)",
+        });
+        setPrompt({
+          ...prompt,
+          imageUrl: "",
+        });
+        return;
+      }
+
+      setValidationError({});
+    } catch (e) {
+      setValidationError({
+        ...validationError,
+        url: "Please enter a valid URL",
+      });
+      return;
+    }
+
+    setPrompt({
+      ...prompt,
+      imageUrl: url,
+    });
   };
 
   const uploadImageToServer = async (file: File): Promise<string> => {
@@ -64,9 +140,12 @@ const CreateUploadImage = () => {
       <CreateGradientTitle additionalInfo="recommended">preview image</CreateGradientTitle>
       <ImageUpload
         onFileSelect={onFileSelectHandler}
+        onUrlSelect={onUrlSelectHandler}
         isSuccess={uploadSuccess}
+        isLoading={isLoading}
+        validationError={validationError}
+        isNetworkError={isNetworkError}
         initialImageUrl={prompt.imageUrl}
-        errorMessage={uploadError}
       />
     </div>
   );

@@ -8,7 +8,11 @@ interface ImageUploadProps {
   step?: number;
   icon?: React.ReactNode;
   isSuccess?: boolean;
-  errorMessage?: string;
+  isLoading?: boolean;
+  validationError?: {
+    upload?: string;
+    url?: string;
+  };
   isNetworkError?: boolean;
   initialImageUrl?: string;
   onFileSelect?: (file: File | null) => void;
@@ -20,8 +24,9 @@ const ImageUpload: FC<ImageUploadProps> = ({
   onUrlSelect,
   step,
   isSuccess,
+  isLoading,
   initialImageUrl,
-  errorMessage,
+  validationError,
   isNetworkError,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -29,9 +34,11 @@ const ImageUpload: FC<ImageUploadProps> = ({
   const [selectedImage, setSelectedImage] = useState<string | null>(initialImageUrl || null);
   const [inputMethod, setInputMethod] = useState<"upload" | "url">("upload");
   const [imageUrl, setImageUrl] = useState<string>("");
-  const [urlError, setUrlError] = useState<string>("");
 
   useEffect(() => {
+    if (validationError?.upload) {
+      setSelectedImage(null);
+    }
     setSelectedImage(initialImageUrl || null);
   }, [initialImageUrl]);
 
@@ -49,11 +56,15 @@ const ImageUpload: FC<ImageUploadProps> = ({
     if (files && files.length > 0) {
       const file = files[0];
       onFileSelect?.(file);
-      const reader = new FileReader();
-      reader.onload = () => {
-        setSelectedImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+
+      // Only set the preview image if we're not in loading state
+      if (!isLoading) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setSelectedImage(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
     }
     // reset the file input value
     if (fileInputRef.current) {
@@ -72,11 +83,15 @@ const ImageUpload: FC<ImageUploadProps> = ({
     if (files && files.length > 0) {
       const file = files[0];
       onFileSelect?.(file);
-      const reader = new FileReader();
-      reader.onload = () => {
-        setSelectedImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+
+      // Only set the preview image if we're not in loading state
+      if (!isLoading) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setSelectedImage(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
     }
     setIsDragOver(false);
   };
@@ -97,9 +112,8 @@ const ImageUpload: FC<ImageUploadProps> = ({
   };
 
   const handleUrlChange = (value: string) => {
-    console.log("value", value);
     setImageUrl(value);
-    if (urlError) setUrlError("");
+    if (validationError?.url) validationError.url = "";
 
     // Only pass the URL to the parent component, but don't clear the network error state
     if (onUrlSelect) {
@@ -114,30 +128,46 @@ const ImageUpload: FC<ImageUploadProps> = ({
   }, [fileUploadIconHeight, fileUploadIconWidth]);
 
   const renderUploadArea = () => (
-    <div
-      onClick={handleClick}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
-      onDragLeave={handleDragLeave}
-      className={`relative flex shadow-file-upload m-auto md:m-0 flex-col w-full h-40 md:w-[376px] md:h-36 justify-center items-center border border-neutral-8 hover:border-positive-11 gap-2 py-2 px-10 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out`}
-    >
-      <input ref={fileInputRef} type="file" style={{ display: "none" }} onChange={handleFileInput} accept="image/*" />
-      <div className="flex flex-col items-center gap-1">
-        {Icon}
-        <div className="flex flex-col">
-          <p className="text-neutral-11 text-[16px] font-bold">drag & drop image</p>
-          <span className="text-neutral-11 text-[16px] font-normal text-center">
-            or <span className="text-[16px] text-positive-11">browse</span>
-          </span>
+    <div className="flex flex-col gap-2">
+      <div
+        onClick={handleClick}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        onDragLeave={handleDragLeave}
+        className={`relative flex shadow-file-upload m-auto md:m-0 flex-col w-full h-40 md:w-[376px] md:h-36 justify-center items-center border ${
+          validationError?.upload ? "border-negative-11" : "border-transparent hover:border-positive-11"
+        } gap-2 py-2 px-10 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out`}
+      >
+        <input ref={fileInputRef} type="file" style={{ display: "none" }} onChange={handleFileInput} accept="image/*" />
+        <div className="flex flex-col items-center gap-1">
+          {isLoading ? (
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-8 h-8 border-t-2 border-positive-11 rounded-full animate-spin"></div>
+              <p className="text-neutral-11 text-[16px] font-bold">uploading...</p>
+            </div>
+          ) : (
+            <>
+              {Icon}
+              <div className="flex flex-col">
+                <p className="text-neutral-11 text-[16px] font-bold">drag & drop image</p>
+                <span className="text-neutral-11 text-[16px] font-normal text-center">
+                  or <span className="text-[16px] text-positive-11">browse</span>
+                </span>
+              </div>
+            </>
+          )}
         </div>
       </div>
+      {validationError?.upload && (
+        <p className="text-negative-11 text-[16px] font-bold mt-1">{validationError.upload}</p>
+      )}
     </div>
   );
 
   const renderUrlInput = () => (
     <div className="flex flex-col gap-2 w-full md:w-[376px]">
       <CreateTextInput value={imageUrl} onChange={handleUrlChange} placeholder="https://i.imgur.com/example.jpg" />
-      {urlError && <p className="text-negative-11 text-xs">{urlError}</p>}
+      {validationError?.url && <p className="text-negative-11 text-[16px] font-bold">{validationError.url}</p>}
     </div>
   );
 
@@ -148,7 +178,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
       content: renderUploadArea(),
     },
     {
-      label: "insert custom image url",
+      label: "insert image url",
       value: "url",
       content: renderUrlInput(),
     },
@@ -156,7 +186,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
 
   return (
     <div className="flex flex-col gap-4">
-      {selectedImage ? (
+      {selectedImage && !isLoading ? (
         <div
           className={`relative flex shadow-file-upload m-auto md:m-0 flex-col w-full h-40 md:w-[376px] md:h-36 justify-center items-center border border-transparent hover:border-positive-11 gap-2 py-2 px-10 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out`}
           style={{
@@ -182,11 +212,6 @@ const ImageUpload: FC<ImageUploadProps> = ({
             className="mt-2"
             labelFontSize={RadioButtonsLabelFontSize.SMALL}
           />
-        </div>
-      ) : errorMessage ? (
-        <div className="flex flex-col gap-4">
-          <p className="text-[12px] text-negative-11 font-bold">{errorMessage}</p>
-          {renderUploadArea()}
         </div>
       ) : (
         renderUploadArea()

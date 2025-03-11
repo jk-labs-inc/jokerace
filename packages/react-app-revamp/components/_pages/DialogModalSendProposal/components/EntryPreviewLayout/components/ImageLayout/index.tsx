@@ -9,50 +9,104 @@ interface DialogModalSendProposalImageLayoutProps {
 
 const DialogModalSendProposalEntryPreviewImageLayout: FC<DialogModalSendProposalImageLayoutProps> = ({ onChange }) => {
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [validationError, setValidationError] = useState<{
+    upload?: string;
+    url?: string;
+  }>({});
   const [isNetworkError, setIsNetworkError] = useState<boolean>(false);
-  const [uploadError, setUploadError] = useState<string>("");
   const { uploadImage } = useUploadImageStore();
 
   const validateFile = (file: File): boolean => {
     if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
-      setUploadError("Please upload a valid image/gif file (JPEG, JPG, PNG, JFIF, GIF, or WebP)");
+      setValidationError({
+        ...validationError,
+        upload: "Please upload a valid image/gif file (JPEG, JPG, PNG, JFIF, GIF, or WebP)",
+      });
       return false;
     }
 
     const maxSize = 20 * 1024 * 1024; // 20MB in bytes
     if (file.size > maxSize) {
-      setUploadError("File size should be less than 20MB");
+      setValidationError({
+        ...validationError,
+        upload: "File size should be less than 20MB",
+      });
       return false;
     }
 
+    setValidationError({
+      ...validationError,
+      upload: undefined,
+    });
     return true;
   };
 
   const onFileSelectHandler = async (file: File | null) => {
+    setIsNetworkError(false);
+    setValidationError({});
+
     if (!file) {
-      setUploadError("");
-      setIsNetworkError(false);
       onChange?.("");
       return;
     }
 
     if (!validateFile(file)) {
-      setIsNetworkError(false);
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const imageUrl = await uploadImageToServer(file);
+
+      if (!imageUrl) {
+        setIsNetworkError(true);
+        onChange?.("");
+        return;
+      }
+
+      setUploadSuccess(true);
+      onChange?.(imageUrl);
+    } catch (error) {
+      setIsNetworkError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onUrlSelectHandler = (url: string | null) => {
+    if (!url) {
+      setValidationError({});
+      onChange?.("");
       return;
     }
 
     try {
-      console.log("uploading image");
-      const imageUrl = await uploadImageToServer(file);
+      new URL(url);
 
-      setUploadSuccess(true);
-      setUploadError("");
-      onChange?.(imageUrl);
-    } catch (error) {
-      console.log("error", error);
-      setIsNetworkError(true);
-      setUploadError("Failed to upload image. Please try again.");
+      const fileExtension = url.split(".").pop()?.toLowerCase();
+      const validImageExtensions = ["jpg", "jpeg", "png", "gif", "webp", "jfif"];
+
+      if (!fileExtension || !validImageExtensions.includes(fileExtension)) {
+        setValidationError({
+          ...validationError,
+          url: "URL must point to a valid image file (JPEG, JPG, PNG, JFIF, GIF, or WebP)",
+        });
+        onChange?.("");
+        return;
+      }
+
+      setValidationError({});
+    } catch (e) {
+      setValidationError({
+        ...validationError,
+        url: "Please enter a valid URL",
+      });
+      return;
     }
+
+    onChange?.(url);
   };
 
   const uploadImageToServer = async (file: File): Promise<string> => {
@@ -65,8 +119,10 @@ const DialogModalSendProposalEntryPreviewImageLayout: FC<DialogModalSendProposal
       <p className="text-neutral-11 text-[16px] font-bold">image</p>
       <ImageUpload
         onFileSelect={onFileSelectHandler}
+        onUrlSelect={onUrlSelectHandler}
         isSuccess={uploadSuccess}
-        errorMessage={uploadError}
+        isLoading={isLoading}
+        validationError={validationError}
         isNetworkError={isNetworkError}
       />
     </div>

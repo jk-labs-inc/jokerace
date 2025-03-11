@@ -15,11 +15,15 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
 }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
-  const [uploadError, setUploadError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [validationError, setValidationError] = useState<{
+    upload?: string;
+    url?: string;
+  }>({});
+  const [isNetworkError, setIsNetworkError] = useState<boolean>(false);
   const [isExceeded, setIsExceeded] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [imageUrl, setImageUrl] = useState<string>("");
-  const [isNetworkError, setIsNetworkError] = useState<boolean>(false);
   const { uploadImage } = useUploadImageStore();
 
   const updateCombinedValue = (newImageUrl: string = imageUrl, newInputValue: string = inputValue) => {
@@ -39,38 +43,51 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
 
   const validateFile = (file: File): boolean => {
     if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
-      setUploadError("Please upload a valid image/gif file (JPEG, JPG, PNG, JFIF, GIF, or WebP)");
+      setValidationError({
+        ...validationError,
+        upload: "Please upload a valid image/gif file (JPEG, JPG, PNG, JFIF, GIF, or WebP)",
+      });
       return false;
     }
 
     const maxSize = 20 * 1024 * 1024; // 20MB in bytes
     if (file.size > maxSize) {
-      setUploadError("File size should be less than 20MB");
+      setValidationError({
+        ...validationError,
+        upload: "File size should be less than 20MB",
+      });
       return false;
     }
 
+    setValidationError({
+      ...validationError,
+      upload: undefined,
+    });
     return true;
   };
 
   const onFileSelectHandler = async (file: File | null) => {
     setIsNetworkError(false);
+
     if (!file) {
-      setUploadError("");
+      setValidationError({});
       setImageUrl("");
       updateCombinedValue("", inputValue);
       return;
     }
 
-    if (!validateFile(file)) {
+    const isValid = validateFile(file);
+
+    if (!isValid) {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const newImageUrl = await uploadImageToServer(file);
-      // if upload fails or returns empty string
       if (!newImageUrl) {
         setIsNetworkError(true);
-        setUploadError("Failed to get image URL");
         setImageUrl("");
         updateCombinedValue("", inputValue);
         return;
@@ -78,13 +95,13 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
 
       setImageUrl(newImageUrl);
       setUploadSuccess(true);
-      setUploadError("");
       updateCombinedValue(newImageUrl, inputValue);
     } catch (error) {
       setIsNetworkError(true);
-      setUploadError("Failed to upload image. Please try again.");
       setImageUrl("");
       updateCombinedValue("", inputValue);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -96,16 +113,38 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
   };
 
   const onUrlSelectHandler = (url: string | null) => {
-    console.log("url", url);
-    setIsNetworkError(false);
     if (!url) {
-      setUploadError("");
+      setValidationError({});
       setImageUrl("");
       updateCombinedValue("", inputValue);
       return;
     }
 
-    console.log(url, inputValue);
+    try {
+      new URL(url);
+
+      const fileExtension = url.split(".").pop()?.toLowerCase();
+      const validImageExtensions = ["jpg", "jpeg", "png", "gif", "webp", "jfif"];
+
+      if (!fileExtension || !validImageExtensions.includes(fileExtension)) {
+        setValidationError({
+          ...validationError,
+          url: "URL must point to a valid image file (JPEG, JPG, PNG, JFIF, GIF, or WebP)",
+        });
+        setImageUrl("");
+        updateCombinedValue("", inputValue);
+        return;
+      }
+
+      setValidationError({});
+    } catch (e) {
+      setValidationError({
+        ...validationError,
+        url: "Please enter a valid URL",
+      });
+      return;
+    }
+
     setImageUrl(url);
     updateCombinedValue(url, inputValue);
   };
@@ -138,9 +177,11 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
         <ImageUpload
           onFileSelect={onFileSelectHandler}
           isSuccess={uploadSuccess}
-          errorMessage={uploadError}
+          isLoading={isLoading}
+          validationError={validationError}
           isNetworkError={isNetworkError}
           onUrlSelect={onUrlSelectHandler}
+          initialImageUrl={imageUrl}
         />
       </div>
     </div>
