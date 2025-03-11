@@ -30,7 +30,6 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
     url?: string;
   }>({});
   const [isNetworkError, setIsNetworkError] = useState<boolean>(false);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
   const { uploadImage } = useUploadImageStore();
 
   useEffect(() => {
@@ -74,7 +73,6 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
     setInputValue("");
     setIsNetworkError(false);
     setValidationError({});
-    setUploadSuccess(false);
     setImageValue("");
   };
 
@@ -127,7 +125,6 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
         return;
       }
 
-      setUploadSuccess(true);
       setImageValue(imageUrl);
     } catch (error) {
       setIsNetworkError(true);
@@ -176,8 +173,14 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
     return img ?? "";
   };
 
+  const onModalClose = () => {
+    setIsCloseModal(false);
+    setIsNetworkError(false);
+    setValidationError({});
+  };
+
   return (
-    <DialogModalV4 isOpen={isOpen} onClose={setIsCloseModal}>
+    <DialogModalV4 isOpen={isOpen} onClose={onModalClose}>
       <div className="flex flex-col gap-14 py-6 md:py-16 pl-8 md:pl-32 pr-4 md:pr-16">
         <div className="flex justify-between items-center">
           <p className="text-[24px] text-neutral-11 font-bold">edit title and image</p>
@@ -194,7 +197,6 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
           <ImageUpload
             initialImageUrl={imageValue}
             validationError={validationError}
-            isSuccess={uploadSuccess}
             isLoading={isLoading}
             isNetworkError={isNetworkError}
             onFileSelect={onFileSelectHandler}

@@ -12,7 +12,6 @@ const CreateUploadImage = () => {
     upload?: string;
     url?: string;
   }>({});
-  const [uploadSuccess, setUploadSuccess] = useState(false);
   const [isNetworkError, setIsNetworkError] = useState(false);
   const { uploadImage } = useUploadImageStore();
 
@@ -71,7 +70,6 @@ const CreateUploadImage = () => {
         return;
       }
 
-      setUploadSuccess(true);
       setPrompt({
         ...prompt,
         imageUrl: imageUrl,
@@ -141,7 +139,6 @@ const CreateUploadImage = () => {
       <ImageUpload
         onFileSelect={onFileSelectHandler}
         onUrlSelect={onUrlSelectHandler}
-        isSuccess={uploadSuccess}
         isLoading={isLoading}
         validationError={validationError}
         isNetworkError={isNetworkError}

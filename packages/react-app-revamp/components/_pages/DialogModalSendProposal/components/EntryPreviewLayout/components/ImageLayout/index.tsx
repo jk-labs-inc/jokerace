@@ -8,7 +8,6 @@ interface DialogModalSendProposalImageLayoutProps {
 }
 
 const DialogModalSendProposalEntryPreviewImageLayout: FC<DialogModalSendProposalImageLayoutProps> = ({ onChange }) => {
-  const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [validationError, setValidationError] = useState<{
     upload?: string;
@@ -66,7 +65,6 @@ const DialogModalSendProposalEntryPreviewImageLayout: FC<DialogModalSendProposal
         return;
       }
 
-      setUploadSuccess(true);
       onChange?.(imageUrl);
     } catch (error) {
       setIsNetworkError(true);
@@ -120,7 +118,6 @@ const DialogModalSendProposalEntryPreviewImageLayout: FC<DialogModalSendProposal
       <ImageUpload
         onFileSelect={onFileSelectHandler}
         onUrlSelect={onUrlSelectHandler}
-        isSuccess={uploadSuccess}
         isLoading={isLoading}
         validationError={validationError}
         isNetworkError={isNetworkError}

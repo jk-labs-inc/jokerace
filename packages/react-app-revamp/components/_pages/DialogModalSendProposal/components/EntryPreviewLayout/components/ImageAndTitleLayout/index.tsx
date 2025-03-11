@@ -14,7 +14,6 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
   onChange,
 }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [validationError, setValidationError] = useState<{
     upload?: string;
@@ -94,7 +93,6 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
       }
 
       setImageUrl(newImageUrl);
-      setUploadSuccess(true);
       updateCombinedValue(newImageUrl, inputValue);
     } catch (error) {
       setIsNetworkError(true);
@@ -176,7 +174,6 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
         <p className="text-neutral-11 text-[16px] font-bold">image</p>
         <ImageUpload
           onFileSelect={onFileSelectHandler}
-          isSuccess={uploadSuccess}
           isLoading={isLoading}
           validationError={validationError}
           isNetworkError={isNetworkError}

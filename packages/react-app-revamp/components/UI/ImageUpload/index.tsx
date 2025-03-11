@@ -5,9 +5,7 @@ import CreateRadioButtonsGroup from "components/_pages/Create/components/RadioBu
 import CreateTextInput from "@components/_pages/Create/components/TextInput";
 
 interface ImageUploadProps {
-  step?: number;
   icon?: React.ReactNode;
-  isSuccess?: boolean;
   isLoading?: boolean;
   validationError?: {
     upload?: string;
@@ -22,8 +20,6 @@ interface ImageUploadProps {
 const ImageUpload: FC<ImageUploadProps> = ({
   onFileSelect,
   onUrlSelect,
-  step,
-  isSuccess,
   isLoading,
   initialImageUrl,
   validationError,
