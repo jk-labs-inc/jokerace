@@ -49,7 +49,7 @@ const createExternalLink = (href: string, text: string): ReactNode => (
 );
 
 const createTweetEmbed = (tweetId: string): ReactNode => (
-  <div className="dark not-prose">
+  <div className="not-prose">
     <Tweet apiUrl={`/api/tweet/${tweetId}`} id={tweetId} />
   </div>
 );
