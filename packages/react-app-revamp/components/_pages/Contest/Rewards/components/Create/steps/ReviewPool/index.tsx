@@ -1,5 +1,3 @@
-import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { toastError } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useDeployRewardsPool } from "@hooks/useDeployRewards";
@@ -21,28 +19,12 @@ const CreateRewardsReviewPool = () => {
   const { deployRewardsPool } = useDeployRewardsPool();
   const { rewardPoolData, currentStep, setStep } = useCreateRewardsStore(state => state);
   const { tokenWidgets } = useFundPoolStore(state => state);
-  const isUserOnCorrectChain = contestChainId === userChainId;
-
-  const handleSwitchNetwork = async () => {
-    if (!contestChainId) return;
-
-    try {
-      await switchChain(config, { chainId: contestChainId });
-    } catch (error) {
-      toastError("failed to switch network");
-    }
-  };
 
   const handleCreateRewards = async () => {
     if (!contestChainId) return;
 
     if (contestChainId !== userChainId) {
-      try {
-        await switchChain(config, { chainId: contestChainId });
-      } catch (error) {
-        toastError("failed to switch network");
-        return;
-      }
+      await switchChain(config, { chainId: contestChainId });
     }
 
     setStep(currentStep + 1);
@@ -58,20 +40,14 @@ const CreateRewardsReviewPool = () => {
           shareAllocations={rewardPoolData.shareAllocations}
           tokens={tokenWidgets.filter(token => token.amount !== "0" && token.amount !== "")}
         />
+        <p className="text-[14px] text-neutral-14 md:hidden">
+          you cannot edit these rewards after confirming. <br /> you can always come back to fund more.
+        </p>
       </div>
       <div className="flex flex-col gap-6">
-        {isUserOnCorrectChain ? (
-          <CreateRewardsSubmitButton step={currentStep} onSubmit={handleCreateRewards} />
-        ) : (
-          <ButtonV3
-            colorClass="text-[20px] bg-gradient-purple rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
-            size={ButtonSize.EXTRA_LARGE_LONG}
-            onClick={handleSwitchNetwork}
-          >
-            switch network
-          </ButtonV3>
-        )}
-        <p className="text-[14px] text-neutral-14">
+        <CreateRewardsSubmitButton step={currentStep} onSubmit={handleCreateRewards} />
+
+        <p className="text-[14px] text-neutral-14 hidden md:block">
           you cannot edit these rewards after confirming. <br /> you can always come back to fund more.
         </p>
       </div>
