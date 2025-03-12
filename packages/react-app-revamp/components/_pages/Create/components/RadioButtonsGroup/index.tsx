@@ -52,7 +52,7 @@ const CreateRadioButtonsGroup = ({
                     )}
                   </div>
                   <div className="flex flex-col">
-                    <p className={`${labelFontSize} ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
+                    <p className={`normal-case ${labelFontSize} ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
                       {isMobile && option.mobileLabel ? option.mobileLabel : option.label}
                     </p>
                   </div>

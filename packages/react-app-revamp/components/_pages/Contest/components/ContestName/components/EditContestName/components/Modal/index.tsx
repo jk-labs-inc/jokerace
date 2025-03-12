@@ -1,8 +1,6 @@
 import { CONTEST_TITLE_MAX_LENGTH } from "@components/_pages/Create/constants/length";
 import DialogModalV4 from "@components/UI/DialogModalV4";
 import ImageUpload from "@components/UI/ImageUpload";
-import { ACCEPTED_FILE_TYPES } from "@components/UI/ImageUpload/utils";
-import { useUploadImageStore } from "@hooks/useUploadImage";
 import { FC, useEffect, useState } from "react";
 import EditContestNameTextInput from "../TextInput";
 
@@ -24,13 +22,6 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
   const [inputValue, setInputValue] = useState(contestName);
   const [imageValue, setImageValue] = useState(contestImageUrl);
   const [error, setError] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [validationError, setValidationError] = useState<{
-    upload?: string;
-    url?: string;
-  }>({});
-  const [isNetworkError, setIsNetworkError] = useState<boolean>(false);
-  const { uploadImage } = useUploadImageStore();
 
   useEffect(() => {
     setInputValue(contestName);
@@ -71,112 +62,15 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
     handleEditContestNameAndImage?.(value, imageValue);
     setIsCloseModal(false);
     setInputValue("");
-    setIsNetworkError(false);
-    setValidationError({});
     setImageValue("");
-  };
-
-  const validateFile = (file: File): boolean => {
-    if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
-      setValidationError({
-        ...validationError,
-        upload: "Please upload a valid image/gif file (JPEG, JPG, PNG, JFIF, GIF, or WebP)",
-      });
-      return false;
-    }
-
-    const maxSize = 20 * 1024 * 1024; // 20MB in bytes
-    if (file.size > maxSize) {
-      setValidationError({
-        ...validationError,
-        upload: "File size should be less than 20MB",
-      });
-      return false;
-    }
-
-    setValidationError({
-      ...validationError,
-      upload: undefined,
-    });
-    return true;
-  };
-
-  const onFileSelectHandler = async (file: File | null) => {
-    setIsNetworkError(false);
-    setValidationError({});
-
-    if (!file) {
-      setImageValue("");
-      return;
-    }
-
-    if (!validateFile(file)) {
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const imageUrl = await uploadImageToServer(file);
-
-      if (!imageUrl) {
-        setIsNetworkError(true);
-        setImageValue("");
-        return;
-      }
-
-      setImageValue(imageUrl);
-    } catch (error) {
-      setIsNetworkError(true);
-      setImageValue("");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const onUrlSelectHandler = (url: string | null) => {
-    if (!url) {
-      setValidationError({});
-      setImageValue("");
-      return;
-    }
-
-    try {
-      new URL(url);
-
-      const fileExtension = url.split(".").pop()?.toLowerCase();
-      const validImageExtensions = ["jpg", "jpeg", "png", "gif", "webp", "jfif"];
-
-      if (!fileExtension || !validImageExtensions.includes(fileExtension)) {
-        setValidationError({
-          ...validationError,
-          url: "URL must point to a valid image file (JPEG, JPG, PNG, JFIF, GIF, or WebP)",
-        });
-        setImageValue("");
-        return;
-      }
-
-      setValidationError({});
-    } catch (e) {
-      setValidationError({
-        ...validationError,
-        url: "Please enter a valid URL",
-      });
-      return;
-    }
-
-    setImageValue(url);
-  };
-
-  const uploadImageToServer = async (file: File): Promise<string> => {
-    const img = await uploadImage(file);
-    return img ?? "";
   };
 
   const onModalClose = () => {
     setIsCloseModal(false);
-    setIsNetworkError(false);
-    setValidationError({});
+  };
+
+  const onImageLoadHandler = (imageUrl: string) => {
+    setImageValue(imageUrl);
   };
 
   return (
@@ -194,14 +88,7 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
           />
         </div>
         <div className="flex flex-col gap-2">
-          <ImageUpload
-            initialImageUrl={imageValue}
-            validationError={validationError}
-            isLoading={isLoading}
-            isNetworkError={isNetworkError}
-            onFileSelect={onFileSelectHandler}
-            onUrlSelect={onUrlSelectHandler}
-          />
+          <ImageUpload initialImageUrl={imageValue} onImageLoad={onImageLoadHandler} />
           <div className="bg-true-black w-full md:w-[700px] rounded-[16px] border-true-black md:shadow-file-upload md:p-4">
             <div className="bg-secondary-1 w-full rounded-[16px] outline-none p-4">
               <EditContestNameTextInput

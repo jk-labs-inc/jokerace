@@ -1,6 +1,4 @@
 import ImageUpload from "@components/UI/ImageUpload";
-import { ACCEPTED_FILE_TYPES } from "@components/UI/ImageUpload/utils";
-import { useUploadImageStore } from "@hooks/useUploadImage";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -14,16 +12,9 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
   onChange,
 }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [validationError, setValidationError] = useState<{
-    upload?: string;
-    url?: string;
-  }>({});
-  const [isNetworkError, setIsNetworkError] = useState<boolean>(false);
   const [isExceeded, setIsExceeded] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [imageUrl, setImageUrl] = useState<string>("");
-  const { uploadImage } = useUploadImageStore();
 
   const updateCombinedValue = (newImageUrl: string = imageUrl, newInputValue: string = inputValue) => {
     // if both values are empty, return empty string
@@ -40,118 +31,16 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
     onChange?.(combinedValue);
   };
 
-  const validateFile = (file: File): boolean => {
-    if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
-      setValidationError({
-        ...validationError,
-        upload: "Please upload a valid image/gif file (JPEG, JPG, PNG, JFIF, GIF, or WebP)",
-      });
-      return false;
-    }
-
-    const maxSize = 20 * 1024 * 1024; // 20MB in bytes
-    if (file.size > maxSize) {
-      setValidationError({
-        ...validationError,
-        upload: "File size should be less than 20MB",
-      });
-      return false;
-    }
-
-    setValidationError({
-      ...validationError,
-      upload: undefined,
-    });
-    return true;
-  };
-
-  const onFileSelectHandler = async (file: File | null) => {
-    setIsNetworkError(false);
-
-    if (!file) {
-      setValidationError({});
-      setImageUrl("");
-      updateCombinedValue("", inputValue);
-      return;
-    }
-
-    const isValid = validateFile(file);
-
-    if (!isValid) {
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const newImageUrl = await uploadImageToServer(file);
-      if (!newImageUrl) {
-        setIsNetworkError(true);
-        setImageUrl("");
-        updateCombinedValue("", inputValue);
-        return;
-      }
-
-      setImageUrl(newImageUrl);
-      updateCombinedValue(newImageUrl, inputValue);
-    } catch (error) {
-      setIsNetworkError(true);
-      setImageUrl("");
-      updateCombinedValue("", inputValue);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const uploadImageToServer = async (file: File | null): Promise<string> => {
-    if (!file) return "";
-
-    const img = await uploadImage(file);
-    return img ?? "";
-  };
-
-  const onUrlSelectHandler = (url: string | null) => {
-    if (!url) {
-      setValidationError({});
-      setImageUrl("");
-      updateCombinedValue("", inputValue);
-      return;
-    }
-
-    try {
-      new URL(url);
-
-      const fileExtension = url.split(".").pop()?.toLowerCase();
-      const validImageExtensions = ["jpg", "jpeg", "png", "gif", "webp", "jfif"];
-
-      if (!fileExtension || !validImageExtensions.includes(fileExtension)) {
-        setValidationError({
-          ...validationError,
-          url: "URL must point to a valid image file (JPEG, JPG, PNG, JFIF, GIF, or WebP)",
-        });
-        setImageUrl("");
-        updateCombinedValue("", inputValue);
-        return;
-      }
-
-      setValidationError({});
-    } catch (e) {
-      setValidationError({
-        ...validationError,
-        url: "Please enter a valid URL",
-      });
-      return;
-    }
-
-    setImageUrl(url);
-    updateCombinedValue(url, inputValue);
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
     setIsExceeded(value.length >= MAX_IMAGE_TITLE_LENGTH);
     updateCombinedValue(imageUrl, value);
+  };
+
+  const onImageLoadHandler = (imageUrl: string) => {
+    setImageUrl(imageUrl);
+    updateCombinedValue(imageUrl, inputValue);
   };
 
   return (
@@ -171,15 +60,8 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
         {isExceeded && <p className="text-negative-11 text-[12px] font-bold">maximum character limit reached!</p>}
       </div>
       <div className="flex flex-col gap-4">
-        <p className="text-neutral-11 text-[16px] font-bold">image</p>
-        <ImageUpload
-          onFileSelect={onFileSelectHandler}
-          isLoading={isLoading}
-          validationError={validationError}
-          isNetworkError={isNetworkError}
-          onUrlSelect={onUrlSelectHandler}
-          initialImageUrl={imageUrl}
-        />
+        <p className="text-neutral-11 text-[16px] font-bold">image upload</p>
+        <ImageUpload onImageLoad={onImageLoadHandler} initialImageUrl={imageUrl} />
       </div>
     </div>
   );

@@ -1,42 +1,40 @@
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import React, { FC, useEffect, useMemo, useRef, useState } from "react";
-import { RadioButtonsLabelFontSize, RadioOption } from "components/_pages/Create/components/RadioButtonsGroup";
-import CreateRadioButtonsGroup from "components/_pages/Create/components/RadioButtonsGroup";
 import CreateTextInput from "@components/_pages/Create/components/TextInput";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useUploadImageStore } from "@hooks/useUploadImage";
+import CreateRadioButtonsGroup, {
+  RadioButtonsLabelFontSize,
+  RadioOption,
+} from "components/_pages/Create/components/RadioButtonsGroup";
+import React, { FC, useEffect, useRef, useState } from "react";
+import { ACCEPTED_FILE_TYPES } from "./utils";
 
 interface ImageUploadProps {
-  icon?: React.ReactNode;
-  isLoading?: boolean;
-  validationError?: {
-    upload?: string;
-    url?: string;
-  };
-  isNetworkError?: boolean;
   initialImageUrl?: string;
-  onFileSelect?: (file: File | null) => void;
-  onUrlSelect?: (url: string | null) => void;
+  onImageLoad?: (imageUrl: string) => void;
 }
 
-const ImageUpload: FC<ImageUploadProps> = ({
-  onFileSelect,
-  onUrlSelect,
-  isLoading,
-  initialImageUrl,
-  validationError,
-  isNetworkError,
-}) => {
+const fileUploadIconWidth = 58;
+const fileUploadIconHeight = 34;
+
+const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, onImageLoad }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(initialImageUrl || null);
   const [inputMethod, setInputMethod] = useState<"upload" | "url">("upload");
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isNetworkError, setIsNetworkError] = useState<boolean>(false);
+  const [validationError, setValidationError] = useState<{
+    upload?: string;
+    url?: string;
+  }>({});
+  const { uploadImage } = useUploadImageStore();
 
   useEffect(() => {
     if (validationError?.upload) {
       setSelectedImage(null);
     }
     setSelectedImage(initialImageUrl || null);
-  }, [initialImageUrl]);
+  }, [initialImageUrl, validationError?.upload]);
 
   useEffect(() => {
     if (isNetworkError) {
@@ -44,57 +42,94 @@ const ImageUpload: FC<ImageUploadProps> = ({
     }
   }, [isNetworkError]);
 
-  const fileUploadIconWidth = 58;
-  const fileUploadIconHeight = 34;
+  const validateFile = (file: File): boolean => {
+    if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
+      setValidationError({
+        ...validationError,
+        upload: "please upload a valid image/gif file (JPEG, JPG, PNG, JFIF, GIF, or WebP)",
+      });
+      return false;
+    }
 
-  const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const maxSize = 20 * 1024 * 1024; // 20MB in bytes
+    if (file.size > maxSize) {
+      setValidationError({
+        ...validationError,
+        upload: "file size should be less than 20MB",
+      });
+      return false;
+    }
+
+    setValidationError({
+      ...validationError,
+      upload: undefined,
+    });
+    return true;
+  };
+
+  const uploadImageToServer = async (file: File): Promise<string> => {
+    const img = await uploadImage(file);
+    return img ?? "";
+  };
+
+  const handleFileInput = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
       const file = files[0];
-      onFileSelect?.(file);
 
-      // Only set the preview image if we're not in loading state
-      if (!isLoading) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          setSelectedImage(reader.result as string);
-        };
-        reader.readAsDataURL(file);
+      if (validateFile(file)) {
+        await processFileUpload(file);
       }
     }
-    // reset the file input value
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
-  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDragOver(true);
+  const processFileUpload = async (file: File) => {
+    setIsNetworkError(false);
+    setValidationError({});
+    setIsLoading(true);
+
+    try {
+      const imageUrl = await uploadImageToServer(file);
+
+      if (!imageUrl) {
+        setIsNetworkError(true);
+        setSelectedImage(null);
+        onImageLoad?.("");
+        return;
+      }
+
+      setSelectedImage(imageUrl);
+      onImageLoad?.(imageUrl);
+    } catch (error) {
+      setIsNetworkError(true);
+      setSelectedImage(null);
+      onImageLoad?.("");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
+
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const files = event.dataTransfer.files;
     if (files && files.length > 0) {
       const file = files[0];
-      onFileSelect?.(file);
 
-      // Only set the preview image if we're not in loading state
-      if (!isLoading) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          setSelectedImage(reader.result as string);
-        };
-        reader.readAsDataURL(file);
+      if (validateFile(file)) {
+        await processFileUpload(file);
       }
     }
-    setIsDragOver(false);
   };
 
   const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    setIsDragOver(false);
   };
 
   const handleClick = () => {
@@ -104,24 +139,56 @@ const ImageUpload: FC<ImageUploadProps> = ({
   const handleRemoveImage = (e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedImage(null);
-    onFileSelect?.(null);
+    onImageLoad?.("");
   };
 
   const handleUrlChange = (value: string) => {
     setImageUrl(value);
-    if (validationError?.url) validationError.url = "";
 
-    // Only pass the URL to the parent component, but don't clear the network error state
-    if (onUrlSelect) {
-      onUrlSelect(value || null);
+    if (validationError?.url) {
+      setValidationError({
+        ...validationError,
+        url: undefined,
+      });
+    }
+
+    if (!value) {
+      setSelectedImage(null);
+      onImageLoad?.("");
+      return;
+    }
+
+    if (validateUrl(value)) {
+      setSelectedImage(value);
+      onImageLoad?.(value);
+      setIsNetworkError(false);
     }
   };
 
-  const Icon = useMemo<React.ReactNode>(() => {
-    return (
-      <img src="/create-flow/csv_upload.png" width={fileUploadIconWidth} height={fileUploadIconHeight} alt="upload" />
-    );
-  }, [fileUploadIconHeight, fileUploadIconWidth]);
+  const validateUrl = (url: string): boolean => {
+    try {
+      new URL(url);
+
+      const fileExtension = url.split(".").pop()?.toLowerCase();
+      const validImageExtensions = ["jpg", "jpeg", "png", "gif", "webp", "jfif"];
+
+      if (!fileExtension || !validImageExtensions.includes(fileExtension)) {
+        setValidationError({
+          ...validationError,
+          url: "url must point to a valid image file (JPEG, JPG, PNG, JFIF, GIF, or WebP)",
+        });
+        return false;
+      }
+
+      return true;
+    } catch (e) {
+      setValidationError({
+        ...validationError,
+        url: "please enter a valid URL",
+      });
+      return false;
+    }
+  };
 
   const renderUploadArea = () => (
     <div className="flex flex-col gap-2">
@@ -143,7 +210,12 @@ const ImageUpload: FC<ImageUploadProps> = ({
             </div>
           ) : (
             <>
-              {Icon}
+              <img
+                src="/create-flow/csv_upload.png"
+                width={fileUploadIconWidth}
+                height={fileUploadIconHeight}
+                alt="upload"
+              />
               <div className="flex flex-col">
                 <p className="text-neutral-11 text-[16px] font-bold">drag & drop image</p>
                 <span className="text-neutral-11 text-[16px] font-normal text-center">
@@ -169,12 +241,12 @@ const ImageUpload: FC<ImageUploadProps> = ({
 
   const networkErrorRadioOptions: RadioOption[] = [
     {
-      label: "keep trying to upload",
+      label: "try to upload again",
       value: "upload",
       content: renderUploadArea(),
     },
     {
-      label: "insert image url",
+      label: "insert image URL",
       value: "url",
       content: renderUrlInput(),
     },
