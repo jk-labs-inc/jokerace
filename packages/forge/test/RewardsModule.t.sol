@@ -207,6 +207,18 @@ contract RewardsModuleTest is Test {
 
     /////////////////////////////
 
+    // OFFICIAL REWARDS MODULE REGISTRATION
+
+    // A rewards module being set as the official rewards module of a contest must have that contest as its underlyingContest.
+    function testRewardsModuleMustHaveContestAsUnderlying() public {
+       vm.startPrank(CREATOR_ADDRESS_1);
+       vm.expectRevert(abi.encodeWithSelector(GovernorModuleRegistry.OfficialRewardsModuleMustPointToThisContest.selector));
+       contest.setOfficialRewardsModule(rewardsModulePaysAuthorToRankOneContest); 
+       vm.stopPrank();
+    }
+
+    /////////////////////////////
+
     // WITHDRAWALS
 
     // Only the creator can withdraw, and they can do so at any time

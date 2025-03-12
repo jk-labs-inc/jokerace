@@ -13,12 +13,14 @@ abstract contract GovernorModuleRegistry is Governor {
     RewardsModule public officialRewardsModule;
 
     error OnlyCreatorCanSetRewardsModule();
+    error OfficialRewardsModuleMustPointToThisContest();
 
     /**
      * @dev Get the official rewards module contract for this contest (effectively reverse record).
      */
     function setOfficialRewardsModule(RewardsModule officialRewardsModule_) public {
         if (msg.sender != creator) revert OnlyCreatorCanSetRewardsModule();
+        if (address(officialRewardsModule_.underlyingContest()) != address(this)) revert OfficialRewardsModuleMustPointToThisContest();
         RewardsModule oldOfficialRewardsModule = officialRewardsModule;
         officialRewardsModule = officialRewardsModule_;
         emit OfficialRewardsModuleSet(oldOfficialRewardsModule, officialRewardsModule_);
