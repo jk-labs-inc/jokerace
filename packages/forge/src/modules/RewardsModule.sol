@@ -245,6 +245,7 @@ contract RewardsModule {
 
     function withdrawRewards(IERC20 token) public {
         if (msg.sender != creator) revert OnlyCreatorCanWithdraw();
+        if (canceled != true) revert MustBeCanceledToWithdraw();
 
         emit ERC20RewardWithdrawn(token, creator, token.balanceOf(address(this)));
         SafeERC20.safeTransfer(token, payable(creator), token.balanceOf(address(this)));
