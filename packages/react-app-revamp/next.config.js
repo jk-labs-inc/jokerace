@@ -18,11 +18,6 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "lens.infura-ipfs.io",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
         hostname: "images.jokerace.io",
         pathname: "/**",
       },

@@ -456,6 +456,16 @@ li {
   .blurProposals {
     opacity: 50% !important;
   }
+
+  .arrow-list-item {
+    @apply list-none;
+    position: relative;
+  }
+
+  .arrow-list-item::before {
+    content: ">";
+    margin-right: 0.5rem;
+  }
 }
 
 .loadingDots:after {
@@ -663,4 +673,8 @@ li {
 [aria-labelledby="rk_chain_modal_title"] [tabindex="0"] ~ [role="document"] > div > div {
   @apply overflow-y-auto md:max-h-unset;
   max-height: calc(100vh - 60px);
+}
+
+#para-modal > cpsl-auth-modal {
+  z-index: 9999999999;
 }

@@ -4,6 +4,7 @@ import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 import ContestParamsMetadataFieldsDropdown from "../../../Dropdown";
 import { fieldsDropdownOptions, metadataFields } from "../../utils";
+import CreateTextInput from "@components/_pages/Create/components/TextInput";
 
 interface ContestParamsMetadataFieldProps {
   index: number;
@@ -28,10 +29,10 @@ const ContestParamsMetadataField: FC<ContestParamsMetadataFieldProps> = ({ index
     }
   };
 
-  const handlePromptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePromptChange = (value: string) => {
     setMetadataFields(prevFields => {
       const newFields = [...prevFields];
-      newFields[index] = { ...newFields[index], prompt: event.target.value };
+      newFields[index] = { ...newFields[index], prompt: value };
       return newFields;
     });
   };
@@ -62,7 +63,7 @@ const ContestParamsMetadataField: FC<ContestParamsMetadataFieldProps> = ({ index
       </div>
       <div className="flex flex-col gap-2">
         <p className="text-[16px] text-neutral-11 font-bold uppercase">field prompt</p>
-        <input
+        <CreateTextInput
           value={field.prompt}
           onChange={handlePromptChange}
           className="text-[16px] md:text-[20px] w-full md:w-[502px] border-b border-neutral-11 placeholder-neutral-10 placeholder-bold bg-transparent focus:outline-none"

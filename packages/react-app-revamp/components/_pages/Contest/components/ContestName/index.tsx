@@ -26,7 +26,7 @@ const ContestName: FC<ContestNameProps> = ({ contestName, contestAddress, chainN
   if (isMobile) {
     return (
       <div className="flex items-center justify-between w-full">
-        <GradientText text={contestName} isStrikethrough={isContestCanceled} />
+        <GradientText isStrikethrough={isContestCanceled}>{contestName}</GradientText>
         <div className="flex items-center gap-2">
           <EditContestName contestName={contestName} contestPrompt={contestPrompt} canEditTitle={canEditTitle} />
           <CancelContest />
@@ -57,7 +57,7 @@ const ContestName: FC<ContestNameProps> = ({ contestName, contestAddress, chainN
         <CancelContest />
       </div>
       <div className="flex items-center justify-between w-full">
-        <GradientText text={contestName} isStrikethrough={isContestCanceled} />
+        <GradientText isStrikethrough={isContestCanceled}>{contestName}</GradientText>
         <ShareDropdown contestAddress={contestAddress} chain={chainName} contestName={contestName} />
       </div>
     </div>

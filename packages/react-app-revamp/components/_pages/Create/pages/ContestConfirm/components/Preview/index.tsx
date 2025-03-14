@@ -1,36 +1,56 @@
-import { EntryPreview, EntryPreviewConfig } from "@hooks/useDeployContest/store";
-import { FC, useState } from "react";
-import { Steps } from "../..";
+import { EntryPreview, EntryPreviewConfig, MetadataField } from "@hooks/useDeployContest/store";
+import { FC, useMemo } from "react";
 import CreateContestConfirmLayout from "../Layout";
-import { useMediaQuery } from "react-responsive";
 interface CreateContestConfirmPreviewProps {
   entryPreviewConfig: EntryPreviewConfig;
-  step: Steps;
-  onClick?: (step: Steps) => void;
+  metadataFields: MetadataField[];
+  step: number;
+  onClick?: (stepIndex: number) => void;
 }
 
-const CreateContestConfirmPreview: FC<CreateContestConfirmPreviewProps> = ({ entryPreviewConfig, step, onClick }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
+const CreateContestConfirmPreview: FC<CreateContestConfirmPreviewProps> = ({
+  entryPreviewConfig,
+  metadataFields,
+  step,
+  onClick,
+}) => {
+  const determinePreviewText = useMemo(() => {
+    switch (entryPreviewConfig.preview) {
+      case EntryPreview.TITLE:
+        return "all entries require a title";
+      case EntryPreview.IMAGE:
+        return "all entries require an image";
+      case EntryPreview.IMAGE_AND_TITLE:
+        return "all entries require an image and title";
+      case EntryPreview.TWEET:
+        return "all entries require a tweet";
+    }
+  }, [entryPreviewConfig.preview]);
+
+  const determineAdditionalDescriptionText = useMemo(() => {
+    if (entryPreviewConfig.isAdditionalDescriptionEnabled) {
+      return "contestants can include additional description";
+    }
+    return "contestants can't include additional description";
+  }, [entryPreviewConfig.isAdditionalDescriptionEnabled]);
+
+  const determineMetadataFieldsText = useMemo(() => {
+    if (!metadataFields?.length) {
+      return "0 additional fields required";
+    }
+
+    const fieldsWithPrompts = metadataFields.filter(field => field.prompt);
+    return `${fieldsWithPrompts.length} additional field${fieldsWithPrompts.length === 1 ? "" : "s"} required`;
+  }, [metadataFields]);
 
   return (
-    <CreateContestConfirmLayout onClick={() => onClick?.(step)} onHover={value => setIsHovered(value)}>
-      <div
-        className={`flex flex-col gap-4 ${
-          isHovered || isMobileOrTablet ? "text-neutral-11" : "text-neutral-14"
-        } transition-colors duration-300`}
-      >
-        <p className="text-[16px] font-bold">entries:</p>
-        <ul className="flex flex-col pl-8">
-          <li className="text-[16px] list-disc">
-            preview:{" "}
-            {Object.keys(EntryPreview).find(
-              key => EntryPreview[key as keyof typeof EntryPreview] === entryPreviewConfig.preview,
-            )}
-          </li>
-          <li className="text-[16px] list-disc">
-            option description enabled: {entryPreviewConfig.isAdditionalDescriptionEnabled ? "yes" : "no"}
-          </li>
+    <CreateContestConfirmLayout onClick={() => onClick?.(step)}>
+      <div className="flex flex-col gap-2">
+        <p className="text-neutral-9 text-[12px] font-bold uppercase">format</p>
+        <ul className="flex flex-col list-disc pl-6">
+          <li className="text-[16px] text-neutral-11">{determinePreviewText}</li>
+          <li className="text-[16px] text-neutral-11">{determineAdditionalDescriptionText}</li>
+          <li className="text-[16px] text-neutral-11">{determineMetadataFieldsText}</li>
         </ul>
       </div>
     </CreateContestConfirmLayout>

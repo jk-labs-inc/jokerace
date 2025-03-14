@@ -22,6 +22,11 @@ import { usePathname } from "next/navigation";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
+import { useEmailSend } from "@hooks/useEmailSend";
+import { EmailType, VotingEmailParams } from "lib/email/types";
+import { FOOTER_LINKS } from "@config/links";
+import moment from "moment";
+import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 
 interface UserAnalyticsParams {
   contestAddress: string;
@@ -51,6 +56,7 @@ export function useCastVotes() {
     charge,
     contestAbi: abi,
     version,
+    votesClose,
     anyoneCanVote,
     rewardsModuleAddress,
     rewardsAbi,
@@ -91,6 +97,9 @@ export function useCastVotes() {
     abi: rewardsAbi ?? [],
     rankings: rewardsStore.rewards.payees,
   });
+  const { sendEmail } = useEmailSend();
+  const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
+  const contestLink = `${window.location.origin}/contest/${chainName.toLowerCase()}/${contestAddress}`;
 
   const calculateChargeAmount = (amountOfVotes: number) => {
     if (!charge) return undefined;
@@ -109,7 +118,7 @@ export function useCastVotes() {
   };
 
   async function castVotes(amountOfVotes: number, isPositive: boolean) {
-    toastLoading("votes are deploying...");
+    toastLoading("votes are deploying...", LoadingToastMessageType.KEEP_BROWSER_OPEN);
     setIsLoading(true);
     setIsSuccess(false);
     setError("");
@@ -202,6 +211,11 @@ export function useCastVotes() {
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess("your votes have been deployed successfully");
+
+      await sendVotingEmail({
+        contest_link: contestLink,
+        contest_end_date: formattedVotesClose,
+      });
     } catch (e) {
       handleError(e, "something went wrong while casting your votes");
       setError(errorMessage);
@@ -254,6 +268,10 @@ export function useCastVotes() {
     } catch (error) {
       console.error("Error in performAnalytics:", error);
     }
+  }
+
+  async function sendVotingEmail(params: VotingEmailParams) {
+    await sendEmail(userAddress ?? "", EmailType.VotingEmail, params);
   }
 
   return {

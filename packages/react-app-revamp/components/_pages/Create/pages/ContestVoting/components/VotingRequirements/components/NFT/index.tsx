@@ -67,7 +67,6 @@ const CreateVotingRequirementsNftSettings: FC<CreateVotingRequirementsNftSetting
 
   return (
     <CreateRequirementsSettings
-      step="voting"
       settingType={votingRequirements.type}
       chain={votingRequirements.chain}
       error={error}

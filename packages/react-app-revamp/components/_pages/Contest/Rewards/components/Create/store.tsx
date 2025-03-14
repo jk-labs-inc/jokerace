@@ -10,9 +10,8 @@ interface ActionState {
 }
 
 export enum CreationStep {
-  Initial = 0,
-  CreatePool,
   FundPool,
+  CreatePool,
   Review,
   DeploymentStatus,
 }
@@ -53,7 +52,7 @@ interface CreateRewardsState {
 }
 
 export const useCreateRewardsStore = create<CreateRewardsState>(set => ({
-  currentStep: CreationStep.Initial,
+  currentStep: CreationStep.FundPool,
   rewardPoolData: {
     rankings: [1],
     shareAllocations: [100],

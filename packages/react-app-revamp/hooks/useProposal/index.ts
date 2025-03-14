@@ -17,7 +17,7 @@ import {
   updateAndRankProposals,
 } from "./utils";
 
-export const PROPOSALS_PER_PAGE = 12;
+export const PROPOSALS_PER_PAGE = 4;
 
 export function useProposal() {
   const {
@@ -219,6 +219,20 @@ export function useProposal() {
 
       //@ts-ignore
       const results = await readContracts(serverConfig, { contracts });
+
+      // check if this proposal ID is already in our mapped IDs
+      const proposalExists = initialMappedProposalIds.some(p => p.id === proposalId);
+
+      // if it's a new proposal, add it to the mapped IDs
+      if (!proposalExists) {
+        const newMappedProposal = {
+          votes: 0,
+          id: proposalId,
+        };
+
+        const updatedMappedProposals = [...initialMappedProposalIds, newMappedProposal];
+        setInitialMappedProposalIds(updatedMappedProposals);
+      }
 
       structureAndRankProposals(results, [proposalId], initialMappedProposalIds);
     } catch (e) {

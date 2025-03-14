@@ -104,7 +104,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
           </button>
         ) : null}
       </div>
-      <div className="dark not-prose">
+      <div className="not-prose">
         <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />
       </div>
       <div className="mt-auto pl-2">

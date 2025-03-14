@@ -1,3 +1,4 @@
+import { ContestType } from "@components/_pages/Create/types";
 import { Avatar } from "@components/UI/Avatar";
 import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import useProfileData from "@hooks/useProfileData";
@@ -43,12 +44,12 @@ function getContestStatus(contest: Contest): { status: string; timeLeft: string 
 }
 
 function formatDuration(duration: moment.Duration): string {
-  const days = duration.days();
+  const totalDays = Math.floor(duration.asDays());
   const hours = duration.hours();
   const minutes = duration.minutes();
 
-  if (days > 0) {
-    return `${days}d ${hours}h`;
+  if (totalDays > 0) {
+    return `${totalDays}d ${hours}h`;
   } else if (hours > 0) {
     return `${hours}h ${minutes}m`;
   } else {
@@ -111,10 +112,25 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
     return ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", network_name).replace("[address]", address);
   };
 
+  const formatContestType = (type: string | null) => {
+    if (!type) return "";
+
+    switch (type) {
+      case ContestType.AnyoneCanPlay:
+        return "anyone can enter & vote";
+      case ContestType.EntryContest:
+        return "anyone can enter";
+      case ContestType.VotingContest:
+        return "anyone can vote";
+      default:
+        return type;
+    }
+  };
+
   return (
     <Link
       href={getContestUrl(contestData.network_name ?? "", contestData.address ?? "")}
-      className="animate-appear flex flex-col justify-between w-[320px] h-[216px] pt-4 pb-3 px-8 bg-gradient-radial rounded-[16px] border border-neutral-0 hover:border-neutral-10 transition-all duration-300 ease-in-out"
+      className="animate-appear flex flex-col justify-between w-[320px] h-[216px] pt-4 pb-3 px-6 bg-gradient-radial rounded-[16px] border border-neutral-0 hover:border-neutral-10 transition-all duration-300 ease-in-out"
     >
       <div className="flex flex-col gap-8">
         <div className="flex items-center gap-2">
@@ -141,13 +157,13 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
           ) : null}
 
           <div className="flex items-center h-6 bg-neutral-7 px-2 border-true-black border rounded-[8px]">
-            <p className="text-neutral-11 font-bold text-[12px]">{contestData.type}</p>
+            <p className="text-neutral-11 font-bold text-[12px]">{formatContestType(contestData.type)}</p>
           </div>
         </div>
         <div className="flex flex-col gap-2">
           <p className="text-[18px] font-bold text-true-white normal-case">{contestData.title}</p>
           <p className="flex items-center gap-2 text-[12px] font-bold text-neutral-11">
-            {isContestActive && (
+            {isContestActive && !contestData.isCanceled && (
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-positive-10 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-positive-11"></span>

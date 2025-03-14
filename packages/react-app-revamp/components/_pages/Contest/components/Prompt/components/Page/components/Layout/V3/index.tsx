@@ -7,6 +7,7 @@ import EditContestPrompt from "./components/EditContestPrompt";
 import { useLineCount } from "@hooks/useLineCount";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useMediaQuery } from "react-responsive";
+import { calculateContentBreakpoint } from "@helpers/textUtils";
 
 interface ContestPromptPageV3LayoutProps {
   prompt: string;
@@ -20,7 +21,20 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const { contestSummary, contestEvaluate, contestContactDetails } = parsePrompt(prompt);
-  const shouldShowReadMore = lineCount > 5;
+  const maxVisibleLines = 6;
+  const shouldShowReadMore = lineCount > maxVisibleLines;
+
+  const breakpoint = calculateContentBreakpoint({
+    elementRef,
+    shouldShowReadMore,
+    isExpanded,
+    maxVisibleLines,
+    sections: [
+      { id: "contestSummary", content: contestSummary },
+      { id: "contestEvaluate", content: contestEvaluate },
+      { id: "contestContactDetails", content: contestContactDetails },
+    ],
+  });
 
   const renderSection = (content: string, showDivider: boolean) => {
     if (!content) return null;
@@ -32,6 +46,12 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
       </>
     );
   };
+
+  const shouldShowEvaluate =
+    isExpanded || !shouldShowReadMore || (breakpoint && breakpoint.section !== "contestSummary");
+
+  const shouldShowContactDetails =
+    isExpanded || !shouldShowReadMore || (breakpoint && breakpoint.section === "contestContactDetails");
 
   return (
     <div className="flex items-start relative w-full">
@@ -58,23 +78,19 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
                 ? {
                     maskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
                     WebkitMaskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
-                    maxHeight: `${Math.min(lineCount, 5) * 1.6}em`,
+                    maxHeight: `${Math.min(lineCount, maxVisibleLines) * 1.6}em`,
                   }
                 : {}),
             }}
           >
             {renderSection(contestSummary, false)}
-            {(isExpanded || !shouldShowReadMore) && (
-              <>
-                {renderSection(contestEvaluate, true)}
-                {renderSection(contestContactDetails, true)}
-              </>
-            )}
+            {shouldShowEvaluate && renderSection(contestEvaluate, true)}
+            {shouldShowContactDetails && renderSection(contestContactDetails, true)}
           </div>
         </div>
 
         {shouldShowReadMore && !isExpanded && (
-          <div className="w-full flex -mt-12 items-center justify-center">
+          <div className="w-full flex -mt-12 items-center justify-center z-10">
             <button
               onClick={() => setIsExpanded(true)}
               className="text-[12px] md:text-[16px] font-bold flex z-50 w-[120px] md:w-40 h-10 rounded-lg items-center justify-center bg-primary-1 gap-1 text-positive-11 hover:bg-positive-11 hover:text-primary-1 transition-all duration-300 ease-in-out"

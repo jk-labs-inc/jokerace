@@ -20,7 +20,7 @@ const WARNING_MESSAGE_THRESHOLD = 10000;
 
 const CreateContestDeploying = () => {
   const { isSuccess, deployContestData, votingMerkle: votingMerkleData } = useDeployContestStore(state => state);
-  const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
+  const votingMerkle = votingMerkleData.prefilled || votingMerkleData.csv;
   const router = useRouter();
   const { setShowRewards } = useShowRewardsStore(state => state);
 
@@ -29,7 +29,7 @@ const CreateContestDeploying = () => {
       toastDismiss();
       router.push(`/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`);
 
-      if (!deployContestData.downvote && deployContestData.sortingEnabled) setShowRewards(true);
+      if (deployContestData.sortingEnabled) setShowRewards(true);
     }
   }, [deployContestData, isSuccess, router, setShowRewards]);
 

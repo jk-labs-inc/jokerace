@@ -4,9 +4,10 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, ReactElement, useState } from "react";
 import { useNextStep } from "../../hooks/useNextStep";
 import CreateContestDeploying from "../../pages/ContestDeploying";
+import { StepTitle } from "../../types";
 
 interface Step {
-  title: string;
+  title: StepTitle;
   content: ReactElement;
 }
 
@@ -19,8 +20,9 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
   const onNextStep = useNextStep();
 
-  const handleStepClick = (index: number) => {
-    onNextStep(index);
+  const handleStepClick = (index?: number) => {
+    const stepTitles = steps.map(step => step.title);
+    onNextStep(index, stepTitles);
   };
 
   if (!isSupabaseConfigured) {
@@ -64,9 +66,9 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
                   }`}
                 />
                 {currentStep === index ? (
-                  <p className="text-neutral-11">{step.title}</p>
+                  <p className="text-neutral-11">{step.title.toLowerCase()}</p>
                 ) : hoveredStep === index ? (
-                  <p className="text-neutral-10">{step.title}</p>
+                  <p className="text-neutral-10">{step.title.toLowerCase()}</p>
                 ) : null}
               </div>
             ))}

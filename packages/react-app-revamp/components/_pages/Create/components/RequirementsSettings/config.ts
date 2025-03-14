@@ -1,4 +1,4 @@
-import { Option } from "@components/_pages/Create/components/TagDropdown";
+import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 
 export const requirementsDropdownOptions: Option[] = [
   { value: "erc20", label: "token holders" },
@@ -32,6 +32,34 @@ export const erc20ChainDropdownOptions: Option[] = [
   {
     value: "mainnet",
     label: "ethereum",
+  },
+  {
+    value: "arbitrumone",
+    label: "arbitrum",
+  },
+  {
+    value: "avalanche",
+    label: "avalanche",
+  },
+  {
+    value: "base",
+    label: "base",
+  },
+  {
+    value: "celo",
+    label: "celo",
+  },
+  {
+    value: "mantle",
+    label: "mantle",
+  },
+  {
+    value: "optimism",
+    label: "optimism",
+  },
+  {
+    value: "polygon",
+    label: "polygon",
   },
 ];
 

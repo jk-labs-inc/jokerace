@@ -3,42 +3,39 @@ import {
   useTimingOptionForVotingPeriod,
 } from "@components/_pages/Create/pages/ContestTiming/utils";
 import { TemplateConfig } from "@components/_pages/Create/templates/types";
-import { StepTitle } from "@components/_pages/Create/types";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-
-const checkIfSubmissionOrVotingNeeded = (
-  steps: StepTitle[],
-): { isSubmissionNeeded: boolean; isVotingNeeded: boolean } => {
-  return {
-    isSubmissionNeeded: steps.includes(StepTitle.Submissions),
-    isVotingNeeded: steps.includes(StepTitle.Voting),
-  };
-};
-
+import { ContestType } from "@components/_pages/Create/types";
+import { useSubmissionMerkle } from "@components/_pages/Create/hooks/useSubmissionMerkle";
+import { useAccount } from "wagmi";
 const useSetContestTemplate = () => {
+  const { address } = useAccount();
   const {
+    setContestType,
     setPrompt,
-    setType,
+    setTitle,
     setSubmissionOpen,
     setVotingOpen,
+    setSubmissionMerkle,
     setVotingClose,
-    setVotingTab,
-    setSubmissionTab,
     setEntryPreviewConfig,
   } = useDeployContestStore(state => state);
   const { setTimingOption: setSubmissionTimingOption } = useTimingOptionForSubmissionPeriod(state => state);
   const { setTimingOption: setVotingTimingOption } = useTimingOptionForVotingPeriod(state => state);
+  const { processCreatorAllowlist } = useSubmissionMerkle();
 
   const setContestTemplateConfig = (config: TemplateConfig) => {
-    const { isSubmissionNeeded, isVotingNeeded } = checkIfSubmissionOrVotingNeeded(config.stepsToFulfill);
+    if (config.data.contestType === ContestType.VotingContest) {
+      processCreatorAllowlist(address);
+    } else {
+      setSubmissionMerkle(null);
+    }
 
-    setPrompt(config.data.prompt);
-    setType(config.data.type);
+    setContestType(config.data.contestType);
+    setTitle(config.data.rules.title);
+    setPrompt(config.data.rules.prompt);
     setSubmissionOpen(config.data.submissionOpen);
     setVotingOpen(config.data.votingOpen);
     setVotingClose(config.data.votingClose);
-    setSubmissionTab(isSubmissionNeeded ? 2 : 0);
-    setVotingTab(isVotingNeeded ? 2 : 0);
     setSubmissionTimingOption(config.data.votingOpenPeriod);
     setVotingTimingOption(config.data.votingClosePeriod);
     setEntryPreviewConfig(config.data.entryPreviewConfig);

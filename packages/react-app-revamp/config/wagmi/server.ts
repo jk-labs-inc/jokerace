@@ -10,6 +10,7 @@ import { celo } from "./custom-chains/celo";
 import { cyber } from "./custom-chains/cyber";
 import { forma } from "./custom-chains/forma";
 import { gnosis } from "./custom-chains/gnosis";
+import { ink } from "./custom-chains/ink";
 import { linea } from "./custom-chains/linea";
 import { mainnet } from "./custom-chains/mainnet";
 import { mantle } from "./custom-chains/mantle";
@@ -21,6 +22,8 @@ import { polygonZk } from "./custom-chains/polygonZk";
 import { scroll } from "./custom-chains/scroll";
 import { sei } from "./custom-chains/sei";
 import { sepolia } from "./custom-chains/sepolia";
+import { soneium } from "./custom-chains/soneium";
+import { story } from "./custom-chains/story";
 import { zora } from "./custom-chains/zora";
 import { lukso } from "./custom-chains/lukso";
 
@@ -46,6 +49,9 @@ export const chains: readonly [Chain, ...Chain[]] = [
   forma,
   bnb,
   lukso,
+  soneium,
+  story,
+  ink,
   sepolia,
   baseTestnet,
   mainnet,
