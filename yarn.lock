@@ -19322,10 +19322,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-viem@2.23.10:
-  version "2.23.10"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.23.10.tgz#deebe1a49da3102a650bc55e256e9877128a7c60"
-  integrity sha512-va6Wde+v96PdfzdPEspCML1MjAqe+88O8BD+R9Kun/4s5KMUNcqfHbXdZP0ZZ2Zms80styvH2pDRAqCho6TqkA==
+viem@2.23.11:
+  version "2.23.11"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.23.11.tgz#c087a52f3c08a9cf4dadd4b273a1d30c62b249e2"
+  integrity sha512-yPkHJt4Vn88kLlrv8mrtVN54PW4vNLWRWDScf8SaHK2f44VlMk5IZbMJw4ycUoW9K9GUvCMrYuUa34MAcwYHIg==
   dependencies:
     "@noble/curves" "1.8.1"
     "@noble/hashes" "1.7.1"
