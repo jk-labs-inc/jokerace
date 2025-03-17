@@ -52,7 +52,6 @@ export function useDeployRewardsPool() {
     }));
 
     try {
-      console.log("deploying rewards module", chainId);
       const signer = await getEthersSigner(config, { chainId });
 
       const factoryCreateRewardsModule = new ContractFactory(

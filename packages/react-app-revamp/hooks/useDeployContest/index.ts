@@ -120,7 +120,6 @@ export function useDeployContest() {
         votingPeriod: differenceInSeconds(votingClose, votingOpen),
         numAllowedProposalSubmissions: finalAllowedSubmissionsPerUser,
         maxProposalCount: finalMaxSubmissions,
-        downvotingAllowed: 0,
         sortingEnabled: 1,
         rankLimit: advancedOptions.rankLimit,
         percentageToCreator: percentageToCreator,
