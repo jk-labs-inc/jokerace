@@ -171,6 +171,7 @@ contract VoterRewardsModule {
         if (canceled == true) revert CannotReleaseCanceledModule();
     }
 
+    // TODO: replace with getProposalIdOfRank (that is zero if tied) function
     /**
      * @dev Return address to pay out for a given ranking.
      */
