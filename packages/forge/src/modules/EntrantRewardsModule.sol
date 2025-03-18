@@ -7,7 +7,7 @@ import "@openzeppelin/utils/Address.sol";
 import "../governance/extensions/GovernorCountingSimple.sol";
 
 /**
- * @title EntrantRewardsModule
+ * @title RewardsModule
  * @dev This contract allows to split Ether payments among a group of accounts. The sender does not need to be aware
  * that the Ether will be split in this way, since it is handled transparently by the contract.
  *
@@ -16,7 +16,7 @@ import "../governance/extensions/GovernorCountingSimple.sol";
  * an amount proportional to the percentage of total shares they were assigned. The distribution of shares is set at the
  * time of contract deployment and can't be updated thereafter.
  *
- * `EntrantRewardsModule` follows a _pull payment_ model. This means that payments are not automatically forwarded to the
+ * `RewardsModule` follows a _pull payment_ model. This means that payments are not automatically forwarded to the
  * accounts but kept in this contract, and the actual transfer is triggered as a separate step by calling the {release}
  * function.
  *
@@ -24,7 +24,7 @@ import "../governance/extensions/GovernorCountingSimple.sol";
  * tokens that apply fees during transfers, are likely to not be supported as expected. If in doubt, we encourage you
  * to run tests before sending real value to this contract.
  */
-contract EntrantRewardsModule {
+contract RewardsModule {
     event PayeeAdded(uint256 ranking, uint256 shares);
     event PaymentReleased(address to, uint256 amount);
     event ERC20PaymentReleased(IERC20 indexed token, address to, uint256 amount);
@@ -67,7 +67,7 @@ contract EntrantRewardsModule {
     error MustBeCanceledToWithdraw();
 
     /**
-     * @dev Creates an instance of `EntrantRewardsModule` where each ranking in `payees` is assigned the number of shares at
+     * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
      * the matching position in the `shares` array.
      *
      * All rankings in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
