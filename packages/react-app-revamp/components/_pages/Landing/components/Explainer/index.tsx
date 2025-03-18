@@ -52,7 +52,7 @@ const LandingPageExplainer = () => {
           <ul className="flex flex-col pl-4 gap-2">
             <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
               {isMobile
-                ? "make a contest, make money: we split all charges 50/50"
+                ? "make a contest, make money: we split all charges 70/30"
                 : "make a contest, make money: we split entry and voting charges"}
             </li>
             <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
