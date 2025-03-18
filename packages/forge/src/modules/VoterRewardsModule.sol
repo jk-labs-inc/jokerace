@@ -11,6 +11,8 @@ import "../governance/extensions/GovernorCountingSimple.sol";
  * @dev This contract allows to split Ether payments among a group of accounts. The sender does not need to be aware
  * that the Ether will be split in this way, since it is handled transparently by the contract.
  *
+ * In this contract, rewards are sent to voters for a given ranking based on their proportionate vote on that ranking. 
+ *
  * The split can be in equal parts or in any other arbitrary proportion. The way this is specified is by assigning each
  * account to a number of shares. Of all the Ether that this contract receives, each account will then be able to claim
  * an amount proportional to the percentage of total shares they were assigned. The distribution of shares is set at the
@@ -37,15 +39,16 @@ contract VoterRewardsModule {
 
     mapping(uint256 => uint256) public shares; // Getter for the amount of shares held by a ranking.
     mapping(uint256 => uint256) public released; // Getter for the amount of Ether already released to a ranking.
+    mapping(IERC20 => uint256) public erc20TotalReleased; // Getter for the total amount of ERC20 already released.
+    mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released; // Getter for the amount of ERC20 already released to a ranking.
+    mapping(address => mapping(ranking => uint256)) public releasedToVoter; // Getter for the amount of Ether already released to a ranking.
+    mapping(IERC20 => mapping(address => mapping(ranking => uint256))) public erc20ReleasedToVoter; // Getter for the amount of ERC20 already released to a ranking.
+
     uint256[] public payees;
     string private constant VERSION = "4.37"; // Private as to not clutter the ABI
 
-    mapping(IERC20 => uint256) public erc20TotalReleased;
-    mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released;
-
     GovernorCountingSimple public underlyingContest;
     address public creator;
-    bool public paysOutTarget; // If true, pay out target address; if false, pay out proposal author.
     bool public canceled; // A rewards module must be canceled in order to withdraw funds, and once canceled it can no longer release funds, only withdraw
 
     error PayeesSharesLengthMismatch();
@@ -76,8 +79,7 @@ contract VoterRewardsModule {
     constructor(
         uint256[] memory payees_,
         uint256[] memory shares_,
-        GovernorCountingSimple underlyingContest_,
-        bool paysOutTarget_
+        GovernorCountingSimple underlyingContest_
     ) payable {
         if (payees_.length != shares_.length) revert PayeesSharesLengthMismatch();
         if (payees_.length == 0) revert MustHaveAtLeastOnePayee();
@@ -88,7 +90,6 @@ contract VoterRewardsModule {
 
         if (totalShares == 0) revert TotalSharesCannotBeZero();
 
-        paysOutTarget = paysOutTarget_;
         underlyingContest = underlyingContest_;
         creator = msg.sender;
     }
@@ -141,6 +142,24 @@ contract VoterRewardsModule {
     }
 
     /**
+     * @dev Getter for the amount of a voter's releasable Ether for a given payee.
+     */
+    function releasableToVoter(address voter, uint256 ranking, uint256 proposalId) public view returns (uint256) {
+        uint256 totalReceived = address(this).balance + totalReleased;
+        uint256 totalRecevedForRanking = (totalReceived * shares[ranking]) / totalShares; 
+        return _pendingVoterPayment(voter, ranking, proposalId, totalReceivedForRanking, releasedToVoter[voter][ranking]);
+    }
+
+    /**
+     * @dev Getter for the amount of a voter's releasable `token` tokens for a given payee. `token` should be the address     * of an IERC20 contract.
+     */
+    function releasableToVoter(IERC20 token, address voter, uint256 ranking, uint256 proposalId) public view returns (uint256) {
+        uint256 totalReceived = token.balanceOf(address(this)) + erc20TotalReleased[token];
+        uint256 totalRecevedForRanking = (totalReceived * shares[ranking]) / totalShares; 
+        return _pendingVoterPayment(voter, ranking, proposalId, totalRecevedForRanking, erc20ReleasedToVoter[token][voter][ranking]);
+    }
+
+    /**
      * @dev Run release checks.
      */
     function runReleaseChecks(uint256 ranking) public view {
@@ -186,10 +205,12 @@ contract VoterRewardsModule {
      * @dev Triggers a transfer to `ranking` of the amount of Ether they are owed, according to their percentage of the
      * total shares and their previous withdrawals.
      */
-    function release(uint256 ranking) public {
+    function release(address voter, uint256 ranking) public {
         runReleaseChecks(ranking);
 
-        uint256 payment = releasable(ranking);
+        // TODO: get the proposalId of the ranking at this point
+        // TODO: tie logic and keeping the proposal and contest-level data up to date for visibility too
+        uint256 payment = releasableToVoter(voter, ranking, proposalId);
 
         if (payment == 0) revert AccountNotDueNativePayment();
 
@@ -208,6 +229,7 @@ contract VoterRewardsModule {
         Address.sendValue(addressToPayOut, payment);
     }
 
+    // TODO: implement release changes here too
     /**
      * @dev Triggers a transfer to `ranking` of the amount of `token` tokens they are owed, according to their
      * percentage of the total shares and their previous withdrawals. `token` must be the address of an IERC20
@@ -260,6 +282,18 @@ contract VoterRewardsModule {
         returns (uint256)
     {
         return (totalReceived * shares[ranking]) / totalShares - alreadyReleased;
+    }
+
+    /**
+     * @dev internal logic for computing the pending payment of a voter for a given `ranking` given the token historical
+     * balances and already released amounts.
+     */
+    function _pendingVoterPayment(address voter, uint256 ranking, uint256 proposalId, uint256 totalReceivedForRanking, uint256 alreadyReleasedForRanking)
+        private
+        view
+        returns (uint256)
+    {
+        return (totalReceivedForRanking * underlyingContest.proposalAddressVotes(proposalId, voter)) / underlyingContest.proposalVotes[proposalId] - alreadyReleasedForRanking;
     }
 
     /**
