@@ -193,52 +193,83 @@ export function transformProposalData(
  * @param isLegacy
  */
 export async function getProposalIdsRaw(contractConfig: ContractConfig, isLegacy: boolean) {
-  if (isLegacy) {
-    return (await readContract(serverConfig, {
-      ...contractConfig,
-      functionName: "getAllProposalIds",
-      args: [],
-    })) as any;
-  } else {
-    const contracts = [
-      {
+  try {
+    if (isLegacy) {
+      const result = (await readContract(serverConfig, {
         ...contractConfig,
-        functionName: "allProposalTotalVotes",
+        functionName: "getAllProposalIds",
         args: [],
-      },
-      {
-        ...contractConfig,
-        functionName: "getAllDeletedProposalIds",
-        args: [],
-      },
-    ];
+      })) as any;
 
-    const results: any[] = await readContracts(serverConfig, { contracts });
+      return result || [];
+    } else {
+      const contracts = [
+        {
+          ...contractConfig,
+          functionName: "allProposalTotalVotes",
+          args: [],
+        },
+        {
+          ...contractConfig,
+          functionName: "getAllDeletedProposalIds",
+          args: [],
+        },
+      ];
 
-    const allProposals = results[0].result[0];
-    const deletedIdsArray = results[1]?.result;
+      const results: any[] = await readContracts(serverConfig, { contracts });
 
-    if (!deletedIdsArray) {
-      return [allProposals, results[0].result[1]];
+      if (
+        !results ||
+        !results[0] ||
+        !results[0].result ||
+        !Array.isArray(results[0].result) ||
+        results[0].result.length < 2
+      ) {
+        return [[], []];
+      }
+
+      const allProposals = results[0].result[0];
+
+      // check if allProposals is valid
+      if (!allProposals || !Array.isArray(allProposals)) {
+        return [[], []];
+      }
+
+      const deletedIdsArray = results[1]?.result;
+
+      if (!deletedIdsArray) {
+        return [allProposals, results[0].result[1]];
+      }
+
+      const deletedProposalSet = new Set(mapResultToStringArray(deletedIdsArray));
+
+      if (!results[0].result[1] || !Array.isArray(results[0].result[1])) {
+        return [[], []];
+      }
+
+      const validData = allProposals.reduce(
+        (
+          accumulator: { validProposalIds: any[]; correspondingVotes: any[] },
+          proposalId: { toString: () => string },
+          index: string | number,
+        ) => {
+          if (!deletedProposalSet.has(proposalId.toString())) {
+            accumulator.validProposalIds.push(proposalId);
+            if (index < results[0].result[1].length) {
+              accumulator.correspondingVotes.push(results[0].result[1][index]);
+            } else {
+              accumulator.correspondingVotes.push(null);
+            }
+          }
+          return accumulator;
+        },
+        { validProposalIds: [], correspondingVotes: [] },
+      );
+
+      return [validData.validProposalIds, validData.correspondingVotes];
     }
-
-    const deletedProposalSet = new Set(mapResultToStringArray(deletedIdsArray));
-
-    const validData = allProposals.reduce(
-      (
-        accumulator: { validProposalIds: any[]; correspondingVotes: any[] },
-        proposalId: { toString: () => string },
-        index: string | number,
-      ) => {
-        if (!deletedProposalSet.has(proposalId.toString())) {
-          accumulator.validProposalIds.push(proposalId);
-          accumulator.correspondingVotes.push(results[0].result[1][index]);
-        }
-        return accumulator;
-      },
-      { validProposalIds: [], correspondingVotes: [] },
-    );
-
-    return [validData.validProposalIds, validData.correspondingVotes];
+  } catch (error) {
+    console.error("Error fetching proposal IDs:", error);
+    return [[], []];
   }
 }
