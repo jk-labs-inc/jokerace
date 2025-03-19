@@ -173,26 +173,23 @@ contract VoterRewardsModule {
 
     // TODO: replace with getProposalIdOfRank (that is zero if tied) function
     /**
-     * @dev Return address to pay out for a given ranking.
+     * @dev Return the proposalId for a given ranking, 0 if tied.
      */
-    function getAddressToPayOut(uint256 ranking) public view returns (address) {
-        address addressToPayOut;
+    function getProposalIdOfRanking(uint256 ranking) public view returns (uint256) {
+        uint256 proposalIdOfRanking;
         uint256 determinedRankingIdxInSortedRanks = underlyingContest.getRankIndex(ranking);
 
-        // if the ranking that we land on is tied or it's below a tied ranking, send to creator
+        // if the ranking that we land on is tied or it's below a tied ranking, return 0 
         if (underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
-            addressToPayOut = creator;
+            proposalIdOfRanking = 0;
         }
-        // otherwise, determine proposal at ranking and pay out according to that
+        // otherwise, determine proposalId at ranking
         else {
             uint256 rankValue = underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
-            Governor.ProposalCore memory rankingProposal = underlyingContest.getProposal(
-                underlyingContest.getOnlyProposalIdWithThisManyForVotes(rankValue) // if no ties there should only be one
-            );
-            addressToPayOut = paysOutTarget ? rankingProposal.targetMetadata.targetAddress : rankingProposal.author;
+            proposalIdOfRanking = underlyingContest.getOnlyProposalIdWithThisManyForVotes(rankValue) // if no ties there should only be one
         }
 
-        return addressToPayOut;
+        return proposalIdOfRanking;
     }
 
     /**
