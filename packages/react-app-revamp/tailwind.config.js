@@ -182,7 +182,7 @@ module.exports = {
         8: "#5E707699",
         9: "#9D9D9D",
         10: "#6A6A6A",
-        11: "#E5E5E5",
+        11: "#DDDDDD",
         12: "#CDCDCD",
         13: "#8E8E8E",
         14: "#A1A1A1",
@@ -193,7 +193,7 @@ module.exports = {
       typography: theme => ({
         DEFAULT: {
           css: {
-            color: theme("colors.true-white"),
+            color: theme("colors.neutral.11"),
             "--tw-prose-invert-hr": theme("colors.neutral.4"),
             fontSize: theme("fontSize.base"),
             p: {
