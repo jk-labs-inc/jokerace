@@ -2,6 +2,7 @@ import { FC } from "react";
 import CreateContestTypesAdditionalInfo from "../../AdditionalInfo";
 import CreateContestTypesCard from "../../Card";
 import { ContestType } from "@components/_pages/Create/types";
+import CreateContestTypesSplit from "../../Split";
 
 interface CreateContestTypesEntryBasedProps {
   isSelected: boolean;
@@ -38,12 +39,7 @@ const CreateContestTypesEntryBased: FC<CreateContestTypesEntryBasedProps> = ({ i
               you can manually allowlist up to 100k addresses with a spreadsheet—or use presets for certain communities
             </span>
           </li>
-          <li className="font-bold">
-            we'll split all charges with you 50/50 <br />{" "}
-            <span className="font-normal">
-              you can keep them, put them in a rewards pool for winners, or do any smart contract tomfoolery you like
-            </span>
-          </li>
+          <CreateContestTypesSplit />
 
           <li>
             read more in our{" "}
