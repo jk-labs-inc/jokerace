@@ -232,7 +232,6 @@ contract VoterRewardsModule {
         Address.sendValue(addressToPayOut, payment);
     }
 
-    // TODO: implement release changes here too
     /**
      * @dev Triggers a transfer to `ranking` of the amount of `token` tokens they are owed, according to their
      * percentage of the total shares and their previous withdrawals. `token` must be the address of an IERC20
@@ -241,7 +240,8 @@ contract VoterRewardsModule {
     function release(IERC20 token, uint256 ranking) public {
         runReleaseChecks(ranking);
 
-        uint256 payment = releasable(token, ranking);
+        uint256 proposalIdOfRanking = getProposalIdOfRanking(ranking); // 0 if tied
+        uint256 payment = proposalIdOfRanking == 0 ? releasable(token, ranking) : releasableToVoter(token, voter, ranking, proposalIdOfRanking); // if this rank is tied, pay out all of the rank's rewards to the creator
 
         if (payment == 0) revert AccountNotDueERC20Payment();
 
@@ -252,7 +252,14 @@ contract VoterRewardsModule {
             erc20Released[token][ranking] += payment;
         }
 
-        address payable addressToPayOut = payable(getAddressToPayOut(ranking));
+        address payable addressToPayOut;
+
+        if (proposalIdOfRanking != 0) { // if the ranking is not tied, account for that we're voter
+            erc20ReleasedToVoter[token][voter][ranking] += payment;
+            addressToPayOut = voter;
+        } else {
+            addressToPayOut = creator;
+        }
 
         if (addressToPayOut == address(0)) revert CannotPayOutToZeroAddress();
 
