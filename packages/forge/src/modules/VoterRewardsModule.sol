@@ -171,7 +171,6 @@ contract VoterRewardsModule {
         if (canceled == true) revert CannotReleaseCanceledModule();
     }
 
-    // TODO: replace with getProposalIdOfRank (that is zero if tied) function
     /**
      * @dev Return the proposalId for a given ranking, 0 if tied.
      */
@@ -206,9 +205,8 @@ contract VoterRewardsModule {
     function release(address voter, uint256 ranking) public {
         runReleaseChecks(ranking);
 
-        // TODO: get the proposalId of the ranking at this point
-        // TODO: tie logic and keeping the proposal and contest-level data up to date for visibility too
-        uint256 payment = releasableToVoter(voter, ranking, proposalId);
+        uint256 proposalIdOfRanking = getProposalIdOfRanking(ranking); // 0 if tied
+        uint256 payment = proposalIdOfRanking == 0 ? releasable(ranking) : releasableToVoter(voter, ranking, proposalIdOfRanking); // if this rank is tied, pay out all of the rank's rewards to the creator
 
         if (payment == 0) revert AccountNotDueNativePayment();
 
@@ -219,7 +217,14 @@ contract VoterRewardsModule {
             released[ranking] += payment;
         }
 
-        address payable addressToPayOut = payable(getAddressToPayOut(ranking));
+        address payable addressToPayOut;
+
+        if (proposalIdOfRanking != 0) { // if the ranking is not tied, account for that we're paying out for a specific voter 
+            releasedToVoter[voter][ranking] += payment;
+            addressToPayOut = voter;
+        } else {
+            addressToPayOut = creator;
+        }
 
         if (addressToPayOut == address(0)) revert CannotPayOutToZeroAddress();
 
