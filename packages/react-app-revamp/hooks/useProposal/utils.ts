@@ -6,6 +6,7 @@ import { shuffle } from "lodash";
 import { formatEther } from "viem";
 import { MappedProposalIds, ProposalCore, SortOptions } from "./store";
 import { ContractConfig } from "@hooks/useContest";
+import { compareVersions } from "compare-versions";
 
 interface RankDictionary {
   [key: string]: number;
@@ -158,10 +159,20 @@ export function transformProposalData(
   proposalData: any,
   proposalCommentsIds: bigint[] = [],
   deletedCommentIds: bigint[] = [],
+  version: string,
 ) {
-  const voteForBigInt = BigInt(voteData.result[0]);
-  const voteAgainstBigInt = BigInt(voteData.result[1]);
-  const netVotes = Number(formatEther(voteForBigInt - voteAgainstBigInt));
+  let netVotes: number;
+
+  const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
+
+  if (hasDownvotes) {
+    const voteForBigInt = BigInt(voteData.result[0]);
+    const voteAgainstBigInt = BigInt(voteData.result[1]);
+    netVotes = Number(formatEther(voteForBigInt - voteAgainstBigInt));
+  } else {
+    netVotes = Number(formatEther(BigInt(voteData.result)));
+  }
+
   const isContentImage = isUrlToImage(proposalData.description);
   const tweet = isContentTweet(proposalData.description);
   const deletedCommentIdsSet = new Set(deletedCommentIds.map(id => id.toString()));
@@ -189,10 +200,13 @@ export function transformProposalData(
 
 /**
  * Gets the proposal ids from the contract.
- * @param contractConfig
- * @param isLegacy
+ * @param contractConfig - Configuration for the contract
+ * @param isLegacy - Whether to use legacy function
+ * @param version - Contract version string
  */
-export async function getProposalIdsRaw(contractConfig: ContractConfig, isLegacy: boolean) {
+export async function getProposalIdsRaw(contractConfig: ContractConfig, isLegacy: boolean, version?: string) {
+  const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
+
   if (isLegacy) {
     return (await readContract(serverConfig, {
       ...contractConfig,
@@ -232,7 +246,15 @@ export async function getProposalIdsRaw(contractConfig: ContractConfig, isLegacy
       ) => {
         if (!deletedProposalSet.has(proposalId.toString())) {
           accumulator.validProposalIds.push(proposalId);
-          accumulator.correspondingVotes.push(results[0].result[1][index]);
+
+          if (hasDownvotes) {
+            accumulator.correspondingVotes.push(results[0].result[1][index]);
+          } else {
+            accumulator.correspondingVotes.push({
+              forVotes: results[0].result[1][index],
+              againstVotes: BigInt(0),
+            });
+          }
         }
         return accumulator;
       },
