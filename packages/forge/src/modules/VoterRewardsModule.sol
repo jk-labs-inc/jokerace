@@ -163,7 +163,6 @@ contract VoterRewardsModule {
      * @dev Run release checks.
      */
     function runReleaseChecks(uint256 ranking) public view {
-        if (underlyingContest.downvotingAllowed() != 0) revert MustHaveDownvotingDisabled();
         if (underlyingContest.sortingEnabled() != 1) revert MustHaveSortingEnabled();
         if (underlyingContest.state() != Governor.ContestState.Completed) revert ContestMustBeCompleted();
         if (ranking == 0) revert PayoutRankCannotBeZero();
@@ -183,7 +182,7 @@ contract VoterRewardsModule {
             proposalIdOfRanking = 0;
         } else { // otherwise, determine proposalId at ranking
             uint256 rankValue = underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
-            proposalIdOfRanking = underlyingContest.getOnlyProposalIdWithThisManyForVotes(rankValue); // if no ties there should only be one
+            proposalIdOfRanking = underlyingContest.getOnlyProposalIdWithThisManyVotes(rankValue); // if no ties there should only be one
         }
 
         return proposalIdOfRanking;
@@ -301,9 +300,7 @@ contract VoterRewardsModule {
         view
         returns (uint256)
     {
-        (uint256 voterForVotes, ) = underlyingContest.proposalAddressVotes(proposalId, voter);
-        (uint256 proposalForVotes, ) = underlyingContest.proposalVotes(proposalId);
-        return (totalReceivedForRanking * voterForVotes) / proposalForVotes - alreadyReleasedForRanking;
+        return (totalReceivedForRanking * underlyingContest.proposalAddressVotes(proposalId, voter)) / underlyingContest.proposalVotes(proposalId) - alreadyReleasedForRanking;
     }
 
     /**
