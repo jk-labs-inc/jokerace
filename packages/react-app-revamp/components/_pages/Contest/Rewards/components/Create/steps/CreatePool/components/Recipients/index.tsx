@@ -19,8 +19,8 @@ const generateRankOptions = (limit: number): Option[] => {
 
 const CreateRewardsPoolRecipients: React.FC = () => {
   const [recipientsExceedLimit, setRecipientsExceedLimit] = useState("");
-  const [nextId, setNextId] = useState(1);
   const { setRewardPoolData, rewardPoolData } = useCreateRewardsStore(state => state);
+  const [nextId, setNextId] = useState(rewardPoolData.recipients.length + 1);
   const rankOptions = generateRankOptions(RANK_LIMIT);
 
   const validateRecipients = (recipients: Recipient[]) => {

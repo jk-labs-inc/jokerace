@@ -93,7 +93,7 @@ export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions
     toastSuccess("Image uploaded successfully!");
     return originalUrl;
   } catch (error: any) {
-    toastError("Failed to upload an image, please try again.");
+    toastError("Failed to upload an image, please try again.", error.message);
     console.error("Upload error:", error);
     throw new Error(`Failed to upload image with ID ${fileId} to bucket ${IMAGE_UPLOAD_BUCKET}`);
   }

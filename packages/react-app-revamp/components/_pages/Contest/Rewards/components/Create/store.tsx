@@ -51,12 +51,20 @@ interface CreateRewardsState {
   setAddEarningsToRewards?: (addEarningsToRewards: boolean) => void;
 }
 
+const DEFAULT_RECIPIENTS: Recipient[] = [
+  { id: 0, place: 1, proportion: 30 },
+  { id: 1, place: 2, proportion: 25 },
+  { id: 2, place: 3, proportion: 20 },
+  { id: 3, place: 4, proportion: 15 },
+  { id: 4, place: 5, proportion: 10 },
+];
+
 export const useCreateRewardsStore = create<CreateRewardsState>(set => ({
   currentStep: CreationStep.FundPool,
   rewardPoolData: {
-    rankings: [1],
-    shareAllocations: [100],
-    recipients: [{ id: 0, place: 1, proportion: 100 }],
+    rankings: DEFAULT_RECIPIENTS.map(r => r.place),
+    shareAllocations: DEFAULT_RECIPIENTS.map(r => r.proportion ?? 0),
+    recipients: DEFAULT_RECIPIENTS,
     validationError: {
       uniqueRanks: undefined,
       zeroProportion: undefined,

@@ -1,7 +1,8 @@
+import { ContestType } from "@components/_pages/Create/types";
 import { FC } from "react";
 import CreateContestTypesAdditionalInfo from "../../AdditionalInfo";
 import CreateContestTypesCard from "../../Card";
-import { ContestType } from "@components/_pages/Create/types";
+import CreateContestTypesSplit from "../../Split";
 
 interface CreateContestTypesAnyoneCanPlayProps {
   isSelected: boolean;
@@ -40,12 +41,7 @@ const CreateContestTypesAnyoneCanPlay: FC<CreateContestTypesAnyoneCanPlayProps> 
             <br />
             <span className="font-normal">this lets anyone vote without risk of botting</span>
           </li>
-          <li className="font-bold">
-            we'll split all charges with you 50/50 <br />{" "}
-            <span className="font-normal">
-              you can keep them, put them in a rewards pool for winners, or do any smart contract tomfoolery you like
-            </span>
-          </li>
+          <CreateContestTypesSplit />
 
           <li>
             read more in our{" "}

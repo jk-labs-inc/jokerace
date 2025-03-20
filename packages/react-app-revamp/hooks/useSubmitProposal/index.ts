@@ -67,6 +67,7 @@ export function useSubmitProposal() {
   const {
     charge,
     contestAbi: abi,
+    version,
     rewardsModuleAddress,
     rewardsAbi,
     votesOpen,
@@ -201,7 +202,7 @@ export function useSubmitProposal() {
           token_address: null,
         });
 
-        await fetchSingleProposal(getContractConfig(), proposalId);
+        await fetchSingleProposal(getContractConfig(), version, proposalId);
 
         setIsLoading(false);
         setIsSuccess(true);

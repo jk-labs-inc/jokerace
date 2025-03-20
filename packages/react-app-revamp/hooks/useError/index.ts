@@ -21,6 +21,7 @@ export function useError() {
     const chainName = resolveChainName(chainNameFromPath);
 
     const handledError = handleUtilityError(e, chainName);
+
     setError(handledError.message);
 
     if (handledError.codeFound) {
