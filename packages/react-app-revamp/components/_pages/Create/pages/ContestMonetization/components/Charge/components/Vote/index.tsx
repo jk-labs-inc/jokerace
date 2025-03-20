@@ -29,8 +29,10 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
   useEffect(() => {
     if (isAnyoneCanVote) {
       setSelected(VoteType.PerVote);
+      onVoteTypeChange?.(VoteType.PerVote);
     } else {
       setSelected(VoteType.PerTransaction);
+      onVoteTypeChange?.(VoteType.PerTransaction);
     }
   }, [isAnyoneCanVote]);
 

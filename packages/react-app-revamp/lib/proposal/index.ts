@@ -57,7 +57,7 @@ const assignRankAndCheckTies = (mappedProposals: MappedProposalIds[], targetId: 
   return { rank, isTied };
 };
 
-const fetchProposalInfo = async (abi: any, address: string, chainId: number, submission: string) => {
+const fetchProposalInfo = async (abi: any, version: string, address: string, chainId: number, submission: string) => {
   let contracts = [
     {
       address: address as `0x${string}`,
@@ -84,9 +84,6 @@ const fetchProposalInfo = async (abi: any, address: string, chainId: number, sub
 
   const results = (await readContracts(config, { contracts })) as any;
   const data = results[0].result;
-  const forVotesBigInt = results[1].result[0] as bigint;
-  const againstVotesBigInt = results[1].result[1] as bigint;
-  const votes = extractVotes(forVotesBigInt, againstVotesBigInt);
   const isDeleted = results[2].result;
   const content = isDeleted ? ProposalState.Deleted : data.description;
   const { fieldsMetadata } = data;
@@ -98,6 +95,21 @@ const fetchProposalInfo = async (abi: any, address: string, chainId: number, sub
       }
     : defaultMetadataFields;
 
+  // calculate votes based on version
+  const hasDownvotes = compareVersions(version, "5.1") < 0;
+  let votes: number;
+
+  if (hasDownvotes) {
+    // older version with for/against votes
+    const forVotesBigInt = results[1].result[0] as bigint;
+    const againstVotesBigInt = results[1].result[1] as bigint;
+    votes = extractVotes(forVotesBigInt, againstVotesBigInt);
+  } else {
+    // newer version with single vote count
+    const votesBigInt = results[1].result as bigint;
+    votes = Number(formatEther(votesBigInt));
+  }
+
   let rankInfo = { rank: 0, isTied: false };
 
   if (votes !== 0) {
@@ -108,12 +120,27 @@ const fetchProposalInfo = async (abi: any, address: string, chainId: number, sub
         chainId: chainId,
       },
       false,
+      version,
     );
 
-    const mappedProposals = proposalsIdsRawData[0].map((idData: any, index: number) => ({
-      votes: extractVotes(proposalsIdsRawData[1][index].forVotes, proposalsIdsRawData[1][index].againstVotes),
-      id: idData.toString(),
-    })) as MappedProposalIds[];
+    // handle different vote data structure based on version
+    const mappedProposals = proposalsIdsRawData[0].map((idData: any, index: number) => {
+      let proposalVotes: number;
+
+      if (hasDownvotes) {
+        proposalVotes = extractVotes(
+          proposalsIdsRawData[1][index].forVotes,
+          proposalsIdsRawData[1][index].againstVotes,
+        );
+      } else {
+        proposalVotes = Number(formatEther(proposalsIdsRawData[1][index]));
+      }
+
+      return {
+        votes: proposalVotes,
+        id: idData.toString(),
+      };
+    }) as MappedProposalIds[];
 
     rankInfo = assignRankAndCheckTies(mappedProposals, submission);
   }
@@ -201,7 +228,7 @@ export const fetchProposalData = async (
     if (!abi || !version) return null;
 
     const results = await Promise.allSettled([
-      fetchProposalInfo(abi, address, chainId, submission),
+      fetchProposalInfo(abi, version, address, chainId, submission),
       fetchNumberOfComments(abi, version, address, chainId, submission),
       fetchAddressesVoted(abi, address, chainId, submission),
     ]);

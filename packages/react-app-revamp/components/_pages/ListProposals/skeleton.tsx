@@ -27,10 +27,21 @@ const ListProposalsSkeleton: FC<ListProposalsSkeletonProps> = ({ enabledPreview,
         </ProposalSkeleton>
       );
     case EntryPreview.IMAGE:
+    case EntryPreview.IMAGE_AND_TITLE:
     case EntryPreview.TWEET:
       return (
         <ProposalSkeleton highlightColor={highlightColor}>
-          <Skeleton borderRadius={16} count={count} className="flex flex-col w-full h-52 animate-appear rounded-2xl" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Array(count || 1)
+              .fill(0)
+              .map((_, index) => (
+                <Skeleton
+                  key={index}
+                  borderRadius={16}
+                  className="flex flex-col w-full h-52 animate-appear rounded-2xl"
+                />
+              ))}
+          </div>
         </ProposalSkeleton>
       );
     default:

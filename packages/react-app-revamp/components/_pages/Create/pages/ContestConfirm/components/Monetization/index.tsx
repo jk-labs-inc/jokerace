@@ -2,7 +2,6 @@
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useChainChange } from "@hooks/useChainChange";
 import useChargeDetails from "@hooks/useChargeDetails";
-import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 import { Charge, SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -45,7 +44,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
       splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet ||
       splitFeeDestination.type === SplitFeeDestinationType.AnotherWallet
     ) {
-      return <li className="text-[16px] list-disc normal-case">all charges split 50/50 with jk labs inc.</li>;
+      return <li className="text-[16px] list-disc normal-case">all charges split 70/30 with jk labs inc.</li>;
     } else {
       return <li className="text-[16px] list-disc normal-case">all charges go to jk labs inc.</li>;
     }

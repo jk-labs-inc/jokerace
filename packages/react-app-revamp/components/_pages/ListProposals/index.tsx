@@ -16,9 +16,11 @@ import { useAccount } from "wagmi";
 import { verifyEntryPreviewPrompt } from "../DialogModalSendProposal/utils";
 import ListProposalsContainer from "./container";
 import ListProposalsSkeleton from "./skeleton";
+import { useMediaQuery } from "react-responsive";
 
 export const ListProposals = () => {
   const { address, chainId: userChainId } = useAccount();
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const asPath = usePathname();
   const { address: contestAddress, chainName: contestChainName } = extractPathSegments(asPath);
   const contestChainId = chains.filter(
@@ -118,6 +120,7 @@ export const ListProposals = () => {
           count={skeletonRemainingLoaderCount}
         />
       }
+      scrollThreshold={isMobile ? 0.4 : 0.5}
     >
       <ListProposalsContainer enabledPreview={enabledPreview}>
         {listProposalsData.map((proposal, index) => {
