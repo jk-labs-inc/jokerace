@@ -14,9 +14,7 @@ export const sepolia: Chain = {
       http: ["https://eth-sepolia.public.blastapi.io"],
     },
     default: {
-      http: [
-        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.ethereum-sepolia.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
-      ],
+      http: [`https://eth-sepolia.public.blastapi.io`],
     },
   },
   blockExplorers: {
