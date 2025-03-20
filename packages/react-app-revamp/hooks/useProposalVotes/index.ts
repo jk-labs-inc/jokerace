@@ -4,12 +4,13 @@ import { useContestStore } from "@hooks/useContest/store";
 import { readContract } from "@wagmi/core";
 import { utils } from "ethers";
 import { useEffect, useState } from "react";
+import { compareVersions } from "compare-versions";
 
 export const VOTES_PER_PAGE = 4;
 
 interface VoteEntry {
   address: string;
-  votes: [bigint, bigint];
+  votes: bigint | [bigint, bigint];
 }
 
 type VotesArray = VoteEntry[];
@@ -20,13 +21,15 @@ export function useProposalVotes(
   chainId: number,
   addressPerPage = VOTES_PER_PAGE,
 ) {
-  const { contestAbi: abi } = useContestStore(state => state);
+  const { contestAbi: abi, version } = useContestStore(state => state);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [addressesVoted, setAddressesVoted] = useState<string[]>([]);
   const [accumulatedVotesData, setAccumulatedVotesData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
 
   const fetchAddressesVoted = async () => {
     try {
@@ -47,19 +50,31 @@ export function useProposalVotes(
 
   const fetchVotesForAddress = async (address: string): Promise<VoteEntry> => {
     try {
-      const votes = (await readContract(config, {
-        address: contractAddress as `0x${string}`,
-        abi: abi,
-        chainId,
-        functionName: "proposalAddressVotes",
-        args: [proposalId, address],
-      })) as [bigint, bigint];
+      if (hasDownvotes) {
+        const votes = (await readContract(config, {
+          address: contractAddress as `0x${string}`,
+          abi: abi,
+          chainId,
+          functionName: "proposalAddressVotes",
+          args: [proposalId, address],
+        })) as [bigint, bigint];
 
-      return { address, votes };
+        return { address, votes };
+      } else {
+        const votes = (await readContract(config, {
+          address: contractAddress as `0x${string}`,
+          abi: abi,
+          chainId,
+          functionName: "proposalAddressVotes",
+          args: [proposalId, address],
+        })) as bigint;
+
+        return { address, votes };
+      }
     } catch (error: any) {
       setError(error.message);
 
-      return { address: "", votes: [BigInt(0), BigInt(0)] };
+      return hasDownvotes ? { address: "", votes: [BigInt(0), BigInt(0)] } : { address: "", votes: BigInt(0) };
     }
   };
 
@@ -73,8 +88,16 @@ export function useProposalVotes(
       const addressesPage = adresses.slice(0, addressPerPage);
       const votesPromises = addressesPage.map((address: string) => fetchVotesForAddress(address));
       const votesArray: VotesArray = await Promise.all(votesPromises);
+
       const votesObj = votesArray.reduce((acc: Record<string, number>, { address, votes }: VoteEntry) => {
-        const netVotes = votes[0] - votes[1];
+        let netVotes: bigint;
+
+        if (hasDownvotes && Array.isArray(votes)) {
+          netVotes = votes[0] - votes[1];
+        } else {
+          netVotes = votes as bigint;
+        }
+
         acc[address] = Number(utils.formatEther(netVotes.toString()));
         return acc;
       }, {});
@@ -98,8 +121,16 @@ export function useProposalVotes(
 
       const votesPromises = addressesPage.map((address: string) => fetchVotesForAddress(address));
       const votesArray: VotesArray = await Promise.all(votesPromises);
+
       const votesObj = votesArray.reduce((acc: Record<string, number>, { address, votes }: VoteEntry) => {
-        const netVotes = votes[0] - votes[1];
+        let netVotes: bigint;
+
+        if (hasDownvotes && Array.isArray(votes)) {
+          netVotes = votes[0] - votes[1];
+        } else {
+          netVotes = votes as bigint;
+        }
+
         acc[address] = Number(utils.formatEther(netVotes.toString()));
         return acc;
       }, {});

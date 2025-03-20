@@ -37,8 +37,10 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({
 
   const renderEarningsSplitMessage = () => {
     const splitPercentage = charge.percentageToCreator;
+    const percentageToJkLabs = 100 - splitPercentage;
+
     if (isCreatorSplit) {
-      return <li className="text-[16px] list-disc normal-case">{splitPercentage}% of charges go to jk labs inc.</li>;
+      return <li className="text-[16px] list-disc normal-case">{percentageToJkLabs}% of charges go to jk labs inc.</li>;
     } else {
       return <li className="text-[16px] list-disc normal-case">all charges go to jk labs inc.</li>;
     }
@@ -46,6 +48,7 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({
 
   const creatorEarningsDestinationMessage = () => {
     const splitPercentage = charge.percentageToCreator;
+
     if (charge.splitFeeDestination.type === SplitFeeDestinationType.RewardsPool) {
       return `${splitPercentage}% of charges go to rewards pool`;
     } else {
