@@ -38,7 +38,7 @@ contract RewardsModule {
     mapping(uint256 => uint256) public shares; // Getter for the amount of shares held by a ranking.
     mapping(uint256 => uint256) public released; // Getter for the amount of Ether already released to a ranking.
     uint256[] public payees;
-    string private constant VERSION = "5.1"; // Private as to not clutter the ABI
+    string private constant VERSION = "5.2"; // Private as to not clutter the ABI
 
     mapping(IERC20 => uint256) public erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released;
@@ -243,6 +243,7 @@ contract RewardsModule {
 
     function withdrawRewards(IERC20 token) public {
         if (msg.sender != creator) revert OnlyCreatorCanWithdraw();
+        if (canceled != true) revert MustBeCanceledToWithdraw();
 
         emit ERC20RewardWithdrawn(token, creator, token.balanceOf(address(this)));
         SafeERC20.safeTransfer(token, payable(creator), token.balanceOf(address(this)));

@@ -59,6 +59,7 @@ import OnlyCreatorChangeMerkleRewards from "@contracts/bytecodeAndAbi/modules/Re
 import NoCommentAfterCloseRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.36.noCommentAfterClose.sol/RewardsModule.json";
 import EditTitleDescRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.37.editTitleDesc.sol/RewardsModule.json";
 import RmDownvotingRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.1.rmDownvoting.sol/RewardsModule.json";
+import AddErc20CancelledCheckRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.2.addErc20CancelledCheck.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -70,7 +71,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
-    if (version === "5.1") {
+    if (version === "5.2") {
+      return AddErc20CancelledCheckRewards.abi;
+    } else if (version === "5.1") {
       return RmDownvotingRewards.abi;
     } else if (version === "4.37") {
       return EditTitleDescRewards.abi;
