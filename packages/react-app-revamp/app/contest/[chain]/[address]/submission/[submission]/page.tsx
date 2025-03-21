@@ -7,6 +7,8 @@ const Page = async (props: { params: Promise<{ chain: string; address: string; s
   const params = await props.params;
   const { chain, address, submission } = params;
 
+  console.log(chain, address, submission);
+
   try {
     if (!REGEX_ETHEREUM_ADDRESS.test(address)) {
       return notFound();

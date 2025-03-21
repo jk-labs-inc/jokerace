@@ -25,6 +25,8 @@ const Submission: FC<SubmissionProps> = ({ address, chain, submission }) => {
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
   const { abi: contractAbi, version: contractVersion } = useContestAbiAndVersion(address, chainId);
 
+  console.log(contractAbi, contractVersion);
+
   useEffect(() => {
     setPickProposal(submission);
   }, [setPickProposal, submission]);
