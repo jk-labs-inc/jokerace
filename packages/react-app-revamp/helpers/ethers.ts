@@ -18,9 +18,9 @@ export function clientToProvider(client: Client<Transport, Chain>) {
             {
               skipFetchSetup: true,
               url: value?.url,
-              headers: {
-                Referer: "https://jokerace-git-chore-test-out-referrer-jokerace.vercel.app/",
-              },
+              // headers: {
+              //   Referer: "https://jokerace-git-chore-test-out-referrer-jokerace.vercel.app/",
+              // },
             },
             network,
           ),
@@ -30,9 +30,9 @@ export function clientToProvider(client: Client<Transport, Chain>) {
     {
       skipFetchSetup: true,
       url: transport.url,
-      headers: {
-        Referer: "https://jokerace-git-chore-test-out-referrer-jokerace.vercel.app/",
-      },
+      // headers: {
+      //   Referer: "https://jokerace-git-chore-test-out-referrer-jokerace.vercel.app/",
+      // },
     },
     network,
   );

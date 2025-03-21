@@ -29,8 +29,6 @@ const Submission: FC<SubmissionProps> = ({ address, chain, submission, abi, vers
     setPickProposal(submission);
   }, [setPickProposal, submission]);
 
-  console.log(abi, version);
-
   return (
     <SubmissionPage
       contestInfo={{

@@ -72,24 +72,12 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const { downvotingAllowed, charge, votesOpen } = useContestStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
+  const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;
+  const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
   const isAnyoneCanVote = charge?.voteType === VoteType.PerVote;
   const [activeTab, setActiveTab] = useState<DialogTab>(DialogTab.Voters);
   const dialogTabs = Object.values(DialogTab);
   const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
-
-  const commentsAllowed = (() => {
-    if (!contestInfo.version || contestInfo.version === "unknown") {
-      return false;
-    }
-    try {
-      return compareVersions(contestInfo.version, COMMENTS_VERSION) >= 0;
-    } catch (error) {
-      console.warn(`Invalid version format: ${contestInfo.version}`, error);
-      return false;
-    }
-  })();
-
-  const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
 
   const tabsOptionalInfo = {
     ...(addressesVoted?.length > 0 && { [DialogTab.Voters]: addressesVoted.length }),
