@@ -29,6 +29,8 @@ import { lukso } from "./custom-chains/lukso";
 
 type Transports = Record<Chain["id"], Transport>;
 
+const isProduction = process.env.NODE_ENV === "production";
+
 export const chains: readonly [Chain, ...Chain[]] = [
   polygon,
   arbitrumOne,
@@ -58,21 +60,19 @@ export const chains: readonly [Chain, ...Chain[]] = [
 ];
 
 const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
+  const headers = isProduction ? { Referer: "https://jokerace.io/" } : undefined;
+
   return chains.reduce<Transports>((acc, chain) => {
     if (chain.rpcUrls?.default?.http?.[0] && chain.rpcUrls?.public?.http?.[0]) {
       acc[chain.id] = fallback([
         http(chain.rpcUrls.default.http[0], {
           fetchOptions: {
-            headers: {
-              Referer: "https://jokerace-git-chore-test-out-referrer-jokerace.vercel.app/",
-            },
+            headers,
           },
         }),
         http(chain.rpcUrls.public.http[0], {
           fetchOptions: {
-            headers: {
-              Referer: "https://jokerace-git-chore-test-out-referrer-jokerace.vercel.app/",
-            },
+            headers,
           },
         }),
       ]);
