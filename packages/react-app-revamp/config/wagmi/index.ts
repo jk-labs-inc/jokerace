@@ -1,5 +1,3 @@
-import { getParaWallet, GetParaOpts, OAuthMethod, AuthLayout } from "@getpara/rainbowkit-wallet";
-import { Environment } from "@getpara/web-sdk";
 import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
@@ -50,7 +48,7 @@ import { sepolia } from "./custom-chains/sepolia";
 import { soneium } from "./custom-chains/soneium";
 import { story } from "./custom-chains/story";
 import { zora } from "./custom-chains/zora";
-import { isParaWalletConfigured, paraWallet, paraWalletOpts } from "./para";
+import { isParaWalletConfigured, paraWallet } from "./para";
 
 declare module "wagmi";
 
@@ -139,22 +137,7 @@ const connectors = connectorsForWallets(
 const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
   return chains.reduce<Transports>((acc, chain) => {
     if (chain.rpcUrls?.default?.http?.[0] && chain.rpcUrls?.public?.http?.[0]) {
-      acc[chain.id] = fallback([
-        http(chain.rpcUrls.default.http[0], {
-          fetchOptions: {
-            headers: {
-              Referer: "https://jokerace-git-chore-test-out-referrer-jokerace.vercel.app/",
-            },
-          },
-        }),
-        http(chain.rpcUrls.public.http[0], {
-          fetchOptions: {
-            headers: {
-              Referer: "https://jokerace-git-chore-test-out-referrer-jokerace.vercel.app/",
-            },
-          },
-        }),
-      ]);
+      acc[chain.id] = fallback([http(chain.rpcUrls.default.http[0]), http(chain.rpcUrls.public.http[0])]);
     }
     return acc;
   }, {});
