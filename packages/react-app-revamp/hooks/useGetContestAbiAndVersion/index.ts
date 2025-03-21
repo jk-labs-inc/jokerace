@@ -1,5 +1,5 @@
+import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useState, useEffect } from "react";
-import getContestContractVersion from "@hooks/useGetContestAbiAndVersion";
 
 type ContestContractData = {
   abi: any;
