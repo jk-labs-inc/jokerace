@@ -64,14 +64,14 @@ const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
         http(chain.rpcUrls.default.http[0], {
           fetchOptions: {
             headers: {
-              Referer: "https://jokerace-pkytoqn3r-jokerace.vercel.app/",
+              Referer: "https://jokerace-git-chore-test-out-referrer-jokerace.vercel.app/",
             },
           },
         }),
         http(chain.rpcUrls.public.http[0], {
           fetchOptions: {
             headers: {
-              Referer: "https://jokerace-pkytoqn3r-jokerace.vercel.app/",
+              Referer: "https://jokerace-git-chore-test-out-referrer-jokerace.vercel.app/",
             },
           },
         }),
