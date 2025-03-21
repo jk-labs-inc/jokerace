@@ -104,7 +104,8 @@ const connectors = connectorsForWallets(
           },
         ]
       : []),
-    { groupName: "Wallets",
+    {
+      groupName: "Wallets",
       wallets: [
         metaMaskWallet,
         walletConnectWallet,
@@ -138,7 +139,22 @@ const connectors = connectorsForWallets(
 const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
   return chains.reduce<Transports>((acc, chain) => {
     if (chain.rpcUrls?.default?.http?.[0] && chain.rpcUrls?.public?.http?.[0]) {
-      acc[chain.id] = fallback([http(chain.rpcUrls.default.http[0]), http(chain.rpcUrls.public.http[0])]);
+      acc[chain.id] = fallback([
+        http(chain.rpcUrls.default.http[0], {
+          fetchOptions: {
+            headers: {
+              Referer: "https://jokerace-git-chore-test-out-referrer-jokerace.vercel.app/",
+            },
+          },
+        }),
+        http(chain.rpcUrls.public.http[0], {
+          fetchOptions: {
+            headers: {
+              Referer: "https://jokerace-git-chore-test-out-referrer-jokerace.vercel.app/",
+            },
+          },
+        }),
+      ]);
     }
     return acc;
   }, {});
