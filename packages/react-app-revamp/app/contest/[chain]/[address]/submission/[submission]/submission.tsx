@@ -3,6 +3,7 @@ import SubmissionPage from "@components/_pages/Submission";
 import { chains } from "@config/wagmi";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useContestAbiAndVersion from "@hooks/useGetContestAbiAndVersion";
+import { notFound } from "next/navigation";
 import { FC, useEffect } from "react";
 
 interface SubmissionProps {
@@ -23,9 +24,15 @@ const getChainId = (chain: string) => {
 const Submission: FC<SubmissionProps> = ({ address, chain, submission }) => {
   const chainId = getChainId(chain);
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
-  const { abi: contractAbi, version: contractVersion } = useContestAbiAndVersion(address, chainId);
+  const { abi: contractAbi, version: contractVersion, isLoading } = useContestAbiAndVersion(address, chainId);
 
-  console.log(contractAbi, contractVersion);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (contractAbi === null || contractVersion === "unknown") {
+    return notFound();
+  }
 
   useEffect(() => {
     setPickProposal(submission);
