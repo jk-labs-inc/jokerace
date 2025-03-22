@@ -87,7 +87,7 @@ const Page = async (props: { params: Promise<{ chain: string; address: string; s
     )?.id;
     const { abi, version } = await getContestContractVersion(address, chainId ?? 1);
 
-    if (!REGEX_ETHEREUM_ADDRESS.test(address)) {
+    if (!REGEX_ETHEREUM_ADDRESS.test(address) || !abi || version === "unknown") {
       return notFound();
     }
 
