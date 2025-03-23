@@ -10,8 +10,8 @@ export const berachain: Chain = {
     symbol: "BERA",
   },
   rpcUrls: {
-    public: { http: "https://rpc.berachain.com/" },
-    default: { http: "https://rpc.berachain.com/" },
+    public: [ http: "https://rpc.berachain.com/" ],
+    default: [ http: "https://rpc.berachain.com/" ],
   },
   blockExplorers: {
     etherscan: { name: "Berachain Mainnet Scan", url: "https://berascan.com/" },
