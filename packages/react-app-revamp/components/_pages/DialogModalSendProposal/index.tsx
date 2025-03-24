@@ -128,7 +128,11 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       return null;
     }
 
-    return subscribeUser(emailForSubscription, address ?? "", false);
+    if (!address) {
+      return null;
+    }
+
+    return subscribeUser(emailForSubscription, address, false);
   };
 
   const onSubmitProposal = async () => {

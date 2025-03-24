@@ -1,5 +1,3 @@
-import { getParaWallet, GetParaOpts, OAuthMethod, AuthLayout } from "@getpara/rainbowkit-wallet";
-import { Environment } from "@getpara/web-sdk";
 import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
@@ -29,6 +27,7 @@ import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
+import { berachain } from "./custom-chains/berachain";
 import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { cyber } from "./custom-chains/cyber";
@@ -50,7 +49,7 @@ import { sepolia } from "./custom-chains/sepolia";
 import { soneium } from "./custom-chains/soneium";
 import { story } from "./custom-chains/story";
 import { zora } from "./custom-chains/zora";
-import { isParaWalletConfigured, paraWallet, paraWalletOpts } from "./para";
+import { isParaWalletConfigured, paraWallet } from "./para";
 
 declare module "wagmi";
 
@@ -83,6 +82,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   soneium,
   story,
   ink,
+  berachain,
   sepolia,
   baseTestnet,
   mainnet,
@@ -104,7 +104,8 @@ const connectors = connectorsForWallets(
           },
         ]
       : []),
-    { groupName: "Wallets",
+    {
+      groupName: "Wallets",
       wallets: [
         metaMaskWallet,
         walletConnectWallet,

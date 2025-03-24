@@ -1,5 +1,6 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { getTotalCharge } from "@helpers/totalCharge";
 import { Charge, VoteType } from "@hooks/useDeployContest/types";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -28,10 +29,7 @@ const TotalCharge: React.FC<TotalChargeProps> = ({ charge: contestCharge, amount
     }
 
     if (contestCharge.voteType === VoteType.PerVote) {
-      const chargeAmount = parseFloat(formatEther(BigInt(contestCharge.type.costToVote)));
-      const multipliedCharge = chargeAmount * amountOfVotes;
-      const charge = +multipliedCharge.toFixed(6);
-      setTotalCharge(charge.toString());
+      setTotalCharge(getTotalCharge(amountOfVotes, contestCharge.type.costToVote));
     } else {
       setTotalCharge(formatEther(BigInt(contestCharge.type.costToVote)));
     }
