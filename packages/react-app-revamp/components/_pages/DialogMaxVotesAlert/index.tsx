@@ -8,6 +8,7 @@ interface DialogMaxVotesAlertProps {
   totalCost: string;
   onConfirm?: () => void;
   onCancel?: () => void;
+  buttonSize?: ButtonSize;
   isMobile?: boolean;
   isOpen?: boolean;
 }
@@ -17,6 +18,7 @@ const DialogMaxVotesAlert: FC<DialogMaxVotesAlertProps> = ({
   totalCost,
   onConfirm,
   onCancel,
+  buttonSize = ButtonSize.EXTRA_LARGE_LONG_MOBILE,
   isMobile = false,
   isOpen = true,
 }) => {
@@ -50,17 +52,13 @@ const DialogMaxVotesAlert: FC<DialogMaxVotesAlertProps> = ({
       </div>
 
       <div className="flex flex-col gap-4 mt-4">
-        <ButtonV3
-          colorClass="bg-gradient-vote rounded-[40px]"
-          size={isMobile || isSmallScreen ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG_MOBILE}
-          onClick={onConfirm}
-        >
+        <ButtonV3 colorClass="bg-gradient-vote rounded-[40px]" size={buttonSize} onClick={onConfirm}>
           buy the max votes baby
         </ButtonV3>
         <ButtonV3
           colorClass="bg-transparent border border-neutral-11 rounded-[40px]"
           textColorClass="text-neutral-11"
-          size={isMobile || isSmallScreen ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG_MOBILE}
+          size={buttonSize}
           onClick={onCancel}
         >
           wait go back!

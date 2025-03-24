@@ -17,6 +17,8 @@ import { usePathname } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import { Proposal } from "../ProposalContent";
 import { VoteType } from "@hooks/useDeployContest/types";
+import { useMediaQuery } from "react-responsive";
+import { ButtonSize } from "@components/UI/ButtonV3";
 
 interface DialogModalVoteForProposalProps {
   isOpen: boolean;
@@ -26,6 +28,7 @@ interface DialogModalVoteForProposalProps {
 
 export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = ({ isOpen, setIsOpen, proposal }) => {
   const asPath = usePathname();
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { chainName } = extractPathSegments(asPath ?? "");
   const { downvotingAllowed, contestPrompt, charge: contestCharge } = useContestStore(state => state);
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
@@ -88,6 +91,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
             totalCost={totalCharge}
             onConfirm={confirmMaxVote}
             onCancel={cancelMaxVote}
+            buttonSize={isMobile ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG_MOBILE}
           />
         ) : (
           <>

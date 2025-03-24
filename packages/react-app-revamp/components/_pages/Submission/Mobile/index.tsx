@@ -1,5 +1,6 @@
 import Comments from "@components/Comments";
 import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
+import { ButtonSize } from "@components/UI/ButtonV3";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
@@ -286,6 +287,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           onConfirm={confirmMaxVote}
           onCancel={cancelMaxVote}
           isMobile={true}
+          buttonSize={ButtonSize.FULL}
         />
       )}
     </div>

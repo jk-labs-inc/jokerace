@@ -25,6 +25,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { usePathname } from "next/navigation";
 import { getTotalCharge } from "@helpers/totalCharge";
 import DialogMaxVotesAlert from "../DialogMaxVotesAlert";
+import { ButtonSize } from "@components/UI/ButtonV3";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -195,6 +196,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                       totalCost={totalCharge}
                       onConfirm={confirmMaxVote}
                       onCancel={cancelMaxVote}
+                      buttonSize={ButtonSize.FULL}
                     />
                   ) : isConnected ? (
                     currentUserAvailableVotesAmount > 0 ? (
