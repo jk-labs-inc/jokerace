@@ -20,6 +20,12 @@ import DialogModalProposalHeader from "./components/Header";
 import DialogModalProposalVoteCountdown from "./components/VoteCountdown";
 import Tabs from "@components/UI/Tabs";
 import { useProposalVotes } from "@hooks/useProposalVotes";
+import { getNativeTokenSymbol } from "@helpers/nativeToken";
+import { extractPathSegments } from "@helpers/extractPath";
+import { usePathname } from "next/navigation";
+import { getTotalCharge } from "@helpers/totalCharge";
+import DialogMaxVotesAlert from "../DialogMaxVotesAlert";
+import { ButtonSize } from "@components/UI/ButtonV3";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -62,6 +68,8 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   onNextEntry,
   onConnectWallet,
 }) => {
+  const asPath = usePathname();
+  const { chainName } = extractPathSegments(asPath ?? "");
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const { isConnected } = useAccount();
   const { isSuccess } = useCastVotes();
@@ -70,14 +78,18 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
   const totalProposals = listProposalsIds.length;
   const { downvotingAllowed, charge, votesOpen } = useContestStore(state => state);
+  const isPayPerVote = charge?.voteType === VoteType.PerVote;
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
   const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;
   const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
-  const isAnyoneCanVote = charge?.voteType === VoteType.PerVote;
   const [activeTab, setActiveTab] = useState<DialogTab>(DialogTab.Voters);
   const dialogTabs = Object.values(DialogTab);
   const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
+  const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
+  const [pendingVote, setPendingVote] = useState<{ amount: number; isUpvote: boolean } | null>(null);
+  const [totalCharge, setTotalCharge] = useState("");
+  const nativeToken = getNativeTokenSymbol(chainName);
 
   const tabsOptionalInfo = {
     ...(addressesVoted?.length > 0 && { [DialogTab.Voters]: addressesVoted.length }),
@@ -87,6 +99,30 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   useEffect(() => {
     if (isSuccess) setIsOpen?.(false);
   }, [isSuccess, setIsOpen]);
+
+  const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
+    if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
+      setShowMaxVoteConfirmation(true);
+      setPendingVote({ amount, isUpvote });
+      setTotalCharge(getTotalCharge(amount, charge?.type.costToVote ?? 0));
+      return;
+    }
+
+    onVote?.(amount, isUpvote);
+  };
+
+  const confirmMaxVote = () => {
+    if (pendingVote) {
+      onVote?.(pendingVote.amount, pendingVote.isUpvote);
+      setShowMaxVoteConfirmation(false);
+      setPendingVote(null);
+    }
+  };
+
+  const cancelMaxVote = () => {
+    setShowMaxVoteConfirmation(false);
+    setPendingVote(null);
+  };
 
   if (isProposalError) {
     return (
@@ -154,12 +190,20 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
             <div className="flex flex-col h-full">
               {contestStatus === ContestStatus.VotingOpen ? (
                 <div className="border-b border-neutral-2 py-4 pl-4">
-                  {isConnected ? (
+                  {showMaxVoteConfirmation ? (
+                    <DialogMaxVotesAlert
+                      token={nativeToken ?? ""}
+                      totalCost={totalCharge}
+                      onConfirm={confirmMaxVote}
+                      onCancel={cancelMaxVote}
+                      buttonSize={ButtonSize.FULL}
+                    />
+                  ) : isConnected ? (
                     currentUserAvailableVotesAmount > 0 ? (
                       <VotingWidget
                         proposalId={proposalId}
                         amountOfVotes={currentUserAvailableVotesAmount}
-                        onVote={onVote}
+                        onVote={onSubmitCastVotes}
                         downvoteAllowed={downvotingAllowed}
                       />
                     ) : outOfVotes ? (
@@ -167,7 +211,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                         looks like you've used up all your votes this contest <br />
                         feel free to try connecting another wallet to see if it has more votes!
                       </p>
-                    ) : isAnyoneCanVote ? (
+                    ) : isPayPerVote ? (
                       <a
                         href={LINK_BRIDGE_DOCS}
                         target="_blank"

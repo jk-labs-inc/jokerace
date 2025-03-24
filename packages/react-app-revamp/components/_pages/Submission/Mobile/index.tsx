@@ -1,15 +1,19 @@
 import Comments from "@components/Comments";
 import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
+import { ButtonSize } from "@components/UI/ButtonV3";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
+import DialogMaxVotesAlert from "@components/_pages/DialogMaxVotesAlert";
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { LINK_BRIDGE_DOCS } from "@config/links";
 import { chains } from "@config/wagmi";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { getNativeTokenSymbol } from "@helpers/nativeToken";
 import ordinalize from "@helpers/ordinalize";
 import { generateUrlSubmissions } from "@helpers/share";
+import { getTotalCharge } from "@helpers/totalCharge";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -20,7 +24,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { compareVersions } from "compare-versions";
 import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useAccount } from "wagmi";
 
 interface SubmissionPageMobileLayoutProps {
@@ -60,6 +64,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const { contestStatus } = useContestStatusStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const { downvotingAllowed, charge } = useContestStore(state => state);
+  const isPayPerVote = charge?.voteType === VoteType.PerVote;
   const { listProposalsIds } = useProposalStore(state => state);
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
@@ -69,7 +74,34 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;
   const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
   const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
-  const isAnyoneCanVote = charge?.voteType === VoteType.PerVote;
+  const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
+  const [pendingVote, setPendingVote] = useState<{ amount: number; isUpvote: boolean } | null>(null);
+  const [totalCharge, setTotalCharge] = useState("");
+  const nativeToken = getNativeTokenSymbol(contestInfo.chain);
+
+  const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
+    if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
+      setShowMaxVoteConfirmation(true);
+      setPendingVote({ amount, isUpvote });
+      setTotalCharge(getTotalCharge(amount, charge?.type.costToVote ?? 0));
+      return;
+    }
+
+    onVote?.(amount, isUpvote);
+  };
+
+  const confirmMaxVote = () => {
+    if (pendingVote) {
+      onVote?.(pendingVote.amount, pendingVote.isUpvote);
+      setShowMaxVoteConfirmation(false);
+      setPendingVote(null);
+    }
+  };
+
+  const cancelMaxVote = () => {
+    setShowMaxVoteConfirmation(false);
+    setPendingVote(null);
+  };
 
   if (isProposalError) {
     return (
@@ -144,7 +176,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
                     <VotingWidget
                       proposalId={proposalId}
                       amountOfVotes={currentUserAvailableVotesAmount}
-                      onVote={onVote}
+                      onVote={onSubmitCastVotes}
                       downvoteAllowed={downvotingAllowed}
                     />
                   ) : outOfVotes ? (
@@ -152,7 +184,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
                       looks like you've used up all your votes this contest <br />
                       feel free to try connecting another wallet to see if it has more votes!
                     </p>
-                  ) : isAnyoneCanVote ? (
+                  ) : isPayPerVote ? (
                     <a
                       href={LINK_BRIDGE_DOCS}
                       target="_blank"
@@ -248,6 +280,16 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           />
         </div>
       </div>
+      {showMaxVoteConfirmation && (
+        <DialogMaxVotesAlert
+          token={nativeToken ?? ""}
+          totalCost={totalCharge}
+          onConfirm={confirmMaxVote}
+          onCancel={cancelMaxVote}
+          isMobile={true}
+          buttonSize={ButtonSize.FULL}
+        />
+      )}
     </div>
   );
 };
