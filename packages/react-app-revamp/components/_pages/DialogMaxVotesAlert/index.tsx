@@ -1,6 +1,7 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { FC, useCallback, useRef } from "react";
 import ReactDOM from "react-dom";
+import { useMediaQuery } from "react-responsive";
 
 interface DialogMaxVotesAlertProps {
   token: string;
@@ -20,6 +21,7 @@ const DialogMaxVotesAlert: FC<DialogMaxVotesAlertProps> = ({
   isOpen = true,
 }) => {
   const backdropRef = useRef<HTMLDivElement>(null);
+  const isSmallScreen = useMediaQuery({ query: "(max-width: 768px)" });
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -50,7 +52,7 @@ const DialogMaxVotesAlert: FC<DialogMaxVotesAlertProps> = ({
       <div className="flex flex-col gap-4 mt-4">
         <ButtonV3
           colorClass="bg-gradient-vote rounded-[40px]"
-          size={isMobile ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG_MOBILE}
+          size={isMobile || isSmallScreen ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG_MOBILE}
           onClick={onConfirm}
         >
           buy the max votes baby
@@ -58,7 +60,7 @@ const DialogMaxVotesAlert: FC<DialogMaxVotesAlertProps> = ({
         <ButtonV3
           colorClass="bg-transparent border border-neutral-11 rounded-[40px]"
           textColorClass="text-neutral-11"
-          size={isMobile ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG_MOBILE}
+          size={isMobile || isSmallScreen ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG_MOBILE}
           onClick={onCancel}
         >
           wait go back!
