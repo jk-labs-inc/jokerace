@@ -51,7 +51,7 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
       <p className="text-[20px] font-bold text-neutral-10">entering</p>
       <ul className="pl-4 text-[16px] font-bold text-neutral-9">
         <li className="list-disc">
-          qualified wallets can enter{" "}
+          {anyoneCanSubmit ? "all" : "qualified"} wallets can enter{" "}
           <span>
             {maxProposalsPerUserCapped
               ? "as many times as desired"
