@@ -264,7 +264,7 @@ export function useDeployContest() {
 
     const emailExists = await checkIfEmailExists(emailAddress, false);
 
-    if (emailExists) {
+    if (emailExists || !address) {
       return;
     }
 
