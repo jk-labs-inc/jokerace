@@ -18,6 +18,7 @@ const CreateSubmissionPeriod = () => {
     useTimingOptionForSubmissionPeriod(state => state);
   const { timingOption: votingPeriodTimingOption, setTimingOption: setVotingPeriodTimingOption } =
     useTimingOptionForVotingPeriod(state => state);
+  const isRecommendedTime = Math.abs(submissionOpen.getTime() - new Date().getTime()) < 1000;
 
   const onSubmissionDateChange = (value: Date) => {
     setSubmissionOpen(value);
@@ -103,7 +104,9 @@ const CreateSubmissionPeriod = () => {
       </div>
       <div className={`flex flex-col gap-8 border-l border-neutral-11 pl-6`}>
         <div className="flex flex-col gap-4">
-          <p className="text-[16px] font-bold text-neutral-11 uppercase">opens</p>
+          <p className="text-[16px] font-bold text-neutral-11 uppercase">
+            opens <span className="font-normal">{isRecommendedTime ? "(recommended)" : ""}</span>
+          </p>
           <CreateDatePicker onChange={onSubmissionDateChange} defaultDate={submissionOpen} minDate={new Date()} />
         </div>
         <div className="flex flex-col gap-4">
