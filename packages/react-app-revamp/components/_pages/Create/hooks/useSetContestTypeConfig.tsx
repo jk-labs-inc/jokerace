@@ -34,6 +34,7 @@ const useSetContestTypeConfig = () => {
     setVotingRequirements,
     setVotingRequirementsOption,
     setSubmissionMerkle,
+    setPrompt,
   } = useDeployContestStore(state => state);
   const { setTimingOption: setSubmissionTimingOption } = useTimingOptionForSubmissionPeriod(state => state);
   const { processCreatorAllowlist } = useSubmissionMerkle();
@@ -64,6 +65,11 @@ const useSetContestTypeConfig = () => {
     setVotingRequirementsOption({
       value: "erc20",
       label: "token holders",
+    });
+    setPrompt({
+      summarize: "",
+      evaluateVoters: "Voters should evaluate based on 50% relevance to the prompt and 50% originality.",
+      contactDetails: "Join the JokeRace telegram: https://t.co/j7Fp3u7pqS.",
     });
   };
 
