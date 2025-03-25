@@ -19,7 +19,6 @@ export enum ContestType {
 }
 
 export interface ContestDataForType {
-  prompt: Prompt;
   submissionOpen: Date;
   votingOpen: Date;
   votingClose: Date;
