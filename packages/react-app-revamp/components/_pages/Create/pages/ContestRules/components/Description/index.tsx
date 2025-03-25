@@ -3,13 +3,20 @@ import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import { createEditorConfig } from "@helpers/createEditorConfig";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { generateDynamicSummary } from "./utils";
+import { getNativeTokenInfo } from "@helpers/getNativeTokenInfo";
+import { useAccount } from "wagmi";
 
 const CreateContestRulesDescription = () => {
-  const { prompt, setPrompt } = useDeployContestStore(state => state);
+  const { chainId } = useAccount();
+  const { prompt, setPrompt, contestType, charge, submissionOpen, votingOpen, votingClose, entryPreviewConfig } =
+    useDeployContestStore(state => state);
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
   const isMobile = useMediaQuery({ maxWidth: 768 });
+  const [isEditorInitialized, setIsEditorInitialized] = useState(false);
+  const { symbol } = getNativeTokenInfo(chainId ?? 0);
 
   const editorSummarize = useEditor({
     ...createEditorConfig({
@@ -65,7 +72,7 @@ const CreateContestRulesDescription = () => {
     ...createEditorConfig({
       content: prompt.contactDetails ?? "",
       placeholderText: isMobile
-        ? "i’m on telegram: @me"
+        ? "i'm on telegram: @me"
         : "we have a telegram group for everyone to coordinate at tgexample.com",
       onUpdate: ({ editor }: { editor: Editor }) => {
         const content = editor.getHTML();
@@ -78,6 +85,28 @@ const CreateContestRulesDescription = () => {
     }),
     onFocus: () => setActiveEditor(editorContactDetails),
   });
+
+  useEffect(() => {
+    if (editorSummarize && !isEditorInitialized) {
+      if (!prompt.summarize) {
+        const defaultContent = generateDynamicSummary(
+          contestType,
+          charge,
+          submissionOpen,
+          votingOpen,
+          votingClose,
+          entryPreviewConfig.preview,
+          symbol,
+        );
+        editorSummarize.commands.setContent(defaultContent);
+        setPrompt({
+          ...prompt,
+          summarize: defaultContent,
+        });
+      }
+      setIsEditorInitialized(true);
+    }
+  }, [editorSummarize, prompt, setPrompt, isEditorInitialized]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -119,7 +148,7 @@ const CreateContestRulesDescription = () => {
           </div>
           <div className="flex flex-col gap-4">
             <CreateGradientTitle additionalInfo="recommended">
-              what’s the best way for players to reach you?
+              what's the best way for players to reach you?
             </CreateGradientTitle>
             <div
               className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
