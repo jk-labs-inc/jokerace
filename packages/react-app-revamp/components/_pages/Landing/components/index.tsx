@@ -4,13 +4,13 @@ import { isSupabaseConfigured } from "@helpers/database";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
 import { getFeaturedContests, getRewards } from "lib/contests";
-import Link from "next/link";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { TypeAnimation } from "react-type-animation";
 import LandingPageExplainer from "./Explainer";
 import LandingPageUsedBy from "./UsedBy";
 import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
+import { Link } from "next-view-transitions";
 
 const wordConfig = {
   desktop: [
