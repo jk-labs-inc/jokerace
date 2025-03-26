@@ -1,5 +1,6 @@
 import { ContestType } from "@components/_pages/Create/types";
 import { Avatar } from "@components/UI/Avatar";
+import LinkNavigation from "@components/UI/Link";
 import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import useProfileData from "@hooks/useProfileData";
 import { Contest, ContestReward } from "lib/contests";
@@ -128,7 +129,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
   };
 
   return (
-    <Link
+    <LinkNavigation
       prefetch={true}
       href={getContestUrl(contestData.network_name ?? "", contestData.address ?? "")}
       className="animate-appear flex flex-col justify-between w-[320px] h-[216px] pt-4 pb-3 px-6 bg-gradient-radial rounded-[16px] border border-neutral-0 hover:border-neutral-10 transition-all duration-300 ease-in-out"
@@ -194,7 +195,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
           <p className="text-neutral-11 font-bold text-[12px]">{profileName}</p>
         </div>
       )}
-    </Link>
+    </LinkNavigation>
   );
 };
 

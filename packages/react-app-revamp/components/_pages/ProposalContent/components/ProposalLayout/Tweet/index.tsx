@@ -1,13 +1,13 @@
 import { Proposal } from "@components/_pages/ProposalContent";
+import LinkNavigation from "@components/UI/Link";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FC } from "react";
 import ProposalContentProfile from "../../Profile";
 import { Tweet } from "./components/CustomTweet";
 import ProposalLayoutTweetRankOrPlaceholder from "./components/RankOrPlacehoder";
-import { useRouter } from "next/navigation";
 
 interface ProposalLayoutTweetProps {
   proposal: Proposal;
@@ -71,7 +71,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
   };
 
   return (
-    <Link
+    <LinkNavigation
       scroll={false}
       href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
       className="flex flex-col gap-4 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out"
@@ -154,7 +154,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
           </div>
         </div>
       </div>
-    </Link>
+    </LinkNavigation>
   );
 };
 

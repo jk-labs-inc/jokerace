@@ -1,5 +1,6 @@
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import { IconTrophy } from "@components/UI/Icons";
+import LinkNavigation from "@components/UI/Link";
 import { MobileProfilePortal } from "@components/UI/MobileWalletPortal";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { FOOTER_LINKS } from "@config/links";
@@ -14,7 +15,6 @@ import { config } from "@config/wagmi";
 import { HomeIcon, MagnifyingGlassIcon, PencilSquareIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { disconnect } from "@wagmi/core";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -72,7 +72,7 @@ const LandingHeader = () => {
   if (isMobile) {
     return (
       <>
-        <Link href="/">
+        <LinkNavigation href="/">
           <div className="pl-4 md:pl-16 md:pr-16 3xl:pl-28">
             <h1 className="font-sabo text-neutral-11 normal-case text-[45px] relative">
               <span className="joke-3d" data-text="J">
@@ -83,7 +83,7 @@ const LandingHeader = () => {
               <span className="text-[35px] joke-3d">ace</span>
             </h1>
           </div>
-        </Link>
+        </LinkNavigation>
         <header className="bg-true-black">
           <div
             className={`fixed bottom-0 left-0 right-0 flex flex-col border-t-2 border-neutral-2 bg-true-black z-50 ${
@@ -106,31 +106,31 @@ const LandingHeader = () => {
               </div>
             </div>
             <div className="flex flex-row items-center justify-between pt-2 px-8">
-              <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
+              <LinkNavigation href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
                 <HomeIcon width={26} />
                 <p className="text-[12px]">home</p>
-              </Link>
+              </LinkNavigation>
 
-              <Link href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
+              <LinkNavigation href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
                 <MagnifyingGlassIcon width={26} />
                 <p className="text-[12px]">search</p>
-              </Link>
+              </LinkNavigation>
 
-              <Link
+              <LinkNavigation
                 href={ROUTE_VIEW_LIVE_CONTESTS}
                 className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
               >
                 <IconTrophy width={26} height={26} />
                 <p className="text-[12px] text-center">play</p>
-              </Link>
+              </LinkNavigation>
 
-              <Link
+              <LinkNavigation
                 href={ROUTE_CREATE_CONTEST}
                 className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}
               >
                 <PencilSquareIcon width={26} />
                 <p className="text-[12px]">create</p>
-              </Link>
+              </LinkNavigation>
 
               <div className="transition-all duration-500">
                 {isConnected ? (
@@ -155,7 +155,7 @@ const LandingHeader = () => {
 
   return (
     <header className="flex items-center pl-16 3xl:pl-28 pr-[60px] mt-4 max-w-[1850px]">
-      <Link href="/">
+      <LinkNavigation href="/">
         <div>
           <h1 className="font-sabo text-neutral-11 normal-case text-[60px]">
             <span className="joke-3d" data-text="J">
@@ -166,7 +166,7 @@ const LandingHeader = () => {
             <span className="text-[45px] joke-3d">ace</span>
           </h1>
         </div>
-      </Link>
+      </LinkNavigation>
 
       <div className="flex gap-3 items-center ml-auto">
         {isClient && address ? <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion /> : null}

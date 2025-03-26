@@ -1,9 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
+import LinkNavigation from "@components/UI/Link";
 import { ROUTE_VIEW_CONTESTS } from "@config/routes";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { CommentsResult, CommentsWithContest } from "lib/user/types";
-import Link from "next/link";
-import { FC, useState, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { Pagination } from "react-headless-pagination";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import UserCommentsList from "./components/List";
@@ -36,9 +36,9 @@ const UserComments: FC<UserCommentsProps> = ({ comments, page, itemsPerPage, set
         <p className="text-[16px] font-bold text-neutral-11">
           we were unable to fetch comments for this user — please check url to make sure it's accurate <i>or</i> search
           for contests{" "}
-          <Link href={ROUTE_VIEW_CONTESTS} className="text-secondary-11">
+          <LinkNavigation href={ROUTE_VIEW_CONTESTS} className="text-secondary-11">
             here
-          </Link>
+          </LinkNavigation>
         </p>
       </div>
     );

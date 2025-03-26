@@ -1,16 +1,17 @@
 import FeaturedContests from "@components/_pages/FeaturedContests";
+import LinkNavigation from "@components/UI/Link";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
 import { getFeaturedContests, getRewards } from "lib/contests";
+import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
+import { Link } from "next-view-transitions";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { TypeAnimation } from "react-type-animation";
 import LandingPageExplainer from "./Explainer";
 import LandingPageUsedBy from "./UsedBy";
-import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
-import { Link } from "next-view-transitions";
 
 const wordConfig = {
   desktop: [
@@ -94,7 +95,7 @@ const LandingPage = () => {
       </div>
       <div className="flex flex-col gap-8 bg-gradient-fade-black-purple">
         <div className="pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-28 2xl:pr-0 ">
-          <Link
+          <LinkNavigation
             prefetch={true}
             href={ROUTE_CREATE_CONTEST}
             className="bg-gradient-green w-[300px] md:w-[320px] h-10 md:h-12 rounded-[40px] text-[20px] font-bold text-true-black text-center flex items-center justify-center transition-all duration-300 hover:opacity-90"
@@ -103,7 +104,7 @@ const LandingPage = () => {
               create a contest in seconds
               <ChevronRightIcon className="w-6 h-6 ml-2 text-true-black font-bold" />
             </span>
-          </Link>
+          </LinkNavigation>
         </div>
 
         <div className="pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-28 2xl:pr-0 mt-4">

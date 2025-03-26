@@ -1,3 +1,4 @@
+import LinkNavigation from "@components/UI/Link";
 import { chainsImages } from "@config/wagmi";
 import { formatNumber } from "@helpers/formatNumber";
 import { getProposalPagePath } from "@helpers/routing";
@@ -14,7 +15,7 @@ const UserVotesList: FC<UserVotesListProps> = ({ submission, isLoading }) => {
   if (!submission.vote_amount) return null;
 
   return (
-    <Link
+    <LinkNavigation
       href={getProposalPagePath(submission.network_name, submission.contest_address, submission.proposal_id)}
       target="_blank"
     >
@@ -29,7 +30,7 @@ const UserVotesList: FC<UserVotesListProps> = ({ submission, isLoading }) => {
           {submission.contest.title} contest.
         </p>
       </div>
-    </Link>
+    </LinkNavigation>
   );
 };
 

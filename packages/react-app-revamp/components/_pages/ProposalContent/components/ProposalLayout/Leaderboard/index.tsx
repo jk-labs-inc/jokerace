@@ -13,6 +13,7 @@ import ProposalLayoutLeaderboardRankOrPlaceholder from "./components/RankOrPlace
 import { toastInfo } from "@components/UI/Toast";
 import { UrlMatcher } from "interweave-autolink";
 import { useEntryPreviewTitleToggleStore } from "@components/_pages/Contest/components/EntryPreviewTitleToggle/store";
+import LinkNavigation from "@components/UI/Link";
 
 interface ProposalLayoutLeaderboardProps {
   proposal: Proposal;
@@ -111,14 +112,13 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
               </div>
               <div className="flex gap-2 items-center min-w-0">
                 <p className="text-[16px] text-neutral-11 font-bold normal-case truncate">{entryTitle}</p>
-                <Link
-                  prefetch={true}
+                <LinkNavigation
                   scroll={false}
                   href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
                   className="flex-shrink-0 w-4 h-4 flex justify-center items-center rounded-full border text-positive-11 border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out group"
                 >
                   <ChevronRightIcon className="w-4 h-4 group-hover:brightness-0 group-hover:saturate-0" />
-                </Link>
+                </LinkNavigation>
               </div>
               <div className="flex gap-2 items-center">
                 {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
@@ -177,7 +177,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                       voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
                     </p>
                   )}
-                  <Link
+                  <LinkNavigation
                     href={commentLink}
                     className="min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
                     shallow
@@ -185,7 +185,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                   >
                     <ChatBubbleLeftEllipsisIcon className="w-4 h-4 flex-shrink-0" />
                     <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
-                  </Link>
+                  </LinkNavigation>
                   <button
                     onClick={copyLink}
                     className="min-w-16 text-[16px] font-bold flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
