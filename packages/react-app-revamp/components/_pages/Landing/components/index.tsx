@@ -116,7 +116,7 @@ const LandingPage = () => {
                 isContestDataFetching={isContestDataFetching}
                 isRewardsFetching={isRewardsFetching}
               />
-              <Link href={ROUTE_VIEW_LIVE_CONTESTS} className="flex gap-1 items-center">
+              <Link prefetch={true} href={ROUTE_VIEW_LIVE_CONTESTS} className="flex gap-1 items-center">
                 <p className="text-[16px] md:text-[18px] text-positive-11 font-bold hover:text-positive-10 transition-colors duration-300 ease-in-out">
                   view all contests
                 </p>

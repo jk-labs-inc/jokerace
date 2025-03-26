@@ -4,7 +4,7 @@ import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, ChevronDownIcon, ChevronRightIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { FC, useEffect, useState } from "react";
 import ProposalContentDeleteButton from "../../Buttons/Delete";
 import ProposalContentProfile from "../../Profile";
@@ -112,6 +112,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
               <div className="flex gap-2 items-center min-w-0">
                 <p className="text-[16px] text-neutral-11 font-bold normal-case truncate">{entryTitle}</p>
                 <Link
+                  prefetch={true}
                   scroll={false}
                   href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
                   className="flex-shrink-0 w-4 h-4 flex justify-center items-center rounded-full border text-positive-11 border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out group"
