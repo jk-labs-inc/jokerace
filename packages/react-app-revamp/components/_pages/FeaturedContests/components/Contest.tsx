@@ -4,7 +4,7 @@ import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import useProfileData from "@hooks/useProfileData";
 import { Contest, ContestReward } from "lib/contests";
 import moment from "moment";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { FC, useCallback, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 
@@ -129,6 +129,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
 
   return (
     <Link
+      prefetch={true}
       href={getContestUrl(contestData.network_name ?? "", contestData.address ?? "")}
       className="animate-appear flex flex-col justify-between w-[320px] h-[216px] pt-4 pb-3 px-6 bg-gradient-radial rounded-[16px] border border-neutral-0 hover:border-neutral-10 transition-all duration-300 ease-in-out"
     >
