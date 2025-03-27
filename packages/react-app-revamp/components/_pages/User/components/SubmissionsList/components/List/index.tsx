@@ -1,4 +1,4 @@
-import LinkNavigation from "@components/UI/Link";
+import CustomLink from "@components/UI/Link";
 import { chainsImages } from "@config/wagmi";
 import { getProposalPagePath } from "@helpers/routing";
 import { SubmissionWithContest } from "lib/user/types";
@@ -11,7 +11,7 @@ interface UserSubmissionListProps {
 
 const UserSubmissionList: FC<UserSubmissionListProps> = ({ submission }) => {
   return (
-    <LinkNavigation
+    <CustomLink
       href={getProposalPagePath(submission.network_name, submission.contest_address, submission.proposal_id)}
       target="_blank"
     >
@@ -24,7 +24,7 @@ const UserSubmissionList: FC<UserSubmissionListProps> = ({ submission }) => {
           Entry {submission.proposal_id.slice(0, 5)} in the {submission.contest.title} contest
         </p>
       </div>
-    </LinkNavigation>
+    </CustomLink>
   );
 };
 

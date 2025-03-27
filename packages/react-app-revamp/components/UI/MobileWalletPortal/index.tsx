@@ -7,7 +7,7 @@ import {
 import { ChevronRightIcon, PowerIcon } from "@heroicons/react/24/outline";
 import React, { useCallback, useRef } from "react";
 import ReactDOM from "react-dom";
-import LinkNavigation from "../Link";
+import CustomLink from "../Link";
 import UserProfileDisplay from "../UserProfileDisplay";
 
 interface MobileProfilePortalProps {
@@ -66,14 +66,14 @@ export const MobileProfilePortal: React.FC<MobileProfilePortalProps> = ({ isOpen
             <UserProfileDisplay size="medium" ethereumAddress={address} shortenOnFallback includeSocials />
             <div className="flex flex-col gap-2 border-t border-primary-2 px-4 pt-6">
               {navLinks.map(link => (
-                <LinkNavigation
+                <CustomLink
                   key={link.href}
                   href={link.href.replace("[address]", address)}
                   className="flex gap-2 items-center text-[16px] font-bold text-neutral-11 uppercase"
                 >
                   my {link.label}
                   <ChevronRightIcon width={20} height={20} className="text-neutral-11" />
-                </LinkNavigation>
+                </CustomLink>
               ))}
             </div>
           </div>

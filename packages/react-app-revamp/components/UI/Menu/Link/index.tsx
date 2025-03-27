@@ -1,4 +1,4 @@
-import LinkNavigation from "@components/UI/Link";
+import CustomLink from "@components/UI/Link";
 
 interface MenuLinkProps {
   active: boolean;
@@ -7,12 +7,12 @@ interface MenuLinkProps {
 }
 
 const MenuLink: React.FC<MenuLinkProps> = ({ active, href, children }) => (
-  <LinkNavigation
+  <CustomLink
     href={href}
     className={`${active ? "bg-blue-500 text-white" : "text-gray-900"} block px-4 py-2 rounded-md`}
   >
     {children}
-  </LinkNavigation>
+  </CustomLink>
 );
 
 export default MenuLink;

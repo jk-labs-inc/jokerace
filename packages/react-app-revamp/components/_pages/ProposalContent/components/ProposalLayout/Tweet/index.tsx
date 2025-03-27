@@ -1,9 +1,9 @@
 import { Proposal } from "@components/_pages/ProposalContent";
-import LinkNavigation from "@components/UI/Link";
+import CustomLink from "@components/UI/Link";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import { useRouter } from "next/navigation";
+import { useTransitionRouter } from "next-view-transitions";
 import { FC } from "react";
 import ProposalContentProfile from "../../Profile";
 import { Tweet } from "./components/CustomTweet";
@@ -50,7 +50,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
 }) => {
   const tweetUrl = proposal.metadataFields.stringArray[0];
   const tweetId = extractTweetId(tweetUrl);
-  const router = useRouter();
+  const router = useTransitionRouter();
 
   const onVotingModalOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -71,7 +71,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
   };
 
   return (
-    <LinkNavigation
+    <CustomLink
       scroll={false}
       href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
       className="flex flex-col gap-4 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out"
@@ -154,7 +154,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
           </div>
         </div>
       </div>
-    </LinkNavigation>
+    </CustomLink>
   );
 };
 

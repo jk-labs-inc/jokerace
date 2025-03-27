@@ -1,9 +1,9 @@
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
-import LinkNavigation from "@components/UI/Link";
+import CustomLink from "@components/UI/Link";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
-import { useRouter } from "next/navigation";
+import { useTransitionRouter } from "next-view-transitions";
 import { FC, useEffect, useState } from "react";
 
 interface CreateFlowHeaderDesktopLayoutProps {
@@ -20,7 +20,7 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
   pageAction,
 }) => {
   const [isClient, setIsClient] = useState(false);
-  const router = useRouter();
+  const router = useTransitionRouter();
 
   useEffect(() => {
     setIsClient(true);
@@ -36,11 +36,11 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
 
   return (
     <header className="flex flex-row items-center justify-between pl-[120px] pr-[60px] mt-8">
-      <LinkNavigation href="/">
+      <CustomLink href="/">
         <h1 className="font-sabo text-neutral-11 normal-case text-[40px]">
           J<span className="text-[30px]">oke</span>R<span className="text-[30px]">ace</span>
         </h1>
-      </LinkNavigation>
+      </CustomLink>
 
       {!isLoading && !isSuccess && (
         <div className="flex items-center gap-5 text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-neutral-10 shadow-create-header">

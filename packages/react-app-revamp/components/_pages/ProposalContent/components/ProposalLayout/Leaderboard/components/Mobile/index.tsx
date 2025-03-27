@@ -1,11 +1,11 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import ProposalContentDeleteButton from "@components/_pages/ProposalContent/components/Buttons/Delete";
 import ProposalContentProfile from "@components/_pages/ProposalContent/components/Profile";
-import LinkNavigation from "@components/UI/Link";
+import CustomLink from "@components/UI/Link";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import { useRouter } from "next/navigation";
+import { useTransitionRouter } from "next-view-transitions";
 import { FC } from "react";
 import ProposalLayoutLeaderboardRankOrPlaceholder from "../RankOrPlaceholder";
 
@@ -39,7 +39,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
   chainName,
   contestAddress,
 }) => {
-  const router = useRouter();
+  const router = useTransitionRouter();
   const entryTitle = proposal.metadataFields.stringArray[0];
 
   const navigateToCommentLink = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -61,7 +61,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
   };
 
   return (
-    <LinkNavigation
+    <CustomLink
       href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
       className="w-full flex flex-col min-h-20 gap-4 bg-true-black shadow-entry-card p-4 rounded-2xl border border-transparent"
     >
@@ -114,7 +114,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
           </button>
         </div>
       </div>
-    </LinkNavigation>
+    </CustomLink>
   );
 };
 

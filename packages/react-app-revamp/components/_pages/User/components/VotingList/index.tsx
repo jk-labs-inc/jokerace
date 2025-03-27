@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import LinkNavigation from "@components/UI/Link";
+import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_CONTESTS } from "@config/routes";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { SubmissionsResult, SubmissionWithContest } from "lib/user/types";
@@ -36,9 +36,9 @@ const UserVotes: FC<UserVotesProps> = ({ submissions, page, itemsPerPage, setPag
         <p className="text-[16px] font-bold text-neutral-11">
           we were unable to fetch voting activity for this user — please check url to make sure it's accurate <i>or</i>{" "}
           search for contests{" "}
-          <LinkNavigation href={ROUTE_VIEW_CONTESTS} className="text-primary-10">
+          <CustomLink href={ROUTE_VIEW_CONTESTS} className="text-primary-10">
             here
-          </LinkNavigation>
+          </CustomLink>
         </p>
       </div>
     );

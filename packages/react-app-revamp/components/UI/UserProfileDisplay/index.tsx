@@ -4,7 +4,7 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import useProfileData from "@hooks/useProfileData";
 import { useState } from "react";
 import { Avatar } from "../Avatar";
-import LinkNavigation from "../Link";
+import CustomLink from "../Link";
 
 interface UserProfileDisplayProps {
   ethereumAddress: string;
@@ -54,24 +54,24 @@ const UserProfileDisplay = ({
 
   if (textualVersion) {
     return (
-      <LinkNavigation
+      <CustomLink
         className={`text-[16px] font-bold ${textColor || "text-neutral-11"}`}
         target="_blank"
         href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
       >
         {profileName}
-      </LinkNavigation>
+      </CustomLink>
     );
   }
 
   if (avatarVersion) {
     return (
-      <LinkNavigation
+      <CustomLink
         href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
         className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}
       >
         <Avatar src={profileAvatar} size={size} />
-      </LinkNavigation>
+      </CustomLink>
     );
   }
 

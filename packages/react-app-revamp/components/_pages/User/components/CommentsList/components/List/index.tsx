@@ -1,4 +1,4 @@
-import LinkNavigation from "@components/UI/Link";
+import CustomLink from "@components/UI/Link";
 import { chainsImages } from "@config/wagmi";
 import { getProposalPagePath } from "@helpers/routing";
 import { CommentsWithContest } from "lib/user/types";
@@ -11,7 +11,7 @@ interface UserCommentsListProps {
 
 const UserCommentsList: FC<UserCommentsListProps> = ({ comment }) => {
   return (
-    <LinkNavigation
+    <CustomLink
       href={{
         pathname: getProposalPagePath(comment.network_name.toLowerCase(), comment.contest_address, comment.proposal_id),
         query: { commentId: comment.comment_id },
@@ -28,7 +28,7 @@ const UserCommentsList: FC<UserCommentsListProps> = ({ comment }) => {
           {comment.contest.title} contest
         </p>
       </div>
-    </LinkNavigation>
+    </CustomLink>
   );
 };
 

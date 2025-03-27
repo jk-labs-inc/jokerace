@@ -1,5 +1,5 @@
 import { IconTrophy } from "@components/UI/Icons";
-import LinkNavigation from "@components/UI/Link";
+import CustomLink from "@components/UI/Link";
 import { MobileProfilePortal } from "@components/UI/MobileWalletPortal";
 import {
   ROUTE_CREATE_CONTEST,
@@ -71,31 +71,31 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
           isClient && isInPwaMode ? "pb-8" : "pb-2"
         } px-8 mt-4 bg-true-black z-50`}
       >
-        <LinkNavigation href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
+        <CustomLink href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
           <HomeIcon width={22} />
           <p className="text-[12px]">home</p>
-        </LinkNavigation>
+        </CustomLink>
 
-        <LinkNavigation href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
+        <CustomLink href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
           <MagnifyingGlassIcon width={22} />
           <p className="text-[12px]">search</p>
-        </LinkNavigation>
+        </CustomLink>
 
-        <LinkNavigation
+        <CustomLink
           href={ROUTE_VIEW_LIVE_CONTESTS}
           className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
         >
           <IconTrophy width={22} height={22} />
           <p className="text-[12px] text-center">play</p>
-        </LinkNavigation>
+        </CustomLink>
 
-        <LinkNavigation
+        <CustomLink
           href={ROUTE_CREATE_CONTEST}
           className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}
         >
           <PencilSquareIcon width={22} />
           <p className="text-[12px]">create</p>
-        </LinkNavigation>
+        </CustomLink>
 
         <div className="transition-all duration-500">
           {isConnected ? (

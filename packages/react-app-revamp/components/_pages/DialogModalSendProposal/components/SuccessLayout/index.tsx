@@ -1,5 +1,5 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import LinkNavigation from "@components/UI/Link";
+import CustomLink from "@components/UI/Link";
 import {
   generateFacebookShareUrlForSubmission,
   generateFarcasterShareUrlForSubmission,
@@ -88,7 +88,7 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
         <p className="text-[16px] text-neutral-11 font-bold">https://jokerace.io...{proposalId.slice(0, 6)}</p>
         <p className="text-positive-11 font-bold text-[16px]">{copyText}</p>
       </div>
-      <LinkNavigation
+      <CustomLink
         prefetch={true}
         href={`/contest/${chainName}/${contestId}/submission/${proposalId}`}
         shallow
@@ -101,7 +101,7 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
         >
           let’s see it
         </ButtonV3>
-      </LinkNavigation>
+      </CustomLink>
     </>
   );
 };

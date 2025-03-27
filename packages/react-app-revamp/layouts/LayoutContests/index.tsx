@@ -1,5 +1,5 @@
 import Button from "@components/UI/Button";
-import LinkNavigation from "@components/UI/Link";
+import CustomLink from "@components/UI/Link";
 import {
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_LIVE_CONTESTS,
@@ -56,7 +56,7 @@ const LayoutContests = (props: LayoutContestsProps) => {
       <div className="relative mt-10 flex-col gap-2">
         <div className="flex gap-4 justify-center mb-4 px-2 sm:gap-8 sm:px-0">
           {navLinks.map((link, index) => (
-            <LinkNavigation href={link.href} key={link.href}>
+            <CustomLink href={link.href} key={link.href}>
               <div
                 ref={(el: HTMLDivElement | null) => {
                   tabRefs.current[index] = el;
@@ -68,7 +68,7 @@ const LayoutContests = (props: LayoutContestsProps) => {
               >
                 {link.label}
               </div>
-            </LinkNavigation>
+            </CustomLink>
           ))}
           <div className="absolute left-0 w-full h-1 bottom-0 bg-neutral-0"></div>
           <div

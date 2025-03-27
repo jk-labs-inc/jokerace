@@ -1,4 +1,4 @@
-import LinkNavigation from "@components/UI/Link";
+import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_CONTESTS } from "@config/routes";
 import { ErrorType } from "@hooks/useContest/store";
 import { FC } from "react";
@@ -32,9 +32,9 @@ const LayoutViewContestError: FC<LayoutViewContestErrorProps> = ({ error, bugRep
         <p className="text-[16px] font-bold text-neutral-11 text-center">
           we were unable to fetch this contest — please check url to make sure it’s accurate <i>or</i> search for
           contests{" "}
-          <LinkNavigation href={ROUTE_VIEW_CONTESTS} className="text-positive-11">
+          <CustomLink href={ROUTE_VIEW_CONTESTS} className="text-positive-11">
             here
-          </LinkNavigation>
+          </CustomLink>
         </p>
       </div>
     );

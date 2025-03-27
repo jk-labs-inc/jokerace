@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 import CircularProgressBar from "@components/Clock";
 import CheckmarkIcon from "@components/UI/Icons/Checkmark";
-import LinkNavigation from "@components/UI/Link";
+import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_CONTEST_BASE_PATH, ROUTE_VIEW_UPCOMING_CONTESTS } from "@config/routes";
 import { chains, chainsImages } from "@config/wagmi";
 import { pluralize } from "@helpers/pluralize";
@@ -280,7 +280,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
-      <LinkNavigation href={getContestUrl(contest)}>
+      <CustomLink href={getContestUrl(contest)}>
         <div
           className="hidden lg:full-width-grid-cols md:items-center border-t border-neutral-9 py-4 p-3 
         hover:bg-neutral-3 transition-colors duration-500 ease-in-out cursor-pointer"
@@ -555,7 +555,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
             </div>
           )}
         </div>
-      </LinkNavigation>
+      </CustomLink>
     </SkeletonTheme>
   );
 };
