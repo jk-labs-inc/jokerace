@@ -1,13 +1,13 @@
 import { Proposal } from "@components/_pages/ProposalContent";
+import CustomLink from "@components/UI/Link";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import Link from "next/link";
+import { useTransitionRouter } from "next-view-transitions";
 import { FC } from "react";
 import ProposalContentProfile from "../../Profile";
 import { Tweet } from "./components/CustomTweet";
 import ProposalLayoutTweetRankOrPlaceholder from "./components/RankOrPlacehoder";
-import { useRouter } from "next/navigation";
 
 interface ProposalLayoutTweetProps {
   proposal: Proposal;
@@ -50,28 +50,31 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
 }) => {
   const tweetUrl = proposal.metadataFields.stringArray[0];
   const tweetId = extractTweetId(tweetUrl);
-  const router = useRouter();
+  const router = useTransitionRouter();
 
   const onVotingModalOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     handleVotingModalOpen?.();
   };
 
   const onCommentLinkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     router.push(commentLink);
   };
 
   const onDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     toggleProposalSelection?.(proposal.id);
   };
 
   return (
-    <Link
+    <CustomLink
       scroll={false}
       href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
       className="flex flex-col gap-4 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out"
@@ -89,30 +92,10 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
           />
         </div>
         {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-          <button
-            onClick={onVotingModalOpen}
-            className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
-          >
-            <img
-              src="/contest/upvote.svg"
-              width={16}
-              height={16}
-              alt="upvote"
-              className="flex-shrink-0 transition-all duration-300 ease-in-out group-hover:brightness-0 group-hover:saturate-0"
-            />
-            <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
-          </button>
-        ) : null}
-      </div>
-      <div className="not-prose">
-        <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />
-      </div>
-      <div className="mt-auto pl-2">
-        <div className="flex gap-2 items-center">
-          {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
+          <div onClick={e => e.stopPropagation()}>
             <button
               onClick={onVotingModalOpen}
-              className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
+              className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
             >
               <img
                 src="/contest/upvote.svg"
@@ -123,19 +106,45 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
               />
               <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
             </button>
+          </div>
+        ) : null}
+      </div>
+      <div className="not-prose">
+        <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />
+      </div>
+      <div className="mt-auto pl-2">
+        <div className="flex gap-2 items-center">
+          {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
+            <div onClick={e => e.stopPropagation()}>
+              <button
+                onClick={onVotingModalOpen}
+                className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
+              >
+                <img
+                  src="/contest/upvote.svg"
+                  width={16}
+                  height={16}
+                  alt="upvote"
+                  className="flex-shrink-0 transition-all duration-300 ease-in-out group-hover:brightness-0 group-hover:saturate-0"
+                />
+                <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
+              </button>
+            </div>
           ) : (
             <p className="text-neutral-10 text-[14px] font-bold">
               voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
             </p>
           )}
-          <button
-            onClick={onCommentLinkClick}
-            className="min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
-          >
-            <ChatBubbleLeftEllipsisIcon className="w-4 h-4 flex-shrink-0" />
-            <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
-          </button>
-          <div className="ml-auto">
+          <div onClick={e => e.stopPropagation()}>
+            <button
+              onClick={onCommentLinkClick}
+              className="min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
+            >
+              <ChatBubbleLeftEllipsisIcon className="w-4 h-4 flex-shrink-0" />
+              <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
+            </button>
+          </div>
+          <div className="ml-auto" onClick={e => e.stopPropagation()}>
             {allowDelete ? (
               <button className="relative w-4 h-4 cursor-pointer" onClick={onDeleteClick}>
                 <CheckIcon
@@ -154,7 +163,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
           </div>
         </div>
       </div>
-    </Link>
+    </CustomLink>
   );
 };
 

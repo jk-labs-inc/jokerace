@@ -1,5 +1,6 @@
 "use client";
 import Button from "@components/UI/Button";
+import CustomLink from "@components/UI/Link";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import {
   ROUTE_VIEW_USER,
@@ -7,7 +8,6 @@ import {
   ROUTE_VIEW_USER_SUBMISSIONS,
   ROUTE_VIEW_USER_VOTING,
 } from "@config/routes";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -85,7 +85,7 @@ const LayoutUser = (props: LayoutUserProps) => {
           <div className="relative mt-12 flex-col gap-2">
             <div className="flex justify-between gap-4 lg:justify-start mb-4 sm:gap-8 sm:px-0">
               {navLinks.map((link, index) => (
-                <Link href={link.href.replace("[address]", address)} key={link.href} prefetch={true}>
+                <CustomLink href={link.href.replace("[address]", address)} key={link.href}>
                   <div
                     ref={(el: HTMLDivElement | null) => {
                       tabRefs.current[index] = el;
@@ -97,7 +97,7 @@ const LayoutUser = (props: LayoutUserProps) => {
                   >
                     {link.label}
                   </div>
-                </Link>
+                </CustomLink>
               ))}
 
               <div className="absolute left-0 w-full h-1 bottom-0 bg-neutral-0"></div>

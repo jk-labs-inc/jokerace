@@ -68,6 +68,7 @@
     "moment-timezone": "0.5.48",
     "next": "14.2.26",
     "next-pwa": "5.6.0",
+    "next-view-transitions": "^0.3.4",
     "nextjs-current-url": "1.0.3",
     "nextjs-toploader": "1.6.12",
     "node-html-parser": "6.1.13",

@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useTransitionRouter } from "next-view-transitions";
 
 export const metadata = {
   title: "Page not found - JokeRace",
@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 const NotFoundPage = () => {
-  const router = useRouter();
+  const router = useTransitionRouter();
 
   return (
     <div className="container m-auto sm:text-center animate-appear">
