@@ -48,15 +48,15 @@ export const viewport: Viewport = {
 const lato = localFont({
   src: [
     {
-      path: "./Lato-Regular.woff2",
+      path: "./_fonts/Lato-Regular.woff2",
       weight: "400",
     },
     {
-      path: "./Lato-Bold.woff2",
+      path: "./_fonts/Lato-Bold.woff2",
       weight: "700",
     },
     {
-      path: "./Lato-Black.woff2",
+      path: "./_fonts/Lato-Black.woff2",
       weight: "900",
     },
   ],
@@ -66,7 +66,7 @@ const lato = localFont({
 const sabo = localFont({
   src: [
     {
-      path: "./Sabo-Filled.otf",
+      path: "./_fonts/Sabo-Filled.otf",
       weight: "400",
     },
   ],
