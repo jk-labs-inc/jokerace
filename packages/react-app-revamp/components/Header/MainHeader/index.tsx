@@ -1,5 +1,5 @@
 import { MediaQuery } from "@helpers/mediaQuery";
-import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { FC } from "react";
 import { useAccount } from "wagmi";
 import MainHeaderDesktopLayout from "./DesktopLayout";

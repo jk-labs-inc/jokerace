@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { FC, useEffect, useRef } from "react";
 import CommentsForm from "./components/Form";
 import CommentsList from "./components/List";
-import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 
 interface CommentsProps {

@@ -1,7 +1,7 @@
 import Subscribe from "@components/Subscribe";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
+import CustomLink from "@components/UI/Link";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -98,13 +98,14 @@ const LandingPageExplainer = () => {
           <p className="text-neutral-11 text-[16px] md:text-[20px]">
             <b>and it’s free.</b> you just pay the cost to deploy (often just cents).
           </p>
-          <Link
+          <CustomLink
+            prefetch={true}
             href={ROUTE_CREATE_CONTEST}
             className="w-[218px] h-10 bg-gradient-purple-white rounded-[40px] normal-case text-[20px] font-bold text-true-black flex items-center justify-center relative transition-all duration-300 hover:opacity-90"
           >
             <span className="mr-4 normal-case">Create a Contest</span>
             <ChevronRightIcon className="w-6 h-6 text-true-black font-bold absolute right-2" />
-          </Link>
+          </CustomLink>
         </>
       ),
     },
@@ -126,13 +127,14 @@ const LandingPageExplainer = () => {
                 : "earn rewards, attestations, points, credentials, and more."}
             </li>
           </ul>
-          <Link
+          <CustomLink
+            prefetch={true}
             href={ROUTE_VIEW_LIVE_CONTESTS}
             className="w-[218px] h-10 bg-gradient-purple-white rounded-[40px] normal-case text-[20px] font-bold text-true-black flex items-center justify-center relative transition-all duration-300 hover:opacity-90"
           >
             <span className="mr-4 normal-case">View Contests</span>
             <ChevronRightIcon className="w-6 h-6 text-true-black font-bold absolute right-2" />
-          </Link>
+          </CustomLink>
         </>
       ),
     },

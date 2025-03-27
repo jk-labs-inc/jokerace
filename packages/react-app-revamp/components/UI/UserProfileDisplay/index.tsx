@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import { ROUTE_VIEW_USER } from "@config/routes";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import useProfileData from "@hooks/useProfileData";
-import Link from "next/link";
-import { Avatar } from "../Avatar";
-import { CheckCircleIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
+import { Avatar } from "../Avatar";
+import CustomLink from "../Link";
 
 interface UserProfileDisplayProps {
   ethereumAddress: string;
@@ -54,25 +54,24 @@ const UserProfileDisplay = ({
 
   if (textualVersion) {
     return (
-      <Link
+      <CustomLink
         className={`text-[16px] font-bold ${textColor || "text-neutral-11"}`}
         target="_blank"
-        rel="noopener noreferrer"
         href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
       >
         {profileName}
-      </Link>
+      </CustomLink>
     );
   }
 
   if (avatarVersion) {
     return (
-      <Link
+      <CustomLink
         href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
         className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}
       >
         <Avatar src={profileAvatar} size={size} />
-      </Link>
+      </CustomLink>
     );
   }
 

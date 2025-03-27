@@ -1,13 +1,13 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import ProposalContentDeleteButton from "@components/_pages/ProposalContent/components/Buttons/Delete";
 import ProposalContentProfile from "@components/_pages/ProposalContent/components/Profile";
+import CustomLink from "@components/UI/Link";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import Link from "next/link";
+import { useTransitionRouter } from "next-view-transitions";
 import { FC } from "react";
 import ProposalLayoutLeaderboardRankOrPlaceholder from "../RankOrPlaceholder";
-import { useRouter } from "next/navigation";
 
 interface ProposalLayoutLeaderboardMobileProps {
   proposal: Proposal;
@@ -39,29 +39,32 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
   chainName,
   contestAddress,
 }) => {
-  const router = useRouter();
+  const router = useTransitionRouter();
   const entryTitle = proposal.metadataFields.stringArray[0];
 
   const navigateToCommentLink = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     router.push(commentLink);
   };
 
   const navigateToVotingModal = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     handleVotingModalOpen?.();
   };
 
   const navigateToProposal = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     router.push(`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`);
   };
 
   return (
-    <Link
+    <CustomLink
       href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
       className="w-full flex flex-col min-h-20 gap-4 bg-true-black shadow-entry-card p-4 rounded-2xl border border-transparent"
     >
@@ -75,7 +78,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
           textColor="text-neutral-10"
           size="extraSmall"
         />
-        <div className="flex gap-2 items-center ml-auto ">
+        <div className="flex gap-2 items-center ml-auto" onClick={e => e.stopPropagation()}>
           <button
             onClick={navigateToCommentLink}
             className="min-w-12 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px]  text-neutral-9  border border-neutral-9"
@@ -96,16 +99,18 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
       </div>
       <div className="flex items-center gap-6">
         {allowDelete ? (
-          <ProposalContentDeleteButton
-            proposalId={proposal.id}
-            selectedProposalIds={selectedProposalIds}
-            toggleProposalSelection={toggleProposalSelection}
-          />
+          <div onClick={e => e.stopPropagation()}>
+            <ProposalContentDeleteButton
+              proposalId={proposal.id}
+              selectedProposalIds={selectedProposalIds}
+              toggleProposalSelection={toggleProposalSelection}
+            />
+          </div>
         ) : (
           <div className="ml-[5px] h-6 w-6 mt-1" />
         )}
         <p className="text-[16px] text-neutral-11 font-bold normal-case">{entryTitle}</p>
-        <div className="flex ml-auto">
+        <div className="flex ml-auto" onClick={e => e.stopPropagation()}>
           <button
             onClick={navigateToProposal}
             className="text-neutral-10 hover:text-positive-11 transition-colors duration-300 ease-in-out"
@@ -114,7 +119,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
           </button>
         </div>
       </div>
-    </Link>
+    </CustomLink>
   );
 };
 

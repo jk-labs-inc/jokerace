@@ -1,12 +1,8 @@
 /* eslint-disable react/no-unescaped-entities */
-import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { useAccountChange } from "@hooks/useAccountChange";
-import { ContractConfig } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
-import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { usePathname } from "next/navigation";
@@ -15,7 +11,6 @@ import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import VotingQualifierMessage from "./components/VotingQualifierMessage";
-import { useEffect, useState } from "react";
 
 const VotingContestQualifier = () => {
   const { anyoneCanVote, charge, contestAbi, version } = useContestStore(state => state);

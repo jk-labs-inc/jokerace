@@ -1,16 +1,16 @@
 import FeaturedContests from "@components/_pages/FeaturedContests";
+import CustomLink from "@components/UI/Link";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
 import { getFeaturedContests, getRewards } from "lib/contests";
-import Link from "next/link";
+import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { TypeAnimation } from "react-type-animation";
 import LandingPageExplainer from "./Explainer";
 import LandingPageUsedBy from "./UsedBy";
-import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
 
 const wordConfig = {
   desktop: [
@@ -94,7 +94,8 @@ const LandingPage = () => {
       </div>
       <div className="flex flex-col gap-8 bg-gradient-fade-black-purple">
         <div className="pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-28 2xl:pr-0 ">
-          <Link
+          <CustomLink
+            prefetch={true}
             href={ROUTE_CREATE_CONTEST}
             className="bg-gradient-green w-[300px] md:w-[320px] h-10 md:h-12 rounded-[40px] text-[20px] font-bold text-true-black text-center flex items-center justify-center transition-all duration-300 hover:opacity-90"
           >
@@ -102,7 +103,7 @@ const LandingPage = () => {
               create a contest in seconds
               <ChevronRightIcon className="w-6 h-6 ml-2 text-true-black font-bold" />
             </span>
-          </Link>
+          </CustomLink>
         </div>
 
         <div className="pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-28 2xl:pr-0 mt-4">
@@ -115,12 +116,12 @@ const LandingPage = () => {
                 isContestDataFetching={isContestDataFetching}
                 isRewardsFetching={isRewardsFetching}
               />
-              <Link href={ROUTE_VIEW_LIVE_CONTESTS} className="flex gap-1 items-center">
+              <CustomLink prefetch={true} href={ROUTE_VIEW_LIVE_CONTESTS} className="flex gap-1 items-center">
                 <p className="text-[16px] md:text-[18px] text-positive-11 font-bold hover:text-positive-10 transition-colors duration-300 ease-in-out">
                   view all contests
                 </p>
                 <ChevronRightIcon className="w-4 h-4 text-positive-11 font-bold" />
-              </Link>
+              </CustomLink>
             </div>
           ) : (
             <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">

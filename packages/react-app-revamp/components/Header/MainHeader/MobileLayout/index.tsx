@@ -1,4 +1,5 @@
 import { IconTrophy } from "@components/UI/Icons";
+import CustomLink from "@components/UI/Link";
 import { MobileProfilePortal } from "@components/UI/MobileWalletPortal";
 import {
   ROUTE_CREATE_CONTEST,
@@ -10,7 +11,6 @@ import {
 import { config } from "@config/wagmi";
 import { HomeIcon, MagnifyingGlassIcon, PencilSquareIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { disconnect } from "@wagmi/core";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FC, useCallback, useEffect, useState } from "react";
 
@@ -71,28 +71,31 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
           isClient && isInPwaMode ? "pb-8" : "pb-2"
         } px-8 mt-4 bg-true-black z-50`}
       >
-        <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
+        <CustomLink href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
           <HomeIcon width={22} />
           <p className="text-[12px]">home</p>
-        </Link>
+        </CustomLink>
 
-        <Link href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
+        <CustomLink href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
           <MagnifyingGlassIcon width={22} />
           <p className="text-[12px]">search</p>
-        </Link>
+        </CustomLink>
 
-        <Link
+        <CustomLink
           href={ROUTE_VIEW_LIVE_CONTESTS}
           className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
         >
           <IconTrophy width={22} height={22} />
           <p className="text-[12px] text-center">play</p>
-        </Link>
+        </CustomLink>
 
-        <Link href={ROUTE_CREATE_CONTEST} className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}>
+        <CustomLink
+          href={ROUTE_CREATE_CONTEST}
+          className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}
+        >
           <PencilSquareIcon width={22} />
           <p className="text-[12px]">create</p>
-        </Link>
+        </CustomLink>
 
         <div className="transition-all duration-500">
           {isConnected ? (

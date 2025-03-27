@@ -1,4 +1,3 @@
-import { Theme } from "@rainbow-me/rainbowkit";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "./../../tailwind.config";
 

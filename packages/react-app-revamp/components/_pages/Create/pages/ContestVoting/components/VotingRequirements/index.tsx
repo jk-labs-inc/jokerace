@@ -1,5 +1,4 @@
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { addressRegex } from "@helpers/regex";
