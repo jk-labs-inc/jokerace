@@ -51,11 +51,11 @@ const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, onImageLoad }) => 
       return false;
     }
 
-    const maxSize = 20 * 1024 * 1024; // 20MB in bytes
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
     if (file.size > maxSize) {
       setValidationError({
         ...validationError,
-        upload: "file size should be less than 20MB",
+        upload: "file size should be less than 5MB",
       });
       return false;
     }
@@ -204,9 +204,8 @@ const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, onImageLoad }) => 
         <input ref={fileInputRef} type="file" style={{ display: "none" }} onChange={handleFileInput} accept="image/*" />
         <div className="flex flex-col items-center gap-1">
           {isLoading ? (
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center">
               <div className="w-8 h-8 border-t-2 border-positive-11 rounded-full animate-spin"></div>
-              <p className="text-neutral-11 text-[16px] font-bold">uploading...</p>
             </div>
           ) : (
             <>
@@ -227,7 +226,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, onImageLoad }) => 
         </div>
       </div>
       {validationError?.upload && (
-        <p className="text-negative-11 text-[16px] font-bold mt-1">{validationError.upload}</p>
+        <p className="text-negative-11 text-[16px] font-bold mt-1 normal-case">{validationError.upload}</p>
       )}
     </div>
   );

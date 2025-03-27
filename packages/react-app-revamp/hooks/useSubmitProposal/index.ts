@@ -12,7 +12,7 @@ import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useProposal from "@hooks/useProposal";
-import { ProposalCore, useProposalStore } from "@hooks/useProposal/store";
+import { useProposalStore } from "@hooks/useProposal/store";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { useUserStore } from "@hooks/useUser/store";

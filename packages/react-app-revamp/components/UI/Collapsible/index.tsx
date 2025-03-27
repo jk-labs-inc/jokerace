@@ -1,5 +1,4 @@
-import { ChevronUpIcon } from "@heroicons/react/24/outline";
-import React, { useState, ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 interface CollapsibleProps {
   children: ReactNode;

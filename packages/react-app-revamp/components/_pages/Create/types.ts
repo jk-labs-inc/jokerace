@@ -1,6 +1,5 @@
 import { VotingMerkle } from "@hooks/useDeployContest/types";
 import { Option } from "./components/DefaultDropdown";
-import { Prompt } from "@hooks/useDeployContest/store";
 
 export enum StepTitle {
   Type = "Type",

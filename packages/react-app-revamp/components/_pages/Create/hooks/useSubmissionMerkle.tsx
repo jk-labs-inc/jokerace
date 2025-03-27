@@ -1,4 +1,3 @@
-import { toastInfo } from "@components/UI/Toast";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 
