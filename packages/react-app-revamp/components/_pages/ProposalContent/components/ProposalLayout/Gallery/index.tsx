@@ -1,15 +1,13 @@
 import { Proposal } from "@components/_pages/ProposalContent";
+import CustomLink from "@components/UI/Link";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import Link from "next/link";
+import { EntryPreview } from "@hooks/useDeployContest/store";
 import { FC, useEffect, useState } from "react";
 import ImageWithFallback from "../../ImageWithFallback";
 import ProposalContentProfile from "../../Profile";
 import ProposalLayoutGalleryRankOrPlaceholder from "./components/RankOrPlaceholder";
-import { useMetadataStore } from "@hooks/useMetadataFields/store";
-import { EntryPreview } from "@hooks/useDeployContest/store";
-import CustomLink from "@components/UI/Link";
 
 interface ProposalLayoutGalleryProps {
   proposal: Proposal;

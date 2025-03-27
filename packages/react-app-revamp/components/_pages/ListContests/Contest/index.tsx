@@ -10,7 +10,6 @@ import useContestInfo from "@hooks/useContestInfo";
 import { useError } from "@hooks/useError";
 import useTokenDetails from "@hooks/useTokenDetails";
 import moment from "moment";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";

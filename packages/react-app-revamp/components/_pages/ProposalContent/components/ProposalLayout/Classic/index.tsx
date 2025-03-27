@@ -11,7 +11,6 @@ import { loadFromLocalStorage } from "@helpers/localStorage";
 import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import ProposalContentDeleteButton from "../../Buttons/Delete";
 import ProposalContentInfo from "../../ProposalContentInfo";

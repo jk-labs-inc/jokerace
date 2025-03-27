@@ -3,7 +3,6 @@ import { chainsImages } from "@config/wagmi";
 import { formatNumber } from "@helpers/formatNumber";
 import { getProposalPagePath } from "@helpers/routing";
 import { SubmissionWithContest } from "lib/user/types";
-import Link from "next/link";
 import { FC } from "react";
 
 interface UserVotesListProps {
