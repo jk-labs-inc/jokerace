@@ -1,4 +1,3 @@
-import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { FC } from "react";
 
 interface CommentFormInputSubmitButtonProps {

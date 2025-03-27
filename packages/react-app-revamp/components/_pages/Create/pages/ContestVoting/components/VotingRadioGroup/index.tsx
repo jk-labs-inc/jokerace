@@ -1,6 +1,6 @@
 import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { VotingMerkle } from "@hooks/useDeployContest/types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CreateVotingRequirements from "../VotingRequirements";
 import CreateVotingCSVUploader from "../VotingUploadCsv";
 import CreateRadioButtonsGroup, { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup";

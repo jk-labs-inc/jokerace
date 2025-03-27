@@ -1,6 +1,6 @@
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
-import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_USER } from "@config/routes";
+import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import Link from "next/link";
 import { FC, useEffect, useState } from "react";
 

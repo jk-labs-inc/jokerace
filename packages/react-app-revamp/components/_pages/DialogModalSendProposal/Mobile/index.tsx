@@ -1,6 +1,5 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
-import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { useContestStore } from "@hooks/useContest/store";
@@ -9,7 +8,7 @@ import useMetadataFields from "@hooks/useMetadataFields";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { Editor, EditorContent } from "@tiptap/react";
+import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useEffect } from "react";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";

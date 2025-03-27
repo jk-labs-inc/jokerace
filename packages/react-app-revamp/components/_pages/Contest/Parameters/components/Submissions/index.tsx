@@ -1,7 +1,6 @@
 import { FC, useMemo } from "react";
 import ContestParamatersCSVSubmitters from "../CSV/Submitters";
 import ContestParametersSubmissionRequirements from "../Requirements/Submission";
-import { formatEther } from "viem";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
 
 interface ContestParametersSubmissionsProps {

@@ -1,10 +1,8 @@
 import { chains, config } from "@config/wagmi";
-import { isAlchemyConfigured } from "@helpers/alchemy";
 import { isSupabaseConfigured } from "@helpers/database";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
-import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
@@ -15,7 +13,6 @@ import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
-import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilliseconds } from "date-fns";
 import { checkIfContestExists } from "lib/contests";
 import { usePathname } from "next/navigation";
 import { useState } from "react";

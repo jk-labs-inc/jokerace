@@ -3,7 +3,7 @@ import { ROUTE_VIEW_USER } from "@config/routes";
 import useProfileData from "@hooks/useProfileData";
 import Link from "next/link";
 import { Avatar } from "../Avatar";
-import { CheckCircleIcon, LinkIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 
 interface UserProfileDisplayProps {

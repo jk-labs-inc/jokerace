@@ -1,7 +1,6 @@
 import CreateRewardsPool from "./steps/CreatePool";
 import CreateRewardsDeploymentStatus from "./steps/DeploymentStatus";
 import CreateRewardsFundPool from "./steps/FundPool";
-import CreateRewardsPoolInitialStep from "./steps/Initial";
 import CreateRewardsReviewPool from "./steps/ReviewPool";
 import { CreationStep, useCreateRewardsStore } from "./store";
 

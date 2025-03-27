@@ -9,7 +9,6 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import ContestPrompt from "../components/Prompt";

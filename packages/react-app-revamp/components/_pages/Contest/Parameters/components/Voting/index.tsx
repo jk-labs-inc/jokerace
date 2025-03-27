@@ -1,6 +1,5 @@
 import { formatNumber } from "@helpers/formatNumber";
 import { FC, useMemo } from "react";
-import { formatEther } from "viem";
 import ContestParamatersCSVVoters from "../CSV/Voters";
 import ContestParametersVotingRequirements from "../Requirements/Voting";
 import { VoteType } from "@hooks/useDeployContest/types";

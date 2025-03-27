@@ -8,7 +8,7 @@ import useFundRewardsModule from "@hooks/useFundRewards";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { toast } from "react-toastify";
 import { useAccount } from "wagmi";
 import TokenWidgets from "../Contest/Rewards/components/Create/steps/FundPool/components/TokenWidgets";
