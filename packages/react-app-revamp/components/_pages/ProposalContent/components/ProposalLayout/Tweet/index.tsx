@@ -54,18 +54,21 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
 
   const onVotingModalOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     handleVotingModalOpen?.();
   };
 
   const onCommentLinkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     router.push(commentLink);
   };
 
   const onDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     toggleProposalSelection?.(proposal.id);
   };
@@ -89,30 +92,10 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
           />
         </div>
         {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-          <button
-            onClick={onVotingModalOpen}
-            className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
-          >
-            <img
-              src="/contest/upvote.svg"
-              width={16}
-              height={16}
-              alt="upvote"
-              className="flex-shrink-0 transition-all duration-300 ease-in-out group-hover:brightness-0 group-hover:saturate-0"
-            />
-            <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
-          </button>
-        ) : null}
-      </div>
-      <div className="not-prose">
-        <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />
-      </div>
-      <div className="mt-auto pl-2">
-        <div className="flex gap-2 items-center">
-          {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
+          <div onClick={e => e.stopPropagation()}>
             <button
               onClick={onVotingModalOpen}
-              className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
+              className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
             >
               <img
                 src="/contest/upvote.svg"
@@ -123,19 +106,45 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
               />
               <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
             </button>
+          </div>
+        ) : null}
+      </div>
+      <div className="not-prose">
+        <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />
+      </div>
+      <div className="mt-auto pl-2">
+        <div className="flex gap-2 items-center">
+          {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
+            <div onClick={e => e.stopPropagation()}>
+              <button
+                onClick={onVotingModalOpen}
+                className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
+              >
+                <img
+                  src="/contest/upvote.svg"
+                  width={16}
+                  height={16}
+                  alt="upvote"
+                  className="flex-shrink-0 transition-all duration-300 ease-in-out group-hover:brightness-0 group-hover:saturate-0"
+                />
+                <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
+              </button>
+            </div>
           ) : (
             <p className="text-neutral-10 text-[14px] font-bold">
               voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
             </p>
           )}
-          <button
-            onClick={onCommentLinkClick}
-            className="min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
-          >
-            <ChatBubbleLeftEllipsisIcon className="w-4 h-4 flex-shrink-0" />
-            <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
-          </button>
-          <div className="ml-auto">
+          <div onClick={e => e.stopPropagation()}>
+            <button
+              onClick={onCommentLinkClick}
+              className="min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
+            >
+              <ChatBubbleLeftEllipsisIcon className="w-4 h-4 flex-shrink-0" />
+              <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
+            </button>
+          </div>
+          <div className="ml-auto" onClick={e => e.stopPropagation()}>
             {allowDelete ? (
               <button className="relative w-4 h-4 cursor-pointer" onClick={onDeleteClick}>
                 <CheckIcon

@@ -63,12 +63,14 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 
   const onVotingModalOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     handleVotingModalOpen?.();
   };
 
   const onDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     toggleProposalSelection?.(proposal.id);
   };
@@ -114,7 +116,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
         </div>
 
         {allowDelete ? (
-          <div className="absolute bottom-1 left-2">
+          <div className="absolute bottom-1 left-2" onClick={e => e.stopPropagation()}>
             <div className="bg-true-black bg-opacity-75 w-8 h-6 rounded-full flex items-center justify-center">
               <button className="relative w-4 h-4 cursor-pointer" onClick={onDeleteClick}>
                 <CheckIcon
@@ -134,7 +136,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
         ) : null}
 
         {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
+          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2" onClick={e => e.stopPropagation()}>
             <button
               onClick={onVotingModalOpen}
               className="min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black bg-opacity-75 rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out group"

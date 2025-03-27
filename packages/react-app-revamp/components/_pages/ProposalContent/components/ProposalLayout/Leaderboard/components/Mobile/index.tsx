@@ -44,18 +44,21 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
 
   const navigateToCommentLink = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     router.push(commentLink);
   };
 
   const navigateToVotingModal = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     handleVotingModalOpen?.();
   };
 
   const navigateToProposal = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     router.push(`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`);
   };
@@ -75,7 +78,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
           textColor="text-neutral-10"
           size="extraSmall"
         />
-        <div className="flex gap-2 items-center ml-auto ">
+        <div className="flex gap-2 items-center ml-auto" onClick={e => e.stopPropagation()}>
           <button
             onClick={navigateToCommentLink}
             className="min-w-12 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px]  text-neutral-9  border border-neutral-9"
@@ -96,16 +99,18 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
       </div>
       <div className="flex items-center gap-6">
         {allowDelete ? (
-          <ProposalContentDeleteButton
-            proposalId={proposal.id}
-            selectedProposalIds={selectedProposalIds}
-            toggleProposalSelection={toggleProposalSelection}
-          />
+          <div onClick={e => e.stopPropagation()}>
+            <ProposalContentDeleteButton
+              proposalId={proposal.id}
+              selectedProposalIds={selectedProposalIds}
+              toggleProposalSelection={toggleProposalSelection}
+            />
+          </div>
         ) : (
           <div className="ml-[5px] h-6 w-6 mt-1" />
         )}
         <p className="text-[16px] text-neutral-11 font-bold normal-case">{entryTitle}</p>
-        <div className="flex ml-auto">
+        <div className="flex ml-auto" onClick={e => e.stopPropagation()}>
           <button
             onClick={navigateToProposal}
             className="text-neutral-10 hover:text-positive-11 transition-colors duration-300 ease-in-out"
