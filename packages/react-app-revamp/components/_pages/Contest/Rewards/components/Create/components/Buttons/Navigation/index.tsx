@@ -1,7 +1,6 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { FC, useState } from "react";
 import { CreationStep, useCreateRewardsStore } from "../../../store";
-import { useFundPoolStore } from "../../../steps/FundPool/store";
 import { useMediaQuery } from "react-responsive";
 import MobileBottomButton from "@components/_pages/Create/components/Buttons/Mobile";
 

@@ -4,9 +4,6 @@ import { useContestStore } from "@hooks/useContest/store";
 import { readContract } from "@wagmi/core";
 import { loadFileFromBucket } from "lib/buckets";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Address } from "viem";
-import { useAccount } from "wagmi";
 
 type ProofType = "submission" | "vote";
 

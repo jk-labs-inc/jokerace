@@ -1,6 +1,5 @@
 import ButtonWithdraw from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdraw";
 import { ProcessedReleasableRewards, TokenInfo } from "@hooks/useReleasableRewards";
-import { RewardModuleInfo } from "@hooks/useRewards/store";
 import { FC, useMemo } from "react";
 import { Abi } from "viem";
 

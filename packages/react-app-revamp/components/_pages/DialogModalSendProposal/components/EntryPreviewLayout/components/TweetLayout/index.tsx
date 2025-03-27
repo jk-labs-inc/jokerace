@@ -4,7 +4,6 @@ import { debounce } from "lodash";
 import { twitterRegex } from "@helpers/regex";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
-import ClipLoader from "react-spinners/ClipLoader";
 
 interface DialogModalSendProposalEntryPreviewTweetLayoutProps {
   onChange?: (value: string) => void;

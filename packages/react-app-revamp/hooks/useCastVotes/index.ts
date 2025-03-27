@@ -24,7 +24,6 @@ import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
 import { useEmailSend } from "@hooks/useEmailSend";
 import { EmailType, VotingEmailParams } from "lib/email/types";
-import { FOOTER_LINKS } from "@config/links";
 import moment from "moment";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 import { compareVersions } from "compare-versions";

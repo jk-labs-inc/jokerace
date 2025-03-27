@@ -1,11 +1,8 @@
 import CreateFlowPromptPreview from "@components/_pages/Create/components/PromptPreview";
 import CreateFlowPreviewToggle from "@components/_pages/Create/components/PreviewToggle";
 import DialogModalV4 from "@components/UI/DialogModalV4";
-import ImageUpload from "@components/UI/ImageUpload";
-import { ACCEPTED_FILE_TYPES } from "@components/UI/ImageUpload/utils";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import { createEditorConfig } from "@helpers/createEditorConfig";
-import { useUploadImageStore } from "@hooks/useUploadImage";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";

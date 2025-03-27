@@ -7,7 +7,6 @@ import { FC, useEffect, useState } from "react";
 import ImageWithFallback from "../../ImageWithFallback";
 import ProposalContentProfile from "../../Profile";
 import ProposalLayoutGalleryRankOrPlaceholder from "./components/RankOrPlaceholder";
-import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import { EntryPreview } from "@hooks/useDeployContest/store";
 
 interface ProposalLayoutGalleryProps {
