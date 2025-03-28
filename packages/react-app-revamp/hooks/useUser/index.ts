@@ -286,7 +286,8 @@ export function useUser() {
       }
 
       const userVotesRaw = (userBalanceResult.value - totalGasCost) / costToVoteResult;
-      const userVotesFormatted = Number(parseEther(userVotesRaw.toString())) / 1e18;
+
+      const userVotesFormatted = Math.floor(Number(parseEther(userVotesRaw.toString())) / 1e18);
 
       // check for valid number
       if (isNaN(userVotesFormatted)) {
