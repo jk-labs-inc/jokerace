@@ -133,13 +133,18 @@ export function useProposal() {
       const currentDate = new Date();
 
       if (!useLegacyGetAllProposalsIdFn) {
+        const hasDownvotes = compareVersions(version, "5.1") < 0;
+
         const extractVotes = (index: number) => {
-          const forVotesValue = BigInt(proposalsIdsRawData[1][index].forVotes);
-          const againstVotesValue = BigInt(proposalsIdsRawData[1][index].againstVotes);
+          if (hasDownvotes) {
+            const forVotesValue = BigInt(proposalsIdsRawData[1][index].forVotes);
+            const againstVotesValue = BigInt(proposalsIdsRawData[1][index].againstVotes);
 
-          const netVotes = Number(formatEther(forVotesValue - againstVotesValue));
+            const netVotes = Number(formatEther(forVotesValue - againstVotesValue));
 
-          return netVotes;
+            return netVotes;
+          }
+          return Number(formatEther(proposalsIdsRawData[1][index]));
         };
 
         mappedProposals = proposalsIdsRawData[0].map((data: any, index: number) => {
