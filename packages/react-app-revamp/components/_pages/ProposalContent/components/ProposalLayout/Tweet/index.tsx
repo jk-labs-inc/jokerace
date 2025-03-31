@@ -109,9 +109,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
           </div>
         ) : null}
       </div>
-      <div className="not-prose">
-        <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />
-      </div>
+      <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />
       <div className="mt-auto pl-2">
         <div className="flex gap-2 items-center">
           {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
