@@ -64,7 +64,7 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, proposalId }) =>
       .replace("[address]", address)
       .replace("[submission]", submission);
 
-    router.push(path);
+    router.push(path, { scroll: false });
   };
 
   const handleOnNextEntryChange = () => {
