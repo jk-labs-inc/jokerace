@@ -249,8 +249,8 @@ export async function getProposalIdsRaw(contractConfig: ContractConfig, isLegacy
 
           if (hasDownvotes) {
             accumulator.correspondingVotes.push({
-              forVotes: results[0].result[1][index],
-              againstVotes: BigInt(0),
+              forVotes: results[0].result[1][index].forVotes,
+              againstVotes: results[0].result[1][index].againstVotes,
             });
           } else {
             accumulator.correspondingVotes.push(results[0].result[1][index]);
