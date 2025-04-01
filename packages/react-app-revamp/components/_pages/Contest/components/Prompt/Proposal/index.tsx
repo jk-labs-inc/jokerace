@@ -56,11 +56,7 @@ const transform = (node: HTMLElement): ReactNode => {
         );
       } else {
         const tweetId = tweetUrlMatch[4] || tweetUrlMatch[2];
-        return (
-          <div className="not-prose">
-            <Tweet apiUrl={`/api/tweet/${tweetId}`} id={tweetId} />
-          </div>
-        );
+        return <Tweet apiUrl={`/api/tweet/${tweetId}`} id={tweetId} />;
       }
     }
   }
