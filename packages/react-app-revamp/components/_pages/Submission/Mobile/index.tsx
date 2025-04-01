@@ -74,6 +74,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
   const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
   const [showVotingModal, setShowVotingModal] = useState(false);
+  const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
 
   if (isProposalError) {
     return (
@@ -140,10 +141,6 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               </p>
             )}
 
-            <div className="flex flex-col gap-4 md:gap-8 md:w-80">
-              <hr className="block border border-neutral-2" />
-            </div>
-
             {proposalData && proposalData.proposal && proposalData.proposal.votes > 0 && (
               <div className="flex flex-col gap-12">
                 <div className="flex flex-col gap-4">
@@ -177,7 +174,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               isInPwaMode ? "bottom-[88px]" : "bottom-12"
             } left-0 right-0 flex ${
               currentIndex === 0 || currentIndex === totalProposals - 1 ? "justify-center" : "justify-between"
-            } px-8 pt-5 pb-9 z-50 border-t-neutral-2 border-t-2 bg-true-black`}
+            } px-8 pt-4 pb-4 z-50 border-t-neutral-2 border-t-2 bg-true-black`}
           >
             {currentIndex !== 0 && (
               <div
@@ -227,17 +224,20 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
         />
       )}
 
-      <StickyVoteFooter
-        isConnected={isConnected}
-        currentUserAvailableVotesAmount={currentUserAvailableVotesAmount}
-        outOfVotes={outOfVotes}
-        isPayPerVote={isPayPerVote}
-        contestInfo={contestInfo}
-        chainCurrencySymbol={chainCurrencySymbol ?? ""}
-        onConnectWallet={onConnectWallet ?? (() => {})}
-        setShowVotingModal={setShowVotingModal}
-        linkBridgeDocs={LINK_BRIDGE_DOCS}
-      />
+      {isVotingOpen && (
+        <StickyVoteFooter
+          isConnected={isConnected}
+          totalProposals={totalProposals}
+          currentUserAvailableVotesAmount={currentUserAvailableVotesAmount}
+          outOfVotes={outOfVotes}
+          isPayPerVote={isPayPerVote}
+          contestInfo={contestInfo}
+          chainCurrencySymbol={chainCurrencySymbol ?? ""}
+          onConnectWallet={onConnectWallet ?? (() => {})}
+          setShowVotingModal={setShowVotingModal}
+          linkBridgeDocs={LINK_BRIDGE_DOCS}
+        />
+      )}
     </div>
   );
 };
