@@ -34,7 +34,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const splitFeeDestinationTitle = isMobile
     ? "who should we split charges with?"
-    : "we split all charges 70/30. who should receive these?";
+    : "we split all charges 70 (you)/30 (us). who should receive these?";
 
   useEffect(() => {
     setSelected(splitFeeDestination.type);
