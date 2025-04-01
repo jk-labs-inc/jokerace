@@ -29,15 +29,15 @@ const StickyVoteFooter: FC<StickyVoteFooterProps> = ({
   linkBridgeDocs,
 }) => {
   return (
-    <div className={`fixed ${totalProposals > 1 ? "bottom-28" : "bottom-14"} left-0 right-0 bg-transparent p-4 z-40`}>
-      <div className="max-w-screen-md mx-auto flex justify-center">
+    <div className={`fixed ${totalProposals > 1 ? "bottom-32" : "bottom-14"} left-0 right-0 bg-transparent z-40`}>
+      <div className="mx-auto flex justify-center px-10 max-w-md w-full">
         {isConnected ? (
           currentUserAvailableVotesAmount > 0 ? (
             <ButtonV3
               onClick={() => setShowVotingModal(true)}
               colorClass="bg-gradient-purple"
               textColorClass="text-true-black rounded-[40px]"
-              size={ButtonSize.EXTRA_LARGE_LONG_MOBILE}
+              size={ButtonSize.FULL}
             >
               add votes
             </ButtonV3>
@@ -50,9 +50,9 @@ const StickyVoteFooter: FC<StickyVoteFooterProps> = ({
               onClick={() => window.open(linkBridgeDocs, "_blank")}
               colorClass="bg-gradient-purple"
               textColorClass="text-true-black rounded-[40px]"
-              size={ButtonSize.EXTRA_LARGE_LONG_MOBILE}
+              size={ButtonSize.FULL}
             >
-              add {chainCurrencySymbol} to {contestInfo.chain} to get votes {">"}
+              add {chainCurrencySymbol} to {contestInfo.chain} to get votes
             </ButtonV3>
           ) : (
             <p className="text-[16px] text-neutral-11 text-center">
@@ -64,7 +64,7 @@ const StickyVoteFooter: FC<StickyVoteFooterProps> = ({
             onClick={onConnectWallet}
             colorClass="bg-gradient-purple"
             textColorClass="text-true-black rounded-[40px]"
-            size={ButtonSize.EXTRA_LARGE_LONG_MOBILE}
+            size={ButtonSize.FULL}
           >
             connect wallet {isPayPerVote ? "to add votes" : "to see if you qualify"}
           </ButtonV3>

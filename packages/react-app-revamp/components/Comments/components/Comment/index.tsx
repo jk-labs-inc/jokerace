@@ -32,13 +32,13 @@ const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentS
               <CheckIcon
                 className={`
                     ${isSelected ? "block" : "hidden"}
-                    h-7 w-7 text-secondary-11 bg-white bg-true-black border border-secondary-11 hover:text-secondary-10 
+                    h-4 w-4 text-secondary-11 bg-white bg-true-black border border-secondary-11 hover:text-secondary-10 
                     shadow-md hover:shadow-lg rounded-full`}
               />
               <TrashIcon
                 className={`
                     ${isSelected ? "hidden" : "block"}
-                    h-7 w-7 text-negative-11 bg-true-black hover:text-negative-10 transition-colors duration-300 ease-in-out`}
+                    h-4 w-4 text-negative-11 bg-true-black hover:text-negative-10 transition-colors duration-300 ease-in-out`}
               />
             </div>
           )}

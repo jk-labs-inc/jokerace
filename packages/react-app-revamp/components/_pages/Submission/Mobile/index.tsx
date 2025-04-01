@@ -87,8 +87,8 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-true-black overflow-y-auto">
-      <div className={`flex justify-between p-4 ${isInPwaMode ? "mt-0" : "mt-8"}`}>
+    <div className="fixed inset-0 z-50 bg-true-black overflow-y-auto px-10">
+      <div className={`flex justify-between ${isInPwaMode ? "mt-0" : "mt-8"}`}>
         <ArrowLeftIcon width={24} onClick={onClose} />
         <div className="flex self-end">
           <div
@@ -103,7 +103,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-6 mt-5 px-4 pb-32">
+      <div className="flex flex-col gap-6 mt-5 pb-32">
         <ContestPrompt type="modal" prompt={prompt} hidePrompt />
         {isProposalLoading ? (
           <p className="loadingDots font-sabo text-[18px] mt-12 text-neutral-9">loading submission info</p>
