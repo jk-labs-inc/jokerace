@@ -111,14 +111,13 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           <div className="animate-reveal flex flex-col gap-6">
             <div className="flex flex-col gap-4">
               {proposalData?.proposal ? (
-                <div className="flex gap-2 items-center">
+                <div className="flex flex-col gap-2">
                   <UserProfileDisplay
                     ethereumAddress={proposalData.proposal.authorEthereumAddress}
                     shortenOnFallback={true}
                   />
                   {proposalData.proposal.rank > 0 && (
                     <div className="flex gap-2 items-center">
-                      <span className="text-neutral-11">&#8226;</span>{" "}
                       <p className="text-[16px] font-bold text-neutral-11">
                         {formatNumberAbbreviated(proposalData.proposal.votes)} vote
                         {proposalData.proposal.votes > 1 ? "s" : ""}
