@@ -29,7 +29,9 @@ const StickyVoteFooter: FC<StickyVoteFooterProps> = ({
   linkBridgeDocs,
 }) => {
   return (
-    <div className={`fixed ${totalProposals > 1 ? "bottom-32" : "bottom-14"} left-0 right-0 bg-transparent z-40`}>
+    <div
+      className={`fixed ${totalProposals > 1 ? "bottom-[106px]" : "bottom-14"} left-0 right-0 bg-true-black z-40 pb-4`}
+    >
       <div className="mx-auto flex justify-center px-10 max-w-md w-full">
         {isConnected ? (
           currentUserAvailableVotesAmount > 0 ? (
