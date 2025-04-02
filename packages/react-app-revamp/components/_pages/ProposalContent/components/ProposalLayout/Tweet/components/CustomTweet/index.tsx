@@ -12,5 +12,9 @@ export const Tweet = ({ id, apiUrl, fallback = <TweetSkeleton />, components, on
     return <CustomTweetNotFound id={id} error={onError ? onError(error) : error} />;
   }
 
-  return <MyTweet tweet={data} components={components} />;
+  return (
+    <div className="not-prose light">
+      <MyTweet tweet={data} components={components} />
+    </div>
+  );
 };
