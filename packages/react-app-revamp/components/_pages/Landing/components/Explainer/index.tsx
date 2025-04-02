@@ -51,7 +51,7 @@ const LandingPageExplainer = () => {
         <>
           <ul className="flex flex-col pl-4 gap-2">
             <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-              make a contest, make money: we split all charges 70/30
+              make a contest, make money: we split all charges 70 (you)/30 (us)
             </li>
             <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
               let anyone vote—or allowlist. the choice is yours, and it’s anti-bot.
