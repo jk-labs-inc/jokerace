@@ -106,7 +106,7 @@ const CreateContestTemplate = () => {
               ) : (
                 <ButtonV3
                   onClick={openConnectModal}
-                  colorClass="text-[20px] bg-gradient-purple rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+                  colorClass="text-[16px] bg-gradient-purple rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
                 >
                   connect wallet
                 </ButtonV3>
