@@ -13,6 +13,8 @@ import GeneralTemplate from "../../templates";
 import { getTemplateConfigByType } from "../../templates/templates";
 import { TemplateType } from "../../templates/types";
 import { useCreateContestStartStore } from "../ContestStart";
+import { useAccount } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 const templateOptions: TemplateOption[] = Object.values(TemplateType).map(value => ({
   value: value as TemplateType,
@@ -28,6 +30,8 @@ const CreateContestTemplate = () => {
   const [showStepper, setShowStepper] = useState(false);
   const [isFullMode, setIsFullMode] = useState(false);
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
+  const { isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
 
   const templateConfig = useMemo(
     () => (selectedTemplate ? getTemplateConfigByType(selectedTemplate) : null),
@@ -40,6 +44,8 @@ const CreateContestTemplate = () => {
   }, [templateConfig, allSteps, steps]);
 
   const handleNextClick = () => {
+    if (!isConnected) return;
+
     if (selectedTemplate && templateConfig) {
       setContestTemplateConfig(templateConfig);
       setShowStepper(true);
@@ -89,26 +95,47 @@ const CreateContestTemplate = () => {
               <p className="text-[20px] text-neutral-11" onClick={handleBackClick}>
                 back
               </p>
-              <ButtonV3
-                onClick={handleNextClick}
-                isDisabled={!selectedTemplate}
-                colorClass="text-[20px] bg-gradient-purple rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
-              >
-                next
-              </ButtonV3>
+              {isConnected ? (
+                <ButtonV3
+                  onClick={handleNextClick}
+                  isDisabled={!selectedTemplate}
+                  colorClass="text-[20px] bg-gradient-purple rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+                >
+                  next
+                </ButtonV3>
+              ) : (
+                <ButtonV3
+                  onClick={openConnectModal}
+                  colorClass="text-[20px] bg-gradient-purple rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+                >
+                  connect wallet
+                </ButtonV3>
+              )}
             </div>
           </MobileBottomButton>
         ) : (
           <div className="flex gap-4 items-start mt-8">
             <div className={`flex flex-col gap-4 items-center`}>
-              <ButtonV3
-                colorClass="text-[20px] bg-gradient-purple rounded-[10px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
-                size={ButtonSize.LARGE}
-                onClick={handleNextClick}
-                isDisabled={!selectedTemplate}
-              >
-                Next
-              </ButtonV3>
+              {isConnected ? (
+                <ButtonV3
+                  colorClass="text-[20px] bg-gradient-purple rounded-[10px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+                  size={ButtonSize.LARGE}
+                  onClick={handleNextClick}
+                  isDisabled={!selectedTemplate}
+                >
+                  Next
+                </ButtonV3>
+              ) : (
+                <div className="flex flex-col gap-2 items-center">
+                  <ButtonV3
+                    colorClass="text-[20px] bg-gradient-purple rounded-[10px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+                    size={ButtonSize.LARGE}
+                    onClick={openConnectModal}
+                  >
+                    connect wallet
+                  </ButtonV3>
+                </div>
+              )}
               <div
                 className="hidden lg:flex items-center gap-[5px] -ml-[15px] cursor-pointer group"
                 onClick={handleBackClick}
