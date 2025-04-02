@@ -25,7 +25,8 @@ import { FC, useState } from "react";
 import { useAccount } from "wagmi";
 import SubmissionPageMobileVoting from "./components/Voting";
 import StickyVoteFooter from "./components/VoteFooter";
-
+import SubmissionPageMobileVotersList from "./components/VotersList";
+import SubmissionPageMobileComments from "./components/Comments";
 interface SubmissionPageMobileLayoutProps {
   contestInfo: {
     address: string;
@@ -87,7 +88,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-true-black overflow-y-auto px-10">
+    <div className="fixed inset-0 z-50 bg-true-black overflow-y-auto px-8">
       <div className={`flex justify-between ${isInPwaMode ? "mt-0" : "mt-8"}`}>
         <ArrowLeftIcon width={24} onClick={onClose} />
         <div className="flex self-end">
@@ -115,6 +116,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
                   <UserProfileDisplay
                     ethereumAddress={proposalData.proposal.authorEthereumAddress}
                     shortenOnFallback={true}
+                    textColor="text-neutral-9"
                   />
                   {proposalData.proposal.rank > 0 && (
                     <div className="flex gap-2 items-center">
@@ -133,7 +135,11 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               ) : null}
             </div>
             {proposalData?.proposal ? (
-              <ContestProposal proposal={proposalData.proposal} contestStatus={contestStatus} />
+              <ContestProposal
+                proposal={proposalData.proposal}
+                contestStatus={contestStatus}
+                className="text-neutral-9"
+              />
             ) : (
               <p className="text-[16px] text-negative-11 font-bold">
                 ruh-roh! An error occurred when retrieving this proposal; try refreshing the page.
@@ -141,28 +147,16 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
             )}
 
             {proposalData && proposalData.proposal && proposalData.proposal.votes > 0 && (
-              <div className="flex flex-col gap-12">
-                <div className="flex flex-col gap-4">
-                  <p className="text-[20px] text-neutral-11 font-bold">
-                    voters {addressesVoted.length > 0 ? `(${addressesVoted.length})` : ""}
-                  </p>
-                  <ListProposalVotes proposalId={proposalId} votedAddresses={proposalData.votedAddresses} />
-                </div>
-              </div>
+              <SubmissionPageMobileVotersList proposalId={proposalId} addressesVoted={addressesVoted} />
             )}
 
             {commentsAllowed && proposalData ? (
-              <div className="flex flex-col gap-4">
-                <p className="text-[20px] text-neutral-11 font-bold">
-                  comments{proposalData?.numberOfComments ? ` (${proposalData.numberOfComments})` : ""}
-                </p>
-                <Comments
-                  contestAddress={contestInfo.address}
-                  contestChainId={contestInfo.chainId}
-                  proposalId={proposalId}
-                  numberOfComments={proposalData?.numberOfComments}
-                />
-              </div>
+              <SubmissionPageMobileComments
+                proposalId={proposalId}
+                numberOfComments={proposalData.numberOfComments}
+                address={contestInfo.address}
+                chainId={contestInfo.chainId}
+              />
             ) : null}
           </div>
         )}

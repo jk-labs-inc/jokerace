@@ -12,9 +12,10 @@ interface CommentsProps {
   contestChainId: number;
   proposalId: string;
   numberOfComments: number | null;
+  className?: string;
 }
 
-const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalId, numberOfComments }) => {
+const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalId, numberOfComments, className }) => {
   const query = useSearchParams();
   const contestState = useContestStateStore(state => state.contestState);
   const isCompletedOrCanceled =
@@ -53,6 +54,7 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
     <div className="flex justify-between flex-col w-full h-full" id="comments" ref={commentsRef}>
       {comments.length > 0 ? (
         <CommentsList
+          className={className}
           comments={comments}
           isLoading={isLoading}
           isPaginating={isPaginating}

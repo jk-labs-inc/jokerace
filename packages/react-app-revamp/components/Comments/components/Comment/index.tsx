@@ -11,9 +11,10 @@ interface CommentProps {
   comment: CommentType;
   toggleCommentSelection?: (commentId: string) => void;
   selectedCommentIds: string[];
+  className?: string;
 }
 
-const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentSelection }) => {
+const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentSelection, className }) => {
   const { address } = useAccount();
   const contestAuthor = useContestStore(state => state.contestAuthorEthereumAddress);
   const timeAgo = moment(comment.createdAt).fromNow();
@@ -24,7 +25,7 @@ const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentS
     <div className="flex flex-col gap-4 animate-reveal">
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
-          <UserProfileDisplay ethereumAddress={comment.author} shortenOnFallback />
+          <UserProfileDisplay ethereumAddress={comment.author} shortenOnFallback textColor={className} />
           <span className="text-neutral-9">•</span>
           <span className="text-[14px] text-neutral-9">{timeAgo}</span>
           {allowDelete && (
@@ -44,7 +45,7 @@ const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentS
           )}
         </div>
       </div>
-      <div className="prose ml-[15px] prose-invert text-[16px] border-l-2 border-neutral-2 pl-4">
+      <div className={`prose ml-[15px] prose-invert text-[16px] border-l-2 border-neutral-2 pl-4 ${className}`}>
         <Interweave content={comment.content} matchers={[new UrlMatcher("url")]} />
       </div>
     </div>
