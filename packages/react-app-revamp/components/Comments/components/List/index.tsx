@@ -19,6 +19,7 @@ interface CommentsListProps {
   isDeletingSuccess: boolean;
   onDeleteSelectedComments?: (selectedCommentIds: string[]) => void;
   onLoadMoreComments?: () => void;
+  className?: string;
 }
 
 interface CommentsSkeletonProps {
@@ -54,6 +55,7 @@ const CommentsList: FC<CommentsListProps> = ({
   onLoadMoreComments,
   currentPage,
   totalPages,
+  className,
 }) => {
   const query = useSearchParams();
   const [selectedCommentIds, setSelectedCommentIds] = useState<string[]>([]);
@@ -119,6 +121,7 @@ const CommentsList: FC<CommentsListProps> = ({
                 comment={comment}
                 selectedCommentIds={selectedCommentIds}
                 toggleCommentSelection={toggleCommentSelection}
+                className={className}
               />
             );
           })}
