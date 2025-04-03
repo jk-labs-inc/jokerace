@@ -60,7 +60,13 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
       </div>
 
       <div className="flex flex-col gap-2 md:gap-4 w-80 xs:w-[460px] sm:w-[560px]">
-        <div className="relative">
+        <div
+          className="relative"
+          style={{
+            overflow: "hidden",
+            height: !isExpanded && shouldShowReadMore ? `${Math.min(lineCount, maxVisibleLines) * 1.6}em` : "auto",
+          }}
+        >
           <div ref={elementRef} className="prose prose-invert flex flex-col invisible absolute w-full">
             {renderSection(contestSummary, false)}
             {renderSection(contestEvaluate, true)}
@@ -79,6 +85,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
                     maskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
                     WebkitMaskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
                     maxHeight: `${Math.min(lineCount, maxVisibleLines) * 1.6}em`,
+                    height: `${Math.min(lineCount, maxVisibleLines) * 1.6}em`,
                   }
                 : {}),
             }}
@@ -90,7 +97,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
         </div>
 
         {shouldShowReadMore && !isExpanded && (
-          <div className="w-full flex -mt-12 items-center justify-center z-10">
+          <div className="w-full flex items-center justify-center z-10 -mt-12">
             <button
               onClick={() => setIsExpanded(true)}
               className="text-[12px] md:text-[16px] font-bold flex z-50 w-[120px] md:w-40 h-10 rounded-lg items-center justify-center bg-primary-1 gap-1 text-positive-11 hover:bg-positive-11 hover:text-primary-1 transition-all duration-300 ease-in-out"

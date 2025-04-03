@@ -230,7 +230,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                       <span className="text-positive-11 cursor-pointer text-[16px]" onClick={onConnectWallet}>
                         connect wallet
                       </span>{" "}
-                      to see if you qualify
+                      {isPayPerVote ? "to get votes" : "to see if you qualify"}
                     </p>
                   )}
                 </div>

@@ -9,8 +9,6 @@ interface DialogMaxVotesAlertProps {
   onConfirm?: () => void;
   onCancel?: () => void;
   buttonSize?: ButtonSize;
-  isMobile?: boolean;
-  isOpen?: boolean;
 }
 
 const DialogMaxVotesAlert: FC<DialogMaxVotesAlertProps> = ({
@@ -19,22 +17,8 @@ const DialogMaxVotesAlert: FC<DialogMaxVotesAlertProps> = ({
   onConfirm,
   onCancel,
   buttonSize = ButtonSize.EXTRA_LARGE_LONG_MOBILE,
-  isMobile = false,
-  isOpen = true,
 }) => {
-  const backdropRef = useRef<HTMLDivElement>(null);
-  const isSmallScreen = useMediaQuery({ query: "(max-width: 768px)" });
-
-  const handleBackdropClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (e.target === backdropRef.current) {
-        onCancel?.();
-      }
-    },
-    [onCancel],
-  );
-
-  const content = (
+  return (
     <div className="flex flex-col gap-8 animate-swingInLeft">
       <p className="text-neutral-11 text-[24px] font-bold">vote it all 😈</p>
       <div className="flex flex-col gap-4">
@@ -66,30 +50,6 @@ const DialogMaxVotesAlert: FC<DialogMaxVotesAlertProps> = ({
       </div>
     </div>
   );
-
-  if (isMobile) {
-    if (typeof window === "undefined") return null;
-
-    return ReactDOM.createPortal(
-      <div
-        ref={backdropRef}
-        className={`fixed inset-0 z-50 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
-        onClick={handleBackdropClick}
-      >
-        <div className="absolute inset-0 bg-neutral-8 bg-opacity-40 pointer-events-none" />
-        <div
-          className={`absolute animate-appear inset-x-0 bottom-0 bg-true-black 
-          border-t border-neutral-9 rounded-t-[40px] p-6 pb-12 
-          ${isOpen ? "translate-y-0" : "translate-y-full"} transition-transform duration-300`}
-        >
-          {content}
-        </div>
-      </div>,
-      document.body,
-    );
-  }
-
-  return content;
 };
 
 export default DialogMaxVotesAlert;
