@@ -121,13 +121,13 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
                   {proposalData.proposal.rank > 0 && (
                     <div className="flex gap-2 items-center">
                       <p className="text-[16px] font-bold text-neutral-11">
-                        {formatNumberAbbreviated(proposalData.proposal.votes)} vote
-                        {proposalData.proposal.votes > 1 ? "s" : ""}
+                        {ordinalize(proposalData.proposal.rank).label} place{" "}
+                        {proposalData.proposal.isTied ? "(tied)" : ""}
                       </p>
                       <span className="text-neutral-9">&#8226;</span>{" "}
                       <p className="text-[16px] font-bold text-neutral-9">
-                        {ordinalize(proposalData.proposal.rank).label} place{" "}
-                        {proposalData.proposal.isTied ? "(tied)" : ""}
+                        {formatNumberAbbreviated(proposalData.proposal.votes)} vote
+                        {proposalData.proposal.votes > 1 ? "s" : ""}
                       </p>
                     </div>
                   )}

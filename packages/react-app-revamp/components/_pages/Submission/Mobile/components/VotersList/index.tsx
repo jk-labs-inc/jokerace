@@ -26,7 +26,7 @@ const SubmissionPageMobileVotersList: FC<SubmissionPageMobileVotersListProps> = 
           aria-label={`voters list ${isExpanded ? "collapse" : "expand"}`}
         >
           <p className="text-[20px] text-neutral-11 font-bold">
-            voters {addressesVoted.length > 0 ? `(${addressesVoted.length})` : ""}
+            voters {addressesVoted.length > 0 ? <span className="text-[16px]">({addressesVoted.length})</span> : ""}
           </p>
           <ChevronDownIcon
             className={`w-5 h-5 text-neutral-11 transition-transform ${isExpanded ? "" : "transform rotate-180"}`}

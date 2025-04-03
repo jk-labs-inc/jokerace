@@ -32,7 +32,7 @@ const SubmissionPageMobileComments: FC<SubmissionPageMobileCommentsProps> = ({
         aria-label={`comments list ${isExpanded ? "collapse" : "expand"}`}
       >
         <p className="text-[20px] text-neutral-11 font-bold">
-          comments{numberOfComments ? ` (${numberOfComments})` : ""}
+          comments{numberOfComments ? <span className="text-[16px]"> ({numberOfComments})</span> : ""}
         </p>
         <ChevronDownIcon
           className={`w-5 h-5 text-neutral-11 transition-transform ${isExpanded ? "" : "transform rotate-180"}`}
