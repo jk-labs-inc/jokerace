@@ -4190,15 +4190,15 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@headlessui/react@2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@headlessui/react/-/react-2.2.0.tgz#a8e32f0899862849a1ce1615fa280e7891431ab7"
-  integrity sha512-RzCEg+LXsuI7mHiSomsu/gBJSjpupm6A1qIZ5sWjd7JhARNlMiSA4kKfJpCKwU9tE+zMRterhhrP74PvfJrpXQ==
+"@headlessui/react@2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@headlessui/react/-/react-2.2.1.tgz#f694e669b741db97d9fab8de095e8bc3942404fb"
+  integrity sha512-daiUqVLae8CKVjEVT19P/izW0aGK0GNhMSAeMlrDebKmoVZHcRRwbxzgtnEadUVDXyBsWo9/UH4KHeniO+0tMg==
   dependencies:
     "@floating-ui/react" "^0.26.16"
     "@react-aria/focus" "^3.17.1"
     "@react-aria/interactions" "^3.21.3"
-    "@tanstack/react-virtual" "^3.8.1"
+    "@tanstack/react-virtual" "^3.11.1"
 
 "@heroicons/react@2.2.0":
   version "2.2.0"
@@ -8105,17 +8105,17 @@
   dependencies:
     "@tanstack/query-core" "5.66.4"
 
-"@tanstack/react-virtual@^3.8.1":
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.8.1.tgz#bff309a7c684b590a92e92e645e2bbab366a2982"
-  integrity sha512-dP5a7giEM4BQWLJ7K07ToZv8rF51mzbrBMkf0scg1QNYuFx3utnPUBPUHdzaowZhIez1K2XS78amuzD+YGRA5Q==
+"@tanstack/react-virtual@^3.11.1":
+  version "3.13.6"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.13.6.tgz#30243c8c3166673caf66bfbf5352e1b314a3a4cd"
+  integrity sha512-WT7nWs8ximoQ0CDx/ngoFP7HbQF9Q2wQe4nh2NB+u2486eX3nZRE40P9g6ccCVq7ZfTSH5gFOuCoVH5DLNS/aA==
   dependencies:
-    "@tanstack/virtual-core" "3.8.1"
+    "@tanstack/virtual-core" "3.13.6"
 
-"@tanstack/virtual-core@3.8.1":
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/@tanstack/virtual-core/-/virtual-core-3.8.1.tgz#50348857890cdfe8e6c784de3bb028caaa097f5e"
-  integrity sha512-uNtAwenT276M9QYCjTBoHZ8X3MUeCRoGK59zPi92hMIxdfS9AyHjkDWJ94WroDxnv48UE+hIeo21BU84jKc8aQ==
+"@tanstack/virtual-core@3.13.6":
+  version "3.13.6"
+  resolved "https://registry.yarnpkg.com/@tanstack/virtual-core/-/virtual-core-3.13.6.tgz#329f962f1596b3280736c266a982897ed2112157"
+  integrity sha512-cnQUeWnhNP8tJ4WsGcYiX24Gjkc9ALstLbHcBj1t3E7EimN6n6kHH+DPV4PpDnuw00NApQp+ViojMj1GRdwYQg==
 
 "@tiptap/core@2.4.0", "@tiptap/core@^2.4.0":
   version "2.4.0"
