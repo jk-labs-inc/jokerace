@@ -236,7 +236,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                     colorClass="bg-gradient-purple rounded-[40px]"
                     size={ButtonSize.EXTRA_LARGE_LONG}
                     onClick={handleConfirm}
-                    isDisabled={isLoading}
+                    isDisabled={isLoading || insufficientBalance}
                   >
                     submit
                   </ButtonV3>

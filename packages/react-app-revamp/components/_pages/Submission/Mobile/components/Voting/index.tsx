@@ -1,4 +1,5 @@
 import DialogMaxVotesAlert from "@components/_pages/DialogMaxVotesAlert";
+import Onramp from "@components/Onramp";
 import { ButtonSize } from "@components/UI/ButtonV3";
 import VotingWidget from "@components/Voting";
 import { getNativeTokenSymbol } from "@helpers/nativeToken";
@@ -41,7 +42,7 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
   const [totalCharge, setTotalCharge] = useState("");
   const nativeToken = getNativeTokenSymbol(contestInfo.chain);
   const backdropRef = useRef<HTMLDivElement>(null);
-
+  const [showOnrampModal, setShowOnrampModal] = useState(false);
   const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
     if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
       setShowMaxVoteConfirmation(true);
@@ -84,7 +85,9 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
                 border-t border-neutral-9 rounded-t-[40px] p-6 pb-12 
                 ${isOpen ? "translate-y-0" : "translate-y-full"} transition-transform duration-300`}
       >
-        {showMaxVoteConfirmation ? (
+        {showOnrampModal ? (
+          <Onramp chain={contestInfo.chain} asset={nativeToken ?? ""} onGoBack={() => setShowOnrampModal(false)} />
+        ) : showMaxVoteConfirmation ? (
           <DialogMaxVotesAlert
             token={nativeToken ?? ""}
             totalCost={totalCharge}
@@ -98,6 +101,9 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
             amountOfVotes={amountOfVotes}
             onVote={onSubmitCastVotes}
             downvoteAllowed={downvoteAllowed}
+            onAddFunds={() => {
+              setShowOnrampModal(true);
+            }}
           />
         )}
       </div>
