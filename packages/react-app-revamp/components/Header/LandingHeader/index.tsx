@@ -30,7 +30,17 @@ const LandingHeader = () => {
   const isOneOfActive = (routes: string[]) =>
     routes.includes(pathname ?? "") ? "text-positive-11 transition-colors font-bold" : "";
   const { openConnectModal } = useConnectModal();
-  const allowedLinks = ["Github", "Twitter", "Report a bug", "Terms", "Telegram", "Media Kit", "FAQ", "Substack"];
+  const allowedLinks = [
+    "Github",
+    "Twitter",
+    "Report a bug",
+    "Terms",
+    "Privacy Policy",
+    "Telegram",
+    "Media Kit",
+    "FAQ",
+    "Substack",
+  ];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const [showWalletPortal, setShowWalletPortal] = useState(false);
 
@@ -90,20 +100,24 @@ const LandingHeader = () => {
               isClient && isInPwaMode ? "pb-8" : "pb-2"
             }`}
           >
-            <div className="text-neutral-10 flex justify-center items-center text-[12px] py-3 border-b border-neutral-2">
-              <div className="flex justify-center gap-2 items-center w-full">
-                {filteredLinks.map((link, key) => (
-                  <a
-                    className="font-bold"
-                    key={`footer-link-${key}`}
-                    href={link.href}
-                    rel="nofollow noreferrer"
-                    target="_blank"
-                  >
-                    {link.label}
-                  </a>
-                ))}
+            <div className="text-neutral-10 border-b text-[14px] border-neutral-2 py-3 overflow-hidden relative">
+              <div className="flex items-center w-full overflow-x-auto scrollbar-hide px-4 pb-1">
+                <div className="flex gap-4 items-center min-w-max">
+                  {filteredLinks.map((link, key) => (
+                    <a
+                      className="font-bold whitespace-nowrap py-1"
+                      key={`footer-link-${key}`}
+                      href={link.href}
+                      rel="nofollow noreferrer"
+                      target="_blank"
+                      aria-label={`Visit ${link.label}`}
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
               </div>
+              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-true-black to-transparent pointer-events-none"></div>
             </div>
             <div className="flex flex-row items-center justify-between pt-2 px-8">
               <CustomLink href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
