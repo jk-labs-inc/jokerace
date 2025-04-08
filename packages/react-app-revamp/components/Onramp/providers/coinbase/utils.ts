@@ -19,7 +19,7 @@ export const getOnrampBuyUrl = ({
 
   const addresses = encodeURIComponent(
     JSON.stringify({
-      [chain]: [address],
+      [address]: [chain],
     }),
   );
 
