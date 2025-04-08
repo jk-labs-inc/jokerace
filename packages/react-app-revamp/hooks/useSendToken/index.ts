@@ -61,8 +61,6 @@ export function useSendToken(options?: UseSendTokenOptions) {
         const parsedAmount = parseUnits(amount, 18);
 
         try {
-          toastLoading("preparing native token transaction...");
-
           const maxPriorityFeePerGas = await estimateMaxPriorityFeePerGas(config, {
             chainId,
           });
@@ -76,7 +74,7 @@ export function useSendToken(options?: UseSendTokenOptions) {
             return;
           }
 
-          toastLoading("sending native token transaction...");
+          toastLoading("sending transfer transaction...");
           const hash = await sendTransaction(config, {
             to: recipientAddress as `0x${string}`,
             value: adjustedAmount,
@@ -92,8 +90,6 @@ export function useSendToken(options?: UseSendTokenOptions) {
           throw error;
         }
       } else {
-        toastLoading("preparing token transfer...");
-
         const parsedAmount = parseUnits(amount, token.decimals);
 
         return await transferERC20Token(
