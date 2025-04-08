@@ -132,8 +132,6 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
         balance: parseFloat(nativeBalance.formatted),
       };
 
-      console.log("nativeToken", nativeToken);
-
       allTokens.unshift(nativeToken);
     }
 

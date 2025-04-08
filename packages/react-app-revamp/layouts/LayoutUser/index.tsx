@@ -14,6 +14,7 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
+import { useAccount } from "wagmi";
 
 interface LayoutUserProps {
   address: string;
@@ -46,6 +47,7 @@ function isActiveLink(pathname: string, hrefTemplate: string, address: string) {
 }
 
 const LayoutUser = (props: LayoutUserProps) => {
+  const { address: userAddress, isConnected } = useAccount();
   const { children, address } = props;
   const pathname = usePathname();
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
@@ -81,7 +83,7 @@ const LayoutUser = (props: LayoutUserProps) => {
               shortenOnFallback
               size={isMobile ? "medium" : "large"}
               includeSocials
-              includeSendFunds
+              includeSendFunds={isConnected && userAddress !== address}
               onSendFundsClick={() => {
                 setIsSendFundsModalOpen(true);
               }}

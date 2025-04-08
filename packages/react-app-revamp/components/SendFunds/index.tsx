@@ -1,13 +1,12 @@
 import { erc20ChainDropdownOptions } from "@components/_pages/Create/components/RequirementsSettings/config";
 import TokenSearchModal, { TokenSearchModalType } from "@components/TokenSearchModal";
-import { FC, useState, useMemo } from "react";
-import { useAccount } from "wagmi";
-import { FilteredToken } from "@hooks/useTokenList";
-import { toast } from "react-toastify";
-import { useSendToken } from "@hooks/useSendToken";
-import { chains, config } from "@config/wagmi";
-import { switchChain } from "@wagmi/core";
 import { toastError } from "@components/UI/Toast";
+import { chains, config } from "@config/wagmi";
+import { useSendToken } from "@hooks/useSendToken";
+import { FilteredToken } from "@hooks/useTokenList";
+import { switchChain } from "@wagmi/core";
+import { FC, useMemo, useState } from "react";
+import { useAccount } from "wagmi";
 
 interface SendFundsProps {
   isOpen: boolean;
@@ -49,7 +48,7 @@ const SendFunds: FC<SendFundsProps> = ({ isOpen, onClose, recipientAddress }) =>
     }
 
     if (!token.balance || token.balance === 0) {
-      toast.error("insufficient token balance");
+      toastError("insufficient token balance");
       return;
     }
 
