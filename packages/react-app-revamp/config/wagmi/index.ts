@@ -48,6 +48,7 @@ import { sei } from "./custom-chains/sei";
 import { sepolia } from "./custom-chains/sepolia";
 import { soneium } from "./custom-chains/soneium";
 import { story } from "./custom-chains/story";
+import { unichain } from "./custom-chains/unichain";
 import { zora } from "./custom-chains/zora";
 import { isParaWalletConfigured, paraWallet } from "./para";
 
@@ -83,6 +84,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   story,
   ink,
   berachain,
+  unichain,
   sepolia,
   baseTestnet,
   mainnet,
