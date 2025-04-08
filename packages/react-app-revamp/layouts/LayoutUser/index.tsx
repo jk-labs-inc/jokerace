@@ -1,4 +1,5 @@
 "use client";
+import SendFunds from "@components/SendFunds";
 import Button from "@components/UI/Button";
 import CustomLink from "@components/UI/Link";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
@@ -50,6 +51,7 @@ const LayoutUser = (props: LayoutUserProps) => {
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
   const isMobile = useMediaQuery({ maxWidth: "768px" });
+  const [isSendFundsModalOpen, setIsSendFundsModalOpen] = useState(false);
 
   useEffect(() => {
     const activeTabIndex = navLinks.findIndex(link => isActiveLink(pathname ?? "", link.href, address));
@@ -79,6 +81,10 @@ const LayoutUser = (props: LayoutUserProps) => {
               shortenOnFallback
               size={isMobile ? "medium" : "large"}
               includeSocials
+              includeSendFunds
+              onSendFundsClick={() => {
+                setIsSendFundsModalOpen(true);
+              }}
             />
           )}
 
@@ -108,6 +114,11 @@ const LayoutUser = (props: LayoutUserProps) => {
             </div>
           </div>
         </div>
+        <SendFunds
+          isOpen={isSendFundsModalOpen}
+          onClose={() => setIsSendFundsModalOpen(false)}
+          recipientAddress={address}
+        />
       </SkeletonTheme>
 
       <ErrorBoundary

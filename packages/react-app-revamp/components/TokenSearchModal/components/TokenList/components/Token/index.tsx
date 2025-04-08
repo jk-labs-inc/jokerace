@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { formatNumber } from "@helpers/formatNumber";
 import { FilteredToken } from "@hooks/useTokenList";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 interface TokenSearchListTokenProps {
   token: FilteredToken;
@@ -12,6 +12,10 @@ interface TokenSearchListTokenProps {
 const TokenSearchListToken: FC<TokenSearchListTokenProps> = ({ token, isChainDropdownOpen, onSelectToken }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [imgSrc, setImgSrc] = useState(token.logoURI);
+
+  useEffect(() => {
+    setImgSrc(token.logoURI);
+  }, [token.logoURI]);
 
   const truncateTokenName = (name: string, maxLength: number = 20): string => {
     if (name.length > maxLength) {

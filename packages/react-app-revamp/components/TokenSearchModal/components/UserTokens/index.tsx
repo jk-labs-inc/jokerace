@@ -42,6 +42,8 @@ const TokenSearchModalUserTokens: FC<TokenSearchModalUserTokensProps> = ({
 
   if (!tokens) return null;
 
+  console.log("tokens", tokens);
+
   return (
     <div className="h-72 animate-reveal">
       <SimpleBar style={{ maxHeight: "100%", height: "100%" }} autoHide={false}>
