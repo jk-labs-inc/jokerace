@@ -83,7 +83,7 @@ const LayoutUser = (props: LayoutUserProps) => {
               shortenOnFallback
               size={isMobile ? "medium" : "large"}
               includeSocials
-              includeSendFunds={isConnected && userAddress !== address}
+              includeSendFunds
               onSendFundsClick={() => {
                 setIsSendFundsModalOpen(true);
               }}

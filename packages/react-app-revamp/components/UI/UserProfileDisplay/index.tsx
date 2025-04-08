@@ -1,13 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
+import { erc20ChainDropdownOptions } from "@components/_pages/Create/components/RequirementsSettings/config";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import useProfileData from "@hooks/useProfileData";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useMemo, useState } from "react";
-import { Avatar } from "../Avatar";
-import CustomLink from "../Link";
-import ButtonV3, { ButtonSize } from "../ButtonV3";
 import { useAccount } from "wagmi";
-import { erc20ChainDropdownOptions } from "@components/_pages/Create/components/RequirementsSettings/config";
+import { Avatar } from "../Avatar";
+import ButtonV3 from "../ButtonV3";
+import CustomLink from "../Link";
 
 interface UserProfileDisplayProps {
   ethereumAddress: string;
@@ -51,7 +52,8 @@ const UserProfileDisplay = ({
   includeSendFunds,
   onSendFundsClick,
 }: UserProfileDisplayProps) => {
-  const { chain } = useAccount();
+  const { chain, isConnected, address: userConnectedAddress } = useAccount();
+  const { openConnectModal } = useConnectModal();
   const { profileName, profileAvatar, socials, isLoading } = useProfileData(
     ethereumAddress,
     shortenOnFallback,
@@ -144,14 +146,24 @@ const UserProfileDisplay = ({
                 ) : null}
               </div>
             ) : null}
-            {includeSendFunds && isChainSupportedForSendFunds ? (
-              <ButtonV3
-                onClick={onSendFundsClick}
-                colorClass="bg-gradient-create"
-                textColorClass="text-true-black rounded-[40px] text-[16px] font-bold"
-              >
-                send funds &gt;
-              </ButtonV3>
+            {includeSendFunds ? (
+              isConnected && isChainSupportedForSendFunds && userConnectedAddress !== ethereumAddress ? (
+                <ButtonV3
+                  onClick={onSendFundsClick}
+                  colorClass="bg-gradient-create"
+                  textColorClass="text-true-black rounded-[40px] text-[16px] font-bold"
+                >
+                  send funds &gt;
+                </ButtonV3>
+              ) : (
+                <ButtonV3
+                  onClick={openConnectModal}
+                  colorClass="bg-gradient-create"
+                  textColorClass="text-true-black rounded-[40px] text-[16px] font-bold"
+                >
+                  send funds &gt;
+                </ButtonV3>
+              )
             ) : null}
           </div>
         </div>
