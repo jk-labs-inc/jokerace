@@ -2,13 +2,7 @@ import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { config } from "@config/wagmi";
 import { useError } from "@hooks/useError";
 import { FilteredToken } from "@hooks/useTokenList";
-import {
-  estimateGas,
-  estimateMaxPriorityFeePerGas,
-  sendTransaction,
-  simulateContract,
-  writeContract,
-} from "@wagmi/core";
+import { estimateMaxPriorityFeePerGas, sendTransaction, simulateContract, writeContract } from "@wagmi/core";
 import { erc20Abi, parseUnits } from "viem";
 
 interface UseSendTokenOptions {
@@ -76,6 +70,7 @@ export function useSendToken(options?: UseSendTokenOptions) {
 
           toastLoading("sending transfer transaction...");
           const hash = await sendTransaction(config, {
+            chainId,
             to: recipientAddress as `0x${string}`,
             value: adjustedAmount,
           });
