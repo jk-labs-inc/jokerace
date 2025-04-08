@@ -2,6 +2,8 @@ import OnrampCard from "@components/Onramp/components/Card";
 import { useAccount } from "wagmi";
 import { FC } from "react";
 import { getOnrampBuyUrl } from "./utils";
+import { usePathname } from "next/navigation";
+import { toastError } from "@components/UI/Toast";
 
 interface OnrampCoinbaseProviderProps {
   chain: string;
@@ -16,6 +18,7 @@ const COINBASE_PARAMS = {
 };
 
 const OnrampCoinbaseProvider: FC<OnrampCoinbaseProviderProps> = ({ chain, asset }) => {
+  const isEntryPage = usePathname().includes("submission");
   const { address } = useAccount();
 
   const handleOnramp = () => {
@@ -27,9 +30,16 @@ const OnrampCoinbaseProvider: FC<OnrampCoinbaseProviderProps> = ({ chain, asset 
       asset,
     });
 
+    if (!url) {
+      toastError("Unable to get onramp url");
+      return;
+    }
+
     window.open(url, "_blank");
   };
-  return <OnrampCard {...COINBASE_PARAMS} onClick={handleOnramp} />;
+  return (
+    <OnrampCard {...COINBASE_PARAMS} onClick={handleOnramp} descriptionClassName={isEntryPage ? "text-[14px]" : ""} />
+  );
 };
 
 export default OnrampCoinbaseProvider;

@@ -6,10 +6,18 @@ interface OnrampCardProps {
   description: string;
   logo: string;
   logoBorderColor?: string;
+  descriptionClassName?: string;
   onClick?: () => void;
 }
 
-const OnrampCard: FC<OnrampCardProps> = ({ name, description, logo, logoBorderColor, onClick }) => {
+const OnrampCard: FC<OnrampCardProps> = ({
+  name,
+  description,
+  logo,
+  logoBorderColor,
+  onClick,
+  descriptionClassName = "",
+}) => {
   return (
     <button
       onClick={onClick}
@@ -24,7 +32,9 @@ const OnrampCard: FC<OnrampCardProps> = ({ name, description, logo, logoBorderCo
         />
         <div className="flex flex-col gap-2 items-start">
           <p className="text-neutral-11 font-bold text-[24px]">{name}</p>
-          <p className="text-neutral-9 font-bold text-[12px] md:text-[16px] normal-case">{description}</p>
+          <p className={`text-neutral-9 font-bold normal-case ${descriptionClassName || "text-[12px] md:text-[16px]"}`}>
+            {description}
+          </p>
         </div>
         <div className="ml-auto">
           <ChevronRightIcon className="w-6 h-6 text-neutral-9 md:group-hover:text-neutral-11 transition-colors duration-300 ease-in-out" />

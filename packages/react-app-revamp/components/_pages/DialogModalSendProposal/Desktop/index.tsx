@@ -22,6 +22,7 @@ import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPrevie
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
 import { isEntryPreviewPrompt } from "../utils";
+import Onramp from "@components/Onramp";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -80,6 +81,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const [error, setError] = useState<ReactNode | null>(null);
   const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
   const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);
+  const [showOnrampModal, setShowOnrampModal] = useState(false);
 
   const handleCheckboxChange = (checked: boolean) => {
     setWantsSubscription(checked);
@@ -118,13 +120,12 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
 
     if (insufficientBalance) {
       setError(
-        <a
-          href={LINK_BRIDGE_DOCS}
-          target="_blank"
-          className="text-[12px] text-positive-11 opacity-80 hover:opacity-100 transition-colors font-bold leading-loose"
+        <button
+          onClick={() => setShowOnrampModal(true)}
+          className="text-[12px] self-start text-positive-11 opacity-80 hover:opacity-100 transition-colors font-bold leading-loose"
         >
           add {chainCurrencySymbol} to {chainName} to enter contest {">"}
-        </a>,
+        </button>,
       );
       return;
     }
@@ -153,16 +154,28 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
     return metadataFields.some(field => field.inputValue === "");
   };
 
+  const onCloseModal = () => {
+    setIsOpen(false);
+    setShowOnrampModal(false);
+  };
+
   return (
     <DialogModalV3
       title="submission"
       isOpen={isOpen}
-      setIsOpen={setIsOpen}
+      setIsOpen={onCloseModal}
       className="w-full xl:w-[1100px]"
       disableClose={!!(isSuccess && proposalId)}
     >
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
-        {isSuccess && proposalId ? (
+        {showOnrampModal ? (
+          <Onramp
+            className="md:w-[400px]"
+            chain={chainName}
+            asset={chainCurrencySymbol ?? ""}
+            onGoBack={() => setShowOnrampModal(false)}
+          />
+        ) : isSuccess && proposalId ? (
           <div className="flex flex-col gap-8">
             <p className="text-[24px] font-bold text-neutral-11">your submission is live!</p>
             <DialogModalSendProposalSuccessLayout proposalId={proposalId} chainName={chainName} contestId={contestId} />
@@ -228,7 +241,13 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
               </div>
             </div>
             <div className="flex flex-col gap-12 mt-12">
-              {showEntryCharge ? <ChargeLayoutSubmission charge={charge} accountData={accountData} /> : null}
+              {showEntryCharge ? (
+                <ChargeLayoutSubmission
+                  charge={charge}
+                  accountData={accountData}
+                  onAddFunds={() => setShowOnrampModal(true)}
+                />
+              ) : null}
 
               {isCorrectNetwork ? (
                 <div className="flex flex-col gap-2">
@@ -236,7 +255,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                     colorClass="bg-gradient-purple rounded-[40px]"
                     size={ButtonSize.EXTRA_LARGE_LONG}
                     onClick={handleConfirm}
-                    isDisabled={isLoading || insufficientBalance}
+                    isDisabled={isLoading}
                   >
                     submit
                   </ButtonV3>

@@ -15,6 +15,8 @@ export const getOnrampBuyUrl = ({
   presetFiatAmount = 20,
   fiatCurrency = "USD",
 }: OnrampParams): string => {
+  if (!projectId) return "";
+
   const addresses = encodeURIComponent(
     JSON.stringify({
       [chain]: [address],

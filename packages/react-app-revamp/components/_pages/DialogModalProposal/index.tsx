@@ -194,11 +194,13 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
               {contestStatus === ContestStatus.VotingOpen ? (
                 <div className="border-b border-neutral-2 py-4 pl-4">
                   {showOnrampModal ? (
-                    <Onramp
-                      chain={chainName ?? ""}
-                      asset={chainCurrencySymbol ?? ""}
-                      onGoBack={() => setShowOnrampModal(false)}
-                    />
+                    <div className="pr-1">
+                      <Onramp
+                        chain={chainName ?? ""}
+                        asset={chainCurrencySymbol ?? ""}
+                        onGoBack={() => setShowOnrampModal(false)}
+                      />
+                    </div>
                   ) : showMaxVoteConfirmation ? (
                     <DialogMaxVotesAlert
                       token={nativeToken ?? ""}
@@ -224,7 +226,9 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                         feel free to try connecting another wallet to see if it has more votes!
                       </p>
                     ) : isPayPerVote ? (
-                      <Onramp chain={chainName ?? ""} asset={chainCurrencySymbol ?? ""} showBackButton={false} />
+                      <div className="pr-1">
+                        <Onramp chain={chainName ?? ""} asset={chainCurrencySymbol ?? ""} showBackButton={false} />
+                      </div>
                     ) : (
                       <p className="text-[16px] text-neutral-11">
                         unfortunately your wallet didn't qualify to vote in this contest <br />
