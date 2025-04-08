@@ -33,3 +33,18 @@ export const getOnrampBuyUrl = ({
 
   return url;
 };
+
+export const COINBASE_SUPPORTED_CHAINS = [
+  "arbitrum",
+  "avalanche",
+  "base",
+  "bnb",
+  "gnosis",
+  "optimism",
+  "polygon",
+  "zora",
+];
+
+export const isChainSupported = (chain: string): boolean => {
+  return COINBASE_SUPPORTED_CHAINS.includes(chain.toLowerCase());
+};
