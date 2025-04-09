@@ -147,7 +147,7 @@ const UserProfileDisplay = ({
               </div>
             ) : null}
             {includeSendFunds ? (
-              isConnected && isChainSupportedForSendFunds && userConnectedAddress !== ethereumAddress ? (
+              isConnected && isChainSupportedForSendFunds && userConnectedAddress === ethereumAddress ? (
                 <ButtonV3
                   onClick={onSendFundsClick}
                   colorClass="bg-gradient-create"

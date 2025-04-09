@@ -2,7 +2,7 @@ import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { config } from "@config/wagmi";
 import { useError } from "@hooks/useError";
 import { FilteredToken } from "@hooks/useTokenList";
-import { estimateMaxPriorityFeePerGas, sendTransaction, simulateContract, writeContract } from "@wagmi/core";
+import { sendTransaction, simulateContract, writeContract } from "@wagmi/core";
 import { erc20Abi, parseUnits } from "viem";
 
 interface UseSendTokenOptions {
@@ -52,27 +52,14 @@ export function useSendToken(options?: UseSendTokenOptions) {
 
     try {
       if (token.address === "0x0000000000000000000000000000000000000000") {
-        const parsedAmount = parseUnits(amount, 18);
+        const parsedAmount = parseUnits(amount, token.decimals);
 
         try {
-          const maxPriorityFeePerGas = await estimateMaxPriorityFeePerGas(config, {
-            chainId,
-          });
-
-          const gasBuffer = maxPriorityFeePerGas * 100000n;
-
-          const adjustedAmount = parsedAmount > gasBuffer ? parsedAmount - gasBuffer : 0n;
-
-          if (adjustedAmount <= 0n) {
-            toastError("amount too small to cover gas fees");
-            return;
-          }
-
           toastLoading("sending transfer transaction...");
           const hash = await sendTransaction(config, {
             chainId,
             to: recipientAddress as `0x${string}`,
-            value: adjustedAmount,
+            value: parsedAmount,
           });
 
           toastSuccess("transaction sent successfully!");

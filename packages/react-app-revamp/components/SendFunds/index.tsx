@@ -1,5 +1,5 @@
 import { erc20ChainDropdownOptions } from "@components/_pages/Create/components/RequirementsSettings/config";
-import TokenSearchModal, { TokenSearchModalType } from "@components/TokenSearchModal";
+import TokenSearchModalERC20MultiStep from "@components/TokenSearchModal/MultiStep";
 import { toastError } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { useSendToken } from "@hooks/useSendToken";
@@ -41,19 +41,19 @@ const SendFunds: FC<SendFundsProps> = ({ isOpen, onClose, recipientAddress }) =>
     ];
   }, [chainId]);
 
-  const handleSelectToken = async (token: FilteredToken) => {
+  const handleSubmitTransfer = async (data: { token: FilteredToken; recipient: string; amount: string }) => {
     if (!recipientAddress) {
       toastError("recipient address is required");
       return;
     }
 
-    if (!token.balance || token.balance === 0) {
+    if (!data.token.balance || data.token.balance === 0) {
       toastError("insufficient token balance");
       return;
     }
 
     try {
-      await sendToken(token, chainId, recipientAddress, token.balance.toString());
+      await sendToken(data.token, chainId, data.recipient, data.amount);
     } catch (error) {
       console.error("Failed to send token:", error);
     }
@@ -68,13 +68,12 @@ const SendFunds: FC<SendFundsProps> = ({ isOpen, onClose, recipientAddress }) =>
   };
 
   return (
-    <TokenSearchModal
-      type={TokenSearchModalType.ERC20}
+    <TokenSearchModalERC20MultiStep
       chains={arrangedChainOptions}
       isOpen={isOpen}
       onClose={onClose}
-      onSelectToken={handleSelectToken}
       onSelectChain={handleSelectChain}
+      onSubmitTransfer={handleSubmitTransfer}
     />
   );
 };
