@@ -12,7 +12,7 @@ interface OnrampCoinbaseProviderProps {
 
 const COINBASE_PARAMS = {
   name: "Coinbase",
-  description: "1.59% fees | NY citizens excluded",
+  description: "2.5% fees",
   logo: "/onramp/coinbase.svg",
   logoBorderColor: "#0052FF",
 };
