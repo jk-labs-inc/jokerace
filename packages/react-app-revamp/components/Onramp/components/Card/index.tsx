@@ -32,7 +32,7 @@ const OnrampCard: FC<OnrampCardProps> = ({
       <button
         onClick={disabled ? undefined : onClick}
         disabled={disabled}
-        className={`group h-[72px] flex w-full p-4 rounded-2xl border border-transparent ${
+        className={`group flex w-full p-4 rounded-2xl border border-transparent ${
           disabled
             ? "opacity-50 cursor-not-allowed filter blur-[1px]"
             : "cursor-pointer md:hover:border-neutral-11 transition-colors duration-300 ease-in-out"
