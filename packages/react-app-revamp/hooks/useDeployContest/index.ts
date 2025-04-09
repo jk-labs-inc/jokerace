@@ -56,7 +56,15 @@ export function useDeployContest() {
   const { address, chain } = useAccount();
 
   async function deployContest() {
-    const signer = await getEthersSigner(config, { chainId: chain?.id });
+    let signer: any;
+
+    try {
+      signer = await getEthersSigner(config, { chainId: chain?.id });
+    } catch (error: any) {
+      handleError(error, "Please try reconnecting your wallet.");
+      return;
+    }
+
     const isSpoofingDetected = await checkForSpoofing(signer?._address);
 
     if (isSpoofingDetected) {
