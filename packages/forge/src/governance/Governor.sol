@@ -154,7 +154,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error NeedToSubmitWithProofFirst();
     error NeedToVoteWithProofFirst();
 
-    error OnlyCreatorCanDelete();
+    error OnlyCreatorOrEntrantCanDelete();
     error OnlyCreatorCanSetName();
     error OnlyCreatorCanSetPrompt();
     error CannotDeleteWhenCompletedOrCanceled();
@@ -471,13 +471,13 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      * Emits a {IGovernor-ProposalsDeleted} event.
      */
     function deleteProposals(uint256[] calldata proposalIdsToDelete) public {
-        if (msg.sender != creator) revert OnlyCreatorCanDelete();
         if (state() == ContestState.Completed || state() == ContestState.Canceled) {
             revert CannotDeleteWhenCompletedOrCanceled();
         }
 
         for (uint256 index = 0; index < proposalIdsToDelete.length; index++) {
             uint256 currentProposalId = proposalIdsToDelete[index];
+            if ((msg.sender != creator) && (msg.sender != proposals[currentProposalId].author)) revert OnlyCreatorOrEntrantCanDelete();
             if (!proposalIsDeleted[currentProposalId]) {
                 // if this proposal hasn't already been deleted
                 proposalIsDeleted[currentProposalId] = true;
