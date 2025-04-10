@@ -1,6 +1,9 @@
 import { FilteredToken } from "@hooks/useTokenList";
 import { useQuery } from "@tanstack/react-query";
 import { formatUnits } from "ethers/lib/utils";
+import { useBalance } from "wagmi";
+import { chains, chainsImages } from "@config/wagmi";
+import React from "react";
 
 const ZERO_BALANCE = "0x0000000000000000000000000000000000000000000000000000000000000000";
 const NEAR_ZERO_BALANCE = "0x0000000000000000000000000000000000000000000000000000000000000001"; // etherscan and rabby show these values as 0, so to not confuse the user, we will exclude them.
@@ -20,11 +23,22 @@ const getAlchemyBaseUrl = (chain: string) => {
   return `https://${subdomain}.g.alchemy.com/v2/${alchemyApiKey}`;
 };
 
+const findChainByName = (chainName: string) => {
+  return chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase());
+};
+
 export const useFetchUserTokens = (userAddress: string, chainName: string) => {
+  const chain = findChainByName(chainName);
+
+  const { data: nativeBalance, isLoading: isLoadingNativeBalance } = useBalance({
+    address: userAddress as `0x${string}`,
+    chainId: chain?.id,
+  });
+
   const {
-    data: tokens,
+    data: erc20Tokens,
     error,
-    isLoading,
+    isLoading: isLoadingErc20,
     refetch,
   } = useQuery<FilteredToken[], Error>({
     queryKey: ["user-erc20-balance", chainName, userAddress],
@@ -89,6 +103,7 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
         return {
           address: token.contractAddress,
           name: metadata.result.name,
+          decimals: metadata.result.decimals,
           symbol: metadata.result.symbol,
           logoURI: metadata.result.logo ? metadata.result.logo : "/contest/mona-lisa-moustache.png",
           balance: formattedTokenBalance,
@@ -100,6 +115,30 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
     },
     enabled: !!userAddress && !!chainName && !!process.env.NEXT_PUBLIC_ALCHEMY_KEY,
   });
+
+  const tokens = React.useMemo(() => {
+    const allTokens: FilteredToken[] = [...(erc20Tokens || [])];
+
+    if (nativeBalance && nativeBalance?.value.toString() !== "0" && chain) {
+      const isEth = chain.nativeCurrency.symbol.toUpperCase() === "ETH";
+      const normalizedChainName = chainName.toLowerCase();
+
+      const nativeToken: FilteredToken = {
+        address: "0x0000000000000000000000000000000000000000",
+        name: chain.nativeCurrency.symbol,
+        symbol: chain.nativeCurrency.symbol,
+        decimals: chain.nativeCurrency.decimals,
+        logoURI: isEth ? "/mainnet.svg" : chainsImages[normalizedChainName] || "/contest/mona-lisa-moustache.png",
+        balance: parseFloat(nativeBalance.formatted),
+      };
+
+      allTokens.unshift(nativeToken);
+    }
+
+    return allTokens;
+  }, [erc20Tokens, nativeBalance, chain, chainName]);
+
+  const isLoading = isLoadingErc20 || isLoadingNativeBalance;
 
   return { tokens, error, isLoading, refetchUserBalances: refetch };
 };

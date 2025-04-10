@@ -2,11 +2,7 @@ import { chainsImages } from "@config/wagmi";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { FC, Fragment, useState } from "react";
-
-export interface Option {
-  value: string;
-  label: string;
-}
+import { Option } from "../../types";
 
 interface ChainDropdownProps {
   options: Option[];
