@@ -25,7 +25,9 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { usePathname } from "next/navigation";
 import { getTotalCharge } from "@helpers/totalCharge";
 import DialogMaxVotesAlert from "../DialogMaxVotesAlert";
-import { ButtonSize } from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import OnrampModal from "@components/Onramp/components/Modal";
+import Onramp from "@components/Onramp";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -90,6 +92,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const [pendingVote, setPendingVote] = useState<{ amount: number; isUpvote: boolean } | null>(null);
   const [totalCharge, setTotalCharge] = useState("");
   const nativeToken = getNativeTokenSymbol(chainName);
+  const [showOnrampModal, setShowOnrampModal] = useState(false);
 
   const tabsOptionalInfo = {
     ...(addressesVoted?.length > 0 && { [DialogTab.Voters]: addressesVoted.length }),
@@ -190,7 +193,15 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
             <div className="flex flex-col h-full">
               {contestStatus === ContestStatus.VotingOpen ? (
                 <div className="border-b border-neutral-2 py-4 pl-4">
-                  {showMaxVoteConfirmation ? (
+                  {showOnrampModal ? (
+                    <div className="pr-1">
+                      <Onramp
+                        chain={chainName ?? ""}
+                        asset={chainCurrencySymbol ?? ""}
+                        onGoBack={() => setShowOnrampModal(false)}
+                      />
+                    </div>
+                  ) : showMaxVoteConfirmation ? (
                     <DialogMaxVotesAlert
                       token={nativeToken ?? ""}
                       totalCost={totalCharge}
@@ -205,6 +216,9 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                         amountOfVotes={currentUserAvailableVotesAmount}
                         onVote={onSubmitCastVotes}
                         downvoteAllowed={downvotingAllowed}
+                        onAddFunds={() => {
+                          setShowOnrampModal(true);
+                        }}
                       />
                     ) : outOfVotes ? (
                       <p className="text-[16px] text-neutral-11">
@@ -212,13 +226,9 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                         feel free to try connecting another wallet to see if it has more votes!
                       </p>
                     ) : isPayPerVote ? (
-                      <a
-                        href={LINK_BRIDGE_DOCS}
-                        target="_blank"
-                        className="text-[16px] text-positive-11 opacity-80 hover:opacity-100 transition-colors font-bold"
-                      >
-                        add {chainCurrencySymbol} to {contestInfo.chain} to get votes {">"}
-                      </a>
+                      <div className="pr-1">
+                        <Onramp chain={chainName ?? ""} asset={chainCurrencySymbol ?? ""} showBackButton={false} />
+                      </div>
                     ) : (
                       <p className="text-[16px] text-neutral-11">
                         unfortunately your wallet didn't qualify to vote in this contest <br />

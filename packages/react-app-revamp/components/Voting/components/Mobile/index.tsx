@@ -26,6 +26,7 @@ interface VotingWidgetMobileProps {
   handleClick: (isUpvote: boolean) => void;
   setIsFocused: (value: boolean) => void;
   handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onAddFunds?: () => void;
 }
 
 const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
@@ -48,6 +49,7 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
   charge,
   chainId,
   voteDisabled,
+  onAddFunds,
 }) => {
   return (
     <div className="flex flex-col gap-8">
@@ -77,7 +79,7 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
             <div className="flex flex-col gap-2">
               {charge?.voteType === VoteType.PerVote ? (
                 <>
-                  <MyVotes amountOfVotes={amountOfVotes} charge={charge} chainId={chainId} />
+                  <MyVotes amountOfVotes={amountOfVotes} charge={charge} chainId={chainId} onAddFunds={onAddFunds} />
                   {charge ? <ChargeInfo charge={charge} /> : null}
                 </>
               ) : null}

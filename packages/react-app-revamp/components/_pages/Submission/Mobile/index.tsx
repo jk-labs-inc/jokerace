@@ -27,6 +27,8 @@ import SubmissionPageMobileVoting from "./components/Voting";
 import StickyVoteFooter from "./components/VoteFooter";
 import SubmissionPageMobileVotersList from "./components/VotersList";
 import SubmissionPageMobileComments from "./components/Comments";
+import OnrampModal from "@components/Onramp/components/Modal";
+import SubmissionPageMobileOnramp from "./components/Onramp";
 interface SubmissionPageMobileLayoutProps {
   contestInfo: {
     address: string;
@@ -75,6 +77,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
   const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
   const [showVotingModal, setShowVotingModal] = useState(false);
+  const [showOnrampModal, setShowOnrampModal] = useState(false);
   const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
 
   if (isProposalError) {
@@ -217,6 +220,15 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
         />
       )}
 
+      {showOnrampModal && (
+        <SubmissionPageMobileOnramp
+          chain={contestInfo.chain}
+          asset={chainCurrencySymbol ?? ""}
+          isOpen={showOnrampModal}
+          onClose={() => setShowOnrampModal(false)}
+        />
+      )}
+
       {isVotingOpen && (
         <StickyVoteFooter
           isConnected={isConnected}
@@ -228,7 +240,9 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           chainCurrencySymbol={chainCurrencySymbol ?? ""}
           onConnectWallet={onConnectWallet ?? (() => {})}
           setShowVotingModal={setShowVotingModal}
-          linkBridgeDocs={LINK_BRIDGE_DOCS}
+          onAddFunds={() => {
+            setShowOnrampModal(true);
+          }}
         />
       )}
     </div>

@@ -24,6 +24,7 @@ import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
 import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
 import ProposalLayoutTweet from "./components/ProposalLayout/Tweet";
 import { LINK_BRIDGE_DOCS } from "@config/links";
+import OnrampModal from "@components/Onramp/components/Modal";
 
 export interface Proposal {
   id: string;
@@ -80,6 +81,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
     isLoading: isUserProfileLoading,
     isError: isUserProfileError,
   } = useProfileData(proposal.authorEthereumAddress, true);
+  const [isOnrampOpen, setIsOnrampOpen] = useState(false);
 
   const handleVotingModalOpen = () => {
     if (isContestCanceled) {
@@ -99,18 +101,10 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
     if (!canVote) {
       if (charge?.voteType === VoteType.PerVote) {
-        toastInfo(
-          <a
-            href={LINK_BRIDGE_DOCS}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-positive-11 opacity-80 hover:opacity-100 transition-colors font-bold"
-          >
-            add {chainCurrencySymbol} to {chainName} to get votes {">"}
-          </a>,
-        );
+        setIsOnrampOpen(true);
         return;
       }
+
       toastInfo("You need to be allowlisted to vote for this contest.");
       return;
     }
@@ -158,6 +152,12 @@ const ProposalContent: FC<ProposalContentProps> = ({
     <>
       {renderLayout()}
       <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={setIsVotingModalOpen} proposal={proposal} />
+      <OnrampModal
+        chain={chainName ?? ""}
+        asset={chainCurrencySymbol ?? ""}
+        isOpen={isOnrampOpen}
+        onClose={() => setIsOnrampOpen(false)}
+      />
     </>
   );
 };
