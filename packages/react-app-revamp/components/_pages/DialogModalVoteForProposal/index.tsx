@@ -83,7 +83,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
 
   return (
     <DialogModalV4 isOpen={isOpen} onClose={handleModalClose}>
-      <div className="flex flex-col gap-4 py-6 md:py-16 px-6 md:pl-32 md:pr-16">
+      <div className="flex flex-col gap-4 pt-6 pb-4 md:py-16 px-6 md:pl-32 md:pr-16">
         {showOnramp && nativeToken && chainName ? (
           <div className="animate-swingInLeft">
             <Onramp
