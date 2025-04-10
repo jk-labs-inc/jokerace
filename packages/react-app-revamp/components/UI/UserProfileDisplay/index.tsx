@@ -6,8 +6,8 @@ import useProfileData from "@hooks/useProfileData";
 import { useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import { Avatar } from "../Avatar";
-import ButtonV3 from "../ButtonV3";
 import CustomLink from "../Link";
+import SendFundsButton from "./componentts/SendFundsButton";
 
 interface UserProfileDisplayProps {
   ethereumAddress: string;
@@ -148,13 +148,7 @@ const UserProfileDisplay = ({
             isConnected &&
             isChainSupportedForSendFunds &&
             userConnectedAddress === ethereumAddress ? (
-              <ButtonV3
-                onClick={onSendFundsClick}
-                colorClass="bg-gradient-create"
-                textColorClass="text-true-black rounded-[40px] text-[16px] font-bold"
-              >
-                send funds &gt;
-              </ButtonV3>
+              <SendFundsButton onSendFundsClick={onSendFundsClick} />
             ) : null}
           </div>
         </div>
