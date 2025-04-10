@@ -135,7 +135,7 @@ const TokenSearchModalERC20MultiStepForm: FC<TokenSearchModalERC20MultiStepFormP
           textColorClass="text-true-black rounded-[40px]"
           onClick={handleSubmit}
         >
-          submit
+          send funds
         </ButtonV3>
         <div className="flex items-center gap-[5px] -ml-[15px] cursor-pointer group" onClick={onBack}>
           <div className="transition-transform duration-200 group-hover:-translate-x-1">
