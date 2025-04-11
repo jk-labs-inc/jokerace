@@ -1,33 +1,33 @@
 import Comments from "@components/Comments";
+import Onramp from "@components/Onramp";
+import { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
+import Tabs from "@components/UI/Tabs";
 import VotingWidget from "@components/Voting";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
-import { LINK_BRIDGE_DOCS } from "@config/links";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
+import { getNativeTokenSymbol } from "@helpers/nativeToken";
+import { getTotalCharge } from "@helpers/totalCharge";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import useDeleteProposal from "@hooks/useDeleteProposal";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { useProposalStore } from "@hooks/useProposal/store";
+import { useProposalVotes } from "@hooks/useProposalVotes";
 import { useUserStore } from "@hooks/useUser/store";
+import { switchChain } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
+import { usePathname } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import SimpleBar from "simplebar-react";
 import { useAccount } from "wagmi";
+import DialogMaxVotesAlert from "../DialogMaxVotesAlert";
 import ListProposalVotes from "../ListProposalVotes";
 import DialogModalProposalHeader from "./components/Header";
 import DialogModalProposalVoteCountdown from "./components/VoteCountdown";
-import Tabs from "@components/UI/Tabs";
-import { useProposalVotes } from "@hooks/useProposalVotes";
-import { getNativeTokenSymbol } from "@helpers/nativeToken";
-import { extractPathSegments } from "@helpers/extractPath";
-import { usePathname } from "next/navigation";
-import { getTotalCharge } from "@helpers/totalCharge";
-import DialogMaxVotesAlert from "../DialogMaxVotesAlert";
-import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import OnrampModal from "@components/Onramp/components/Modal";
-import Onramp from "@components/Onramp";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -72,14 +72,20 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
 }) => {
   const asPath = usePathname();
   const { chainName } = extractPathSegments(asPath ?? "");
+  const {
+    canDeleteProposal,
+    deleteProposal,
+    isLoading: isDeleteLoading,
+    isSuccess: isDeleteSuccess,
+  } = useDeleteProposal();
   const contestStatus = useContestStatusStore(state => state.contestStatus);
-  const { isConnected } = useAccount();
+  const { isConnected, address: userAddress, chainId: userChainId } = useAccount();
   const { isSuccess } = useCastVotes();
   const { listProposalsIds } = useProposalStore(state => state);
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
   const totalProposals = listProposalsIds.length;
-  const { downvotingAllowed, charge, votesOpen } = useContestStore(state => state);
+  const { downvotingAllowed, charge, votesOpen, contestAuthorEthereumAddress } = useContestStore(state => state);
   const isPayPerVote = charge?.voteType === VoteType.PerVote;
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
@@ -93,6 +99,13 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const [totalCharge, setTotalCharge] = useState("");
   const nativeToken = getNativeTokenSymbol(chainName);
   const [showOnrampModal, setShowOnrampModal] = useState(false);
+  const allowDelete = canDeleteProposal(
+    userAddress,
+    contestAuthorEthereumAddress,
+    proposalData?.proposal?.authorEthereumAddress ?? "",
+    contestStatus,
+  );
+  const isUserOnCorrectChain = userChainId === contestInfo.chainId;
 
   const tabsOptionalInfo = {
     ...(addressesVoted?.length > 0 && { [DialogTab.Voters]: addressesVoted.length }),
@@ -102,6 +115,10 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   useEffect(() => {
     if (isSuccess) setIsOpen?.(false);
   }, [isSuccess, setIsOpen]);
+
+  useEffect(() => {
+    if (isDeleteSuccess) setIsOpen?.(false);
+  }, [isDeleteSuccess, setIsOpen]);
 
   const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
     if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
@@ -125,6 +142,14 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const cancelMaxVote = () => {
     setShowMaxVoteConfirmation(false);
     setPendingVote(null);
+  };
+
+  const handleDeleteProposal = async () => {
+    if (!isUserOnCorrectChain) {
+      await switchChain(config, { chainId: contestInfo.chainId });
+    }
+
+    await deleteProposal([proposalId]);
   };
 
   if (isProposalError) {
@@ -165,8 +190,10 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
               currentIndex={currentIndex}
               totalProposals={totalProposals}
               isProposalLoading={isProposalLoading}
+              allowDelete={allowDelete}
               onPreviousEntry={onPreviousEntry}
               onNextEntry={onNextEntry}
+              onDeleteProposal={handleDeleteProposal}
             />
           )}
         </div>

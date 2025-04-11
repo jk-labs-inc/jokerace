@@ -5,7 +5,7 @@ import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { LINK_BRIDGE_DOCS } from "@config/links";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { getNativeTokenSymbol } from "@helpers/nativeToken";
 import ordinalize from "@helpers/ordinalize";
@@ -21,7 +21,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { compareVersions } from "compare-versions";
 import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import SubmissionPageMobileVoting from "./components/Voting";
 import StickyVoteFooter from "./components/VoteFooter";
@@ -29,6 +29,10 @@ import SubmissionPageMobileVotersList from "./components/VotersList";
 import SubmissionPageMobileComments from "./components/Comments";
 import OnrampModal from "@components/Onramp/components/Modal";
 import SubmissionPageMobileOnramp from "./components/Onramp";
+import SubmissionDeleteModal from "../components/Modals/Delete";
+import SubmissionDeleteButton from "../components/Buttons/Delete";
+import useDeleteProposal from "@hooks/useDeleteProposal";
+import { switchChain } from "@wagmi/core";
 interface SubmissionPageMobileLayoutProps {
   contestInfo: {
     address: string;
@@ -61,11 +65,11 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   onNextEntry,
   onConnectWallet,
 }) => {
-  const { isConnected } = useAccount();
+  const { isConnected, address: userAddress, chainId: userChainId } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { contestStatus } = useContestStatusStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
-  const { downvotingAllowed, charge } = useContestStore(state => state);
+  const { downvotingAllowed, charge, contestAuthorEthereumAddress } = useContestStore(state => state);
   const isPayPerVote = charge?.voteType === VoteType.PerVote;
   const { listProposalsIds } = useProposalStore(state => state);
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
@@ -79,6 +83,35 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const [showVotingModal, setShowVotingModal] = useState(false);
   const [showOnrampModal, setShowOnrampModal] = useState(false);
   const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const {
+    canDeleteProposal,
+    deleteProposal,
+    isLoading: isDeleteLoading,
+    isSuccess: isDeleteSuccess,
+  } = useDeleteProposal();
+  const allowDelete = canDeleteProposal(
+    userAddress,
+    contestAuthorEthereumAddress,
+    proposalData?.proposal?.authorEthereumAddress ?? "",
+    contestStatus,
+  );
+  const isUserOnCorrectChain = userChainId === contestInfo.chainId;
+
+  useEffect(() => {
+    if (isDeleteSuccess) {
+      onClose?.();
+    }
+  }, [isDeleteSuccess, onClose]);
+
+  const handleDeleteProposal = async () => {
+    setIsDeleteModalOpen(false);
+
+    if (!isUserOnCorrectChain) {
+      await switchChain(config, { chainId: contestInfo.chainId });
+    }
+    await deleteProposal([proposalId]);
+  };
 
   if (isProposalError) {
     return (
@@ -116,11 +149,15 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
             <div className="flex flex-col gap-4">
               {proposalData?.proposal ? (
                 <div className="flex flex-col gap-2">
-                  <UserProfileDisplay
-                    ethereumAddress={proposalData.proposal.authorEthereumAddress}
-                    shortenOnFallback={true}
-                    textColor="text-neutral-9"
-                  />
+                  <div className="flex items-center justify-between">
+                    <UserProfileDisplay
+                      ethereumAddress={proposalData.proposal.authorEthereumAddress}
+                      shortenOnFallback={true}
+                      textColor="text-neutral-9"
+                    />
+                    {allowDelete && <SubmissionDeleteButton onClick={() => setIsDeleteModalOpen(true)} />}
+                  </div>
+
                   {proposalData.proposal.rank > 0 && (
                     <div className="flex gap-2 items-center">
                       <p className="text-[16px] font-bold text-neutral-11">
@@ -243,6 +280,13 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           onAddFunds={() => {
             setShowOnrampModal(true);
           }}
+        />
+      )}
+      {isDeleteModalOpen && (
+        <SubmissionDeleteModal
+          isDeleteProposalModalOpen={isDeleteModalOpen}
+          setIsDeleteProposalModalOpen={setIsDeleteModalOpen}
+          onClick={handleDeleteProposal}
         />
       )}
     </div>

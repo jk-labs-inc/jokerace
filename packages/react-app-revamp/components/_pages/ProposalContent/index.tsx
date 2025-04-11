@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import OnrampModal from "@components/Onramp/components/Modal";
 import { toastInfo } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
@@ -7,6 +8,7 @@ import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import useDeleteProposal from "@hooks/useDeleteProposal";
 import { EntryPreview } from "@hooks/useDeployContest/store";
 import { VoteType } from "@hooks/useDeployContest/types";
 import useProfileData from "@hooks/useProfileData";
@@ -23,8 +25,6 @@ import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
 import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
 import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
 import ProposalLayoutTweet from "./components/ProposalLayout/Tweet";
-import { LINK_BRIDGE_DOCS } from "@config/links";
-import OnrampModal from "@components/Onramp/components/Modal";
 
 export interface Proposal {
   id: string;
@@ -42,7 +42,7 @@ export interface Proposal {
 
 interface ProposalContentProps {
   proposal: Proposal;
-  allowDelete: boolean;
+  contestAuthorEthereumAddress: string;
   enabledPreview: EntryPreview | null;
   selectedProposalIds: string[];
   toggleProposalSelection?: (proposalId: string) => void;
@@ -50,12 +50,20 @@ interface ProposalContentProps {
 
 const ProposalContent: FC<ProposalContentProps> = ({
   proposal,
-  allowDelete,
+  contestAuthorEthereumAddress,
   selectedProposalIds,
   toggleProposalSelection,
   enabledPreview,
 }) => {
-  const { isConnected } = useAccount();
+  const { isConnected, address: userAddress } = useAccount();
+  const { canDeleteProposal } = useDeleteProposal();
+  const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const allowDelete = canDeleteProposal(
+    userAddress,
+    contestAuthorEthereumAddress,
+    proposal.authorEthereumAddress,
+    contestStatus,
+  );
   const { openConnectModal } = useConnectModal();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const asPath = usePathname();
@@ -66,7 +74,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
   const { votesOpen, charge } = useContestStore(state => state);
   const canVote = currentUserAvailableVotesAmount > 0;
-  const contestStatus = useContestStatusStore(state => state.contestStatus);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
