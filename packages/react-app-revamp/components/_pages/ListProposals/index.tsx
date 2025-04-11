@@ -40,10 +40,7 @@ export const ListProposals = () => {
     listProposalsData,
   } = useProposalStore(state => state);
   const { contestAuthorEthereumAddress, contestAbi: abi, version } = useContestStore(state => state);
-  const contestStatus = useContestStatusStore(state => state.contestStatus);
-  const allowDelete =
-    (contestStatus === ContestStatus.SubmissionOpen || contestStatus === ContestStatus.VotingOpen) &&
-    address === contestAuthorEthereumAddress;
+
   const [deletingProposalIds, setDeletingProposalIds] = useState<string[]>([]);
   const [selectedProposalIds, setSelectedProposalIds] = useState<string[]>([]);
   const showDeleteButton = selectedProposalIds.length > 0 && !isDeleteInProcess;
@@ -116,7 +113,7 @@ export const ListProposals = () => {
       loader={
         <ListProposalsSkeleton
           enabledPreview={enabledPreview}
-          highlightColor="#FFE25B"
+          highlightColor="#BB65FF"
           count={skeletonRemainingLoaderCount}
         />
       }
@@ -125,7 +122,13 @@ export const ListProposals = () => {
       <ListProposalsContainer enabledPreview={enabledPreview}>
         {listProposalsData.map((proposal, index) => {
           if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
-            return <ListProposalsSkeleton enabledPreview={enabledPreview} highlightColor="#FF78A9" />;
+            return (
+              <ListProposalsSkeleton
+                enabledPreview={enabledPreview}
+                highlightColor="#FF78A9"
+                count={selectedProposalIds.length}
+              />
+            );
           }
           return (
             <ProposalContent
@@ -144,9 +147,9 @@ export const ListProposals = () => {
                 metadataFields: proposal.metadataFields,
               }}
               enabledPreview={enabledPreview}
-              allowDelete={allowDelete}
               selectedProposalIds={selectedProposalIds}
               toggleProposalSelection={toggleProposalSelection}
+              contestAuthorEthereumAddress={contestAuthorEthereumAddress}
             />
           );
         })}
