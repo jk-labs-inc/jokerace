@@ -1,6 +1,8 @@
 import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
+import Onramp from "@components/Onramp";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import EmailSubscription from "@components/UI/EmailSubscription";
+import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 import { FOOTER_LINKS, LINK_BRIDGE_DOCS } from "@config/links";
 import { chains } from "@config/wagmi";
 import { emailRegex } from "@helpers/regex";
@@ -8,8 +10,6 @@ import { Charge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useState } from "react";
-import Onramp from "@components/Onramp";
-import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 
 interface SendProposalMobileLayoutConfirmInitialContentProps {
   charge: Charge | null;
