@@ -12,7 +12,7 @@ const CreateGradientTitle = ({ children, additionalInfo, textSize = "medium" }: 
       {children}
 
       {additionalInfo && (
-        <span className={`font-normal ${textSize === "small" ? "text-[14px]" : "text-[16px]"}`}>
+        <span className={`font-normal ${textSize === "small" ? "text-[12px]" : "text-[16px]"}`}>
           {" "}
           ({additionalInfo})
         </span>
