@@ -177,11 +177,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   return (
     <DialogModalV3 title="Proposal" isOpen={isOpen} setIsOpen={setIsOpen} className="xl:w-[1200px]" onClose={onClose}>
       <div className="flex flex-col h-full" id="custom-modal">
-        <div
-          className={`flex items-center justify-between ${
-            proposalData?.proposal && proposalData?.proposal?.rank === 0 ? "mt-10" : ""
-          } py-4 border-b border-neutral-2`}
-        >
+        <div className={`flex items-center justify-between pb-4 border-b border-neutral-2`}>
           {isProposalLoading ? (
             <p className="loadingDots font-sabo text-[18px] text-neutral-9">loading submission info</p>
           ) : (
