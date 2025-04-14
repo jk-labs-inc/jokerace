@@ -13,9 +13,12 @@ import { useEffect } from "react";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useDeleteProposalStore } from "./store";
+import { ContestStatus } from "@hooks/useContestStatus/store";
+
+export const ENTRANT_CAN_DELETE_VERSION = "5.3";
 
 export function useDeleteProposal() {
-  const { contestAbi: abi } = useContestStore(state => state);
+  const { contestAbi: abi, version } = useContestStore(state => state);
   const { address: userAddress } = useAccount();
   const asPath = usePathname();
   const { address, chainName } = extractPathSegments(asPath ?? "");
@@ -95,6 +98,26 @@ export function useDeleteProposal() {
     }
   }
 
+  function isEntrantCanDeleteVersion() {
+    return version === ENTRANT_CAN_DELETE_VERSION;
+  }
+
+  function canDeleteProposal(
+    userAddress: string | undefined,
+    contestAuthorAddress: string,
+    proposalAuthorAddress: string,
+    contestStatus: ContestStatus,
+  ) {
+    const isContestAuthor = userAddress === contestAuthorAddress;
+    const isProposalAuthor = userAddress === proposalAuthorAddress;
+    const canEntrantDelete = isEntrantCanDeleteVersion();
+
+    return (
+      (contestStatus === ContestStatus.SubmissionOpen || contestStatus === ContestStatus.VotingOpen) &&
+      (isContestAuthor || (canEntrantDelete && isProposalAuthor))
+    );
+  }
+
   useEffect(() => {
     if (!isModalOpen) {
       setIsLoading(false);
@@ -110,6 +133,8 @@ export function useDeleteProposal() {
     error,
     isSuccess,
     transactionData,
+    isEntrantCanDeleteVersion,
+    canDeleteProposal,
   };
 }
 

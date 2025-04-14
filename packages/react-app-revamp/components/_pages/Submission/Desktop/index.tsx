@@ -48,6 +48,7 @@ const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
       onConnectWallet={onConnectWallet}
       onNextEntry={onNextEntry}
       onPreviousEntry={onPreviousEntry}
+      setIsOpen={onClose}
     />
   );
 };

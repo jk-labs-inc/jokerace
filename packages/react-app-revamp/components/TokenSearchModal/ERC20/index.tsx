@@ -2,10 +2,11 @@ import { chains } from "@config/wagmi";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { FilteredToken, TOKENLISTOOOR_SUPPORTED_CHAIN_IDS } from "@hooks/useTokenList";
 import { FC, useState } from "react";
-import TokenSearchModalChainDropdown, { Option } from "../components/ChainDropdown";
+import TokenSearchModalChainDropdown from "../components/ChainDropdown";
 import TokenSearchModalSearchInput from "../components/SearchInput";
 import TokenSearchList from "../components/TokenList";
 import TokenSearchModalUserTokens from "../components/UserTokens";
+import { Option } from "../types";
 
 interface TokenSearchModalERC20Props {
   chains: Option[];
