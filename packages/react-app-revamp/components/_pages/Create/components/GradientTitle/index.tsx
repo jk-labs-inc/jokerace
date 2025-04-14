@@ -1,6 +1,6 @@
 interface CreateGradientTitleProps {
   children: React.ReactNode;
-  additionalInfo?: "required" | "recommended";
+  additionalInfo?: "required" | "recommended" | "optional";
   textSize?: "small" | "medium";
 }
 
@@ -11,7 +11,12 @@ const CreateGradientTitle = ({ children, additionalInfo, textSize = "medium" }: 
     <p className={`font-bold bg-gradient-title bg-clip-text text-transparent ${textSizeClass} `}>
       {children}
 
-      {additionalInfo && <span className="font-normal text-[16px]"> ({additionalInfo})</span>}
+      {additionalInfo && (
+        <span className={`font-normal ${textSize === "small" ? "text-[14px]" : "text-[16px]"}`}>
+          {" "}
+          ({additionalInfo})
+        </span>
+      )}
     </p>
   );
 };

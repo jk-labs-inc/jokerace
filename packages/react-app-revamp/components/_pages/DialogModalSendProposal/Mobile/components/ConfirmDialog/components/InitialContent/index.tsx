@@ -3,13 +3,13 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import EmailSubscription from "@components/UI/EmailSubscription";
 import { FOOTER_LINKS, LINK_BRIDGE_DOCS } from "@config/links";
 import { chains } from "@config/wagmi";
-import { Switch } from "@headlessui/react";
 import { emailRegex } from "@helpers/regex";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useState } from "react";
 import Onramp from "@components/Onramp";
+import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 
 interface SendProposalMobileLayoutConfirmInitialContentProps {
   charge: Charge | null;
@@ -34,32 +34,14 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
   const [showOnramp, setShowOnramp] = useState(false);
 
-  const handleCheckboxChange = (checked: boolean) => {
-    setWantsSubscription(checked);
-    setEmailError(null);
-  };
-
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value) {
-      setWantsSubscription(true);
-    } else {
-      setWantsSubscription(false);
-    }
-    setEmailForSubscription(event.target.value);
+    const value = event.target.value;
+    setEmailForSubscription(value);
+    setWantsSubscription(!!value);
     setEmailError(null);
   };
 
   const handleConfirm = () => {
-    if (wantsSubscription && !emailForSubscription) {
-      setEmailError("Please enter an email address.");
-      return;
-    }
-
-    if (!wantsSubscription && emailForSubscription) {
-      setEmailError("Please check the box if you want to be notified.");
-      return;
-    }
-
     if (emailForSubscription && !emailRegex.test(emailForSubscription)) {
       setEmailError("Invalid email address.");
       return;
@@ -85,29 +67,17 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
         <Onramp chain={chainName} asset={chainCurrencySymbol || ""} onGoBack={handleOnRampClose} />
       ) : (
         <>
-          <div className="flex flex-col gap-4 ">
-            <div className="flex gap-4 items-center">
-              <Switch
-                checked={wantsSubscription}
-                onChange={handleCheckboxChange}
-                className="group relative flex w-12 h-6 cursor-pointer rounded-full bg-neutral-10 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-secondary-11"
-              >
-                <span
-                  aria-hidden="true"
-                  className="pointer-events-none inline-block size-6 translate-x-0 rounded-full bg-neutral-11 ring-0 shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-7"
-                />
-              </Switch>
-              <p className="text-[16px] text-neutral-11 font-bold">get updates on contests</p>
-            </div>
-            {wantsSubscription ? (
-              <EmailSubscription
-                emailAlreadyExists={emailAlreadyExists ?? false}
-                emailError={emailError}
-                emailForSubscription={emailForSubscription ?? ""}
-                tosHref={tosHref ?? ""}
-                handleEmailChange={handleEmailChange}
-              />
-            ) : null}
+          <div className="flex flex-col gap-4">
+            <CreateGradientTitle textSize="small" additionalInfo="optional">
+              get updates by email
+            </CreateGradientTitle>
+            <EmailSubscription
+              emailAlreadyExists={emailAlreadyExists ?? false}
+              emailError={emailError}
+              emailForSubscription={emailForSubscription ?? ""}
+              tosHref={tosHref ?? ""}
+              handleEmailChange={handleEmailChange}
+            />
           </div>
           {charge && charge.type.costToPropose && accountData ? (
             <ChargeLayoutSubmission charge={charge} accountData={accountData} onAddFunds={handleOnRampOpen} />

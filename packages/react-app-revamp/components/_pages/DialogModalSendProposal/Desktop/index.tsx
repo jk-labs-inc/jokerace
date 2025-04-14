@@ -1,12 +1,12 @@
 import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
+import Onramp from "@components/Onramp";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EmailSubscription from "@components/UI/EmailSubscription";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
-import { FOOTER_LINKS, LINK_BRIDGE_DOCS } from "@config/links";
+import { FOOTER_LINKS } from "@config/links";
 import { chains } from "@config/wagmi";
-import { Switch } from "@headlessui/react";
 import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
 import { Charge } from "@hooks/useDeployContest/types";
@@ -22,7 +22,7 @@ import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPrevie
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
 import { isEntryPreviewPrompt } from "../utils";
-import Onramp from "@components/Onramp";
+import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -63,7 +63,6 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
 }) => {
   const { contestPrompt } = useContestStore(state => state);
   const {
-    wantsSubscription,
     setWantsSubscription,
     setEmailForSubscription,
     emailForSubscription,
@@ -83,18 +82,10 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);
   const [showOnrampModal, setShowOnrampModal] = useState(false);
 
-  const handleCheckboxChange = (checked: boolean) => {
-    setWantsSubscription(checked);
-    setEmailError(null);
-  };
-
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value) {
-      setWantsSubscription(true);
-    } else {
-      setWantsSubscription(false);
-    }
-    setEmailForSubscription(event.target.value);
+    const value = event.target.value;
+    setEmailForSubscription(value);
+    setWantsSubscription(!!value);
     setEmailError(null);
     setEmailAlreadyExists(false);
   };
@@ -127,16 +118,6 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
           add {chainCurrencySymbol} to {chainName} to enter contest {">"}
         </button>,
       );
-      return;
-    }
-
-    if (wantsSubscription && !emailForSubscription) {
-      setEmailError("Please enter an email address.");
-      return;
-    }
-
-    if (!wantsSubscription && emailForSubscription) {
-      setEmailError("Please check the box if you want to be notified.");
       return;
     }
 
@@ -216,28 +197,16 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                 <DialogModalSendProposalMetadataFields />
               ) : null}
               <div className="flex flex-col gap-4 -mt-2">
-                <div className="flex gap-4 items-center">
-                  <Switch
-                    checked={wantsSubscription}
-                    onChange={handleCheckboxChange}
-                    className="group relative flex w-12 h-6 cursor-pointer rounded-full bg-neutral-10 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-secondary-11"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="pointer-events-none inline-block size-6 translate-x-0 rounded-full bg-neutral-11 ring-0 shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-7"
-                    />
-                  </Switch>
-                  <p className="text-[16px] text-neutral-11 font-bold">get updates on contests</p>
-                </div>
-                {wantsSubscription ? (
-                  <EmailSubscription
-                    emailAlreadyExists={emailAlreadyExists ?? false}
-                    emailError={emailError}
-                    emailForSubscription={emailForSubscription ?? ""}
-                    tosHref={tosHref ?? ""}
-                    handleEmailChange={handleEmailChange}
-                  />
-                ) : null}
+                <CreateGradientTitle textSize="small" additionalInfo="optional">
+                  get updates by email
+                </CreateGradientTitle>
+                <EmailSubscription
+                  emailAlreadyExists={emailAlreadyExists ?? false}
+                  emailError={emailError}
+                  emailForSubscription={emailForSubscription ?? ""}
+                  tosHref={tosHref ?? ""}
+                  handleEmailChange={handleEmailChange}
+                />
               </div>
             </div>
             <div className="flex flex-col gap-12 mt-12">
