@@ -4,6 +4,11 @@ import {
 } from "@components/_pages/Create/pages/ContestTiming/utils";
 import { ContestType, ContestTypeConfig } from "@components/_pages/Create/types";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import {
+  DEFAULT_ALLOWED_SUBMISSIONS_PER_USER,
+  MAX_ALLOWED_SUBMISSIONS_PER_USER,
+  MAX_SUBMISSIONS_PER_CONTEST,
+} from "@hooks/useDeployContest/types";
 import { useAccount } from "wagmi";
 import { useSubmissionMerkle } from "./useSubmissionMerkle";
 
@@ -35,6 +40,7 @@ const useSetContestTypeConfig = () => {
     setVotingRequirementsOption,
     setSubmissionMerkle,
     setPrompt,
+    setCustomization,
   } = useDeployContestStore(state => state);
   const { setTimingOption: setSubmissionTimingOption } = useTimingOptionForSubmissionPeriod(state => state);
   const { processCreatorAllowlist } = useSubmissionMerkle();
@@ -48,7 +54,15 @@ const useSetContestTypeConfig = () => {
 
     if (type === ContestType.VotingContest) {
       processCreatorAllowlist(address);
+      setCustomization({
+        maxSubmissions: MAX_SUBMISSIONS_PER_CONTEST,
+        allowedSubmissionsPerUser: MAX_ALLOWED_SUBMISSIONS_PER_USER,
+      });
     } else {
+      setCustomization({
+        maxSubmissions: MAX_SUBMISSIONS_PER_CONTEST,
+        allowedSubmissionsPerUser: DEFAULT_ALLOWED_SUBMISSIONS_PER_USER,
+      });
       setSubmissionMerkle(null);
     }
 
