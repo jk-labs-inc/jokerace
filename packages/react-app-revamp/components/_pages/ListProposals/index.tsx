@@ -85,7 +85,7 @@ export const ListProposals = () => {
     return (
       <ListProposalsSkeleton
         enabledPreview={enabledPreview}
-        highlightColor="#FFE25B"
+        highlightColor="#BB65FF"
         count={listProposalsIds.length > PROPOSALS_PER_PAGE ? PROPOSALS_PER_PAGE : listProposalsIds.length}
       />
     );
@@ -117,7 +117,6 @@ export const ListProposals = () => {
           count={skeletonRemainingLoaderCount}
         />
       }
-      scrollThreshold={isMobile ? 0.4 : 0.5}
     >
       <ListProposalsContainer enabledPreview={enabledPreview}>
         {listProposalsData.map((proposal, index) => {
