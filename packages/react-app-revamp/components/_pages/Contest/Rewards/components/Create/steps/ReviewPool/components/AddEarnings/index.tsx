@@ -1,8 +1,13 @@
 import { Switch } from "@headlessui/react";
 import { useCreateRewardsStore } from "../../../../store";
 import { useMediaQuery } from "react-responsive";
+import { FC } from "react";
 
-const CreateRewardsAddEarningsToggle = () => {
+interface CreateRewardsAddEarningsToggleProps {
+  percentageToCreator: number;
+}
+
+const CreateRewardsAddEarningsToggle: FC<CreateRewardsAddEarningsToggleProps> = ({ percentageToCreator }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { addEarningsToRewards, setAddEarningsToRewards } = useCreateRewardsStore(state => state);
 
@@ -18,7 +23,9 @@ const CreateRewardsAddEarningsToggle = () => {
           className="pointer-events-none inline-block size-6 translate-x-0 rounded-full bg-neutral-11 ring-0 shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-7"
         />
       </Switch>
-      <p className="text-[16px] text-neutral-11">send a split of charges to {isMobile ? "" : "the"} rewards pool</p>
+      <p className="text-[16px] text-neutral-11">
+        send {percentageToCreator}% of all charges to {isMobile ? "" : "the"} rewards pool
+      </p>
     </div>
   );
 };

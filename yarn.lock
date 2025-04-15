@@ -8210,17 +8210,17 @@
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.66.4.tgz#44b87bff289466adbfa0de8daa5756cbd2d61c61"
   integrity sha512-skM/gzNX4shPkqmdTCSoHtJAPMTtmIJNS0hE+xwTTUVYwezArCT34NMermABmBVUg5Ls5aiUXEDXfqwR1oVkcA==
 
-"@tanstack/query-core@5.74.0":
-  version "5.74.0"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.74.0.tgz#032250ce9f42bd2840bfad72e2fe1313d3d8ca5b"
-  integrity sha512-kMqBfXA06INskI06rm+abAY3/Vi/Kq1nRNfLbpwuhuMJ5lMAI5qASretlvjEO5OJoze6w7OB3pNvsbztirIWWQ==
+"@tanstack/query-core@5.74.3":
+  version "5.74.3"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.74.3.tgz#1fc97bd9a47f2acdf9f49737b1e6969e7bbcb7d7"
+  integrity sha512-Mqk+5o3qTuAiZML248XpNH8r2cOzl15+LTbUsZQEwvSvn1GU4VQhvqzAbil36p+MBxpr/58oBSnRzhrBevDhfg==
 
-"@tanstack/react-query@5.74.0":
-  version "5.74.0"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.74.0.tgz#c6575733a369f098c05be3ccc8bb4aafe6e51e70"
-  integrity sha512-tT/XQ8FmG5nlN7O8xnYaOM1c1ckJi9+SPKRq+Ay8rV118lefWCoFDQIsF/BarRsLTHijBmSQ6xE9PRugaOqrCQ==
+"@tanstack/react-query@5.74.3":
+  version "5.74.3"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.74.3.tgz#f7acd825abaea091f009d1c3f115212e45c4ee74"
+  integrity sha512-QrycUn0wxjVPzITvQvOxFRdhlAwIoOQSuav7qWD4SWCoKCdLbyRZ2vji2GuBq/glaxbF4wBx3fqcYRDOt8KDTA==
   dependencies:
-    "@tanstack/query-core" "5.74.0"
+    "@tanstack/query-core" "5.74.3"
 
 "@tanstack/react-query@^5.0.0":
   version "5.66.4"
@@ -19326,10 +19326,10 @@ viem@2.23.2:
     ox "0.6.7"
     ws "8.18.0"
 
-viem@2.26.3:
-  version "2.26.3"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.26.3.tgz#54a76cf458a3010ffae54b80c72b8f5b715cb67f"
-  integrity sha512-rGIIdDsxbs101C0gorWkuPqtMfRy2+lmO8S25fkzVe1KPQw0CQ8u6JMFHrLwdJS9Lr9xwpgmPh6LfvpOjpo3xQ==
+viem@2.27.0:
+  version "2.27.0"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.27.0.tgz#edfca8e107d96eecff70d6c4f049c5e43422f902"
+  integrity sha512-pKw2dcwDi6TaWlTzLHYazOgjO1GgbUpE1zdLsLNSiCjHNrMTpL/teL0wVHnJDLiB2tR5CL19LBqefYNtRUkH5Q==
   dependencies:
     "@noble/curves" "1.8.1"
     "@noble/hashes" "1.7.1"
