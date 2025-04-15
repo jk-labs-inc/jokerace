@@ -40,16 +40,18 @@ const DialogModalProposalHeader: FC<DialogModalProposalHeaderProps> = ({
   return (
     <div className="flex flex-col gap-4 w-full">
       {allowDelete && <SubmissionDeleteButton onClick={() => setIsDeleteProposalModalOpen(true)} />}
-      <div className="flex gap-2 items-center">
-        <p className="text-[20px] font-bold text-neutral-11">
-          {formatNumberAbbreviated(proposalData.proposal.votes)} vote
-          {proposalData.proposal.votes > 1 ? "s" : ""}
-        </p>
-        <span className="text-neutral-9">•</span>
-        <p className="text-[20px] font-bold text-neutral-9">
-          {ordinalize(proposalData.proposal.rank).label} place {proposalData.proposal.isTied ? "(tied)" : ""}
-        </p>
-      </div>
+      {proposalData.proposal.votes > 0 && (
+        <div className="flex gap-2 items-center">
+          <p className="text-[20px] font-bold text-neutral-11">
+            {formatNumberAbbreviated(proposalData.proposal.votes)} vote
+            {proposalData.proposal.votes > 1 ? "s" : ""}
+          </p>
+          <span className="text-neutral-9">•</span>
+          <p className="text-[20px] font-bold text-neutral-9">
+            {ordinalize(proposalData.proposal.rank).label} place {proposalData.proposal.isTied ? "(tied)" : ""}
+          </p>
+        </div>
+      )}
       <div className="flex justify-between w-full items-center">
         <UserProfileDisplay ethereumAddress={proposalData.proposal.authorEthereumAddress} shortenOnFallback={true} />
         <div className="flex items-center gap-2">
