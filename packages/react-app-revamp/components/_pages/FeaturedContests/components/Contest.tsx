@@ -5,7 +5,6 @@ import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import useProfileData from "@hooks/useProfileData";
 import { Contest, ContestReward } from "lib/contests";
 import moment from "moment";
-import { Link } from "next-view-transitions";
 import { FC, useCallback, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 
@@ -163,7 +162,13 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-[18px] font-bold text-true-white normal-case">{contestData.title}</p>
+          {contestData.title ? (
+            <p className="text-[18px] font-bold text-true-white normal-case">{contestData.title}</p>
+          ) : (
+            <p className="text-[14px] font-bold text-negative-11 flex items-start gap-2">
+              we couldn't load title, please reload or try again later.
+            </p>
+          )}
           <p className="flex items-center gap-2 text-[12px] font-bold text-neutral-11">
             {isContestActive && !contestData.isCanceled && (
               <span className="relative flex h-3 w-3">
