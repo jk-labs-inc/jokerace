@@ -1,6 +1,8 @@
 import { Editor } from "@tiptap/react";
 import { FC } from "react";
 import DialogModalSendProposalEditor from "../../../Editor";
+import GradientText from "@components/UI/GradientText";
+import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 
 interface DialogModalSendProposalEntryPreviewAdditionalDescriptionLayoutProps {
   editorProposal: Editor | null;
@@ -15,9 +17,9 @@ const DialogModalSendProposalEntryPreviewAdditionalDescriptionLayout: FC<
 > = ({ editorProposal, isDragging, handleDrop, handleDragOver, handleDragLeave }) => {
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-[16px] font-bold text-neutral-11">
-        additional description <span className="font-normal">(optional)</span>
-      </p>
+      <CreateGradientTitle textSize="small" additionalInfo="optional">
+        additional description
+      </CreateGradientTitle>
       <DialogModalSendProposalEditor
         editorProposal={editorProposal}
         isDragging={isDragging}
