@@ -1,6 +1,6 @@
 import { twitterRegex } from "@helpers/regex";
 import { ReactNode } from "react";
-import { Tweet } from "react-tweet";
+import { Tweet } from "../components/ProposalLayout/Tweet/components/CustomTweet";
 
 export const transform = (node: HTMLElement): ReactNode => {
   const element = node.tagName.toLowerCase();
@@ -48,8 +48,4 @@ const createExternalLink = (href: string, text: string): ReactNode => (
   </a>
 );
 
-const createTweetEmbed = (tweetId: string): ReactNode => (
-  <div className="dark not-prose">
-    <Tweet apiUrl={`/api/tweet/${tweetId}`} id={tweetId} />
-  </div>
-);
+const createTweetEmbed = (tweetId: string): ReactNode => <Tweet apiUrl={`/api/tweet/${tweetId}`} id={tweetId} />;

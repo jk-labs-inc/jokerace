@@ -25,7 +25,6 @@ import Text from "@tiptap/extension-text";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { switchChain } from "@wagmi/core";
-import moment from "moment";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -128,7 +127,11 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       return null;
     }
 
-    return subscribeUser(emailForSubscription, address ?? "", false);
+    if (!address) {
+      return null;
+    }
+
+    return subscribeUser(emailForSubscription, address, false);
   };
 
   const onSubmitProposal = async () => {

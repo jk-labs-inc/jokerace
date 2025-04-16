@@ -1,4 +1,3 @@
-import { LinkIcon } from "@heroicons/react/24/outline";
 import { FC } from "react";
 import { TweetContainer } from "react-tweet";
 

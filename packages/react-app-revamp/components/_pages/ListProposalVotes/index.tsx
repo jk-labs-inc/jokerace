@@ -11,6 +11,7 @@ import VoterRow from "./components/VoterRow";
 interface ListProposalVotesProps {
   proposalId: string;
   votedAddresses: string[] | null;
+  className?: string;
 }
 
 const LoadingSkeleton: FC<{ count: number }> = ({ count }) => (
@@ -27,7 +28,7 @@ const LoadingSkeleton: FC<{ count: number }> = ({ count }) => (
   </div>
 );
 
-export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, votedAddresses }) => {
+export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, votedAddresses, className }) => {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
@@ -96,11 +97,10 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
                     {addresses.map(address => (
                       <VoterRow
                         key={address}
-                        data={{
-                          votesPerAddress: accumulatedVotesData,
-                          address: address,
-                          addressesLength: addresses.length,
-                        }}
+                        votesPerAddress={accumulatedVotesData}
+                        address={address}
+                        addressesLength={addresses.length}
+                        className={className}
                       />
                     ))}
                     {showLoadMore && (

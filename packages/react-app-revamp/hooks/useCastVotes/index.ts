@@ -24,9 +24,9 @@ import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
 import { useEmailSend } from "@hooks/useEmailSend";
 import { EmailType, VotingEmailParams } from "lib/email/types";
-import { FOOTER_LINKS } from "@config/links";
 import moment from "moment";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
+import { compareVersions } from "compare-versions";
 
 interface UserAnalyticsParams {
   contestAddress: string;
@@ -101,6 +101,11 @@ export function useCastVotes() {
   const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
   const contestLink = `${window.location.origin}/contest/${chainName.toLowerCase()}/${contestAddress}`;
 
+  // feature flags based on version
+  const features = {
+    hasDownvotes: version ? compareVersions(version, "5.1") < 0 : false,
+  };
+
   const calculateChargeAmount = (amountOfVotes: number) => {
     if (!charge) return undefined;
 
@@ -133,23 +138,32 @@ export function useCastVotes() {
       let request;
 
       if (!isVerified) {
+        const castVoteArgs = features.hasDownvotes
+          ? [pickedProposal, isPositive ? 0 : 1, totalVoteAmount, parseUnits(amountOfVotes.toString()), proofs]
+          : [pickedProposal, totalVoteAmount, parseUnits(amountOfVotes.toString()), proofs];
+
         const { request: simulatedRequest } = await simulateContract(config, {
           address: contestAddress as `0x${string}`,
           abi: abi ? abi : DeployedContestContract.abi,
           chainId,
           functionName: "castVote",
-          args: [pickedProposal, isPositive ? 0 : 1, totalVoteAmount, parseUnits(amountOfVotes.toString()), proofs],
+          args: castVoteArgs,
           //@ts-ignore
           value: costToVote,
         });
         request = simulatedRequest;
       } else {
+        // prepare args based on version
+        const castVoteWithoutProofArgs = features.hasDownvotes
+          ? [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amountOfVotes}`)]
+          : [pickedProposal, parseUnits(`${amountOfVotes}`)];
+
         const { request: simulatedRequest } = await simulateContract(config, {
           address: contestAddress as `0x${string}`,
           abi: abi ? abi : DeployedContestContract.abi,
           chainId,
           functionName: "castVoteWithoutProof",
-          args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amountOfVotes}`)],
+          args: castVoteWithoutProofArgs,
           //@ts-ignore
           value: costToVote,
         });
@@ -182,17 +196,31 @@ export function useCastVotes() {
         hash: receipt.transactionHash,
       });
 
-      const voteResponse = (await readContract(config, {
-        address: contestAddress as `0x${string}`,
-        abi: DeployedContestContract.abi,
-        functionName: "proposalVotes",
-        args: [pickedProposal],
-      })) as bigint[];
+      let votes: number;
 
-      const forVotes = voteResponse[0] as bigint;
-      const againstVotes = voteResponse[1] as bigint;
-      const finalVotes = forVotes - againstVotes;
-      const votes = Number(formatEther(finalVotes));
+      if (features.hasDownvotes) {
+        const voteResponse = (await readContract(config, {
+          address: contestAddress as `0x${string}`,
+          abi: DeployedContestContract.abi,
+          functionName: "proposalVotes",
+          args: [pickedProposal],
+        })) as bigint[];
+
+        const forVotes = voteResponse[0] as bigint;
+        const againstVotes = voteResponse[1] as bigint;
+        const finalVotes = forVotes - againstVotes;
+        votes = Number(formatEther(finalVotes));
+      } else {
+        const voteCount = (await readContract(config, {
+          address: contestAddress as `0x${string}`,
+          abi: DeployedContestContract.abi,
+          functionName: "proposalVotes",
+          args: [pickedProposal],
+        })) as bigint;
+
+        votes = Number(formatEther(voteCount));
+      }
+
       const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
 
       if (existingProposal) {

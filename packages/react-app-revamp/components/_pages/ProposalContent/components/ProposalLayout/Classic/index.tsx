@@ -11,10 +11,10 @@ import { loadFromLocalStorage } from "@helpers/localStorage";
 import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import ProposalContentDeleteButton from "../../Buttons/Delete";
 import ProposalContentInfo from "../../ProposalContentInfo";
+import CustomLink from "@components/UI/Link";
 
 interface ProposalLayoutClassicProps {
   proposal: Proposal;
@@ -71,12 +71,11 @@ const ProposalLayoutClassic = ({
       {!isContentHidden && (
         <div className="md:mx-8 flex flex-col gap-4">
           <div className="flex w-full">
-            <Link
+            <CustomLink
               className="inline-block p-4 rounded-[8px] bg-primary-1 border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out overflow-hidden"
               href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
               shallow
               scroll={false}
-              prefetch
             >
               <div className="max-w-full overflow-hidden interweave-container">
                 <Interweave
@@ -86,7 +85,7 @@ const ProposalLayoutClassic = ({
                   tagName="div"
                 />
               </div>
-            </Link>
+            </CustomLink>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex gap-2 items-center">
@@ -105,7 +104,7 @@ const ProposalLayoutClassic = ({
                   voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
                 </p>
               )}
-              <Link
+              <CustomLink
                 href={commentLink}
                 className="min-w-16 flex-shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-primary-1 rounded-[16px] cursor-pointer border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out"
                 shallow
@@ -113,7 +112,7 @@ const ProposalLayoutClassic = ({
               >
                 <ChatBubbleLeftEllipsisIcon className="w-6 h-6 text-neutral-9 flex-shrink-0" />
                 <p className="text-[16px] text-neutral-9 font-bold flex-grow text-center">{proposal.commentsCount}</p>
-              </Link>
+              </CustomLink>
             </div>
             {allowDelete && (
               <ProposalContentDeleteButton

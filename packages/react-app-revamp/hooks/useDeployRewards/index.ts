@@ -1,6 +1,6 @@
 import { useFundPoolStore } from "@components/_pages/Contest/Rewards/components/Create/steps/FundPool/store";
 import { CreationStep, useCreateRewardsStore } from "@components/_pages/Contest/Rewards/components/Create/store";
-import { config } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { getEthersSigner } from "@helpers/ethers";
@@ -14,12 +14,11 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
 import { didUserReject } from "utils/error";
 import { erc20Abi, parseUnits } from "viem";
-import { useAccount } from "wagmi";
 
 export function useDeployRewardsPool() {
-  const { chainId, chain } = useAccount();
   const asPath = usePathname();
-  const { address: contestAddress } = extractPathSegments(asPath ?? "");
+  const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
+  const chainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
   const setSupportsRewardsModule = useContestStore(state => state.setSupportsRewardsModule);
   const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards } = useCreateRewardsStore(state => state);
   const { tokenWidgets, setTokenWidgets } = useFundPoolStore(state => state);
@@ -189,7 +188,7 @@ export function useDeployRewardsPool() {
           await updateRewardAnalytics({
             contest_address: contestAddress,
             rewards_module_address: contractRewardsModuleAddress,
-            network_name: chain?.name.toLowerCase() ?? "",
+            network_name: chainName,
             amount: parseFloat(token.amount),
             operation: "deposit",
             token_address: token.address === "native" ? null : token.address,

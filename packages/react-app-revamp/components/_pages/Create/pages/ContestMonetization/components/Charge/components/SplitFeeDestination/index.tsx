@@ -1,9 +1,9 @@
+import CreateRadioButtonsGroup, { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { SplitFeeDestination, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import CreateRadioButtonsGroup, { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup";
 
 interface ContestParamsSplitFeeDestinationProps {
   splitFeeDestination: SplitFeeDestination;
@@ -32,9 +32,9 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
   const [address, setAddress] = useState(splitFeeDestination.address);
   const [isRewardsModuleAddress, setIsRewardsModuleAddress] = useState(false);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const percentageTitle = isMobile
+  const splitFeeDestinationTitle = isMobile
     ? "who should we split charges with?"
-    : "we split all charges 50/50. who should receive these?";
+    : "we split all charges 70 (you)/30 (us). who should receive these?";
 
   useEffect(() => {
     setSelected(splitFeeDestination.type);
@@ -120,7 +120,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-4">
-        <p className="text-[20px] md:text-[20px] text-neutral-11 font-bold">{percentageTitle}</p>
+        <p className="text-[20px] text-neutral-11 font-bold">{splitFeeDestinationTitle}</p>
         <CreateRadioButtonsGroup
           options={getOptions()}
           value={selected}

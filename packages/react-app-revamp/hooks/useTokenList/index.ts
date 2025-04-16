@@ -1,7 +1,8 @@
 import { config } from "@config/wagmi";
 import { addressRegex } from "@helpers/regex";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getToken } from "@wagmi/core";
+import { getToken, getBalance } from "@wagmi/core";
+import { useAccount } from "wagmi";
 
 export interface FilteredToken {
   address: string;
@@ -29,13 +30,15 @@ async function fetchTokenListOrMetadata({
   pageParam = 0,
   chainId,
   tokenIdentifier,
+  userAddress,
 }: {
   pageParam?: number;
   chainId: number;
   tokenIdentifier: string;
+  userAddress?: string;
 }): Promise<{ tokens: FilteredToken[]; pagination: PaginationInfo }> {
   if (!TOKENLISTOOOR_SUPPORTED_CHAIN_IDS.includes(chainId)) {
-    return fetchTokenByAddress({ chainId, tokenIdentifier });
+    return fetchTokenByAddress({ chainId, tokenIdentifier, userAddress });
   }
 
   const response = await fetch(
@@ -51,17 +54,50 @@ async function fetchTokenListOrMetadata({
   const data = await response.json();
 
   if (data.tokens && data.tokens.length > 0) {
+    const tokens = data.tokens.map((token: any) => ({
+      address: token.address,
+      name: token.name,
+      symbol: token.symbol,
+      decimals: token.decimals,
+      logoURI:
+        token.logoURI === "" || token.logoURI === "missing_thumb.png"
+          ? "/contest/mona-lisa-moustache.png"
+          : token.logoURI,
+    }));
+
+    if (userAddress) {
+      const tokensWithBalances = await Promise.all(
+        tokens.map(async (token: { address: string }) => {
+          try {
+            const balance = await getBalance(config, {
+              address: userAddress as `0x${string}`,
+              token: token.address as `0x${string}`,
+              chainId,
+            });
+
+            return {
+              ...token,
+              balance: Number(balance.formatted),
+            };
+          } catch (error) {
+            console.error(`error fetching balance for token ${token.address}:`, error);
+            return token;
+          }
+        }),
+      );
+
+      return {
+        tokens: tokensWithBalances,
+        pagination: {
+          totalLength: data.pagination.totalLength,
+          hasMore: data.pagination.hasMore,
+          pageParam: pageParam,
+        },
+      };
+    }
+
     return {
-      tokens: data.tokens.map((token: any) => ({
-        address: token.address,
-        name: token.name,
-        symbol: token.symbol,
-        decimals: token.decimals,
-        logoURI:
-          token.logoURI === "" || token.logoURI === "missing_thumb.png"
-            ? "/contest/mona-lisa-moustache.png"
-            : token.logoURI,
-      })),
+      tokens,
       pagination: {
         totalLength: data.pagination.totalLength,
         hasMore: data.pagination.hasMore,
@@ -70,15 +106,17 @@ async function fetchTokenListOrMetadata({
     };
   }
 
-  return fetchTokenByAddress({ chainId, tokenIdentifier });
+  return fetchTokenByAddress({ chainId, tokenIdentifier, userAddress });
 }
 
 async function fetchTokenByAddress({
   chainId,
   tokenIdentifier,
+  userAddress,
 }: {
   chainId: number;
   tokenIdentifier: string;
+  userAddress?: string;
 }): Promise<{ tokens: FilteredToken[]; pagination: PaginationInfo }> {
   if (addressRegex.test(tokenIdentifier)) {
     const token = await getToken(config, {
@@ -101,6 +139,20 @@ async function fetchTokenByAddress({
       };
     }
 
+    if (userAddress) {
+      try {
+        const balance = await getBalance(config, {
+          address: userAddress as `0x${string}`,
+          token: tokenData.address as `0x${string}`,
+          chainId,
+        });
+
+        tokenData.balance = Number(balance.formatted);
+      } catch (error) {
+        console.error(`error fetching balance for token ${tokenData.address}:`, error);
+      }
+    }
+
     return {
       tokens: [tokenData],
       pagination: {
@@ -115,9 +167,17 @@ async function fetchTokenByAddress({
 }
 
 export function useTokenList(chainId: number, tokenIdentifier: string) {
+  const { address } = useAccount();
+
   const { data, isLoading, isError, error, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["searchTokens", chainId, tokenIdentifier],
-    queryFn: ({ pageParam = 0 }) => fetchTokenListOrMetadata({ pageParam, chainId, tokenIdentifier }),
+    queryKey: ["searchTokens", chainId, tokenIdentifier, address],
+    queryFn: ({ pageParam = 0 }) =>
+      fetchTokenListOrMetadata({
+        pageParam,
+        chainId,
+        tokenIdentifier,
+        userAddress: address,
+      }),
     getNextPageParam: lastPage => {
       return lastPage.pagination.hasMore ? (lastPage.pagination.pageParam ?? 0) + 1 : undefined;
     },

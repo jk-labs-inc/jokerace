@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ITEMS_PER_PAGE } from "lib/contests";
 import { getUserSubmissions } from "lib/user";
 import { SubmissionsResult } from "lib/user/types";
-import { FC, useState } from "react";
+import { useState } from "react";
 
 function useUserSubmissions(userAddress: string) {
   const [page, setPage] = useState(0);

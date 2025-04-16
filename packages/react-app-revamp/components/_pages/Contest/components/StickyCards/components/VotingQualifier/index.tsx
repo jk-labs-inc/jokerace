@@ -1,12 +1,8 @@
 /* eslint-disable react/no-unescaped-entities */
-import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { useAccountChange } from "@hooks/useAccountChange";
-import { ContractConfig } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
-import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { usePathname } from "next/navigation";
@@ -15,7 +11,6 @@ import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import VotingQualifierMessage from "./components/VotingQualifierMessage";
-import { useEffect, useState } from "react";
 
 const VotingContestQualifier = () => {
   const { anyoneCanVote, charge, contestAbi, version } = useContestStore(state => state);
@@ -81,7 +76,7 @@ const VotingContestQualifier = () => {
         )
       ) : (
         <button
-          className="w-32 md:w-48 h-8 text-[16px] font-bold bg-true-black text-positive-11 md:text-neutral-11 rounded-[40px] border border-positive-11 md:border-neutral-11 hover:bg-neutral-11 hover:text-true-black transition-all duration-300"
+          className="w-32 md:w-48 h-8 text-[16px] font-bold bg-true-black text-neutral-11 rounded-[40px] border border-neutral-11 hover:bg-neutral-11 hover:text-true-black transition-all duration-300"
           onClick={openConnectModal}
         >
           connect wallet

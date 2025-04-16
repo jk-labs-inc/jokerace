@@ -1,25 +1,33 @@
 import Comments from "@components/Comments";
+import Onramp from "@components/Onramp";
+import { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
+import Tabs from "@components/UI/Tabs";
 import VotingWidget from "@components/Voting";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
-import { LINK_BRIDGE_DOCS } from "@config/links";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
+import { getNativeTokenSymbol } from "@helpers/nativeToken";
+import { getTotalCharge } from "@helpers/totalCharge";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import useDeleteProposal from "@hooks/useDeleteProposal";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { useProposalStore } from "@hooks/useProposal/store";
+import { useProposalVotes } from "@hooks/useProposalVotes";
 import { useUserStore } from "@hooks/useUser/store";
+import { switchChain } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
+import { usePathname } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import SimpleBar from "simplebar-react";
 import { useAccount } from "wagmi";
+import DialogMaxVotesAlert from "../DialogMaxVotesAlert";
 import ListProposalVotes from "../ListProposalVotes";
 import DialogModalProposalHeader from "./components/Header";
 import DialogModalProposalVoteCountdown from "./components/VoteCountdown";
-import Tabs from "@components/UI/Tabs";
-import { useProposalVotes } from "@hooks/useProposalVotes";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -62,22 +70,42 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   onNextEntry,
   onConnectWallet,
 }) => {
+  const asPath = usePathname();
+  const { chainName } = extractPathSegments(asPath ?? "");
+  const {
+    canDeleteProposal,
+    deleteProposal,
+    isLoading: isDeleteLoading,
+    isSuccess: isDeleteSuccess,
+  } = useDeleteProposal();
   const contestStatus = useContestStatusStore(state => state.contestStatus);
-  const { isConnected } = useAccount();
+  const { isConnected, address: userAddress, chainId: userChainId } = useAccount();
   const { isSuccess } = useCastVotes();
   const { listProposalsIds } = useProposalStore(state => state);
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
   const totalProposals = listProposalsIds.length;
-  const { downvotingAllowed, charge, votesOpen } = useContestStore(state => state);
+  const { downvotingAllowed, charge, votesOpen, contestAuthorEthereumAddress } = useContestStore(state => state);
+  const isPayPerVote = charge?.voteType === VoteType.PerVote;
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
   const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;
   const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
-  const isAnyoneCanVote = charge?.voteType === VoteType.PerVote;
   const [activeTab, setActiveTab] = useState<DialogTab>(DialogTab.Voters);
   const dialogTabs = Object.values(DialogTab);
   const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
+  const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
+  const [pendingVote, setPendingVote] = useState<{ amount: number; isUpvote: boolean } | null>(null);
+  const [totalCharge, setTotalCharge] = useState("");
+  const nativeToken = getNativeTokenSymbol(chainName);
+  const [showOnrampModal, setShowOnrampModal] = useState(false);
+  const allowDelete = canDeleteProposal(
+    userAddress,
+    contestAuthorEthereumAddress,
+    proposalData?.proposal?.authorEthereumAddress ?? "",
+    contestStatus,
+  );
+  const isUserOnCorrectChain = userChainId === contestInfo.chainId;
 
   const tabsOptionalInfo = {
     ...(addressesVoted?.length > 0 && { [DialogTab.Voters]: addressesVoted.length }),
@@ -87,6 +115,42 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   useEffect(() => {
     if (isSuccess) setIsOpen?.(false);
   }, [isSuccess, setIsOpen]);
+
+  useEffect(() => {
+    if (isDeleteSuccess) setIsOpen?.(false);
+  }, [isDeleteSuccess, setIsOpen]);
+
+  const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
+    if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
+      setShowMaxVoteConfirmation(true);
+      setPendingVote({ amount, isUpvote });
+      setTotalCharge(getTotalCharge(amount, charge?.type.costToVote ?? 0));
+      return;
+    }
+
+    onVote?.(amount, isUpvote);
+  };
+
+  const confirmMaxVote = () => {
+    if (pendingVote) {
+      onVote?.(pendingVote.amount, pendingVote.isUpvote);
+      setShowMaxVoteConfirmation(false);
+      setPendingVote(null);
+    }
+  };
+
+  const cancelMaxVote = () => {
+    setShowMaxVoteConfirmation(false);
+    setPendingVote(null);
+  };
+
+  const handleDeleteProposal = async () => {
+    if (!isUserOnCorrectChain) {
+      await switchChain(config, { chainId: contestInfo.chainId });
+    }
+
+    await deleteProposal([proposalId]);
+  };
 
   if (isProposalError) {
     return (
@@ -113,11 +177,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   return (
     <DialogModalV3 title="Proposal" isOpen={isOpen} setIsOpen={setIsOpen} className="xl:w-[1200px]" onClose={onClose}>
       <div className="flex flex-col h-full" id="custom-modal">
-        <div
-          className={`flex items-center justify-between ${
-            proposalData?.proposal && proposalData?.proposal?.rank === 0 ? "mt-10" : ""
-          } py-4 border-b border-neutral-2`}
-        >
+        <div className={`flex items-center justify-between pb-4 border-b border-neutral-2`}>
           {isProposalLoading ? (
             <p className="loadingDots font-sabo text-[18px] text-neutral-9">loading submission info</p>
           ) : (
@@ -126,8 +186,10 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
               currentIndex={currentIndex}
               totalProposals={totalProposals}
               isProposalLoading={isProposalLoading}
+              allowDelete={allowDelete}
               onPreviousEntry={onPreviousEntry}
               onNextEntry={onNextEntry}
+              onDeleteProposal={handleDeleteProposal}
             />
           )}
         </div>
@@ -154,27 +216,42 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
             <div className="flex flex-col h-full">
               {contestStatus === ContestStatus.VotingOpen ? (
                 <div className="border-b border-neutral-2 py-4 pl-4">
-                  {isConnected ? (
+                  {showOnrampModal ? (
+                    <div className="pr-1">
+                      <Onramp
+                        chain={chainName ?? ""}
+                        asset={chainCurrencySymbol ?? ""}
+                        onGoBack={() => setShowOnrampModal(false)}
+                      />
+                    </div>
+                  ) : showMaxVoteConfirmation ? (
+                    <DialogMaxVotesAlert
+                      token={nativeToken ?? ""}
+                      totalCost={totalCharge}
+                      onConfirm={confirmMaxVote}
+                      onCancel={cancelMaxVote}
+                      buttonSize={ButtonSize.FULL}
+                    />
+                  ) : isConnected ? (
                     currentUserAvailableVotesAmount > 0 ? (
                       <VotingWidget
                         proposalId={proposalId}
                         amountOfVotes={currentUserAvailableVotesAmount}
-                        onVote={onVote}
+                        onVote={onSubmitCastVotes}
                         downvoteAllowed={downvotingAllowed}
+                        onAddFunds={() => {
+                          setShowOnrampModal(true);
+                        }}
                       />
                     ) : outOfVotes ? (
                       <p className="text-[16px] text-neutral-11">
                         looks like you've used up all your votes this contest <br />
                         feel free to try connecting another wallet to see if it has more votes!
                       </p>
-                    ) : isAnyoneCanVote ? (
-                      <a
-                        href={LINK_BRIDGE_DOCS}
-                        target="_blank"
-                        className="text-[16px] text-positive-11 opacity-80 hover:opacity-100 transition-colors font-bold"
-                      >
-                        add {chainCurrencySymbol} to {contestInfo.chain} to get votes {">"}
-                      </a>
+                    ) : isPayPerVote ? (
+                      <div className="pr-1">
+                        <Onramp chain={chainName ?? ""} asset={chainCurrencySymbol ?? ""} showBackButton={false} />
+                      </div>
                     ) : (
                       <p className="text-[16px] text-neutral-11">
                         unfortunately your wallet didn't qualify to vote in this contest <br />
@@ -186,7 +263,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                       <span className="text-positive-11 cursor-pointer text-[16px]" onClick={onConnectWallet}>
                         connect wallet
                       </span>{" "}
-                      to see if you qualify
+                      {isPayPerVote ? "to get votes" : "to see if you qualify"}
                     </p>
                   )}
                 </div>

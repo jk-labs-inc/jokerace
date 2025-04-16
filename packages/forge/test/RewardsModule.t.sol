@@ -17,7 +17,6 @@ contract RewardsModuleTest is Test {
     uint64 public constant VOTING_PERIOD = 10000;
     uint64 public constant NUM_ALLOWED_PROPOSAL_SUBMISSIONS = 3;
     uint64 public constant MAX_PROPOSAL_COUNT = 100;
-    uint64 public constant DOWNVOTING_ALLOWED = 0;
 
     // COST PARAMS
     uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
@@ -43,7 +42,6 @@ contract RewardsModuleTest is Test {
         VOTING_PERIOD,
         NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
         MAX_PROPOSAL_COUNT,
-        DOWNVOTING_ALLOWED,
         SORTING_ENABLED,
         RANK_LIMIT_250,
         FIFTY_PERCENT_TO_CREATOR,
@@ -58,7 +56,6 @@ contract RewardsModuleTest is Test {
         VOTING_PERIOD,
         NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
         MAX_PROPOSAL_COUNT,
-        DOWNVOTING_ALLOWED,
         SORTING_ENABLED,
         RANK_LIMIT_1,
         FIFTY_PERCENT_TO_CREATOR,
@@ -260,7 +257,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -278,7 +275,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
 
         vm.stopPrank();
 
@@ -297,7 +294,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
@@ -315,7 +312,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
 
         vm.stopPrank();
 
@@ -334,7 +331,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
 
         vm.stopPrank();
 
@@ -351,7 +348,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
 
         vm.stopPrank();
 
@@ -369,7 +366,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
 
         vm.stopPrank();
 
@@ -386,7 +383,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
 
         vm.stopPrank();
 
@@ -408,9 +405,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -428,9 +425,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
@@ -449,9 +446,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
@@ -469,9 +466,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
@@ -496,9 +493,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -516,9 +513,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
@@ -599,9 +596,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.startPrank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 3 ether, votingProof1);
-        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
-        contest.castVote(proposalId3, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 3 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId3, 10 ether, 1 ether, votingProof1);
         vm.stopPrank();
 
         vm.warp(1681670001);
@@ -622,9 +619,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.startPrank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 3 ether, votingProof1);
-        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
-        contest.castVote(proposalId3, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 3 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId3, 10 ether, 1 ether, votingProof1);
         vm.stopPrank();
 
         vm.warp(1681670001);
@@ -650,10 +647,10 @@ contract RewardsModuleTest is Test {
         uint256 proposalId4 = contest.propose(thirdProposalPA1, submissionProof1);
         vm.warp(1681660001);
         vm.startPrank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 3 ether, votingProof1);
-        contest.castVote(proposalId2, 0, 10 ether, 2 ether, votingProof1);
-        contest.castVote(proposalId3, 0, 10 ether, 2 ether, votingProof1);
-        contest.castVote(proposalId4, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 3 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 2 ether, votingProof1);
+        contest.castVote(proposalId3, 10 ether, 2 ether, votingProof1);
+        contest.castVote(proposalId4, 10 ether, 1 ether, votingProof1);
         vm.stopPrank();
 
         vm.warp(1681670001);
@@ -676,10 +673,10 @@ contract RewardsModuleTest is Test {
         uint256 proposalId4 = contest.propose(thirdProposalPA1, submissionProof1);
         vm.warp(1681660001);
         vm.startPrank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 3 ether, votingProof1);
-        contest.castVote(proposalId2, 0, 10 ether, 2 ether, votingProof1);
-        contest.castVote(proposalId3, 0, 10 ether, 2 ether, votingProof1);
-        contest.castVote(proposalId4, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 3 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 2 ether, votingProof1);
+        contest.castVote(proposalId3, 10 ether, 2 ether, votingProof1);
+        contest.castVote(proposalId4, 10 ether, 1 ether, votingProof1);
         vm.stopPrank();
 
         vm.warp(1681670001);
@@ -726,9 +723,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
 
         proposalsToDelete.push(proposalId2);
         vm.prank(CREATOR_ADDRESS_1);
@@ -750,9 +747,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
 
         proposalsToDelete.push(proposalId2);
         vm.prank(CREATOR_ADDRESS_1);
@@ -773,9 +770,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
 
         proposalsToDelete.push(proposalId1);
         vm.prank(CREATOR_ADDRESS_1);
@@ -798,14 +795,14 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
 
         proposalsToDelete.push(proposalId1);
         vm.prank(CREATOR_ADDRESS_1);
         contest.deleteProposals(proposalsToDelete);
 
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -827,11 +824,11 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 2 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 2 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -849,11 +846,11 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 2 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 2 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -871,11 +868,11 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -895,13 +892,13 @@ contract RewardsModuleTest is Test {
         uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 2 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 2 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId3, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId3, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 3 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 3 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -921,18 +918,18 @@ contract RewardsModuleTest is Test {
         uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 2 ether, votingProof1);
+        contest.castVote(proposalId1, 10 ether, 2 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId3, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId3, 10 ether, 1 ether, votingProof1);
 
         proposalsToDelete.push(proposalId3);
         vm.prank(CREATOR_ADDRESS_1);
         contest.deleteProposals(proposalsToDelete);
 
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 3 ether, votingProof1);
+        contest.castVote(proposalId2, 10 ether, 3 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -954,9 +951,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = rankLimitOneContest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        rankLimitOneContest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        rankLimitOneContest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        rankLimitOneContest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+        rankLimitOneContest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out
@@ -974,9 +971,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = rankLimitOneContest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        rankLimitOneContest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        rankLimitOneContest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        rankLimitOneContest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+        rankLimitOneContest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out
@@ -993,11 +990,11 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = rankLimitOneContest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        rankLimitOneContest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        rankLimitOneContest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        rankLimitOneContest.castVote(proposalId2, 0, 10 ether, 2 ether, votingProof1);
+        rankLimitOneContest.castVote(proposalId2, 10 ether, 2 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        rankLimitOneContest.castVote(proposalId1, 0, 10 ether, 5 ether, votingProof1);
+        rankLimitOneContest.castVote(proposalId1, 10 ether, 5 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out

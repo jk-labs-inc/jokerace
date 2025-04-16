@@ -14,7 +14,7 @@ const ProposalSkeleton = ({ highlightColor, children }: { highlightColor: string
   </SkeletonTheme>
 );
 
-const ListProposalsSkeleton: FC<ListProposalsSkeletonProps> = ({ enabledPreview, highlightColor, count }) => {
+const ListProposalsSkeleton: FC<ListProposalsSkeletonProps> = ({ enabledPreview, highlightColor, count = 1 }) => {
   switch (enabledPreview) {
     case EntryPreview.TITLE:
       return (
@@ -27,10 +27,13 @@ const ListProposalsSkeleton: FC<ListProposalsSkeletonProps> = ({ enabledPreview,
         </ProposalSkeleton>
       );
     case EntryPreview.IMAGE:
+    case EntryPreview.IMAGE_AND_TITLE:
     case EntryPreview.TWEET:
       return (
         <ProposalSkeleton highlightColor={highlightColor}>
-          <Skeleton borderRadius={16} count={count} className="flex flex-col w-full h-52 animate-appear rounded-2xl" />
+          <div className="flex flex-col gap-4">
+            <Skeleton borderRadius={16} className="flex flex-col w-full h-52 animate-appear rounded-2xl" />
+          </div>
         </ProposalSkeleton>
       );
     default:

@@ -1,14 +1,15 @@
-import { ChevronRightIcon, PowerIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
-import React, { useCallback, useRef } from "react";
-import ReactDOM from "react-dom";
-import UserProfileDisplay from "../UserProfileDisplay";
 import {
   ROUTE_VIEW_USER,
   ROUTE_VIEW_USER_COMMENTS,
   ROUTE_VIEW_USER_SUBMISSIONS,
   ROUTE_VIEW_USER_VOTING,
 } from "@config/routes";
+import { ChevronRightIcon, PowerIcon } from "@heroicons/react/24/outline";
+import React, { useCallback, useRef, useState } from "react";
+import ReactDOM from "react-dom";
+import CustomLink from "../Link";
+import UserProfileDisplay from "../UserProfileDisplay";
+import SendFunds from "@components/SendFunds";
 
 interface MobileProfilePortalProps {
   isOpen: boolean;
@@ -38,6 +39,7 @@ const navLinks = [
 
 export const MobileProfilePortal: React.FC<MobileProfilePortalProps> = ({ isOpen, onClose, address, onDisconnect }) => {
   const backdropRef = useRef<HTMLDivElement>(null);
+  const [isSendFundsModalOpen, setIsSendFundsModalOpen] = useState(false);
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -63,17 +65,24 @@ export const MobileProfilePortal: React.FC<MobileProfilePortalProps> = ({ isOpen
       >
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-6 px-8 pt-8">
-            <UserProfileDisplay size="medium" ethereumAddress={address} shortenOnFallback includeSocials />
+            <UserProfileDisplay
+              size="medium"
+              ethereumAddress={address}
+              shortenOnFallback
+              includeSocials
+              includeSendFunds
+              onSendFundsClick={() => setIsSendFundsModalOpen(true)}
+            />
             <div className="flex flex-col gap-2 border-t border-primary-2 px-4 pt-6">
               {navLinks.map(link => (
-                <Link
+                <CustomLink
                   key={link.href}
                   href={link.href.replace("[address]", address)}
                   className="flex gap-2 items-center text-[16px] font-bold text-neutral-11 uppercase"
                 >
                   my {link.label}
                   <ChevronRightIcon width={20} height={20} className="text-neutral-11" />
-                </Link>
+                </CustomLink>
               ))}
             </div>
           </div>
@@ -82,6 +91,13 @@ export const MobileProfilePortal: React.FC<MobileProfilePortalProps> = ({ isOpen
           </div>
         </div>
       </div>
+      {isSendFundsModalOpen && (
+        <SendFunds
+          isOpen={isSendFundsModalOpen}
+          onClose={() => setIsSendFundsModalOpen(false)}
+          recipientAddress={address}
+        />
+      )}
     </div>,
     document.body,
   );

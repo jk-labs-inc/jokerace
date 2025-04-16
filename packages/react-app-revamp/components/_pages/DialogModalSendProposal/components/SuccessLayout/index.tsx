@@ -1,4 +1,5 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import CustomLink from "@components/UI/Link";
 import {
   generateFacebookShareUrlForSubmission,
   generateFarcasterShareUrlForSubmission,
@@ -8,7 +9,6 @@ import {
 } from "@helpers/share";
 import { useContestStore } from "@hooks/useContest/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import Link from "next/link";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -88,7 +88,8 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
         <p className="text-[16px] text-neutral-11 font-bold">https://jokerace.io...{proposalId.slice(0, 6)}</p>
         <p className="text-positive-11 font-bold text-[16px]">{copyText}</p>
       </div>
-      <Link
+      <CustomLink
+        prefetch={true}
         href={`/contest/${chainName}/${contestId}/submission/${proposalId}`}
         shallow
         scroll={false}
@@ -100,7 +101,7 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
         >
           let’s see it
         </ButtonV3>
-      </Link>
+      </CustomLink>
     </>
   );
 };

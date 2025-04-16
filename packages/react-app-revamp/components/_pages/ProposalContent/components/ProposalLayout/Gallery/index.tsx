@@ -1,14 +1,13 @@
 import { Proposal } from "@components/_pages/ProposalContent";
+import CustomLink from "@components/UI/Link";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import Link from "next/link";
+import { EntryPreview } from "@hooks/useDeployContest/store";
 import { FC, useEffect, useState } from "react";
 import ImageWithFallback from "../../ImageWithFallback";
 import ProposalContentProfile from "../../Profile";
 import ProposalLayoutGalleryRankOrPlaceholder from "./components/RankOrPlaceholder";
-import { useMetadataStore } from "@hooks/useMetadataFields/store";
-import { EntryPreview } from "@hooks/useDeployContest/store";
 
 interface ProposalLayoutGalleryProps {
   proposal: Proposal;
@@ -62,12 +61,14 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 
   const onVotingModalOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     handleVotingModalOpen?.();
   };
 
   const onDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     toggleProposalSelection?.(proposal.id);
   };
@@ -77,7 +78,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
   }, [enabledPreview, proposal.metadataFields.stringArray]);
 
   return (
-    <Link
+    <CustomLink
       scroll={false}
       href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
       className="flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out"
@@ -113,7 +114,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
         </div>
 
         {allowDelete ? (
-          <div className="absolute bottom-1 left-2">
+          <div className="absolute bottom-1 left-2" onClick={e => e.stopPropagation()}>
             <div className="bg-true-black bg-opacity-75 w-8 h-6 rounded-full flex items-center justify-center">
               <button className="relative w-4 h-4 cursor-pointer" onClick={onDeleteClick}>
                 <CheckIcon
@@ -133,7 +134,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
         ) : null}
 
         {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
+          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2" onClick={e => e.stopPropagation()}>
             <button
               onClick={onVotingModalOpen}
               className="min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black bg-opacity-75 rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out group"
@@ -150,7 +151,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
           </div>
         ) : null}
       </div>
-    </Link>
+    </CustomLink>
   );
 };
 

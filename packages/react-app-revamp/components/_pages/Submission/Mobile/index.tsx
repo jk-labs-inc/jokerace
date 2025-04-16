@@ -1,15 +1,16 @@
 import Comments from "@components/Comments";
 import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
-import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { LINK_BRIDGE_DOCS } from "@config/links";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { getNativeTokenSymbol } from "@helpers/nativeToken";
 import ordinalize from "@helpers/ordinalize";
 import { generateUrlSubmissions } from "@helpers/share";
+import { getTotalCharge } from "@helpers/totalCharge";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -20,9 +21,18 @@ import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { compareVersions } from "compare-versions";
 import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-
+import SubmissionPageMobileVoting from "./components/Voting";
+import StickyVoteFooter from "./components/VoteFooter";
+import SubmissionPageMobileVotersList from "./components/VotersList";
+import SubmissionPageMobileComments from "./components/Comments";
+import OnrampModal from "@components/Onramp/components/Modal";
+import SubmissionPageMobileOnramp from "./components/Onramp";
+import SubmissionDeleteModal from "../components/Modals/Delete";
+import SubmissionDeleteButton from "../components/Buttons/Delete";
+import useDeleteProposal from "@hooks/useDeleteProposal";
+import { switchChain } from "@wagmi/core";
 interface SubmissionPageMobileLayoutProps {
   contestInfo: {
     address: string;
@@ -55,11 +65,12 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   onNextEntry,
   onConnectWallet,
 }) => {
-  const { isConnected } = useAccount();
+  const { isConnected, address: userAddress, chainId: userChainId } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { contestStatus } = useContestStatusStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
-  const { downvotingAllowed, charge } = useContestStore(state => state);
+  const { downvotingAllowed, charge, contestAuthorEthereumAddress } = useContestStore(state => state);
+  const isPayPerVote = charge?.voteType === VoteType.PerVote;
   const { listProposalsIds } = useProposalStore(state => state);
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
@@ -69,7 +80,38 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;
   const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
   const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
-  const isAnyoneCanVote = charge?.voteType === VoteType.PerVote;
+  const [showVotingModal, setShowVotingModal] = useState(false);
+  const [showOnrampModal, setShowOnrampModal] = useState(false);
+  const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const {
+    canDeleteProposal,
+    deleteProposal,
+    isLoading: isDeleteLoading,
+    isSuccess: isDeleteSuccess,
+  } = useDeleteProposal();
+  const allowDelete = canDeleteProposal(
+    userAddress,
+    contestAuthorEthereumAddress,
+    proposalData?.proposal?.authorEthereumAddress ?? "",
+    contestStatus,
+  );
+  const isUserOnCorrectChain = userChainId === contestInfo.chainId;
+
+  useEffect(() => {
+    if (isDeleteSuccess) {
+      onClose?.();
+    }
+  }, [isDeleteSuccess, onClose]);
+
+  const handleDeleteProposal = async () => {
+    setIsDeleteModalOpen(false);
+
+    if (!isUserOnCorrectChain) {
+      await switchChain(config, { chainId: contestInfo.chainId });
+    }
+    await deleteProposal([proposalId]);
+  };
 
   if (isProposalError) {
     return (
@@ -82,8 +124,8 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-true-black overflow-y-auto">
-      <div className={`flex justify-between p-4 ${isInPwaMode ? "mt-0" : "mt-8"}`}>
+    <div className="fixed inset-0 z-50 bg-true-black overflow-y-auto px-8">
+      <div className={`flex justify-between ${isInPwaMode ? "mt-0" : "mt-8"}`}>
         <ArrowLeftIcon width={24} onClick={onClose} />
         <div className="flex self-end">
           <div
@@ -98,30 +140,34 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-12 mt-5 px-4 pb-32">
+      <div className="flex flex-col gap-6 mt-5 pb-32">
         <ContestPrompt type="modal" prompt={prompt} hidePrompt />
         {isProposalLoading ? (
           <p className="loadingDots font-sabo text-[18px] mt-12 text-neutral-9">loading submission info</p>
         ) : (
-          <div className="animate-reveal flex flex-col gap-8">
+          <div className="animate-reveal flex flex-col gap-6">
             <div className="flex flex-col gap-4">
               {proposalData?.proposal ? (
-                <div className="flex gap-2 items-center">
-                  <UserProfileDisplay
-                    ethereumAddress={proposalData.proposal.authorEthereumAddress}
-                    shortenOnFallback={true}
-                  />
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <UserProfileDisplay
+                      ethereumAddress={proposalData.proposal.authorEthereumAddress}
+                      shortenOnFallback={true}
+                      textColor="text-neutral-9"
+                    />
+                    {allowDelete && <SubmissionDeleteButton onClick={() => setIsDeleteModalOpen(true)} />}
+                  </div>
+
                   {proposalData.proposal.rank > 0 && (
                     <div className="flex gap-2 items-center">
-                      <span className="text-neutral-11">&#8226;</span>{" "}
                       <p className="text-[16px] font-bold text-neutral-11">
-                        {formatNumberAbbreviated(proposalData.proposal.votes)} vote
-                        {proposalData.proposal.votes > 1 ? "s" : ""}
+                        {ordinalize(proposalData.proposal.rank).label} place{" "}
+                        {proposalData.proposal.isTied ? "(tied)" : ""}
                       </p>
                       <span className="text-neutral-9">&#8226;</span>{" "}
                       <p className="text-[16px] font-bold text-neutral-9">
-                        {ordinalize(proposalData.proposal.rank).label} place{" "}
-                        {proposalData.proposal.isTied ? "(tied)" : ""}
+                        {formatNumberAbbreviated(proposalData.proposal.votes)} vote
+                        {proposalData.proposal.votes > 1 ? "s" : ""}
                       </p>
                     </div>
                   )}
@@ -129,81 +175,28 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               ) : null}
             </div>
             {proposalData?.proposal ? (
-              <ContestProposal proposal={proposalData.proposal} contestStatus={contestStatus} />
+              <ContestProposal
+                proposal={proposalData.proposal}
+                contestStatus={contestStatus}
+                className="text-neutral-9"
+              />
             ) : (
               <p className="text-[16px] text-negative-11 font-bold">
                 ruh-roh! An error occurred when retrieving this proposal; try refreshing the page.
               </p>
             )}
 
-            {contestStatus === ContestStatus.VotingOpen && (
-              <div className="flex flex-col gap-4 md:gap-8 md:w-80">
-                <hr className="block border border-neutral-2" />
-                {isConnected ? (
-                  currentUserAvailableVotesAmount > 0 ? (
-                    <VotingWidget
-                      proposalId={proposalId}
-                      amountOfVotes={currentUserAvailableVotesAmount}
-                      onVote={onVote}
-                      downvoteAllowed={downvotingAllowed}
-                    />
-                  ) : outOfVotes ? (
-                    <p className="text-[16px] text-neutral-11">
-                      looks like you've used up all your votes this contest <br />
-                      feel free to try connecting another wallet to see if it has more votes!
-                    </p>
-                  ) : isAnyoneCanVote ? (
-                    <a
-                      href={LINK_BRIDGE_DOCS}
-                      target="_blank"
-                      className="text-[16px] text-positive-11 opacity-80 hover:opacity-100 transition-colors font-bold"
-                    >
-                      add {chainCurrencySymbol} to {contestInfo.chain} to get votes {">"}
-                    </a>
-                  ) : (
-                    <p className="text-[16px] text-neutral-11">
-                      unfortunately your wallet didn't qualify to vote in this contest <br />
-                      feel free to try connecting another wallet!
-                    </p>
-                  )
-                ) : (
-                  <p className="text-[16px] text-neutral-11 font-bold">
-                    <span className="text-positive-11 cursor-pointer text-[16px]" onClick={onConnectWallet}>
-                      connect wallet
-                    </span>{" "}
-                    to see if you qualify
-                  </p>
-                )}
-              </div>
-            )}
-
             {proposalData && proposalData.proposal && proposalData.proposal.votes > 0 && (
-              <div className="flex flex-col gap-12">
-                <div className="flex flex-col gap-4">
-                  <p className="text-[24px] text-neutral-11 font-bold">
-                    voters ({addressesVoted.length > 0 ? addressesVoted.length : null})
-                  </p>
-                  <ListProposalVotes proposalId={proposalId} votedAddresses={proposalData.votedAddresses} />
-                </div>
-              </div>
+              <SubmissionPageMobileVotersList proposalId={proposalId} addressesVoted={addressesVoted} />
             )}
 
             {commentsAllowed && proposalData ? (
-              <div className="flex flex-col gap-4">
-                <p className="text-[24px] text-neutral-11 font-bold">
-                  comments (
-                  {proposalData.numberOfComments && proposalData.numberOfComments > 0
-                    ? proposalData.numberOfComments
-                    : null}
-                  )
-                </p>
-                <Comments
-                  contestAddress={contestInfo.address}
-                  contestChainId={contestInfo.chainId}
-                  proposalId={proposalId}
-                  numberOfComments={proposalData?.numberOfComments}
-                />
-              </div>
+              <SubmissionPageMobileComments
+                proposalId={proposalId}
+                numberOfComments={proposalData.numberOfComments}
+                address={contestInfo.address}
+                chainId={contestInfo.chainId}
+              />
             ) : null}
           </div>
         )}
@@ -214,7 +207,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               isInPwaMode ? "bottom-[88px]" : "bottom-12"
             } left-0 right-0 flex ${
               currentIndex === 0 || currentIndex === totalProposals - 1 ? "justify-center" : "justify-between"
-            } px-8 pt-5 pb-9 z-50 border-t-neutral-2 border-t-2 bg-true-black`}
+            } px-8 pt-4 pb-4 z-50 border-t-neutral-2 border-t-2 bg-true-black`}
           >
             {currentIndex !== 0 && (
               <div
@@ -248,6 +241,54 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           />
         </div>
       </div>
+
+      {showVotingModal && charge && (
+        <SubmissionPageMobileVoting
+          isOpen={showVotingModal}
+          onClose={() => setShowVotingModal(false)}
+          proposalId={proposalId}
+          amountOfVotes={currentUserAvailableVotesAmount}
+          onVote={(amount, isUpvote) => onVote?.(amount, isUpvote)}
+          downvoteAllowed={downvotingAllowed}
+          charge={charge}
+          isPayPerVote={isPayPerVote}
+          currentUserAvailableVotesAmount={currentUserAvailableVotesAmount}
+          contestInfo={contestInfo}
+        />
+      )}
+
+      {showOnrampModal && (
+        <SubmissionPageMobileOnramp
+          chain={contestInfo.chain}
+          asset={chainCurrencySymbol ?? ""}
+          isOpen={showOnrampModal}
+          onClose={() => setShowOnrampModal(false)}
+        />
+      )}
+
+      {isVotingOpen && (
+        <StickyVoteFooter
+          isConnected={isConnected}
+          totalProposals={totalProposals}
+          currentUserAvailableVotesAmount={currentUserAvailableVotesAmount}
+          outOfVotes={outOfVotes}
+          isPayPerVote={isPayPerVote}
+          contestInfo={contestInfo}
+          chainCurrencySymbol={chainCurrencySymbol ?? ""}
+          onConnectWallet={onConnectWallet ?? (() => {})}
+          setShowVotingModal={setShowVotingModal}
+          onAddFunds={() => {
+            setShowOnrampModal(true);
+          }}
+        />
+      )}
+      {isDeleteModalOpen && (
+        <SubmissionDeleteModal
+          isDeleteProposalModalOpen={isDeleteModalOpen}
+          setIsDeleteProposalModalOpen={setIsDeleteModalOpen}
+          onClick={handleDeleteProposal}
+        />
+      )}
     </div>
   );
 };

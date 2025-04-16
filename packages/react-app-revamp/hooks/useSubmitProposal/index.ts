@@ -12,7 +12,7 @@ import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useProposal from "@hooks/useProposal";
-import { ProposalCore, useProposalStore } from "@hooks/useProposal/store";
+import { useProposalStore } from "@hooks/useProposal/store";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { useUserStore } from "@hooks/useUser/store";
@@ -67,6 +67,7 @@ export function useSubmitProposal() {
   const {
     charge,
     contestAbi: abi,
+    version,
     rewardsModuleAddress,
     rewardsAbi,
     votesOpen,
@@ -201,7 +202,7 @@ export function useSubmitProposal() {
           token_address: null,
         });
 
-        await fetchSingleProposal(getContractConfig(), proposalId);
+        await fetchSingleProposal(getContractConfig(), version, proposalId);
 
         setIsLoading(false);
         setIsSuccess(true);

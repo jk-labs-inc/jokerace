@@ -20,9 +20,10 @@ interface VotingWidgetProps {
   amountOfVotes: number;
   downvoteAllowed?: boolean;
   onVote?: (amount: number, isUpvote: boolean) => void;
+  onAddFunds?: () => void;
 }
 
-const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvoteAllowed, onVote }) => {
+const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvoteAllowed, onVote, onAddFunds }) => {
   const { charge } = useContestStore(state => state);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const asPath = usePathname();
@@ -140,6 +141,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
         handleKeyDownSlider={handleKeyDownSlider}
         handleKeyDownInput={handleKeyDownInput}
         handleInput={handleInput}
+        onAddFunds={onAddFunds}
       />
     );
   }
@@ -195,7 +197,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
           </div>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <MyVotes amountOfVotes={amountOfVotes} charge={charge} chainId={chainId} />
+              <MyVotes amountOfVotes={amountOfVotes} charge={charge} chainId={chainId} onAddFunds={onAddFunds} />
               {charge ? <ChargeInfo charge={charge} /> : null}
             </div>
             {charge ? <TotalCharge charge={charge} amountOfVotes={amount} /> : null}

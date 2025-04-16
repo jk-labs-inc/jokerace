@@ -24,7 +24,7 @@ const TokenSearchModalSearchInput: FC<TokenSearchModalSearchInputProps> = ({ cha
 
   return (
     <div
-      className={`flex items-center h-12 rounded-[15px] bg-primary-5 text-[16px] pl-8 pr-4 transition-all duration-300 ease-in-out`}
+      className={`flex items-center h-12 rounded-[15px] bg-primary-5 text-[16px] pl-4 pr-4 transition-all duration-300 ease-in-out`}
     >
       <span className="text-neutral-11">
         <MagnifyingGlassIcon
@@ -36,7 +36,7 @@ const TokenSearchModalSearchInput: FC<TokenSearchModalSearchInputProps> = ({ cha
       <input
         className="text-[20px] bg-transparent text-neutral-11 ml-3 outline-none placeholder-neutral-14 w-full"
         type="text"
-        placeholder={isChainSupportedBySearch ? "search name or paste address" : "paste token address"}
+        placeholder={isChainSupportedBySearch ? "search token name or paste address" : "paste token address"}
         value={searchValue}
         onChange={handleChange}
       />

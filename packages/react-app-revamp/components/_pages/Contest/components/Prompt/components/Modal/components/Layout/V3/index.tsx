@@ -27,11 +27,7 @@ const ContestPromptModalV3Layout: FC<ContestPromptModalV3LayoutProps> = ({
     <div className="flex flex-col gap-4">
       <div className="flex gap-1 md:gap-4 items-center">
         <div className="relative inline-block">
-          <span className="text-[24px] font-bold inline-block">
-            <span className="relative z-10 bg-gradient-purple text-transparent bg-clip-text inline-block">
-              {contestName}
-            </span>
-          </span>
+          <span className="text-[24px] text-neutral-11 font-bold inline-block">{contestName}</span>
         </div>
         <button
           onClick={() => setIsPromptOpen(!isPromptOpen)}
@@ -44,7 +40,7 @@ const ContestPromptModalV3Layout: FC<ContestPromptModalV3LayoutProps> = ({
         <div className="pl-5">
           <Collapsible isOpen={isPromptOpen}>
             <div className="border-l border-true-white ">
-              <div className="prose prose-invert pl-5">
+              <div className="prose prose-invert pl-5 text-neutral-9">
                 <Interweave content={contestSummary} matchers={[new UrlMatcher("url")]} />
                 {contestEvaluate ? (
                   <div>

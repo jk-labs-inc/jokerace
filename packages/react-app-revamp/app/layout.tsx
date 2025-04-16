@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 import "react-tooltip/dist/react-tooltip.css";
 import "simplebar-react/dist/simplebar.min.css";
 import Providers from "./providers";
+import { ViewTransitions } from "next-view-transitions";
 
 polyfill();
 
@@ -48,15 +49,15 @@ export const viewport: Viewport = {
 const lato = localFont({
   src: [
     {
-      path: "./Lato-Regular.woff2",
+      path: "./_fonts/Lato-Regular.woff2",
       weight: "400",
     },
     {
-      path: "./Lato-Bold.woff2",
+      path: "./_fonts/Lato-Bold.woff2",
       weight: "700",
     },
     {
-      path: "./Lato-Black.woff2",
+      path: "./_fonts/Lato-Black.woff2",
       weight: "900",
     },
   ],
@@ -66,7 +67,7 @@ const lato = localFont({
 const sabo = localFont({
   src: [
     {
-      path: "./Sabo-Filled.otf",
+      path: "./_fonts/Sabo-Filled.otf",
       weight: "400",
     },
   ],
@@ -79,17 +80,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const cookie = headers().get("cookie") ?? "";
 
   return (
-    <html lang="en" className={`${lato.variable} ${sabo.variable}`}>
-      <body>
-        <div id="__next">
-          <NextTopLoader color="#BB65FF" shadow="0 0 10px #BB65FF, 0 0 5px #78FFC6" showSpinner={false} />
-          <Providers cookie={cookie}>
-            <LayoutBase>{children}</LayoutBase>
-            <DynamicPortal />
-            <GoogleAnalytics gaId={GA_TRACKING_ID} />
-          </Providers>
-        </div>
-      </body>
-    </html>
+    <ViewTransitions>
+      <html lang="en" className={`${lato.variable} ${sabo.variable}`}>
+        <body>
+          <div id="__next">
+            <NextTopLoader color="#BB65FF" shadow="0 0 10px #BB65FF, 0 0 5px #78FFC6" showSpinner={false} />
+            <Providers cookie={cookie}>
+              <LayoutBase>{children}</LayoutBase>
+              <DynamicPortal />
+              <GoogleAnalytics gaId={GA_TRACKING_ID} />
+            </Providers>
+          </div>
+        </body>
+      </html>
+    </ViewTransitions>
   );
 }

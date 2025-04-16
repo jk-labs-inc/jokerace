@@ -10,9 +10,10 @@ import { formatEther } from "viem";
 interface ChargeLayoutSubmissionProps {
   charge: Charge;
   accountData: GetBalanceReturnType;
+  onAddFunds?: () => void;
 }
 
-const ChargeLayoutSubmission: FC<ChargeLayoutSubmissionProps> = ({ charge, accountData }) => {
+const ChargeLayoutSubmission: FC<ChargeLayoutSubmissionProps> = ({ charge, accountData, onAddFunds }) => {
   const asPath = usePathname();
   const { chainName } = extractPathSegments(asPath ?? "");
   const chainUnitLabel = chains.find((c: { name: string }) => c.name.toLowerCase() === chainName.toLowerCase())
@@ -25,7 +26,12 @@ const ChargeLayoutSubmission: FC<ChargeLayoutSubmissionProps> = ({ charge, accou
   return (
     <div className="flex flex-col gap-2 w-full md:w-[320px]">
       <div className="flex justify-between items-center">
-        <p className="text-[16px] text-neutral-9">my wallet</p>
+        <p className="text-[16px] text-neutral-9">
+          my wallet |{" "}
+          <button onClick={onAddFunds} className="text-positive-11">
+            add funds
+          </button>
+        </p>
         <p className={`text-[16px] text-neutral-9 ${insufficientBalance ? "text-negative-11" : ""}`}>
           {formatBalance(accountBalance)} {chainUnitLabel}
         </p>

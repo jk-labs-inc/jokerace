@@ -2,6 +2,8 @@ import { getClient, getConnectorClient, type Config } from "@wagmi/core";
 import { providers } from "ethers";
 import type { Account, Chain, Client, Transport } from "viem";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 export function clientToProvider(client: Client<Transport, Chain>) {
   const { chain, transport } = client;
   const network = {
@@ -9,6 +11,8 @@ export function clientToProvider(client: Client<Transport, Chain>) {
     name: chain.name,
     ensAddress: chain.contracts?.ensRegistry?.address,
   };
+
+  const headers = isProduction ? { Referer: "https://jokerace.io/" } : undefined;
 
   if (transport.type === "fallback")
     return new providers.FallbackProvider(
@@ -18,6 +22,7 @@ export function clientToProvider(client: Client<Transport, Chain>) {
             {
               skipFetchSetup: true,
               url: value?.url,
+              headers,
             },
             network,
           ),
@@ -27,6 +32,7 @@ export function clientToProvider(client: Client<Transport, Chain>) {
     {
       skipFetchSetup: true,
       url: transport.url,
+      headers,
     },
     network,
   );

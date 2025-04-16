@@ -24,6 +24,7 @@ interface ContestProposalProps {
   displaySocials?: boolean;
   contestStatus?: ContestStatus;
   votingOpen?: Date;
+  className?: string;
 }
 
 const transform = (node: HTMLElement): ReactNode => {
@@ -56,17 +57,19 @@ const transform = (node: HTMLElement): ReactNode => {
         );
       } else {
         const tweetId = tweetUrlMatch[4] || tweetUrlMatch[2];
-        return (
-          <div className="dark not-prose">
-            <Tweet apiUrl={`/api/tweet/${tweetId}`} id={tweetId} />
-          </div>
-        );
+        return <Tweet apiUrl={`/api/tweet/${tweetId}`} id={tweetId} />;
       }
     }
   }
 };
 
-const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, contestStatus, displaySocials }) => {
+const ContestProposal: FC<ContestProposalProps> = ({
+  proposal,
+  proposalId,
+  contestStatus,
+  displaySocials,
+  className,
+}) => {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const { contestName } = useContestStore(state => state);
@@ -77,7 +80,7 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
         <p className="text-[16px] text-neutral-11">{ProposalState.Deleted}</p>
       ) : (
         <Interweave
-          className="prose prose-invert overflow-hidden"
+          className={`prose prose-invert overflow-hidden ${className}`}
           content={proposal.content}
           matchers={[new UrlMatcher("url")]}
           transform={transform}

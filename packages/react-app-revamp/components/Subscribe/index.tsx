@@ -1,11 +1,13 @@
 import { emailRegex } from "@helpers/regex";
 import useEmailSignup from "@hooks/useEmailSignup";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 
 const Subscribe = () => {
   const [email, setEmail] = useState("");
+  const { openConnectModal } = useConnectModal();
   const [emailError, setEmailError] = useState("");
   const [emailAlreadyExistsMessage, setEmailAlreadyExistsMessage] = useState("");
   const { subscribeUser, checkIfEmailExists, isLoading } = useEmailSignup();
@@ -13,15 +15,17 @@ const Subscribe = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   const handleSubscribe = async () => {
-    if (isLoading) return;
+    if (isLoading || !address) return;
+
     if (!isEmailValid()) {
       setEmailError("Please enter a valid email address.");
       return;
     }
 
     const emailExists = await checkIfEmailExists(email);
+
     if (!emailExists) {
-      await subscribeUser(email, address ?? null);
+      await subscribeUser(email, address);
       setEmail("");
       setEmailError("");
     } else {
@@ -52,13 +56,12 @@ const Subscribe = () => {
             required
           />
           <button
-            className={`flex justify-center cursor-pointer items-center absolute right-0 w-36 md:w-48 rounded-r-[8px] top-0 h-full bg-gradient-purple-white ${
-              isLoading ? "opacity-50 pointer-events-none" : ""
-            } transition-all duration-300 hover:opacity-90`}
-            onClick={handleSubscribe}
+            className={`flex justify-center cursor-pointer items-center absolute right-0 w-36 md:w-48 rounded-r-[8px] top-0 h-full 
+           bg-gradient-purple-white hover:opacity-90 ${isLoading ? "opacity-50 pointer-events-none" : ""} transition-all duration-300`}
+            onClick={address ? handleSubscribe : openConnectModal}
           >
-            <p className="text-[16px] md:text-[18px] font-bold text-true-black">
-              {isMobile ? "get updates" : "get contest updates"}
+            <p className="text-[16px] md:text-[18px] font-bold text-true-black whitespace-nowrap px-2">
+              {!address ? "connect wallet" : isMobile ? "get updates" : "get contest updates"}
             </p>
           </button>
         </div>
@@ -67,6 +70,8 @@ const Subscribe = () => {
         <p className="text-negative-11 text-[16px] font-bold pl-2">{emailError}</p>
       ) : emailAlreadyExistsMessage ? (
         <p className="text-positive-11 text-[16px] font-bold pl-2">{emailAlreadyExistsMessage}</p>
+      ) : !address ? (
+        <p className="text-neutral-11 text-[14px] font-medium pl-2">connect your wallet to get contest updates</p>
       ) : null}
     </div>
   );

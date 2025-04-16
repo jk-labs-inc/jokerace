@@ -20,7 +20,13 @@ const stepValidations: Record<StepTitle, (state: DeployContestState, isConnected
   },
 
   [StepTitle.Monetization]: (state, isConnected) => {
-    return isConnected && !!state.charge.type.costToPropose && state.charge.type.costToPropose > 0;
+    return (
+      isConnected &&
+      !!state.charge.type.costToPropose &&
+      state.charge.type.costToPropose > 0 &&
+      !!state.charge.type.costToVote &&
+      state.charge.type.costToVote > 0
+    );
   },
   [StepTitle.Rules]: state => {
     return !!state.title && !!state.prompt.summarize && !!state.prompt.evaluateVoters;

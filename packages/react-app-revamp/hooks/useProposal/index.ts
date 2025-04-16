@@ -98,7 +98,7 @@ export function useProposal() {
 
       const results = await readContracts(serverConfig, { contracts });
 
-      structureAndRankProposals(results, slice, pageMappedProposals, sorting);
+      structureAndRankProposals(results, slice, pageMappedProposals, version, sorting);
 
       setIsPageProposalsLoading(false);
       setIsPageProposalsError("");
@@ -126,20 +126,25 @@ export function useProposal() {
           ? false
           : true;
 
-      const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn);
+      const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn, version);
 
       let proposalsIds: Result;
       let mappedProposals: MappedProposalIds[] = [];
       const currentDate = new Date();
 
       if (!useLegacyGetAllProposalsIdFn) {
+        const hasDownvotes = compareVersions(version, "5.1") < 0;
+
         const extractVotes = (index: number) => {
-          const forVotesValue = BigInt(proposalsIdsRawData[1][index].forVotes);
-          const againstVotesValue = BigInt(proposalsIdsRawData[1][index].againstVotes);
+          if (hasDownvotes) {
+            const forVotesValue = BigInt(proposalsIdsRawData[1][index].forVotes);
+            const againstVotesValue = BigInt(proposalsIdsRawData[1][index].againstVotes);
 
-          const netVotes = Number(formatEther(forVotesValue - againstVotesValue));
+            const netVotes = Number(formatEther(forVotesValue - againstVotesValue));
 
-          return netVotes;
+            return netVotes;
+          }
+          return Number(formatEther(proposalsIdsRawData[1][index]));
         };
 
         mappedProposals = proposalsIdsRawData[0].map((data: any, index: number) => {
@@ -202,7 +207,7 @@ export function useProposal() {
    * Fetch a single proposal based on its ID.
    * @param proposalId - the ID of the proposal to fetch
    */
-  async function fetchSingleProposal(contractConfig: ContractConfig, proposalId: any) {
+  async function fetchSingleProposal(contractConfig: ContractConfig, version: string, proposalId: any) {
     try {
       const contracts = [
         {
@@ -234,7 +239,7 @@ export function useProposal() {
         setInitialMappedProposalIds(updatedMappedProposals);
       }
 
-      structureAndRankProposals(results, [proposalId], initialMappedProposalIds);
+      structureAndRankProposals(results, [proposalId], initialMappedProposalIds, version);
     } catch (e) {
       handleError(e, "Something went wrong while getting the proposal.");
       setIsPageProposalsError(error);
@@ -250,6 +255,7 @@ export function useProposal() {
     proposalsResults: Array<any>,
     proposalIds: Array<any>,
     pageMappedProposals: MappedProposalIds[],
+    version: string,
     sorting?: boolean,
   ) {
     const hasCommentsData = proposalsResults.length > proposalIds.length * 2;
@@ -271,7 +277,7 @@ export function useProposal() {
         proposalComments = proposalsResults[baseIndex + 2].result;
       }
 
-      return transformProposalData(id, proposalVotes, proposalData, proposalComments, deletedCommentIds);
+      return transformProposalData(id, proposalVotes, proposalData, proposalComments, deletedCommentIds, version);
     });
 
     let combinedProposals;

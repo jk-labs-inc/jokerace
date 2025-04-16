@@ -62,7 +62,13 @@ const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> 
         <div className="text-[12px] uppercase font-bold text-neutral-9">Description</div>
         <div className="flex flex-col gap-4">
           {imageUrl ? <ContestImage imageUrl={imageUrl} /> : null}
-          <div className="relative">
+          <div
+            className="relative"
+            style={{
+              overflow: "hidden",
+              height: !isExpanded && shouldShowReadMore ? `${Math.min(lineCount, maxVisibleLines) * 1.6}em` : "auto",
+            }}
+          >
             <div ref={elementRef} className="prose prose-invert flex flex-col invisible absolute w-full">
               {renderSection(prompt.summarize, false)}
               {renderSection(prompt.evaluateVoters, true)}
@@ -70,13 +76,14 @@ const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> 
             </div>
 
             <div
-              className={`prose prose-invert flex flex-col text-neutral-11 transition-color duration-300 ${!isExpanded && shouldShowReadMore ? "overflow-hidden" : ""}`}
+              className={`prose prose-invert flex flex-col text-neutral-11 transition-color duration-300`}
               style={{
                 ...(!isExpanded && shouldShowReadMore
                   ? {
                       maskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
                       WebkitMaskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
                       maxHeight: `${Math.min(lineCount, maxVisibleLines) * 1.6}em`,
+                      height: `${Math.min(lineCount, maxVisibleLines) * 1.6}em`,
                     }
                   : {}),
               }}

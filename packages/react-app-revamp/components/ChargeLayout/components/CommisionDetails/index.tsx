@@ -1,4 +1,3 @@
-import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { SplitFeeDestination, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { FC } from "react";
 
