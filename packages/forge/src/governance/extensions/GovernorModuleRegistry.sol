@@ -20,7 +20,9 @@ abstract contract GovernorModuleRegistry is Governor {
      */
     function setOfficialRewardsModule(RewardsModule officialRewardsModule_) public {
         if (msg.sender != creator) revert OnlyCreatorCanSetRewardsModule();
-        if (address(officialRewardsModule_.underlyingContest()) != address(this)) revert OfficialRewardsModuleMustPointToThisContest();
+        if (address(officialRewardsModule_.underlyingContest()) != address(this)) {
+            revert OfficialRewardsModuleMustPointToThisContest();
+        }
         RewardsModule oldOfficialRewardsModule = officialRewardsModule;
         officialRewardsModule = officialRewardsModule_;
         emit OfficialRewardsModuleSet(oldOfficialRewardsModule, officialRewardsModule_);

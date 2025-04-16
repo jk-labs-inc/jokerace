@@ -208,10 +208,12 @@ contract RewardsModuleTest is Test {
 
     // A rewards module being set as the official rewards module of a contest must have that contest as its underlyingContest.
     function testRewardsModuleMustHaveContestAsUnderlying() public {
-       vm.startPrank(CREATOR_ADDRESS_1);
-       vm.expectRevert(abi.encodeWithSelector(GovernorModuleRegistry.OfficialRewardsModuleMustPointToThisContest.selector));
-       contest.setOfficialRewardsModule(rewardsModulePaysAuthorToRankOneContest); 
-       vm.stopPrank();
+        vm.startPrank(CREATOR_ADDRESS_1);
+        vm.expectRevert(
+            abi.encodeWithSelector(GovernorModuleRegistry.OfficialRewardsModuleMustPointToThisContest.selector)
+        );
+        contest.setOfficialRewardsModule(rewardsModulePaysAuthorToRankOneContest);
+        vm.stopPrank();
     }
 
     /////////////////////////////
