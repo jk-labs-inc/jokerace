@@ -65,6 +65,7 @@ import AddGetPropIdsWithForVotesContract from "@contracts/bytecodeAndAbi/Contest
 import RmDownvotingContract from "@contracts/bytecodeAndAbi/Contest.5.1.rmDownvoting.sol/Contest.json";
 import AddErc20CancelledCheckContract from "@contracts/bytecodeAndAbi/Contest.5.2.addErc20CancelledCheck.sol/Contest.json";
 import EntrantsCanDeleteContract from "@contracts/bytecodeAndAbi/Contest.5.3.entrantsCanDelete.sol/Contest.json";
+import OfficialModulePointsToContestContract from "@contracts/bytecodeAndAbi/Contest.5.4.officialModulePointsToContest.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -80,7 +81,9 @@ export async function getContestContractVersion(address: string, chainId: number
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
     const defaultReturn = { abi: null, version: "unknown" };
-    if (version === "5.3") {
+    if (version === "5.4") {
+      return { abi: OfficialModulePointsToContestContract.abi, version }; 
+    } else if (version === "5.3") {
       return { abi: EntrantsCanDeleteContract.abi, version }; 
     } else if (version === "5.2") {
       return { abi: AddErc20CancelledCheckContract.abi, version }; 
