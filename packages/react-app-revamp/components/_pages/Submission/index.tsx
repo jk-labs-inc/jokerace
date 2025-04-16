@@ -5,7 +5,7 @@ import useFetchProposalData from "@hooks/useFetchProposalData";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useTransitionRouter } from "next-view-transitions";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Abi } from "viem";
 import SubmissionPageDesktopLayout from "./Desktop";
@@ -33,6 +33,12 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, proposalId }) =>
   const { openConnectModal } = useConnectModal();
   const { castVotes } = useCastVotes();
   const { listProposalsIds } = useProposalStore(state => state);
+
+  useEffect(() => {
+    // prefetch close route
+    const contestRoute = `/contest/${contestInfo.chain}/${contestInfo.address}`;
+    router.prefetch(contestRoute);
+  }, [contestInfo.chain, contestInfo.address, router]);
 
   const handleCastVotes = (amount: number, isUpvote: boolean) => {
     castVotes(amount, isUpvote);
