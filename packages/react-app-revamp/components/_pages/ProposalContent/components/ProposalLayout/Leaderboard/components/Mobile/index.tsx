@@ -5,7 +5,7 @@ import CustomLink from "@components/UI/Link";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import { useTransitionRouter } from "next-view-transitions";
+import { useRouter } from "next/navigation";
 import { FC } from "react";
 import ProposalLayoutLeaderboardRankOrPlaceholder from "../RankOrPlaceholder";
 
@@ -39,7 +39,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
   chainName,
   contestAddress,
 }) => {
-  const router = useTransitionRouter();
+  const router = useRouter();
   const entryTitle = proposal.metadataFields.stringArray[0];
 
   const navigateToCommentLink = (e: React.MouseEvent<HTMLButtonElement>) => {
