@@ -91,8 +91,6 @@ const LandingHeader = () => {
     );
   };
 
-  console.log(pathname, ROUTE_VIEW_CONTESTS, pathname === ROUTE_VIEW_CONTESTS);
-
   if (isMobile) {
     return (
       <>

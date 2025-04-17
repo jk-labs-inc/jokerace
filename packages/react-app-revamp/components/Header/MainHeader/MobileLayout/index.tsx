@@ -75,8 +75,6 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
     );
   };
 
-  console.log(pathname, ROUTE_VIEW_CONTESTS, pathname === ROUTE_VIEW_CONTESTS);
-
   return (
     <>
       <header
