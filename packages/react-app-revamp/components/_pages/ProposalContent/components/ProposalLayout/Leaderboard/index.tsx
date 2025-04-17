@@ -1,19 +1,18 @@
+import { useEntryPreviewTitleToggleStore } from "@components/_pages/Contest/components/EntryPreviewTitleToggle/store";
 import { Proposal } from "@components/_pages/ProposalContent";
 import { transform } from "@components/_pages/ProposalContent/utils/markdown";
+import CustomLink from "@components/UI/Link";
+import { toastInfo } from "@components/UI/Toast";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, ChevronDownIcon, ChevronRightIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
-import { Link } from "next-view-transitions";
+import { UrlMatcher } from "interweave-autolink";
 import { FC, useEffect, useState } from "react";
 import ProposalContentDeleteButton from "../../Buttons/Delete";
 import ProposalContentProfile from "../../Profile";
 import ProposalLayoutLeaderboardMobile from "./components/Mobile";
 import ProposalLayoutLeaderboardRankOrPlaceholder from "./components/RankOrPlaceholder";
-import { toastInfo } from "@components/UI/Toast";
-import { UrlMatcher } from "interweave-autolink";
-import { useEntryPreviewTitleToggleStore } from "@components/_pages/Contest/components/EntryPreviewTitleToggle/store";
-import CustomLink from "@components/UI/Link";
 
 interface ProposalLayoutLeaderboardProps {
   proposal: Proposal;

@@ -1,6 +1,4 @@
-import { Link } from "next-view-transitions";
-import { LinkProps } from "next/link";
-
+import Link, { LinkProps } from "next/link";
 interface CustomLinkProps extends LinkProps {
   children: React.ReactNode;
   prefetch?: boolean;
