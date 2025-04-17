@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import { toastDismiss } from "@components/UI/Toast";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useTransitionRouter } from "next-view-transitions";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { create } from "zustand";
 
@@ -21,7 +21,7 @@ const WARNING_MESSAGE_THRESHOLD = 10000;
 const CreateContestDeploying = () => {
   const { isSuccess, deployContestData, votingMerkle: votingMerkleData } = useDeployContestStore(state => state);
   const votingMerkle = votingMerkleData.prefilled || votingMerkleData.csv;
-  const router = useTransitionRouter();
+  const router = useRouter();
   const { setShowRewards } = useShowRewardsStore(state => state);
 
   useEffect(() => {

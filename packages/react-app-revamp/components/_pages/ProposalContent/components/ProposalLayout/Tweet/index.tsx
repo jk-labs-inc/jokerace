@@ -3,7 +3,7 @@ import CustomLink from "@components/UI/Link";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import { useTransitionRouter } from "next-view-transitions";
+import { useRouter } from "next/navigation";
 import { FC } from "react";
 import ProposalContentProfile from "../../Profile";
 import { Tweet } from "./components/CustomTweet";
@@ -50,7 +50,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
 }) => {
   const tweetUrl = proposal.metadataFields.stringArray[0];
   const tweetId = extractTweetId(tweetUrl);
-  const router = useTransitionRouter();
+  const router = useRouter();
 
   const onVotingModalOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
