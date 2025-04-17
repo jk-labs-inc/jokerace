@@ -1,4 +1,3 @@
-import { IconTrophy } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
 import { MobileProfilePortal } from "@components/UI/MobileWalletPortal";
 import {
@@ -9,7 +8,20 @@ import {
   ROUTE_VIEW_LIVE_CONTESTS,
 } from "@config/routes";
 import { config } from "@config/wagmi";
-import { HomeIcon, MagnifyingGlassIcon, PencilSquareIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import {
+  HomeIcon,
+  MagnifyingGlassIcon,
+  PencilSquareIcon,
+  TrophyIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/outline";
+import {
+  HomeIcon as HomeIconSolid,
+  MagnifyingGlassIcon as MagnifyingGlassIconSolid,
+  PencilSquareIcon as PencilSquareIconSolid,
+  TrophyIcon as TrophyIconSolid,
+  UserCircleIcon as UserCircleIconSolid,
+} from "@heroicons/react/24/solid";
 import { disconnect } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { FC, useCallback, useEffect, useState } from "react";
@@ -25,9 +37,8 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
   const [isClient, setIsClient] = useState(false);
   const [isInPwaMode, setIsInPwaMode] = useState(false);
   const [showWalletPortal, setShowWalletPortal] = useState(false);
-  const isActive = (route: string) => (pathname === route ? "text-positive-11 transition-colors font-bold" : "");
-  const isOneOfActive = (routes: string[]) =>
-    routes.includes(pathname ?? "") ? "text-positive-11 transition-colors font-bold" : "";
+  const isActive = (route: string) => (pathname === route ? "font-bold" : "");
+  const isOneOfActive = (routes: string[]) => (routes.includes(pathname ?? "") ? "font-bold" : "");
 
   useEffect(() => {
     setIsClient(true);
@@ -64,20 +75,26 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
     );
   };
 
+  console.log(pathname, ROUTE_VIEW_CONTESTS, pathname === ROUTE_VIEW_CONTESTS);
+
   return (
     <>
       <header
-        className={`h-12 flex flex-row bottom-0 right-0 left-0 fixed items-center justify-between border-t-neutral-2 border-t-2 pt-2 ${
+        className={`flex flex-row bottom-0 right-0 left-0 fixed items-center justify-between border-t-neutral-2 border-t-2 py-3 ${
           isClient && isInPwaMode ? "pb-8" : "pb-2"
         } px-8 mt-4 bg-true-black z-50`}
       >
         <CustomLink href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
-          <HomeIcon width={22} />
+          {pathname === ROUTE_LANDING ? <HomeIconSolid width={24} /> : <HomeIcon width={24} />}
           <p className="text-[12px]">home</p>
         </CustomLink>
 
         <CustomLink href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
-          <MagnifyingGlassIcon width={22} />
+          {pathname === ROUTE_VIEW_CONTESTS ? (
+            <MagnifyingGlassIconSolid width={24} />
+          ) : (
+            <MagnifyingGlassIcon width={24} />
+          )}
           <p className="text-[12px]">search</p>
         </CustomLink>
 
@@ -85,7 +102,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
           href={ROUTE_VIEW_LIVE_CONTESTS}
           className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
         >
-          <IconTrophy width={22} height={22} />
+          {pathname === ROUTE_VIEW_LIVE_CONTESTS ? <TrophyIconSolid width={24} /> : <TrophyIcon width={24} />}
           <p className="text-[12px] text-center">play</p>
         </CustomLink>
 
@@ -93,19 +110,23 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
           href={ROUTE_CREATE_CONTEST}
           className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}
         >
-          <PencilSquareIcon width={22} />
+          {pathname === ROUTE_CREATE_CONTEST ? <PencilSquareIconSolid width={24} /> : <PencilSquareIcon width={24} />}
           <p className="text-[12px]">create</p>
         </CustomLink>
 
         <div className="transition-all duration-500">
           {isConnected ? (
             <div className="flex flex-col items-center" onClick={handleWalletClick}>
-              <UserCircleIcon width={22} height={22} className="text-neutral-11" />
+              {showWalletPortal ? (
+                <UserCircleIconSolid width={24} height={24} className="text-neutral-11" />
+              ) : (
+                <UserCircleIcon width={24} height={24} className="text-neutral-11" />
+              )}
               <p className="text-[12px]">profile</p>
             </div>
           ) : (
             <div className="flex flex-col items-center" onClick={openConnectModal}>
-              <img width={22} height={22} src="/header/wallet.svg" alt="wallet" />
+              <img width={24} height={24} src="/header/wallet.svg" alt="wallet" />
               <p className="text-[12px]">wallet</p>
             </div>
           )}
