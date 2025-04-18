@@ -35,7 +35,6 @@ import { forma } from "./custom-chains/forma";
 import { gnosis } from "./custom-chains/gnosis";
 import { ink } from "./custom-chains/ink";
 import { linea } from "./custom-chains/linea";
-import { lukso } from "./custom-chains/lukso";
 import { mainnet } from "./custom-chains/mainnet";
 import { mantle } from "./custom-chains/mantle";
 import { metis } from "./custom-chains/metis";
@@ -80,7 +79,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   metis,
   forma,
   bnb,
-  lukso,
   soneium,
   story,
   ink,

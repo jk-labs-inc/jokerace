@@ -28,7 +28,6 @@ import { story } from "./custom-chains/story";
 import { swell } from "./custom-chains/swell";
 import { unichain } from "./custom-chains/unichain";
 import { zora } from "./custom-chains/zora";
-import { lukso } from "./custom-chains/lukso";
 
 type Transports = Record<Chain["id"], Transport>;
 
@@ -53,7 +52,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   metis,
   forma,
   bnb,
-  lukso,
   soneium,
   story,
   ink,
