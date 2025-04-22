@@ -1,8 +1,7 @@
 import { ROUTE_VIEW_PAST_CONTESTS } from "@config/routes";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useTransitionRouter } from "next-view-transitions";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FC, Fragment, useEffect, useState } from "react";
 
 function classNames(...classes: string[]) {
@@ -24,7 +23,7 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange }) => {
   const [label, setLabel] = useState<string | null>(null);
   const query = useSearchParams();
   const pathname = usePathname();
-  const router = useTransitionRouter();
+  const router = useRouter();
   const sortByFromQuery = query?.get("sortBy");
 
   useEffect(() => {

@@ -103,13 +103,13 @@ const connectors = connectorsForWallets(
     ...(isParaWalletConfigured
       ? [
           {
-            groupName: "Social Login",
+            groupName: "Standard Login (Recommended For New Users)",
             wallets: [paraWallet],
           },
         ]
       : []),
     {
-      groupName: "Wallets",
+      groupName: "Other Wallets",
       wallets: [
         metaMaskWallet,
         walletConnectWallet,
