@@ -1,3 +1,4 @@
+import { IconMagnifyingGlassSolid } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
 import { MobileProfilePortal } from "@components/UI/MobileWalletPortal";
 import {
@@ -89,7 +90,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
 
         <CustomLink href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
           {pathname === ROUTE_VIEW_CONTESTS ? (
-            <MagnifyingGlassIconSolid width={24} />
+            <IconMagnifyingGlassSolid width={24} />
           ) : (
             <MagnifyingGlassIcon width={24} />
           )}

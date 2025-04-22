@@ -1,5 +1,5 @@
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
-import { IconTrophy } from "@components/UI/Icons";
+import { IconMagnifyingGlassSolid, IconTrophy } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
 import { MobileProfilePortal } from "@components/UI/MobileWalletPortal";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
@@ -139,7 +139,7 @@ const LandingHeader = () => {
 
               <CustomLink href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
                 {pathname === ROUTE_VIEW_CONTESTS ? (
-                  <MagnifyingGlassIconSolid width={24} />
+                  <IconMagnifyingGlassSolid width={24} />
                 ) : (
                   <MagnifyingGlassIcon width={24} />
                 )}
