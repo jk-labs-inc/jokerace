@@ -8,6 +8,10 @@ export type OnrampParams = {
   fiatCurrency?: string;
 };
 
+export const COINBASE_CHAIN_MAPPING: Record<string, string> = {
+  arbitrumone: "arbitrum",
+};
+
 export const getOnrampBuyUrl = ({
   address,
   chain,
@@ -17,9 +21,11 @@ export const getOnrampBuyUrl = ({
 }: OnrampParams): string => {
   if (!projectId) return "";
 
+  const coinbaseChain = COINBASE_CHAIN_MAPPING[chain.toLowerCase()] || chain;
+
   const addresses = encodeURIComponent(
     JSON.stringify({
-      [address]: [chain],
+      [address]: [coinbaseChain],
     }),
   );
 
@@ -35,7 +41,7 @@ export const getOnrampBuyUrl = ({
 };
 
 export const COINBASE_SUPPORTED_CHAINS = [
-  "arbitrum",
+  "arbitrumone",
   "avalanche",
   "base",
   "bnb",
