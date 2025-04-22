@@ -5366,6 +5366,13 @@
   dependencies:
     "@noble/hashes" "1.7.1"
 
+"@noble/curves@1.8.2":
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.8.2.tgz#8f24c037795e22b90ae29e222a856294c1d9ffc7"
+  integrity sha512-vnI7V6lFNe0tLAuJMu+2sX+FcL14TaCWy1qiczg1VwRmPrpQCdq5ESXQMqUc2tluRNf6irBXrWbl1mGN8uaU/g==
+  dependencies:
+    "@noble/hashes" "1.7.2"
+
 "@noble/curves@^1.6.0", "@noble/curves@~1.6.0":
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.6.0.tgz#be5296ebcd5a1730fccea4786d420f87abfeb40b"
@@ -5402,6 +5409,11 @@
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.7.1.tgz#5738f6d765710921e7a751e00c20ae091ed8db0f"
   integrity sha512-B8XBPsn4vT/KJAGqDzbwztd+6Yte3P4V7iafm24bxgDe/mlRuK6xmWPuCNrKt2vDafZ8MfJLlchDG/vYafQEjQ==
+
+"@noble/hashes@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.7.2.tgz#d53c65a21658fb02f3303e7ee3ba89d6754c64b4"
+  integrity sha512-biZ0NUSxyjLLqo6KxEJ1b+C2NAx0wtDoFvCaXHGgUkeHzf3Xc1xKumFKREuT7f7DARNZ/slvYUwFG6B0f2b6hQ==
 
 "@noble/secp256k1@1.7.1", "@noble/secp256k1@~1.7.0":
   version "1.7.1"
@@ -19343,13 +19355,13 @@ viem@2.23.2:
     ox "0.6.7"
     ws "8.18.0"
 
-viem@2.27.2:
-  version "2.27.2"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.27.2.tgz#226e89a09e7d89a230b0c99910040e75b1ffee8d"
-  integrity sha512-VwsB+RswcflbwBNPMvzTHuafDA51iT8v4SuIFcudTP2skmxcdodbgoOLP4dYELVnCzcedxoSJDOeext4V3zdnA==
+viem@2.27.3:
+  version "2.27.3"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.27.3.tgz#3b4e3a456723874e29e0f0ee40bfb28ca4942b24"
+  integrity sha512-n15nZz143MoXCE3RbmdEBtomQRjuT5sS5Mgo0B2haGd0tZ4nXES+x829a1GrLr8+ApP29I1ASmVQVglGN6Hpzg==
   dependencies:
-    "@noble/curves" "1.8.1"
-    "@noble/hashes" "1.7.1"
+    "@noble/curves" "1.8.2"
+    "@noble/hashes" "1.7.2"
     "@scure/bip32" "1.6.2"
     "@scure/bip39" "1.5.4"
     abitype "1.0.8"
