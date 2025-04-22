@@ -20,11 +20,10 @@ import CreateContestConfirmPreview from "./components/Preview";
 import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
 import CreateContestConfirmType from "./components/Type";
-
-const ETHEREUM_MAINNET_CHAIN_ID = 1;
+import { displayCoinbaseWalletWarning, isCoinbaseWallet, isEthereumMainnet } from "./utils";
 
 const CreateContestConfirm = () => {
-  const { chainId, chain } = useAccount();
+  const { chainId, chain, connector } = useAccount();
   const { steps, stepReferences, allSteps } = useContestSteps();
   const { setEmailSubscriptionAddress, ...state } = useDeployContestStore(state => state);
   const { deployContest } = useDeployContest();
@@ -35,7 +34,13 @@ const CreateContestConfirm = () => {
   const [isTestnetDeploymentModalOpen, setIsTestnetDeploymentModalOpen] = useState(false);
 
   const onDeployHandler = useCallback(() => {
-    if (chainId === ETHEREUM_MAINNET_CHAIN_ID) {
+    if (!chainId) {
+      return;
+    }
+
+    if (connector && isCoinbaseWallet(connector?.id)) {
+      displayCoinbaseWalletWarning();
+    } else if (isEthereumMainnet(chainId)) {
       setIsEthereumDeploymentModalOpen(true);
     } else if (chain?.testnet) {
       setIsTestnetDeploymentModalOpen(true);

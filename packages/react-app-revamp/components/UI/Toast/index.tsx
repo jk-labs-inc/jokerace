@@ -26,8 +26,8 @@ const createToast = (type: any, content: JSX.Element, additionalSettings: any = 
   toastId = toast(content, settings);
 };
 
-export const toastInfo = (message: ReactNode) => {
-  createToast("info", <InfoToast message={message} />, { autoClose: 2000 });
+export const toastInfo = (message: ReactNode, additionalMessage?: string) => {
+  createToast("info", <InfoToast message={message} additionalMessage={additionalMessage} />, { autoClose: 2000 });
 };
 
 export const toastSuccess = (message: string) => {
