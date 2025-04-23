@@ -1,4 +1,4 @@
-import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
+import { Chain, getDefaultConfig } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
   bitgetWallet,
@@ -22,7 +22,7 @@ import {
   zerionWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { Transport } from "viem";
-import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
+import { cookieStorage, createStorage, fallback, http } from "wagmi";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
@@ -96,8 +96,23 @@ const projectId = WALLETCONECT_PROJECT_ID;
 
 coinbaseWallet.preference = "smartWalletOnly";
 
-const connectors = connectorsForWallets(
-  [
+const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
+  return chains.reduce<Transports>((acc, chain) => {
+    if (chain.rpcUrls?.default?.http?.[0] && chain.rpcUrls?.public?.http?.[0]) {
+      acc[chain.id] = fallback([http(chain.rpcUrls.default.http[0]), http(chain.rpcUrls.public.http[0])]);
+    }
+    return acc;
+  }, {});
+};
+
+const transports = createTransports(chains);
+
+export const config = getDefaultConfig({
+  appName: "jokerace",
+  projectId: projectId,
+  chains,
+  transports,
+  wallets: [
     ...(isParaWalletConfigured
       ? [
           {
@@ -132,27 +147,6 @@ const connectors = connectorsForWallets(
       ],
     },
   ],
-  {
-    projectId: projectId,
-    appName: appName,
-  },
-);
-
-const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
-  return chains.reduce<Transports>((acc, chain) => {
-    if (chain.rpcUrls?.default?.http?.[0] && chain.rpcUrls?.public?.http?.[0]) {
-      acc[chain.id] = fallback([http(chain.rpcUrls.default.http[0]), http(chain.rpcUrls.public.http[0])]);
-    }
-    return acc;
-  }, {});
-};
-
-const transports = createTransports(chains);
-
-export const config = createConfig({
-  connectors,
-  chains,
-  transports,
   ssr: true,
   storage: createStorage({
     storage: cookieStorage,
