@@ -3,8 +3,12 @@
   "extends": [
     "config:recommended"
   ],
-  "labels": ["renovate"],
-  "ignoreDeps": ["react-native"],
+  "labels": [
+    "renovate"
+  ],
+  "ignoreDeps": [
+    "react-native"
+  ],
   "schedule": [
     "after 11pm every weekday",
     "before 6am every weekday",
@@ -12,15 +16,22 @@
   ],
   "packageRules": [
     {
-      "packagePatterns": ["*"],
-      "enabled": false
+      "enabled": false,
+      "matchPackageNames": [
+        "*"
+      ]
     },
     {
-      "paths": ["packages/react-app-revamp/package.json"],
+      "matchFileNames": [
+        "packages/react-app-revamp/package.json"
+      ],
       "enabled": true
     },
     {
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "matchCurrentVersion": "!/^0/",
       "automerge": true,
       "automergeStrategy": "squash"
