@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import ErrorToast from "./components/Error";
+import ErrorToast, { ErrorToastType } from "./components/Error";
 import LoadingToast, { LoadingToastMessageType } from "./components/Loading";
 import SuccessToast from "./components/Success";
 import WarningToast from "./components/Warning";
@@ -34,8 +34,8 @@ export const toastSuccess = (message: string) => {
   createToast("success", <SuccessToast message={message} />);
 };
 
-export const toastError = (message: string, messageToCopy?: string) => {
-  createToast("error", <ErrorToast messageToShow={message} messageToCopy={messageToCopy} />, {
+export const toastError = (message: string, messageToCopy?: string, type?: ErrorToastType) => {
+  createToast("error", <ErrorToast messageToShow={message} messageToCopy={messageToCopy} type={type} />, {
     autoClose: false,
     className: "error-toast",
   });

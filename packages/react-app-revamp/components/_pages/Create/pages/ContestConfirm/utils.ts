@@ -1,4 +1,5 @@
-import { toastInfo } from "@components/UI/Toast";
+import { toastError, toastInfo } from "@components/UI/Toast";
+import { ErrorToastType } from "@components/UI/Toast/components/Error";
 import { mainnet } from "@config/wagmi/custom-chains/mainnet";
 
 const FORBIDDEN_WALLETS = ["coinbase"];
@@ -12,7 +13,7 @@ const isEthereumMainnet = (chainId: number) => {
 };
 
 const displayCoinbaseWalletWarning = () => {
-  return toastInfo("coinbase wallet is not supported for creating a contest", "note: retry with a different wallet");
+  return toastError("coinbase wallet is not supported for creating a contest.", "", ErrorToastType.SIMPLE);
 };
 
 export { isWalletForbidden, isEthereumMainnet, displayCoinbaseWalletWarning };
