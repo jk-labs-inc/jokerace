@@ -4761,11 +4761,12 @@
     siwe "^2.1.4"
     tslib "^2.6.2"
 
-"@lens-protocol/metadata@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/metadata/-/metadata-1.2.0.tgz#bb5ee5b9e01237e939c019de5c972931869b576e"
-  integrity sha512-fUB8+GvYiVt1uMqYJi/iN/aw/lzE+oEfpTjraTI87MqWPgYubbx0vFySjJs7uAdI7oftczvlwhthmMUl5DDuGA==
+"@lens-protocol/metadata@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/metadata/-/metadata-2.0.0.tgz#c849297a60fc5840d451b8ca8ba823b48a9d3c63"
+  integrity sha512-KLm9hQvPw8zCYOxnZFA02Cnzfrphbt6i1YIzAK5fBki1ZTMqAnlSoKxCesEXVjDd6m9MM6dd3neRxmvDGwer4Q==
   dependencies:
+    abitype "^1.0.8"
     json-stable-stringify "^1.1.1"
     uuid "^9.0.1"
 
@@ -9671,7 +9672,7 @@ abitype@1.0.5:
   resolved "https://registry.yarnpkg.com/abitype/-/abitype-1.0.5.tgz#29d0daa3eea867ca90f7e4123144c1d1270774b6"
   integrity sha512-YzDhti7cjlfaBhHutMaboYB21Ha3rXR9QTkNJFzYC4kC8YclaiwPBBBJY8ejFdu2wnJeZCVZSMlQJ7fi8S6hsw==
 
-abitype@1.0.8:
+abitype@1.0.8, abitype@^1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/abitype/-/abitype-1.0.8.tgz#3554f28b2e9d6e9f35eb59878193eabd1b9f46ba"
   integrity sha512-ZeiI6h3GnW06uYDLx0etQtX/p8E24UaHHBj57RSjK7YBFe7iuVn07EDpOeP451D06sF27VOz9JJPlIKJmXgkEg==

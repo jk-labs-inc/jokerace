@@ -19,7 +19,7 @@
     "@headlessui/react": "2.2.2",
     "@heroicons/react": "2.2.0",
     "@lens-protocol/client": "2.3.2",
-    "@lens-protocol/metadata": "1.2.0",
+    "@lens-protocol/metadata": "2.0.0",
     "@next/third-parties": "14.2.28",
     "@rainbow-me/rainbowkit": "2.2.4",
     "@supabase/supabase-js": "2.49.4",
