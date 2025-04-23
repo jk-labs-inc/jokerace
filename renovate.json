@@ -4,9 +4,6 @@
     "config:recommended"
   ],
   "labels": ["renovate"],
-  "major": {
-    "dependencyDashboardApproval": true
-  },
   "ignoreDeps": ["react-native"],
   "schedule": [
     "after 11pm every weekday",
