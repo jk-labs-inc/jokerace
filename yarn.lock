@@ -17049,10 +17049,10 @@ react-shallow-renderer@^16.15.0:
     object-assign "^4.1.1"
     react-is "^16.12.0 || ^17.0.0 || ^18.0.0"
 
-react-spinners@0.16.1:
-  version "0.16.1"
-  resolved "https://registry.yarnpkg.com/react-spinners/-/react-spinners-0.16.1.tgz#06832db2ae96d6a3f4997dbbce28c7ef7aa357ca"
-  integrity sha512-hYDQp2mmmv3a3JZZZYOi3+jW7C/ro51Ny71TfkRXhoPBb6wZuK9BgdvYbTnSAUrQCrVnOLSpWfZatncUTb6n5w==
+react-spinners@0.17.0:
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/react-spinners/-/react-spinners-0.17.0.tgz#d518913e2192afaae76c5b781929ea3bd7b1910e"
+  integrity sha512-L/8HTylaBmIWwQzIjMq+0vyaRXuoAevzWoD35wKpNTxxtYXWZp+xtgkfD7Y4WItuX0YvdxMPU79+7VhhmbmuTQ==
 
 react-style-singleton@^2.2.1:
   version "2.2.1"
