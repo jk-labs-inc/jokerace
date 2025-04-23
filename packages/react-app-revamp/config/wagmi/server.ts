@@ -1,6 +1,6 @@
-import { Chain } from "@rainbow-me/rainbowkit";
+import { Chain, getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { Transport } from "viem";
-import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
+import { cookieStorage, createStorage, fallback, http } from "wagmi";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
@@ -63,6 +63,9 @@ export const chains: readonly [Chain, ...Chain[]] = [
   mainnet,
 ];
 
+const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
+const projectId = WALLETCONECT_PROJECT_ID;
+
 const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
   const headers = isProduction ? { Referer: "https://jokerace.io/" } : undefined;
 
@@ -87,7 +90,9 @@ const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
 
 const transports = createTransports(chains);
 
-export const serverConfig = createConfig({
+export const serverConfig = getDefaultConfig({
+  appName: "jokerace",
+  projectId: projectId,
   chains,
   transports,
   ssr: true,

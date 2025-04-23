@@ -91,7 +91,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
 ];
 
 const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
-const appName = "jokerace";
 const projectId = WALLETCONECT_PROJECT_ID;
 
 coinbaseWallet.preference = "smartWalletOnly";
