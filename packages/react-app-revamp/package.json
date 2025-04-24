@@ -56,7 +56,6 @@
     "eslint-config-next": "14.2.28",
     "ethers": "5.8.0",
     "fuse.js": "7.1.0",
-    "i18next": "23.16.8",
     "interweave": "13.1.1",
     "interweave-autolink": "5.1.2",
     "interweave-ssr": "2.0.0",
