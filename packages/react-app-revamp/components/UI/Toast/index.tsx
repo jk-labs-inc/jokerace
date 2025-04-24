@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import ErrorToast from "./components/Error";
+import ErrorToast, { ErrorToastType } from "./components/Error";
 import LoadingToast, { LoadingToastMessageType } from "./components/Loading";
 import SuccessToast from "./components/Success";
 import WarningToast from "./components/Warning";
@@ -26,16 +26,16 @@ const createToast = (type: any, content: JSX.Element, additionalSettings: any = 
   toastId = toast(content, settings);
 };
 
-export const toastInfo = (message: ReactNode) => {
-  createToast("info", <InfoToast message={message} />, { autoClose: 2000 });
+export const toastInfo = (message: ReactNode, additionalMessage?: string) => {
+  createToast("info", <InfoToast message={message} additionalMessage={additionalMessage} />, { autoClose: 2000 });
 };
 
 export const toastSuccess = (message: string) => {
   createToast("success", <SuccessToast message={message} />);
 };
 
-export const toastError = (message: string, messageToCopy?: string) => {
-  createToast("error", <ErrorToast messageToShow={message} messageToCopy={messageToCopy} />, {
+export const toastError = (message: string, messageToCopy?: string, type?: ErrorToastType) => {
+  createToast("error", <ErrorToast messageToShow={message} messageToCopy={messageToCopy} type={type} />, {
     autoClose: false,
     className: "error-toast",
   });

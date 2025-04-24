@@ -4,12 +4,18 @@ import { useUrl } from "nextjs-current-url";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
 
+export enum ErrorToastType {
+  SIMPLE = "simple",
+  ADVANCED = "advanced",
+}
+
 interface ErrorToastProps {
   messageToShow: string;
   messageToCopy?: string;
+  type?: ErrorToastType;
 }
 
-const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
+const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy, type = ErrorToastType.ADVANCED }) => {
   const url = useUrl();
   const { address } = useAccount();
   const [copySuccess, setCopySuccess] = useState(false);
@@ -28,6 +34,18 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
       console.error("Failed to copy text: ", err);
     }
   };
+
+  if (type === ErrorToastType.SIMPLE) {
+    return (
+      <div className="flex items-center pl-3 md:pl-6">
+        <img className="hidden md:block mr-4" src="/toast/sadboi.png" width={40} height={40} alt="error" />
+        <div className="flex flex-col gap-1">
+          <p className="text-[14px] font-medium">{messageToShow}</p>
+          <p className="text-[11px]">please retry with another wallet.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex gap-4 items-center pl-3 md:pl-6">
