@@ -70,7 +70,7 @@
     "next-pwa": "5.6.0",
     "nextjs-current-url": "1.0.3",
     "nextjs-toploader": "1.6.12",
-    "node-html-parser": "6.1.13",
+    "node-html-parser": "7.0.1",
     "papaparse": "5.5.2",
     "postcss": "8.5.3",
     "postcss-100vh-fix": "1.0.2",
