@@ -1,7 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import OnrampModal from "@components/Onramp/components/Modal";
 import { toastInfo } from "@components/UI/Toast";
-import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
@@ -68,8 +66,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.nativeCurrency
-    ?.symbol;
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
   const { votesOpen, charge } = useContestStore(state => state);
@@ -108,7 +104,8 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
     if (!canVote) {
       if (charge?.voteType === VoteType.PerVote) {
-        setIsOnrampOpen(true);
+        setPickProposal(proposal.id);
+        setIsVotingModalOpen(true);
         return;
       }
 
@@ -159,12 +156,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
     <>
       {renderLayout()}
       <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={setIsVotingModalOpen} proposal={proposal} />
-      <OnrampModal
-        chain={chainName ?? ""}
-        asset={chainCurrencySymbol ?? ""}
-        isOpen={isOnrampOpen}
-        onClose={() => setIsOnrampOpen(false)}
-      />
     </>
   );
 };
