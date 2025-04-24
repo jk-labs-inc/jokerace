@@ -16,7 +16,7 @@ import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import DialogModalSendProposalEditor from "../components/Editor";
 import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
@@ -41,6 +41,11 @@ interface DialogModalSendProposalDesktopLayoutProps {
   handleDragLeave?: (event: React.DragEvent<HTMLDivElement>) => void;
   onSwitchNetwork?: () => void;
   onSubmitProposal?: () => void;
+}
+
+enum ButtonText {
+  SUBMIT = "submit",
+  ADD_FUNDS = "add funds",
 }
 
 const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLayoutProps> = ({
@@ -81,6 +86,15 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
   const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);
   const [showOnrampModal, setShowOnrampModal] = useState(false);
+  const [buttonText, setButtonText] = useState(ButtonText.SUBMIT);
+
+  useEffect(() => {
+    if (insufficientBalance) {
+      setButtonText(ButtonText.ADD_FUNDS);
+    } else {
+      setButtonText(ButtonText.SUBMIT);
+    }
+  }, [insufficientBalance]);
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -107,18 +121,6 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
         setError(<p className="text-negative-11 font-bold text-[12px]">Please fill in your proposal.</p>);
         return;
       }
-    }
-
-    if (insufficientBalance) {
-      setError(
-        <button
-          onClick={() => setShowOnrampModal(true)}
-          className="text-[12px] self-start text-positive-11 opacity-80 hover:opacity-100 transition-colors font-bold leading-loose"
-        >
-          add {chainCurrencySymbol} to {chainName} to enter contest {">"}
-        </button>,
-      );
-      return;
     }
 
     if (emailForSubscription && !emailRegex.test(emailForSubscription)) {
@@ -210,23 +212,17 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
               </div>
             </div>
             <div className="flex flex-col gap-12 mt-12">
-              {showEntryCharge ? (
-                <ChargeLayoutSubmission
-                  charge={charge}
-                  accountData={accountData}
-                  onAddFunds={() => setShowOnrampModal(true)}
-                />
-              ) : null}
+              {showEntryCharge ? <ChargeLayoutSubmission charge={charge} accountData={accountData} /> : null}
 
               {isCorrectNetwork ? (
                 <div className="flex flex-col gap-2">
                   <ButtonV3
                     colorClass="bg-gradient-purple rounded-[40px]"
                     size={ButtonSize.EXTRA_LARGE_LONG}
-                    onClick={handleConfirm}
+                    onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowOnrampModal(true)}
                     isDisabled={isLoading}
                   >
-                    submit
+                    {buttonText}
                   </ButtonV3>
                   {error && <>{error}</>}
                 </div>

@@ -1,9 +1,9 @@
 import OnrampCard from "@components/Onramp/components/Card";
-import { useAccount } from "wagmi";
-import { FC } from "react";
-import { getOnrampBuyUrl, isChainSupported } from "./utils";
-import { usePathname } from "next/navigation";
 import { toastError } from "@components/UI/Toast";
+import { usePathname } from "next/navigation";
+import { FC } from "react";
+import { useAccount } from "wagmi";
+import { getOnrampBuyUrl, isChainSupported } from "./utils";
 
 interface OnrampCoinbaseProviderProps {
   chain: string;
@@ -45,7 +45,7 @@ const OnrampCoinbaseProvider: FC<OnrampCoinbaseProviderProps> = ({ chain, asset 
       onClick={handleOnramp}
       descriptionClassName={isEntryPage ? "text-[14px]" : ""}
       disabled={!isSupported}
-      disabledMessage={!isSupported ? `NOT SUPPORTED ON ${chain}` : ""}
+      disabledMessage={!isSupported ? `not available on this chain` : ""}
     />
   );
 };

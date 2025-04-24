@@ -233,37 +233,24 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                       buttonSize={ButtonSize.FULL}
                     />
                   ) : isConnected ? (
-                    currentUserAvailableVotesAmount > 0 ? (
-                      <VotingWidget
-                        proposalId={proposalId}
-                        amountOfVotes={currentUserAvailableVotesAmount}
-                        onVote={onSubmitCastVotes}
-                        downvoteAllowed={downvotingAllowed}
-                        onAddFunds={() => {
-                          setShowOnrampModal(true);
-                        }}
-                      />
-                    ) : outOfVotes ? (
-                      <p className="text-[16px] text-neutral-11">
-                        looks like you've used up all your votes this contest <br />
-                        feel free to try connecting another wallet to see if it has more votes!
-                      </p>
-                    ) : isPayPerVote ? (
-                      <div className="pr-1">
-                        <Onramp chain={chainName ?? ""} asset={chainCurrencySymbol ?? ""} showBackButton={false} />
-                      </div>
-                    ) : (
-                      <p className="text-[16px] text-neutral-11">
-                        unfortunately your wallet didn't qualify to vote in this contest <br />
-                        feel free to try connecting another wallet!
-                      </p>
-                    )
+                    <VotingWidget
+                      proposalId={proposalId}
+                      amountOfVotes={currentUserAvailableVotesAmount}
+                      onVote={onSubmitCastVotes}
+                      downvoteAllowed={downvotingAllowed}
+                      onAddFunds={() => {
+                        setShowOnrampModal(true);
+                      }}
+                    />
+                  ) : outOfVotes ? (
+                    <p className="text-[16px] text-neutral-11">
+                      looks like you've used up all your votes this contest <br />
+                      feel free to try connecting another wallet to see if it has more votes!
+                    </p>
                   ) : (
-                    <p className="text-[16px] text-neutral-11 font-bold">
-                      <span className="text-positive-11 cursor-pointer text-[16px]" onClick={onConnectWallet}>
-                        connect wallet
-                      </span>{" "}
-                      {isPayPerVote ? "to get votes" : "to see if you qualify"}
+                    <p className="text-[16px] text-neutral-11">
+                      unfortunately your wallet didn't qualify to vote in this contest <br />
+                      feel free to try connecting another wallet!
                     </p>
                   )}
                 </div>

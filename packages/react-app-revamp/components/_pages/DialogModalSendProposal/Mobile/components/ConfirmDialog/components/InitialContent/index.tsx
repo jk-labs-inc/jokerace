@@ -3,13 +3,13 @@ import Onramp from "@components/Onramp";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import EmailSubscription from "@components/UI/EmailSubscription";
 import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
-import { FOOTER_LINKS, LINK_BRIDGE_DOCS } from "@config/links";
+import { FOOTER_LINKS } from "@config/links";
 import { chains } from "@config/wagmi";
 import { emailRegex } from "@helpers/regex";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { type GetBalanceReturnType } from "@wagmi/core";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 interface SendProposalMobileLayoutConfirmInitialContentProps {
   charge: Charge | null;
@@ -19,6 +19,11 @@ interface SendProposalMobileLayoutConfirmInitialContentProps {
   onShowOnramp?: (value: boolean) => void;
 }
 
+enum ButtonText {
+  SUBMIT = "submit",
+  ADD_FUNDS = "add funds",
+}
+
 const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayoutConfirmInitialContentProps> = ({
   charge,
   accountData,
@@ -26,13 +31,22 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   onConfirm,
   onShowOnramp,
 }) => {
-  const { wantsSubscription, emailForSubscription, setWantsSubscription, setEmailForSubscription, emailAlreadyExists } =
+  const { emailForSubscription, setWantsSubscription, setEmailForSubscription, emailAlreadyExists } =
     useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
   const insufficientBalance = (accountData?.value ?? 0) < (charge?.type.costToPropose ?? 0);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
   const [showOnramp, setShowOnramp] = useState(false);
+  const [buttonText, setButtonText] = useState(ButtonText.SUBMIT);
+
+  useEffect(() => {
+    if (insufficientBalance) {
+      setButtonText(ButtonText.ADD_FUNDS);
+    } else {
+      setButtonText(ButtonText.SUBMIT);
+    }
+  }, [insufficientBalance]);
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -56,11 +70,6 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
     onShowOnramp?.(false);
   };
 
-  const handleOnRampOpen = () => {
-    setShowOnramp(true);
-    onShowOnramp?.(true);
-  };
-
   return (
     <>
       {showOnramp ? (
@@ -80,26 +89,16 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
             />
           </div>
           {charge && charge.type.costToPropose && accountData ? (
-            <ChargeLayoutSubmission charge={charge} accountData={accountData} onAddFunds={handleOnRampOpen} />
+            <ChargeLayoutSubmission charge={charge} accountData={accountData} />
           ) : null}
 
           <div className="flex flex-col gap-2 mt-12">
-            {insufficientBalance ? (
-              <a
-                href={LINK_BRIDGE_DOCS}
-                target="_blank"
-                className="text-[12px] text-center text-positive-11 opacity-80 hover:opacity-100 transition-colors font-bold leading-loose"
-              >
-                add {chainCurrencySymbol} to {chainName} to enter contest {">"}
-              </a>
-            ) : null}
             <ButtonV3
               colorClass="bg-gradient-vote rounded-[40px]"
               size={ButtonSize.FULL}
-              onClick={handleConfirm}
-              isDisabled={insufficientBalance}
+              onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowOnramp(true)}
             >
-              submit!
+              {buttonText}
             </ButtonV3>
           </div>
         </>

@@ -30,8 +30,8 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
   const title = isLoading
     ? "approving transaction..."
     : isSuccess && proposalId
-      ? "your submission is live!"
-      : "confirm submission";
+      ? "your entry is live!"
+      : "submit entry";
 
   if (!isOpen) return null;
 
