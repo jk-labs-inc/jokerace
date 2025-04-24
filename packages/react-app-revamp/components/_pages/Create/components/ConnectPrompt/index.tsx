@@ -4,7 +4,7 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useCallback } from "react";
 
-const CreateContestChargeUnconnectedAccount = () => {
+const CreateConnectPrompt = () => {
   const { openConnectModal } = useConnectModal();
   const { step, setStep } = useDeployContestStore(state => state);
 
@@ -45,4 +45,4 @@ const CreateContestChargeUnconnectedAccount = () => {
   );
 };
 
-export default CreateContestChargeUnconnectedAccount;
+export default CreateConnectPrompt;
