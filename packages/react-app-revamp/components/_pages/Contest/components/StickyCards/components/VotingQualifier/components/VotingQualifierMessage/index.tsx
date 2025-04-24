@@ -129,7 +129,8 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
         />
         <ButtonV3
           size={ButtonSize.DEFAULT_LONG}
-          colorClass="bg-gradient-create text-true-black rounded-[40px]"
+          colorClass="bg-true-black border border-neutral-11 rounded-[40px] hover:bg-neutral-11 hover:text-true-black transition-all duration-300"
+          textColorClass="text-neutral-11"
           onClick={() => setIsOnrampOpen(true)}
         >
           add funds

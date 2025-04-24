@@ -1,4 +1,4 @@
-import { Clusters } from "@clustersxyz/sdk";
+import { Clusters, getImageUrl, getProfileUrl } from "@clustersxyz/sdk";
 import { config } from "@config/wagmi";
 import { mainnet } from "@config/wagmi/custom-chains/mainnet";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
@@ -18,7 +18,7 @@ interface ProfileData {
   };
 }
 
-const normalizeClusterName = (clusterName: string) => {
+const normalizeClusterName = (clusterName: string): string => {
   return clusterName.split("/")[0] + "/";
 };
 
@@ -80,27 +80,28 @@ const fetchProfileData = async (
         profileAvatar = DEFAULT_AVATAR_URL;
       }
     } else {
-      const clusterName = await clusters.getName(ethereumAddress);
+      const clusterName = (await clusters.getName(ethereumAddress)).clusterName;
       if (clusterName) {
         try {
-          const cluster = await clusters.getCluster(normalizeClusterName(clusterName));
+          const imageUrl = getImageUrl(normalizeClusterName(clusterName).slice(0, -1));
 
-          await checkImageUrl(cluster?.imageUrl ?? DEFAULT_AVATAR_URL);
-          profileAvatar = cluster?.imageUrl ?? DEFAULT_AVATAR_URL;
+          await checkImageUrl(imageUrl ?? DEFAULT_AVATAR_URL);
+          profileAvatar = imageUrl ?? DEFAULT_AVATAR_URL;
           profileName = normalizeClusterName(clusterName);
         } catch {
+          profileName = normalizeClusterName(clusterName);
           profileAvatar = DEFAULT_AVATAR_URL;
         }
       }
     }
 
     if (includeSocials) {
-      const clusterName = await clusters.getName(ethereumAddress);
+      const clusterName = (await clusters.getName(ethereumAddress)).clusterName;
       let clusterProfileUrl = "";
 
       if (clusterName) {
-        const clusterMetadata = await clusters.getCluster(normalizeClusterName(clusterName));
-        clusterProfileUrl = clusterMetadata?.profileUrl ?? "";
+        const clusterMetadata = getProfileUrl(normalizeClusterName(clusterName));
+        clusterProfileUrl = clusterMetadata ?? "";
       }
 
       socials = {

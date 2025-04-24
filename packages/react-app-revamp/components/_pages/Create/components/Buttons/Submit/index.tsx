@@ -1,9 +1,10 @@
+import OnrampModal from "@components/Onramp/components/Modal";
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, MouseEventHandler, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useAccount } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import MobileBottomButton from "../Mobile";
 
 interface CreateContestButtonProps {
@@ -12,12 +13,38 @@ interface CreateContestButtonProps {
   isDisabled?: boolean;
 }
 
+enum CreateButtonText {
+  CREATE = "create contest",
+  CONNECT_WALLET = "connect wallet",
+  ONRAMP = "add funds",
+}
+
 const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDisabled }) => {
   const { errors } = useDeployContestStore(state => state);
-  const { isConnected } = useAccount();
+  const { isConnected, address, chainId, chain } = useAccount();
   const [shake, setShake] = useState(false);
   const onPreviousStep = usePreviousStep();
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
+  const [showOnramp, setShowOnramp] = useState(false);
+  const { data: balance } = useBalance({
+    address,
+    chainId,
+  });
+  const chainCurrencyDecimals = chain?.nativeCurrency.decimals || 18;
+  const DUST_THRESHOLD = BigInt(10) ** BigInt(chainCurrencyDecimals - 6);
+  const insufficientBalance = balance && (balance.value === BigInt(0) || balance.value < DUST_THRESHOLD);
+  const [createButtonText, setCreateButtonText] = useState(CreateButtonText.CREATE);
+  const chainNativeCurrency = chain?.nativeCurrency.symbol;
+
+  useEffect(() => {
+    if (insufficientBalance && isConnected) {
+      setCreateButtonText(CreateButtonText.ONRAMP);
+    } else if (isConnected) {
+      setCreateButtonText(CreateButtonText.CREATE);
+    } else {
+      setCreateButtonText(CreateButtonText.CONNECT_WALLET);
+    }
+  }, [insufficientBalance, isConnected]);
 
   useEffect(() => {
     // If there's an error for the current step, shake the button
@@ -34,7 +61,9 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
       setShake(true);
     }
 
-    if (onClick) {
+    if (createButtonText === CreateButtonText.ONRAMP) {
+      setShowOnramp(true);
+    } else if (onClick) {
       onClick(e);
     }
   };
@@ -50,7 +79,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
             onClick={handleClick}
             colorClass="text-[20px] bg-gradient-create rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           >
-            {isConnected ? "create" : "connect wallet"}
+            {isConnected ? (insufficientBalance ? "add funds" : "create") : "connect wallet"}
           </ButtonV3>
         </div>
       </MobileBottomButton>
@@ -68,7 +97,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
           type={ButtonType.TX_ACTION}
           onClick={handleClick}
         >
-          {isConnected ? "create contest" : "connect wallet"}
+          {createButtonText}
         </ButtonV3>
 
         <div
@@ -81,6 +110,12 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
           <p className="text-[16px]">back</p>
         </div>
       </div>
+      <OnrampModal
+        chain={chain?.name.toLowerCase() ?? ""}
+        asset={chainNativeCurrency ?? ""}
+        isOpen={showOnramp}
+        onClose={() => setShowOnramp(false)}
+      />
     </div>
   );
 };
