@@ -3,8 +3,10 @@ import MyVotes from "@components/ChargeLayout/components/Vote/components/MyVotes
 import TotalCharge from "@components/ChargeLayout/components/Vote/components/TotalCharge";
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import StepSlider from "@components/UI/Slider";
+import { VotingButtonText } from "@components/Voting";
 import { Charge, VoteType } from "@hooks/useDeployContest/types";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
+import { GetBalanceData } from "wagmi/query";
 
 interface VotingWidgetMobileProps {
   downvoteAllowed: boolean;
@@ -18,6 +20,8 @@ interface VotingWidgetMobileProps {
   charge: Charge | null;
   chainId: number;
   voteDisabled: boolean;
+  insufficientBalance: boolean;
+  balanceData: GetBalanceData | undefined;
   handleVote: () => void;
   handleChange: (value: string) => void;
   handleKeyDownInput: (e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -37,6 +41,8 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
   amount,
   amountOfVotes,
   isFocused,
+  insufficientBalance,
+  balanceData,
   handleVote,
   handleChange,
   handleKeyDownInput,
@@ -51,6 +57,16 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
   voteDisabled,
   onAddFunds,
 }) => {
+  const [buttonText, setButtonText] = useState(VotingButtonText.ADD_VOTES);
+
+  useEffect(() => {
+    if (insufficientBalance) {
+      setButtonText(VotingButtonText.ADD_FUNDS);
+    } else {
+      setButtonText(VotingButtonText.ADD_VOTES);
+    }
+  }, [insufficientBalance]);
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
@@ -79,7 +95,7 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
             <div className="flex flex-col gap-2">
               {charge?.voteType === VoteType.PerVote ? (
                 <>
-                  <MyVotes amountOfVotes={amountOfVotes} charge={charge} chainId={chainId} onAddFunds={onAddFunds} />
+                  <MyVotes balanceData={balanceData} amountOfVotes={amountOfVotes} charge={charge} />
                   {charge ? <ChargeInfo charge={charge} /> : null}
                 </>
               ) : null}
@@ -112,7 +128,7 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
               <StepSlider val={sliderValue} onChange={handleSliderChange} onKeyDown={handleKeyDownSlider} />
               {charge?.voteType === VoteType.PerTransaction ? (
                 <>
-                  <MyVotes amountOfVotes={amountOfVotes} charge={charge} chainId={chainId} />
+                  <MyVotes balanceData={balanceData} amountOfVotes={amountOfVotes} charge={charge} />
                   {charge ? <ChargeInfo charge={charge} /> : null}
                 </>
               ) : null}
@@ -122,12 +138,12 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
 
           <ButtonV3
             type={ButtonType.TX_ACTION}
-            isDisabled={voteDisabled}
+            isDisabled={buttonText === VotingButtonText.ADD_FUNDS ? false : voteDisabled}
             colorClass="px-[20px] bg-gradient-purple rounded-[40px] w-full"
             size={ButtonSize.FULL}
-            onClick={handleVote}
+            onClick={buttonText === VotingButtonText.ADD_FUNDS ? onAddFunds : handleVote}
           >
-            <span className="w-full text-center">add votes to entry</span>
+            <span className="w-full text-center">{buttonText}</span>
           </ButtonV3>
         </div>
       </div>

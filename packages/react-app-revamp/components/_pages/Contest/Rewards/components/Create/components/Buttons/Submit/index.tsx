@@ -1,20 +1,54 @@
-import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { FC } from "react";
-import { useCreateRewardsStore } from "../../../store";
-import { useMediaQuery } from "react-responsive";
 import MobileBottomButton from "@components/_pages/Create/components/Buttons/Mobile";
+import OnrampModal from "@components/Onramp/components/Modal";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import { FC, useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
+import { useAccount, useBalance } from "wagmi";
+import { useCreateRewardsStore } from "../../../store";
 
 interface CreateRewardsSubmitButtonProps {
   step: number;
   onSubmit?: () => void;
 }
 
+enum CreateButtonText {
+  CREATE = "create pool",
+  ONRAMP = "add funds",
+}
+
 const CreateRewardsSubmitButton: FC<CreateRewardsSubmitButtonProps> = ({ step, onSubmit }) => {
+  const { isConnected, address, chainId, chain } = useAccount();
+  const { data: balance } = useBalance({
+    address,
+    chainId,
+  });
+  const chainCurrencyDecimals = chain?.nativeCurrency.decimals || 18;
+  const DUST_THRESHOLD = BigInt(10) ** BigInt(chainCurrencyDecimals - 6);
+  const insufficientBalance = balance && (balance.value === BigInt(0) || balance.value < DUST_THRESHOLD);
   const { setStep } = useCreateRewardsStore(state => state);
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
+  const [showOnramp, setShowOnramp] = useState(false);
+  const [createButtonText, setCreateButtonText] = useState(CreateButtonText.CREATE);
+  const chainNativeCurrency = chain?.nativeCurrency.symbol;
+
+  useEffect(() => {
+    if (insufficientBalance && isConnected) {
+      setCreateButtonText(CreateButtonText.ONRAMP);
+    } else if (isConnected) {
+      setCreateButtonText(CreateButtonText.CREATE);
+    }
+  }, [insufficientBalance, isConnected]);
 
   const onBackHandler = (step: number) => {
     setStep(step - 1);
+  };
+
+  const handleClick = () => {
+    if (createButtonText === CreateButtonText.ONRAMP) {
+      setShowOnramp(true);
+    } else {
+      onSubmit?.();
+    }
   };
 
   if (isMobileOrTablet) {
@@ -26,10 +60,10 @@ const CreateRewardsSubmitButton: FC<CreateRewardsSubmitButtonProps> = ({ step, o
           </p>
           <ButtonV3
             size={ButtonSize.DEFAULT_LONG}
-            onClick={onSubmit}
+            onClick={handleClick}
             colorClass="text-[20px] bg-gradient-purple rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           >
-            create pool
+            {createButtonText}
           </ButtonV3>
         </div>
       </MobileBottomButton>
@@ -42,9 +76,9 @@ const CreateRewardsSubmitButton: FC<CreateRewardsSubmitButtonProps> = ({ step, o
         <ButtonV3
           colorClass="text-[20px] bg-gradient-purple rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           size={ButtonSize.EXTRA_LARGE_LONG}
-          onClick={onSubmit}
+          onClick={handleClick}
         >
-          create pool
+          {createButtonText}
         </ButtonV3>
         <div
           className="hidden lg:flex items-center gap-[5px] -ml-[15px] cursor-pointer group"
@@ -56,6 +90,12 @@ const CreateRewardsSubmitButton: FC<CreateRewardsSubmitButtonProps> = ({ step, o
           <p className="text-[16px]">back</p>
         </div>
       </div>
+      <OnrampModal
+        chain={chain?.name.toLowerCase() ?? ""}
+        asset={chainNativeCurrency ?? ""}
+        isOpen={showOnramp}
+        onClose={() => setShowOnramp(false)}
+      />
     </div>
   );
 };

@@ -1,9 +1,17 @@
 import { chains } from "@config/wagmi";
 
 export const getNativeTokenInfo = (chainId: number) => {
-  const { nativeCurrency } = chains.filter(chain => chain.id === chainId)[0];
+  const matchingChain = chains.find(chain => chain.id === chainId);
+
+  if (!matchingChain) {
+    return {
+      symbol: "ETH",
+      decimals: 18,
+    };
+  }
+
   return {
-    symbol: nativeCurrency?.symbol,
-    decimals: nativeCurrency?.decimals,
+    symbol: matchingChain.nativeCurrency?.symbol || "ETH",
+    decimals: matchingChain.nativeCurrency?.decimals || 18,
   };
 };
