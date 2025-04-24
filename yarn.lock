@@ -15326,10 +15326,10 @@ possible-typed-array-names@^1.0.0:
   resolved "https://registry.yarnpkg.com/possible-typed-array-names/-/possible-typed-array-names-1.0.0.tgz#89bb63c6fada2c3e90adc4a647beeeb39cc7bf8f"
   integrity sha512-d7Uw+eZoloe0EHDIYoe+bQ5WXnGMOpmiZFTuMWCwpjzzkL2nTjcKiAk4hh8TjnGye2TwWOk3UXucZ+3rbmBa8Q==
 
-postcss-100vh-fix@1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/postcss-100vh-fix/-/postcss-100vh-fix-1.0.2.tgz#d7931b1b9db90c1ea9cafefeb444ad5e534f7550"
-  integrity sha512-t7vqk9AfjI4fXmWlQCEiMZFFhi1hro4WlECINI1TV6Qh1XapUJE++gCmNr95F5Hen/+bz1OmO+SiSB9TZmFmSg==
+postcss-100vh-fix@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/postcss-100vh-fix/-/postcss-100vh-fix-2.0.0.tgz#3baaac0b127d6d7624521b45e8bf7418cfadec8a"
+  integrity sha512-8ztJY6WWHQYGPC1BffaW7QCsIg6TrELNaHo61fagskWJ5T7gC9RqYVaGIP4gh4c8QySTU9yAF7zrAF3cckDYRQ==
 
 postcss-import@^14.1.0:
   version "14.1.0"
