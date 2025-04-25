@@ -137,15 +137,9 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
           <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2" onClick={e => e.stopPropagation()}>
             <button
               onClick={onVotingModalOpen}
-              className="min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black bg-opacity-75 rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out group"
+              className="min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-gradient-vote rounded-[16px] cursor-pointer text-true-black"
             >
-              <img
-                src="/contest/upvote.svg"
-                width={16}
-                height={16}
-                alt="upvote"
-                className="flex-shrink-0 transition-all duration-300 ease-in-out group-hover:brightness-0 group-hover:saturate-0"
-              />
+              <img src="/contest/upvote-2.svg" width={16} height={16} alt="upvote" className="flex-shrink-0 " />
               <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
             </button>
           </div>

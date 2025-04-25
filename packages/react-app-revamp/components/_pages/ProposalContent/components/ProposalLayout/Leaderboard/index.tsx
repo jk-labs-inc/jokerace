@@ -123,15 +123,9 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                 {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
                   <button
                     onClick={handleVotingModalOpen}
-                    className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
+                    className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-gradient-vote rounded-[16px] cursor-pointer text-true-black"
                   >
-                    <img
-                      src="/contest/upvote.svg"
-                      width={16}
-                      height={16}
-                      alt="upvote"
-                      className="flex-shrink-0 transition-all duration-300 ease-in-out group-hover:brightness-0 group-hover:saturate-0"
-                    />
+                    <img src="/contest/upvote-2.svg" width={13} height={15} alt="upvote" className="flex-shrink-0" />
                     <p className="text-[16px] font-bold flex-grow text-center">
                       {formatNumberAbbreviated(proposal.votes)}
                     </p>
@@ -156,21 +150,29 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                 </div>
                 <div className="flex gap-2 items-center">
                   {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-                    <button
-                      onClick={handleVotingModalOpen}
-                      className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
-                    >
-                      <img
-                        src="/contest/upvote.svg"
-                        width={16}
-                        height={16}
-                        alt="upvote"
-                        className="flex-shrink-0 transition-all duration-300 ease-in-out group-hover:brightness-0 group-hover:saturate-0"
-                      />
-                      <p className="text-[16px] font-bold flex-grow text-center">
-                        {formatNumberAbbreviated(proposal.votes)}
-                      </p>
-                    </button>
+                    <div className="rounded-2xl p-[1px] bg-gradient-vote-purple">
+                      <div className="bg-true-black rounded-[calc(2rem-1px)] p-[2px]">
+                        <div className="rounded-[calc(2rem-3px)] bg-gradient-vote-rainbow p-[1px]">
+                          <div className="bg-true-black rounded-[calc(2rem-4px)]">
+                            <button
+                              onClick={handleVotingModalOpen}
+                              className="min-w-16 flex-shrink-0 h-6 px-2 flex items-center justify-between gap-2 cursor-pointer text-neutral-11 w-full"
+                            >
+                              <img
+                                src="/contest/upvote-3.svg"
+                                width={14}
+                                height={15}
+                                alt="upvote"
+                                className="flex-shrink-0"
+                              />
+                              <p className="text-[16px] font-bold flex-grow text-center">
+                                {formatNumberAbbreviated(proposal.votes)}
+                              </p>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   ) : (
                     <p className="text-neutral-10 text-[16px] font-bold">
                       voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
