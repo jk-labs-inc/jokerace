@@ -23,6 +23,7 @@ const DUNE_SUPPORTED_CHAIN_NAMES = [
   "blast",
   "bnb",
   "bob",
+  "berachain",
   "celo",
   "degen",
   "fantom",
