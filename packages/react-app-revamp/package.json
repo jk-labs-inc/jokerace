@@ -104,7 +104,7 @@
     "typescript": "5.8.3",
     "underscore": "1.13.7",
     "uuid": "11.1.0",
-    "valibot": "0.42.1",
+    "valibot": "1.0.0",
     "viem": "2.28.0",
     "wagmi": "2.14.16",
     "webpack": "5.99.7",
