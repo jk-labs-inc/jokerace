@@ -318,7 +318,52 @@ contract VoterRewardsModuleTest is Test {
         voterRewardsModule.release(testERC20, PERMISSIONED_ADDRESS_1, 2);
     }
 
-    //// 2 PROPOSALS WITH DIFFERENT VOTERS
+    //// 1 PROPOSAL WITH 2 VOTERS
+
+    // 1 proposal with 2 voters; release to voters of rank 1
+    function testReleaseToVotersFirstPlace1WithNative() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.castVote(proposalId, 100 ether, 1 ether, votingProof2);
+
+        vm.warp(1681670001);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_1, 1);
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_2, 1);
+
+        assertEq(PERMISSIONED_ADDRESS_2.balance, 25);
+    }
+
+    // 1 proposal with 2 voters; release to voters of rank 1
+    function testReleaseToVotersFirstPlace1WithERC20() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.castVote(proposalId, 100 ether, 1 ether, votingProof2);
+
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(voterRewardsModule), 100); // give the rewards module ERC20 to pay out
+        voterRewardsModule.release(testERC20, PERMISSIONED_ADDRESS_1, 1);
+        voterRewardsModule.release(testERC20, PERMISSIONED_ADDRESS_2, 1);
+
+        assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_1), 25);
+        assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_2), 25);
+    }
+
+
+   //// 2 PROPOSALS WITH DIFFERENT VOTERS
 
     // 2 proposals with different voters, at 1 and 5 votes; release to voter of rank 1
     function testReleaseToVoterFirstPlace2WithNative() public {
