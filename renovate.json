@@ -6,9 +6,6 @@
   "labels": [
     "renovate"
   ],
-  "major": {
-    "dependencyDashboardApproval": true
-  },
   "ignoreDeps": [
     "react-native"
   ],
