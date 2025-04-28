@@ -854,7 +854,7 @@ contract RewardsModuleTest is Test {
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
         rewardsModulePaysAuthor.release(1);
 
-        assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
+        assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
     }
 
     // Old value is after inserting index and in array
