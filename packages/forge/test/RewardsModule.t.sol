@@ -815,7 +815,7 @@ contract RewardsModuleTest is Test {
 
     /////////////////////////////
 
-    // SORTING OLD VALUE TESTING
+    // SORTING OLD VALUE TESTING (TESTING SORTING ALGORITHM)
 
     // Old value is at inserting index
     function testReleaseToAuthorFirstPlaceOldValueAtInsertingIndex() public {
