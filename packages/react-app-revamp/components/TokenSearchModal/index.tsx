@@ -2,7 +2,7 @@ import DialogModalV4 from "@components/UI/DialogModalV4";
 import { NFTMetadata } from "@hooks/useSearchNfts";
 import { FilteredToken } from "@hooks/useTokenList";
 import { FC, useCallback } from "react";
-import { Option } from "./components/ChainDropdown";
+import { Option } from "./types";
 import TokenSearchModalERC20 from "./ERC20";
 import TokenSearchModalNft from "./NFT";
 

@@ -1,10 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
+import OnrampModal from "@components/Onramp/components/Modal";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { LINK_BRIDGE_DOCS } from "@config/links";
 import { chains } from "@config/wagmi";
 import { formatBalance } from "@helpers/formatBalance";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import { FC } from "react";
+import { FC, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import { formatEther } from "viem";
 import { useBalance } from "wagmi";
@@ -60,6 +62,7 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
   chainId,
   nativeCurrencySymbol,
 }) => {
+  const [isOnrampOpen, setIsOnrampOpen] = useState(false);
   const canVote = currentUserAvailableVotesAmount > 0;
   const votingOpen = contestStatus === ContestStatus.VotingOpen;
   const outOfVotes = currentUserTotalVotesAmount > 0 && !canVote;
@@ -117,13 +120,22 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
 
   if (zeroVotesOnAnyoneCanVote) {
     return (
-      <a
-        href={LINK_BRIDGE_DOCS}
-        target="_blank"
-        className="text-[16px] text-positive-11 opacity-80 hover:opacity-100 transition-colors font-bold leading-loose"
-      >
-        add {chainCurrencySymbol} to {chainName} to get votes {">"}
-      </a>
+      <>
+        <OnrampModal
+          chain={chainName ?? ""}
+          asset={chainCurrencySymbol ?? ""}
+          isOpen={isOnrampOpen}
+          onClose={() => setIsOnrampOpen(false)}
+        />
+        <ButtonV3
+          size={ButtonSize.DEFAULT_LONG}
+          colorClass="bg-true-black border border-neutral-11 rounded-[40px] hover:bg-neutral-11 hover:text-true-black transition-all duration-300"
+          textColorClass="text-neutral-11"
+          onClick={() => setIsOnrampOpen(true)}
+        >
+          add funds
+        </ButtonV3>
+      </>
     );
   }
 

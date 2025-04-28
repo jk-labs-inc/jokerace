@@ -40,7 +40,7 @@ const CreateRewardsFundPool = () => {
       </div>
 
       <div className="flex flex-col gap-8">
-        {enableEarningsToggle && <CreateRewardsAddEarningsToggle />}
+        {enableEarningsToggle && <CreateRewardsAddEarningsToggle percentageToCreator={charge?.percentageToCreator} />}
         <CreateRewardsAddFundsToggle />
 
         {addFundsToRewards && <TokenWidgets />}

@@ -40,7 +40,7 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
 
   return (
     <div
-      className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black md:shadow-file-upload md:p-2 relative`}
+      className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black md:shadow-file-upload md:p-2 relative ${className}`}
     >
       <input
         ref={inputRef}

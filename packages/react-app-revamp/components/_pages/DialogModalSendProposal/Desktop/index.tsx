@@ -1,12 +1,12 @@
 import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
+import Onramp from "@components/Onramp";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EmailSubscription from "@components/UI/EmailSubscription";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
-import { FOOTER_LINKS, LINK_BRIDGE_DOCS } from "@config/links";
+import { FOOTER_LINKS } from "@config/links";
 import { chains } from "@config/wagmi";
-import { Switch } from "@headlessui/react";
 import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
 import { Charge } from "@hooks/useDeployContest/types";
@@ -16,12 +16,13 @@ import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import DialogModalSendProposalEditor from "../components/Editor";
 import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
 import { isEntryPreviewPrompt } from "../utils";
+import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -40,6 +41,11 @@ interface DialogModalSendProposalDesktopLayoutProps {
   handleDragLeave?: (event: React.DragEvent<HTMLDivElement>) => void;
   onSwitchNetwork?: () => void;
   onSubmitProposal?: () => void;
+}
+
+enum ButtonText {
+  SUBMIT = "submit",
+  ADD_FUNDS = "add funds",
 }
 
 const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLayoutProps> = ({
@@ -62,7 +68,6 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
 }) => {
   const { contestPrompt } = useContestStore(state => state);
   const {
-    wantsSubscription,
     setWantsSubscription,
     setEmailForSubscription,
     emailForSubscription,
@@ -80,19 +85,21 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const [error, setError] = useState<ReactNode | null>(null);
   const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
   const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);
+  const [showOnrampModal, setShowOnrampModal] = useState(false);
+  const [buttonText, setButtonText] = useState(ButtonText.SUBMIT);
 
-  const handleCheckboxChange = (checked: boolean) => {
-    setWantsSubscription(checked);
-    setEmailError(null);
-  };
+  useEffect(() => {
+    if (insufficientBalance) {
+      setButtonText(ButtonText.ADD_FUNDS);
+    } else {
+      setButtonText(ButtonText.SUBMIT);
+    }
+  }, [insufficientBalance]);
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value) {
-      setWantsSubscription(true);
-    } else {
-      setWantsSubscription(false);
-    }
-    setEmailForSubscription(event.target.value);
+    const value = event.target.value;
+    setEmailForSubscription(value);
+    setWantsSubscription(!!value);
     setEmailError(null);
     setEmailAlreadyExists(false);
   };
@@ -116,29 +123,6 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
       }
     }
 
-    if (insufficientBalance) {
-      setError(
-        <a
-          href={LINK_BRIDGE_DOCS}
-          target="_blank"
-          className="text-[12px] text-positive-11 opacity-80 hover:opacity-100 transition-colors font-bold leading-loose"
-        >
-          add {chainCurrencySymbol} to {chainName} to enter contest {">"}
-        </a>,
-      );
-      return;
-    }
-
-    if (wantsSubscription && !emailForSubscription) {
-      setEmailError("Please enter an email address.");
-      return;
-    }
-
-    if (!wantsSubscription && emailForSubscription) {
-      setEmailError("Please check the box if you want to be notified.");
-      return;
-    }
-
     if (emailForSubscription && !emailRegex.test(emailForSubscription)) {
       setEmailError("Invalid email address.");
       return;
@@ -153,16 +137,28 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
     return metadataFields.some(field => field.inputValue === "");
   };
 
+  const onCloseModal = () => {
+    setIsOpen(false);
+    setShowOnrampModal(false);
+  };
+
   return (
     <DialogModalV3
       title="submission"
       isOpen={isOpen}
-      setIsOpen={setIsOpen}
+      setIsOpen={onCloseModal}
       className="w-full xl:w-[1100px]"
       disableClose={!!(isSuccess && proposalId)}
     >
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
-        {isSuccess && proposalId ? (
+        {showOnrampModal ? (
+          <Onramp
+            className="md:w-[400px]"
+            chain={chainName}
+            asset={chainCurrencySymbol ?? ""}
+            onGoBack={() => setShowOnrampModal(false)}
+          />
+        ) : isSuccess && proposalId ? (
           <div className="flex flex-col gap-8">
             <p className="text-[24px] font-bold text-neutral-11">your submission is live!</p>
             <DialogModalSendProposalSuccessLayout proposalId={proposalId} chainName={chainName} contestId={contestId} />
@@ -203,28 +199,16 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                 <DialogModalSendProposalMetadataFields />
               ) : null}
               <div className="flex flex-col gap-4 -mt-2">
-                <div className="flex gap-4 items-center">
-                  <Switch
-                    checked={wantsSubscription}
-                    onChange={handleCheckboxChange}
-                    className="group relative flex w-12 h-6 cursor-pointer rounded-full bg-neutral-10 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-secondary-11"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="pointer-events-none inline-block size-6 translate-x-0 rounded-full bg-neutral-11 ring-0 shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-7"
-                    />
-                  </Switch>
-                  <p className="text-[16px] text-neutral-11 font-bold">get updates on contests</p>
-                </div>
-                {wantsSubscription ? (
-                  <EmailSubscription
-                    emailAlreadyExists={emailAlreadyExists ?? false}
-                    emailError={emailError}
-                    emailForSubscription={emailForSubscription ?? ""}
-                    tosHref={tosHref ?? ""}
-                    handleEmailChange={handleEmailChange}
-                  />
-                ) : null}
+                <CreateGradientTitle textSize="small" additionalInfo="optional">
+                  get updates by email
+                </CreateGradientTitle>
+                <EmailSubscription
+                  emailAlreadyExists={emailAlreadyExists ?? false}
+                  emailError={emailError}
+                  emailForSubscription={emailForSubscription ?? ""}
+                  tosHref={tosHref ?? ""}
+                  handleEmailChange={handleEmailChange}
+                />
               </div>
             </div>
             <div className="flex flex-col gap-12 mt-12">
@@ -235,10 +219,10 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                   <ButtonV3
                     colorClass="bg-gradient-purple rounded-[40px]"
                     size={ButtonSize.EXTRA_LARGE_LONG}
-                    onClick={handleConfirm}
+                    onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowOnrampModal(true)}
                     isDisabled={isLoading}
                   >
-                    submit
+                    {buttonText}
                   </ButtonV3>
                   {error && <>{error}</>}
                 </div>

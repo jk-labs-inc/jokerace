@@ -3,7 +3,7 @@ import CustomLink from "@components/UI/Link";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
-import { useTransitionRouter } from "next-view-transitions";
+import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 
 interface CreateFlowHeaderDesktopLayoutProps {
@@ -20,7 +20,7 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
   pageAction,
 }) => {
   const [isClient, setIsClient] = useState(false);
-  const router = useTransitionRouter();
+  const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);

@@ -12,7 +12,7 @@ import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useAccount } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import VotingWidgetMobile from "./components/Mobile";
 
 interface VotingWidgetProps {
@@ -20,13 +20,19 @@ interface VotingWidgetProps {
   amountOfVotes: number;
   downvoteAllowed?: boolean;
   onVote?: (amount: number, isUpvote: boolean) => void;
+  onAddFunds?: () => void;
 }
 
-const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvoteAllowed, onVote }) => {
+export enum VotingButtonText {
+  ADD_FUNDS = "add funds",
+  ADD_VOTES = "add votes to entry",
+}
+
+const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvoteAllowed, onVote, onAddFunds }) => {
   const { charge } = useContestStore(state => state);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const asPath = usePathname();
-  const { chainId: accountChainId } = useAccount();
+  const { chainId: accountChainId, address: userAddress } = useAccount();
   const { chainName } = extractPathSegments(asPath ?? "");
   const { isLoading } = useCastVotesStore(state => state);
   const [isUpvote, setIsUpvote] = useState(true);
@@ -34,7 +40,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
   const [sliderValue, setSliderValue] = useState(0);
   const [isInvalid, setIsInvalid] = useState(false);
   const [isFocused, setIsFocused] = useState(true);
-  const voteDisabled = isLoading || amount === 0 || isInvalid || isNaN(amount);
+  const voteDisabled = isLoading || isInvalid || isNaN(amount);
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
@@ -42,6 +48,20 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const inputRef = useRef<HTMLInputElement>(null);
+  const [buttonText, setButtonText] = useState(VotingButtonText.ADD_VOTES);
+  const { data: balanceData } = useBalance({
+    address: userAddress,
+    chainId,
+  });
+  const insufficientBalance = charge && balanceData ? balanceData.value < BigInt(charge.type.costToVote) : false;
+
+  useEffect(() => {
+    if (insufficientBalance) {
+      setButtonText(VotingButtonText.ADD_FUNDS);
+    } else {
+      setButtonText(VotingButtonText.ADD_VOTES);
+    }
+  }, [insufficientBalance]);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -129,6 +149,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
         chainId={chainId}
         charge={charge}
         amountOfVotes={amountOfVotes}
+        balanceData={balanceData}
         downvoteAllowed={downvoteAllowed ?? false}
         isFocused={isFocused}
         setIsFocused={setIsFocused}
@@ -140,6 +161,8 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
         handleKeyDownSlider={handleKeyDownSlider}
         handleKeyDownInput={handleKeyDownInput}
         handleInput={handleInput}
+        onAddFunds={onAddFunds}
+        insufficientBalance={insufficientBalance}
       />
     );
   }
@@ -195,19 +218,19 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
           </div>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <MyVotes amountOfVotes={amountOfVotes} charge={charge} chainId={chainId} />
+              <MyVotes balanceData={balanceData} amountOfVotes={amountOfVotes} charge={charge} />
               {charge ? <ChargeInfo charge={charge} /> : null}
             </div>
             {charge ? <TotalCharge charge={charge} amountOfVotes={amount} /> : null}
           </div>
           <ButtonV3
             type={ButtonType.TX_ACTION}
-            isDisabled={voteDisabled}
+            isDisabled={buttonText === VotingButtonText.ADD_FUNDS ? false : voteDisabled}
             colorClass="px-[20px] bg-gradient-purple rounded-[40px] w-full"
             size={ButtonSize.FULL}
-            onClick={handleVote}
+            onClick={buttonText === VotingButtonText.ADD_FUNDS ? onAddFunds : handleVote}
           >
-            <span className="w-full text-center">add votes to entry</span>
+            <span className="w-full text-center">{buttonText}</span>
           </ButtonV3>
         </div>
       </div>

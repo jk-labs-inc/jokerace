@@ -1,9 +1,10 @@
 import { chains as wagmiChains } from "@config/wagmi";
 import { NFTMetadata } from "@hooks/useSearchNfts";
 import { FC, useState } from "react";
-import TokenSearchModalChainDropdown, { Option } from "../components/ChainDropdown";
+import TokenSearchModalChainDropdown from "../components/ChainDropdown";
 import NftsSearchList from "../components/NftList";
 import TokenSearchModalSearchInput from "../components/SearchInput";
+import { Option } from "../types";
 
 interface TokenSearchModalNftProps {
   chains: Option[];

@@ -1,14 +1,21 @@
 import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { metadataFields } from "@components/_pages/Create/pages/ContestParams/components/Metadata/components/Fields/utils";
 import { ContestType } from "@components/_pages/Create/types";
+import moment from "moment";
 import { ReactNode } from "react";
 import { create } from "zustand";
-import { Charge, SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle, VotingRequirements } from "./types";
-import moment from "moment";
+import {
+  Charge,
+  DEFAULT_ALLOWED_SUBMISSIONS_PER_USER,
+  MAX_SUBMISSIONS_PER_CONTEST,
+  SplitFeeDestinationType,
+  SubmissionMerkle,
+  VoteType,
+  VotingMerkle,
+  VotingRequirements,
+} from "./types";
 
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
-
-const DEFAULT_SUBMISSIONS = 1000;
 
 type ContestDeployError = {
   step: number;
@@ -201,8 +208,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     prevChainRefInCharge: "",
     customization: {
-      allowedSubmissionsPerUser: 3,
-      maxSubmissions: DEFAULT_SUBMISSIONS,
+      allowedSubmissionsPerUser: DEFAULT_ALLOWED_SUBMISSIONS_PER_USER,
+      maxSubmissions: MAX_SUBMISSIONS_PER_CONTEST,
     },
     advancedOptions: {
       sorting: true,

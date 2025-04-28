@@ -1,10 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
+import { erc20ChainDropdownOptions } from "@components/_pages/Create/components/RequirementsSettings/config";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import useProfileData from "@hooks/useProfileData";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useAccount } from "wagmi";
 import { Avatar } from "../Avatar";
 import CustomLink from "../Link";
+import SendFundsButton from "./componentts/SendFundsButton";
 
 interface UserProfileDisplayProps {
   ethereumAddress: string;
@@ -14,6 +17,8 @@ interface UserProfileDisplayProps {
   textualVersion?: boolean;
   avatarVersion?: boolean;
   includeSocials?: boolean;
+  includeSendFunds?: boolean;
+  onSendFundsClick?: () => void;
 }
 
 export const SIZES = {
@@ -43,7 +48,10 @@ const UserProfileDisplay = ({
   textColor,
   shortenOnFallback,
   size = "small",
+  includeSendFunds,
+  onSendFundsClick,
 }: UserProfileDisplayProps) => {
+  const { chain, isConnected, address: userConnectedAddress } = useAccount();
   const { profileName, profileAvatar, socials, isLoading } = useProfileData(
     ethereumAddress,
     shortenOnFallback,
@@ -51,6 +59,10 @@ const UserProfileDisplay = ({
   );
   const { avatarSizeClass, textSizeClass } = SIZES[size];
   const [isAddressCopied, setIsAddressCopied] = useState(false);
+
+  const isChainSupportedForSendFunds = useMemo(() => {
+    return erc20ChainDropdownOptions.some(option => option.value.toLowerCase() === chain?.name.toLowerCase());
+  }, [chain]);
 
   if (textualVersion) {
     return (
@@ -87,7 +99,7 @@ const UserProfileDisplay = ({
     <div
       className={`flex ${
         size === "large" ? "gap-6" : size === "medium" ? "gap-4" : "gap-2"
-      } items-center ${textSizeClass} ${textColor || "text-neutral-11"} font-bold`}
+      } items-center ${textColor || "text-neutral-11"} font-bold`}
     >
       <div className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}>
         <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={profileAvatar} alt="avatar" />
@@ -114,23 +126,31 @@ const UserProfileDisplay = ({
             )}
           </div>
 
-          {includeSocials ? (
-            <div className="flex gap-2 items-center">
-              <a href={socials?.etherscan} target="_blank">
-                <div className="w-6 h-6 flex justify-center items-center overflow-hidden rounded-full">
-                  <img className="object-cover" src="/etherscan.svg" alt="Etherscan" />
-                </div>
-              </a>
-
-              {socials?.cluster ? (
-                <a href={socials.cluster} target="_blank">
+          <div className="flex items-center gap-4">
+            {includeSocials ? (
+              <div className="flex gap-2 items-center">
+                <a href={socials?.etherscan} target="_blank">
                   <div className="w-6 h-6 flex justify-center items-center overflow-hidden rounded-full">
-                    <img className="object-cover" src="/socials/cluster.png" alt="Cluster" />
+                    <img className="object-cover" src="/etherscan.svg" alt="Etherscan" />
                   </div>
                 </a>
-              ) : null}
-            </div>
-          ) : null}
+
+                {socials?.cluster ? (
+                  <a href={socials.cluster} target="_blank">
+                    <div className="w-6 h-6 flex justify-center items-center overflow-hidden rounded-full">
+                      <img className="object-cover" src="/socials/cluster.png" alt="Cluster" />
+                    </div>
+                  </a>
+                ) : null}
+              </div>
+            ) : null}
+            {includeSendFunds &&
+            isConnected &&
+            isChainSupportedForSendFunds &&
+            userConnectedAddress === ethereumAddress ? (
+              <SendFundsButton onSendFundsClick={onSendFundsClick} />
+            ) : null}
+          </div>
         </div>
       )}
     </div>

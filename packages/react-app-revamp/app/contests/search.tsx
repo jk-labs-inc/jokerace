@@ -7,8 +7,7 @@ import useContestSortOptions from "@hooks/useSortOptions";
 import { useQuery } from "@tanstack/react-query";
 import { getEnsAddress } from "@wagmi/core";
 import { ITEMS_PER_PAGE, getRewards, searchContests } from "lib/contests";
-import { useTransitionRouter } from "next-view-transitions";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
@@ -63,7 +62,7 @@ function useContests(searchCriteria: SearchCriteria, sortBy?: string) {
 }
 
 const SearchContests = () => {
-  const router = useTransitionRouter();
+  const router = useRouter();
   const query = useSearchParams();
   const [searchCriteria, setSearchCriteria] = useState<SearchCriteria>({
     searchString: "",

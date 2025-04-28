@@ -40,7 +40,7 @@ export function generateFieldInputsHTML(proposalContent: string, fieldInputs: Me
     .map(
       field => `
         <div class="flex flex-col gap-4">
-          <p class="text-neutral-11 italic m-0">${field.prompt}</p>
+          <p class="text-neutral-11 normal-case font-bold m-0">${field.prompt}:</p>
           <p class="text-neutral-11 m-0">${field.inputValue}</p>
         </div>
     `,
@@ -54,7 +54,7 @@ export function generateFieldInputsHTML(proposalContent: string, fieldInputs: Me
   return fieldHTMLs
     ? `
         ${divider}
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-6 mt-2">
           ${fieldHTMLs}
         </div>
     `

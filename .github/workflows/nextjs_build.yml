@@ -35,7 +35,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
       - name: Restore cache
         uses: actions/cache@v4
@@ -66,4 +66,5 @@ jobs:
           NEXT_PUBLIC_ALCHEMY_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_ALCHEMY_KEY || secrets.DEV_NEXT_PUBLIC_ALCHEMY_KEY }}
           NEXT_PUBLIC_PARA_API_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_PARA_API_KEY || secrets.DEV_NEXT_PUBLIC_PARA_API_KEY }}
           NEXT_PUBLIC_PARA_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_PARA_ENVIRONMENT || secrets.DEV_NEXT_PUBLIC_PARA_ENVIRONMENT }}
-          NEXT_PUBLIC_BREVO_API_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_NEXT_PUBLIC_BREVO_API_KEY || secrets.DEV_NEXT_PUBLIC_BREVO_API_KEY }}
+          NEXT_PUBLIC_BREVO_API_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_BREVO_API_KEY || secrets.DEV_NEXT_PUBLIC_BREVO_API_KEY }}
+          NEXT_PUBLIC_CDP_PROJECT_ID: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_CDP_PROJECT_ID || secrets.DEV_NEXT_PUBLIC_CDP_PROJECT_ID }}

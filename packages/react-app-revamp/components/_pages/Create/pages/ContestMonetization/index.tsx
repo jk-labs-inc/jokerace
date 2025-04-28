@@ -3,12 +3,12 @@ import { useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import CreateNextButton from "../../components/Buttons/Next";
+import CreateConnectPrompt from "../../components/ConnectPrompt";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
 import { useContestSteps } from "../../hooks/useContestSteps";
 import { useNextStep } from "../../hooks/useNextStep";
 import CreateContestCharge from "./components/Charge";
-import CreateContestChargeUnconnectedAccount from "./components/UnconnectedAccount";
 
 const CreateContestMonetization = () => {
   const { step } = useDeployContestStore(state => state);
@@ -22,7 +22,7 @@ const CreateContestMonetization = () => {
   const switchLayout = useMemo<JSX.Element>(() => {
     if (!isConnected) {
       setDisableNextStep(true);
-      return <CreateContestChargeUnconnectedAccount />;
+      return <CreateConnectPrompt />;
     }
 
     setDisableNextStep(false);
