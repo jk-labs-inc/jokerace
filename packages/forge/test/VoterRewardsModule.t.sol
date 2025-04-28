@@ -264,8 +264,8 @@ contract VoterRewardsModuleTest is Test {
         assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
     }
 
-    // 1 proposal at 1 vote; release to author of rank 1
-    function testReleaseToAuthorFirstPlace1WithERC20() public {
+    // 1 proposal at 1 vote; release to voter of rank 1
+    function testReleaseToVoterFirstPlace1WithERC20() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
@@ -284,7 +284,7 @@ contract VoterRewardsModuleTest is Test {
     }
 
     // 1 proposal at 1 vote; release to voter of rank 2; revert with error message
-    function testReleaseToAuthorSecondPlace1WithNative() public {
+    function testReleaseToVoterSecondPlace1WithNative() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
@@ -301,7 +301,7 @@ contract VoterRewardsModuleTest is Test {
     }
 
     // 1 proposal at 1 vote; release to voter of rank 2; revert with error message
-    function testReleaseToAuthorSecondPlace1WithERC20() public {
+    function testReleaseToVoterSecondPlace1WithERC20() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
@@ -321,7 +321,7 @@ contract VoterRewardsModuleTest is Test {
     //// 2 PROPOSALS WITH DIFFERENT VOTERS
 
     // 2 proposals with different voters, at 1 and 5 votes; release to voter of rank 1
-    function testReleaseToAuthorFirstPlace2WithNative() public {
+    function testReleaseToVoterFirstPlace2WithNative() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -341,7 +341,7 @@ contract VoterRewardsModuleTest is Test {
     }
 
     // 2 proposals with different authors, at 1 and 5 votes; release to voter of rank 1
-    function testReleaseToAuthorFirstPlace2WithERC20() public {
+    function testReleaseToVoterFirstPlace2WithERC20() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -598,7 +598,7 @@ contract VoterRewardsModuleTest is Test {
     //// 2 PROPOSALS WITH DIFFERENT AUTHORS, 1 DELETED
 
     // 2 proposals with different authors, at 1 and 5 votes, the one with 5 votes is deleted; release to voter of rank 1
-    function testReleaseToAuthorFirstPlace2WithActualFirstPlaceDeleted() public {
+    function testReleaseToVoterFirstPlace2WithActualFirstPlaceDeleted() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -621,8 +621,8 @@ contract VoterRewardsModuleTest is Test {
         assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
     }
 
-    // 2 proposals with different authors, at 1 and 5 votes, the one with 5 votes is deleted; release to author of rank 2; reverted
-    function testReleaseToAuthorSecondPlace2WithActualFirstPlaceDeleted() public {
+    // 2 proposals with different authors, at 1 and 5 votes, the one with 5 votes is deleted; release to voter of rank 2; reverted
+    function testReleaseToVoterSecondPlace2WithActualFirstPlaceDeleted() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -644,8 +644,8 @@ contract VoterRewardsModuleTest is Test {
         voterRewardsModule.release(PERMISSIONED_ADDRESS_1, 2);
     }
 
-    // 2 proposals with different authors, at 1 and 5 votes, the one with 1 vote is deleted; release to author of rank 1
-    function testReleaseToAuthorFirstPlace2WithActualSecondPlaceDeleted() public {
+    // 2 proposals with different authors, at 1 and 5 votes, the one with 1 vote is deleted; release to voter of rank 1
+    function testReleaseToVoterFirstPlace2WithActualSecondPlaceDeleted() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -668,8 +668,8 @@ contract VoterRewardsModuleTest is Test {
         assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
     }
 
-    // 2 proposals with different authors, P1 gets 1 vote -> P1 is deleted -> P2 gets 1 vote; release to author of rank 1
-    function testReleaseToAuthorFirstPlace2WinnerWithSameVotesAsDeleted() public {
+    // 2 proposals with different authors, P1 gets 1 vote -> P1 is deleted -> P2 gets 1 vote; release to voter of rank 1
+    function testReleaseToVoterFirstPlace2WinnerWithSameVotesAsDeleted() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
