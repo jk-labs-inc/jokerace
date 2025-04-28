@@ -3,7 +3,7 @@ import { Proposal } from "@components/_pages/ProposalContent";
 import { transform } from "@components/_pages/ProposalContent/utils/markdown";
 import CustomLink from "@components/UI/Link";
 import { toastInfo } from "@components/UI/Toast";
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { formatNumberAbbreviated, getNumberWithSymbol } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, ChevronDownIcon, ChevronRightIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
@@ -127,7 +127,15 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                   >
                     <img src="/contest/upvote-2.svg" width={13} height={15} alt="upvote" className="flex-shrink-0" />
                     <p className="text-[16px] font-bold flex-grow text-center">
-                      {formatNumberAbbreviated(proposal.votes)}
+                      {(() => {
+                        const { value, symbol } = getNumberWithSymbol(proposal.votes);
+                        return (
+                          <>
+                            {value}
+                            <span>{symbol}</span>
+                          </>
+                        );
+                      })()}
                     </p>
                   </button>
                 ) : null}
@@ -166,7 +174,15 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                                 className="flex-shrink-0"
                               />
                               <p className="text-[16px] font-bold flex-grow text-center">
-                                {formatNumberAbbreviated(proposal.votes)}
+                                {(() => {
+                                  const { value, symbol } = getNumberWithSymbol(proposal.votes);
+                                  return (
+                                    <>
+                                      {value}
+                                      <span className="text-neutral-9">{symbol}</span>
+                                    </>
+                                  );
+                                })()}
                               </p>
                             </button>
                           </div>
