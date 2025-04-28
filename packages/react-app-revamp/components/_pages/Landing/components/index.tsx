@@ -6,9 +6,9 @@ import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
 import { getRewards, streamFeaturedContests } from "lib/contests";
 import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
-import { Contest } from "lib/contests/types";
+import { Contest, ContestReward } from "lib/contests/types";
 import moment from "moment";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { TypeAnimation } from "react-type-animation";
 import LandingPageExplainer from "./Explainer";
@@ -53,13 +53,33 @@ function useFeaturedContests() {
       setContests([]);
 
       try {
+        const tempContests: Contest[] = [];
+
         for await (const contest of streamFeaturedContests(page, CONTESTS_FEATURE_COUNT)) {
           if (contest) {
+            tempContests.push(contest);
             setContests(prev => [...prev, contest]);
             setStatus("success");
           }
         }
 
+        // Sort once all contests are loaded
+        const now = moment();
+        const sortedContests = tempContests.sort((a, b) => {
+          const aIsHappening = moment(a.created_at).isBefore(now) && moment(a.end_at).isAfter(now);
+          const bIsHappening = moment(b.created_at).isBefore(now) && moment(b.end_at).isAfter(now);
+
+          if (aIsHappening && bIsHappening) {
+            return moment(a.end_at).diff(now) - moment(b.end_at).diff(now);
+          }
+
+          if (aIsHappening) return -1;
+          if (bIsHappening) return 1;
+
+          return moment(a.created_at).diff(now) - moment(b.created_at).diff(now);
+        });
+
+        setContests(sortedContests);
         setIsLoading(false);
         return true;
       } catch (e) {
@@ -72,7 +92,6 @@ function useFeaturedContests() {
     refetchOnWindowFocus: false,
   });
 
-  // Get rewards for contests that have been loaded
   const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({
     queryKey: ["rewards", contests],
     queryFn: () => getRewards(contests),
@@ -80,31 +99,11 @@ function useFeaturedContests() {
     refetchOnWindowFocus: false,
   });
 
-  // Sort contests once they're all loaded
-  const sortedContests = useMemo(() => {
-    if (contests.length === 0) return [];
-
-    return [...contests].sort((a, b) => {
-      const now = moment();
-      const aIsHappening = moment(a.created_at).isBefore(now) && moment(a.end_at).isAfter(now);
-      const bIsHappening = moment(b.created_at).isBefore(now) && moment(b.end_at).isAfter(now);
-
-      if (aIsHappening && bIsHappening) {
-        return moment(a.end_at).diff(now) - moment(b.end_at).diff(now);
-      }
-
-      if (aIsHappening) return -1;
-      if (bIsHappening) return 1;
-
-      return moment(a.created_at).diff(now) - moment(b.created_at).diff(now);
-    });
-  }, [contests]);
-
   return {
     status,
-    contestData: sortedContests,
-    rewardsData,
-    isRewardsFetching,
+    contestData: contests,
+    rewardsData: rewardsData,
+    isRewardsFetching: isRewardsFetching,
     isContestDataFetching: isLoading,
   };
 }

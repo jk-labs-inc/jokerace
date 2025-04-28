@@ -2,9 +2,9 @@ import { isSupabaseConfigured } from "@helpers/database";
 import getPagination from "@helpers/getPagination";
 import { SearchOptions } from "types/search";
 import { FEATURED_CONTEST_COLUMNS } from "./constants";
-import { Contest } from "./types";
+import { Contest, ContestReward } from "./types";
 import { sortContests } from "./utils/sortContests";
-import { streamProcessItems } from "./utils/streamItems";
+import { streamProcessItems, streamPromiseResults } from "./utils/streamItems";
 import { EMPTY_HASH, getContestTitleAndState, processContestRewardsData } from "./contracts";
 
 export const ITEMS_PER_PAGE = 7;
