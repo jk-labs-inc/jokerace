@@ -8,6 +8,7 @@ import { FC, useEffect, useState } from "react";
 import ImageWithFallback from "../../ImageWithFallback";
 import ProposalContentProfile from "../../Profile";
 import ProposalLayoutGalleryRankOrPlaceholder from "./components/RankOrPlaceholder";
+import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
 
 interface ProposalLayoutGalleryProps {
   proposal: Proposal;
@@ -135,13 +136,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 
         {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
           <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2" onClick={e => e.stopPropagation()}>
-            <button
-              onClick={onVotingModalOpen}
-              className="min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-gradient-vote rounded-[16px] cursor-pointer text-true-black"
-            >
-              <img src="/contest/upvote-2.svg" width={16} height={16} alt="upvote" className="flex-shrink-0 " />
-              <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
-            </button>
+            <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={handleVotingModalOpen} />
           </div>
         ) : null}
       </div>

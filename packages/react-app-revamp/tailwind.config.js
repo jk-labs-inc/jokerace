@@ -376,6 +376,7 @@ module.exports = {
         "prompt-preview": "0px 0px 4px 2px #3E3E3E",
         "entry-card": "0 0 8px 2px #3c3c3c",
         "split-fee-destination": "0 0 1px 1px rgba(106, 106, 106, 1)",
+        "button-embossed-hover": "0 0 10px 4px rgba(255, 255, 255, 0.4), 0 0 10px 4px rgba(0, 0, 0, 0.3)",
       },
 
       backgroundColor: {

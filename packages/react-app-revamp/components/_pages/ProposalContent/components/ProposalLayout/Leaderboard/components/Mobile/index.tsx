@@ -78,14 +78,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
           textColor="text-neutral-10"
           size="extraSmall"
         />
-        <div className="flex gap-2 items-center ml-auto" onClick={e => e.stopPropagation()}>
-          <button
-            onClick={navigateToCommentLink}
-            className="min-w-12 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px]  text-neutral-9  border border-neutral-9"
-          >
-            <ChatBubbleLeftEllipsisIcon className="w-4 h-4 flex-shrink-0" />
-            <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
-          </button>
+        <div className="flex items-center ml-auto" onClick={e => e.stopPropagation()}>
           {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
             <button
               onClick={navigateToVotingModal}
@@ -115,7 +108,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
             onClick={navigateToProposal}
             className="text-neutral-10 hover:text-positive-11 transition-colors duration-300 ease-in-out"
           >
-            <ChevronRightIcon className="w-4 h-4" />
+            <ChevronRightIcon className="w-6 h-6" />
           </button>
         </div>
       </div>
