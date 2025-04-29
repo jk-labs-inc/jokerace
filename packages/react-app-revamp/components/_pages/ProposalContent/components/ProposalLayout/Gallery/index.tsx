@@ -135,8 +135,8 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
         ) : null}
 
         {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2" onClick={e => e.stopPropagation()}>
-            <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={handleVotingModalOpen} />
+          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
+            <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingModalOpen} />
           </div>
         ) : null}
       </div>

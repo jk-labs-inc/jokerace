@@ -94,18 +94,14 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
           />
         </div>
         {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-          <div onClick={e => e.stopPropagation()}>
-            <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={handleVotingModalOpen} />
-          </div>
+          <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingModalOpen} />
         ) : null}
       </div>
       <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />
       <div className="mt-auto pl-2">
         <div className="flex gap-2 items-center">
           {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-            <div onClick={e => e.stopPropagation()}>
-              <ProposalContentVoteSecondary proposal={proposal} handleVotingModalOpen={handleVotingModalOpen} />
-            </div>
+            <ProposalContentVoteSecondary proposal={proposal} handleVotingModalOpen={onVotingModalOpen} />
           ) : (
             <p className="text-neutral-10 text-[14px] font-bold">
               voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}

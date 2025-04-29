@@ -4,15 +4,20 @@ import { FC } from "react";
 
 interface ProposalContentVoteSecondaryProps {
   proposal: Proposal;
-  handleVotingModalOpen?: () => void;
+  handleVotingModalOpen?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const ProposalContentVoteSecondary: FC<ProposalContentVoteSecondaryProps> = ({ proposal, handleVotingModalOpen }) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    handleVotingModalOpen?.(e);
+  };
+
   return (
     <div className="rounded-2xl p-[1px] bg-gradient-vote-rainbow">
       <div className="group bg-true-black hover:bg-gradient-vote-rainbow transition-colors duration-300 ease-in-out rounded-[calc(2rem-1px)] p-[2px]">
         <button
-          onClick={handleVotingModalOpen}
+          onClick={handleClick}
           className="min-w-16 flex-shrink-0 h-6 px-2 flex items-center justify-between gap-2 cursor-pointer text-neutral-11 group-hover:text-true-black w-full"
         >
           <img src="/contest/upvote-3.svg" width={14} height={15} alt="upvote" className="flex-shrink-0" />
