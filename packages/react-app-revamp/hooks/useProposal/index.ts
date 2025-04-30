@@ -15,7 +15,6 @@ import {
   transformProposalData,
   updateAndRankProposals,
 } from "./utils";
-import { Result } from "ethers";
 
 export const PROPOSALS_PER_PAGE = 4;
 
