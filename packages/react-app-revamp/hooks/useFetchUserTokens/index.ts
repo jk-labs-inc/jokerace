@@ -1,9 +1,9 @@
 import { FilteredToken } from "@hooks/useTokenList";
 import { useQuery } from "@tanstack/react-query";
-import { formatUnits } from "ethers/lib/utils";
 import { useBalance } from "wagmi";
 import { chains, chainsImages } from "@config/wagmi";
 import React from "react";
+import { formatUnits } from "ethers";
 
 const ZERO_BALANCE = "0x0000000000000000000000000000000000000000000000000000000000000000";
 const NEAR_ZERO_BALANCE = "0x0000000000000000000000000000000000000000000000000000000000000001"; // etherscan and rabby show these values as 0, so to not confuse the user, we will exclude them.
