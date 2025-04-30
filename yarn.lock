@@ -3582,7 +3582,7 @@
   dependencies:
     tslib "^2.4.0"
 
-"@getbrevo/brevo@^2.2.0":
+"@getbrevo/brevo@2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@getbrevo/brevo/-/brevo-2.2.0.tgz#3a1a85d6f0766d4750170a37dd394b3db06c24f9"
   integrity sha512-mNCkXtgqn6jqLglAx1JzZcTj53kBZ5dK9Yd6zVuEyXAvhz68f5Ps6dSJar9HvkHH0Lfr3NrqW76xurjcoxqhIg==
@@ -13815,10 +13815,10 @@ marky@^1.2.2:
   resolved "https://registry.yarnpkg.com/marky/-/marky-1.2.5.tgz#55796b688cbd72390d2d399eaaf1832c9413e3c0"
   integrity sha512-q9JtQJKjpsVxCRVgQ+WapguSbKC3SQ5HEzFGPAJMStgh3QjCawp00UKv3MTTAArTmGmmPUvllHZoNbZ3gs0I+Q==
 
-masonic@^4.0.1:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/masonic/-/masonic-4.1.0.tgz#deabf94902420b139922a3864a110b8f5a0cc1df"
-  integrity sha512-3RNbAG5qLve7qNtGp1UM/u7vI39jO73ZFHDBAg3xl8AVh7A6Ikx7I7mBeC0NY0h1r1jJn2Wqeol1QMa09MQbyQ==
+masonic@4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/masonic/-/masonic-4.0.1.tgz#df817e6e545aeea415609a0b144bed090233f8e4"
+  integrity sha512-gOj1B61NtrELoGigCy+E9SZpWSRGmAONMXrzYboBNbI0uvy7otinzGVGKDXLIZBYdNdcFySyON8qtu6IsFp6Sw==
   dependencies:
     "@essentials/memoize-one" "^1.1.0"
     "@essentials/one-key-map" "^1.2.0"
