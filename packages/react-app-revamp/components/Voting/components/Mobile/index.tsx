@@ -12,7 +12,7 @@ interface VotingWidgetMobileProps {
   downvoteAllowed: boolean;
   isUpvote: boolean;
   isInvalid: boolean;
-  inputRef: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
   amount: number;
   amountOfVotes: number;
   isFocused: boolean;

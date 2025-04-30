@@ -126,10 +126,7 @@ export const createContestStore = () =>
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);
 
 export function ContestWrapper({ children }: { children: React.ReactNode }) {
-  const storeRef = useRef<ReturnType<typeof createContestStore>>();
-  if (!storeRef.current) {
-    storeRef.current = createContestStore();
-  }
+  const storeRef = useRef<ReturnType<typeof createContestStore>>(createContestStore());
   return <ContestContext.Provider value={storeRef.current}>{children}</ContestContext.Provider>;
 }
 

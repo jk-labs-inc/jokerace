@@ -33,10 +33,7 @@ export const createDeleteProposalStore = () =>
 export const DeleteProposalContext = createContext<ReturnType<typeof createDeleteProposalStore> | null>(null);
 
 export function DeleteProposalWrapper({ children }: { children: React.ReactNode }) {
-  const storeRef = useRef<ReturnType<typeof createDeleteProposalStore>>();
-  if (!storeRef.current) {
-    storeRef.current = createDeleteProposalStore();
-  }
+  const storeRef = useRef<ReturnType<typeof createDeleteProposalStore>>(createDeleteProposalStore());
   return <DeleteProposalContext.Provider value={storeRef.current}>{children}</DeleteProposalContext.Provider>;
 }
 
