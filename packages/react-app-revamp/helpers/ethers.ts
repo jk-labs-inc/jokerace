@@ -1,8 +1,16 @@
-import { getClient, getConnectorClient, type Config } from "@wagmi/core";
-import { providers } from "ethers";
+import { getClient, getConnectorClient } from "@wagmi/core";
+import { BrowserProvider, FallbackProvider, FetchRequest, JsonRpcProvider } from "ethers";
 import type { Account, Chain, Client, Transport } from "viem";
+import { type Config } from "wagmi";
 
 const isProduction = process.env.NODE_ENV === "production";
+const headers = isProduction ? { Referer: "https://jokerace.io/" } : { Referer: "" };
+
+const createJsonRpcProvider = (url: string, network: any) => {
+  const request = new FetchRequest(url);
+  request.setHeader("Referer", headers.Referer);
+  return new JsonRpcProvider(request, network);
+};
 
 export function clientToProvider(client: Client<Transport, Chain>) {
   const { chain, transport } = client;
@@ -12,30 +20,19 @@ export function clientToProvider(client: Client<Transport, Chain>) {
     ensAddress: chain.contracts?.ensRegistry?.address,
   };
 
-  const headers = isProduction ? { Referer: "https://jokerace.io/" } : undefined;
+  if (transport.type === "fallback") {
+    return new FallbackProvider(
+      (transport.transports as ReturnType<Transport>[])
+        .map(({ value }) => {
+          if (!value?.url) return;
 
-  if (transport.type === "fallback")
-    return new providers.FallbackProvider(
-      (transport.transports as ReturnType<Transport>[]).map(
-        ({ value }) =>
-          new providers.JsonRpcProvider(
-            {
-              skipFetchSetup: true,
-              url: value?.url,
-              headers,
-            },
-            network,
-          ),
-      ),
+          return createJsonRpcProvider(value.url, network);
+        })
+        .filter(Boolean) as JsonRpcProvider[],
     );
-  return new providers.JsonRpcProvider(
-    {
-      skipFetchSetup: true,
-      url: transport.url,
-      headers,
-    },
-    network,
-  );
+  }
+
+  return createJsonRpcProvider(transport.url, network);
 }
 
 /** Action to convert a viem Public Client to an ethers.js Provider. */
@@ -57,7 +54,8 @@ export function clientToSigner(client: Client<Transport, Chain, Account>) {
     name: chain.name,
     ensAddress: chain.contracts?.ensRegistry?.address,
   };
-  const provider = new providers.Web3Provider(transport, network);
+
+  const provider = new BrowserProvider(transport, network);
   const signer = provider.getSigner(account.address);
   return signer;
 }

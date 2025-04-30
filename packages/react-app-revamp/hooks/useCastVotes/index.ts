@@ -15,7 +15,6 @@ import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
-import { parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
@@ -27,6 +26,7 @@ import { EmailType, VotingEmailParams } from "lib/email/types";
 import moment from "moment";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 import { compareVersions } from "compare-versions";
+import { parseUnits } from "ethers";
 
 interface UserAnalyticsParams {
   contestAddress: string;

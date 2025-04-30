@@ -12,8 +12,7 @@ import useEmailSignup from "@hooks/useEmailSignup";
 import { useError } from "@hooks/useError";
 import { readContract, waitForTransactionReceipt } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
-import { ContractFactory } from "ethers";
-import { formatUnits } from "ethers/lib/utils";
+import { ContractFactory, formatUnits } from "ethers";
 import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { checkIfChainIsTestnet } from "lib/monetization";
@@ -156,23 +155,26 @@ export function useDeployContest() {
         constructorArgs,
       );
 
-      const transactionPromise = contractContest.deployTransaction.wait();
+      const transactionPromise = contractContest.deploymentTransaction()?.wait();
 
       // Wait for transaction to be executed
       await transactionPromise;
 
       const receiptDeployContest = await waitForTransactionReceipt(config, {
         chainId: chain?.id,
-        hash: contractContest.deployTransaction.hash as `0x${string}`,
+        hash: contractContest.deploymentTransaction()?.blockHash as `0x${string}`,
       });
 
-      const sortingEnabled = await isSortingEnabled(contractContest.address, chain?.id ?? 0);
+      // TODO: check if this is correct
+      const contractAddress = await contractContest.getAddress();
+
+      const sortingEnabled = await isSortingEnabled(contractAddress, chain?.id ?? 0);
 
       setDeployContestData(
         chain?.name ?? "",
         chain?.id ?? 0,
         receiptDeployContest.transactionHash,
-        contractContest.address.toLowerCase(),
+        contractAddress.toLowerCase(),
         sortingEnabled,
       );
 
@@ -197,7 +199,7 @@ export function useDeployContest() {
         datetimeOpeningSubmissions: submissionOpen,
         datetimeOpeningVoting: votingOpen,
         datetimeClosingVoting: votingClose,
-        contractAddress: contractContest.address.toLowerCase(),
+        contractAddress: contractAddress.toLowerCase(),
         votingMerkleRoot: votingMerkle?.merkleRoot ?? EMPTY_ROOT,
         submissionMerkleRoot: submissionMerkle?.merkleRoot ?? EMPTY_ROOT,
         authorAddress: address,

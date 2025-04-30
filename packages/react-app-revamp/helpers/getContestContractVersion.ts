@@ -1,3 +1,4 @@
+import { serverConfig } from "@config/wagmi/server";
 import LegacyDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.2.1.pre-prompt.sol/Contest.json";
 import BetterRewardsNotesContract from "@contracts/bytecodeAndAbi/Contest.2.10.betterRewardsNotes.sol/Contest.json";
 import PromptDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.2.2.prompt.sol/Contest.json";
@@ -47,6 +48,7 @@ import CleanUpConstructorsContract from "@contracts/bytecodeAndAbi/Contest.4.26.
 import AnyoneCanVoteContract from "@contracts/bytecodeAndAbi/Contest.4.27.anyoneCanVote.sol/Contest.json";
 import UpdateForgeLibsContract from "@contracts/bytecodeAndAbi/Contest.4.28.updateForgeLibs.sol/Contest.json";
 import SetSplitDestinationContract from "@contracts/bytecodeAndAbi/Contest.4.29.setSplitDestination.sol/Contest.json";
+import NewValueAlreadyInArrayContract from "@contracts/bytecodeAndAbi/Contest.4.3.newValueAlreadyInArray.sol/Contest.json";
 import MakeJkLabsSplitConfigurableContract from "@contracts/bytecodeAndAbi/Contest.4.30.makeJkLabsSplitConfigurable.sol/Contest.json";
 import AddMetadataFieldsContract from "@contracts/bytecodeAndAbi/Contest.4.31.addMetadataFields.sol/Contest.json";
 import CheckCanceledContract from "@contracts/bytecodeAndAbi/Contest.4.32.checkCanceled.sol/Contest.json";
@@ -55,7 +57,6 @@ import AllowJkLabsDestUpdateContract from "@contracts/bytecodeAndAbi/Contest.4.3
 import OnlyCreatorChangeMerkleContract from "@contracts/bytecodeAndAbi/Contest.4.35.onlyCreatorChangeMerkle.sol/Contest.json";
 import NoCommentAfterCloseContract from "@contracts/bytecodeAndAbi/Contest.4.36.noCommentAfterClose.sol/Contest.json";
 import EditTitleDescContract from "@contracts/bytecodeAndAbi/Contest.4.37.editTitleDesc.sol/Contest.json";
-import NewValueAlreadyInArrayContract from "@contracts/bytecodeAndAbi/Contest.4.3.newValueAlreadyInArray.sol/Contest.json";
 import UseCustomErrorsContract from "@contracts/bytecodeAndAbi/Contest.4.4.useCustomErrors.sol/Contest.json";
 import CleanUpSortingContract from "@contracts/bytecodeAndAbi/Contest.4.5.cleanUpSorting.sol/Contest.json";
 import RestructureExtensionsAndUtilsContract from "@contracts/bytecodeAndAbi/Contest.4.6.restructureExtensionsAndUtils.sol/Contest.json";
@@ -67,10 +68,9 @@ import AddErc20CancelledCheckContract from "@contracts/bytecodeAndAbi/Contest.5.
 import EntrantsCanDeleteContract from "@contracts/bytecodeAndAbi/Contest.5.3.entrantsCanDelete.sol/Contest.json";
 import OfficialModulePointsToContestContract from "@contracts/bytecodeAndAbi/Contest.5.4.officialModulePointsToContest.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { ethers, utils } from "ethers";
+import { ethers, id } from "ethers";
 import { getEthersProvider } from "./ethers";
 import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
-import { serverConfig } from "@config/wagmi/server";
 
 export async function getContestContractVersion(address: string, chainId: number) {
   try {
@@ -82,25 +82,25 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
     if (version === "5.4") {
-      return { abi: OfficialModulePointsToContestContract.abi, version }; 
+      return { abi: OfficialModulePointsToContestContract.abi, version };
     } else if (version === "5.3") {
-      return { abi: EntrantsCanDeleteContract.abi, version }; 
+      return { abi: EntrantsCanDeleteContract.abi, version };
     } else if (version === "5.2") {
-      return { abi: AddErc20CancelledCheckContract.abi, version }; 
+      return { abi: AddErc20CancelledCheckContract.abi, version };
     } else if (version === "5.1") {
-      return { abi: RmDownvotingContract.abi, version }; 
+      return { abi: RmDownvotingContract.abi, version };
     } else if (version === "4.37") {
-      return { abi: EditTitleDescContract.abi, version }; 
+      return { abi: EditTitleDescContract.abi, version };
     } else if (version === "4.36") {
-      return { abi: NoCommentAfterCloseContract.abi, version }; 
+      return { abi: NoCommentAfterCloseContract.abi, version };
     } else if (version === "4.35") {
-      return { abi: OnlyCreatorChangeMerkleContract.abi, version }; 
+      return { abi: OnlyCreatorChangeMerkleContract.abi, version };
     } else if (version === "4.34") {
-      return { abi: AllowJkLabsDestUpdateContract.abi, version }; 
+      return { abi: AllowJkLabsDestUpdateContract.abi, version };
     } else if (version === "4.33") {
-      return { abi: MustCancelToWithdrawContract.abi, version }; 
+      return { abi: MustCancelToWithdrawContract.abi, version };
     } else if (version === "4.32") {
-      return { abi: CheckCanceledContract.abi, version }; 
+      return { abi: CheckCanceledContract.abi, version };
     } else if (version === "4.31") {
       return { abi: AddMetadataFieldsContract.abi, version };
     } else if (version === "4.30") {
@@ -210,15 +210,15 @@ export async function getContestContractVersion(address: string, chainId: number
     if (version === "1") {
       const bytecode = await provider.getCode(address);
       if (bytecode.length <= 2) return defaultReturn;
-      if (!bytecode.includes(utils.id("prompt()").slice(2, 10))) {
+      if (!bytecode.includes(id("prompt()").slice(2, 10))) {
         return { abi: LegacyDeployedContestContract.abi, version };
-      } else if (!bytecode.includes(utils.id("allProposalTotalVotes()").slice(2, 10))) {
+      } else if (!bytecode.includes(id("allProposalTotalVotes()").slice(2, 10))) {
         return { abi: PromptDeployedContestContract.abi, version };
-      } else if (!bytecode.includes(utils.id("downvotingAllowed()").slice(2, 10))) {
+      } else if (!bytecode.includes(id("downvotingAllowed()").slice(2, 10))) {
         return { abi: AllProposalTotalVotesDeployedContestContract.abi, version };
-      } else if (!bytecode.includes(utils.id("submissionGatingByVotingToken()").slice(2, 10))) {
+      } else if (!bytecode.includes(id("submissionGatingByVotingToken()").slice(2, 10))) {
         return { abi: ProposalVotesDownvotesContract.abi, version };
-      } else if (!bytecode.includes(utils.id("officialRewardsModule()").slice(2, 10))) {
+      } else if (!bytecode.includes(id("officialRewardsModule()").slice(2, 10))) {
         return { abi: SubmissionTokenGatingContract.abi, version };
       } else {
         return { abi: RewardsContract.abi, version };

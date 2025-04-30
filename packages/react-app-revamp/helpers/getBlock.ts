@@ -1,6 +1,6 @@
 import { config } from "@config/wagmi";
-import { Block } from "@ethersproject/abstract-provider";
 import { getEthersProvider } from "./ethers";
+import { Block } from "ethers";
 
 export async function getBlockDetails(blockHash: string, chainId: number): Promise<Block | null> {
   try {

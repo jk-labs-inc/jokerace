@@ -67,14 +67,17 @@ export function useDeployRewardsPool() {
         false,
       );
 
-      await contractRewardsModule.deployTransaction.wait();
+      await contractRewardsModule.deploymentTransaction()?.wait();
+
+      // TODO: check if this is correct
+      const contractRewardsModuleAddress = await contractRewardsModule.getAddress();
 
       setRewardPoolData(prevData => ({
         ...prevData,
         deploy: { ...prevData.deploy, success: true, loading: false, error: false },
       }));
 
-      return contractRewardsModule.address;
+      return contractRewardsModuleAddress;
     } catch (e) {
       setRewardPoolData(prevData => ({
         ...prevData,

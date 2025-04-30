@@ -4,7 +4,6 @@ import { ContractConfig } from "@hooks/useContest";
 import { useError } from "@hooks/useError";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
-import { Result } from "ethers/lib/utils";
 import { COMMENTS_VERSION } from "lib/proposal";
 import { shuffle, sortBy as sortUnique } from "lodash";
 import { formatEther } from "viem";
@@ -16,6 +15,7 @@ import {
   transformProposalData,
   updateAndRankProposals,
 } from "./utils";
+import { Result } from "ethers";
 
 export const PROPOSALS_PER_PAGE = 4;
 
@@ -128,7 +128,8 @@ export function useProposal() {
 
       const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn, version);
 
-      let proposalsIds: Result;
+      // TODO: check if this is correct
+      let proposalsIds: any;
       let mappedProposals: MappedProposalIds[] = [];
       const currentDate = new Date();
 
