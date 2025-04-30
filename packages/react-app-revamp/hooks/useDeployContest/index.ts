@@ -12,7 +12,7 @@ import useEmailSignup from "@hooks/useEmailSignup";
 import { useError } from "@hooks/useError";
 import { readContract, waitForTransactionReceipt } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
-import { ContractFactory, formatUnits } from "ethers";
+import { ContractFactory, formatUnits, JsonRpcSigner } from "ethers";
 import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { checkIfChainIsTestnet } from "lib/monetization";
@@ -55,7 +55,7 @@ export function useDeployContest() {
   const { address, chain } = useAccount();
 
   async function deployContest() {
-    let signer: any;
+    let signer: JsonRpcSigner;
 
     try {
       signer = await getEthersSigner(config, { chainId: chain?.id });
@@ -64,7 +64,7 @@ export function useDeployContest() {
       return;
     }
 
-    const isSpoofingDetected = await checkForSpoofing(signer?._address);
+    const isSpoofingDetected = await checkForSpoofing(signer?.address);
 
     if (isSpoofingDetected) {
       stateContestDeployment.setIsLoading(false);
@@ -85,6 +85,7 @@ export function useDeployContest() {
         DeployedContestContract.bytecode,
         signer,
       );
+
       const combinedPrompt = new URLSearchParams({
         type: contestType,
         summarize: prompt.summarize,
@@ -139,7 +140,7 @@ export function useDeployContest() {
         intConstructorArgs,
         creatorSplitDestination:
           charge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet
-            ? signer._address
+            ? signer.address
             : charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit
               ? jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT
               : charge.splitFeeDestination.address,
@@ -155,31 +156,22 @@ export function useDeployContest() {
         constructorArgs,
       );
 
-      const transactionPromise = contractContest.deploymentTransaction()?.wait();
+      await contractContest.waitForDeployment();
 
-      // Wait for transaction to be executed
-      await transactionPromise;
-
-      const receiptDeployContest = await waitForTransactionReceipt(config, {
-        chainId: chain?.id,
-        hash: contractContest.deploymentTransaction()?.blockHash as `0x${string}`,
-      });
-
-      // TODO: check if this is correct
       const contractAddress = await contractContest.getAddress();
+      const contractDeploymentHash = contractContest.deploymentTransaction()?.hash as `0x${string}`;
 
       const sortingEnabled = await isSortingEnabled(contractAddress, chain?.id ?? 0);
 
       setDeployContestData(
         chain?.name ?? "",
         chain?.id ?? 0,
-        receiptDeployContest.transactionHash,
+        contractDeploymentHash,
         contractAddress.toLowerCase(),
         sortingEnabled,
       );
 
       let votingReqDatabaseEntry = null;
-      let submissionReqDatabaseEntry = null;
 
       if (votingMerkleData.prefilled) {
         votingReqDatabaseEntry = {

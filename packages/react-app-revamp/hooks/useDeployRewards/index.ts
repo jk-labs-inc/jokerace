@@ -67,9 +67,8 @@ export function useDeployRewardsPool() {
         false,
       );
 
-      await contractRewardsModule.deploymentTransaction()?.wait();
+      await contractRewardsModule.waitForDeployment();
 
-      // TODO: check if this is correct
       const contractRewardsModuleAddress = await contractRewardsModule.getAddress();
 
       setRewardPoolData(prevData => ({
