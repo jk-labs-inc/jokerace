@@ -363,6 +363,8 @@ module.exports = {
         "gradient-gray": "linear-gradient(90deg, #A1A1A1 0%, #E5E5E5 100%)",
         "gradient-light-pink": "linear-gradient(90deg, #FF78A9 0%, #E5E5E5 100%)",
         "gradient-title": "linear-gradient(180deg, #FFFFFF 0%, #A1A1A1 100%)",
+        "gradient-vote-rainbow": "linear-gradient(90deg, #FFE25B 0%, #FF78A9 50%, #78FFC6 75%, #BB65FF 100%)",
+        "gradient-vote-purple": "linear-gradient(90deg, #BB65FF 0%, #BB65FF 50%, #FF78A9 75%, #FFE25B 100%)",
       },
       boxShadow: {
         "create-header": "0 3px 4px 0 rgba(106, 106, 106, 1)",
@@ -374,6 +376,7 @@ module.exports = {
         "prompt-preview": "0px 0px 4px 2px #3E3E3E",
         "entry-card": "0 0 8px 2px #3c3c3c",
         "split-fee-destination": "0 0 1px 1px rgba(106, 106, 106, 1)",
+        "button-embossed-hover": "0 0 10px 4px rgba(255, 255, 255, 0.4), 0 0 10px 4px rgba(0, 0, 0, 0.3)",
       },
 
       backgroundColor: {
