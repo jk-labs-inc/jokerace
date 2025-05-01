@@ -23,16 +23,12 @@ export function clientToProvider(client: Client<Transport, Chain>) {
 
   if (transport.type === "fallback") {
     return new FallbackProvider(
-      (transport.transports as ReturnType<Transport>[])
-        .map(({ value }) => {
-          if (!value?.url) return;
-
-          return createJsonRpcProvider(value.url, chain.id, chain.name);
-        })
-        .filter(Boolean) as JsonRpcProvider[],
+      (transport.transports as ReturnType<Transport>[]).map(({ value }) =>
+        createJsonRpcProvider(value?.url, chain.id, chain.name),
+      ),
     );
   }
-
+  1;
   return createJsonRpcProvider(transport.url, chain.id, chain.name);
 }
 
