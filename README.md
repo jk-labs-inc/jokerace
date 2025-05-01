@@ -4,7 +4,7 @@ Check out the live site at [jokerace.io](https://jokerace.io/)!
 
 ## Pre-requisites
 - `yarn` installed
-- `node` version >= `17.0.0`
+- `node` version >= `22.0.0`
 - Have an Ethereum wallet (like MetaMask for instance)
 
 ## Before you start
