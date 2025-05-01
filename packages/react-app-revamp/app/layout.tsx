@@ -12,7 +12,6 @@ import { headers } from "next/headers";
 import NextTopLoader from "nextjs-toploader";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-loading-skeleton/dist/skeleton.css";
-import "react-toastify/dist/ReactToastify.min.css";
 import "react-tooltip/dist/react-tooltip.css";
 import "simplebar-react/dist/simplebar.min.css";
 import Providers from "./providers";

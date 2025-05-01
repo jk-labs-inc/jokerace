@@ -73,7 +73,6 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
       />,
       {
         position: "bottom-center",
-        bodyClassName: "text-[16px] font-bold",
         autoClose: false,
         icon: false,
       },
