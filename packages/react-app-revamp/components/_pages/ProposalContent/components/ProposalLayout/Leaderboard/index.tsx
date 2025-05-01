@@ -3,7 +3,7 @@ import { Proposal } from "@components/_pages/ProposalContent";
 import { transform } from "@components/_pages/ProposalContent/utils/markdown";
 import CustomLink from "@components/UI/Link";
 import { toastInfo } from "@components/UI/Toast";
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { formatNumberAbbreviated, getNumberWithSymbol } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, ChevronDownIcon, ChevronRightIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
@@ -13,6 +13,8 @@ import ProposalContentDeleteButton from "../../Buttons/Delete";
 import ProposalContentProfile from "../../Profile";
 import ProposalLayoutLeaderboardMobile from "./components/Mobile";
 import ProposalLayoutLeaderboardRankOrPlaceholder from "./components/RankOrPlaceholder";
+import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
+import ProposalContentVoteSecondary from "../../Buttons/Vote/Secondary";
 
 interface ProposalLayoutLeaderboardProps {
   proposal: Proposal;
@@ -119,23 +121,9 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                   <ChevronRightIcon className="w-4 h-4 group-hover:brightness-0 group-hover:saturate-0" />
                 </CustomLink>
               </div>
-              <div className="flex gap-2 items-center">
+              <div className="flex gap-4 items-center">
                 {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-                  <button
-                    onClick={handleVotingModalOpen}
-                    className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
-                  >
-                    <img
-                      src="/contest/upvote.svg"
-                      width={16}
-                      height={16}
-                      alt="upvote"
-                      className="flex-shrink-0 transition-all duration-300 ease-in-out group-hover:brightness-0 group-hover:saturate-0"
-                    />
-                    <p className="text-[16px] font-bold flex-grow text-center">
-                      {formatNumberAbbreviated(proposal.votes)}
-                    </p>
-                  </button>
+                  <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={handleVotingModalOpen} />
                 ) : null}
                 <ChevronDownIcon
                   className={`w-6 h-6 text-positive-11 cursor-pointer transition-transform duration-300 ${isContentHidden ? "" : "transform rotate-180"}`}
@@ -156,21 +144,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                 </div>
                 <div className="flex gap-2 items-center">
                   {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-                    <button
-                      onClick={handleVotingModalOpen}
-                      className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
-                    >
-                      <img
-                        src="/contest/upvote.svg"
-                        width={16}
-                        height={16}
-                        alt="upvote"
-                        className="flex-shrink-0 transition-all duration-300 ease-in-out group-hover:brightness-0 group-hover:saturate-0"
-                      />
-                      <p className="text-[16px] font-bold flex-grow text-center">
-                        {formatNumberAbbreviated(proposal.votes)}
-                      </p>
-                    </button>
+                    <ProposalContentVoteSecondary proposal={proposal} handleVotingModalOpen={handleVotingModalOpen} />
                   ) : (
                     <p className="text-neutral-10 text-[16px] font-bold">
                       voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}

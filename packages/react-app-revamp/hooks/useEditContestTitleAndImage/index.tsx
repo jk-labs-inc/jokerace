@@ -71,7 +71,6 @@ const useEditContestTitleAndImage = ({ contestAbi, contestAddress }: UseEditCont
       />,
       {
         position: "bottom-center",
-        bodyClassName: "text-[16px] font-bold",
         autoClose: false,
         icon: false,
       },

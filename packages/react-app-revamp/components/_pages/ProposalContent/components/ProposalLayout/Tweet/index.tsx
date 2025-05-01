@@ -8,6 +8,8 @@ import { FC } from "react";
 import ProposalContentProfile from "../../Profile";
 import { Tweet } from "./components/CustomTweet";
 import ProposalLayoutTweetRankOrPlaceholder from "./components/RankOrPlacehoder";
+import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
+import ProposalContentVoteSecondary from "../../Buttons/Vote/Secondary";
 
 interface ProposalLayoutTweetProps {
   proposal: Proposal;
@@ -92,42 +94,14 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
           />
         </div>
         {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-          <div onClick={e => e.stopPropagation()}>
-            <button
-              onClick={onVotingModalOpen}
-              className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-neutral-2 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
-            >
-              <img
-                src="/contest/upvote.svg"
-                width={16}
-                height={16}
-                alt="upvote"
-                className="flex-shrink-0 transition-all duration-300 ease-in-out group-hover:brightness-0 group-hover:saturate-0"
-              />
-              <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
-            </button>
-          </div>
+          <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingModalOpen} />
         ) : null}
       </div>
       <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />
       <div className="mt-auto pl-2">
         <div className="flex gap-2 items-center">
           {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-            <div onClick={e => e.stopPropagation()}>
-              <button
-                onClick={onVotingModalOpen}
-                className="group min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-positive-11  border border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out"
-              >
-                <img
-                  src="/contest/upvote.svg"
-                  width={16}
-                  height={16}
-                  alt="upvote"
-                  className="flex-shrink-0 transition-all duration-300 ease-in-out group-hover:brightness-0 group-hover:saturate-0"
-                />
-                <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
-              </button>
-            </div>
+            <ProposalContentVoteSecondary proposal={proposal} handleVotingModalOpen={onVotingModalOpen} />
           ) : (
             <p className="text-neutral-10 text-[14px] font-bold">
               voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}

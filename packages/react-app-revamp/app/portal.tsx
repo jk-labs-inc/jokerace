@@ -25,7 +25,6 @@ const Portal = () => {
       draggable
       pauseOnHover
       theme="colored"
-      bodyClassName={() => "text-[16px] flex items-center"}
       transition={Slide}
     />,
     document.body,
