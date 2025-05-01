@@ -39,10 +39,7 @@ export const createCastVotesStore = () =>
 export const CastVotesContext = createContext<ReturnType<typeof createCastVotesStore> | null>(null);
 
 export function CastVotesWrapper({ children }: { children: React.ReactNode }) {
-  const storeRef = useRef<ReturnType<typeof createCastVotesStore>>();
-  if (!storeRef.current) {
-    storeRef.current = createCastVotesStore();
-  }
+  const storeRef = useRef<ReturnType<typeof createCastVotesStore>>(createCastVotesStore());
   return <CastVotesContext.Provider value={storeRef.current}>{children}</CastVotesContext.Provider>;
 }
 
