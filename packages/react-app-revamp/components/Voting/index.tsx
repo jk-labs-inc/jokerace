@@ -24,7 +24,7 @@ interface VotingWidgetProps {
 }
 
 export enum VotingButtonText {
-  ADD_FUNDS = "add funds",
+  ADD_FUNDS = "add funds to vote",
   ADD_VOTES = "add votes to entry",
 }
 
@@ -218,7 +218,12 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
           </div>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <MyVotes balanceData={balanceData} amountOfVotes={amountOfVotes} charge={charge} />
+              <MyVotes
+                balanceData={balanceData}
+                amountOfVotes={amountOfVotes}
+                charge={charge}
+                onAddFunds={onAddFunds}
+              />
               {charge ? <ChargeInfo charge={charge} /> : null}
             </div>
             {charge ? <TotalCharge charge={charge} amountOfVotes={amount} /> : null}
