@@ -2,7 +2,7 @@
 import { config } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
 import { readContract } from "@wagmi/core";
-import { utils } from "ethers";
+import { formatEther } from "ethers";
 import { useEffect, useState } from "react";
 import { compareVersions } from "compare-versions";
 
@@ -98,7 +98,7 @@ export function useProposalVotes(
           netVotes = votes as bigint;
         }
 
-        acc[address] = Number(utils.formatEther(netVotes.toString()));
+        acc[address] = Number(formatEther(netVotes.toString()));
         return acc;
       }, {});
 
@@ -131,7 +131,7 @@ export function useProposalVotes(
           netVotes = votes as bigint;
         }
 
-        acc[address] = Number(utils.formatEther(netVotes.toString()));
+        acc[address] = Number(formatEther(netVotes.toString()));
         return acc;
       }, {});
 

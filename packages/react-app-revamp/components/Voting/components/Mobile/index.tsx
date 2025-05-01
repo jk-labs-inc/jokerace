@@ -95,7 +95,12 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
             <div className="flex flex-col gap-2">
               {charge?.voteType === VoteType.PerVote ? (
                 <>
-                  <MyVotes balanceData={balanceData} amountOfVotes={amountOfVotes} charge={charge} />
+                  <MyVotes
+                    balanceData={balanceData}
+                    amountOfVotes={amountOfVotes}
+                    charge={charge}
+                    onAddFunds={onAddFunds}
+                  />
                   {charge ? <ChargeInfo charge={charge} /> : null}
                 </>
               ) : null}
