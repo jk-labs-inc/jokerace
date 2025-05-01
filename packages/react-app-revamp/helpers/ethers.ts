@@ -4,7 +4,9 @@ import type { Account, Chain, Client, Transport } from "viem";
 import { type Config } from "wagmi";
 
 const isProduction = process.env.NODE_ENV === "production";
-const headers = isProduction ? { Referer: "https://jokerace.io/" } : { Referer: "" };
+const headers = isProduction
+  ? { Referer: "https://jokerace.io/" }
+  : { Referer: "https://jokerace-git-chore-fix-referer-implementation-jokerace.vercel.app/" };
 
 const createJsonRpcProvider = (url: string, chainId: number, name: string) => {
   const request = new FetchRequest(url);
