@@ -27,10 +27,7 @@ export const createContractFactoryStore = () =>
 export const ContractFactoryContext = createContext<ReturnType<typeof createContractFactoryStore> | null>(null);
 
 export function ContractFactoryWrapper({ children }: { children: React.ReactNode }) {
-  const storeRef = useRef<ReturnType<typeof createContractFactoryStore>>();
-  if (!storeRef.current) {
-    storeRef.current = createContractFactoryStore();
-  }
+  const storeRef = useRef<ReturnType<typeof createContractFactoryStore>>(createContractFactoryStore());
   return <ContractFactoryContext.Provider value={storeRef.current}>{children}</ContractFactoryContext.Provider>;
 }
 

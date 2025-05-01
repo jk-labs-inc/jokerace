@@ -6,7 +6,7 @@ interface ContentSection {
 }
 
 interface BreakpointParams {
-  elementRef: RefObject<HTMLElement>;
+  elementRef: RefObject<HTMLElement | null>;
   shouldShowReadMore: boolean;
   isExpanded: boolean;
   maxVisibleLines: number;

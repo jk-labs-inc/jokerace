@@ -70,10 +70,7 @@ export const createUserStore = () =>
 export const UserContext = createContext<ReturnType<typeof createUserStore> | null>(null);
 
 export function UserWrapper({ children }: { children: React.ReactNode }) {
-  const storeRef = useRef<ReturnType<typeof createUserStore>>();
-  if (!storeRef.current) {
-    storeRef.current = createUserStore();
-  }
+  const storeRef = useRef<ReturnType<typeof createUserStore>>(createUserStore());
   return <UserContext.Provider value={storeRef.current}>{children}</UserContext.Provider>;
 }
 
