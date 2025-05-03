@@ -81,7 +81,7 @@
     "react-datepicker": "8.3.0",
     "react-device-detect": "2.2.3",
     "react-dom": "19.1.0",
-    "react-error-boundary": "5.0.0",
+    "react-error-boundary": "6.0.0",
     "react-headless-pagination": "1.1.6",
     "react-html-props": "2.0.10",
     "react-infinite-scroll-component": "6.1.0",
