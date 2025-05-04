@@ -362,8 +362,7 @@ contract VoterRewardsModuleTest is Test {
         assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_2), 25);
     }
 
-
-   //// 2 PROPOSALS WITH DIFFERENT VOTERS
+    //// 2 PROPOSALS WITH DIFFERENT VOTERS
 
     // 2 proposals with different voters, at 1 and 5 votes; release to voter of rank 1
     function testReleaseToVoterFirstPlace2WithNative() public {

@@ -11,7 +11,7 @@ import "../governance/extensions/GovernorCountingSimple.sol";
  * @dev This contract allows to split Ether payments among a group of accounts. The sender does not need to be aware
  * that the Ether will be split in this way, since it is handled transparently by the contract.
  *
- * In this contract, rewards are sent to voters for a given ranking based on their proportionate vote on that ranking. 
+ * In this contract, rewards are sent to voters for a given ranking based on their proportionate vote on that ranking.
  *
  * The split can be in equal parts or in any other arbitrary proportion. The way this is specified is by assigning each
  * account to a number of shares. Of all the Ether that this contract receives, each account will then be able to claim
@@ -45,7 +45,7 @@ contract VoterRewardsModule {
     mapping(IERC20 => mapping(address => mapping(uint256 => uint256))) public erc20ReleasedToVoter; // Getter for the amount of ERC20 already released to a ranking.
 
     uint256[] public payees;
-    string private constant VERSION = "4.37"; // Private as to not clutter the ABI
+    string private constant VERSION = "5.5"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;
@@ -75,11 +75,9 @@ contract VoterRewardsModule {
      * All rankings in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
      * duplicates in `payees`.
      */
-    constructor(
-        uint256[] memory payees_,
-        uint256[] memory shares_,
-        GovernorCountingSimple underlyingContest_
-    ) payable {
+    constructor(uint256[] memory payees_, uint256[] memory shares_, GovernorCountingSimple underlyingContest_)
+        payable
+    {
         if (payees_.length != shares_.length) revert PayeesSharesLengthMismatch();
         if (payees_.length == 0) revert MustHaveAtLeastOnePayee();
 
@@ -152,10 +150,15 @@ contract VoterRewardsModule {
     /**
      * @dev Getter for the amount of a voter's releasable `token` tokens for a given payee. `token` should be the address     * of an IERC20 contract.
      */
-    function releasableToVoter(IERC20 token, address voter, uint256 ranking, uint256 proposalId) public view returns (uint256) {
+    function releasableToVoter(IERC20 token, address voter, uint256 ranking, uint256 proposalId)
+        public
+        view
+        returns (uint256)
+    {
         uint256 totalReceived = token.balanceOf(address(this)) + erc20TotalReleased[token];
-        uint256 totalRecevedForRanking = (totalReceived * shares[ranking]) / totalShares; 
-        return _pendingVoterPayment(voter, proposalId, totalRecevedForRanking, erc20ReleasedToVoter[token][voter][ranking]);
+        uint256 totalRecevedForRanking = (totalReceived * shares[ranking]) / totalShares;
+        return
+            _pendingVoterPayment(voter, proposalId, totalRecevedForRanking, erc20ReleasedToVoter[token][voter][ranking]);
     }
 
     /**
@@ -176,10 +179,11 @@ contract VoterRewardsModule {
         uint256 proposalIdOfRanking;
         uint256 determinedRankingIdxInSortedRanks = underlyingContest.getRankIndex(ranking);
 
-        // if the ranking that we land on is tied or it's below a tied ranking, return 0 
+        // if the ranking that we land on is tied or it's below a tied ranking, return 0
         if (underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
             proposalIdOfRanking = 0;
-        } else { // otherwise, determine proposalId at ranking
+        } else {
+            // otherwise, determine proposalId at ranking
             uint256 rankValue = underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
             proposalIdOfRanking = underlyingContest.getOnlyProposalIdWithThisManyVotes(rankValue); // if no ties there should only be one
         }
@@ -202,7 +206,8 @@ contract VoterRewardsModule {
         runReleaseChecks(ranking);
 
         uint256 proposalIdOfRanking = getProposalIdOfRanking(ranking); // 0 if tied
-        uint256 payment = proposalIdOfRanking == 0 ? releasable(ranking) : releasableToVoter(voter, ranking, proposalIdOfRanking); // if this rank is tied, pay out all of the rank's rewards to the creator
+        uint256 payment =
+            proposalIdOfRanking == 0 ? releasable(ranking) : releasableToVoter(voter, ranking, proposalIdOfRanking); // if this rank is tied, pay out all of the rank's rewards to the creator
 
         if (payment == 0) revert AccountNotDueNativePayment();
 
@@ -215,7 +220,8 @@ contract VoterRewardsModule {
 
         address payable addressToPayOut;
 
-        if (proposalIdOfRanking != 0) { // if the ranking is not tied, account for that we're paying out for a specific voter 
+        if (proposalIdOfRanking != 0) {
+            // if the ranking is not tied, account for that we're paying out for a specific voter
             releasedToVoter[voter][ranking] += payment;
             addressToPayOut = payable(voter);
         } else {
@@ -237,7 +243,9 @@ contract VoterRewardsModule {
         runReleaseChecks(ranking);
 
         uint256 proposalIdOfRanking = getProposalIdOfRanking(ranking); // 0 if tied
-        uint256 payment = proposalIdOfRanking == 0 ? releasable(token, ranking) : releasableToVoter(token, voter, ranking, proposalIdOfRanking); // if this rank is tied, pay out all of the rank's rewards to the creator
+        uint256 payment = proposalIdOfRanking == 0
+            ? releasable(token, ranking)
+            : releasableToVoter(token, voter, ranking, proposalIdOfRanking); // if this rank is tied, pay out all of the rank's rewards to the creator
 
         if (payment == 0) revert AccountNotDueERC20Payment();
 
@@ -250,7 +258,8 @@ contract VoterRewardsModule {
 
         address payable addressToPayOut;
 
-        if (proposalIdOfRanking != 0) { // if the ranking is not tied, account for that we're voter
+        if (proposalIdOfRanking != 0) {
+            // if the ranking is not tied, account for that we're voter
             erc20ReleasedToVoter[token][voter][ranking] += payment;
             addressToPayOut = payable(voter);
         } else {
@@ -295,12 +304,14 @@ contract VoterRewardsModule {
      * @dev internal logic for computing the pending payment of a voter for a given `ranking` given the token historical
      * balances and already released amounts.
      */
-    function _pendingVoterPayment(address voter, uint256 proposalId, uint256 totalReceivedForRanking, uint256 alreadyReleasedForRanking)
-        private
-        view
-        returns (uint256)
-    {
-        return (totalReceivedForRanking * underlyingContest.proposalAddressVotes(proposalId, voter)) / underlyingContest.proposalVotes(proposalId) - alreadyReleasedForRanking;
+    function _pendingVoterPayment(
+        address voter,
+        uint256 proposalId,
+        uint256 totalReceivedForRanking,
+        uint256 alreadyReleasedForRanking
+    ) private view returns (uint256) {
+        return (totalReceivedForRanking * underlyingContest.proposalAddressVotes(proposalId, voter))
+            / underlyingContest.proposalVotes(proposalId) - alreadyReleasedForRanking;
     }
 
     /**
