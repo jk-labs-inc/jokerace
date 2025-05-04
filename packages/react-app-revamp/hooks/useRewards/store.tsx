@@ -44,10 +44,7 @@ export const createRewardsStore = () =>
 export const RewardsContext = createContext<ReturnType<typeof createRewardsStore> | null>(null);
 
 export function RewardsWrapper({ children }: { children: React.ReactNode }) {
-  const storeRef = useRef<ReturnType<typeof createRewardsStore>>();
-  if (!storeRef.current) {
-    storeRef.current = createRewardsStore();
-  }
+  const storeRef = useRef<ReturnType<typeof createRewardsStore>>(createRewardsStore());
   return <RewardsContext.Provider value={storeRef.current}>{children}</RewardsContext.Provider>;
 }
 

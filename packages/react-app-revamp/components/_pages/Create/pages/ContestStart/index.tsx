@@ -63,7 +63,7 @@ const CreateContestStart: FC<CreateContestStartProps> = ({ onCreateContest, onCr
       </div>
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-8">
-          <div className="flex flex-col gap-4 w-full md:w-[360px] h-48 pt-4 pb-6 pl-4 border-primary-2 border rounded-[10px] hover:border-neutral-11 transition-colors duration-300 shadow-file-upload">
+          <div className="flex flex-col gap-4 w-full md:w-[360px] h-48 pt-4 pb-6 pl-4 border-transparent border rounded-[10px] hover:border-primary-2 transition-colors duration-300 shadow-file-upload">
             <p className="text-neutral-11 text-[20px] font-bold">create new contest</p>
             <p className="text-neutral-14 text-[16px]">
               create a brand new contest in 5 steps <br /> according to whatever criteria you want.
@@ -78,7 +78,7 @@ const CreateContestStart: FC<CreateContestStartProps> = ({ onCreateContest, onCr
           </div>
         </div>
         <div className="flex flex-col gap-8">
-          <div className="flex flex-col gap-4 w-full md:w-[360px] h-48 pt-4 pb-6 pl-4 border-primary-2 border rounded-[10px] hover:border-neutral-11 transition-colors duration-300 shadow-file-upload">
+          <div className="flex flex-col gap-4 w-full md:w-[360px] h-48 pt-4 pb-6 pl-4 border-transparent border rounded-[10px] hover:border-primary-2 transition-colors duration-300 shadow-file-upload">
             <div className="flex flex-col gap-4">
               <p className="text-neutral-11 text-[20px] font-bold">use a template</p>
               <p className="text-neutral-14 text-[16px]">
