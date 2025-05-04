@@ -59,7 +59,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   berachain,
   unichain,
   swell,
-  manta
+  manta,
   sepolia,
   baseTestnet,
   mainnet,
