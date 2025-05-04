@@ -4,12 +4,12 @@ pragma solidity ^0.8.19;
 import "@forge-std/Test.sol";
 import "@openzeppelin/token/ERC20/presets/ERC20PresetFixedSupply.sol";
 import "../src/Contest.sol";
-import "../src/modules/RewardsModule.sol";
+import "../src/modules/VoterRewardsModule.sol";
 
-contract RewardsModuleTest is Test {
+contract VoterRewardsModuleTest is Test {
     // CONTEST VARS
     Contest public contest;
-    Contest public rankLimitOneContest;
+    Contest public contest2;
 
     // BASIC INT PARAMS
     uint64 public constant CONTEST_START = 1681650000;
@@ -167,9 +167,8 @@ contract RewardsModuleTest is Test {
     uint256[] public proposalsToDelete;
 
     // REWARDS MODULE VARS
-    RewardsModule public rewardsModulePaysTarget;
-    RewardsModule public rewardsModulePaysAuthor;
-    RewardsModule public rewardsModulePaysAuthorToRankOneContest;
+    VoterRewardsModule public voterRewardsModule;
+    VoterRewardsModule public voterRewardsModuleWrongUnderlying;
     uint256[] public payees = [1, 2, 3];
     uint256[] public shares = [3, 2, 1];
 
@@ -189,15 +188,10 @@ contract RewardsModuleTest is Test {
         contest =
             new Contest("test", "hello world", SUBMISSION_MERKLE_ROOT, VOTING_MERKLE_ROOT, zeroCostToProposeNumParams);
 
-        rankLimitOneContest = new Contest(
-            "test", "hello world", SUBMISSION_MERKLE_ROOT, VOTING_MERKLE_ROOT, zeroCostToProposeAndRankLimitOneNumParams
-        );
+        contest2 =
+            new Contest("test", "hello world 2", SUBMISSION_MERKLE_ROOT, VOTING_MERKLE_ROOT, zeroCostToProposeNumParams);
 
-        rewardsModulePaysTarget = new RewardsModule(payees, shares, Contest(contest), true);
-
-        rewardsModulePaysAuthor = new RewardsModule(payees, shares, Contest(contest), false);
-
-        rewardsModulePaysAuthorToRankOneContest = new RewardsModule(payees, shares, Contest(rankLimitOneContest), false);
+        voterRewardsModule = new VoterRewardsModule(payees, shares, Contest(contest));
 
         vm.stopPrank();
     }
@@ -206,13 +200,13 @@ contract RewardsModuleTest is Test {
 
     // OFFICIAL REWARDS MODULE REGISTRATION
 
-    // A rewards module being set as the official rewards module of a contest must have that contest as its underlyingContest.
-    function testRewardsModuleMustHaveContestAsUnderlying() public {
+    // A voter rewards module being set as the official rewards module of a contest must have that contest as its underlyingContest.
+    function testVoterRewardsModuleMustHaveContestAsUnderlying() public {
         vm.startPrank(CREATOR_ADDRESS_1);
         vm.expectRevert(
             abi.encodeWithSelector(GovernorModuleRegistry.OfficialRewardsModuleMustPointToThisContest.selector)
         );
-        contest.setOfficialRewardsModule(address(rewardsModulePaysAuthorToRankOneContest));
+        contest2.setOfficialRewardsModule(address(voterRewardsModule));
         vm.stopPrank();
     }
 
@@ -223,10 +217,10 @@ contract RewardsModuleTest is Test {
     // Only the creator can withdraw, and they can do so at any time
     function testCreatorWithdrawNative() public {
         vm.warp(1681650001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to be withdrawn
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to be withdrawn
         vm.startPrank(CREATOR_ADDRESS_1);
-        rewardsModulePaysAuthor.cancel();
-        rewardsModulePaysAuthor.withdrawRewards();
+        voterRewardsModule.cancel();
+        voterRewardsModule.withdrawRewards();
         vm.stopPrank();
 
         assertEq(CREATOR_ADDRESS_1.balance, 100);
@@ -235,10 +229,10 @@ contract RewardsModuleTest is Test {
     // Only the creator can withdraw, and they can do so at any time
     function testCreatorWithdrawERC20() public {
         vm.warp(1681650001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to be withdrawn
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to be withdrawn
         vm.startPrank(CREATOR_ADDRESS_1);
-        rewardsModulePaysAuthor.cancel();
-        rewardsModulePaysAuthor.withdrawRewards();
+        voterRewardsModule.cancel();
+        voterRewardsModule.withdrawRewards();
         vm.stopPrank();
 
         assertEq(CREATOR_ADDRESS_1.balance, 100);
@@ -248,12 +242,12 @@ contract RewardsModuleTest is Test {
 
     // REGULAR RELEASES
 
-    //// PATTERN BELOW: AUTHOR + NATIVE, AUTHOR + ERC20, TARGET + NATIVE, TARGET + ERC20
+    //// PATTERN BELOW: NATIVE, ERC20
 
     //// 1 PROPOSAL AT 1 VOTE
 
-    // 1 proposal at 1 vote; release to author of rank 1
-    function testReleaseToAuthorFirstPlace1WithNative() public {
+    // 1 proposal at 1 vote; release to voter of rank 1
+    function testReleaseToVoterFirstPlace1WithNative() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
@@ -262,16 +256,16 @@ contract RewardsModuleTest is Test {
         contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_1, 1);
 
         vm.stopPrank();
 
         assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
     }
 
-    // 1 proposal at 1 vote; release to author of rank 1
-    function testReleaseToAuthorFirstPlace1WithERC20() public {
+    // 1 proposal at 1 vote; release to voter of rank 1
+    function testReleaseToVoterFirstPlace1WithERC20() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
@@ -283,14 +277,14 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
-        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-        rewardsModulePaysAuthor.release(testERC20, 1);
+        testERC20.transfer(address(voterRewardsModule), 100); // give the rewards module ERC20 to pay out
+        voterRewardsModule.release(testERC20, PERMISSIONED_ADDRESS_1, 1);
 
         assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_1), 50);
     }
 
-    // 1 proposal at 1 vote; release to target of rank 1
-    function testReleaseToTargetFirstPlace1WithNative() public {
+    // 1 proposal at 1 vote; release to voter of rank 2; revert with error message
+    function testReleaseToVoterSecondPlace1WithNative() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
@@ -298,17 +292,16 @@ contract RewardsModuleTest is Test {
         vm.warp(1681660001);
         contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
 
-        vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
-        rewardsModulePaysTarget.release(1);
-
         vm.stopPrank();
 
-        assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
+        vm.warp(1681670001);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_1, 2);
     }
 
-    // 1 proposal at 1 vote; release to target of rank 1
-    function testReleaseToTargetFirstPlace1WithERC20() public {
+    // 1 proposal at 1 vote; release to voter of rank 2; revert with error message
+    function testReleaseToVoterSecondPlace1WithERC20() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
@@ -320,86 +313,59 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
-        testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
-        rewardsModulePaysTarget.release(testERC20, 1);
-
-        assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_1), 50);
+        testERC20.transfer(address(voterRewardsModule), 100); // give the rewards module ERC20 to pay out
+        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
+        voterRewardsModule.release(testERC20, PERMISSIONED_ADDRESS_1, 2);
     }
 
-    // 1 proposal at 1 vote; release to author of rank 2; revert with error message
-    function testReleaseToAuthorSecondPlace1WithNative() public {
-        vm.startPrank(PERMISSIONED_ADDRESS_1);
+    //// 1 PROPOSAL WITH 2 VOTERS
 
+    // 1 proposal with 2 voters; release to voters of rank 1
+    function testReleaseToVotersFirstPlace1WithNative() public {
         vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
-        vm.warp(1681660001);
-        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
 
-        vm.stopPrank();
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.castVote(proposalId, 100 ether, 1 ether, votingProof2);
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
-        rewardsModulePaysAuthor.release(2);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_1, 1);
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_2, 1);
+
+        assertEq(PERMISSIONED_ADDRESS_2.balance, 25);
     }
 
-    // 1 proposal at 1 vote; release to author of rank 2; revert with error message
-    function testReleaseToAuthorSecondPlace1WithERC20() public {
-        vm.startPrank(PERMISSIONED_ADDRESS_1);
-
+    // 1 proposal with 2 voters; release to voters of rank 1
+    function testReleaseToVotersFirstPlace1WithERC20() public {
         vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+
         vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
         contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
-
-        vm.stopPrank();
-
-        vm.warp(1681670001);
-        vm.prank(CREATOR_ADDRESS_1);
-        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
-        rewardsModulePaysAuthor.release(testERC20, 2);
-    }
-
-    // 1 proposal at 1 vote; release to target of rank 2; revert with error message
-    function testReleaseToTargetSecondPlace1WithNative() public {
-        vm.startPrank(PERMISSIONED_ADDRESS_1);
-
-        vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
-        vm.warp(1681660001);
-        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
-
-        vm.stopPrank();
-
-        vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
-        rewardsModulePaysTarget.release(2);
-    }
-
-    // 1 proposal at 1 vote; release to target of rank 2; revert with error message
-    function testReleaseToTargetSecondPlace1WithERC20() public {
-        vm.startPrank(PERMISSIONED_ADDRESS_1);
-
-        vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
-        vm.warp(1681660001);
-        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
-
-        vm.stopPrank();
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.castVote(proposalId, 100 ether, 1 ether, votingProof2);
 
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
-        testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
-        rewardsModulePaysTarget.release(testERC20, 2);
+        testERC20.transfer(address(voterRewardsModule), 100); // give the rewards module ERC20 to pay out
+        voterRewardsModule.release(testERC20, PERMISSIONED_ADDRESS_1, 1);
+        voterRewardsModule.release(testERC20, PERMISSIONED_ADDRESS_2, 1);
+
+        assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_1), 25);
+        assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_2), 25);
     }
 
-    //// 2 PROPOSALS WITH DIFFERENT AUTHORS
+    //// 2 PROPOSALS WITH DIFFERENT VOTERS
 
-    // 2 proposals with different authors, at 1 and 5 votes; release to author of rank 1
-    function testReleaseToAuthorFirstPlace2WithNative() public {
+    // 2 proposals with different voters, at 1 and 5 votes; release to voter of rank 1
+    function testReleaseToVoterFirstPlace2WithNative() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -408,18 +374,18 @@ contract RewardsModuleTest is Test {
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.castVote(proposalId2, 100 ether, 5 ether, votingProof2);
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_2, 1);
 
         assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
     }
 
-    // 2 proposals with different authors, at 1 and 5 votes; release to author of rank 1
-    function testReleaseToAuthorFirstPlace2WithERC20() public {
+    // 2 proposals with different authors, at 1 and 5 votes; release to voter of rank 1
+    function testReleaseToVoterFirstPlace2WithERC20() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -428,54 +394,13 @@ contract RewardsModuleTest is Test {
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.castVote(proposalId2, 100 ether, 5 ether, votingProof2);
 
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
-        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-        rewardsModulePaysAuthor.release(testERC20, 1);
-
-        assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_2), 50);
-    }
-
-    // 2 proposals with different authors, at 1 and 5 votes; release to target of rank 1
-    function testReleaseToTargetFirstPlace2WithNative() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-        vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
-        vm.warp(1681660001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
-
-        vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
-        rewardsModulePaysTarget.release(1);
-
-        assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
-    }
-
-    // 2 proposals with different authors, at 1 and 5 votes; release to target of rank 1
-    function testReleaseToTargetFirstPlace2WithERC20() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-        vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
-        vm.warp(1681660001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
-
-        vm.warp(1681670001);
-        vm.prank(CREATOR_ADDRESS_1);
-        testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
-        rewardsModulePaysTarget.release(testERC20, 1);
+        testERC20.transfer(address(voterRewardsModule), 100); // give the rewards module ERC20 to pay out
+        voterRewardsModule.release(testERC20, PERMISSIONED_ADDRESS_2, 1);
 
         assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_2), 50);
     }
@@ -500,8 +425,8 @@ contract RewardsModuleTest is Test {
         contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_1, 1);
 
         assertEq(CREATOR_ADDRESS_1.balance, 50);
     }
@@ -521,8 +446,8 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
-        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-        rewardsModulePaysAuthor.release(testERC20, 1);
+        testERC20.transfer(address(voterRewardsModule), 100); // give the rewards module ERC20 to pay out
+        voterRewardsModule.release(testERC20, PERMISSIONED_ADDRESS_1, 1);
 
         assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 50);
     }
@@ -536,9 +461,9 @@ contract RewardsModuleTest is Test {
         contest.propose(firstProposalPA2, submissionProof2);
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
-        rewardsModulePaysAuthor.release(1);
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_1, 1);
     }
 
     // 2 proposals with different authors, both at 0 votes; reverted
@@ -551,12 +476,12 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
-        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        testERC20.transfer(address(voterRewardsModule), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
-        rewardsModulePaysAuthor.release(testERC20, 1);
+        voterRewardsModule.release(testERC20, PERMISSIONED_ADDRESS_1, 1);
     }
 
-    // 2 proposals with different authors, both at 0 votes; reverted
+    // 2 proposals with different authors, both at 0 votes; release 2nd place; reverted
     function testSecondPlaceTieWithZeroVotesWithNative() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
@@ -565,12 +490,12 @@ contract RewardsModuleTest is Test {
         contest.propose(firstProposalPA2, submissionProof2);
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
-        rewardsModulePaysAuthor.release(2);
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_1, 2);
     }
 
-    // 2 proposals with different authors, both at 0 votes; reverted
+    // 2 proposals with different authors, both at 0 votes; release 2nd place; reverted
     function testSecondPlaceTieWithZeroVotesWithERC20() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
@@ -580,9 +505,9 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
-        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        testERC20.transfer(address(voterRewardsModule), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
-        rewardsModulePaysAuthor.release(testERC20, 2);
+        voterRewardsModule.release(testERC20, PERMISSIONED_ADDRESS_1, 2);
     }
 
     //// 3 PROPOSALS FROM 2 DIFFERENT AUTHORS
@@ -604,8 +529,8 @@ contract RewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(2);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_1, 2);
 
         assertEq(CREATOR_ADDRESS_1.balance, 33);
     }
@@ -628,8 +553,8 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
-        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-        rewardsModulePaysAuthor.release(testERC20, 2);
+        testERC20.transfer(address(voterRewardsModule), 100); // give the rewards module ERC20 to pay out
+        voterRewardsModule.release(testERC20, PERMISSIONED_ADDRESS_1, 2);
 
         assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 33);
     }
@@ -656,8 +581,8 @@ contract RewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(3);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_1, 3);
 
         assertEq(CREATOR_ADDRESS_1.balance, 16);
     }
@@ -683,8 +608,8 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
-        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-        rewardsModulePaysAuthor.release(testERC20, 3);
+        testERC20.transfer(address(voterRewardsModule), 100); // give the rewards module ERC20 to pay out
+        voterRewardsModule.release(testERC20, PERMISSIONED_ADDRESS_1, 3);
 
         assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 16);
     }
@@ -696,18 +621,18 @@ contract RewardsModuleTest is Test {
     // No proposals; revert with error message
     function testFirstPlaceTieWithZeroProposalsWithNative() public {
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
-        rewardsModulePaysAuthor.release(1);
+        voterRewardsModule.release(CREATOR_ADDRESS_1, 1);
     }
 
     // No proposals; revert with error message
     function testFirstPlaceTieWithZeroProposalsWithERC20() public {
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
-        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        testERC20.transfer(address(voterRewardsModule), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
-        rewardsModulePaysAuthor.release(testERC20, 1);
+        voterRewardsModule.release(testERC20, CREATOR_ADDRESS_1, 1);
     }
 
     /////////////////////////////
@@ -716,8 +641,8 @@ contract RewardsModuleTest is Test {
 
     //// 2 PROPOSALS WITH DIFFERENT AUTHORS, 1 DELETED
 
-    // 2 proposals with different authors, at 1 and 5 votes, the one with 5 votes is deleted; release to author of rank 1
-    function testReleaseToAuthorFirstPlace2WithActualFirstPlaceDeleted() public {
+    // 2 proposals with different authors, at 1 and 5 votes, the one with 5 votes is deleted; release to voter of rank 1
+    function testReleaseToVoterFirstPlace2WithActualFirstPlaceDeleted() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -726,22 +651,22 @@ contract RewardsModuleTest is Test {
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.castVote(proposalId2, 100 ether, 5 ether, votingProof2);
 
         proposalsToDelete.push(proposalId2);
         vm.prank(CREATOR_ADDRESS_1);
         contest.deleteProposals(proposalsToDelete);
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_1, 1);
 
         assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
     }
 
-    // 2 proposals with different authors, at 1 and 5 votes, the one with 5 votes is deleted; reverted
-    function testReleaseToAuthorSecondPlace2WithActualFirstPlaceDeleted() public {
+    // 2 proposals with different authors, at 1 and 5 votes, the one with 5 votes is deleted; release to voter of rank 2; reverted
+    function testReleaseToVoterSecondPlace2WithActualFirstPlaceDeleted() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -750,21 +675,21 @@ contract RewardsModuleTest is Test {
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.castVote(proposalId2, 100 ether, 5 ether, votingProof2);
 
         proposalsToDelete.push(proposalId2);
         vm.prank(CREATOR_ADDRESS_1);
         contest.deleteProposals(proposalsToDelete);
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
-        rewardsModulePaysAuthor.release(2);
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_1, 2);
     }
 
-    // 2 proposals with different authors, at 1 and 5 votes, the one with 1 vote is deleted; release to author of rank 1
-    function testReleaseToAuthorFirstPlace2WithActualSecondPlaceDeleted() public {
+    // 2 proposals with different authors, at 1 and 5 votes, the one with 1 vote is deleted; release to voter of rank 1
+    function testReleaseToVoterFirstPlace2WithActualSecondPlaceDeleted() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -773,22 +698,22 @@ contract RewardsModuleTest is Test {
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.castVote(proposalId2, 100 ether, 5 ether, votingProof2);
 
         proposalsToDelete.push(proposalId1);
         vm.prank(CREATOR_ADDRESS_1);
         contest.deleteProposals(proposalsToDelete);
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_2, 1);
 
         assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
     }
 
-    // 2 proposals with different authors, P1 gets 1 vote -> P1 is deleted -> P2 gets 1 vote; release to author of rank 1
-    function testReleaseToAuthorFirstPlace2WinnerWithSameVotesAsDeleted() public {
+    // 2 proposals with different authors, P1 gets 1 vote -> P1 is deleted -> P2 gets 1 vote; release to voter of rank 1
+    function testReleaseToVoterFirstPlace2WinnerWithSameVotesAsDeleted() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -803,224 +728,14 @@ contract RewardsModuleTest is Test {
         vm.prank(CREATOR_ADDRESS_1);
         contest.deleteProposals(proposalsToDelete);
 
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.castVote(proposalId2, 100 ether, 1 ether, votingProof2);
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(PERMISSIONED_ADDRESS_2, 1);
 
         assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
-    }
-
-    /////////////////////////////
-
-    // SORTING OLD VALUE TESTING (TESTING SORTING ALGORITHM)
-
-    // Old value is at inserting index
-    function testReleaseToAuthorFirstPlaceOldValueAtInsertingIndex() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-        vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
-        vm.warp(1681660001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 2 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
-
-        vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
-
-        assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
-    }
-
-    // Old value is at inserting index and is only value in array
-    function testReleaseToAuthorFirstPlaceOldValueAtInsertingIndexOnlyValue() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-        vm.warp(1681660001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 10 ether, 2 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 10 ether, 5 ether, votingProof1);
-
-        vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
-
-        assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
-    }
-
-    // Old value is after inserting index and in array
-    function testReleaseToAuthorFirstPlaceOldValueAfterInserting() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-        vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
-        vm.warp(1681660001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 10 ether, 2 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
-
-        vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
-
-        assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
-    }
-
-    // Old value is at inserting index and tied
-    function testReleaseToAuthorFirstPlaceOldValueAtInsertingIndexAndTied() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-        vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
-        vm.warp(1681660001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
-
-        vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
-
-        assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
-    }
-
-    // Old value is after inserting index, in array, and tied
-    function testReleaseToAuthorFirstPlaceOldValueAfterInsertingAndTied() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof1);
-        vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
-        vm.warp(1681660001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 10 ether, 2 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId3, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 3 ether, votingProof1);
-
-        vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
-
-        assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
-    }
-
-    // Old value is after inserting index, in array, tied, and the tied was deleted
-    function testReleaseToAuthorFirstPlaceOldValueAfterInsertingAndTiedAndTieDeleted() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof1);
-        vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
-        vm.warp(1681660001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 10 ether, 2 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId3, 10 ether, 1 ether, votingProof1);
-
-        proposalsToDelete.push(proposalId3);
-        vm.prank(CREATOR_ADDRESS_1);
-        contest.deleteProposals(proposalsToDelete);
-
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 10 ether, 3 ether, votingProof1);
-
-        vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
-
-        assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
-    }
-
-    /////////////////////////////
-
-    // RELEASES WITH RANK LIMIT OF ONE (TESTING SORTING ALGORITHM)
-
-    // 2 proposals, different authors, at 1 and 5 votes, on contest with rank limit of 1 - array already at limit, release to author of rank 1
-    function testReleaseToAuthorFirstPlaceRankLimit1() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = rankLimitOneContest.propose(firstProposalPA1, submissionProof1);
-        vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId2 = rankLimitOneContest.propose(firstProposalPA2, submissionProof2);
-        vm.warp(1681660001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        rankLimitOneContest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        rankLimitOneContest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
-
-        vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthorToRankOneContest.release(1);
-
-        assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
-    }
-
-    // 2 proposals, different authors, at 1 and 5 votes, on contest with rank limit of 1 - array already at limit, release to author of rank 2 - should error
-    function testReleaseToAuthorSecondPlaceRankLimit1() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = rankLimitOneContest.propose(firstProposalPA1, submissionProof1);
-        vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId2 = rankLimitOneContest.propose(firstProposalPA2, submissionProof2);
-        vm.warp(1681660001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        rankLimitOneContest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        rankLimitOneContest.castVote(proposalId2, 10 ether, 5 ether, votingProof1);
-
-        vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
-        rewardsModulePaysAuthorToRankOneContest.release(2);
-    }
-
-    // Old value is after inserting index and in array and at limit
-    function testReleaseToAuthorFirstPlaceOldValueInArrayAfterInsertingAtLimit() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = rankLimitOneContest.propose(firstProposalPA1, submissionProof1);
-        vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId2 = rankLimitOneContest.propose(firstProposalPA2, submissionProof2);
-        vm.warp(1681660001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        rankLimitOneContest.castVote(proposalId1, 10 ether, 1 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        rankLimitOneContest.castVote(proposalId2, 10 ether, 2 ether, votingProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        rankLimitOneContest.castVote(proposalId1, 10 ether, 5 ether, votingProof1);
-
-        vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthorToRankOneContest.release(1);
-
-        assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
     }
 
     /////////////////////////////

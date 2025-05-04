@@ -62,6 +62,7 @@ import RmDownvotingRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule
 import AddErc20CancelledCheckRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.2.addErc20CancelledCheck.sol/RewardsModule.json";
 import EntrantsCanDeleteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.3.entrantsCanDelete.sol/RewardsModule.json";
 import OfficialModulePointsToContestRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.4.officialModulePointsToContest.sol/RewardsModule.json";
+import VoterRewardsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.5.voterRewards.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -73,7 +74,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
-    if (version === "5.4") {
+    if (version === "5.5") {
+      return VoterRewardsRewards.abi;
+    } else if (version === "5.4") {
       return OfficialModulePointsToContestRewards.abi;
     } else if (version === "5.3") {
       return EntrantsCanDeleteRewards.abi;
