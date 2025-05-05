@@ -13,6 +13,9 @@ const createJsonRpcProvider = (url: string, chainId: number, name: string) => {
   request.setHeader("Referer", headers.Referer);
   const network = new ethers.Network(name, chainId);
 
+  console.log("request", request);
+  console.log("network", network);
+
   return new JsonRpcProvider(request, network, {
     staticNetwork: true,
   });
@@ -28,13 +31,15 @@ export function clientToProvider(client: Client<Transport, Chain>) {
       ),
     );
   }
-  1;
+
   return createJsonRpcProvider(transport.url, chain.id, chain.name);
 }
 
 /** Action to convert a viem Public Client to an ethers.js Provider. */
 export function getEthersProvider(config: Config, { chainId }: { chainId?: number } = {}) {
   const client = getClient(config, { chainId });
+
+  console.log("client", client);
 
   if (!client) {
     console.error({ config, chainId });
