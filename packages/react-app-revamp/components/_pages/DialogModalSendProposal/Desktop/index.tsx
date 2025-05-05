@@ -111,7 +111,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
       if (isAnyMetadataFieldEmpty()) {
         setError(
           <p className="text-negative-11 font-bold text-[12px]">
-            Please fill in all additional fields before submitting.
+            Please fill in all required fields before submitting.
           </p>,
         );
         return;

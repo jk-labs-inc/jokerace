@@ -25,18 +25,20 @@ const DialogModalSendProposalEntryPreviewTweetLayout: FC<DialogModalSendProposal
       const match = url.match(twitterRegex);
       if (!match) {
         setIsValid(false);
+        onChange?.("");
         return;
       }
 
       const tweetId = match[2] || match[4]; // get id from either twitter.com or x.com match
       if (!tweetId) {
         setIsValid(false);
+        onChange?.("");
         return;
       }
 
       setIsValid(true);
     }, 500),
-    [],
+    [onChange],
   );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
