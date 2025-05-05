@@ -11,6 +11,7 @@ import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import VotingQualifierMessage from "./components/VotingQualifierMessage";
+import { useShallow } from "zustand/shallow";
 
 const VotingContestQualifier = () => {
   const { anyoneCanVote, charge, contestAbi, version } = useContestStore(state => state);
@@ -23,7 +24,7 @@ const VotingContestQualifier = () => {
     isCurrentUserVoteQualificationError,
   } = useUserStore(state => state);
   const { contestStatus } = useContestStatusStore(state => state);
-  const isReadOnly = useContestStore(state => state.isReadOnly);
+  const isReadOnly = useContestStore(useShallow(state => state.isReadOnly));
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const costToVoteFormatted = formatEther(BigInt(charge?.type.costToVote ?? 0));
   const asPath = usePathname();

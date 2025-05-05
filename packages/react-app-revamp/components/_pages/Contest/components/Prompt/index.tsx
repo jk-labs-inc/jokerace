@@ -8,6 +8,7 @@ import { useAccount } from "wagmi";
 import SubmissionQualifierMessage from "./SubmissionQualifierMessage";
 import ContestPromptModal from "./components/Modal";
 import ContestPromptPage from "./components/Page";
+import { useShallow } from "zustand/shallow";
 
 interface ContestPromptProps {
   prompt: string;
@@ -17,7 +18,7 @@ interface ContestPromptProps {
 
 const ContestPrompt: FC<ContestPromptProps> = ({ prompt, type, hidePrompt = false }) => {
   const { isConnected } = useAccount();
-  const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const isVotingOpenOrClosed =
     contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
   const { submissionMerkleRoot } = useContestStore(state => state);

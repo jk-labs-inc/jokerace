@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { Abi } from "viem";
 import { useReadContract } from "wagmi";
 import { ParsedMetadataField, useMetadataStore } from "./store";
+import { useShallow } from "zustand/shallow";
 
 const METADATA_FIELDS_VERSION = "4.31";
 
@@ -37,7 +38,7 @@ function parseMetadataFieldsSchema(schema: string): ParsedMetadataField[] {
 }
 
 const useMetadataFields = () => {
-  const setFields = useMetadataStore(state => state.setFields);
+  const setFields = useMetadataStore(useShallow(state => state.setFields));
   const pathname = usePathname();
   const { address: contestAddress, chainName: contestChainName } = extractPathSegments(pathname ?? "");
   const contestChainId = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.id;

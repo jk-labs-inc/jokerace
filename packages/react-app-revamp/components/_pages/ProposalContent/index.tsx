@@ -23,6 +23,7 @@ import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
 import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
 import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
 import ProposalLayoutTweet from "./components/ProposalLayout/Tweet";
+import { useShallow } from "zustand/shallow";
 
 export interface Proposal {
   id: string;
@@ -55,7 +56,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
 }) => {
   const { isConnected, address: userAddress } = useAccount();
   const { canDeleteProposal } = useDeleteProposal();
-  const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const allowDelete = canDeleteProposal(
     userAddress,
     contestAuthorEthereumAddress,
@@ -72,7 +73,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const canVote = currentUserAvailableVotesAmount > 0;
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
-  const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
+  const setPickProposal = useCastVotesStore(useShallow(state => state.setPickedProposal));
   const formattedVotingOpen = moment(votesOpen);
   const commentLink = {
     pathname: `/contest/${chainName}/${contestAddress}/submission/${proposal.id}`,

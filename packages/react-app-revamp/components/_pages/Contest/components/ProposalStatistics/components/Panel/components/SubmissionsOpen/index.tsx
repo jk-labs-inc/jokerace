@@ -1,6 +1,7 @@
 import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
 import { FC } from "react";
+import { useShallow } from "zustand/shallow";
 
 interface ProposalStatisticsPanelSubmissionOpenProps {
   submissionsCount: number;
@@ -9,7 +10,7 @@ interface ProposalStatisticsPanelSubmissionOpenProps {
 const ProposalStatisticsPanelSubmissionOpen: FC<ProposalStatisticsPanelSubmissionOpenProps> = ({
   submissionsCount,
 }) => {
-  const contestMaxProposalCount = useContestStore(state => state.contestMaxProposalCount);
+  const contestMaxProposalCount = useContestStore(useShallow(state => state.contestMaxProposalCount));
 
   return (
     <p className="text-[12px] md:text-[16px] text-neutral-9 font-bold">
