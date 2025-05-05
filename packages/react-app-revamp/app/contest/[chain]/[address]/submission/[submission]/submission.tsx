@@ -4,6 +4,8 @@ import { chains } from "@config/wagmi";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { FC, useEffect } from "react";
 import { Abi } from "viem";
+import { useShallow } from "zustand/shallow";
+
 interface SubmissionProps {
   abi: Abi;
   version: string;
@@ -23,7 +25,7 @@ const getChainId = (chain: string) => {
 
 const Submission: FC<SubmissionProps> = ({ address, chain, submission, abi, version }) => {
   const chainId = getChainId(chain);
-  const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
+  const setPickProposal = useCastVotesStore(useShallow(state => state.setPickedProposal));
 
   useEffect(() => {
     setPickProposal(submission);

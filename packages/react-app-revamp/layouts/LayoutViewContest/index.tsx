@@ -31,6 +31,7 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import LayoutViewContestError from "./components/Error";
+import { useShallow } from "zustand/shallow";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -38,7 +39,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const { address: accountAddress } = useAccount();
   const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(pathname ?? "");
   const chainId = chains.filter(chain => chain.name.toLowerCase() === chainNameFromUrl.toLowerCase())[0]?.id;
-  const showRewards = useShowRewardsStore(state => state.showRewards);
+  const showRewards = useShowRewardsStore(useShallow(state => state.showRewards));
   const { isLoading, address, fetchContestInfo, isSuccess, error, chainName } = useContest();
   const {
     submissionsOpen,
