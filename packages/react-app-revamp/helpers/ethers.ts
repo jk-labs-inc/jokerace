@@ -8,17 +8,17 @@ const headers = isProduction
   ? { Referer: "https://jokerace.io/" }
   : { Referer: "https://jokerace-git-chore-fix-referer-implementation-jokerace.vercel.app/" };
 
-const createJsonRpcProvider = (url: string, chainId: number, name: string) => {
+const createJsonRpcProvider = (url: string, chainId: number, name: string, ensAddress?: string) => {
   const request = new FetchRequest(url);
   request.setHeader("Referer", headers.Referer);
-  const network = new ethers.Network(name, chainId);
 
-  console.log("request", request);
-  console.log("network", network);
+  const network = {
+    chainId,
+    name,
+    ensAddress,
+  };
 
-  return new JsonRpcProvider(request, network, {
-    staticNetwork: true,
-  });
+  return new JsonRpcProvider(request, network);
 };
 
 export function clientToProvider(client: Client<Transport, Chain>) {
@@ -27,7 +27,7 @@ export function clientToProvider(client: Client<Transport, Chain>) {
   if (transport.type === "fallback") {
     return new FallbackProvider(
       (transport.transports as ReturnType<Transport>[]).map(({ value }) =>
-        createJsonRpcProvider(value?.url, chain.id, chain.name),
+        createJsonRpcProvider(value?.url, chain.id, chain.name, chain.contracts?.ensRegistry?.address),
       ),
     );
   }
