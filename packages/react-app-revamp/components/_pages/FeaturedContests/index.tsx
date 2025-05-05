@@ -1,17 +1,14 @@
-import { Contest, ContestReward } from "lib/contests";
 import { FC } from "react";
 import FeaturedContestCard from "./components/Contest";
 import Skeleton from "react-loading-skeleton";
 import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
+import { Contest, ContestReward } from "lib/contests/types";
 
 interface FeaturedContestsProps {
   status: "error" | "pending" | "success";
   isContestDataFetching: boolean;
   isRewardsFetching: boolean;
-  contestData?: {
-    data: Contest[];
-    count: number | null;
-  };
+  contestData?: Contest[];
   rewardsData?: (ContestReward | null)[];
 }
 
@@ -37,6 +34,7 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
       <Skeleton width={150} height={16} baseColor="#212121" highlightColor="#100816" />
     </div>
   );
+
   return (
     <>
       {status === "error" ? (
@@ -48,17 +46,22 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
           <p className="text-[16px] text-neutral-14 font-bold uppercase">featured contests</p>
           <div className="overflow-x-auto scrollbar-hide">
             <div className="flex lg:featured-contests-grid gap-4 pb-4">
-              {isContestDataFetching
-                ? Array.from({ length: CONTESTS_FEATURE_COUNT }).map((_, index) => <SkeletonCard key={index} />)
-                : contestData?.data.map((contest, index) => (
-                    <div className="w-[320px] flex-shrink-0 lg:w-auto" key={index}>
-                      <FeaturedContestCard
-                        contestData={contest}
-                        rewardsData={rewardsData?.[index]}
-                        isRewardsFetching={isRewardsFetching}
-                      />
-                    </div>
-                  ))}
+              {/* Show loaded contests */}
+              {contestData?.map((contest, index) => (
+                <div className="w-[320px] flex-shrink-0 lg:w-auto" key={`contest-${index}`}>
+                  <FeaturedContestCard
+                    contestData={contest}
+                    rewardsData={rewardsData?.[index]}
+                    isRewardsFetching={isRewardsFetching}
+                  />
+                </div>
+              ))}
+
+              {/* Show skeletons for remaining slots */}
+              {isContestDataFetching &&
+                Array.from({
+                  length: Math.max(0, CONTESTS_FEATURE_COUNT - (contestData?.length || 0)),
+                }).map((_, index) => <SkeletonCard key={`skeleton-${index}`} />)}
             </div>
           </div>
         </div>
