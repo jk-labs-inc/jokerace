@@ -72,10 +72,11 @@ const sabo = localFont({
   variable: "--font-sabo",
 });
 
-const DynamicPortal = dynamic(() => import("./portal"), { ssr: false });
+const DynamicPortal = dynamic(() => import("./portal"), { ssr: !!false });
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const cookie = headers().get("cookie") ?? "";
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const headersList = await headers();
+  const cookie = headersList.get("cookie") ?? "";
 
   return (
     <html lang="en" className={`${lato.variable} ${sabo.variable}`}>

@@ -4,10 +4,11 @@ import { notFound } from "next/navigation";
 import UserContests from "./contests";
 
 type Props = {
-  params: { address: string };
+  params: Promise<{ address: string }>;
 };
 
-export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata(props: Props, parent: ResolvingMetadata): Promise<Metadata> {
+  const params = await props.params;
   const address = params.address;
 
   const addressProps = await getAddressProps(address);
@@ -22,7 +23,8 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
 }
 
 const Page = async (props: Props) => {
-  const addressProps = await getAddressProps(props.params.address);
+  const params = await props.params;
+  const addressProps = await getAddressProps(params.address);
 
   if (addressProps.notFound) {
     return notFound();
