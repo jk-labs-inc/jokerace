@@ -7,11 +7,12 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import CreateRewardsAddEarningsToggle from "../ReviewPool/components/AddEarnings";
 import CreateRewardsAddFundsToggle from "../ReviewPool/components/AddFunds";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/shallow";
 
 const CreateRewardsFundPool = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const charge = useContestStore(state => state.charge);
-  const contestState = useContestStateStore(state => state.contestState);
+  const charge = useContestStore(useShallow(state => state.charge));
+  const contestState = useContestStateStore(useShallow(state => state.contestState));
   const isContestFinishedOrCanceled =
     contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
   const enableEarningsToggle = charge && charge.percentageToCreator > 0 && !isContestFinishedOrCanceled;

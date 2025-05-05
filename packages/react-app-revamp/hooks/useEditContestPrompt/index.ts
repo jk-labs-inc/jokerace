@@ -4,6 +4,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { simulateContract, writeContract } from "@wagmi/core";
 import { type Abi } from "viem";
+import { useShallow } from "zustand/shallow";
 
 interface UseEditContestPromptProps {
   contestAbi: Abi;
@@ -11,7 +12,7 @@ interface UseEditContestPromptProps {
 }
 
 const useEditContestPrompt = ({ contestAbi, contestAddress }: UseEditContestPromptProps) => {
-  const setContestPrompt = useContestStore(state => state.setContestPrompt);
+  const setContestPrompt = useContestStore(useShallow(state => state.setContestPrompt));
   const { handleError } = useError();
 
   const editPrompt = async (newPrompt: string) => {
