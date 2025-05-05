@@ -45,6 +45,7 @@ contract VoterRewardsModule {
     mapping(IERC20 => mapping(address => mapping(uint256 => uint256))) public erc20ReleasedToVoter; // Getter for the amount of ERC20 already released to a ranking.
 
     uint256[] public payees;
+    string public constant MODULE_TYPE = "VOTER_REWARDS";
     string private constant VERSION = "5.5"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;

@@ -3098,6 +3098,7 @@ contract RewardsModule {
     mapping(uint256 => uint256) public shares; // Getter for the amount of shares held by a ranking.
     mapping(uint256 => uint256) public released; // Getter for the amount of Ether already released to a ranking.
     uint256[] public payees;
+    string public constant MODULE_TYPE = "AUTHOR_REWARDS";
     string private constant VERSION = "5.5"; // Private as to not clutter the ABI
 
     mapping(IERC20 => uint256) public erc20TotalReleased;
