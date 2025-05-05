@@ -82,7 +82,7 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({
           {charge.voteType === VoteType.PerVote ? " per vote" : " to vote"}
         </li>
         {isCreatorSplit ? <li className="list-disc">{creatorEarningsDestinationMessage()}</li> : null}
-        <li className="list-disc">{renderEarningsSplitMessage()}</li>
+        {renderEarningsSplitMessage()}
       </ul>
 
       <ContestParamsEarningsModal
