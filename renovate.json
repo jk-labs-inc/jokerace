@@ -6,9 +6,6 @@
   "labels": [
     "renovate"
   ],
-  "ignoreDeps": [
-    "react-native"
-  ],
   "schedule": [
     "after 11pm every weekday",
     "before 6am every weekday",

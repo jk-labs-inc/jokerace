@@ -2,9 +2,10 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import ContestCountdown from "./components/Countdown";
 import VotingContestQualifier from "./components/VotingQualifier";
+import { useShallow } from "zustand/shallow";
 
 const ContestStickyCards = () => {
-  const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
 

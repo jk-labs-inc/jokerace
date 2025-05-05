@@ -7,6 +7,7 @@ import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
 import { FC } from "react";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 interface CommentProps {
   comment: CommentType;
   toggleCommentSelection?: (commentId: string) => void;
@@ -16,7 +17,7 @@ interface CommentProps {
 
 const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentSelection, className }) => {
   const { address } = useAccount();
-  const contestAuthor = useContestStore(state => state.contestAuthorEthereumAddress);
+  const contestAuthor = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
   const timeAgo = moment(comment.createdAt).fromNow();
   const allowDelete = (address === comment.author || address === contestAuthor) && !comment.isDeleted;
   const isSelected = selectedCommentIds.includes(comment.id);

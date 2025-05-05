@@ -6,7 +6,7 @@ import {
   useTimingOptionForVotingPeriod,
 } from "../../../ContestTiming/utils";
 import CreateContestConfirmLayout from "../Layout";
-
+import { useShallow } from "zustand/shallow";
 interface CreateContestConfirmTimingProps {
   timing: {
     submissionOpen: Date;
@@ -19,8 +19,8 @@ interface CreateContestConfirmTimingProps {
 
 const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timing, step, onClick }) => {
   const { submissionOpen, votingOpen, votingClose } = timing;
-  const timingOptionForSubmissionPeriod = useTimingOptionForSubmissionPeriod(state => state.timingOption);
-  const timingOptionForVotingPeriod = useTimingOptionForVotingPeriod(state => state.timingOption);
+  const timingOptionForSubmissionPeriod = useTimingOptionForSubmissionPeriod(useShallow(state => state.timingOption));
+  const timingOptionForVotingPeriod = useTimingOptionForVotingPeriod(useShallow(state => state.timingOption));
 
   const formattedSubmissionOpen =
     moment(submissionOpen).format("MMMM D, YYYY h:mmA") + " " + moment.tz(moment.tz.guess()).zoneAbbr();
