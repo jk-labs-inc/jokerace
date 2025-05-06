@@ -14,12 +14,13 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
 import { didUserReject } from "utils/error";
 import { erc20Abi, parseUnits } from "viem";
+import { useShallow } from "zustand/shallow";
 
 export function useDeployRewardsPool() {
   const asPath = usePathname();
   const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
-  const setSupportsRewardsModule = useContestStore(state => state.setSupportsRewardsModule);
+  const setSupportsRewardsModule = useContestStore(useShallow(state => state.setSupportsRewardsModule));
   const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards } = useCreateRewardsStore(state => state);
   const { tokenWidgets, setTokenWidgets } = useFundPoolStore(state => state);
   const { setCreatorSplitDestination } = useCreatorSplitDestination();

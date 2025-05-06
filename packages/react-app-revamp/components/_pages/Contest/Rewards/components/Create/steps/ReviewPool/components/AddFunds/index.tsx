@@ -3,10 +3,10 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useMediaQuery } from "react-responsive";
 import { useCreateRewardsStore } from "../../../../store";
 import { useFundPoolStore } from "../../../FundPool/store";
-
+import { useShallow } from "zustand/shallow";
 const CreateRewardsAddFundsToggle = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const anyoneCanVote = useContestStore(state => state.anyoneCanVote);
+  const anyoneCanVote = useContestStore(useShallow(state => state.anyoneCanVote));
   const { addFundsToRewards, setAddFundsToRewards } = useCreateRewardsStore(state => state);
   const { setTokenWidgets } = useFundPoolStore(state => state);
   const toggleLabel = isMobile ? "i want to fund the rewards pool" : "i want to personally fund the rewards pool";

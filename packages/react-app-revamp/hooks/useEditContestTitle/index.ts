@@ -4,14 +4,14 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { simulateContract, writeContract } from "@wagmi/core";
 import { type Abi } from "viem";
-
+import { useShallow } from "zustand/shallow";
 interface UseEditContestTitleProps {
   contestAbi: Abi;
   contestAddress: string;
 }
 
 const useEditContestTitle = ({ contestAbi, contestAddress }: UseEditContestTitleProps) => {
-  const setContestName = useContestStore(state => state.setContestName);
+  const setContestName = useContestStore(useShallow(state => state.setContestName));
   const { handleError } = useError();
 
   const editTitle = async (newName: string) => {

@@ -9,14 +9,14 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import CancelContestModal from "./components/Modal";
-
+import { useShallow } from "zustand/shallow";
 const CancelContest = () => {
   const pathname = usePathname();
   const { chainName } = extractPathSegments(pathname);
   const contestChainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
   const { address, chainId } = useAccount();
   const isUserOnCorrectChain = contestChainId === chainId;
-  const contestAuthorEthereumAddress = useContestStore(state => state.contestAuthorEthereumAddress);
+  const contestAuthorEthereumAddress = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
   const { cancelContest, isLoading, isConfirmed } = useContestState();
   const { contestState } = useContestStateStore(state => state);
   const [isCloseContestModalOpen, setIsCloseContestModalOpen] = useState(false);

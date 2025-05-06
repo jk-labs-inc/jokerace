@@ -35,6 +35,7 @@ import { gnosis } from "./custom-chains/gnosis";
 import { ink } from "./custom-chains/ink";
 import { linea } from "./custom-chains/linea";
 import { mainnet } from "./custom-chains/mainnet";
+import { manta } from "./custom-chains/manta";
 import { mantle } from "./custom-chains/mantle";
 import { metis } from "./custom-chains/metis";
 import { mode } from "./custom-chains/mode";
@@ -83,6 +84,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   berachain,
   unichain,
   swell,
+  manta,
   sepolia,
   baseTestnet,
   mainnet,

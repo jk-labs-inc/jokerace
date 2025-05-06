@@ -27,7 +27,7 @@ const DialogModalSendProposalEntryPreviewLayout: FC<DialogModalSendProposalEntry
   handleDragLeave,
 }) => {
   const { enabledPreview, isDescriptionEnabled } = verifyEntryPreviewPrompt(entryPreviewLayout);
-  const { setInputValue, fields } = useMetadataStore();
+  const { setInputValue } = useMetadataStore();
 
   const handleMetadataFieldChange = (value: string) => {
     // always set the first input value ( index = 0 )

@@ -102,10 +102,7 @@ export const createProposalStore = () =>
 export const ProposalContext = createContext<ReturnType<typeof createProposalStore> | null>(null);
 
 export function ProposalWrapper({ children }: { children: React.ReactNode }) {
-  const storeRef = useRef<ReturnType<typeof createProposalStore>>();
-  if (!storeRef.current) {
-    storeRef.current = createProposalStore();
-  }
+  const storeRef = useRef<ReturnType<typeof createProposalStore>>(createProposalStore());
   return <ProposalContext.Provider value={storeRef.current}>{children}</ProposalContext.Provider>;
 }
 

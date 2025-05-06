@@ -5,6 +5,7 @@ import { simulateContract, writeContract } from "@wagmi/core";
 import { useRef } from "react";
 import { toast } from "react-toastify";
 import { type Abi } from "viem";
+import { useShallow } from "zustand/shallow";
 
 interface UseEditContestTitleAndImageProps {
   contestAbi: Abi;
@@ -12,10 +13,12 @@ interface UseEditContestTitleAndImageProps {
 }
 
 const useEditContestTitleAndImage = ({ contestAbi, contestAddress }: UseEditContestTitleAndImageProps) => {
-  const { setContestPrompt, setContestName } = useContestStore(state => ({
-    setContestPrompt: state.setContestPrompt,
-    setContestName: state.setContestName,
-  }));
+  const { setContestPrompt, setContestName } = useContestStore(
+    useShallow(state => ({
+      setContestPrompt: state.setContestPrompt,
+      setContestName: state.setContestName,
+    })),
+  );
   const toastIdRef = useRef<string | number | null>(null);
 
   const updateContestTitleAndImage = async (newTitle: string, newPrompt: string) => {

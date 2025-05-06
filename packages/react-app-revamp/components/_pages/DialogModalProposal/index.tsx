@@ -28,6 +28,7 @@ import DialogMaxVotesAlert from "../DialogMaxVotesAlert";
 import ListProposalVotes from "../ListProposalVotes";
 import DialogModalProposalHeader from "./components/Header";
 import DialogModalProposalVoteCountdown from "./components/VoteCountdown";
+import { useShallow } from "zustand/shallow";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -78,7 +79,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
     isLoading: isDeleteLoading,
     isSuccess: isDeleteSuccess,
   } = useDeleteProposal();
-  const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const { isConnected, address: userAddress, chainId: userChainId } = useAccount();
   const { isSuccess } = useCastVotes();
   const { listProposalsIds } = useProposalStore(state => state);

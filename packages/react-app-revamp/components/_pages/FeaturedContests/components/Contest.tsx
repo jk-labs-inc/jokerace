@@ -3,7 +3,7 @@ import { Avatar } from "@components/UI/Avatar";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import useProfileData from "@hooks/useProfileData";
-import { Contest, ContestReward } from "lib/contests";
+import { Contest, ContestReward } from "lib/contests/types";
 import moment from "moment";
 import { FC, useCallback, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
