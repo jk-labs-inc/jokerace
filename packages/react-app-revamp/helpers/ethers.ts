@@ -1,5 +1,5 @@
 import { getClient, getConnectorClient } from "@wagmi/core";
-import { BrowserProvider, ethers, FallbackProvider, FetchRequest, JsonRpcProvider } from "ethers";
+import { BrowserProvider, ethers, FallbackProvider, FetchRequest, JsonRpcProvider, JsonRpcSigner } from "ethers";
 import type { Account, Chain, Client, Transport } from "viem";
 import { type Config } from "wagmi";
 
@@ -11,6 +11,8 @@ const headers = isProduction
 const createJsonRpcProvider = (url: string, chainId: number, name: string, ensAddress?: string) => {
   const request = new FetchRequest(url);
   request.setHeader("Referer", headers.Referer);
+
+  console.log(headers.Referer);
 
   const network = {
     chainId,
@@ -57,9 +59,24 @@ export function clientToSigner(client: Client<Transport, Chain, Account>) {
     ensAddress: chain.contracts?.ensRegistry?.address,
   };
 
-  const provider = new BrowserProvider(transport, network);
-  const signer = provider.getSigner(account.address);
-  return signer;
+  if (transport.type === "fallback") {
+    const firstTransport = (transport.transports as ReturnType<Transport>[])[0];
+    if (!firstTransport?.value?.url) {
+      throw new Error("No valid transport found");
+    }
+
+    const provider = createJsonRpcProvider(
+      firstTransport.value.url,
+      chain.id,
+      chain.name,
+      chain.contracts?.ensRegistry?.address,
+    );
+
+    return provider.getSigner(account.address);
+  } else {
+    const provider = new BrowserProvider(transport, network);
+    return provider.getSigner(account.address);
+  }
 }
 
 /** Action to convert a Viem Client to an ethers.js Signer. */
