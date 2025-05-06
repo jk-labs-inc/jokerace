@@ -41,8 +41,6 @@ export function clientToProvider(client: Client<Transport, Chain>) {
 export function getEthersProvider(config: Config, { chainId }: { chainId?: number } = {}) {
   const client = getClient(config, { chainId });
 
-  console.log("client", client);
-
   if (!client) {
     console.error({ config, chainId });
     throw new Error("Unable to get client");
@@ -58,17 +56,9 @@ export function clientToSigner(client: Client<Transport, Chain, Account>) {
     name: chain.name,
     ensAddress: chain.contracts?.ensRegistry?.address,
   };
-
-  if (transport.type === "fallback") {
-    return new FallbackProvider(
-      (transport.transports as ReturnType<Transport>[]).map(({ value }) =>
-        createJsonRpcProvider(value?.url, chain.id, chain.name, chain.contracts?.ensRegistry?.address),
-      ),
-    );
-  } else {
-    const provider = new BrowserProvider(transport, network);
-    return provider.getSigner(account.address);
-  }
+  const provider = new BrowserProvider(transport, network);
+  const signer = new JsonRpcSigner(provider, account.address);
+  return signer;
 }
 
 /** Action to convert a Viem Client to an ethers.js Signer. */
