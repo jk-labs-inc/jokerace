@@ -166,7 +166,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
             {contestData.title ? contestData.title : "👀 Contest 👀"}
           </p>
 
-          <p className="flex items-center gap-2 text-[12px] font-bold text-neutral-11">
+          <div className="flex items-center gap-2 text-[12px] font-bold text-neutral-11">
             {isContestActive && !contestData.isCanceled && (
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-positive-10 opacity-75"></span>
@@ -183,7 +183,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
                 {status} <span className="text-true-white">{timeLeft}</span>
               </span>
             )}
-          </p>
+          </div>
         </div>
       </div>
 

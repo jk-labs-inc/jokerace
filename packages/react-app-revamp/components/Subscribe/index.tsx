@@ -1,7 +1,7 @@
 import { emailRegex } from "@helpers/regex";
 import useEmailSignup from "@hooks/useEmailSignup";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 
@@ -13,6 +13,11 @@ const Subscribe = () => {
   const { subscribeUser, checkIfEmailExists, isLoading } = useEmailSignup();
   const { address } = useAccount();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleSubscribe = async () => {
     if (isLoading || !address) return;
@@ -61,7 +66,7 @@ const Subscribe = () => {
             onClick={address ? handleSubscribe : openConnectModal}
           >
             <p className="text-[16px] md:text-[18px] font-bold text-true-black whitespace-nowrap px-2">
-              {!address ? "connect wallet" : isMobile ? "get updates" : "get contest updates"}
+              {!address && !isMounted ? "connect wallet" : isMobile ? "get updates" : "get contest updates"}
             </p>
           </button>
         </div>
