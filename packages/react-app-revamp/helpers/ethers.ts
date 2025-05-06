@@ -1,9 +1,9 @@
 import { getClient, getConnectorClient } from "@wagmi/core";
-import { BrowserProvider, ethers, FallbackProvider, FetchRequest, JsonRpcProvider } from "ethers";
+import { BrowserProvider, ethers, FallbackProvider, FetchRequest, JsonRpcProvider, JsonRpcSigner } from "ethers";
 import type { Account, Chain, Client, Transport } from "viem";
 import { type Config } from "wagmi";
 
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction = process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "production";
 const headers = isProduction ? { Referer: "https://jokerace.io/" } : { Referer: "" };
 
 const createJsonRpcProvider = (url: string, chainId: number, name: string) => {
@@ -21,13 +21,9 @@ export function clientToProvider(client: Client<Transport, Chain>) {
 
   if (transport.type === "fallback") {
     return new FallbackProvider(
-      (transport.transports as ReturnType<Transport>[])
-        .map(({ value }) => {
-          if (!value?.url) return;
-
-          return createJsonRpcProvider(value.url, chain.id, chain.name);
-        })
-        .filter(Boolean) as JsonRpcProvider[],
+      (transport.transports as ReturnType<Transport>[]).map(({ value }) =>
+        createJsonRpcProvider(value?.url, chain.id, chain.name),
+      ),
     );
   }
 
@@ -53,9 +49,8 @@ export function clientToSigner(client: Client<Transport, Chain, Account>) {
     name: chain.name,
     ensAddress: chain.contracts?.ensRegistry?.address,
   };
-
   const provider = new BrowserProvider(transport, network);
-  const signer = provider.getSigner(account.address);
+  const signer = new JsonRpcSigner(provider, account.address);
   return signer;
 }
 

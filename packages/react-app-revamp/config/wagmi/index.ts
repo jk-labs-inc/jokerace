@@ -21,8 +21,7 @@ import {
   walletConnectWallet,
   zerionWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-import { Transport } from "viem";
-import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
+import { cookieStorage, createConfig, createStorage } from "wagmi";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
@@ -52,14 +51,13 @@ import { swell } from "./custom-chains/swell";
 import { unichain } from "./custom-chains/unichain";
 import { zora } from "./custom-chains/zora";
 import { isParaWalletConfigured, paraWallet } from "./para";
+import createTransports from "./transports";
 
 declare module "wagmi";
 
 type ChainImages = {
   [key: string]: string;
 };
-
-type Transports = Record<Chain["id"], Transport>;
 
 export const chains: readonly [Chain, ...Chain[]] = [
   polygon,
@@ -139,15 +137,6 @@ const connectors = connectorsForWallets(
     appName: appName,
   },
 );
-
-const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
-  return chains.reduce<Transports>((acc, chain) => {
-    if (chain.rpcUrls?.default?.http?.[0] && chain.rpcUrls?.public?.http?.[0]) {
-      acc[chain.id] = fallback([http(chain.rpcUrls.default.http[0]), http(chain.rpcUrls.public.http[0])]);
-    }
-    return acc;
-  }, {});
-};
 
 const transports = createTransports(chains);
 
