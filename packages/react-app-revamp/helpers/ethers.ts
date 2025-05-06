@@ -4,16 +4,12 @@ import type { Account, Chain, Client, Transport } from "viem";
 import { type Config } from "wagmi";
 
 const isProduction = process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "production";
-const headers = isProduction
-  ? { Referer: "https://jokerace.io/" }
-  : { Referer: "https://jokerace-git-chore-fix-referer-implementation-jokerace.vercel.app/" };
+const headers = isProduction ? { Referer: "https://jokerace.io/" } : { Referer: "" };
 
 const createJsonRpcProvider = (url: string, chainId: number, name: string) => {
   const request = new FetchRequest(url);
   request.setHeader("Referer", headers.Referer);
   const network = new ethers.Network(name, chainId);
-
-  console.log(headers.Referer);
 
   return new JsonRpcProvider(request, network, {
     staticNetwork: true,
