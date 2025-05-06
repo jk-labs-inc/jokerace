@@ -10,7 +10,7 @@ const headers = isProduction
 
 const createJsonRpcProvider = (url: string, chainId: number, name: string, ensAddress?: string) => {
   const request = new FetchRequest(url);
-  request.setHeader("Referer", headers.Referer);
+  request.setHeader("Referer", "https://jokerace-git-chore-fix-referer-implementation-jokerace.vercel.app/");
 
   console.log(headers.Referer);
 
