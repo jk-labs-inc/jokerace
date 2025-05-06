@@ -76,7 +76,6 @@ export async function getContestContractVersion(address: string, chainId: number
   try {
     const provider = getEthersProvider(serverConfig, { chainId });
 
-    console.log("provider", provider);
     const contract = new ethers.Contract(address, NumberedVersioningContract.abi, provider);
 
     // Here we check if all RPC calls are successful, otherwise we throw an error and return empty ABI
