@@ -1,18 +1,14 @@
 import { getClient, getConnectorClient } from "@wagmi/core";
-import { BrowserProvider, ethers, FallbackProvider, FetchRequest, JsonRpcProvider, JsonRpcSigner } from "ethers";
+import { BrowserProvider, FallbackProvider, FetchRequest, JsonRpcProvider, JsonRpcSigner } from "ethers";
 import type { Account, Chain, Client, Transport } from "viem";
 import { type Config } from "wagmi";
 
 const isProduction = process.env.NODE_ENV === "production";
-const headers = isProduction
-  ? { Referer: "https://jokerace.io/" }
-  : { Referer: "https://jokerace-git-chore-fix-referer-implementation-jokerace.vercel.app/" };
+const headers = isProduction ? { Referer: "https://jokerace.io/" } : { Referer: "" };
 
 const createJsonRpcProvider = (url: string, chainId: number, name: string, ensAddress?: string) => {
   const request = new FetchRequest(url);
-  request.setHeader("Referer", "https://jokerace-git-chore-fix-referer-implementation-jokerace.vercel.app/");
-
-  console.log(headers.Referer);
+  request.setHeader("Referer", headers.Referer);
 
   const network = {
     chainId,
