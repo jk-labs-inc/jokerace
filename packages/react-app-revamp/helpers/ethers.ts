@@ -34,7 +34,7 @@ export function clientToProvider(client: Client<Transport, Chain>) {
     );
   }
 
-  return createJsonRpcProvider(transport.url, chain.id, chain.name);
+  return createJsonRpcProvider(transport.url, chain.id, chain.name, chain.contracts?.ensRegistry?.address);
 }
 
 /** Action to convert a viem Public Client to an ethers.js Provider. */
@@ -60,19 +60,11 @@ export function clientToSigner(client: Client<Transport, Chain, Account>) {
   };
 
   if (transport.type === "fallback") {
-    const firstTransport = (transport.transports as ReturnType<Transport>[])[0];
-    if (!firstTransport?.value?.url) {
-      throw new Error("No valid transport found");
-    }
-
-    const provider = createJsonRpcProvider(
-      firstTransport.value.url,
-      chain.id,
-      chain.name,
-      chain.contracts?.ensRegistry?.address,
+    return new FallbackProvider(
+      (transport.transports as ReturnType<Transport>[]).map(({ value }) =>
+        createJsonRpcProvider(value?.url, chain.id, chain.name, chain.contracts?.ensRegistry?.address),
+      ),
     );
-
-    return provider.getSigner(account.address);
   } else {
     const provider = new BrowserProvider(transport, network);
     return provider.getSigner(account.address);
