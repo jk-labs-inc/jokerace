@@ -2,10 +2,12 @@ import { Chain, Transport, fallback, http } from "viem";
 
 type Transports = Record<Chain["id"], Transport>;
 
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction = process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "production";
 
 const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
-  const headers = isProduction ? { Referer: "https://jokerace.io/" } : { Referer: "" };
+  const headers = isProduction
+    ? { Referer: "https://jokerace.io/" }
+    : { Referer: "https://jokerace-git-chore-fix-referer-implementation-jokerace.vercel.app/" };
 
   return chains.reduce<Transports>((acc, chain) => {
     if (chain.rpcUrls?.default?.http?.[0] && chain.rpcUrls?.public?.http?.[0]) {
