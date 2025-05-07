@@ -13,7 +13,7 @@ export const Tweet = ({ id, apiUrl, fallback = <TweetSkeleton />, components, on
   }
 
   return (
-    <div className="not-prose light">
+    <div data-theme="light" className="not-prose">
       <MyTweet tweet={data} components={components} />
     </div>
   );
