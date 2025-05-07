@@ -5,11 +5,12 @@ import { Suspense } from "react";
 import UserSubmissionsLayout from "./submissions";
 
 type Props = {
-  params: { address: string };
+  params: Promise<{ address: string }>;
 };
 
 const Page = async (props: Props) => {
-  const address = props.params.address;
+  const params = await props.params;
+  const address = params.address;
   const addressProps = await getAddressProps(address);
 
   if (addressProps.notFound) {

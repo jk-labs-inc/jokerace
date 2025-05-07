@@ -6,7 +6,7 @@ import { FC, useEffect, useRef } from "react";
 import CommentsForm from "./components/Form";
 import CommentsList from "./components/List";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
-
+import { useShallow } from "zustand/shallow";
 interface CommentsProps {
   contestAddress: string;
   contestChainId: number;
@@ -17,7 +17,7 @@ interface CommentsProps {
 
 const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalId, numberOfComments, className }) => {
   const query = useSearchParams();
-  const contestState = useContestStateStore(state => state.contestState);
+  const contestState = useContestStateStore(useShallow(state => state.contestState));
   const isCompletedOrCanceled =
     contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
   const { getAllCommentsIdsPerProposal, getCommentsWithSpecificFirst, addComment, deleteComments, getCommentsPerPage } =

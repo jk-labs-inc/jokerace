@@ -76,6 +76,7 @@ import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
 export async function getContestContractVersion(address: string, chainId: number) {
   try {
     const provider = getEthersProvider(serverConfig, { chainId });
+
     const contract = new ethers.Contract(address, NumberedVersioningContract.abi, provider);
 
     // Here we check if all RPC calls are successful, otherwise we throw an error and return empty ABI

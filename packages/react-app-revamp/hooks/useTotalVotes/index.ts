@@ -3,7 +3,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useQuery } from "@tanstack/react-query";
 import { readContract } from "@wagmi/core";
 import { fetchDataFromBucket } from "lib/buckets";
-import { EMPTY_HASH } from "lib/contests";
+import { EMPTY_HASH } from "lib/contests/contracts";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { Abi } from "viem";
 

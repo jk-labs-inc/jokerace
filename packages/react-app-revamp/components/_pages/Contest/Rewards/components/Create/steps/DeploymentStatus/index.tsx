@@ -4,6 +4,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { formatBalance } from "@helpers/formatBalance";
 import { useCreateRewardsStore } from "../../store";
 import { useFundPoolStore } from "../FundPool/store";
+import { useShallow } from "zustand/shallow";
 
 type TransactionKey = "deploy" | "attach" | `fund_${string}` | "setCreatorSplitDestination";
 
@@ -18,10 +19,12 @@ const baseTransactions: Transaction[] = [
 ];
 
 const CreateRewardsDeploymentStatus: React.FC = () => {
-  const { rewardPoolData, addEarningsToRewards } = useCreateRewardsStore(state => ({
-    rewardPoolData: state.rewardPoolData,
-    addEarningsToRewards: state.addEarningsToRewards,
-  }));
+  const { rewardPoolData, addEarningsToRewards } = useCreateRewardsStore(
+    useShallow(state => ({
+      rewardPoolData: state.rewardPoolData,
+      addEarningsToRewards: state.addEarningsToRewards,
+    })),
+  );
   const { tokenWidgets } = useFundPoolStore(state => state);
 
   const tokenTransactions: Transaction[] = tokenWidgets

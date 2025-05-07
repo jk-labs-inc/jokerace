@@ -4,8 +4,10 @@ import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
-import { getFeaturedContests, getRewards } from "lib/contests";
+import { getRewards, streamFeaturedContests } from "lib/contests";
 import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
+import { Contest, ContestReward } from "lib/contests/types";
+import moment from "moment";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { TypeAnimation } from "react-type-animation";
@@ -39,32 +41,70 @@ const wordConfig = {
 
 function useFeaturedContests() {
   const [page] = useState(0);
+  const [contests, setContests] = useState<Contest[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [status, setStatus] = useState<"error" | "pending" | "success">("pending");
 
-  const {
-    status,
-    data: contestData,
-    error,
-    isFetching: isContestDataFetching,
-  } = useQuery({
-    queryKey: ["featuredContests", page],
-    queryFn: () => getFeaturedContests(page, CONTESTS_FEATURE_COUNT),
+  useQuery({
+    queryKey: ["featuredContestsStream", page],
+    queryFn: async () => {
+      setIsLoading(true);
+      setStatus("pending");
+      setContests([]);
+
+      try {
+        const tempContests: Contest[] = [];
+
+        for await (const contest of streamFeaturedContests(page, CONTESTS_FEATURE_COUNT)) {
+          if (contest) {
+            tempContests.push(contest);
+            setContests(prev => [...prev, contest]);
+            setStatus("success");
+          }
+        }
+
+        // Sort once all contests are loaded
+        const now = moment();
+        const sortedContests = tempContests.sort((a, b) => {
+          const aIsHappening = moment(a.created_at).isBefore(now) && moment(a.end_at).isAfter(now);
+          const bIsHappening = moment(b.created_at).isBefore(now) && moment(b.end_at).isAfter(now);
+
+          if (aIsHappening && bIsHappening) {
+            return moment(a.end_at).diff(now) - moment(b.end_at).diff(now);
+          }
+
+          if (aIsHappening) return -1;
+          if (bIsHappening) return 1;
+
+          return moment(a.created_at).diff(now) - moment(b.created_at).diff(now);
+        });
+
+        setContests(sortedContests);
+        setIsLoading(false);
+        return true;
+      } catch (e) {
+        console.error("Error fetching featured contests:", e);
+        setStatus("error");
+        setIsLoading(false);
+        return false;
+      }
+    },
     refetchOnWindowFocus: false,
   });
 
   const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({
-    queryKey: ["rewards", contestData],
-    queryFn: () => getRewards(contestData?.data ?? []),
-    enabled: !!contestData,
+    queryKey: ["rewards", contests],
+    queryFn: () => getRewards(contests),
+    enabled: contests.length > 0,
     refetchOnWindowFocus: false,
   });
 
   return {
     status,
-    contestData,
-    rewardsData,
-    isRewardsFetching,
-    error,
-    isContestDataFetching,
+    contestData: contests,
+    rewardsData: rewardsData,
+    isRewardsFetching: isRewardsFetching,
+    isContestDataFetching: isLoading,
   };
 }
 
