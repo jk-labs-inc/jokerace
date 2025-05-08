@@ -65,7 +65,7 @@ const CreateRewardsDeploymentStatus: React.FC = () => {
 
   const renderTransactionStatus = (transactionKey: TransactionKey) => {
     const state = rewardPoolData[transactionKey];
-    if (state?.loading) return <MotionSpinner size={24} color="#E5E5E5" />;
+    if (state?.loading) return <MotionSpinner size={24} theme="light" />;
     if (state?.success) return <CheckCircleIcon className="text-positive-11 w-6 h-6" />;
     if (state?.error) return <XCircleIcon className="text-negative-11 w-6 h-6" />;
     return null;
