@@ -99,7 +99,7 @@
     "simplebar-react": "3.3.0",
     "tailwind-scrollbar-hide": "2.0.0",
     "tailwindcss": "3.4.17",
-    "tailwindcss-logical": "3.0.1",
+    "tailwindcss-logical": "4.0.0",
     "ts-node": "10.9.2",
     "typescript": "5.8.3",
     "underscore": "1.13.7",
