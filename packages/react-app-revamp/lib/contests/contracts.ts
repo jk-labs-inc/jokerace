@@ -4,7 +4,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { ContestStateEnum } from "@hooks/useContestState/store";
 import { getBalance, readContract, readContracts } from "@wagmi/core";
-import { getTokenAddresses } from "lib/rewards";
+import { getRewardsModuleAbi, getTokenAddresses } from "lib/rewards";
 import { Abi, erc20Abi, formatUnits } from "viem";
 import { ContestReward } from "./types";
 
@@ -157,7 +157,7 @@ export async function processContestRewardsData(
 
     if (rewardsModuleAddress === EMPTY_ADDRESS || rewardsModuleAddress === EMPTY_HASH) return null;
 
-    const abiRewardsModule = await getRewardsModuleContractVersion(rewardsModuleAddress, chain.id);
+    const abiRewardsModule = await getRewardsModuleAbi(contractConfig);
     if (!abiRewardsModule) return null;
 
     const [winners, erc20TokenAddresses] = await Promise.all([

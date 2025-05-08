@@ -1,10 +1,10 @@
 import { toastError } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
-import { readContract, readContracts } from "@wagmi/core";
+import { readContracts } from "@wagmi/core";
+import { getRewardsModuleAbi, getRewardsModuleAddress } from "lib/rewards";
 import { usePathname } from "next/navigation";
 import { Abi } from "viem";
 import { useRewardsStore } from "./store";
@@ -21,13 +21,14 @@ export function useRewardsModule() {
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
   )?.[0]?.id;
 
-  const handleRefetchBalanceRewardsModule = () => {
-    // TODO: Implement refetch balance rewards module
-  };
-
   const fetchRewardsModuleAbi = async (address: string) => {
     try {
-      const abi = await getRewardsModuleContractVersion(address, chainId);
+      const contractConfig = {
+        address: address as `0x${string}`,
+        abi: contestAbi,
+        chainId,
+      };
+      const abi = await getRewardsModuleAbi(contractConfig);
       return abi;
     } catch (e) {
       handleError(e, "Error fetching rewards module ABI");
@@ -44,14 +45,13 @@ export function useRewardsModule() {
         return null;
       }
 
-      const contestRewardModuleAddress = (await readContract(config, {
+      const contestRewardModuleAddress = await getRewardsModuleAddress({
         address: contestAddress as `0x${string}`,
         abi: contestAbi,
         chainId,
-        functionName: "officialRewardsModule",
-      })) as string;
+      });
 
-      if (!contestRewardModuleAddress || contestRewardModuleAddress === "0x0000000000000000000000000000000000000000") {
+      if (!contestRewardModuleAddress) {
         toastError("Invalid rewards module address.");
         return null;
       }
@@ -84,8 +84,8 @@ export function useRewardsModule() {
 
     // Fetch ABI if not available
     if (!rewardsAbiLocal) {
-      //@ts-ignore
       rewardsAbiLocal = await fetchRewardsModuleAbi(rewardsModuleAddressLocal);
+
       if (!rewardsAbiLocal) {
         setIsLoading(false);
         toastError(`This contract doesn't exist on ${contestChainName}.`);

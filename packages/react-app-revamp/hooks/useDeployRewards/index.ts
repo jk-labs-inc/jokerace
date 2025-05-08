@@ -1,8 +1,13 @@
 import { useFundPoolStore } from "@components/_pages/Contest/Rewards/components/Create/steps/FundPool/store";
-import { CreationStep, useCreateRewardsStore } from "@components/_pages/Contest/Rewards/components/Create/store";
+import {
+  CreationStep,
+  RewardPoolType,
+  useCreateRewardsStore,
+} from "@components/_pages/Contest/Rewards/components/Create/store";
 import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
+import VotingModuleContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { getEthersSigner } from "@helpers/ethers";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
@@ -21,8 +26,21 @@ export function useDeployRewardsPool() {
   const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
   const setSupportsRewardsModule = useContestStore(useShallow(state => state.setSupportsRewardsModule));
-  const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards } = useCreateRewardsStore(state => state);
-  const { tokenWidgets, setTokenWidgets } = useFundPoolStore(state => state);
+  const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards, rewardPoolType } = useCreateRewardsStore(
+    useShallow(state => ({
+      rewardPoolData: state.rewardPoolData,
+      setRewardPoolData: state.setRewardPoolData,
+      setStep: state.setStep,
+      addEarningsToRewards: state.addEarningsToRewards,
+      rewardPoolType: state.rewardPoolType,
+    })),
+  );
+  const { tokenWidgets, setTokenWidgets } = useFundPoolStore(
+    useShallow(state => ({
+      tokenWidgets: state.tokenWidgets,
+      setTokenWidgets: state.setTokenWidgets,
+    })),
+  );
   const { setCreatorSplitDestination } = useCreatorSplitDestination();
 
   async function deployRewardsPool() {
@@ -53,19 +71,13 @@ export function useDeployRewardsPool() {
     }));
 
     try {
-      const signer = await getEthersSigner(config, { chainId });
+      const contractFactory = await createContractFactoryInstance();
 
-      const factoryCreateRewardsModule = new ContractFactory(
-        RewardsModuleContract.abi,
-        RewardsModuleContract.bytecode,
-        signer,
-      );
+      const baseParams = [rewardPoolData.rankings, rewardPoolData.shareAllocations, contestAddress];
 
-      const contractRewardsModule = await factoryCreateRewardsModule.deploy(
-        rewardPoolData.rankings,
-        rewardPoolData.shareAllocations,
-        contestAddress,
-        false,
+      const contractRewardsModule = await contractFactory.deploy(
+        ...baseParams,
+        ...(rewardPoolType === RewardPoolType.Winners ? [false] : []),
       );
 
       await contractRewardsModule.waitForDeployment();
@@ -79,6 +91,7 @@ export function useDeployRewardsPool() {
 
       return contractRewardsModuleAddress;
     } catch (e) {
+      console.log("error", e);
       setRewardPoolData(prevData => ({
         ...prevData,
         deploy: { ...prevData.deploy, loading: false, success: false, error: true },
@@ -232,6 +245,14 @@ export function useDeployRewardsPool() {
       }));
       throw e;
     }
+  }
+
+  async function createContractFactoryInstance() {
+    const signer = await getEthersSigner(config, { chainId });
+    const factory = rewardPoolType === RewardPoolType.Voters ? VotingModuleContract : RewardsModuleContract;
+    const contractFactory = new ContractFactory(factory.abi, factory.bytecode, signer);
+
+    return contractFactory;
   }
 
   return { deployRewardsPool, deployRewardsModule, attachRewardsModule, fundPoolTokens };

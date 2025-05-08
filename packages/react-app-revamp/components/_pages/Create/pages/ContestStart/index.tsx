@@ -1,5 +1,6 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import GradientText from "@components/UI/GradientText";
+import { toastLoading } from "@components/UI/Toast";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 import { create } from "zustand";
@@ -37,6 +38,7 @@ const CreateContestStart: FC<CreateContestStartProps> = ({ onCreateContest, onCr
 
   return (
     <div className="flex flex-col gap-10 lg:ml-[300px] mt-6 md:mt-24 animate-reveal">
+      <button onClick={() => toastLoading("test loading")}>test load</button>
       <div className="flex flex-col gap-2">
         <GradientText textSizeClassName="text-[24px] font-bold" isFontSabo={false}>
           {stepTitle}

@@ -10,10 +10,15 @@ interface ActionState {
 }
 
 export enum CreationStep {
-  FundPool,
+  InitialStep,
   CreatePool,
   Review,
   DeploymentStatus,
+}
+
+export enum RewardPoolType {
+  Winners = "winners",
+  Voters = "voters",
 }
 
 export interface Recipient {
@@ -43,10 +48,12 @@ export interface RewardPoolData {
 interface CreateRewardsState {
   currentStep: CreationStep;
   rewardPoolData: RewardPoolData;
+  rewardPoolType: RewardPoolType;
   addFundsToRewards?: boolean;
   addEarningsToRewards?: boolean;
   setStep: (step: CreationStep) => void;
   setRewardPoolData: (data: ReactStyleStateSetter<RewardPoolData>) => void;
+  setRewardPoolType: (type: RewardPoolType) => void;
   setAddFundsToRewards?: (addFundsToRewards: boolean) => void;
   setAddEarningsToRewards?: (addEarningsToRewards: boolean) => void;
 }
@@ -60,7 +67,8 @@ const DEFAULT_RECIPIENTS: Recipient[] = [
 ];
 
 export const useCreateRewardsStore = create<CreateRewardsState>(set => ({
-  currentStep: CreationStep.FundPool,
+  currentStep: CreationStep.InitialStep,
+  rewardPoolType: RewardPoolType.Voters,
   rewardPoolData: {
     rankings: DEFAULT_RECIPIENTS.map(r => r.place),
     shareAllocations: DEFAULT_RECIPIENTS.map(r => r.proportion ?? 0),
@@ -90,5 +98,6 @@ export const useCreateRewardsStore = create<CreateRewardsState>(set => ({
     set(state => ({
       rewardPoolData: typeof data === "function" ? data(state.rewardPoolData) : data,
     })),
+  setRewardPoolType: type => set({ rewardPoolType: type }),
   setStep: step => set({ currentStep: step }),
 }));

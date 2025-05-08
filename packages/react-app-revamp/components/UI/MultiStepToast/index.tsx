@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC, RefObject, useEffect, useState } from "react";
-import { FadeLoader } from "react-spinners";
 import { toast } from "react-toastify";
+import MotionSpinner from "../MotionSpinner";
 
 export type ToastMessage = {
   message: string;
@@ -67,7 +67,7 @@ const MultiStepToast: FC<MultiStepToastProps> = ({ messages, promises, toastIdRe
 
   return (
     <div className="flex gap-2 pl-4 items-center">
-      {loading ? <FadeLoader /> : null}
+      {loading ? <MotionSpinner theme="dark" /> : null}
       <div className="flex flex-col">
         {messages.map((message, index) => (
           <div
