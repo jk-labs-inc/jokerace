@@ -34,7 +34,7 @@
     "@types/gtag.js": "0.0.20",
     "@types/lodash": "4.17.16",
     "@types/node": "22.15.12",
-    "@types/papaparse": "5.3.15",
+    "@types/papaparse": "5.3.16",
     "@types/react": "19.1.2",
     "@types/react-csv": "1.1.10",
     "@types/react-dom": "19.1.3",
