@@ -208,6 +208,10 @@ li {
   background-color: black !important;
 }
 
+.earnings-tooltip {
+  background-color: #6a6a6a !important;
+}
+
 .my-masonry-grid {
   display: -webkit-box;
   display: -ms-flexbox;

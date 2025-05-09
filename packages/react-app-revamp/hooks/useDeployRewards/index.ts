@@ -1,8 +1,13 @@
 import { useFundPoolStore } from "@components/_pages/Contest/Rewards/components/Create/steps/FundPool/store";
-import { CreationStep, useCreateRewardsStore } from "@components/_pages/Contest/Rewards/components/Create/store";
+import {
+  CreationStep,
+  RewardPoolType,
+  useCreateRewardsStore,
+} from "@components/_pages/Contest/Rewards/components/Create/store";
 import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
+import VotingModuleContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { getEthersSigner } from "@helpers/ethers";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
@@ -11,6 +16,7 @@ import { SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { estimateGas, sendTransaction, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { ContractFactory } from "ethers";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
+import { insertContestWithVotingRewards } from "lib/rewards";
 import { usePathname } from "next/navigation";
 import { didUserReject } from "utils/error";
 import { erc20Abi, parseUnits } from "viem";
@@ -21,8 +27,21 @@ export function useDeployRewardsPool() {
   const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
   const setSupportsRewardsModule = useContestStore(useShallow(state => state.setSupportsRewardsModule));
-  const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards } = useCreateRewardsStore(state => state);
-  const { tokenWidgets, setTokenWidgets } = useFundPoolStore(state => state);
+  const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards, rewardPoolType } = useCreateRewardsStore(
+    useShallow(state => ({
+      rewardPoolData: state.rewardPoolData,
+      setRewardPoolData: state.setRewardPoolData,
+      setStep: state.setStep,
+      addEarningsToRewards: state.addEarningsToRewards,
+      rewardPoolType: state.rewardPoolType,
+    })),
+  );
+  const { tokenWidgets, setTokenWidgets } = useFundPoolStore(
+    useShallow(state => ({
+      tokenWidgets: state.tokenWidgets,
+      setTokenWidgets: state.setTokenWidgets,
+    })),
+  );
   const { setCreatorSplitDestination } = useCreatorSplitDestination();
 
   async function deployRewardsPool() {
@@ -35,6 +54,14 @@ export function useDeployRewardsPool() {
 
       if (addEarningsToRewards) {
         await setCreatorSplitDestinationToRewardsPool(contractRewardsModuleAddress);
+      }
+
+      if (rewardPoolType === RewardPoolType.Voters) {
+        try {
+          await insertContestWithVotingRewards(contestAddress, chainName);
+        } catch (error) {
+          console.error("Failed to insert contest with voting rewards:", error);
+        }
       }
 
       setSupportsRewardsModule(true);
@@ -53,19 +80,13 @@ export function useDeployRewardsPool() {
     }));
 
     try {
-      const signer = await getEthersSigner(config, { chainId });
+      const contractFactory = await createContractFactoryInstance();
 
-      const factoryCreateRewardsModule = new ContractFactory(
-        RewardsModuleContract.abi,
-        RewardsModuleContract.bytecode,
-        signer,
-      );
+      const baseParams = [rewardPoolData.rankings, rewardPoolData.shareAllocations, contestAddress];
 
-      const contractRewardsModule = await factoryCreateRewardsModule.deploy(
-        rewardPoolData.rankings,
-        rewardPoolData.shareAllocations,
-        contestAddress,
-        false,
+      const contractRewardsModule = await contractFactory.deploy(
+        ...baseParams,
+        ...(rewardPoolType === RewardPoolType.Winners ? [false] : []),
       );
 
       await contractRewardsModule.waitForDeployment();
@@ -232,6 +253,14 @@ export function useDeployRewardsPool() {
       }));
       throw e;
     }
+  }
+
+  async function createContractFactoryInstance() {
+    const signer = await getEthersSigner(config, { chainId });
+    const factory = rewardPoolType === RewardPoolType.Voters ? VotingModuleContract : RewardsModuleContract;
+    const contractFactory = new ContractFactory(factory.abi, factory.bytecode, signer);
+
+    return contractFactory;
   }
 
   return { deployRewardsPool, deployRewardsModule, attachRewardsModule, fundPoolTokens };
