@@ -330,7 +330,7 @@ export function useContest() {
     setSupportsRewardsModule(true);
     setRewardsModuleAddress(moduleAddress);
 
-    const abi = await getRewardsModuleAbi(contractConfig);
+    const abi = await getRewardsModuleAbi(moduleAddress, contractConfig.chainId);
     if (abi) setRewardsAbi(abi);
 
     return moduleAddress;

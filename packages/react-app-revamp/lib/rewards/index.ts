@@ -56,22 +56,62 @@ export const getTokenAddresses = async (rewardsModuleAddress: string, networkNam
   return [];
 };
 
-export async function getRewardsModuleAbi(contractConfig: ContractConfig): Promise<Abi | null> {
-  const moduleAddress = await getRewardsModuleAddress(contractConfig);
-  if (!moduleAddress) return null;
+/**
+ * Inserts a contest with voting rewards into the database.
+ * @param contestAddress contest address
+ * @param chainName chain name
+ * @returns true if the contest was inserted successfully, false otherwise
+ */
+export const insertContestWithVotingRewards = async (contestAddress: string, chainName: string): Promise<boolean> => {
+  if (isSupabaseConfigured) {
+    try {
+      const config = await import("@config/supabase");
+      const supabase = config.supabase;
 
-  const { abi, version } = await getRewardsModuleVersionInfo(moduleAddress, contractConfig.chainId);
-  if (!abi) return null;
+      const { error } = await supabase
+        .from("contests_with_voting_rewards")
+        .insert({ chain: chainName.toLowerCase(), address: contestAddress });
 
-  if (compareVersions(version, VOTER_REWARDS_VERSION) < 0) {
-    return abi as Abi;
+      if (error) {
+        console.error("Error inserting contest with voting rewards:", error.message);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Failed to insert contest with voting rewards:", error);
+      return false;
+    }
   }
 
-  const moduleType = await getModuleType(moduleAddress, abi as Abi, contractConfig.chainId);
+  return false;
+};
 
-  return moduleType === ModuleType.VOTER_REWARDS
-    ? ((await getVoterRewardsModuleContractVersion(moduleAddress, contractConfig.chainId)) as Abi)
-    : (abi as Abi);
+export async function getRewardsModuleAbi(rewardsModuleAddress: string, chainId: number): Promise<Abi | null> {
+  try {
+    try {
+      const { abi, version } = await getRewardsModuleVersionInfo(rewardsModuleAddress, chainId);
+
+      if (!abi) return null;
+      if (compareVersions(version, VOTER_REWARDS_VERSION) < 0) {
+        return abi as Abi;
+      }
+
+      const moduleType = await getModuleType(rewardsModuleAddress, abi as Abi, chainId);
+
+      if (moduleType === ModuleType.VOTER_REWARDS) {
+        return (await getVoterRewardsModuleContractVersion(rewardsModuleAddress, chainId)) as Abi;
+      } else {
+        return abi as Abi;
+      }
+    } catch (error) {
+      console.error("Error getting module info:", error);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error in getRewardsModuleAbi:", error);
+    return null;
+  }
 }
 
 export async function getRewardsModuleVersionInfo(address: string, chainId: number) {
@@ -80,6 +120,7 @@ export async function getRewardsModuleVersionInfo(address: string, chainId: numb
 
 export async function getRewardsModuleAddress(contractConfig: ContractConfig): Promise<string | null> {
   const hasRewardsModule = contractConfig.abi?.some((el: { name: string }) => el.name === "officialRewardsModule");
+
   if (!hasRewardsModule) return null;
 
   const address = (await readContract(config, {

@@ -157,7 +157,7 @@ export async function processContestRewardsData(
 
     if (rewardsModuleAddress === EMPTY_ADDRESS || rewardsModuleAddress === EMPTY_HASH) return null;
 
-    const abiRewardsModule = await getRewardsModuleAbi(contractConfig);
+    const abiRewardsModule = await getRewardsModuleAbi(rewardsModuleAddress, chain.id);
     if (!abiRewardsModule) return null;
 
     const [winners, erc20TokenAddresses] = await Promise.all([

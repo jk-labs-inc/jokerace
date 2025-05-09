@@ -21,14 +21,9 @@ export function useRewardsModule() {
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
   )?.[0]?.id;
 
-  const fetchRewardsModuleAbi = async (address: string) => {
+  const fetchRewardsModuleAbi = async (rewardsModuleAddress: string) => {
     try {
-      const contractConfig = {
-        address: address as `0x${string}`,
-        abi: contestAbi,
-        chainId,
-      };
-      const abi = await getRewardsModuleAbi(contractConfig);
+      const abi = await getRewardsModuleAbi(rewardsModuleAddress, chainId);
       return abi;
     } catch (e) {
       handleError(e, "Error fetching rewards module ABI");
