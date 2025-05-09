@@ -2996,6 +2996,7 @@ contract RewardsModule {
     error AccountNotDueNativePayment();
     error CannotPayOutToZeroAddress();
     error AccountNotDueERC20Payment();
+    error OnlyCreatorCanCancel();
     error OnlyCreatorCanWithdraw();
     error RankingCannotBeZero();
     error SharesCannotBeZero();
@@ -3134,6 +3135,7 @@ contract RewardsModule {
      * @dev Cancels the rewards module.
      */
     function cancel() public {
+        if (msg.sender != creator) revert OnlyCreatorCanCancel();
         canceled = true;
     }
 

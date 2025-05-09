@@ -62,6 +62,7 @@ contract VoterRewardsModule {
     error AccountNotDueNativePayment();
     error CannotPayOutToZeroAddress();
     error AccountNotDueERC20Payment();
+    error OnlyCreatorCanCancel();
     error OnlyCreatorCanWithdraw();
     error RankingCannotBeZero();
     error SharesCannotBeZero();
@@ -196,6 +197,7 @@ contract VoterRewardsModule {
      * @dev Cancels the rewards module.
      */
     function cancel() public {
+        if (msg.sender != creator) revert OnlyCreatorCanCancel();
         canceled = true;
     }
 
