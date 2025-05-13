@@ -3119,6 +3119,7 @@ contract RewardsModule {
     error AccountNotDueNativePayment();
     error CannotPayOutToZeroAddress();
     error AccountNotDueERC20Payment();
+    error OnlyCreatorCanCancel();
     error OnlyCreatorCanWithdraw();
     error RankingCannotBeZero();
     error SharesCannotBeZero();
@@ -3235,9 +3236,29 @@ contract RewardsModule {
     }
 
     /**
+     * @dev Return the proposalId for a given ranking, 0 if tied.
+     */
+    function getProposalIdOfRanking(uint256 ranking) public view returns (uint256) {
+        uint256 proposalIdOfRanking;
+        uint256 determinedRankingIdxInSortedRanks = underlyingContest.getRankIndex(ranking);
+
+        // if the ranking that we land on is tied or it's below a tied ranking, return 0
+        if (underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
+            proposalIdOfRanking = 0;
+        } else {
+            // otherwise, determine proposalId at ranking
+            uint256 rankValue = underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
+            proposalIdOfRanking = underlyingContest.getOnlyProposalIdWithThisManyVotes(rankValue); // if no ties there should only be one
+        }
+
+        return proposalIdOfRanking;
+    }
+
+    /**
      * @dev Cancels the rewards module.
      */
     function cancel() public {
+        if (msg.sender != creator) revert OnlyCreatorCanCancel();
         canceled = true;
     }
 
