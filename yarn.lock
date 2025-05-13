@@ -2469,10 +2469,10 @@
   resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-4.20240815.0.tgz#d808f35c6d4ffc15d64e94aee370dd7549a7167d"
   integrity sha512-H/IXCOahT1lr4RKzsiCkyjM7+LCPLtl2wjxyLG8xMTNERR0XuD1Vcfns6TraE0cd5+IcKe7j3rpzBlSCjZ+61A==
 
-"@clustersxyz/sdk@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@clustersxyz/sdk/-/sdk-1.0.1.tgz#6b3f60347876dea922bc2b0077678997c862b19d"
-  integrity sha512-1AjzURTcm/fX9WoYdnLONp8Q/RSmWK/o3GpcQSxLAxNPX6xTwC5IROloIZtcts5DoKIHebTV6vrl5VjIeZU9hw==
+"@clustersxyz/sdk@1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@clustersxyz/sdk/-/sdk-1.0.2.tgz#1f1627d6b82296c840c7def470b72407ea24b16f"
+  integrity sha512-904y6v55DMwtrnRIGCvjc/YfvYIYyo6kCGubH0jTXsbjWfNAgRjG9IDOFz0M7nSyFW1AKUqSnIWEyRFLREhnaQ==
   dependencies:
     viem "^2.23.15"
 
