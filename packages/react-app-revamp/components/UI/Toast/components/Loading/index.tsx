@@ -26,7 +26,7 @@ const LoadingToast: FC<LoadingToastProps> = ({ message, additionalMessageType = 
 
   return (
     <div className="flex gap-4 items-center pl-4">
-      <MotionSpinner theme="dark" />
+      <MotionSpinner theme="dark" size={32} />
       <div className="flex flex-col">
         <p className="font-bold text-[14px]">{message}</p>
         {additionalMessageType !== LoadingToastMessageType.NONE && (

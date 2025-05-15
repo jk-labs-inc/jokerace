@@ -1,5 +1,6 @@
 import { VotingRequirementsSchema } from "@hooks/useContestsIndexV3";
 import { Charge } from "@hooks/useDeployContest/types";
+import { ModuleType } from "lib/rewards";
 import { createContext, useContext, useRef } from "react";
 import { Abi } from "viem";
 import { createStore, useStore } from "zustand";
@@ -38,6 +39,7 @@ export interface ContestState {
   rewardsModuleAddress: string;
   rewardsAbi: Abi | null;
   canEditTitleAndDescription: boolean;
+  rewardsModuleType: ModuleType | null;
   setSupportsRewardsModule: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
   setSortingEnabled: (isAllowed: boolean) => void;
@@ -63,6 +65,7 @@ export interface ContestState {
   setVersion: (version: string) => void;
   setRewardsModuleAddress: (address: string) => void;
   setRewardsAbi: (abi: Abi | null) => void;
+  setRewardsModuleType: (moduleType: ModuleType | null) => void;
   setCanEditTitleAndDescription: (value: boolean) => void;
 }
 
@@ -95,6 +98,7 @@ export const createContestStore = () =>
     rewardsModuleAddress: "",
     rewardsAbi: null,
     canEditTitleAndDescription: false,
+    rewardsModuleType: null,
     setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
     setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
     setSortingEnabled: isAllowed => set({ sortingEnabled: isAllowed }),
@@ -121,6 +125,7 @@ export const createContestStore = () =>
     setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
     setRewardsAbi: abi => set({ rewardsAbi: abi }),
     setCanEditTitleAndDescription: value => set({ canEditTitleAndDescription: value }),
+    setRewardsModuleType: moduleType => set({ rewardsModuleType: moduleType }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);

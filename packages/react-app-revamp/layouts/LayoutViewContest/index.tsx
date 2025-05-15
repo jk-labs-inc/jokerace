@@ -17,21 +17,20 @@ import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { populateBugReportLink } from "@helpers/githubIssue";
-import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
 import { ContractConfig, useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { useContestStatusStore } from "@hooks/useContestStatus/store";
+import { useContestStatusTimer } from "@hooks/useContestStatusTimer";
 import useUser from "@hooks/useUser";
-import moment from "moment";
 import { usePathname } from "next/navigation";
 import { useUrl } from "nextjs-current-url";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
-import LayoutViewContestError from "./components/Error";
 import { useShallow } from "zustand/shallow";
+import LayoutViewContestError from "./components/Error";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -62,6 +61,12 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { contestImageUrl } = parsePrompt(contestPrompt || "");
   const bugReportLink = populateBugReportLink(url?.href ?? "", accountAddress ?? "", error ?? "");
+  const contestStatus = useContestStatusTimer({
+    submissionsOpen,
+    votesOpen,
+    votesClose,
+    isLoading,
+  });
 
   useAccountEffect({
     onConnect(data) {
@@ -72,42 +77,8 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   });
 
   useEffect(() => {
-    if (isLoading) return;
-
-    const now = moment();
-    const formattedSubmissionOpen = moment(submissionsOpen);
-    const formattedVotingOpen = moment(votesOpen);
-    const formattedVotingClose = moment(votesClose);
-
-    let timeoutId: NodeJS.Timeout;
-
-    const setAndScheduleStatus = (status: ContestStatus, nextStatus: ContestStatus, nextTime: moment.Moment) => {
-      setContestStatus(status);
-      if (now.isBefore(nextTime)) {
-        const msUntilNext = nextTime.diff(now);
-        timeoutId = setTimeout(
-          () => {
-            setContestStatus(nextStatus);
-          },
-          msUntilNext > MAX_MS_TIMEOUT ? MAX_MS_TIMEOUT : msUntilNext,
-        );
-      }
-    };
-
-    if (now.isBefore(formattedSubmissionOpen)) {
-      setAndScheduleStatus(ContestStatus.ContestOpen, ContestStatus.SubmissionOpen, formattedSubmissionOpen);
-    } else if (now.isBefore(formattedVotingOpen)) {
-      setAndScheduleStatus(ContestStatus.SubmissionOpen, ContestStatus.VotingOpen, formattedVotingOpen);
-    } else if (now.isBefore(formattedVotingClose)) {
-      setAndScheduleStatus(ContestStatus.VotingOpen, ContestStatus.VotingClosed, formattedVotingClose);
-    } else {
-      setContestStatus(ContestStatus.VotingClosed);
-    }
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [submissionsOpen, votesOpen, votesClose, setContestStatus, isLoading]);
+    setContestStatus(contestStatus);
+  }, [contestStatus, setContestStatus]);
 
   useEffect(() => {
     if (isLoading || !isSuccess) return;

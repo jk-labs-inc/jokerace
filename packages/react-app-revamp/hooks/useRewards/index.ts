@@ -4,9 +4,9 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { readContracts } from "@wagmi/core";
-import { getRewardsModuleAbi, getRewardsModuleAddress } from "lib/rewards";
 import { usePathname } from "next/navigation";
 import { Abi } from "viem";
+import { getRewardsModuleAddress, getRewardsModuleInfo } from "lib/rewards/contracts";
 import { useRewardsStore } from "./store";
 
 export function useRewardsModule() {
@@ -23,7 +23,7 @@ export function useRewardsModule() {
 
   const fetchRewardsModuleAbi = async (rewardsModuleAddress: string) => {
     try {
-      const abi = await getRewardsModuleAbi(rewardsModuleAddress, chainId);
+      const { abi } = await getRewardsModuleInfo(rewardsModuleAddress, chainId);
       return abi;
     } catch (e) {
       handleError(e, "Error fetching rewards module ABI");

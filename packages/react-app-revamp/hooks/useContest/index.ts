@@ -13,7 +13,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { checkIfContestExists } from "lib/contests";
-import { getRewardsModuleAbi, getRewardsModuleAddress } from "lib/rewards";
+import { getRewardsModuleAddress, getRewardsModuleInfo } from "lib/rewards/contracts";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
@@ -69,6 +69,7 @@ export function useContest() {
     setVersion,
     setRewardsModuleAddress,
     setRewardsAbi,
+    setRewardsModuleType,
     setCanEditTitleAndDescription,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
@@ -79,9 +80,6 @@ export function useContest() {
   const { fetchProposalsIdsList } = useProposal();
   const { setContestState } = useContestStateStore(state => state);
   const { error: errorMessage, handleError } = useError();
-  const alchemyRpc = chains
-    .filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
-    ?.rpcUrls.default.http[0].includes("alchemy");
 
   // Generate config for the contract
   async function getContractConfig(): Promise<ContractConfigResult | undefined> {
@@ -330,8 +328,9 @@ export function useContest() {
     setSupportsRewardsModule(true);
     setRewardsModuleAddress(moduleAddress);
 
-    const abi = await getRewardsModuleAbi(moduleAddress, contractConfig.chainId);
+    const { abi, moduleType } = await getRewardsModuleInfo(moduleAddress, contractConfig.chainId);
     if (abi) setRewardsAbi(abi);
+    if (moduleType) setRewardsModuleType(moduleType);
 
     return moduleAddress;
   }
