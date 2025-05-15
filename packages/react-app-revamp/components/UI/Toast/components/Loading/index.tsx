@@ -1,5 +1,5 @@
+import MotionSpinner from "@components/UI/MotionSpinner";
 import { FC } from "react";
-import { FadeLoader } from "react-spinners";
 
 export enum LoadingToastMessageType {
   WALLET_SIGNATURE = "walletSignature",
@@ -18,7 +18,7 @@ const LoadingToast: FC<LoadingToastProps> = ({ message, additionalMessageType = 
       case LoadingToastMessageType.WALLET_SIGNATURE:
         return "check wallet to sign all transactions";
       case LoadingToastMessageType.KEEP_BROWSER_OPEN:
-        return "please don’t close browser until confirmation appears";
+        return "please don't close browser until confirmation appears";
       default:
         return null;
     }
@@ -26,7 +26,7 @@ const LoadingToast: FC<LoadingToastProps> = ({ message, additionalMessageType = 
 
   return (
     <div className="flex gap-4 items-center pl-4">
-      <FadeLoader />
+      <MotionSpinner theme="dark" size={32} />
       <div className="flex flex-col">
         <p className="font-bold text-[14px]">{message}</p>
         {additionalMessageType !== LoadingToastMessageType.NONE && (
