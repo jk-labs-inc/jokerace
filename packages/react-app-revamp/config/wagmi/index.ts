@@ -49,6 +49,7 @@ import { soneium } from "./custom-chains/soneium";
 import { story } from "./custom-chains/story";
 import { swell } from "./custom-chains/swell";
 import { unichain } from "./custom-chains/unichain";
+import { zksyncEra } from "./custom-chains/zksyncEra";
 import { zora } from "./custom-chains/zora";
 import { isParaWalletConfigured, paraWallet } from "./para";
 import createTransports from "./transports";
@@ -85,6 +86,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   unichain,
   swell,
   manta,
+  zksyncEra,
   sepolia,
   baseTestnet,
   mainnet,
