@@ -69,7 +69,7 @@
     "nextjs-current-url": "1.0.3",
     "nextjs-toploader": "3.8.16",
     "node-html-parser": "7.0.1",
-    "papaparse": "5.5.2",
+    "papaparse": "5.5.3",
     "postcss": "8.5.3",
     "postcss-100vh-fix": "2.0.0",
     "rc-slider": "11.1.8",
