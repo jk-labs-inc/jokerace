@@ -70,7 +70,6 @@ const Tabs: FC<TabsProps> = ({ tabs, activeTab, onChange, optionalInfo }) => {
               initial={false}
               animate={{
                 color: tab === currentTab ? activeColor : inactiveColor,
-                opacity: tab === currentTab ? 1 : 0.8,
                 fontWeight: tab === currentTab ? 600 : 400,
               }}
               transition={{
