@@ -1,21 +1,20 @@
-import { toastError } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { readContracts } from "@wagmi/core";
+import { getRewardsModuleAddress, getRewardsModuleInfo } from "lib/rewards/contracts";
+import { ModuleType } from "lib/rewards/types";
 import { usePathname } from "next/navigation";
 import { Abi } from "viem";
-import { getRewardsModuleAddress, getRewardsModuleInfo } from "lib/rewards/contracts";
 import { useRewardsStore } from "./store";
-import { ModuleType } from "lib/rewards/types";
 
 export function useRewardsModule() {
   const asPath = usePathname();
   const { contestAbi } = useContestStore(state => state);
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { setRewards, setIsLoading, setIsError, setIsSuccess } = useRewardsStore(state => state);
-  const { error, handleError } = useError();
+  const { handleError } = useError();
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
   )?.[0]?.id;
@@ -43,7 +42,6 @@ export function useRewardsModule() {
       if (!contestAbi) {
         setIsLoading(false);
         setIsSuccess(false);
-        toastError(`This contract doesn't exist on ${contestChainName}.`);
         return null;
       }
 
@@ -54,7 +52,6 @@ export function useRewardsModule() {
       });
 
       if (!contestRewardModuleAddress) {
-        toastError("Invalid rewards module address.");
         return null;
       }
 
@@ -73,7 +70,6 @@ export function useRewardsModule() {
     const rewardsModuleAddress = await fetchRewardsModuleAddress();
     if (!rewardsModuleAddress) {
       setIsLoading(false);
-      toastError(`Rewards module address not found on ${contestChainName}.`);
       setIsError(true);
       return;
     }
@@ -81,7 +77,6 @@ export function useRewardsModule() {
     const { abi, moduleType } = await fetchRewardsModuleAbi(rewardsModuleAddress);
     if (!abi) {
       setIsLoading(false);
-      toastError(`This contract doesn't exist on ${contestChainName}.`);
       setIsError(true);
       return;
     }

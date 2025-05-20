@@ -22,7 +22,6 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
 
   const { getContestRewardsModule } = useRewardsModule();
   const { rewards, isLoading, isSuccess, isError } = useRewardsStore(state => state);
-
   const { isCanceled } = useCancelRewards({
     rewardsAddress: rewards.contractAddress as `0x${string}`,
     abi: rewards.abi as Abi,
