@@ -2,6 +2,7 @@ import Loader from "@components/UI/Loader";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { useCancelRewards } from "@hooks/useCancelRewards";
 import { useContestStore } from "@hooks/useContest/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
@@ -12,10 +13,9 @@ import { Abi } from "viem";
 import { useAccount, useAccountEffect } from "wagmi";
 import CreateRewardsModule from "./components/CreateRewardsModule";
 import NoRewardsInfo from "./components/NoRewards";
+import RewardsCanceled from "./modules/shared/RewardsCanceled";
 import VotersRewardsPage from "./modules/Voters";
 import WinnersRewardsPage from "./modules/Winners";
-import { useCancelRewards } from "@hooks/useCancelRewards";
-import RewardsCanceled from "./modules/shared/RewardsCanceled";
 
 const ContestRewards = () => {
   const asPath = usePathname();
@@ -31,10 +31,7 @@ const ContestRewards = () => {
     contestAuthorEthereumAddress,
     sortingEnabled,
     contestMaxProposalCount,
-    rewardsModuleAddress,
-    rewardsAbi,
     contestAbi,
-    rewardsModuleType,
     version,
     downvotingAllowed,
   } = useContestStore(state => state);
@@ -47,8 +44,8 @@ const ContestRewards = () => {
     isLoading: isRewardsCanceledLoading,
     isError: isRewardsCanceledError,
   } = useCancelRewards({
-    rewardsAddress: rewardsModuleAddress as `0x${string}`,
-    abi: rewardsAbi as Abi,
+    rewardsAddress: rewardsStore.rewards.contractAddress as `0x${string}`,
+    abi: rewardsStore.rewards.abi as Abi,
     chainId,
     version,
   });
@@ -62,9 +59,9 @@ const ContestRewards = () => {
   });
 
   useEffect(() => {
-    if (rewardsStore?.isSuccess) return;
+    if (rewardsStore.isSuccess) return;
     if (supportsRewardsModule) getContestRewardsModule();
-  }, [rewardsStore?.isSuccess, supportsRewardsModule]);
+  }, [supportsRewardsModule, rewardsStore.isSuccess]);
 
   if (!supportsRewardsModule && !creator) {
     return <NoRewardsInfo />;
@@ -90,8 +87,8 @@ const ContestRewards = () => {
     return (
       <RewardsCanceled
         isCreatorView={creator}
-        rewardsModuleAddress={rewardsModuleAddress as `0x${string}`}
-        rewardsAbi={rewardsAbi as Abi}
+        rewardsModuleAddress={rewardsStore.rewards.contractAddress as `0x${string}`}
+        rewardsAbi={rewardsStore.rewards.abi as Abi}
         rankings={rewardsStore.rewards.payees}
         chainId={chainId}
       />
@@ -104,21 +101,21 @@ const ContestRewards = () => {
         <>
           {rewardsStore.isLoading || (isRewardsCanceledLoading && <Loader>Loading rewards</Loader>)}
           {rewardsStore.isSuccess &&
-            (rewardsModuleType === ModuleType.VOTER_REWARDS ? (
+            (rewardsStore.rewards.moduleType === ModuleType.VOTER_REWARDS ? (
               <VotersRewardsPage
-                rewardsModuleAbi={rewardsAbi as Abi}
+                rewardsModuleAbi={rewardsStore.rewards.abi as Abi}
                 contestAddress={contestAddress as `0x${string}`}
                 chainId={chainId}
-                contestRewardsModuleAddress={rewardsModuleAddress as `0x${string}`}
+                contestRewardsModuleAddress={rewardsStore.rewards.contractAddress as `0x${string}`}
                 version={version}
               />
-            ) : rewardsModuleType === ModuleType.AUTHOR_REWARDS ? (
+            ) : rewardsStore.rewards.moduleType === ModuleType.AUTHOR_REWARDS ? (
               <WinnersRewardsPage
                 contestAddress={contestAddress as `0x${string}`}
                 chainId={chainId}
-                contestRewardsModuleAddress={rewardsModuleAddress as `0x${string}`}
+                contestRewardsModuleAddress={rewardsStore.rewards.contractAddress as `0x${string}`}
                 contestAbi={contestAbi as Abi}
-                rewardsModuleAbi={rewardsAbi as Abi}
+                rewardsModuleAbi={rewardsStore.rewards.abi as Abi}
                 version={version}
               />
             ) : null)}

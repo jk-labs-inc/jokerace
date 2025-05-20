@@ -120,7 +120,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
             <ContestRewards />
           </div>
         );
-      case Tab.Parameters:
+      case Tab.Rules:
         return (
           <div className="mt-12">
             <ContestParameters />

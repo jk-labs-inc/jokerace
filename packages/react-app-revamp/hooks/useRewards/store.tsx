@@ -1,9 +1,11 @@
+import { ModuleType } from "lib/rewards/types";
 import { createContext, useContext, useRef } from "react";
 import { Abi } from "viem";
 import { createStore, useStore } from "zustand";
 
 export interface RewardModuleInfo {
   abi: Abi;
+  moduleType: ModuleType;
   contractAddress: string;
   creator: string;
   payees: number[];
@@ -11,22 +13,15 @@ export interface RewardModuleInfo {
   blockExplorers?: string;
 }
 
-enum RewardsType {
-  VOTER_REWARDS = "voters",
-  AUTHOR_REWARDS = "winners",
-}
-
 interface RewardsState {
   isLoading: boolean;
   isSuccess: boolean;
   error: string;
   rewards: RewardModuleInfo;
-  rewardsType: RewardsType;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (value: boolean) => void;
   setError: (value: string) => void;
   setRewards: (rewards: RewardModuleInfo) => void;
-  setRewardsType: (rewardsType: RewardsType) => void;
 }
 
 export const createRewardsStore = () =>
@@ -41,13 +36,12 @@ export const createRewardsStore = () =>
       payees: [],
       totalShares: 0,
       blockExplorers: "",
+      moduleType: ModuleType.VOTER_REWARDS,
     },
-    rewardsType: RewardsType.VOTER_REWARDS,
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),
     setRewards: rewards => set({ rewards }),
-    setRewardsType: rewardsType => set({ rewardsType }),
   }));
 
 export const RewardsContext = createContext<ReturnType<typeof createRewardsStore> | null>(null);

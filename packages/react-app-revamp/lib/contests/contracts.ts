@@ -209,7 +209,6 @@ export async function processContestRewardsData(
         chain: contestChainName,
         token: {
           symbol: chain.nativeCurrency.symbol,
-          //TODO: fix output
           value: formatBalance(formatUnits(nativeReleasable, chain.nativeCurrency.decimals).toString()),
         },
         winners: winners.length,
@@ -242,7 +241,6 @@ export async function processContestRewardsData(
           chain: contestChainName,
           token: {
             symbol: tokenDetails.symbol ?? "",
-            //TODO: fix output
             value: formatBalance(formatUnits(erc20Releasable, tokenDetails.decimals).toString()),
           },
           winners: winners.length,

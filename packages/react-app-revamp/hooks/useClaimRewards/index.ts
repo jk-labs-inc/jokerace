@@ -9,32 +9,7 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { ModuleType } from "lib/rewards/types";
 import { usePathname } from "next/navigation";
 import { Abi } from "viem";
-import { create } from "zustand";
-
-type LoadingState = Record<number, boolean>;
-type SuccessState = Record<number, boolean>;
-
-type Store = {
-  loadingStates: LoadingState;
-  successStates: SuccessState;
-  setLoading: (payee: number, isLoading: boolean) => void;
-  setSuccess: (payee: number, isSuccess: boolean) => void;
-  resetStates: () => void;
-};
-
-export const useClaimRewardsStore = create<Store>(set => ({
-  loadingStates: {},
-  successStates: {},
-  setLoading: (payee, isLoading) =>
-    set(state => ({
-      loadingStates: { ...state.loadingStates, [payee]: isLoading },
-    })),
-  setSuccess: (payee, isSuccess) =>
-    set(state => ({
-      successStates: { ...state.successStates, [payee]: isSuccess },
-    })),
-  resetStates: () => set({ loadingStates: {}, successStates: {} }),
-}));
+import { useClaimRewardsStore } from "./store";
 
 interface UseClaimRewardsProps {
   contractRewardsModuleAddress: `0x${string}`;
@@ -64,12 +39,10 @@ export const useClaimRewards = ({
     tokenAddress: string,
     voterAddress?: `0x${string}`,
   ) => {
-    setLoading(payee, true);
-    setSuccess(payee, false);
+    setLoading(payee, tokenAddress, true);
+    setSuccess(payee, tokenAddress, false);
     toastLoading(`Claiming rewards...`, LoadingToastMessageType.KEEP_BROWSER_OPEN);
     const amountReleasableFormatted = transform(tokenBalance, tokenAddress, tokenDecimals);
-
-    console.log(tokenAddress, tokenDecimals, amountReleasableFormatted);
 
     try {
       const args =
@@ -91,8 +64,8 @@ export const useClaimRewards = ({
 
       await waitForTransactionReceipt(config, { hash });
 
-      setLoading(payee, false);
-      setSuccess(payee, true);
+      setLoading(payee, tokenAddress, false);
+      setSuccess(payee, tokenAddress, true);
       toastSuccess("Rewards claimed successfully!");
 
       try {
@@ -110,12 +83,12 @@ export const useClaimRewards = ({
       }
     } catch (error) {
       handleError(error, "Error while claiming rewards");
-      setLoading(payee, false);
+      setLoading(payee, tokenAddress, false);
     }
   };
 
-  const isLoading = (payee: number) => loadingStates[payee] || false;
-  const isSuccess = (payee: number) => successStates[payee] || false;
+  const isLoading = (payee: number, tokenAddress: string) => loadingStates[`${payee}-${tokenAddress}`] || false;
+  const isSuccess = (payee: number, tokenAddress: string) => successStates[`${payee}-${tokenAddress}`] || false;
 
   return {
     claimRewards,

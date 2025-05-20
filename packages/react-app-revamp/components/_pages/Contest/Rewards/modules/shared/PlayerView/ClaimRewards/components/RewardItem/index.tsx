@@ -8,20 +8,29 @@ interface RewardItemProps {
   reward: Reward;
   rank: number;
   isActive: boolean;
-  isClaimLoading: (rank: number) => boolean;
+  isClaimLoading: (rank: number, tokenAddress: string) => boolean;
   isRankClaimed: (rank: number) => boolean;
+  isClaimSuccess?: (rank: number, tokenAddress: string) => boolean;
   onClaim: (rank: number, value: bigint, tokenAddress: string) => void;
 }
 
-const RewardItem: FC<RewardItemProps> = ({ reward, rank, isActive, isClaimLoading, isRankClaimed, onClaim }) => {
+const RewardItem: FC<RewardItemProps> = ({
+  reward,
+  rank,
+  isActive,
+  isClaimLoading,
+  isRankClaimed,
+  isClaimSuccess,
+  onClaim,
+}) => {
   const renderClaimStatus = () => {
     if (isActive) return null;
 
     const isClaimed = isRankClaimed(rank);
-    const isLoading = isClaimLoading(rank);
+    const isLoading = isClaimLoading(rank, reward.address);
+    const isSuccess = isClaimSuccess?.(rank, reward.address) || false;
 
-    //TODO: check why it isn't updating when the claim is successful (only when we switch tab)
-    if (isClaimed) {
+    if (isClaimed || isSuccess) {
       return (
         <div className="flex gap-1 items-center text-[16px]">
           🎉

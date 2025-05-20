@@ -43,7 +43,6 @@ const TotalRewardsTable = ({ totalRewards, shares }: TotalRewardsTableProps) => 
 
   ranksWithPercentage.sort((a, b) => a.rank - b.rank);
 
-  //TODO: adjust when rewards are zero
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">

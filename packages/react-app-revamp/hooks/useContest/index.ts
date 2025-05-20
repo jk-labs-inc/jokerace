@@ -13,7 +13,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { checkIfContestExists } from "lib/contests";
-import { getRewardsModuleAddress, getRewardsModuleInfo } from "lib/rewards/contracts";
+import { getRewardsModuleAddress } from "lib/rewards/contracts";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
@@ -68,8 +68,6 @@ export function useContest() {
     setSortingEnabled,
     setVersion,
     setRewardsModuleAddress,
-    setRewardsAbi,
-    setRewardsModuleType,
     setCanEditTitleAndDescription,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
@@ -321,16 +319,11 @@ export function useContest() {
 
     if (!moduleAddress) {
       setSupportsRewardsModule(false);
-      setRewardsModuleAddress("");
       return "";
     }
 
     setSupportsRewardsModule(true);
     setRewardsModuleAddress(moduleAddress);
-
-    const { abi, moduleType } = await getRewardsModuleInfo(moduleAddress, contractConfig.chainId);
-    if (abi) setRewardsAbi(abi);
-    if (moduleType) setRewardsModuleType(moduleType);
 
     return moduleAddress;
   }

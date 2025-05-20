@@ -13,8 +13,8 @@ interface RewardsPlayerViewClaimRewardsProps {
   contestStatus: ContestStatus;
   onClaim: (rank: number, value: bigint, tokenAddress: string) => void;
   onRefresh?: () => void;
-  isClaimLoading: (rank: number) => boolean;
-  isClaimSuccess: (rank: number) => boolean;
+  isClaimLoading: (rank: number, tokenAddress: string) => boolean;
+  isClaimSuccess: (rank: number, tokenAddress: string) => boolean;
 }
 
 const RewardsPlayerViewClaimRewards: FC<RewardsPlayerViewClaimRewardsProps> = ({
@@ -62,6 +62,7 @@ const RewardsPlayerViewClaimRewards: FC<RewardsPlayerViewClaimRewardsProps> = ({
                       isActive={isActive}
                       isClaimLoading={isClaimLoading}
                       isRankClaimed={() => item.claimed}
+                      isClaimSuccess={isClaimSuccess}
                       onClaim={onClaim}
                     />
                   ))}

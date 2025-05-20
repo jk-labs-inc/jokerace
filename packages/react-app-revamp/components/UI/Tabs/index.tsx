@@ -1,5 +1,5 @@
+import { animate, motion, useMotionValue } from "motion/react";
 import { FC, useEffect, useRef, useState } from "react";
-import { motion } from "motion/react";
 
 interface TabsProps {
   tabs: string[];
@@ -11,31 +11,48 @@ interface TabsProps {
 const Tabs: FC<TabsProps> = ({ tabs, activeTab, onChange, optionalInfo }) => {
   const [currentTab, setCurrentTab] = useState<string>(activeTab);
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [indicatorLayout, setIndicatorLayout] = useState({ left: 0, width: 0 });
+  const indicatorX = useMotionValue(0);
+  const indicatorWidth = useMotionValue(0);
+
+  const activeColor = "#E5E5E5";
+  const inactiveColor = "#6A6A6A";
 
   useEffect(() => {
     const activeTabIndex = tabs.findIndex(tab => tab === currentTab);
     const activeTabRef = tabRefs.current[activeTabIndex];
 
     if (activeTabRef) {
-      setIndicatorLayout({
-        left: activeTabRef.offsetLeft,
-        width: activeTabRef.offsetWidth,
+      animate(indicatorX, activeTabRef.offsetLeft, {
+        type: "spring",
+        stiffness: 400,
+        damping: 35,
+        mass: 1.2,
+      });
+
+      animate(indicatorWidth, activeTabRef.offsetWidth, {
+        type: "spring",
+        stiffness: 400,
+        damping: 35,
+        mass: 1.2,
       });
     }
-  }, [currentTab, tabs]);
+  }, [currentTab, tabs, indicatorX, indicatorWidth]);
 
   const handleTabChange = (tab: string) => {
     setCurrentTab(tab);
     onChange?.(tab);
   };
 
-  const activeColor = "#E5E5E5"; // neutral-11
-  const inactiveColor = "#6A6A6A"; // neutral-10
+  const handleKeyDown = (e: React.KeyboardEvent, tab: string) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleTabChange(tab);
+    }
+  };
 
   return (
     <div className="relative flex flex-col gap-2">
-      <div className="flex gap-6 md:gap-8 mb-4">
+      <div className="flex gap-6 md:gap-8 mb-4" role="tablist">
         {tabs.map((tab, index) => (
           <div
             key={tab}
@@ -44,47 +61,50 @@ const Tabs: FC<TabsProps> = ({ tabs, activeTab, onChange, optionalInfo }) => {
             }}
             className="text-[16px] md:text-[24px] cursor-pointer relative"
             onClick={() => handleTabChange(tab)}
+            onKeyDown={e => handleKeyDown(e, tab)}
+            role="tab"
+            aria-selected={tab === currentTab}
+            tabIndex={0}
           >
             <motion.span
-              initial={{
-                color: tab === currentTab ? activeColor : inactiveColor,
-                opacity: tab === currentTab ? 1 : 0.8,
-              }}
+              initial={false}
               animate={{
                 color: tab === currentTab ? activeColor : inactiveColor,
                 opacity: tab === currentTab ? 1 : 0.8,
+                fontWeight: tab === currentTab ? 600 : 400,
               }}
               transition={{
-                duration: 0.35,
+                duration: 0.2,
                 ease: [0.25, 0.1, 0.25, 1],
               }}
               style={{
                 display: "block",
-                fontWeight: tab === currentTab ? 600 : 400,
+                willChange: "color, opacity",
               }}
             >
               {tab}
-              {optionalInfo?.[tab] !== undefined && <span className="text-[16px] ml-1">({optionalInfo[tab]})</span>}
+              {optionalInfo?.[tab] !== undefined && (
+                <motion.span
+                  className="text-[16px] ml-1"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  ({optionalInfo[tab]})
+                </motion.span>
+              )}
             </motion.span>
           </div>
         ))}
       </div>
-      <div className="absolute left-0 w-full h-[1px] bottom-0 bg-neutral-0"></div>
+      <div className="absolute left-0 w-full h-[1px] bottom-0 bg-neutral-0" />
       <motion.div
         className="absolute bottom-0 h-[1px] bg-positive-11"
-        animate={{
-          left: indicatorLayout.left,
-          width: indicatorLayout.width,
+        style={{
+          x: indicatorX,
+          width: indicatorWidth,
+          willChange: "transform",
         }}
-        initial={false}
-        transition={{
-          type: "spring",
-          stiffness: 400,
-          damping: 35,
-          mass: 1.2,
-          duration: 0.35,
-        }}
-        style={{ willChange: "transform" }}
       />
     </div>
   );

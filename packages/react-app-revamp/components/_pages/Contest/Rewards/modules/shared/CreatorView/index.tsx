@@ -49,6 +49,19 @@ const RewardsCreatorView = ({
     rankings: rewardsData.payees,
   });
 
+  if (isTotalRewardsLoading || isRankSharesLoading) {
+    return (
+      <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center gap-4">
+            <p className="text-[24px] text-neutral-11">total rewards summary</p>
+            <RefreshButton onRefresh={() => refetchTotalRewards()} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-12">
       <div className="flex flex-col gap-6">

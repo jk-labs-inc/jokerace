@@ -85,8 +85,8 @@ const WinnerClaimRewards: FC<WinnerClaimRewardsProps> = ({
       contestStatus={contestStatus}
       onRefresh={handleRefresh}
       onClaim={handleClaim}
-      isClaimLoading={isClaimLoading}
-      isClaimSuccess={isClaimSuccess}
+      isClaimLoading={(rank: number, tokenAddress: string) => isClaimLoading(rank, tokenAddress)}
+      isClaimSuccess={(rank: number, tokenAddress: string) => isClaimSuccess(rank, tokenAddress)}
     />
   );
 };

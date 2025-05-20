@@ -24,8 +24,6 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({
     rankings: rankings,
   });
 
-  console.log({ releasableRewards });
-
   const aggregatedRewards = useMemo(() => {
     const rewardMap = new Map<string, TokenInfo>();
 

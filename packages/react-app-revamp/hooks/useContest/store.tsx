@@ -1,6 +1,5 @@
 import { VotingRequirementsSchema } from "@hooks/useContestsIndexV3";
 import { Charge } from "@hooks/useDeployContest/types";
-import { ModuleType } from "lib/rewards/types";
 import { createContext, useContext, useRef } from "react";
 import { Abi } from "viem";
 import { createStore, useStore } from "zustand";
@@ -36,10 +35,8 @@ export interface ContestState {
   isReadOnly: boolean;
   anyoneCanVote: boolean;
   version: string;
-  rewardsModuleAddress: string;
-  rewardsAbi: Abi | null;
   canEditTitleAndDescription: boolean;
-  rewardsModuleType: ModuleType | null;
+  rewardsModuleAddress: string;
   setSupportsRewardsModule: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
   setSortingEnabled: (isAllowed: boolean) => void;
@@ -63,10 +60,8 @@ export interface ContestState {
   setContestAbi: (abi: Abi) => void;
   setAnyoneCanVote: (value: boolean) => void;
   setVersion: (version: string) => void;
-  setRewardsModuleAddress: (address: string) => void;
-  setRewardsAbi: (abi: Abi | null) => void;
-  setRewardsModuleType: (moduleType: ModuleType | null) => void;
   setCanEditTitleAndDescription: (value: boolean) => void;
+  setRewardsModuleAddress: (address: string) => void;
 }
 
 export const createContestStore = () =>
@@ -95,10 +90,8 @@ export const createContestStore = () =>
     supportsRewardsModule: false,
     anyoneCanVote: false,
     version: "",
-    rewardsModuleAddress: "",
-    rewardsAbi: null,
     canEditTitleAndDescription: false,
-    rewardsModuleType: null,
+    rewardsModuleAddress: "",
     setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
     setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
     setSortingEnabled: isAllowed => set({ sortingEnabled: isAllowed }),
@@ -122,10 +115,8 @@ export const createContestStore = () =>
     setContestAbi: abi => set({ contestAbi: abi }),
     setAnyoneCanVote: value => set({ anyoneCanVote: value }),
     setVersion: version => set({ version: version }),
-    setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
-    setRewardsAbi: abi => set({ rewardsAbi: abi }),
     setCanEditTitleAndDescription: value => set({ canEditTitleAndDescription: value }),
-    setRewardsModuleType: moduleType => set({ rewardsModuleType: moduleType }),
+    setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);

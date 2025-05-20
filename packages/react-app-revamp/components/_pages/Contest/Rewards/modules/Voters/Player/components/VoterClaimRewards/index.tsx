@@ -49,8 +49,6 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
     moduleType: ModuleType.VOTER_REWARDS,
   });
 
-  console.log("claimable", claimable, claimed, contestRewardsModuleAddress);
-
   const handleClaim = async (rank: number, value: bigint, tokenAddress: string) => {
     await claimRewards(rank, value, tokenAddress, userAddress);
   };
@@ -75,8 +73,8 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
       contestStatus={contestStatus}
       onRefresh={refetch}
       onClaim={handleClaim}
-      isClaimLoading={isClaimLoading}
-      isClaimSuccess={isClaimSuccess}
+      isClaimLoading={(rank: number, tokenAddress: string) => isClaimLoading(rank, tokenAddress)}
+      isClaimSuccess={(rank: number, tokenAddress: string) => isClaimSuccess(rank, tokenAddress)}
     />
   );
 };

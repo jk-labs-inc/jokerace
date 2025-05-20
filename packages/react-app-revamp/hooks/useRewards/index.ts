@@ -8,17 +8,25 @@ import { usePathname } from "next/navigation";
 import { Abi } from "viem";
 import { getRewardsModuleAddress, getRewardsModuleInfo } from "lib/rewards/contracts";
 import { useRewardsStore } from "./store";
+import { ModuleType } from "lib/rewards/types";
 
 export function useRewardsModule() {
   const asPath = usePathname();
-  const { rewardsModuleAddress, rewardsAbi, setRewardsModuleAddress, setRewardsAbi, contestAbi, setRewardsModuleType } =
-    useContestStore(state => state);
+  const { contestAbi } = useContestStore(state => state);
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
   const { error, handleError } = useError();
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
   )?.[0]?.id;
+
+  function getRewardsConfig(rewardsModuleAddress: string, abi: Abi) {
+    return {
+      address: rewardsModuleAddress as `0x${string}`,
+      abi: abi as Abi,
+      chainId,
+    };
+  }
 
   const fetchRewardsModuleAbi = async (rewardsModuleAddress: string) => {
     try {
@@ -62,50 +70,32 @@ export function useRewardsModule() {
     setError("");
     setIsSuccess(false);
 
-    let rewardsModuleAddressLocal: string | null = rewardsModuleAddress;
-    let rewardsAbiLocal = rewardsAbi;
-
-    // Fetch rewards module address if not available
-    if (!rewardsModuleAddressLocal) {
-      rewardsModuleAddressLocal = await fetchRewardsModuleAddress();
-      if (!rewardsModuleAddressLocal) {
-        setIsLoading(false);
-        toastError(`Rewards module address not found on ${contestChainName}.`);
-        return;
-      }
-      setRewardsModuleAddress(rewardsModuleAddressLocal);
+    const rewardsModuleAddress = await fetchRewardsModuleAddress();
+    if (!rewardsModuleAddress) {
+      setIsLoading(false);
+      toastError(`Rewards module address not found on ${contestChainName}.`);
+      return;
     }
 
-    // Fetch ABI if not available
-    if (!rewardsAbiLocal) {
-      const { abi, moduleType } = await fetchRewardsModuleAbi(rewardsModuleAddressLocal);
-
-      if (!abi) {
-        setIsLoading(false);
-        toastError(`This contract doesn't exist on ${contestChainName}.`);
-        return;
-      }
-      rewardsAbiLocal = abi;
-      setRewardsModuleType(moduleType);
+    const { abi, moduleType } = await fetchRewardsModuleAbi(rewardsModuleAddress);
+    if (!abi) {
+      setIsLoading(false);
+      toastError(`This contract doesn't exist on ${contestChainName}.`);
+      return;
     }
 
     try {
-      const configRewardsModuleContract = {
-        address: rewardsModuleAddressLocal as `0x${string}`,
-        abi: rewardsAbiLocal as Abi,
-        chainId,
-      };
       const contractsRewardsModule = [
         {
-          ...configRewardsModuleContract,
+          ...getRewardsConfig(rewardsModuleAddress, abi),
           functionName: "creator",
         },
         {
-          ...configRewardsModuleContract,
+          ...getRewardsConfig(rewardsModuleAddress, abi),
           functionName: "getPayees",
         },
         {
-          ...configRewardsModuleContract,
+          ...getRewardsConfig(rewardsModuleAddress, abi),
           functionName: "totalShares",
         },
       ];
@@ -122,11 +112,12 @@ export function useRewardsModule() {
       const totalSharesFormatted = Number(totalShares);
 
       setRewards({
-        abi: rewardsAbiLocal,
-        contractAddress: rewardsModuleAddressLocal,
-        creator: creator,
+        abi,
+        contractAddress: rewardsModuleAddress,
+        creator,
         payees: formattedPayees,
         totalShares: totalSharesFormatted,
+        moduleType: moduleType ?? ModuleType.VOTER_REWARDS,
         blockExplorers: chains.filter(
           (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName,
         )?.[0]?.blockExplorers?.default.url,
