@@ -18,12 +18,14 @@ const RewardsPlayerNotQualified: FC<RewardsPlayerNotQualifiedProps> = ({ rewards
       image: "/rewards/not-qualified-in-play-phase.png",
       voterDescription: (
         <p className="text-[16px] text-neutral-11">
-          <b>you need to vote</b> in order to qualify for rewards!
+          <b>you need to vote</b> in order to qualify for <br />
+          rewards!
         </p>
       ),
       contestantDescription: (
         <p className="text-[16px] text-neutral-11">
-          <b>you need to enter the contest</b> in order to qualify for rewards!
+          <b>you need to enter the contest</b> in order <br />
+          to qualify for rewards!
         </p>
       ),
     },
