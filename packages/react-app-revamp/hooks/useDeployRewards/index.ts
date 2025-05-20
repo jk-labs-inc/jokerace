@@ -16,7 +16,7 @@ import { SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { estimateGas, sendTransaction, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { ContractFactory } from "ethers";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
-import { insertContestWithVotingRewards } from "lib/rewards";
+import { insertContestWithVotingRewards } from "lib/rewards/database";
 import { usePathname } from "next/navigation";
 import { didUserReject } from "utils/error";
 import { erc20Abi, parseUnits } from "viem";
@@ -26,7 +26,12 @@ export function useDeployRewardsPool() {
   const asPath = usePathname();
   const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
-  const setSupportsRewardsModule = useContestStore(useShallow(state => state.setSupportsRewardsModule));
+  const { setSupportsRewardsModule } = useContestStore(
+    useShallow(state => ({
+      setSupportsRewardsModule: state.setSupportsRewardsModule,
+    })),
+  );
+
   const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards, rewardPoolType } = useCreateRewardsStore(
     useShallow(state => ({
       rewardPoolData: state.rewardPoolData,

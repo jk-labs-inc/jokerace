@@ -73,7 +73,7 @@ export function useReleasableRewards({
         functionName: "releasable",
         args: [BigInt(ranking)],
       },
-      ...(erc20Addresses?.map(tokenAddress => ({
+      ...(erc20Addresses?.map((tokenAddress: any) => ({
         address: contractAddress as `0x${string}`,
         chainId,
         abi,
@@ -110,7 +110,7 @@ export function useReleasableRewards({
             });
           }
 
-          erc20Addresses?.forEach((address, index) => {
+          erc20Addresses?.forEach((address: any, index: any) => {
             const amount = data[startIndex + index + 1]?.result as bigint | undefined;
             if (amount && amount > 0n) {
               result.tokens.push({

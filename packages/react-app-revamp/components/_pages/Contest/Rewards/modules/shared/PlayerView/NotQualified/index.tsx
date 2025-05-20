@@ -1,8 +1,8 @@
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
-import { ModuleType } from "lib/rewards";
 import Link from "next/link";
 import { FC } from "react";
 import InfoPanel from "../../InfoPanel";
+import { ModuleType } from "lib/rewards/types";
 
 interface RewardsPlayerNotQualifiedProps {
   phase: "active" | "closed";

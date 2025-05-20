@@ -1,10 +1,8 @@
-import RewardsClaimButton from "@components/_pages/Contest/Rewards/components/Buttons/Claim";
+import RewardsClaimButton from "@components/_pages/Contest/Rewards/components/UI/Buttons/Claim";
+import RewardsNumberDisplay from "@components/_pages/Contest/Rewards/components/UI/Display/Number";
 import { Reward } from "@components/_pages/Contest/Rewards/types";
 import GradientText from "@components/UI/GradientText";
-import { formatBalance } from "@helpers/formatBalance";
-import { AnimateNumber } from "motion-plus/react";
 import { FC } from "react";
-import { formatUnits } from "viem";
 
 interface RewardItemProps {
   reward: Reward;
@@ -12,7 +10,7 @@ interface RewardItemProps {
   isActive: boolean;
   isClaimLoading: (rank: number) => boolean;
   isRankClaimed: (rank: number) => boolean;
-  onClaim: (currency: string, rank: number) => void;
+  onClaim: (rank: number, value: bigint, tokenAddress: string) => void;
 }
 
 const RewardItem: FC<RewardItemProps> = ({ reward, rank, isActive, isClaimLoading, isRankClaimed, onClaim }) => {
@@ -22,26 +20,25 @@ const RewardItem: FC<RewardItemProps> = ({ reward, rank, isActive, isClaimLoadin
     const isClaimed = isRankClaimed(rank);
     const isLoading = isClaimLoading(rank);
 
+    //TODO: check why it isn't updating when the claim is successful (only when we switch tab)
     if (isClaimed) {
       return (
-        <div className="flex gap-1 items-center text-[14px]">
+        <div className="flex gap-1 items-center text-[16px]">
           🎉
-          <GradientText textSizeClassName="text-[14px]" isFontSabo={false}>
+          <GradientText textSizeClassName="text-[16px]" isFontSabo={false}>
             rewards have been claimed!
           </GradientText>
         </div>
       );
     }
 
-    return <RewardsClaimButton onClick={() => onClaim(reward.currency, rank)} isLoading={isLoading} />;
+    return <RewardsClaimButton onClick={() => onClaim(rank, reward.value, reward.address)} isLoading={isLoading} />;
   };
 
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-4">
-        <AnimateNumber className="text-[32px] text-neutral-11" suffix={`${reward.currency.toUpperCase()}`}>
-          {formatBalance(formatUnits(reward.value, reward.decimals).toString())}
-        </AnimateNumber>
+        <RewardsNumberDisplay value={reward.value} symbol={reward.symbol} decimals={reward.decimals} index={0} />
         {isActive ? <p className="text-[12px] text-neutral-9">come back after contest ends to claim rewards!</p> : null}
         {!isActive && renderClaimStatus()}
       </div>

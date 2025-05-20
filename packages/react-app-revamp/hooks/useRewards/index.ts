@@ -11,9 +11,8 @@ import { useRewardsStore } from "./store";
 
 export function useRewardsModule() {
   const asPath = usePathname();
-  const { rewardsModuleAddress, rewardsAbi, setRewardsModuleAddress, setRewardsAbi, contestAbi } = useContestStore(
-    state => state,
-  );
+  const { rewardsModuleAddress, rewardsAbi, setRewardsModuleAddress, setRewardsAbi, contestAbi, setRewardsModuleType } =
+    useContestStore(state => state);
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
   const { error, handleError } = useError();
@@ -23,11 +22,11 @@ export function useRewardsModule() {
 
   const fetchRewardsModuleAbi = async (rewardsModuleAddress: string) => {
     try {
-      const { abi } = await getRewardsModuleInfo(rewardsModuleAddress, chainId);
-      return abi;
+      const { abi, moduleType } = await getRewardsModuleInfo(rewardsModuleAddress, chainId);
+      return { abi, moduleType };
     } catch (e) {
       handleError(e, "Error fetching rewards module ABI");
-      return null;
+      return { abi: null, moduleType: null };
     }
   };
 
@@ -79,14 +78,15 @@ export function useRewardsModule() {
 
     // Fetch ABI if not available
     if (!rewardsAbiLocal) {
-      rewardsAbiLocal = await fetchRewardsModuleAbi(rewardsModuleAddressLocal);
+      const { abi, moduleType } = await fetchRewardsModuleAbi(rewardsModuleAddressLocal);
 
-      if (!rewardsAbiLocal) {
+      if (!abi) {
         setIsLoading(false);
         toastError(`This contract doesn't exist on ${contestChainName}.`);
         return;
       }
-      setRewardsAbi(rewardsAbiLocal);
+      rewardsAbiLocal = abi;
+      setRewardsModuleType(moduleType);
     }
 
     try {

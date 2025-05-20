@@ -1,24 +1,21 @@
 import Loader from "@components/UI/Loader";
-import DialogAddFundsToRewardsModule from "@components/_pages/DialogAddFundsToRewardsModule";
-import { FOOTER_LINKS } from "@config/links";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { REWARDS_CANCELED_VERSION, useCancelRewards } from "@hooks/useCancelRewards";
 import { useContestStore } from "@hooks/useContest/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
-import { compareVersions } from "compare-versions";
-import { ModuleType } from "lib/rewards";
+import { ModuleType } from "lib/rewards/types";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useMediaQuery } from "react-responsive";
+import { useEffect } from "react";
 import { Abi } from "viem";
 import { useAccount, useAccountEffect } from "wagmi";
 import CreateRewardsModule from "./components/CreateRewardsModule";
 import NoRewardsInfo from "./components/NoRewards";
 import VotersRewardsPage from "./modules/Voters";
 import WinnersRewardsPage from "./modules/Winners";
+import { useCancelRewards } from "@hooks/useCancelRewards";
+import RewardsCanceled from "./modules/shared/RewardsCanceled";
 
 const ContestRewards = () => {
   const asPath = usePathname();
@@ -26,9 +23,6 @@ const ContestRewards = () => {
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
-  const chainExplorer = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
-  )?.[0]?.blockExplorers?.default.url;
 
   const {
     isSuccess,
@@ -39,29 +33,25 @@ const ContestRewards = () => {
     contestMaxProposalCount,
     rewardsModuleAddress,
     rewardsAbi,
+    contestAbi,
     rewardsModuleType,
     version,
     downvotingAllowed,
   } = useContestStore(state => state);
-  const [isFundRewardsOpen, setIsFundRewardsOpen] = useState(false);
-  const [isWithdrawRewardsOpen, setIsWithdrawRewardsOpen] = useState(false);
   const rewardsStore = useRewardsStore(state => state);
   const { getContestRewardsModule } = useRewardsModule();
   const { address: accountAddress } = useAccount();
   const creator = contestAuthorEthereumAddress === accountAddress;
-  const githubLink = FOOTER_LINKS.find(link => link.label === "Github");
   const {
     isCanceled,
     isLoading: isRewardsCanceledLoading,
-    isSuccess: isRewardsCanceledSuccess,
+    isError: isRewardsCanceledError,
   } = useCancelRewards({
-    rewardsAddress: rewardsStore.rewards.contractAddress as `0x${string}`,
-    abi: rewardsStore.rewards.abi,
+    rewardsAddress: rewardsModuleAddress as `0x${string}`,
+    abi: rewardsAbi as Abi,
     chainId,
     version,
   });
-  const hasCanceledFunction = compareVersions(version, REWARDS_CANCELED_VERSION) >= 0;
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   useAccountEffect({
     onConnect(data) {
@@ -91,11 +81,28 @@ const ContestRewards = () => {
     );
   }
 
+  //TODO: add unified error handling for all errors
+  if (isRewardsCanceledError) {
+    return <div>Error loading rewards</div>;
+  }
+
+  if (isCanceled) {
+    return (
+      <RewardsCanceled
+        isCreatorView={creator}
+        rewardsModuleAddress={rewardsModuleAddress as `0x${string}`}
+        rewardsAbi={rewardsAbi as Abi}
+        rankings={rewardsStore.rewards.payees}
+        chainId={chainId}
+      />
+    );
+  }
+
   return (
     <div className="animate-reveal">
       {!isLoading && isSuccess && (
         <>
-          {rewardsStore.isLoading && <Loader>Loading rewards</Loader>}
+          {rewardsStore.isLoading || (isRewardsCanceledLoading && <Loader>Loading rewards</Loader>)}
           {rewardsStore.isSuccess &&
             (rewardsModuleType === ModuleType.VOTER_REWARDS ? (
               <VotersRewardsPage
@@ -103,12 +110,18 @@ const ContestRewards = () => {
                 contestAddress={contestAddress as `0x${string}`}
                 chainId={chainId}
                 contestRewardsModuleAddress={rewardsModuleAddress as `0x${string}`}
+                version={version}
               />
             ) : rewardsModuleType === ModuleType.AUTHOR_REWARDS ? (
-              <WinnersRewardsPage />
+              <WinnersRewardsPage
+                contestAddress={contestAddress as `0x${string}`}
+                chainId={chainId}
+                contestRewardsModuleAddress={rewardsModuleAddress as `0x${string}`}
+                contestAbi={contestAbi as Abi}
+                rewardsModuleAbi={rewardsAbi as Abi}
+                version={version}
+              />
             ) : null)}
-
-          <DialogAddFundsToRewardsModule isOpen={isFundRewardsOpen} setIsOpen={setIsFundRewardsOpen} />
         </>
       )}
     </div>

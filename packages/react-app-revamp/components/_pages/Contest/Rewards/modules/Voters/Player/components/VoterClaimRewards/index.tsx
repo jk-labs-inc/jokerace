@@ -3,14 +3,13 @@ import { useClaimRewards } from "@hooks/useClaimRewards";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import useUserRewards from "@hooks/useUserRewards";
-import { ModuleType } from "lib/rewards";
+import { ModuleType } from "lib/rewards/types";
 import { FC } from "react";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import RewardsPlayerViewClaimRewards from "../../../../shared/PlayerView/ClaimRewards";
 import RewardsPlayerLosingStatus from "../../../../shared/PlayerView/LosingStatus";
-import RewardsPlayerNotQualified from "../../../../shared/PlayerView/NotQualified";
 
 interface VoterClaimRewardsProps {
   contestRewardsModuleAddress: `0x${string}`;
@@ -50,19 +49,10 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
     moduleType: ModuleType.VOTER_REWARDS,
   });
 
-  const handleClaim = async (currency: string, rank: number) => {
-    const distribution = claimable?.distributions.find(d => d.rank === rank);
-    if (!distribution) return;
+  console.log("claimable", claimable, claimed, contestRewardsModuleAddress);
 
-    const reward = distribution.rewards.find(r => r.currency.toLowerCase() === currency.toLowerCase());
-    if (!reward) return;
-
-    // TODO: access a token address
-    const tokenAddress = reward.address || "native";
-    const tokenBalance = reward.value;
-    const tokenDecimals = reward.decimals;
-
-    await claimRewards(rank, tokenBalance, userAddress as `0x${string}`);
+  const handleClaim = async (rank: number, value: bigint, tokenAddress: string) => {
+    await claimRewards(rank, value, tokenAddress, userAddress);
   };
 
   if (isLoading) {

@@ -1,15 +1,15 @@
-import { useAccount } from "wagmi";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { useShallow } from "zustand/shallow";
-import { FC } from "react";
-import useTotalVotesPerUser from "@hooks/useTotalVotesPerUser";
-import VoterRewardsPagePlayerViewVotingNotStarted from "./components/VotingNotStarted";
 import { Loader } from "@components/UI/Loader";
-import RewardsPlayerViewNotConnected from "../../shared/PlayerView/WalletNotConnected";
-import { ModuleType } from "lib/rewards";
-import RewardsPlayerNotQualified from "../../shared/PlayerView/NotQualified";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import useTotalVotesPerUser from "@hooks/useTotalVotesPerUser";
+import { FC } from "react";
 import { Abi } from "viem";
+import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
+import RewardsPlayerNotQualified from "../../shared/PlayerView/NotQualified";
+import RewardsNotStarted from "../../shared/PlayerView/RewardsNotStarted";
+import RewardsPlayerViewNotConnected from "../../shared/PlayerView/WalletNotConnected";
 import VoterClaimRewards from "./components/VoterClaimRewards";
+import { ModuleType } from "lib/rewards/types";
 interface VoterRewardsPagePlayerViewProps {
   contestAddress: `0x${string}`;
   contestRewardsModuleAddress: `0x${string}`;
@@ -41,13 +41,14 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({
   }
 
   if (contestStatus === ContestStatus.ContestOpen || contestStatus === ContestStatus.SubmissionOpen) {
-    return <VoterRewardsPagePlayerViewVotingNotStarted />;
+    return <RewardsNotStarted rewardsType={ModuleType.VOTER_REWARDS} />;
   }
 
   if (isLoadingHasVoted) {
     return <Loader className="mt-8">Loading your voting info...</Loader>;
   }
 
+  // TODO: style this error state
   if (isErrorHasVoted) {
     return (
       <div className="flex flex-col items-center gap-4 p-6 rounded-lg bg-neutral-3">

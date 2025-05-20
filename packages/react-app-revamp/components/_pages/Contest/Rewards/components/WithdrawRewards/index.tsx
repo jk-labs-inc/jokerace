@@ -1,25 +1,35 @@
-import ButtonWithdraw from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdraw";
-import { ProcessedReleasableRewards, TokenInfo } from "@hooks/useReleasableRewards";
-import { FC, useMemo } from "react";
+import { TokenInfo, useReleasableRewards } from "@hooks/useReleasableRewards";
+import { FC, useMemo, useState } from "react";
 import { Abi } from "viem";
+import WithdrawRewardsModal from "./components/Modal";
 
 interface ContestWithdrawRewardsProps {
-  releasableRewards: ProcessedReleasableRewards[];
   rewardsModuleAddress: string;
   rewardsAbi: Abi;
-  isReleasableRewardsLoading: boolean;
+  chainId: number;
+  rankings: number[];
 }
 
 const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({
-  releasableRewards,
   rewardsModuleAddress,
   rewardsAbi,
-  isReleasableRewardsLoading,
+  chainId,
+  rankings,
 }) => {
+  const [isWithdrawRewardsModalOpen, setIsWithdrawRewardsModalOpen] = useState(false);
+  const { data: releasableRewards, isLoading: isReleasableRewardsLoading } = useReleasableRewards({
+    contractAddress: rewardsModuleAddress,
+    chainId: chainId,
+    abi: rewardsAbi,
+    rankings: rankings,
+  });
+
+  console.log({ releasableRewards });
+
   const aggregatedRewards = useMemo(() => {
     const rewardMap = new Map<string, TokenInfo>();
 
-    releasableRewards.forEach(reward => {
+    releasableRewards?.forEach(reward => {
       reward.tokens.forEach(token => {
         const existingToken = rewardMap.get(token.address);
         if (existingToken) {
@@ -34,24 +44,24 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({
   }, [releasableRewards]);
 
   return (
-    <div className="w-full md:w-[600px] mt-14">
-      {isReleasableRewardsLoading ? (
-        <p className="loadingDots font-sabo text-[14px] text-neutral-14">Loading rewards</p>
-      ) : aggregatedRewards.length > 0 ? (
-        <ul className="flex flex-col gap-3 text-[16px] font-bold list-explainer">
-          {aggregatedRewards.map((token, index) => (
-            <ButtonWithdraw
-              key={index}
-              token={token}
-              rewardsModuleAddress={rewardsModuleAddress}
-              rewardsAbi={rewardsAbi}
-            />
-          ))}
-        </ul>
+    <>
+      {aggregatedRewards.length > 0 ? (
+        <button className="text-positive-11 text-[16px] font-bold" onClick={() => setIsWithdrawRewardsModalOpen(true)}>
+          📤 withdraw funds
+        </button>
       ) : (
-        <p className="italic text-[16px] text-neutral-11">No balance found for rewards.</p>
+        <p className="text-neutral-11 text-[16px] font-bold">you have withdrawn funds</p>
       )}
-    </div>
+      <WithdrawRewardsModal
+        aggregatedRewards={aggregatedRewards}
+        rewardsModuleAddress={rewardsModuleAddress}
+        rewardsAbi={rewardsAbi}
+        rankings={rankings}
+        isReleasableRewardsLoading={isReleasableRewardsLoading}
+        isWithdrawRewardsModalOpen={isWithdrawRewardsModalOpen}
+        setIsWithdrawRewardsModalOpen={setIsWithdrawRewardsModalOpen}
+      />
+    </>
   );
 };
 

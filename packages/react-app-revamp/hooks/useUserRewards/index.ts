@@ -2,7 +2,8 @@ import { Distribution, Reward } from "@components/_pages/Contest/Rewards/types";
 import { extractPathSegments } from "@helpers/extractPath";
 import { getNativeTokenInfo } from "@helpers/getNativeTokenInfo";
 import { useQuery } from "@tanstack/react-query";
-import { fetchClaimableRewards, fetchClaimedRewards, ModuleType } from "lib/rewards";
+import { fetchClaimableRewards, fetchClaimedRewards } from "lib/rewards";
+import { ModuleType } from "lib/rewards/types";
 import { calculateTotalRewards } from "lib/rewards/utils";
 import { usePathname } from "next/navigation";
 import { useCallback, useMemo } from "react";
@@ -56,7 +57,6 @@ const useUserRewards = ({
   const { chainName: contestChainName } = extractPathSegments(asPath ?? "");
   const nativeTokenInfo = getNativeTokenInfo(chainId);
 
-  // Common parameters for both queries
   const commonQueryParams = {
     moduleType,
     contractAddress,
@@ -88,7 +88,6 @@ const useUserRewards = ({
     enabled: claimedEnabled && !!contractAddress && !!voterAddress && rankings.length > 0,
   });
 
-  // Calculate total rewards (combine claimable and claimed)
   const totalRewards = useMemo(() => {
     if (!claimableData && !claimedData) return [];
     const allDistributions = [...(claimableData || []), ...(claimedData || [])];

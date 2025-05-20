@@ -9,6 +9,7 @@ interface VotersRewardsPageProps {
   chainId: number;
   contestRewardsModuleAddress: `0x${string}`;
   rewardsModuleAbi: Abi;
+  version: string;
 }
 
 const VotersRewardsPage: FC<VotersRewardsPageProps> = ({
@@ -16,6 +17,7 @@ const VotersRewardsPage: FC<VotersRewardsPageProps> = ({
   chainId,
   contestRewardsModuleAddress,
   rewardsModuleAbi,
+  version,
 }) => {
   return (
     <RewardsSplitLayout
@@ -27,7 +29,14 @@ const VotersRewardsPage: FC<VotersRewardsPageProps> = ({
           chainId={chainId}
         />
       }
-      creatorView={<VoterRewardsPageCreatorView />}
+      creatorView={
+        <VoterRewardsPageCreatorView
+          contestRewardsModuleAddress={contestRewardsModuleAddress}
+          rewardsModuleAbi={rewardsModuleAbi}
+          chainId={chainId}
+          version={version}
+        />
+      }
     />
   );
 };

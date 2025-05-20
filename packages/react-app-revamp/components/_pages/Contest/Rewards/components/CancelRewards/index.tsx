@@ -1,11 +1,10 @@
-import { useCancelRewards } from "@hooks/useCancelRewards";
-import { FC, useState } from "react";
-import CancelRewardsModal from "./components/Modal";
-import { TrashIcon } from "@heroicons/react/24/outline";
-import { Abi } from "viem";
-import { switchChain } from "@wagmi/core";
-import { useAccount } from "wagmi";
 import { config } from "@config/wagmi";
+import { useCancelRewards } from "@hooks/useCancelRewards";
+import { switchChain } from "@wagmi/core";
+import { FC, useState } from "react";
+import { Abi } from "viem";
+import { useAccount } from "wagmi";
+import CancelRewardsModal from "./components/Modal";
 
 interface CancelRewardsProps {
   rewardsAddress: `0x${string}`;
@@ -32,8 +31,8 @@ const CancelRewards: FC<CancelRewardsProps> = ({ rewardsAddress, abi, chainId, v
 
   return (
     <>
-      <button disabled={isLoading} onClick={handleOpenModal}>
-        <TrashIcon className="w-6 h-6 text-negative-11 hover:text-negative-10 transition-colors duration-300 ease-in-out" />
+      <button disabled={isLoading} onClick={handleOpenModal} className="text-negative-11 text-[16px] font-bold">
+        🗑️ cancel rewards <span className="text-neutral-9">(required to withdraw funds)</span>
       </button>
 
       <CancelRewardsModal

@@ -3,13 +3,16 @@ import { getRewardsModuleContractVersion } from "@helpers/getRewardsModuleContra
 import { getTokenDecimalsBatch, getTokenSymbolBatch } from "@helpers/getTokenDecimals";
 import getVoterRewardsModuleContractVersion from "@helpers/getVoterRewardsModuleContractVersion";
 import { ContractConfig } from "@hooks/useContest";
-import { readContract, readContracts } from "@wagmi/core";
-import { compareVersions } from "compare-versions";
-import { Abi } from "viem";
-import { fetchTokenAddresses } from "./database";
-import { createERC20TokenQuery, createNativeTokenQuery } from "./utils";
-import { ModuleType, VOTER_REWARDS_VERSION, RewardsModuleInfo } from "./types";
 import { RewardsParams } from "@hooks/useUserRewards";
+import { getBalance, readContract, readContracts } from "@wagmi/core";
+import { compareVersions } from "compare-versions";
+import { Abi, Address, erc20Abi, formatUnits } from "viem";
+import { fetchTokenAddresses, getTokenAddresses } from "./database";
+import { ModuleType, RewardsModuleInfo, TokenData, TotalRewardsData, VOTER_REWARDS_VERSION } from "./types";
+import { createERC20TokenQuery, createNativeTokenQuery } from "./utils";
+import { chains } from "@config/wagmi";
+
+//TODO: refactor this to a more pieces of data (such as core like getRewardsModule info to be in a separate contract folder)
 
 /**
  * Gets information about the rewards module
@@ -252,3 +255,154 @@ export const prepareRewardsFetching = async (
 
   return { validRankings, tokenAddresses, tokenInfo: { symbols, decimals } };
 };
+
+/**
+ * Fetches total rewards for a rewards module
+ * @param rewardsModuleAddress address of the rewards module
+ * @param rewardsModuleAbi ABI of the rewards module
+ * @param chainId chain ID
+ * @returns total rewards data
+ */
+export async function fetchTotalRewards({
+  rewardsModuleAddress,
+  rewardsModuleAbi,
+  chainId,
+}: {
+  rewardsModuleAddress: Address;
+  rewardsModuleAbi: Abi;
+  chainId: number;
+}): Promise<TotalRewardsData> {
+  // Get native token balance first
+  const nativeBalance = await getBalance(config, {
+    address: rewardsModuleAddress,
+    chainId,
+  });
+
+  // Initialize with native token data
+  let nativeTotalReleased = 0n;
+  const nativeTotal = nativeBalance.value + nativeTotalReleased;
+  const tokensData: Record<string, TokenData> = {};
+
+  try {
+    // Find the chain name from the chainId
+    const chain = chains.find(chain => chain.id === chainId);
+    if (!chain) {
+      console.warn(`Chain with ID ${chainId} not found, using only native rewards`);
+    } else {
+      // Get network name from chain and fetch token addresses
+      const networkName = chain.name.toLowerCase();
+      const tokenAddresses = (await getTokenAddresses(rewardsModuleAddress, networkName)) as Address[];
+
+      // Only proceed with token data if addresses are available
+      if (tokenAddresses && tokenAddresses.length > 0) {
+        // Prepare contract calls for batch execution
+        const contractCalls = [
+          {
+            address: rewardsModuleAddress,
+            abi: rewardsModuleAbi,
+            functionName: "totalReleased",
+            chainId,
+          },
+          ...tokenAddresses.flatMap(tokenAddress => [
+            {
+              address: rewardsModuleAddress,
+              abi: rewardsModuleAbi,
+              functionName: "erc20TotalReleased",
+              args: [tokenAddress],
+              chainId,
+            },
+            {
+              address: tokenAddress,
+              abi: erc20Abi,
+              functionName: "symbol",
+              chainId,
+            },
+            {
+              address: tokenAddress,
+              abi: erc20Abi,
+              functionName: "decimals",
+              chainId,
+            },
+          ]),
+        ];
+
+        const contractResults = await readContracts(config, {
+          contracts: contractCalls,
+        });
+
+        // Update native value with released amount
+        nativeTotalReleased = contractResults[0].result as bigint;
+        const updatedNativeTotal = nativeBalance.value + nativeTotalReleased;
+
+        // Get token balances in parallel
+        const tokenBalances = await Promise.all(
+          tokenAddresses.map(tokenAddress =>
+            getBalance(config, {
+              address: rewardsModuleAddress,
+              token: tokenAddress,
+              chainId,
+            }),
+          ),
+        );
+
+        // Process token data
+        for (let i = 0; i < tokenAddresses.length; i++) {
+          const tokenAddress = tokenAddresses[i];
+          const resultBaseIndex = 1 + i * 3;
+
+          const tokenTotalReleasedResult = contractResults[resultBaseIndex];
+          const symbolResult = contractResults[resultBaseIndex + 1];
+          const decimalsResult = contractResults[resultBaseIndex + 2];
+
+          if (
+            tokenTotalReleasedResult.status === "failure" ||
+            symbolResult.status === "failure" ||
+            decimalsResult.status === "failure"
+          ) {
+            const error = [tokenTotalReleasedResult, symbolResult, decimalsResult].find(
+              r => r.status === "failure",
+            )?.error;
+            console.error(`Failed to get token data for ${tokenAddress}:`, error);
+            continue;
+          }
+
+          const tokenTotalReleased = tokenTotalReleasedResult.result as bigint;
+          const symbol = symbolResult.result as string;
+          const decimals = decimalsResult.result as number;
+          const tokenBalance = tokenBalances[i];
+
+          const tokenTotal = tokenBalance.value + tokenTotalReleased;
+
+          tokensData[tokenAddress as string] = {
+            value: tokenTotal,
+            formatted: formatUnits(tokenTotal, decimals),
+            symbol,
+            decimals,
+          };
+        }
+
+        return {
+          native: {
+            value: updatedNativeTotal,
+            formatted: formatUnits(updatedNativeTotal, 18),
+            symbol: nativeBalance.symbol,
+            decimals: 18,
+          },
+          tokens: tokensData,
+        };
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching token data:", error);
+  }
+
+  return {
+    native: {
+      value: nativeTotal,
+      formatted: formatUnits(nativeTotal, 18),
+      symbol: nativeBalance.symbol || "ETH",
+      decimals: 18,
+    },
+    tokens: tokensData,
+  };
+}

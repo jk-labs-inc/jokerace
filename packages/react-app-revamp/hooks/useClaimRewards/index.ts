@@ -6,7 +6,7 @@ import { transform } from "@hooks/useDistributeRewards";
 import { useError } from "@hooks/useError";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
-import { ModuleType } from "lib/rewards";
+import { ModuleType } from "lib/rewards/types";
 import { usePathname } from "next/navigation";
 import { Abi } from "viem";
 import { create } from "zustand";
@@ -58,11 +58,18 @@ export const useClaimRewards = ({
   const { handleError } = useError();
   const { loadingStates, successStates, setLoading, setSuccess } = useClaimRewardsStore();
 
-  const claimRewards = async (payee: number, tokenBalance: bigint, voterAddress?: `0x${string}`) => {
+  const claimRewards = async (
+    payee: number,
+    tokenBalance: bigint,
+    tokenAddress: string,
+    voterAddress?: `0x${string}`,
+  ) => {
     setLoading(payee, true);
     setSuccess(payee, false);
     toastLoading(`Claiming rewards...`, LoadingToastMessageType.KEEP_BROWSER_OPEN);
     const amountReleasableFormatted = transform(tokenBalance, tokenAddress, tokenDecimals);
+
+    console.log(tokenAddress, tokenDecimals, amountReleasableFormatted);
 
     try {
       const args =

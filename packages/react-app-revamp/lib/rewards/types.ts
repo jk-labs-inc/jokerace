@@ -23,4 +23,21 @@ export enum ModuleType {
   AUTHOR_REWARDS = "AUTHOR_REWARDS",
 }
 
+export interface TokenData {
+  value: bigint;
+  formatted: string;
+  symbol: string;
+  decimals: number;
+}
+
+export interface TotalRewardsData {
+  native: TokenData;
+  tokens: Record<string, TokenData>;
+}
+
+export interface RankShare {
+  rank: number;
+  share: bigint;
+}
+
 export const VOTER_REWARDS_VERSION = "5.5";

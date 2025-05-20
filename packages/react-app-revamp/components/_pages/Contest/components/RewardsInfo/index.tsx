@@ -4,14 +4,13 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
 import { useCancelRewards } from "@hooks/useCancelRewards";
-import { transform } from "@hooks/useDistributeRewards";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
 import { useReleasedRewards } from "@hooks/useReleasedRewards";
 import { usePathname } from "next/navigation";
 import { FC, useEffect, useMemo, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
-import { Abi } from "viem";
+import { Abi, formatUnits } from "viem";
 import { useReadContract } from "wagmi";
 
 interface ContestRewardsInfoProps {
@@ -107,12 +106,6 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
 
   if (!currentReward || isError || isCanceled) return null;
 
-  const currentRewardAmount = transform(
-    currentReward?.amount ?? 0n,
-    currentReward.address,
-    currentReward.decimals ?? 18,
-  ).toString();
-
   return (
     <>
       <div className="h-4 w-[2px] bg-primary-2"></div>
@@ -123,7 +116,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
             textSizeClassName="text-[14px] md:text-[24px] font-bold"
             isFontSabo={false}
           >
-            {formatBalance(currentRewardAmount)}{" "}
+            {formatBalance(formatUnits(currentReward.amount ?? 0n, currentReward.decimals ?? 18))}{" "}
             <span className="uppercase text-[12px] md:text-[16px] font-bold">${currentReward.symbol}</span>
           </GradientText>
         </div>

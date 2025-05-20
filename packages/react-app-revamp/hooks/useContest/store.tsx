@@ -1,6 +1,6 @@
 import { VotingRequirementsSchema } from "@hooks/useContestsIndexV3";
 import { Charge } from "@hooks/useDeployContest/types";
-import { ModuleType } from "lib/rewards";
+import { ModuleType } from "lib/rewards/types";
 import { createContext, useContext, useRef } from "react";
 import { Abi } from "viem";
 import { createStore, useStore } from "zustand";

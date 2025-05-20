@@ -1,8 +1,8 @@
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
-import { ModuleType } from "lib/rewards";
 import Link from "next/link";
 import { FC } from "react";
 import InfoPanel from "../../InfoPanel";
+import { ModuleType } from "lib/rewards/types";
 
 interface RewardsPlayerLosingStatusProps {
   phase: "active" | "closed";
@@ -23,8 +23,7 @@ const RewardsPlayerLosingStatus: FC<RewardsPlayerLosingStatusProps> = ({ phase, 
       ),
       contestantDescription: (
         <p className="text-[16px] text-neutral-11">
-          <b>but there’s still time.</b> rally more people to vote on <br />
-          your entry to win!
+          <b>but there’s still time.</b> rally more people to vote on your entry to win!
         </p>
       ),
     },

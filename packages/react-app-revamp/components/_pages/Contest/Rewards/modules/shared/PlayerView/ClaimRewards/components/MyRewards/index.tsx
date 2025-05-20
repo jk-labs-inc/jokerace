@@ -1,9 +1,7 @@
+import RewardsNumberDisplay from "@components/_pages/Contest/Rewards/components/UI/Display/Number";
 import { Reward } from "@components/_pages/Contest/Rewards/types";
 import RefreshButton from "@components/UI/RefreshButton";
-import { formatBalance } from "@helpers/formatBalance";
 import { FC } from "react";
-import { formatUnits } from "viem";
-import { AnimateNumber } from "motion-plus/react";
 
 interface RewardsPlayerViewClaimRewardTotalRewardsProps {
   totalRewards: Reward[];
@@ -27,9 +25,14 @@ const RewardsPlayerViewClaimRewardTotalRewards: FC<RewardsPlayerViewClaimRewardT
       </div>
 
       {totalRewards.map((reward, index) => (
-        <AnimateNumber key={index} className="text-[40px] text-neutral-11" suffix={`${reward.currency.toUpperCase()}`}>
-          {formatBalance(formatUnits(reward.value, reward.decimals).toString())}
-        </AnimateNumber>
+        <RewardsNumberDisplay
+          key={index}
+          value={reward.value}
+          symbol={reward.symbol}
+          decimals={reward.decimals}
+          index={index}
+          isBold={true}
+        />
       ))}
     </div>
   );

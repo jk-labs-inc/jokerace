@@ -26,7 +26,8 @@ export function processNativeTokenRewards(
 
       distributionsMap.get(ranking)!.rewards.push({
         value: nativeAmount,
-        currency: nativeTokenInfo.symbol.toLowerCase(),
+        address: "native",
+        symbol: nativeTokenInfo.symbol,
         decimals: nativeTokenInfo.decimals,
       });
     }
@@ -64,7 +65,8 @@ export function processERC20TokenRewards(
 
         distributionsMap.get(ranking)!.rewards.push({
           value: amount,
-          currency: (symbols[tokenAddress] || "unknown").toLowerCase(),
+          address: tokenAddress,
+          symbol: symbols[tokenAddress] || "unknown",
           decimals: decimals[tokenAddress] || 18,
         });
       }
@@ -153,14 +155,15 @@ export function createERC20TokenQuery(
   @param distributionsMap - The distributions map
   @param ranking - The ranking
   @param amount - The amount
-  @param currency - The currency
+  @param address - The address
   @param decimals - The decimals
 */
 export function addRewardToDistribution(
   distributionsMap: Map<number, Distribution>,
   ranking: number,
   amount: bigint,
-  currency: string,
+  address: string,
+  symbol: string,
   decimals: number,
 ) {
   if (amount && amount > 0n) {
@@ -170,7 +173,8 @@ export function addRewardToDistribution(
 
     distributionsMap.get(ranking)!.rewards.push({
       value: amount,
-      currency: currency.toLowerCase(),
+      address,
+      symbol,
       decimals,
     });
   }
@@ -184,7 +188,7 @@ export function addRewardToDistribution(
 export function calculateTotalRewards(distributions: Distribution[]): Reward[] {
   return distributions.reduce<Reward[]>((acc, distribution) => {
     for (const reward of distribution.rewards) {
-      const existingRewardIndex = acc.findIndex(r => r.currency === reward.currency);
+      const existingRewardIndex = acc.findIndex(r => r.address === reward.address);
 
       if (existingRewardIndex >= 0) {
         acc[existingRewardIndex].value += reward.value;

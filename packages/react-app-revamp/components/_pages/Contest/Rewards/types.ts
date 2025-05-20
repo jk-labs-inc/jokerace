@@ -1,6 +1,7 @@
 export interface Reward {
   value: bigint;
-  currency: string;
+  address: string;
+  symbol: string;
   decimals: number;
 }
 

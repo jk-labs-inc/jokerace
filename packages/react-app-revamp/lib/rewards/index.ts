@@ -9,9 +9,6 @@ import {
 import { ModuleType } from "./types";
 import { addRewardToDistribution, processERC20TokenRewards, processNativeTokenRewards } from "./utils";
 
-export * from "./database";
-export * from "./types";
-
 /**
  * Fetches claimed (released) rewards
  */
@@ -61,6 +58,7 @@ export async function fetchClaimedRewards({
       distributionsMap,
       ranking,
       nativeAmount || 0n,
+      "native",
       nativeTokenInfo.symbol,
       nativeTokenInfo.decimals,
     );
@@ -89,6 +87,7 @@ export async function fetchClaimedRewards({
           distributionsMap,
           ranking,
           amount || 0n,
+          tokenAddress,
           tokenInfo.symbols?.[tokenAddress] || "unknown",
           tokenInfo.decimals?.[tokenAddress] || 18,
         );
