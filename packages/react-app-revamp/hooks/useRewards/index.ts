@@ -14,7 +14,7 @@ export function useRewardsModule() {
   const asPath = usePathname();
   const { contestAbi } = useContestStore(state => state);
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const { setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
+  const { setRewards, setIsLoading, setIsError, setIsSuccess } = useRewardsStore(state => state);
   const { error, handleError } = useError();
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
@@ -67,13 +67,14 @@ export function useRewardsModule() {
 
   async function getContestRewardsModule() {
     setIsLoading(true);
-    setError("");
+    setIsError(false);
     setIsSuccess(false);
 
     const rewardsModuleAddress = await fetchRewardsModuleAddress();
     if (!rewardsModuleAddress) {
       setIsLoading(false);
       toastError(`Rewards module address not found on ${contestChainName}.`);
+      setIsError(true);
       return;
     }
 
@@ -81,6 +82,7 @@ export function useRewardsModule() {
     if (!abi) {
       setIsLoading(false);
       toastError(`This contract doesn't exist on ${contestChainName}.`);
+      setIsError(true);
       return;
     }
 
@@ -123,10 +125,11 @@ export function useRewardsModule() {
         )?.[0]?.blockExplorers?.default.url,
       });
       setIsLoading(false);
+      setIsError(false);
       setIsSuccess(true);
     } catch (e) {
       handleError(e, "Something went wrong and the rewards module couldn't be retrieved.");
-      setError(error);
+      setIsError(true);
       setIsLoading(false);
       setIsSuccess(false);
     }

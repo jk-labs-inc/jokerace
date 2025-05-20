@@ -16,11 +16,11 @@ export interface RewardModuleInfo {
 interface RewardsState {
   isLoading: boolean;
   isSuccess: boolean;
-  error: string;
+  isError: boolean;
   rewards: RewardModuleInfo;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (value: boolean) => void;
-  setError: (value: string) => void;
+  setIsError: (value: boolean) => void;
   setRewards: (rewards: RewardModuleInfo) => void;
 }
 
@@ -28,7 +28,7 @@ export const createRewardsStore = () =>
   createStore<RewardsState>(set => ({
     isLoading: false,
     isSuccess: false,
-    error: "",
+    isError: false,
     rewards: {
       abi: [],
       contractAddress: "",
@@ -39,7 +39,7 @@ export const createRewardsStore = () =>
       moduleType: ModuleType.VOTER_REWARDS,
     },
     setIsLoading: value => set({ isLoading: value }),
-    setError: value => set({ error: value }),
+    setIsError: value => set({ isError: value }),
     setIsSuccess: value => set({ isSuccess: value }),
     setRewards: rewards => set({ rewards }),
   }));

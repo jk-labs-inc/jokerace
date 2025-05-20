@@ -47,8 +47,6 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     contestAuthorEthereumAddress,
     contestName,
     isReadOnly,
-    rewardsModuleAddress,
-    rewardsAbi,
     contestAbi,
     contestPrompt,
     canEditTitleAndDescription,
@@ -196,13 +194,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                           shortenOnFallback
                           size={isMobile ? "extraSmall" : "small"}
                         />
-                        {rewardsModuleAddress && rewardsAbi ? (
-                          <ContestRewardsInfo
-                            rewardsModuleAddress={rewardsModuleAddress}
-                            rewardsAbi={rewardsAbi}
-                            version={version}
-                          />
-                        ) : null}
+                        <ContestRewardsInfo version={version} />
                       </div>
 
                       <div

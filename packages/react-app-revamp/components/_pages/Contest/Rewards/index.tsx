@@ -79,7 +79,7 @@ const ContestRewards = () => {
   }
 
   //TODO: add unified error handling for all errors
-  if (isRewardsCanceledError) {
+  if (isRewardsCanceledError || rewardsStore.isError) {
     return <div>Error loading rewards</div>;
   }
 
@@ -99,7 +99,7 @@ const ContestRewards = () => {
     <div className="animate-reveal">
       {!isLoading && isSuccess && (
         <>
-          {rewardsStore.isLoading || (isRewardsCanceledLoading && <Loader>Loading rewards</Loader>)}
+          {(rewardsStore.isLoading || isRewardsCanceledLoading) && <Loader>Loading rewards</Loader>}
           {rewardsStore.isSuccess &&
             (rewardsStore.rewards.moduleType === ModuleType.VOTER_REWARDS ? (
               <VotersRewardsPage
