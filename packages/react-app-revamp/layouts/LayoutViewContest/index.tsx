@@ -98,6 +98,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     fetchUserData();
   }, [accountChanged, isLoading, isSuccess]);
 
+  //TODO: think if we want to fetch rewards module here and pass from there
   useEffect(() => {
     fetchContestInfo();
   }, [chainNameFromUrl, addressFromUrl]);

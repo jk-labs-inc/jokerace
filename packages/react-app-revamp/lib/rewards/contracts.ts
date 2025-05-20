@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { getRewardsModuleContractVersion } from "@helpers/getRewardsModuleContractVersion";
 import { getTokenDecimalsBatch, getTokenSymbolBatch } from "@helpers/getTokenDecimals";
 import getVoterRewardsModuleContractVersion from "@helpers/getVoterRewardsModuleContractVersion";
@@ -8,9 +8,15 @@ import { getBalance, readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { Abi, Address, erc20Abi, formatUnits } from "viem";
 import { fetchTokenAddresses, getTokenAddresses } from "./database";
-import { ModuleType, RewardsModuleInfo, TokenData, TotalRewardsData, VOTER_REWARDS_VERSION } from "./types";
+import {
+  ContractQuery,
+  ModuleType,
+  RewardsModuleInfo,
+  TokenData,
+  TotalRewardsData,
+  VOTER_REWARDS_VERSION,
+} from "./types";
 import { createERC20TokenQuery, createNativeTokenQuery } from "./utils";
-import { chains } from "@config/wagmi";
 
 //TODO: refactor this to a more pieces of data (such as core like getRewardsModule info to be in a separate contract folder)
 
@@ -261,7 +267,7 @@ export const prepareRewardsFetching = async (
  * @param rewardsModuleAddress address of the rewards module
  * @param rewardsModuleAbi ABI of the rewards module
  * @param chainId chain ID
- * @returns total rewards data
+ * @returns total rewards data (native and erc20 tokens)
  */
 export async function fetchTotalRewards({
   rewardsModuleAddress,
@@ -272,69 +278,69 @@ export async function fetchTotalRewards({
   rewardsModuleAbi: Abi;
   chainId: number;
 }): Promise<TotalRewardsData> {
-  // Get native token balance first
   const nativeBalance = await getBalance(config, {
     address: rewardsModuleAddress,
     chainId,
   });
 
-  // Initialize with native token data
   let nativeTotalReleased = 0n;
-  const nativeTotal = nativeBalance.value + nativeTotalReleased;
   const tokensData: Record<string, TokenData> = {};
 
   try {
-    // Find the chain name from the chainId
     const chain = chains.find(chain => chain.id === chainId);
     if (!chain) {
       console.warn(`Chain with ID ${chainId} not found, using only native rewards`);
     } else {
-      // Get network name from chain and fetch token addresses
       const networkName = chain.name.toLowerCase();
       const tokenAddresses = (await getTokenAddresses(rewardsModuleAddress, networkName)) as Address[];
 
-      // Only proceed with token data if addresses are available
+      const contractCalls: ContractQuery[] = [
+        {
+          address: rewardsModuleAddress,
+          abi: rewardsModuleAbi,
+          functionName: "totalReleased",
+          chainId,
+          args: [],
+        },
+      ];
+
+      // Add ERC20 token calls if we have token addresses
       if (tokenAddresses && tokenAddresses.length > 0) {
-        // Prepare contract calls for batch execution
-        const contractCalls = [
-          {
-            address: rewardsModuleAddress,
-            abi: rewardsModuleAbi,
-            functionName: "totalReleased",
-            chainId,
-          },
-          ...tokenAddresses.flatMap(tokenAddress => [
+        tokenAddresses.forEach(tokenAddress => {
+          contractCalls.push(
             {
               address: rewardsModuleAddress,
               abi: rewardsModuleAbi,
               functionName: "erc20TotalReleased",
-              args: [tokenAddress],
               chainId,
+              args: [tokenAddress],
             },
             {
               address: tokenAddress,
               abi: erc20Abi,
               functionName: "symbol",
               chainId,
+              args: [],
             },
             {
               address: tokenAddress,
               abi: erc20Abi,
               functionName: "decimals",
               chainId,
+              args: [],
             },
-          ]),
-        ];
-
-        const contractResults = await readContracts(config, {
-          contracts: contractCalls,
+          );
         });
+      }
 
-        // Update native value with released amount
-        nativeTotalReleased = contractResults[0].result as bigint;
-        const updatedNativeTotal = nativeBalance.value + nativeTotalReleased;
+      const contractResults = await readContracts(config, {
+        contracts: contractCalls,
+      });
 
-        // Get token balances in parallel
+      nativeTotalReleased = (contractResults[0].result as bigint) || 0n;
+      const nativeTotal = nativeBalance.value + nativeTotalReleased;
+
+      if (tokenAddresses && tokenAddresses.length > 0) {
         const tokenBalances = await Promise.all(
           tokenAddresses.map(tokenAddress =>
             getBalance(config, {
@@ -345,7 +351,6 @@ export async function fetchTotalRewards({
           ),
         );
 
-        // Process token data
         for (let i = 0; i < tokenAddresses.length; i++) {
           const tokenAddress = tokenAddresses[i];
           const resultBaseIndex = 1 + i * 3;
@@ -366,7 +371,7 @@ export async function fetchTotalRewards({
             continue;
           }
 
-          const tokenTotalReleased = tokenTotalReleasedResult.result as bigint;
+          const tokenTotalReleased = (tokenTotalReleasedResult.result as bigint) || 0n;
           const symbol = symbolResult.result as string;
           const decimals = decimalsResult.result as number;
           const tokenBalance = tokenBalances[i];
@@ -380,22 +385,23 @@ export async function fetchTotalRewards({
             decimals,
           };
         }
-
-        return {
-          native: {
-            value: updatedNativeTotal,
-            formatted: formatUnits(updatedNativeTotal, 18),
-            symbol: nativeBalance.symbol,
-            decimals: 18,
-          },
-          tokens: tokensData,
-        };
       }
+
+      return {
+        native: {
+          value: nativeTotal,
+          formatted: formatUnits(nativeTotal, 18),
+          symbol: nativeBalance.symbol || "ETH",
+          decimals: 18,
+        },
+        tokens: tokensData,
+      };
     }
   } catch (error) {
     console.error("Error fetching token data:", error);
   }
 
+  const nativeTotal = nativeBalance.value + nativeTotalReleased;
   return {
     native: {
       value: nativeTotal,
