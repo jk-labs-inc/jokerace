@@ -38,7 +38,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const { address: accountAddress } = useAccount();
   const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(pathname ?? "");
   const chainId = chains.filter(chain => chain.name.toLowerCase() === chainNameFromUrl.toLowerCase())[0]?.id;
-  const showRewards = useShowRewardsStore(useShallow(state => state.showRewards));
+  const { showRewards, setShowRewards } = useShowRewardsStore(useShallow(state => state));
   const { isLoading, address, fetchContestInfo, isSuccess, error, chainName } = useContest();
   const {
     submissionsOpen,
@@ -106,8 +106,9 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (showRewards) {
       setTab(Tab.Rewards);
+      setShowRewards(false);
     }
-  }, [showRewards]);
+  }, [showRewards, setShowRewards]);
 
   const renderTabs = useMemo<ReactNode>(() => {
     switch (tab) {

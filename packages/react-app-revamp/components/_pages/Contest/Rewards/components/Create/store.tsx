@@ -56,6 +56,7 @@ interface CreateRewardsState {
   setRewardPoolType: (type: RewardPoolType) => void;
   setAddFundsToRewards?: (addFundsToRewards: boolean) => void;
   setAddEarningsToRewards?: (addEarningsToRewards: boolean) => void;
+  reset: () => void;
 }
 
 const WINNER_DEFAULT_RECIPIENTS: Recipient[] = [
@@ -115,4 +116,12 @@ export const useCreateRewardsStore = create<CreateRewardsState>(set => ({
       rewardPoolData: getInitialRewardPoolData(type),
     }),
   setStep: step => set({ currentStep: step }),
+  reset: () =>
+    set({
+      currentStep: CreationStep.InitialStep,
+      rewardPoolType: RewardPoolType.Voters,
+      rewardPoolData: getInitialRewardPoolData(RewardPoolType.Voters),
+      addEarningsToRewards: false,
+      addFundsToRewards: false,
+    }),
 }));

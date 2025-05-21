@@ -32,15 +32,17 @@ export function useDeployRewardsPool() {
     })),
   );
 
-  const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards, rewardPoolType } = useCreateRewardsStore(
-    useShallow(state => ({
-      rewardPoolData: state.rewardPoolData,
-      setRewardPoolData: state.setRewardPoolData,
-      setStep: state.setStep,
-      addEarningsToRewards: state.addEarningsToRewards,
-      rewardPoolType: state.rewardPoolType,
-    })),
-  );
+  const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards, rewardPoolType, resetCreateRewardsStore } =
+    useCreateRewardsStore(
+      useShallow(state => ({
+        rewardPoolData: state.rewardPoolData,
+        setRewardPoolData: state.setRewardPoolData,
+        setStep: state.setStep,
+        addEarningsToRewards: state.addEarningsToRewards,
+        rewardPoolType: state.rewardPoolType,
+        resetCreateRewardsStore: state.reset,
+      })),
+    );
   const { tokenWidgets, setTokenWidgets } = useFundPoolStore(
     useShallow(state => ({
       tokenWidgets: state.tokenWidgets,
@@ -70,6 +72,7 @@ export function useDeployRewardsPool() {
       }
 
       setSupportsRewardsModule(true);
+      resetCreateRewardsStore();
       setTokenWidgets([]);
     } catch (e: any) {
       if (didUserReject(e)) {
