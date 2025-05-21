@@ -1,7 +1,6 @@
 import { FundPoolToken } from "@components/_pages/Contest/Rewards/components/Create/steps/FundPool/store";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
@@ -19,6 +18,7 @@ import { useEffect } from "react";
 import { erc20Abi, parseUnits } from "viem";
 import { useAccount } from "wagmi";
 import { useFundRewardsStore } from "./store";
+import { useShallow } from "zustand/react/shallow";
 
 export interface RewardData {
   currentUserAddress: string;
@@ -31,7 +31,6 @@ export interface RewardData {
 export function useFundRewardsModule() {
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const { rewardsModuleAddress, rewardsAbi } = useContestStore(state => state);
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
@@ -48,12 +47,16 @@ export function useFundRewardsModule() {
     setTransactionData,
   } = useFundRewardsStore(state => state);
   const { error: errorMessage, handleError } = useError();
-  const rewardsStore = useRewardsStore(state => state);
+  const {
+    contractAddress: rewardsModuleAddress,
+    abi: rewardsAbi,
+    payees,
+  } = useRewardsStore(useShallow(state => state.rewards));
   const { refetch: refetchReleasableRewards } = useReleasableRewards({
     contractAddress: rewardsModuleAddress,
     chainId,
-    abi: rewardsAbi ?? [],
-    rankings: rewardsStore.rewards.payees,
+    abi: rewardsAbi,
+    rankings: payees,
   });
 
   const sendFundsToRewardsModuleV3 = (rewards: FundPoolToken[]) => {

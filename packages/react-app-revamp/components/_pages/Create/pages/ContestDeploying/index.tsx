@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable react/no-unescaped-entities */
 import { toastDismiss } from "@components/UI/Toast";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useRouter } from "next/navigation";
@@ -19,18 +17,32 @@ export const useShowRewardsStore = create<ShowRewardsStore>(set => ({
 const WARNING_MESSAGE_THRESHOLD = 10000;
 
 const CreateContestDeploying = () => {
-  const { isSuccess, deployContestData, votingMerkle: votingMerkleData } = useDeployContestStore(state => state);
-  const votingMerkle = votingMerkleData.prefilled || votingMerkleData.csv;
   const router = useRouter();
+  const { isSuccess, deployContestData, votingMerkle: votingMerkleData, reset } = useDeployContestStore(state => state);
   const { setShowRewards } = useShowRewardsStore(state => state);
+  const votingMerkle = votingMerkleData.prefilled || votingMerkleData.csv;
+  const hasLargeVoterList = votingMerkle && votingMerkle.voters.length > WARNING_MESSAGE_THRESHOLD;
 
   useEffect(() => {
-    if (isSuccess && deployContestData) {
-      toastDismiss();
-      router.push(`/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`);
+    return () => {
+      reset();
+    };
+  }, [reset]);
 
-      if (deployContestData.sortingEnabled) setShowRewards(true);
+  useEffect(() => {
+    if (!isSuccess || !deployContestData) {
+      return;
     }
+
+    const contestPath = `/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`;
+
+    toastDismiss();
+
+    if (deployContestData.sortingEnabled) {
+      setShowRewards(true);
+    }
+
+    router.push(contestPath);
   }, [deployContestData, isSuccess, router, setShowRewards]);
 
   return (
@@ -40,6 +52,7 @@ const CreateContestDeploying = () => {
       </p>
       <p className="text-[18px] text-neutral-11">we'll redirect you to it as soon as it deploys...</p>
       <p className="text-[18px] text-neutral-11">while it's deploying, here's a fun gif:</p>
+
       <div className="relative w-[400px] border-4 border-true-black rounded-[10px] overflow-hidden">
         <div className="absolute top-0 left-0 bg-black py-1 px-2">
           <span className="text-[14px] text-true-black font-sabo font-bold">JOKETV</span>
@@ -50,7 +63,8 @@ const CreateContestDeploying = () => {
           alt="Loading GIF"
         />
       </div>
-      {votingMerkle && votingMerkle.voters.length > WARNING_MESSAGE_THRESHOLD && (
+
+      {hasLargeVoterList && (
         <p className="text-[16px] text-neutral-11 italic">
           You seem to be trying to deploy a larger set of data; since this could take longer, don't reload the page.{" "}
           <br />

@@ -35,9 +35,8 @@ export interface ContestState {
   isReadOnly: boolean;
   anyoneCanVote: boolean;
   version: string;
-  rewardsModuleAddress: string;
-  rewardsAbi: Abi | null;
   canEditTitleAndDescription: boolean;
+  rewardsModuleAddress: string;
   setSupportsRewardsModule: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
   setSortingEnabled: (isAllowed: boolean) => void;
@@ -61,9 +60,8 @@ export interface ContestState {
   setContestAbi: (abi: Abi) => void;
   setAnyoneCanVote: (value: boolean) => void;
   setVersion: (version: string) => void;
-  setRewardsModuleAddress: (address: string) => void;
-  setRewardsAbi: (abi: Abi | null) => void;
   setCanEditTitleAndDescription: (value: boolean) => void;
+  setRewardsModuleAddress: (address: string) => void;
 }
 
 export const createContestStore = () =>
@@ -92,9 +90,8 @@ export const createContestStore = () =>
     supportsRewardsModule: false,
     anyoneCanVote: false,
     version: "",
-    rewardsModuleAddress: "",
-    rewardsAbi: null,
     canEditTitleAndDescription: false,
+    rewardsModuleAddress: "",
     setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
     setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
     setSortingEnabled: isAllowed => set({ sortingEnabled: isAllowed }),
@@ -118,9 +115,8 @@ export const createContestStore = () =>
     setContestAbi: abi => set({ contestAbi: abi }),
     setAnyoneCanVote: value => set({ anyoneCanVote: value }),
     setVersion: version => set({ version: version }),
-    setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
-    setRewardsAbi: abi => set({ rewardsAbi: abi }),
     setCanEditTitleAndDescription: value => set({ canEditTitleAndDescription: value }),
+    setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);

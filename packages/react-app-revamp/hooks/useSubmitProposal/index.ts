@@ -69,7 +69,6 @@ export function useSubmitProposal() {
     contestAbi: abi,
     version,
     rewardsModuleAddress,
-    rewardsAbi,
     votesOpen,
     votesClose,
   } = useContestStore(state => state);
@@ -86,7 +85,7 @@ export function useSubmitProposal() {
   const { refetch: refetchReleasableRewards } = useReleasableRewards({
     contractAddress: rewardsModuleAddress,
     chainId,
-    abi: rewardsAbi ?? [],
+    abi: rewardsStore.rewards.abi ?? [],
     rankings: rewardsStore.rewards.payees,
   });
   const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");

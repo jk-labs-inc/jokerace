@@ -1,10 +1,10 @@
 import { chains, config } from "@config/wagmi";
 import { formatBalance } from "@helpers/formatBalance";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { ContestStateEnum } from "@hooks/useContestState/store";
 import { getBalance, readContract, readContracts } from "@wagmi/core";
-import { getTokenAddresses } from "lib/rewards";
+import { getRewardsModuleInfo } from "lib/rewards/contracts";
+import { getTokenAddresses } from "lib/rewards/database";
 import { Abi, erc20Abi, formatUnits } from "viem";
 import { ContestReward } from "./types";
 
@@ -157,7 +157,7 @@ export async function processContestRewardsData(
 
     if (rewardsModuleAddress === EMPTY_ADDRESS || rewardsModuleAddress === EMPTY_HASH) return null;
 
-    const abiRewardsModule = await getRewardsModuleContractVersion(rewardsModuleAddress, chain.id);
+    const { abi: abiRewardsModule, moduleType } = await getRewardsModuleInfo(rewardsModuleAddress, chain.id);
     if (!abiRewardsModule) return null;
 
     const [winners, erc20TokenAddresses] = await Promise.all([
@@ -228,7 +228,6 @@ export async function processContestRewardsData(
       };
     }
 
-    // 0check ERC20 tokens
     for (const tokenAddress of erc20TokenAddresses) {
       const { totalReleasable: erc20Releasable, totalReleased: erc20Released } = await checkReleasableAndReleased(
         false,
