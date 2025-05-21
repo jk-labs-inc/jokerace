@@ -3375,15 +3375,15 @@
     node-forge "1.3.1"
     ua-parser-js "^2.0.2"
 
-"@headlessui/react@2.2.3":
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/@headlessui/react/-/react-2.2.3.tgz#d947844665ce223f55d79aa23e9bb4ce28846133"
-  integrity sha512-hgOJGXPifPlOczIeSwX8OjLWRJ5XdYApZFf7DeCbCrO1PXHkPhNTRrA9ZwJsgAG7SON1i2JcvIreF/kbgtJeaQ==
+"@headlessui/react@2.2.4":
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/@headlessui/react/-/react-2.2.4.tgz#9b0c48a5be1fe4577f03f3216290bb71d9883520"
+  integrity sha512-lz+OGcAH1dK93rgSMzXmm1qKOJkBUqZf1L4M8TWLNplftQD3IkoEDdUFNfAn4ylsN6WOTVtWaLmvmaHOUk1dTA==
   dependencies:
     "@floating-ui/react" "^0.26.16"
     "@react-aria/focus" "^3.20.2"
     "@react-aria/interactions" "^3.25.0"
-    "@tanstack/react-virtual" "^3.13.6"
+    "@tanstack/react-virtual" "^3.13.9"
     use-sync-external-store "^1.5.0"
 
 "@heroicons/react@2.2.0":
@@ -6863,17 +6863,17 @@
   dependencies:
     "@tanstack/query-core" "5.66.4"
 
-"@tanstack/react-virtual@^3.13.6":
-  version "3.13.6"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.13.6.tgz#30243c8c3166673caf66bfbf5352e1b314a3a4cd"
-  integrity sha512-WT7nWs8ximoQ0CDx/ngoFP7HbQF9Q2wQe4nh2NB+u2486eX3nZRE40P9g6ccCVq7ZfTSH5gFOuCoVH5DLNS/aA==
+"@tanstack/react-virtual@^3.13.9":
+  version "3.13.9"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.13.9.tgz#6f87bce08a65c8f4ec6d2c303646ca6b3897e9fe"
+  integrity sha512-SPWC8kwG/dWBf7Py7cfheAPOxuvIv4fFQ54PdmYbg7CpXfsKxkucak43Q0qKsxVthhUJQ1A7CIMAIplq4BjVwA==
   dependencies:
-    "@tanstack/virtual-core" "3.13.6"
+    "@tanstack/virtual-core" "3.13.9"
 
-"@tanstack/virtual-core@3.13.6":
-  version "3.13.6"
-  resolved "https://registry.yarnpkg.com/@tanstack/virtual-core/-/virtual-core-3.13.6.tgz#329f962f1596b3280736c266a982897ed2112157"
-  integrity sha512-cnQUeWnhNP8tJ4WsGcYiX24Gjkc9ALstLbHcBj1t3E7EimN6n6kHH+DPV4PpDnuw00NApQp+ViojMj1GRdwYQg==
+"@tanstack/virtual-core@3.13.9":
+  version "3.13.9"
+  resolved "https://registry.yarnpkg.com/@tanstack/virtual-core/-/virtual-core-3.13.9.tgz#62b4d2d4351d658101664beacf088fbd061190bf"
+  integrity sha512-3jztt0jpaoJO5TARe2WIHC1UQC3VMLAFUW5mmMo0yrkwtDB2AQP0+sh10BVUpWrnvHjSLvzFizydtEGLCJKFoQ==
 
 "@tiptap/core@2.4.0", "@tiptap/core@^2.4.0":
   version "2.4.0"
