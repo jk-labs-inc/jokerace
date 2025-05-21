@@ -71,7 +71,7 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="max-w-72">
       <VoterClaimRewards
         contestRewardsModuleAddress={contestRewardsModuleAddress}
         rewardsModuleAbi={rewardsModuleAbi}

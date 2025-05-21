@@ -16,7 +16,7 @@ export function useTotalRewards({
   enabled = true,
 }: UseTotalRewardsParams) {
   return useQuery({
-    queryKey: ["totalRewards", rewardsModuleAddress, chainId],
+    queryKey: ["totalRewards", rewardsModuleAddress, rewardsModuleAbi, chainId],
     queryFn: async () => {
       if (!rewardsModuleAddress || !rewardsModuleAbi || !chainId) {
         throw new Error("Missing required parameters");

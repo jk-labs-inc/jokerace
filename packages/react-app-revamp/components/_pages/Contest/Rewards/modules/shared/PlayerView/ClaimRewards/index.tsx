@@ -11,10 +11,11 @@ interface RewardsPlayerViewClaimRewardsProps {
   claimableDistributions: Distribution[];
   claimedDistributions?: Distribution[];
   contestStatus: ContestStatus;
-  onClaim: (rank: number, value: bigint, tokenAddress: string) => void;
-  onRefresh?: () => void;
   isClaimLoading: (rank: number, tokenAddress: string) => boolean;
   isClaimSuccess: (rank: number, tokenAddress: string) => boolean;
+  onClaim: (rank: number, value: bigint, tokenAddress: string) => void;
+  isAdditionalStatisticsSupported?: boolean;
+  onRefresh?: () => void;
 }
 
 const RewardsPlayerViewClaimRewards: FC<RewardsPlayerViewClaimRewardsProps> = ({
@@ -26,6 +27,7 @@ const RewardsPlayerViewClaimRewards: FC<RewardsPlayerViewClaimRewardsProps> = ({
   onRefresh,
   isClaimLoading,
   isClaimSuccess,
+  isAdditionalStatisticsSupported,
 }) => {
   const isActive = contestStatus === ContestStatus.VotingOpen;
   const groupedByRank = groupRewardsByRank(claimableDistributions, claimedDistributions);
@@ -40,14 +42,14 @@ const RewardsPlayerViewClaimRewards: FC<RewardsPlayerViewClaimRewardsProps> = ({
       />
 
       {sortedRanks.length > 0 && (
-        <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             <p className="text-[24px] text-neutral-11">distribution</p>
             {isActive ? <p className="text-[12px] text-neutral-9">if contest ended now</p> : null}
           </div>
           <div className="flex flex-col gap-14">
             {sortedRanks.map(rank => (
-              <div key={rank} className="flex flex-col gap-6">
+              <div key={rank} className="flex flex-col gap-4">
                 <p className="text-[16px] text-neutral-9 font-bold">
                   {rank}
                   <sup>{returnOnlySuffix(rank)}</sup> place
@@ -63,6 +65,7 @@ const RewardsPlayerViewClaimRewards: FC<RewardsPlayerViewClaimRewardsProps> = ({
                       isClaimLoading={isClaimLoading}
                       isRankClaimed={() => item.claimed}
                       isClaimSuccess={isClaimSuccess}
+                      isAdditionalStatisticsSupported={isAdditionalStatisticsSupported}
                       onClaim={onClaim}
                     />
                   ))}

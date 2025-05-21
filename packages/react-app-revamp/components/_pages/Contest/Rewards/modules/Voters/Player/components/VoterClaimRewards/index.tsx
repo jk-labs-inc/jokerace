@@ -75,6 +75,7 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
       onClaim={handleClaim}
       isClaimLoading={(rank: number, tokenAddress: string) => isClaimLoading(rank, tokenAddress)}
       isClaimSuccess={(rank: number, tokenAddress: string) => isClaimSuccess(rank, tokenAddress)}
+      isAdditionalStatisticsSupported
     />
   );
 };

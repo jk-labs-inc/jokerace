@@ -84,14 +84,16 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
   }
 
   return (
-    <WinnerClaimRewards
-      contestRewardsModuleAddress={contestRewardsModuleAddress}
-      rewardsModuleAbi={rewardsModuleAbi}
-      chainId={chainId}
-      contestStatus={contestStatus}
-      rankingsForAddress={rankingsForAddress}
-      refetchPayoutAddresses={() => refetchPayoutAddresses()}
-    />
+    <div className="max-w-72">
+      <WinnerClaimRewards
+        contestRewardsModuleAddress={contestRewardsModuleAddress}
+        rewardsModuleAbi={rewardsModuleAbi}
+        chainId={chainId}
+        contestStatus={contestStatus}
+        rankingsForAddress={rankingsForAddress}
+        refetchPayoutAddresses={() => refetchPayoutAddresses()}
+      />
+    </div>
   );
 };
 
