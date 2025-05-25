@@ -15315,10 +15315,10 @@ react-csv@2.2.2:
   resolved "https://registry.yarnpkg.com/react-csv/-/react-csv-2.2.2.tgz#5bbf0d72a846412221a14880f294da9d6def9bfb"
   integrity sha512-RG5hOcZKZFigIGE8LxIEV/OgS1vigFQT4EkaHeKgyuCbUAu9Nbd/1RYq++bJcJJ9VOqO/n9TZRADsXNDR4VEpw==
 
-react-datepicker@8.3.0:
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-8.3.0.tgz#21d51294a953755bcc273d411fe10d12918a6f51"
-  integrity sha512-DhfrIJnTPJTUVRtXU7c7zooug40rD6q+Fc8UTCt19dYEotLpDQgTN98MfocY6Rc4S99oOFFEoxyanOM/TKauuw==
+react-datepicker@8.4.0:
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-8.4.0.tgz#8db0beac6282ef72d12494bd49cc5e61362a3a42"
+  integrity sha512-6nPDnj8vektWCIOy9ArS3avus9Ndsyz5XgFCJ7nBxXASSpBdSL6lG9jzNNmViPOAOPh6T5oJyGaXuMirBLECag==
   dependencies:
     "@floating-ui/react" "^0.27.3"
     clsx "^2.1.1"
