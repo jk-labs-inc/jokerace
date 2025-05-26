@@ -5,6 +5,10 @@ const fetchLocationFromAPI = async (): Promise<UserLocation> => {
   try {
     const urlWithKey = `${IP_API_URL}?key=${IP_API_KEY}`;
 
+    if (!IP_API_KEY) {
+      throw new Error("IP_API_KEY is not set");
+    }
+
     const response = await fetch(urlWithKey, {
       method: "GET",
       headers: {

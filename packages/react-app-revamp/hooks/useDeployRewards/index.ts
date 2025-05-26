@@ -16,7 +16,7 @@ import { SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { estimateGas, sendTransaction, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { ContractFactory } from "ethers";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
-import { insertContestWithVotingRewards } from "lib/rewards/database";
+import { insertContestWithOfficialModule } from "lib/rewards/database";
 import { usePathname } from "next/navigation";
 import { didUserReject } from "utils/error";
 import { erc20Abi, parseUnits } from "viem";
@@ -63,12 +63,10 @@ export function useDeployRewardsPool() {
         await setCreatorSplitDestinationToRewardsPool(contractRewardsModuleAddress);
       }
 
-      if (rewardPoolType === RewardPoolType.Voters) {
-        try {
-          await insertContestWithVotingRewards(contestAddress, chainName);
-        } catch (error) {
-          console.error("Failed to insert contest with voting rewards:", error);
-        }
+      try {
+        await insertContestWithOfficialModule(contestAddress, chainName, rewardPoolType);
+      } catch (error) {
+        console.error("Failed to insert contest with official module:", error);
       }
 
       setSupportsRewardsModule(true);

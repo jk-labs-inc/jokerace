@@ -1,3 +1,4 @@
+import { RewardPoolType } from "@components/_pages/Contest/Rewards/components/Create/store";
 import { isSupabaseConfigured } from "@helpers/database";
 
 /**
@@ -41,26 +42,31 @@ export const getTokenAddresses = async (rewardsModuleAddress: string, networkNam
  * Inserts a contest with voting rewards into the database.
  * @param contestAddress contest address
  * @param chainName chain name
+ * @param moduleType module type (AUTHOR_REWARDS or VOTING_REWARDS)
  * @returns true if the contest was inserted successfully, false otherwise
  */
-export const insertContestWithVotingRewards = async (contestAddress: string, chainName: string): Promise<boolean> => {
+export const insertContestWithOfficialModule = async (
+  contestAddress: string,
+  chainName: string,
+  rewardPoolType: RewardPoolType,
+): Promise<boolean> => {
   if (isSupabaseConfigured) {
     try {
       const config = await import("@config/supabase");
       const supabase = config.supabase;
 
       const { error } = await supabase
-        .from("contests_with_voting_rewards")
-        .insert({ chain: chainName.toLowerCase(), address: contestAddress });
+        .from("contests_with_official_modules")
+        .insert({ network_name: chainName.toLowerCase(), address: contestAddress, type: rewardPoolType });
 
       if (error) {
-        console.error("Error inserting contest with voting rewards:", error.message);
+        console.error("Error inserting contest with official module:", error.message);
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error("Failed to insert contest with voting rewards:", error);
+      console.error("Failed to insert contest with official module:", error);
       return false;
     }
   }
