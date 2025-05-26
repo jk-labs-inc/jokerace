@@ -1,4 +1,5 @@
 import { FC, ReactNode } from "react";
+import Image from "next/image";
 
 interface InfoPanelProps {
   title: string;
@@ -34,7 +35,7 @@ const InfoPanel: FC<InfoPanelProps> = ({
 
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-6">
-          {image && <img src={image} alt={imageAlt} width={imageSize.width} height={imageSize.height} />}
+          {image && <Image src={image} alt={imageAlt} width={imageSize.width} height={imageSize.height} />}
           <div className="flex flex-col gap-4">
             {heading && <p className="text-[20px] text-neutral-11">{heading}</p>}
             {description &&
