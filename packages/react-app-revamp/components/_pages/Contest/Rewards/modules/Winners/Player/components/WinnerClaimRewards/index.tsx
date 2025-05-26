@@ -1,15 +1,15 @@
 import Loader from "@components/UI/Loader";
 import { useClaimRewards } from "@hooks/useClaimRewards";
-import { ContestStatus } from "@hooks/useContestStatus/store";
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestStatus } from "@hooks/useContestStatus/store";
 import useUserRewards from "@hooks/useUserRewards";
 import { ModuleType } from "lib/rewards/types";
 import { FC } from "react";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
+import RewardsError from "../../../../shared/Error";
 import RewardsPlayerViewClaimRewards from "../../../../shared/PlayerView/ClaimRewards";
 import RewardsPlayerLosingStatus from "../../../../shared/PlayerView/LosingStatus";
-import RewardsError from "../../../../shared/Error";
 
 interface WinnerClaimRewardsProps {
   contestRewardsModuleAddress: `0x${string}`;
