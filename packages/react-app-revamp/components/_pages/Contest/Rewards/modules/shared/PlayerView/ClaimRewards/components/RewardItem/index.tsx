@@ -64,14 +64,16 @@ const RewardItem: FC<RewardItemProps> = ({
           </button>
         ) : null}
       </div>
-      {showAdditionalStatistics ? (
-        <VoterStatistics
-          ranking={rank}
-          myReward={{ value: reward.value, symbol: reward.symbol, decimals: reward.decimals }}
-        />
-      ) : null}
-      {isActive ? <p className="text-[12px] text-neutral-9">come back after contest ends to claim rewards!</p> : null}
-      {!isActive && renderClaimStatus()}
+      <div className="flex flex-col gap-6">
+        {showAdditionalStatistics ? (
+          <VoterStatistics
+            ranking={rank}
+            myReward={{ value: reward.value, symbol: reward.symbol, decimals: reward.decimals }}
+          />
+        ) : null}
+        {isActive ? <p className="text-[12px] text-neutral-9">come back after contest ends to claim rewards!</p> : null}
+        {!isActive && renderClaimStatus()}
+      </div>
     </div>
   );
 };

@@ -42,14 +42,14 @@ const RewardsPlayerViewClaimRewards: FC<RewardsPlayerViewClaimRewardsProps> = ({
       />
 
       {sortedRanks.length > 0 && (
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2">
+        <div className={`flex flex-col ${isActive ? "gap-6" : "gap-12"}`}>
+          <div className="flex flex-col gap-1">
             <p className="text-[24px] text-neutral-11">distribution</p>
             {isActive ? <p className="text-[12px] text-neutral-9">if contest ended now</p> : null}
           </div>
-          <div className="flex flex-col gap-14">
+          <div className="flex flex-col gap-12">
             {sortedRanks.map(rank => (
-              <div key={rank} className="flex flex-col gap-4">
+              <div key={rank} className="flex flex-col gap-2">
                 <p className="text-[16px] text-neutral-9 font-bold">
                   {rank}
                   <sup>{returnOnlySuffix(rank)}</sup> place

@@ -19,6 +19,7 @@ import {
 import { createERC20TokenQuery, createNativeTokenQuery } from "./utils";
 
 //TODO: refactor this to a more pieces of data (such as core like getRewardsModule info to be in a separate contract folder)
+//TODO: add try/catch on all?
 
 /**
  * Gets information about the rewards module
@@ -200,13 +201,47 @@ export const createERC20TokenRead = (
 /**
  * Validates rankings
  */
+
 export const validateRankings = async (
   rankings: number[],
   contractAddress: `0x${string}`,
   chainId: number,
   abi: Abi,
-): Promise<number[]> => {
-  if (!rankings.length) return [];
+  version: string,
+  creatorAddress?: `0x${string}`,
+): Promise<{ validRankings: number[]; tiedRankings: number[] }> => {
+  if (!rankings.length) return { validRankings: [], tiedRankings: [] };
+
+  // check if this is an older version (before VOTER_REWARDS_VERSION)
+  if (compareVersions(version, VOTER_REWARDS_VERSION) < 0) {
+    // for older versions, use getAddressToPayOut
+    const addressResults = await readContracts(config, {
+      contracts: rankings.map(ranking => ({
+        address: contractAddress,
+        chainId,
+        abi,
+        functionName: "getAddressToPayOut",
+        args: [BigInt(ranking)],
+      })),
+    });
+
+    const validRankings: number[] = [];
+    const tiedRankings: number[] = [];
+
+    for (let i = 0; i < rankings.length; i++) {
+      const payoutAddress = addressResults[i]?.result as `0x${string}` | undefined;
+      if (payoutAddress !== undefined) {
+        //TODO: if creator participated, it isn't a tie, just think about this
+        if (payoutAddress.toLowerCase() === creatorAddress?.toLowerCase()) {
+          tiedRankings.push(rankings[i]);
+        } else {
+          validRankings.push(rankings[i]);
+        }
+      }
+    }
+
+    return { validRankings, tiedRankings };
+  }
 
   const proposalIdResults = await readContracts(config, {
     contracts: rankings.map(ranking => ({
@@ -219,14 +254,20 @@ export const validateRankings = async (
   });
 
   const validRankings: number[] = [];
+  const tiedRankings: number[] = [];
+
   for (let i = 0; i < rankings.length; i++) {
     const proposalId = proposalIdResults[i]?.result as bigint | undefined;
-    if (proposalId && proposalId !== 0n) {
-      validRankings.push(rankings[i]);
+    if (proposalId !== undefined) {
+      if (proposalId === 0n) {
+        tiedRankings.push(rankings[i]);
+      } else {
+        validRankings.push(rankings[i]);
+      }
     }
   }
 
-  return validRankings;
+  return { validRankings, tiedRankings };
 };
 
 /**
@@ -237,17 +278,24 @@ export const prepareRewardsFetching = async (
     contestChainName: string;
   },
 ) => {
-  const { rankings, contractAddress, chainId, abi, contestChainName } = params;
+  const { rankings, contractAddress, chainId, abi, contestChainName, version, creatorAddress } = params;
 
   if (!rankings.length) {
-    return { validRankings: [], tokenAddresses: [], tokenInfo: {} };
+    return { validRankings: [], tiedRankings: [], tokenAddresses: [], tokenInfo: {} };
   }
 
   const tokenAddresses = await fetchTokenAddresses(contractAddress, contestChainName);
-  const validRankings = await validateRankings(rankings, contractAddress, chainId, abi);
+  const { validRankings, tiedRankings } = await validateRankings(
+    rankings,
+    contractAddress,
+    chainId,
+    abi,
+    version,
+    creatorAddress,
+  );
 
-  if (!validRankings.length) {
-    return { validRankings: [], tokenAddresses: [], tokenInfo: {} };
+  if (!validRankings.length && !tiedRankings.length) {
+    return { validRankings: [], tiedRankings: [], tokenAddresses: [], tokenInfo: {} };
   }
 
   // get token symbols and decimals for ERC20 tokens (if any) in parallel
@@ -259,7 +307,7 @@ export const prepareRewardsFetching = async (
         ])
       : [{}, {}];
 
-  return { validRankings, tokenAddresses, tokenInfo: { symbols, decimals } };
+  return { validRankings, tiedRankings, tokenAddresses, tokenInfo: { symbols, decimals } };
 };
 
 /**

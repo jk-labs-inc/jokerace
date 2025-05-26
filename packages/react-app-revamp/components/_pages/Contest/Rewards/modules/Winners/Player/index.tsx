@@ -12,6 +12,7 @@ import RewardsPlayerNotQualified from "../../shared/PlayerView/NotQualified";
 import RewardsNotStarted from "../../shared/PlayerView/RewardsNotStarted";
 import RewardsPlayerViewNotConnected from "../../shared/PlayerView/WalletNotConnected";
 import WinnerClaimRewards from "./components/WinnerClaimRewards";
+import { useContestStore } from "@hooks/useContest/store";
 
 interface WinnersRewardsPagePlayerViewProps {
   contestAddress: `0x${string}`;
@@ -30,6 +31,8 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
 }) => {
   const { contestStatus } = useContestStatusStore(state => state);
   const { address: accountAddress, isConnected } = useAccount();
+  const creator = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
+  const isCreator = accountAddress === creator;
   const rankings = useRewardsStore(useShallow(state => state.rewards.payees));
   const { hasSubmitted, isLoading, isError, refetch } = useHasSubmittedProposal({
     contractAddress: contestAddress,
@@ -48,6 +51,9 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
     chainId,
     rankings,
   });
+  const rankingsForAddress = accountAddress ? getRankingsForAddress(accountAddress as `0x${string}`) : [];
+  const isEntryOpen = contestStatus === ContestStatus.SubmissionOpen;
+  const phase = isEntryOpen ? "active" : "closed";
 
   if (!isConnected) {
     return <RewardsPlayerViewNotConnected />;
@@ -71,11 +77,22 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
     );
   }
 
-  const rankingsForAddress = accountAddress ? getRankingsForAddress(accountAddress as `0x${string}`) : [];
-  const isEntryOpen = contestStatus === ContestStatus.SubmissionOpen;
-  const phase = isEntryOpen ? "active" : "closed";
-
   if (!hasSubmitted) {
+    if (isCreator && rankingsForAddress.length > 0) {
+      return (
+        <div className="max-w-72">
+          <WinnerClaimRewards
+            contestRewardsModuleAddress={contestRewardsModuleAddress}
+            rewardsModuleAbi={rewardsModuleAbi}
+            chainId={chainId}
+            contestStatus={contestStatus}
+            rankingsForAddress={rankingsForAddress}
+            refetchPayoutAddresses={() => refetchPayoutAddresses()}
+          />
+        </div>
+      );
+    }
+
     return <RewardsPlayerNotQualified phase={phase} rewardsType={ModuleType.AUTHOR_REWARDS} />;
   }
 

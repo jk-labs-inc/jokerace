@@ -11,6 +11,7 @@ import { useShallow } from "zustand/shallow";
 import StatisticsRow from "./components/StatisticsRow";
 import StatisticsSkeleton from "./components/StatisticsSkeleton";
 import RankingSuffix from "./components/RankingSuffix";
+import VotesInfo from "./components/VotesInfo";
 
 interface VoterStatisticsProps {
   ranking: number;
@@ -49,8 +50,6 @@ const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward }) => {
   // TODO: Add error handling unified
   if (isError || isTotalRewardsForRankError) return <div>Error</div>;
 
-  if (!statistics) return null;
-
   const renderTotalRewards = () => (
     <div className="flex flex-col items-end font-bold">
       <span>
@@ -65,26 +64,13 @@ const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward }) => {
   );
 
   return (
-    <div className="flex flex-col w-full text-neutral-9 gap-2">
+    <div className="flex flex-col w-full text-neutral-9 gap-2 mt-4">
       <StatisticsRow
         label={<RankingSuffix ranking={ranking} text="place voter rewards" />}
         value={renderTotalRewards()}
       />
 
-      <StatisticsRow
-        label={<RankingSuffix ranking={ranking} text="place" prefix="my votes on" />}
-        value={<b>{formatBalance(statistics.userVotesFormatted)}</b>}
-      />
-
-      <StatisticsRow
-        label={<RankingSuffix ranking={ranking} text="place" prefix="total votes on" />}
-        value={<b>{formatBalance(statistics.totalVotesFormatted)}</b>}
-      />
-
-      <StatisticsRow
-        label={<RankingSuffix ranking={ranking} text="place rewards" prefix="my % of" />}
-        value={<b>{statistics.rewardsPercentage}%</b>}
-      />
+      <VotesInfo ranking={ranking} info={statistics} />
 
       <StatisticsRow
         label={<RankingSuffix ranking={ranking} text="place rewards" prefix="my" />}

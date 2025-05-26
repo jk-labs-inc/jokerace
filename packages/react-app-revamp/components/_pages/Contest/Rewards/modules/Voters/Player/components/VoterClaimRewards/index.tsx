@@ -1,6 +1,7 @@
 import Loader from "@components/UI/Loader";
 import { useClaimRewards } from "@hooks/useClaimRewards";
 import { ContestStatus } from "@hooks/useContestStatus/store";
+import { useContestStore } from "@hooks/useContest/store";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import useUserRewards from "@hooks/useUserRewards";
 import { ModuleType } from "lib/rewards/types";
@@ -25,6 +26,7 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
   contestStatus,
 }) => {
   const { address: userAddress } = useAccount();
+  const { contestAuthorEthereumAddress, version } = useContestStore(state => state);
   const rankings = useRewardsStore(useShallow(state => state.rewards.payees));
   const { claimable, claimed, totalRewards, isLoading, refetch } = useUserRewards({
     moduleType: ModuleType.VOTER_REWARDS,
@@ -33,7 +35,9 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
     abi: rewardsModuleAbi,
     voterAddress: userAddress as `0x${string}`,
     rankings,
+    creatorAddress: contestAuthorEthereumAddress as `0x${string}`,
     claimedEnabled: contestStatus === ContestStatus.VotingClosed,
+    version,
   });
 
   const {

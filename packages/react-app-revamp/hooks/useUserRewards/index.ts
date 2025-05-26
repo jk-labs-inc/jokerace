@@ -16,6 +16,8 @@ export interface RewardsParams {
   abi: Abi;
   voterAddress: `0x${string}`;
   rankings: number[];
+  creatorAddress?: `0x${string}`;
+  version: string;
   claimableEnabled?: boolean;
   claimedEnabled?: boolean;
 }
@@ -40,6 +42,7 @@ export interface RewardsResult {
  * @param abi - The abi of the rewards module
  * @param voterAddress - The address of the user
  * @param rankings - The rankings of the user
+ * @param creatorAddress - The address of the creator (needed for tied rankings)
  * @param claimableEnabled - Whether the claimable rewards are enabled
  * @param claimedEnabled - Whether the claimed rewards are enabled
  */
@@ -50,6 +53,8 @@ const useUserRewards = ({
   abi,
   voterAddress,
   rankings,
+  creatorAddress,
+  version,
   claimableEnabled = true,
   claimedEnabled = true,
 }: RewardsParams): RewardsResult => {
@@ -64,8 +69,10 @@ const useUserRewards = ({
     abi,
     voterAddress,
     rankings,
+    creatorAddress,
     contestChainName,
     nativeTokenInfo,
+    version,
   };
 
   const {
@@ -73,7 +80,7 @@ const useUserRewards = ({
     isLoading: isClaimableLoading,
     refetch: refetchClaimable,
   } = useQuery({
-    queryKey: ["claimableRewards", contractAddress, chainId, voterAddress, rankings],
+    queryKey: ["claimableRewards", contractAddress, chainId, voterAddress, creatorAddress, rankings],
     queryFn: () => fetchClaimableRewards(commonQueryParams),
     enabled: claimableEnabled && !!contractAddress && !!voterAddress && rankings.length > 0,
   });
@@ -83,7 +90,7 @@ const useUserRewards = ({
     isLoading: isClaimedLoading,
     refetch: refetchClaimed,
   } = useQuery({
-    queryKey: ["claimedRewards", contractAddress, chainId, voterAddress, rankings],
+    queryKey: ["claimedRewards", contractAddress, chainId, voterAddress, creatorAddress, rankings],
     queryFn: () => fetchClaimedRewards(commonQueryParams),
     enabled: claimedEnabled && !!contractAddress && !!voterAddress && rankings.length > 0,
   });

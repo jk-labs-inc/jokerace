@@ -1,6 +1,9 @@
 import { Loader } from "@components/UI/Loader";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { useRewardsStore } from "@hooks/useRewards/store";
 import useTotalVotesPerUser from "@hooks/useTotalVotesPerUser";
+import { useValidateRankings } from "@hooks/useValidateRankings";
+import { ModuleType } from "lib/rewards/types";
 import { FC } from "react";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
@@ -9,7 +12,6 @@ import RewardsPlayerNotQualified from "../../shared/PlayerView/NotQualified";
 import RewardsNotStarted from "../../shared/PlayerView/RewardsNotStarted";
 import RewardsPlayerViewNotConnected from "../../shared/PlayerView/WalletNotConnected";
 import VoterClaimRewards from "./components/VoterClaimRewards";
-import { ModuleType } from "lib/rewards/types";
 interface VoterRewardsPagePlayerViewProps {
   contestAddress: `0x${string}`;
   contestRewardsModuleAddress: `0x${string}`;
@@ -23,7 +25,9 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({
   contestRewardsModuleAddress,
   rewardsModuleAbi,
 }) => {
+  const rewardsStore = useRewardsStore(useShallow(state => state.rewards));
   const { isConnected, address } = useAccount();
+  const isCreator = address === rewardsStore.creator;
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const {
     hasVoted,
@@ -34,6 +38,12 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({
     contractAddress: contestAddress,
     chainId,
     userAddress: address,
+  });
+  const { tiedRankings } = useValidateRankings({
+    rankings: rewardsStore.payees,
+    contractAddress: contestRewardsModuleAddress,
+    chainId,
+    abi: rewardsModuleAbi,
   });
 
   if (!isConnected) {
@@ -67,6 +77,19 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({
   const phase = isVotingActive ? "active" : "closed";
 
   if (!hasVoted) {
+    if (isCreator && tiedRankings.length > 0) {
+      return (
+        <div className="max-w-72">
+          <VoterClaimRewards
+            contestRewardsModuleAddress={contestRewardsModuleAddress}
+            rewardsModuleAbi={rewardsModuleAbi}
+            chainId={chainId}
+            contestStatus={contestStatus}
+          />
+        </div>
+      );
+    }
+
     return <RewardsPlayerNotQualified phase={phase} rewardsType={ModuleType.VOTER_REWARDS} />;
   }
 

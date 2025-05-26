@@ -80,7 +80,13 @@ const RewardsCreatorView = ({
       </div>
       {/* TODO: Add a loading state */}
       <div className="flex flex-col gap-6">
-        {totalRewards && rankShares && <TotalRewardsTable totalRewards={totalRewards} shares={rankShares} />}
+        {totalRewards && rankShares && (
+          <TotalRewardsTable
+            totalRewards={totalRewards}
+            shares={rankShares}
+            rewardsModuleType={rewardsData.moduleType}
+          />
+        )}
         {isEarningsToRewards ? (
           <GradientText textSizeClassName="text-[16px] font-bold" isFontSabo={false}>
             rewards go up as players enter and vote

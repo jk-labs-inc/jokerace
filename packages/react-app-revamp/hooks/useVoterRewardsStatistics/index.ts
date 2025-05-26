@@ -8,6 +8,14 @@ import { useRewardsStore } from "@hooks/useRewards/store";
 import { useShallow } from "zustand/react/shallow";
 import { compareVersions } from "compare-versions";
 
+export interface VoterRewardsStatistics {
+  userVotes: bigint;
+  totalVotes: bigint;
+  rewardsPercentage: number;
+  userVotesFormatted: string;
+  totalVotesFormatted: string;
+}
+
 export const useVoterRewardsStatistics = (
   contractAddress: string,
   rewardsContractAddress: string,
@@ -95,19 +103,11 @@ export const useVoterRewardsStatistics = (
     return Number(percentage.toFixed(2));
   };
 
-  const fetchStatistics = async () => {
+  const fetchStatistics = async (): Promise<VoterRewardsStatistics | null> => {
     const proposalId = await fetchProposalId();
 
     // If proposalId is 0, it means there's a tie or the rank is below a tied ranking
-    if (proposalId === BigInt(0)) {
-      return {
-        userVotes: BigInt(0),
-        totalVotes: BigInt(0),
-        rewardsPercentage: 0,
-        userVotesFormatted: "0",
-        totalVotesFormatted: "0",
-      };
-    }
+    if (proposalId === BigInt(0)) return null;
 
     const [userVotes, totalVotes] = await Promise.all([fetchUserVotes(proposalId), fetchTotalVotes(proposalId)]);
 
