@@ -3,6 +3,7 @@ import CreateContestTypesAdditionalInfo from "../../AdditionalInfo";
 import CreateContestTypesCard from "../../Card";
 import { ContestType } from "@components/_pages/Create/types";
 import CreateContestTypesSplit from "../../Split";
+import { useMediaQuery } from "react-responsive";
 
 interface CreateContestTypesVotingBasedProps {
   isSelected: boolean;
@@ -11,6 +12,26 @@ interface CreateContestTypesVotingBasedProps {
 }
 
 const CreateContestTypesVotingBased: FC<CreateContestTypesVotingBasedProps> = ({ isSelected, onClick, faqLink }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+
+  const tipMessage = () => {
+    if (isMobile) {
+      return (
+        <>
+          <b>tip: recommended for rewarding voters.</b> if you want to reward winners, pick "anyone can play" so they
+          can enter.
+        </>
+      );
+    }
+
+    return (
+      <>
+        <b>tip: recommended if you want to reward voters.</b> if you want to reward winners,
+        <br /> pick “anyone can play” so they can enter and win.
+      </>
+    );
+  };
+
   return (
     <CreateContestTypesCard isSelected={isSelected} onClick={() => onClick?.(ContestType.VotingContest)}>
       <p className="text-[20px] text-neutral-11 font-bold">voting contest 🗳️</p>
@@ -31,10 +52,7 @@ const CreateContestTypesVotingBased: FC<CreateContestTypesVotingBasedProps> = ({
           />
         </div>
         <div className="p-2 bg-neutral-2 rounded-lg ">
-          <p className="text-neutral-9 text-[12px]">
-            note: <b>if you want to add a rewards pool for winners,</b> pick “anyone can play.” <br />
-            otherwise the rewards just go to you if you’re the only one entering.
-          </p>
+          <p className="text-neutral-9 text-[12px]">{tipMessage()}</p>
         </div>
       </div>
 
