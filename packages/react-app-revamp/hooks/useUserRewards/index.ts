@@ -31,6 +31,8 @@ export interface RewardsResult {
   };
   totalRewards: Reward[];
   isLoading: boolean;
+  isError: boolean;
+
   refetch: () => void;
 }
 
@@ -79,6 +81,7 @@ const useUserRewards = ({
     data: claimableData,
     isLoading: isClaimableLoading,
     refetch: refetchClaimable,
+    isError: isClaimableError,
   } = useQuery({
     queryKey: ["claimableRewards", contractAddress, chainId, voterAddress, creatorAddress, rankings],
     queryFn: () => fetchClaimableRewards(commonQueryParams),
@@ -89,6 +92,7 @@ const useUserRewards = ({
     data: claimedData,
     isLoading: isClaimedLoading,
     refetch: refetchClaimed,
+    isError: isClaimedError,
   } = useQuery({
     queryKey: ["claimedRewards", contractAddress, chainId, voterAddress, creatorAddress, rankings],
     queryFn: () => fetchClaimedRewards(commonQueryParams),
@@ -116,6 +120,7 @@ const useUserRewards = ({
     totalRewards,
     isLoading: isClaimableLoading || isClaimedLoading,
     refetch,
+    isError: isClaimableError || isClaimedError,
   };
 };
 

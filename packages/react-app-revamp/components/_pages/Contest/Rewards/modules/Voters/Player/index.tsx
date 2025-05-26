@@ -12,6 +12,7 @@ import RewardsPlayerNotQualified from "../../shared/PlayerView/NotQualified";
 import RewardsNotStarted from "../../shared/PlayerView/RewardsNotStarted";
 import RewardsPlayerViewNotConnected from "../../shared/PlayerView/WalletNotConnected";
 import VoterClaimRewards from "./components/VoterClaimRewards";
+import RewardsError from "../../shared/Error";
 interface VoterRewardsPagePlayerViewProps {
   contestAddress: `0x${string}`;
   contestRewardsModuleAddress: `0x${string}`;
@@ -39,7 +40,12 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({
     chainId,
     userAddress: address,
   });
-  const { tiedRankings } = useValidateRankings({
+  const {
+    tiedRankings,
+    isLoading: isLoadingValidateRankings,
+    isError: isErrorValidateRankings,
+    refetch: retryValidateRankings,
+  } = useValidateRankings({
     rankings: rewardsStore.payees,
     contractAddress: contestRewardsModuleAddress,
     chainId,
@@ -54,23 +60,12 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({
     return <RewardsNotStarted rewardsType={ModuleType.VOTER_REWARDS} />;
   }
 
-  if (isLoadingHasVoted) {
+  if (isLoadingHasVoted || isLoadingValidateRankings) {
     return <Loader className="mt-8">Loading your voting info...</Loader>;
   }
 
-  // TODO: style this error state
-  if (isErrorHasVoted) {
-    return (
-      <div className="flex flex-col items-center gap-4 p-6 rounded-lg bg-neutral-3">
-        <p className="text-[16px] text-neutral-11">failed to load your voting information</p>
-        <button
-          onClick={() => retryHasVoted()}
-          className="px-4 py-2 text-sm font-medium text-neutral-12 bg-neutral-4 hover:bg-neutral-5 rounded-md transition-colors"
-        >
-          retry
-        </button>
-      </div>
-    );
+  if (isErrorHasVoted || isErrorValidateRankings) {
+    return <RewardsError onRetry={isErrorHasVoted ? retryHasVoted : retryValidateRankings} />;
   }
 
   const isVotingActive = contestStatus === ContestStatus.VotingOpen;

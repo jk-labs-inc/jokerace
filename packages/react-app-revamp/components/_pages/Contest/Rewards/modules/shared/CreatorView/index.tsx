@@ -1,3 +1,5 @@
+import GradientText from "@components/UI/GradientText";
+import RefreshButton from "@components/UI/RefreshButton";
 import { useContestStore } from "@hooks/useContest/store";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { useSharesByRankings } from "@hooks/useShares";
@@ -5,10 +7,9 @@ import { useTotalRewards } from "@hooks/useTotalRewards";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
+import RewardsError from "../Error";
 import RewardsCreatorOptions from "./CreatorOptions";
 import TotalRewardsTable from "./TotalRewardsTable";
-import RefreshButton from "@components/UI/RefreshButton";
-import GradientText from "@components/UI/GradientText";
 
 interface RewardsCreatorViewProps {
   contestRewardsModuleAddress: `0x${string}`;
@@ -32,6 +33,7 @@ const RewardsCreatorView = ({
     data: totalRewards,
     isLoading: isTotalRewardsLoading,
     refetch: refetchTotalRewards,
+    isError: isTotalRewardsError,
   } = useTotalRewards({
     rewardsModuleAddress: contestRewardsModuleAddress,
     rewardsModuleAbi,
@@ -42,6 +44,7 @@ const RewardsCreatorView = ({
     rankShares,
     isLoading: isRankSharesLoading,
     refetch: refetchRankShares,
+    isError: isRankSharesError,
   } = useSharesByRankings({
     rewardsModuleAddress: contestRewardsModuleAddress,
     abi: rewardsModuleAbi,
@@ -60,6 +63,10 @@ const RewardsCreatorView = ({
         </div>
       </div>
     );
+  }
+
+  if (isTotalRewardsError || isRankSharesError) {
+    return <RewardsError onRetry={isTotalRewardsError ? refetchTotalRewards : refetchRankShares} />;
   }
 
   return (

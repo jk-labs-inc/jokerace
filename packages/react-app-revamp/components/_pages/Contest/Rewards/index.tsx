@@ -13,6 +13,7 @@ import { Abi } from "viem";
 import { useAccount, useAccountEffect } from "wagmi";
 import CreateRewardsModule from "./components/CreateRewardsModule";
 import NoRewardsInfo from "./components/NoRewards";
+import RewardsError from "./modules/shared/Error";
 import RewardsCanceled from "./modules/shared/RewardsCanceled";
 import VotersRewardsPage from "./modules/Voters";
 import WinnersRewardsPage from "./modules/Winners";
@@ -43,6 +44,7 @@ const ContestRewards = () => {
     isCanceled,
     isLoading: isRewardsCanceledLoading,
     isError: isRewardsCanceledError,
+    refetch: refetchRewardsCanceled,
   } = useCancelRewards({
     rewardsAddress: rewardsStore.rewards.contractAddress as `0x${string}`,
     abi: rewardsStore.rewards.abi as Abi,
@@ -78,9 +80,8 @@ const ContestRewards = () => {
     );
   }
 
-  //TODO: add unified error handling for all errors
   if (isRewardsCanceledError || rewardsStore.isError) {
-    return <div>Error loading rewards</div>;
+    return <RewardsError onRetry={refetchRewardsCanceled} />;
   }
 
   if (isCanceled) {

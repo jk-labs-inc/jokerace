@@ -1,4 +1,5 @@
 import Loader from "@components/UI/Loader";
+import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useHasSubmittedProposal from "@hooks/useHasSubmittedProposal";
 import { usePayoutAddresses } from "@hooks/usePayoutAddresses";
@@ -8,11 +9,11 @@ import { FC } from "react";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
+import RewardsError from "../../shared/Error";
 import RewardsPlayerNotQualified from "../../shared/PlayerView/NotQualified";
 import RewardsNotStarted from "../../shared/PlayerView/RewardsNotStarted";
 import RewardsPlayerViewNotConnected from "../../shared/PlayerView/WalletNotConnected";
 import WinnerClaimRewards from "./components/WinnerClaimRewards";
-import { useContestStore } from "@hooks/useContest/store";
 
 interface WinnersRewardsPagePlayerViewProps {
   contestAddress: `0x${string}`;
@@ -34,7 +35,12 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
   const creator = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
   const isCreator = accountAddress === creator;
   const rankings = useRewardsStore(useShallow(state => state.rewards.payees));
-  const { hasSubmitted, isLoading, isError, refetch } = useHasSubmittedProposal({
+  const {
+    hasSubmitted,
+    isLoading: isLoadingHasSubmittedProposal,
+    isError: isErrorHasSubmittedProposal,
+    refetch: refetchHasSubmittedProposal,
+  } = useHasSubmittedProposal({
     contractAddress: contestAddress,
     chainId,
     abi: contestAbi,
@@ -59,21 +65,13 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
     return <RewardsPlayerViewNotConnected />;
   }
 
-  if (isLoading || isPayoutAddressesLoading) {
+  if (isLoadingHasSubmittedProposal || isPayoutAddressesLoading) {
     return <Loader className="mt-8">Loading...</Loader>;
   }
 
-  if (isError || isPayoutAddressesError) {
+  if (isErrorHasSubmittedProposal || isPayoutAddressesError) {
     return (
-      <div className="flex flex-col items-center gap-4 p-6 rounded-lg bg-neutral-3">
-        <p className="text-[16px] text-neutral-11">failed to load your rewards information</p>
-        <button
-          onClick={isError ? () => refetch() : () => refetchPayoutAddresses()}
-          className="px-4 py-2 text-sm font-medium text-neutral-12 bg-neutral-4 hover:bg-neutral-5 rounded-md transition-colors"
-        >
-          retry
-        </button>
-      </div>
+      <RewardsError onRetry={isErrorHasSubmittedProposal ? refetchHasSubmittedProposal : refetchPayoutAddresses} />
     );
   }
 

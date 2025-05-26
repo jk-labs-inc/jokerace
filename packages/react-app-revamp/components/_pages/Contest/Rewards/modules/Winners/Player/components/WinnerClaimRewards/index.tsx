@@ -9,6 +9,7 @@ import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import RewardsPlayerViewClaimRewards from "../../../../shared/PlayerView/ClaimRewards";
 import RewardsPlayerLosingStatus from "../../../../shared/PlayerView/LosingStatus";
+import RewardsError from "../../../../shared/Error";
 
 interface WinnerClaimRewardsProps {
   contestRewardsModuleAddress: `0x${string}`;
@@ -34,6 +35,7 @@ const WinnerClaimRewards: FC<WinnerClaimRewardsProps> = ({
     claimed,
     totalRewards,
     isLoading,
+    isError: isUserRewardsError,
     refetch: refetchUserRewards,
   } = useUserRewards({
     moduleType: ModuleType.AUTHOR_REWARDS,
@@ -71,6 +73,10 @@ const WinnerClaimRewards: FC<WinnerClaimRewardsProps> = ({
 
   if (isLoading) {
     return <Loader className="mt-8">Loading...</Loader>;
+  }
+
+  if (isUserRewardsError) {
+    return <RewardsError onRetry={refetchUserRewards} />;
   }
 
   if (contestStatus === ContestStatus.VotingOpen && !totalRewards.length) {

@@ -8,9 +8,10 @@ import { usePathname } from "next/navigation";
 import { FC } from "react";
 import { formatUnits } from "viem";
 import { useShallow } from "zustand/shallow";
+import RewardsError from "../../../../shared/Error";
+import RankingSuffix from "./components/RankingSuffix";
 import StatisticsRow from "./components/StatisticsRow";
 import StatisticsSkeleton from "./components/StatisticsSkeleton";
-import RankingSuffix from "./components/RankingSuffix";
 import VotesInfo from "./components/VotesInfo";
 
 interface VoterStatisticsProps {
@@ -27,17 +28,18 @@ const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward }) => {
   const { address: contestAddress, chainName } = extractPathSegments(asPath);
   const chainId = getChainId(chainName);
   const { rewards } = useRewardsStore(useShallow(state => state));
-  const { statistics, isLoading, isError } = useVoterRewardsStatistics(
-    contestAddress,
-    rewards.contractAddress,
-    ranking,
-    chainId ?? 0,
-  );
+  const {
+    statistics,
+    isLoading,
+    isError,
+    refetch: refetchStatistics,
+  } = useVoterRewardsStatistics(contestAddress, rewards.contractAddress, ranking, chainId ?? 0);
 
   const {
     data: totalRewardsForRank,
     isLoading: isTotalRewardsForRankLoading,
     isError: isTotalRewardsForRankError,
+    refetch: refetchTotalRewardsForRank,
   } = useTotalRewardsForRank({
     rewardsModuleAddress: rewards.contractAddress as `0x${string}`,
     rewardsModuleAbi: rewards.abi,
@@ -47,8 +49,8 @@ const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward }) => {
 
   if (isLoading || isTotalRewardsForRankLoading) return <StatisticsSkeleton />;
 
-  // TODO: Add error handling unified
-  if (isError || isTotalRewardsForRankError) return <div>Error</div>;
+  if (isError || isTotalRewardsForRankError)
+    return <RewardsError onRetry={isError ? refetchStatistics : refetchTotalRewardsForRank} />;
 
   const renderTotalRewards = () => (
     <div className="flex flex-col items-end font-bold">

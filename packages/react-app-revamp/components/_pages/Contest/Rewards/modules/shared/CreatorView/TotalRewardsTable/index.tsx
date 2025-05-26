@@ -75,7 +75,6 @@ const TotalRewardsTable = ({ totalRewards, shares, rewardsModuleType }: TotalRew
             <div className="flex justify-between items-center text-[16px] font-bold">
               <div>
                 {rank}
-                {/* TODO: fix here to say either voters or winners */}
                 <sup>{returnOnlySuffix(rank)}</sup> place {rewardType} ({percentage}%)
               </div>
               <div>

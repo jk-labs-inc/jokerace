@@ -11,6 +11,7 @@ import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import RewardsPlayerViewClaimRewards from "../../../../shared/PlayerView/ClaimRewards";
 import RewardsPlayerLosingStatus from "../../../../shared/PlayerView/LosingStatus";
+import RewardsError from "../../../../shared/Error";
 
 interface VoterClaimRewardsProps {
   contestRewardsModuleAddress: `0x${string}`;
@@ -28,7 +29,7 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
   const { address: userAddress } = useAccount();
   const { contestAuthorEthereumAddress, version } = useContestStore(state => state);
   const rankings = useRewardsStore(useShallow(state => state.rewards.payees));
-  const { claimable, claimed, totalRewards, isLoading, refetch } = useUserRewards({
+  const { claimable, claimed, totalRewards, isLoading, refetch, isError } = useUserRewards({
     moduleType: ModuleType.VOTER_REWARDS,
     contractAddress: contestRewardsModuleAddress,
     chainId,
@@ -59,6 +60,10 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
 
   if (isLoading) {
     return <Loader className="mt-8">Loading...</Loader>;
+  }
+
+  if (isError) {
+    return <RewardsError onRetry={refetch} />;
   }
 
   if (contestStatus === ContestStatus.VotingOpen && !totalRewards.length) {

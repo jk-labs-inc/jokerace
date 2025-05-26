@@ -1,5 +1,6 @@
 import { useReadContracts } from "wagmi";
 import { Abi } from "viem";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 
 interface UseValidateRankingsProps {
   rankings: number[];
@@ -15,6 +16,9 @@ interface ValidateRankingsResult {
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
+  refetch: (
+    options?: RefetchOptions,
+  ) => Promise<QueryObserverResult<{ validRankings: number[]; tiedRankings: number[] }, Error>>;
 }
 
 export const useValidateRankings = ({
@@ -32,7 +36,7 @@ export const useValidateRankings = ({
     args: [BigInt(ranking)],
   }));
 
-  const { data, isLoading, isError, error } = useReadContracts({
+  const { data, isLoading, isError, error, refetch } = useReadContracts({
     contracts,
     query: {
       enabled: enabled && rankings.length > 0,
@@ -62,5 +66,6 @@ export const useValidateRankings = ({
     isLoading,
     isError,
     error: error as Error | null,
+    refetch,
   };
 };
