@@ -22,7 +22,7 @@ const CreateRewardsInitialStep = () => {
     <div className="flex flex-col gap-6 animate-reveal">
       <div className="flex flex-col gap-4">
         <p className="text-neutral-11 text-[24px] font-bold">
-          add rewards for {!supportsVoterRewards ? "winners" : "..."}
+          add rewards for{!supportsVoterRewards ? " winners" : "..."}
         </p>
         {supportsVoterRewards && <RewardTypeSwitcher />}
       </div>

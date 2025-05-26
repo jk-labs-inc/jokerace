@@ -5,7 +5,7 @@ const RewardsTypeInfoVoters = () => {
   return (
     <div className="absolute inset-0 flex flex-col gap-4">
       <p className="text-neutral-11 text-[16px]">
-        let's pick how to fund a rewards pool for <b>voters-</b>then <br />
+        let's pick how to fund a rewards pool for <b>voters—</b>then <br />
         decide on the proportions that everyone gets.
       </p>
       <p className="text-neutral-11 text-[16px]">

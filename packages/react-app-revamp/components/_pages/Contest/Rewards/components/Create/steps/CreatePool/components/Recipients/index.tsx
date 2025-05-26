@@ -60,7 +60,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
 
     setRecipientsExceedLimit("");
     const nextPlace = rewardPoolData.recipients.length + 1;
-    const newRecipients = [...rewardPoolData.recipients, { id: nextId, place: nextPlace, proportion: 0 }];
+    const newRecipients = [...rewardPoolData.recipients, { id: nextId, place: nextPlace, proportion: null }];
     setNextId(prevId => prevId + 1);
     validateRecipients(newRecipients);
   };
@@ -105,6 +105,14 @@ const CreateRewardsPoolRecipients: React.FC = () => {
     }
   };
 
+  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+    event.target.select();
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
+    event.currentTarget.select();
+  };
+
   const handlePlaceChange = (value: string, id: number) => {
     const newPlace = parseInt(value);
 
@@ -123,7 +131,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
   };
 
   return (
-    <div className="w-[340px] md:w-[370px]">
+    <div className="w-[344px]">
       <div className="hidden justify-start md:block">
         <ButtonV3
           onClick={handleAddRecipient}
@@ -194,9 +202,10 @@ const CreateRewardsPoolRecipients: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center relative">
                         <input
-                          className="w-[120px] h-8 bg-neutral-9 text-true-black rounded-[8px] font-bold text-center appearance-none focus:outline-none"
+                          className="w-[120px] h-8 bg-neutral-9 text-true-black rounded-[8px] font-bold text-center appearance-none focus:outline-none placeholder:text-true-black"
                           type="number"
                           max="100"
+                          placeholder="0"
                           value={recipient.proportion === null ? "" : recipient.proportion}
                           onChange={event => handleProportionChange(event, recipient.id)}
                           onInput={handleInput}
