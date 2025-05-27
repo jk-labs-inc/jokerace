@@ -54,7 +54,6 @@ interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsP
 
 export function useCastVotes() {
   const { charge, contestAbi: abi, version, votesClose, anyoneCanVote } = useContestStore(state => state);
-  //TODO: check if this arrives in the store
   const {
     contractAddress: rewardsModuleAddress,
     abi: rewardsAbi,

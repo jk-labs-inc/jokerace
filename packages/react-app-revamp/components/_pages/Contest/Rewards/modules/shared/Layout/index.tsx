@@ -8,10 +8,15 @@ interface RewardsSplitLayoutProps {
 
 const RewardsSplitLayout: FC<RewardsSplitLayoutProps> = ({ playerView, creatorView, showBothViews = true }) => {
   return (
-    <div className="flex flex-col md:flex-row w-full gap-8">
-      <div className="w-full md:w-1/2 md:border-r md:border-neutral-10 md:pr-4">{playerView}</div>
+    <div className="flex flex-col md:flex-row w-full gap-6 md:gap-8">
+      <div className="w-full md:w-1/2 md:border-r md:border-neutral-10 md:pr-12">{playerView}</div>
 
-      {showBothViews && <div className="w-full md:w-1/2 md:pl-4">{creatorView}</div>}
+      {showBothViews && (
+        <>
+          <div className="w-full h-px bg-neutral-6 md:hidden" />
+          <div className="w-full md:w-1/2 md:pl-12">{creatorView}</div>
+        </>
+      )}
     </div>
   );
 };

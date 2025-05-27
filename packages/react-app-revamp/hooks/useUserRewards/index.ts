@@ -14,7 +14,7 @@ export interface RewardsParams {
   contractAddress: `0x${string}`;
   chainId: number;
   abi: Abi;
-  voterAddress: `0x${string}`;
+  userAddress: `0x${string}`;
   rankings: number[];
   creatorAddress?: `0x${string}`;
   version: string;
@@ -42,7 +42,7 @@ export interface RewardsResult {
  * @param contractAddress - The rewards module address
  * @param chainId - The chainId of the rewards module
  * @param abi - The abi of the rewards module
- * @param voterAddress - The address of the user
+ * @param userAddress - The address of the user
  * @param rankings - The rankings of the user
  * @param creatorAddress - The address of the creator (needed for tied rankings)
  * @param claimableEnabled - Whether the claimable rewards are enabled
@@ -53,7 +53,7 @@ const useUserRewards = ({
   contractAddress,
   chainId,
   abi,
-  voterAddress,
+  userAddress,
   rankings,
   creatorAddress,
   version,
@@ -69,7 +69,7 @@ const useUserRewards = ({
     contractAddress,
     chainId,
     abi,
-    voterAddress,
+    userAddress,
     rankings,
     creatorAddress,
     contestChainName,
@@ -83,9 +83,9 @@ const useUserRewards = ({
     refetch: refetchClaimable,
     isError: isClaimableError,
   } = useQuery({
-    queryKey: ["claimableRewards", contractAddress, chainId, voterAddress, creatorAddress, rankings],
+    queryKey: ["claimableRewards", contractAddress, chainId, userAddress, creatorAddress, rankings],
     queryFn: () => fetchClaimableRewards(commonQueryParams),
-    enabled: claimableEnabled && !!contractAddress && !!voterAddress && rankings.length > 0,
+    enabled: claimableEnabled && !!contractAddress && !!userAddress && rankings.length > 0,
   });
 
   const {
@@ -94,9 +94,9 @@ const useUserRewards = ({
     refetch: refetchClaimed,
     isError: isClaimedError,
   } = useQuery({
-    queryKey: ["claimedRewards", contractAddress, chainId, voterAddress, creatorAddress, rankings],
+    queryKey: ["claimedRewards", contractAddress, chainId, userAddress, creatorAddress, rankings],
     queryFn: () => fetchClaimedRewards(commonQueryParams),
-    enabled: claimedEnabled && !!contractAddress && !!voterAddress && rankings.length > 0,
+    enabled: claimedEnabled && !!contractAddress && !!userAddress && rankings.length > 0,
   });
 
   const totalRewards = useMemo(() => {

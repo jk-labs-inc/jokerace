@@ -2,7 +2,7 @@ import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
 
 const StatisticsSkeleton: FC = () => (
-  <div className="flex flex-col w-full text-neutral-9 max-w-72 gap-2 mt-4">
+  <div className="flex flex-col w-full text-neutral-9 md:max-w-72 gap-2 mt-4">
     {[...Array(5)].map((_, i) => (
       <div
         key={i}

@@ -30,7 +30,7 @@ const InfoPanel: FC<InfoPanelProps> = ({
   actionButton,
 }) => {
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col gap-6 md:gap-12">
       <p className="text-[24px] text-neutral-11">{title}</p>
 
       <div className="flex flex-col gap-8">

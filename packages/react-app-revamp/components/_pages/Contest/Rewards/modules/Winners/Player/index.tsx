@@ -78,7 +78,7 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
   if (!hasSubmitted) {
     if (isCreator && rankingsForAddress.length > 0) {
       return (
-        <div className="max-w-72">
+        <div className="w-full md:max-w-72">
           <WinnerClaimRewards
             contestRewardsModuleAddress={contestRewardsModuleAddress}
             rewardsModuleAbi={rewardsModuleAbi}
@@ -99,7 +99,7 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
   }
 
   return (
-    <div className="max-w-72">
+    <div className="w-full md:max-w-72">
       <WinnerClaimRewards
         contestRewardsModuleAddress={contestRewardsModuleAddress}
         rewardsModuleAbi={rewardsModuleAbi}

@@ -12,7 +12,7 @@ export const createNativeTokenReadBatch = (
   chainId: number,
   abi: Abi,
   validRankings: number[],
-  voterAddress: `0x${string}`,
+  userAddress: `0x${string}`,
   functionName: string,
 ) => {
   return readContracts(config, {
@@ -21,7 +21,7 @@ export const createNativeTokenReadBatch = (
       chainId,
       abi,
       functionName,
-      args: moduleType === ModuleType.VOTER_REWARDS ? [voterAddress, BigInt(ranking)] : [BigInt(ranking)],
+      args: moduleType === ModuleType.VOTER_REWARDS ? [userAddress, BigInt(ranking)] : [BigInt(ranking)],
     })),
   });
 };
@@ -36,7 +36,7 @@ export const createERC20TokenRead = (
   abi: Abi,
   tokenAddress: `0x${string}`,
   ranking: number,
-  voterAddress: `0x${string}`,
+  userAddress: `0x${string}`,
   functionName: string,
 ) => {
   return readContracts(config, {
@@ -48,7 +48,7 @@ export const createERC20TokenRead = (
         functionName,
         args:
           moduleType === ModuleType.VOTER_REWARDS
-            ? [tokenAddress, voterAddress, BigInt(ranking)]
+            ? [tokenAddress, userAddress, BigInt(ranking)]
             : [tokenAddress, BigInt(ranking)],
       },
     ],

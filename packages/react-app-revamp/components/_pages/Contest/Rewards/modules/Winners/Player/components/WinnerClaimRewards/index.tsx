@@ -42,7 +42,7 @@ const WinnerClaimRewards: FC<WinnerClaimRewardsProps> = ({
     contractAddress: contestRewardsModuleAddress,
     chainId,
     abi: rewardsModuleAbi,
-    voterAddress: userAddress as `0x${string}`,
+    userAddress: userAddress as `0x${string}`,
     rankings: rankingsForAddress,
     creatorAddress: contestAuthorEthereumAddress as `0x${string}`,
     version,

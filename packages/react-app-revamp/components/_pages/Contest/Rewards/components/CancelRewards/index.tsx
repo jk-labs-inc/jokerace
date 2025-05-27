@@ -31,7 +31,11 @@ const CancelRewards: FC<CancelRewardsProps> = ({ rewardsAddress, abi, chainId, v
 
   return (
     <>
-      <button disabled={isLoading} onClick={handleOpenModal} className="text-negative-11 text-[16px] font-bold">
+      <button
+        disabled={isLoading}
+        onClick={handleOpenModal}
+        className="text-negative-11 text-[16px] font-bold whitespace-nowrap overflow-visible relative z-10 hover:text-negative-10 transition-colors duration-200"
+      >
         🗑️ cancel rewards <span className="text-neutral-9">(required to withdraw funds)</span>
       </button>
 

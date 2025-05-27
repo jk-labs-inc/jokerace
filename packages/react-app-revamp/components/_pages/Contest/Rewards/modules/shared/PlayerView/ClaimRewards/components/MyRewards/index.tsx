@@ -15,7 +15,7 @@ const RewardsPlayerViewClaimRewardTotalRewards: FC<RewardsPlayerViewClaimRewardT
   onRefresh,
 }) => {
   return (
-    <div className={`flex flex-col ${isContestInProcess ? "gap-6" : "gap-12"}`}>
+    <div className={`flex flex-col ${isContestInProcess ? "gap-6" : "gap-8 md:gap-12"}`}>
       <div className="flex flex-col gap-1">
         <div className="flex gap-4 items-center">
           <p className="text-[24px] text-neutral-11">my rewards</p>

@@ -16,7 +16,7 @@ import { validateRankings } from "./validation";
  * @param contractAddress contract address
  * @param chainId chain ID
  * @param abi ABI of the contract
- * @param voterAddress voter address
+ * @param userAddress user address
  * @returns releasable rewards
  */
 export async function fetchReleasableRewards(
@@ -26,13 +26,13 @@ export async function fetchReleasableRewards(
   contractAddress: `0x${string}`,
   chainId: number,
   abi: Abi,
-  voterAddress?: `0x${string}`,
+  userAddress?: `0x${string}`,
 ): Promise<any[]> {
   const queries = [];
 
   // build all native token queries
   const nativeTokenQueries = validRankings.map(ranking =>
-    createNativeTokenQuery(moduleType, contractAddress, chainId, abi, ranking, voterAddress),
+    createNativeTokenQuery(moduleType, contractAddress, chainId, abi, ranking, userAddress),
   );
   queries.push(...nativeTokenQueries);
 
@@ -40,7 +40,7 @@ export async function fetchReleasableRewards(
   if (tokenAddresses.length > 0) {
     for (const ranking of validRankings) {
       const erc20Queries = tokenAddresses.map(tokenAddress =>
-        createERC20TokenQuery(moduleType, contractAddress, chainId, abi, ranking, tokenAddress, voterAddress),
+        createERC20TokenQuery(moduleType, contractAddress, chainId, abi, ranking, tokenAddress, userAddress),
       );
       queries.push(...erc20Queries);
     }

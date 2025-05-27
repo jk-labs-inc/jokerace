@@ -17,7 +17,7 @@ export async function fetchClaimedRewards({
   contractAddress,
   chainId,
   abi,
-  voterAddress,
+  userAddress,
   rankings,
   creatorAddress,
   contestChainName,
@@ -32,7 +32,7 @@ export async function fetchClaimedRewards({
     contractAddress,
     chainId,
     abi,
-    voterAddress,
+    userAddress,
     rankings,
     contestChainName,
     version,
@@ -40,7 +40,7 @@ export async function fetchClaimedRewards({
   });
 
   const distributionsMap = new Map<number, Distribution>();
-  const isCreator = creatorAddress && voterAddress === creatorAddress;
+  const isCreator = creatorAddress && userAddress === creatorAddress;
 
   // Process valid rankings
   if (validRankings.length > 0) {
@@ -51,7 +51,7 @@ export async function fetchClaimedRewards({
       chainId,
       abi,
       validRankings,
-      voterAddress,
+      userAddress,
       nativeFunctionName,
     );
 
@@ -82,7 +82,7 @@ export async function fetchClaimedRewards({
             abi,
             tokenAddress,
             ranking,
-            voterAddress,
+            userAddress,
             erc20FunctionName,
           );
 
@@ -110,7 +110,7 @@ export async function fetchClaimedRewards({
       chainId,
       abi,
       tiedRankings,
-      voterAddress,
+      userAddress,
       "released", // Use released for creator
     );
 
@@ -139,7 +139,7 @@ export async function fetchClaimedRewards({
             abi,
             tokenAddress,
             ranking,
-            voterAddress,
+            userAddress,
             "erc20Released", // Use erc20Released for creator
           );
 
@@ -169,8 +169,7 @@ export async function fetchClaimableRewards({
   contractAddress,
   chainId,
   abi,
-  //TODO: rename this to userAddress
-  voterAddress,
+  userAddress,
   rankings,
   creatorAddress,
   version,
@@ -185,14 +184,14 @@ export async function fetchClaimableRewards({
     contractAddress,
     chainId,
     abi,
-    voterAddress,
+    userAddress,
     rankings,
     contestChainName,
     version,
   });
 
   const distributionsMap = new Map<number, Distribution>();
-  const isCreator = creatorAddress && voterAddress === creatorAddress;
+  const isCreator = creatorAddress && userAddress === creatorAddress;
 
   if (validRankings.length > 0) {
     const rewardResults = await fetchReleasableRewards(
@@ -202,7 +201,7 @@ export async function fetchClaimableRewards({
       contractAddress,
       chainId,
       abi,
-      voterAddress,
+      userAddress,
     );
 
     processNativeTokenRewards(validRankings, rewardResults, nativeTokenInfo, distributionsMap);
@@ -226,7 +225,7 @@ export async function fetchClaimableRewards({
       contractAddress,
       chainId,
       abi,
-      voterAddress,
+      userAddress,
     );
 
     processNativeTokenRewards(tiedRankings, tiedRewardResults, nativeTokenInfo, distributionsMap);

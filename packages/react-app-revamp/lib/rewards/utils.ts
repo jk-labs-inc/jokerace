@@ -81,7 +81,7 @@ export function processERC20TokenRewards(
  * @param chainId - The chain id
  * @param abi - The abi of the contract
  * @param ranking - The ranking
- * @param voterAddress - The voter address
+ * @param userAddress - The user address
  * @returns The contract query
  */
 export function createNativeTokenQuery(
@@ -90,7 +90,7 @@ export function createNativeTokenQuery(
   chainId: number,
   abi: Abi,
   ranking: number,
-  voterAddress?: `0x${string}`,
+  userAddress?: `0x${string}`,
 ): ContractQuery {
   if (moduleType === ModuleType.VOTER_REWARDS) {
     return {
@@ -98,7 +98,7 @@ export function createNativeTokenQuery(
       chainId,
       abi,
       functionName: "releasableToVoter",
-      args: [voterAddress, BigInt(ranking)],
+      args: [userAddress, BigInt(ranking)],
     };
   }
 
@@ -119,7 +119,7 @@ export function createNativeTokenQuery(
  * @param abi - The abi of the contract
  * @param ranking - The ranking
  * @param tokenAddress - The token address
- * @param voterAddress - The voter address
+ * @param userAddress - The user address
  * @returns The contract query
  */
 export function createERC20TokenQuery(
@@ -129,7 +129,7 @@ export function createERC20TokenQuery(
   abi: Abi,
   ranking: number,
   tokenAddress: `0x${string}`,
-  voterAddress?: `0x${string}`,
+  userAddress?: `0x${string}`,
 ): ContractQuery {
   if (moduleType === ModuleType.VOTER_REWARDS) {
     return {
@@ -137,7 +137,7 @@ export function createERC20TokenQuery(
       chainId,
       abi,
       functionName: "releasableToVoter",
-      args: [tokenAddress, voterAddress, BigInt(ranking)],
+      args: [tokenAddress, userAddress, BigInt(ranking)],
     };
   }
 

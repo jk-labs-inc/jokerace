@@ -36,7 +36,6 @@ export const validateRankings = async (
     for (let i = 0; i < rankings.length; i++) {
       const payoutAddress = addressResults[i]?.result as `0x${string}` | undefined;
       if (payoutAddress !== undefined) {
-        //TODO: if creator participated, it isn't a tie, just think about this
         if (payoutAddress.toLowerCase() === creatorAddress?.toLowerCase()) {
           tiedRankings.push(rankings[i]);
         } else {

@@ -100,7 +100,6 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     fetchUserData();
   }, [accountChanged, isLoading, isSuccess]);
 
-  //TODO: think if we want to fetch rewards module here and pass from there
   useEffect(() => {
     fetchContestInfo();
     getContestRewardsModule();
@@ -119,19 +118,19 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
         return <ContestTab />;
       case Tab.Rewards:
         return (
-          <div className="mt-12">
+          <div className="mt-6 md:mt-12">
             <ContestRewards />
           </div>
         );
       case Tab.Rules:
         return (
-          <div className="mt-12">
+          <div className="mt-6 md:mt-12">
             <ContestParameters />
           </div>
         );
       case Tab.Extensions:
         return (
-          <div className="mt-12">
+          <div className="mt-6 md:mt-12">
             <ContestExtensions />
           </div>
         );

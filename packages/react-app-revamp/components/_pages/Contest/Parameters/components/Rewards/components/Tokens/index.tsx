@@ -4,14 +4,26 @@ import { formatBalance } from "@helpers/formatBalance";
 import { FC } from "react";
 import { formatUnits } from "viem";
 import Skeleton from "react-loading-skeleton";
+import RewardsError from "@components/_pages/Contest/Rewards/modules/shared/Error";
 
 interface RewardsParametersTokensProps {
   rewardsStore: RewardModuleInfo;
   chainId: number;
 }
 
+const formatReward = (value: bigint, decimals: number, symbol: string) => (
+  <>
+    {formatBalance(formatUnits(value, decimals))} {symbol}
+  </>
+);
+
 const RewardsParametersTokens: FC<RewardsParametersTokensProps> = ({ rewardsStore, chainId }) => {
-  const { data: totalRewards, isLoading } = useTotalRewards({
+  const {
+    data: totalRewards,
+    isLoading,
+    isError,
+    refetch,
+  } = useTotalRewards({
     rewardsModuleAddress: rewardsStore.contractAddress as `0x${string}`,
     rewardsModuleAbi: rewardsStore.abi,
     chainId,
@@ -25,15 +37,13 @@ const RewardsParametersTokens: FC<RewardsParametersTokensProps> = ({ rewardsStor
     );
   }
 
+  if (isError) {
+    return <RewardsError onRetry={refetch} />;
+  }
+
   if (totalRewards && !totalRewards.native.value && Object.keys(totalRewards.tokens).length === 0) {
     return null;
   }
-
-  const formatReward = (value: bigint, decimals: number, symbol: string) => (
-    <>
-      {formatBalance(formatUnits(value, decimals))} $<span className="uppercase">{symbol}</span>
-    </>
-  );
 
   const renderRewardsList = () => {
     if (!totalRewards) return null;

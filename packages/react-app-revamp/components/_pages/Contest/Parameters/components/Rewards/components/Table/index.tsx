@@ -3,11 +3,33 @@ import { RewardModuleInfo } from "@hooks/useRewards/store";
 import { FC } from "react";
 import { Abi } from "viem";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import RewardsError from "@components/_pages/Contest/Rewards/modules/shared/Error";
 
 interface RewardsParametersTableProps {
   rewardsStore: RewardModuleInfo;
   chainId: number;
 }
+
+const RewardsTableSkeleton: FC = () => (
+  <SkeletonTheme baseColor="#6A6A6A" highlightColor="#BB65FF" duration={1}>
+    <div className="flex flex-col space-y-2 w-72">
+      {[...Array(5)].map((_, index) => (
+        <div
+          key={index}
+          className="flex justify-between font-bold items-center pb-2 border-b border-primary-2 text-neutral-9 last:border-b-0"
+        >
+          <div className="flex items-center text-[16px]">
+            <Skeleton width={60} height={16} />
+          </div>
+          <div className="text-[16px]">
+            <Skeleton width={80} height={16} />
+          </div>
+        </div>
+      ))}
+    </div>
+  </SkeletonTheme>
+);
 
 const RewardsParametersTable: FC<RewardsParametersTableProps> = ({ rewardsStore, chainId }) => {
   const { rankShares, isLoading, isError, refetch } = useSharesByRankings({
@@ -17,13 +39,12 @@ const RewardsParametersTable: FC<RewardsParametersTableProps> = ({ rewardsStore,
     chainId,
   });
 
-  //TODO add skeleton loader for table
   if (isLoading) {
-    return <div>loading..</div>;
+    return <RewardsTableSkeleton />;
   }
 
   if (isError) {
-    return <div>error..</div>;
+    return <RewardsError onRetry={refetch} />;
   }
 
   return (

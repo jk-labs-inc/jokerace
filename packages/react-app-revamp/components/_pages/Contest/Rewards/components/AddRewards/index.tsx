@@ -6,7 +6,10 @@ const AddRewards = () => {
 
   return (
     <>
-      <button className="text-[16px] text-positive-11 font-bold" onClick={() => setIsAddRewardsModalOpen(true)}>
+      <button
+        className="text-[16px] text-positive-11 font-bold hover:text-positive-9 transition-colors duration-200"
+        onClick={() => setIsAddRewardsModalOpen(true)}
+      >
         💸 add funds to rewards pool
       </button>
 

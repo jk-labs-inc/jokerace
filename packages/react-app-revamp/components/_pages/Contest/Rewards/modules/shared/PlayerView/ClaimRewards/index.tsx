@@ -34,7 +34,7 @@ const RewardsPlayerViewClaimRewards: FC<RewardsPlayerViewClaimRewardsProps> = ({
   const sortedRanks = getSortedRanks(groupedByRank);
 
   return (
-    <div className="flex flex-col gap-16">
+    <div className="flex flex-col gap-6 md:gap-16">
       <RewardsPlayerViewClaimRewardTotalRewards
         totalRewards={totalRewards}
         onRefresh={onRefresh}
@@ -42,37 +42,40 @@ const RewardsPlayerViewClaimRewards: FC<RewardsPlayerViewClaimRewardsProps> = ({
       />
 
       {sortedRanks.length > 0 && (
-        <div className={`flex flex-col ${isActive ? "gap-6" : "gap-12"}`}>
-          <div className="flex flex-col gap-1">
-            <p className="text-[24px] text-neutral-11">distribution</p>
-            {isActive ? <p className="text-[12px] text-neutral-9">if contest ended now</p> : null}
+        <>
+          <div className="w-full h-px bg-neutral-6 md:hidden" />
+          <div className={`flex flex-col ${isActive ? "gap-6" : "gap-8 md:gap-12"}`}>
+            <div className="flex flex-col gap-1">
+              <p className="text-[24px] text-neutral-11">distribution</p>
+              {isActive ? <p className="text-[12px] text-neutral-9">if contest ended now</p> : null}
+            </div>
+            <div className="flex flex-col gap-8 md:gap-12">
+              {sortedRanks.map(rank => (
+                <div key={rank} className="flex flex-col gap-2">
+                  <p className="text-[16px] text-neutral-9 font-bold">
+                    {rank}
+                    <sup>{returnOnlySuffix(rank)}</sup> place
+                  </p>
+                  {groupedByRank
+                    .get(rank)
+                    ?.map((item, idx) => (
+                      <RewardItem
+                        key={`${item.reward.address}-${item.reward.value.toString()}-${item.claimed}-${idx}`}
+                        reward={item.reward}
+                        rank={rank}
+                        isActive={isActive}
+                        isClaimLoading={isClaimLoading}
+                        isRankClaimed={() => item.claimed}
+                        isClaimSuccess={isClaimSuccess}
+                        isAdditionalStatisticsSupported={isAdditionalStatisticsSupported}
+                        onClaim={onClaim}
+                      />
+                    ))}
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="flex flex-col gap-12">
-            {sortedRanks.map(rank => (
-              <div key={rank} className="flex flex-col gap-2">
-                <p className="text-[16px] text-neutral-9 font-bold">
-                  {rank}
-                  <sup>{returnOnlySuffix(rank)}</sup> place
-                </p>
-                {groupedByRank
-                  .get(rank)
-                  ?.map((item, idx) => (
-                    <RewardItem
-                      key={`${item.reward.address}-${item.reward.value.toString()}-${item.claimed}-${idx}`}
-                      reward={item.reward}
-                      rank={rank}
-                      isActive={isActive}
-                      isClaimLoading={isClaimLoading}
-                      isRankClaimed={() => item.claimed}
-                      isClaimSuccess={isClaimSuccess}
-                      isAdditionalStatisticsSupported={isAdditionalStatisticsSupported}
-                      onClaim={onClaim}
-                    />
-                  ))}
-              </div>
-            ))}
-          </div>
-        </div>
+        </>
       )}
     </div>
   );

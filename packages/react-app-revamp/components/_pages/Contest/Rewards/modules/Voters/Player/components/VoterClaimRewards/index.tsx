@@ -34,7 +34,7 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
     contractAddress: contestRewardsModuleAddress,
     chainId,
     abi: rewardsModuleAbi,
-    voterAddress: userAddress as `0x${string}`,
+    userAddress: userAddress as `0x${string}`,
     rankings,
     creatorAddress: contestAuthorEthereumAddress as `0x${string}`,
     claimedEnabled: contestStatus === ContestStatus.VotingClosed,
