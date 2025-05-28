@@ -78,16 +78,14 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
   if (!hasSubmitted) {
     if (isCreator && rankingsForAddress.length > 0) {
       return (
-        <div className="w-full md:max-w-72">
-          <WinnerClaimRewards
-            contestRewardsModuleAddress={contestRewardsModuleAddress}
-            rewardsModuleAbi={rewardsModuleAbi}
-            chainId={chainId}
-            contestStatus={contestStatus}
-            rankingsForAddress={rankingsForAddress}
-            refetchPayoutAddresses={() => refetchPayoutAddresses()}
-          />
-        </div>
+        <WinnerClaimRewards
+          contestRewardsModuleAddress={contestRewardsModuleAddress}
+          rewardsModuleAbi={rewardsModuleAbi}
+          chainId={chainId}
+          contestStatus={contestStatus}
+          rankingsForAddress={rankingsForAddress}
+          refetchPayoutAddresses={() => refetchPayoutAddresses()}
+        />
       );
     }
 
@@ -99,16 +97,14 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
   }
 
   return (
-    <div className="w-full md:max-w-72">
-      <WinnerClaimRewards
-        contestRewardsModuleAddress={contestRewardsModuleAddress}
-        rewardsModuleAbi={rewardsModuleAbi}
-        chainId={chainId}
-        contestStatus={contestStatus}
-        rankingsForAddress={rankingsForAddress}
-        refetchPayoutAddresses={() => refetchPayoutAddresses()}
-      />
-    </div>
+    <WinnerClaimRewards
+      contestRewardsModuleAddress={contestRewardsModuleAddress}
+      rewardsModuleAbi={rewardsModuleAbi}
+      chainId={chainId}
+      contestStatus={contestStatus}
+      rankingsForAddress={rankingsForAddress}
+      refetchPayoutAddresses={() => refetchPayoutAddresses()}
+    />
   );
 };
 

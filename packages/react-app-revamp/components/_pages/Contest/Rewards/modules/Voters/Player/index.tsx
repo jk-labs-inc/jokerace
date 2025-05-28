@@ -74,14 +74,12 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({
   if (!hasVoted) {
     if (isCreator && tiedRankings.length > 0) {
       return (
-        <div className="w-full md:max-w-72">
-          <VoterClaimRewards
-            contestRewardsModuleAddress={contestRewardsModuleAddress}
-            rewardsModuleAbi={rewardsModuleAbi}
-            chainId={chainId}
-            contestStatus={contestStatus}
-          />
-        </div>
+        <VoterClaimRewards
+          contestRewardsModuleAddress={contestRewardsModuleAddress}
+          rewardsModuleAbi={rewardsModuleAbi}
+          chainId={chainId}
+          contestStatus={contestStatus}
+        />
       );
     }
 
@@ -89,14 +87,12 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({
   }
 
   return (
-    <div className="w-full md:max-w-72">
-      <VoterClaimRewards
-        contestRewardsModuleAddress={contestRewardsModuleAddress}
-        rewardsModuleAbi={rewardsModuleAbi}
-        chainId={chainId}
-        contestStatus={contestStatus}
-      />
-    </div>
+    <VoterClaimRewards
+      contestRewardsModuleAddress={contestRewardsModuleAddress}
+      rewardsModuleAbi={rewardsModuleAbi}
+      chainId={chainId}
+      contestStatus={contestStatus}
+    />
   );
 };
 
