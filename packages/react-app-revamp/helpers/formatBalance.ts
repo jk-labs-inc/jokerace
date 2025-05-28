@@ -15,13 +15,13 @@ export function formatBalance(balance: string): string {
     // find the first non-zero digit
     const firstNonZeroIndex = balance.replace(/^-?0\.?0*/, "").search(/[1-9]/);
     if (firstNonZeroIndex !== -1) {
-      // return the number with up to 6 significant digits
-      return num.precision(firstNonZeroIndex + 6).toString();
+      // return the number with up to 5 significant digits
+      return num.precision(firstNonZeroIndex + 5).toString();
     }
   }
 
   // handle numbers >= 0.001
-  const truncated = num.decimalPlaces(6, BigNumber.ROUND_FLOOR);
+  const truncated = num.decimalPlaces(5, BigNumber.ROUND_FLOOR);
 
   // add comma separators only for numbers >= 1000
   if (truncated.abs().isGreaterThanOrEqualTo(MIN_VALUE_FOR_COMMA_SEPARATION)) {
