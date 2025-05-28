@@ -11,19 +11,16 @@ interface RewardsParametersTableProps {
   chainId: number;
 }
 
-const RewardsTableSkeleton: FC = () => (
+const RewardsTableSkeleton = ({ payeesCount }: { payeesCount: number }) => (
   <SkeletonTheme baseColor="#6A6A6A" highlightColor="#BB65FF" duration={1}>
     <div className="flex flex-col space-y-2 w-72">
-      {[...Array(5)].map((_, index) => (
+      {[...Array(payeesCount)].map((_, index) => (
         <div
           key={index}
-          className="flex justify-between font-bold items-center pb-2 border-b border-primary-2 text-neutral-9 last:border-b-0"
+          className={`flex flex-col gap-2 text-neutral-9 ${index !== payeesCount - 1 ? "border-b border-primary-2 pb-2" : ""}`}
         >
           <div className="flex items-center text-[16px]">
-            <Skeleton width={60} height={16} />
-          </div>
-          <div className="text-[16px]">
-            <Skeleton width={80} height={16} />
+            <Skeleton width={288} height={16} />
           </div>
         </div>
       ))}
@@ -40,7 +37,7 @@ const RewardsParametersTable: FC<RewardsParametersTableProps> = ({ rewardsStore,
   });
 
   if (isLoading) {
-    return <RewardsTableSkeleton />;
+    return <RewardsTableSkeleton payeesCount={rewardsStore.payees.length} />;
   }
 
   if (isError) {

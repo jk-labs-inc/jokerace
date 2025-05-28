@@ -31,12 +31,8 @@ const TotalRewardsTableSkeleton = ({ payeesCount }: { payeesCount: number }) => 
             className={`flex flex-col gap-2 text-neutral-9 ${index !== payeesCount - 1 ? "border-b border-primary-2 pb-2" : ""}`}
           >
             <div className="flex justify-between items-center text-[16px] font-bold">
-              <div>
-                <Skeleton width={150} height={16} />
-              </div>
-              <div>
-                <Skeleton width={100} height={16} />
-              </div>
+              <Skeleton width={150} height={16} />
+              <Skeleton width={100} height={16} />
             </div>
           </div>
         ))}
@@ -87,7 +83,7 @@ const RewardsCreatorView = ({
     <div className="flex flex-col gap-8 md:gap-10">
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-4">
-          <p className="text-[24px] text-neutral-11">total rewards summary</p>
+          <p className="text-[24px] text-neutral-11 leading-none">total rewards summary</p>
           <RefreshButton onRefresh={() => refetchTotalRewards()} />
         </div>
         {isCreator && (

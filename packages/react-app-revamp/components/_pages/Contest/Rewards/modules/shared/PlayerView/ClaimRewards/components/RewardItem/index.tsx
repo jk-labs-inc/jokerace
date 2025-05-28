@@ -30,7 +30,9 @@ const RewardItem: FC<RewardItemProps> = ({
   const [showAdditionalStatistics, setShowAdditionalStatistics] = useState(false);
 
   const renderClaimStatus = () => {
-    if (isActive) return null;
+    if (isActive) {
+      return <p className="text-[12px] text-neutral-9">come back after contest ends to claim rewards!</p>;
+    }
 
     const isClaimed = isRankClaimed(rank);
     const isLoading = isClaimLoading(rank, reward.address);
@@ -38,9 +40,9 @@ const RewardItem: FC<RewardItemProps> = ({
 
     if (isClaimed || isSuccess) {
       return (
-        <div className="flex gap-1 items-center text-[16px]">
+        <div className="flex gap-1 items-center leading-none">
           🎉
-          <GradientText textSizeClassName="text-[16px]" isFontSabo={false}>
+          <GradientText textSizeClassName="text-[12px]" isFontSabo={false}>
             rewards have been claimed!
           </GradientText>
         </div>
@@ -71,8 +73,7 @@ const RewardItem: FC<RewardItemProps> = ({
             myReward={{ value: reward.value, symbol: reward.symbol, decimals: reward.decimals }}
           />
         ) : null}
-        {isActive ? <p className="text-[12px] text-neutral-9">come back after contest ends to claim rewards!</p> : null}
-        {!isActive && renderClaimStatus()}
+        {renderClaimStatus()}
       </div>
     </div>
   );

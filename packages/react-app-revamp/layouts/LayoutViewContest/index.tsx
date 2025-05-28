@@ -31,7 +31,6 @@ import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import LayoutViewContestError from "./components/Error";
-import useRewardsModule from "@hooks/useRewards";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -40,7 +39,6 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(pathname ?? "");
   const chainId = chains.filter(chain => chain.name.toLowerCase() === chainNameFromUrl.toLowerCase())[0]?.id;
   const { showRewards, setShowRewards } = useShowRewardsStore(useShallow(state => state));
-  const { getContestRewardsModule } = useRewardsModule();
   const { isLoading, address, fetchContestInfo, isSuccess, error, chainName } = useContest();
   const {
     submissionsOpen,
@@ -102,7 +100,6 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     fetchContestInfo();
-    getContestRewardsModule();
   }, [chainNameFromUrl, addressFromUrl]);
 
   useEffect(() => {

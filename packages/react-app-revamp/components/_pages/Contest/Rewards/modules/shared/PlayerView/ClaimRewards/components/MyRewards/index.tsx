@@ -18,7 +18,7 @@ const RewardsPlayerViewClaimRewardTotalRewards: FC<RewardsPlayerViewClaimRewardT
     <div className={`flex flex-col ${isContestInProcess ? "gap-6" : "gap-8 md:gap-12"}`}>
       <div className="flex flex-col gap-1">
         <div className="flex gap-4 items-center">
-          <p className="text-[24px] text-neutral-11">my rewards</p>
+          <p className="text-[24px] text-neutral-11 leading-none">my rewards</p>
           <RefreshButton onRefresh={() => onRefresh?.()} size="sm" />
         </div>
         {isContestInProcess ? <p className="text-[12px] text-neutral-9">if contest ended now</p> : null}

@@ -58,7 +58,7 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({ rewardsModuleAddress, rewards
     if (flattenedRewards.length > 1) {
       const interval = setInterval(() => {
         setCurrentIndex(prevIndex => (prevIndex + 1) % flattenedRewards.length);
-      }, 1500);
+      }, 2000);
 
       return () => clearInterval(interval);
     } else if (flattenedRewards.length === 1) {

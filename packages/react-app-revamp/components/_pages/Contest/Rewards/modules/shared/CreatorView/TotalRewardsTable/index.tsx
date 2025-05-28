@@ -73,13 +73,13 @@ const TotalRewardsTable = ({ totalRewards, shares, rewardsModuleType }: TotalRew
             className={`flex flex-col gap-2 text-neutral-9 ${idx !== ranksWithPercentage.length - 1 ? "border-b border-primary-2 pb-2" : ""}`}
           >
             <div className="flex justify-between items-center text-[16px] font-bold">
-              <div>
+              <p>
                 {rank}
                 <sup>{returnOnlySuffix(rank)}</sup> place {rewardType} ({percentage}%)
-              </div>
-              <div>
+              </p>
+              <p>
                 {rewardAmount} <span className="text-[12px] text-neutral-9 font-bold">{symbol}</span>
-              </div>
+              </p>
             </div>
 
             {tokenRewards.length > 0 && (
