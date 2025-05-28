@@ -50,7 +50,3 @@ export const getUserLocation = async (): Promise<UserLocation> => {
     return defaultLocation;
   }
 };
-
-export const isLocationDetectionAvailable = (): boolean => {
-  return typeof window !== "undefined" && typeof fetch !== "undefined";
-};

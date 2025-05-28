@@ -3,7 +3,6 @@ interface LoaderProps {
   children?: React.ReactNode;
 }
 
-//TODO: check this loader on multiple places in rewards tab
 export const Loader = (props: LoaderProps) => {
   const { children, className } = props;
   return (

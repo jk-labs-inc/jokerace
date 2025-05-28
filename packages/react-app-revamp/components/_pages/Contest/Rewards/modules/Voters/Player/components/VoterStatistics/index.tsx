@@ -21,9 +21,10 @@ interface VoterStatisticsProps {
     symbol: string;
     decimals: number;
   };
+  isActive: boolean;
 }
 
-const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward }) => {
+const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward, isActive }) => {
   const asPath = usePathname();
   const { address: contestAddress, chainName } = extractPathSegments(asPath);
   const chainId = getChainId(chainName);
@@ -72,7 +73,7 @@ const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward }) => {
         value={renderTotalRewards()}
       />
 
-      <VotesInfo ranking={ranking} info={statistics} />
+      <VotesInfo ranking={ranking} info={statistics} isActive={isActive} />
 
       <StatisticsRow
         label={<RankingSuffix ranking={ranking} text="place rewards" prefix="my" />}

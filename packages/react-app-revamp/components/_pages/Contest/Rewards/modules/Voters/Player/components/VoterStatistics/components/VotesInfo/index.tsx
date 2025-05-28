@@ -7,12 +7,17 @@ import { formatBalance } from "@helpers/formatBalance";
 interface VotesInfoProps {
   ranking: number;
   info: VoterRewardsStatistics | null | undefined;
+  isActive: boolean;
 }
 
-const VotesInfo: FC<VotesInfoProps> = ({ ranking, info }) => {
-  //TODO: add diff message based on contest status (current tense and past tense)
+const VotesInfo: FC<VotesInfoProps> = ({ ranking, info, isActive }) => {
   if (!info)
-    return <StatisticsRow label={<RankingSuffix ranking={ranking} text="place" />} value={<b>is currently tied</b>} />;
+    return (
+      <StatisticsRow
+        label={<RankingSuffix ranking={ranking} text="place" />}
+        value={<b>{isActive ? "is currently tied" : "tied"}</b>}
+      />
+    );
 
   return (
     <>

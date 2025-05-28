@@ -71,6 +71,7 @@ const RewardItem: FC<RewardItemProps> = ({
           <VoterStatistics
             ranking={rank}
             myReward={{ value: reward.value, symbol: reward.symbol, decimals: reward.decimals }}
+            isActive={isActive}
           />
         ) : null}
         {renderClaimStatus()}
