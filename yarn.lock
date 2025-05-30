@@ -11585,6 +11585,24 @@ framer-motion@11.3.28:
   dependencies:
     tslib "^2.4.0"
 
+framer-motion@^12.10.0:
+  version "12.10.0"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-12.10.0.tgz#1b49984ba1a687978ea0671cc6ce907da11515d8"
+  integrity sha512-fce/SPS/lrIHYLGfRNytdvzwotc43hBGnEGjXAS304xB+uX9iAm0BpPDx9SuO3TatJkQMm9mglVu94wIPdOTjw==
+  dependencies:
+    motion-dom "^12.10.0"
+    motion-utils "^12.9.4"
+    tslib "^2.4.0"
+
+framer-motion@^12.11.3:
+  version "12.11.3"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-12.11.3.tgz#5ea783ca4e464664a524ec5e3840fec5f9ee14a5"
+  integrity sha512-ksUtDFBZtrbQFt4bEMFrFgo7camhmXcLeuylKQxEYSd9czkZ4tZmFROxWczWeu51WqC2m91ifpvgGCBLd0uviQ==
+  dependencies:
+    motion-dom "^12.11.2"
+    motion-utils "^12.9.4"
+    tslib "^2.4.0"
+
 fresh@0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
@@ -13901,6 +13919,67 @@ moment@2.30.1, moment@^2.29.4:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.30.1.tgz#f8c91c07b7a786e30c59926df530b4eac96974ae"
   integrity sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==
 
+motion-dom@^12.0.0, motion-dom@^12.11.2:
+  version "12.11.2"
+  resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-12.11.2.tgz#0e38eed78288ce36c35f1dc62fdf837f12d26ade"
+  integrity sha512-wZ396XNNTI9GOkyrr80wFSbZc1JbIHSHTbLdririSbkEgahWWKmsHzsxyxqBBvuBU/iaQWVu1YCjdpXYNfo2yQ==
+  dependencies:
+    motion-utils "^12.9.4"
+
+motion-dom@^12.10.0:
+  version "12.10.0"
+  resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-12.10.0.tgz#9e71317c1e64d01cc702083ccd7263cb1fda2f74"
+  integrity sha512-TbRFEjQmRIDEFXJFIHfvM3VW8PuQ8bSWwwYxWA5Elq+GCghzqYUQ1FDQK/K6PmtmOoLiQY3ttJE6CrOedRrGgw==
+  dependencies:
+    motion-utils "^12.9.4"
+
+motion-plus-dom@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/motion-plus-dom/-/motion-plus-dom-0.1.7.tgz#89554c4a51849e47facecb96063447d6bead5b4a"
+  integrity sha512-VhKHcQCiv+s9y0hjRskV+/UVaHYR5O8zaSou8qRwkEl5RtMyxbgfKs4/uzt6aRDToFW+DiZuxBgsvCd9WWbfXw==
+  dependencies:
+    motion "^12.11.0"
+    motion-dom "^12.0.0"
+    motion-utils "^12.0.0"
+
+motion-plus-react@^0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/motion-plus-react/-/motion-plus-react-0.1.9.tgz#25a034618c0da190e912995bfb294da3d0c5467c"
+  integrity sha512-8tMtmGyq4kVatLL2PXO7s3PNmzw/r3V5TqQ51JhPJVaYZKKT8iFSes6jZRZSOt0hBUfqe5mK46fr/MKL5qqd1Q==
+  dependencies:
+    motion "^12.11.0"
+    motion-plus-dom "^0.1.7"
+    motion-utils "^12.9.4"
+
+motion-plus@0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/motion-plus/-/motion-plus-0.1.9.tgz#820c685273136dd34c3f5c2dccf2791892e0905b"
+  integrity sha512-mUFOUJy+kd4xIahp4NYbJVKLYYDRG8MlC2DuOESFmFCbnfUyq+wsN3zOVduBvPAbukgBc1Yx9Pnx8lc/0locSg==
+  dependencies:
+    motion-plus-dom "^0.1.7"
+    motion-plus-react "^0.1.9"
+
+motion-utils@^12.0.0, motion-utils@^12.9.4:
+  version "12.9.4"
+  resolved "https://registry.yarnpkg.com/motion-utils/-/motion-utils-12.9.4.tgz#9d5a45a19971e20059911526d7af2217c5158fa2"
+  integrity sha512-BW3I65zeM76CMsfh3kHid9ansEJk9Qvl+K5cu4DVHKGsI52n76OJ4z2CUJUV+Mn3uEP9k1JJA3tClG0ggSrRcg==
+
+motion@12.10.0:
+  version "12.10.0"
+  resolved "https://registry.yarnpkg.com/motion/-/motion-12.10.0.tgz#5777d6d829bd05426f52c0c36d9f0b26bea67938"
+  integrity sha512-GeIt/h4iVA5EW2UcCnBeuWeZX1pHjB7HEw0jn5sooq2VhnxkWCIbK5adYISVxhxpYcCz3HS1N8TDprz8PlY0kw==
+  dependencies:
+    framer-motion "^12.10.0"
+    tslib "^2.4.0"
+
+motion@^12.11.0:
+  version "12.11.3"
+  resolved "https://registry.yarnpkg.com/motion/-/motion-12.11.3.tgz#c3a7ac0809897a9c4e754382d943b59d37c52280"
+  integrity sha512-R9t8IYJ5hSl+Ao5rj6XGS4lJN+fXQstcpwKOcFA5aWjlwjf3IHcHr8DUjPV0My6T/5ZCQ1jqh0pmjggO4zUpEA==
+  dependencies:
+    framer-motion "^12.11.3"
+    tslib "^2.4.0"
+
 mri@1.2.0, mri@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/mri/-/mri-1.2.0.tgz#6721480fec2a11a4889861115a48b6cbe7cc8f0b"
@@ -15548,11 +15627,6 @@ react-responsive@10.0.1:
     matchmediaquery "^0.4.2"
     prop-types "^15.6.1"
     shallow-equal "^3.1.0"
-
-react-spinners@0.17.0:
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/react-spinners/-/react-spinners-0.17.0.tgz#d518913e2192afaae76c5b781929ea3bd7b1910e"
-  integrity sha512-L/8HTylaBmIWwQzIjMq+0vyaRXuoAevzWoD35wKpNTxxtYXWZp+xtgkfD7Y4WItuX0YvdxMPU79+7VhhmbmuTQ==
 
 react-style-singleton@^2.2.1:
   version "2.2.1"

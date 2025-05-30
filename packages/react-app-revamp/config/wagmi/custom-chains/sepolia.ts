@@ -11,7 +11,9 @@ export const sepolia: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://eth-sepolia.public.blastapi.io"],
+      http: [
+        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.ethereum-sepolia.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+      ],
     },
     default: {
       http: [

@@ -10,12 +10,11 @@ import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import useEmailSignup from "@hooks/useEmailSignup";
 import { useError } from "@hooks/useError";
-import { readContract, waitForTransactionReceipt } from "@wagmi/core";
+import { readContract } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory, formatUnits, JsonRpcSigner } from "ethers";
 import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
-import { checkIfChainIsTestnet } from "lib/monetization";
 import { canUploadLargeAllowlist } from "lib/vip";
 import { Abi, parseEther } from "viem";
 import { useAccount } from "wagmi";
@@ -404,10 +403,6 @@ export function useDeployContest() {
 
     if (!chain) {
       throw new Error(`Chain with id ${chainId} not found`);
-    }
-
-    if (checkIfChainIsTestnet(chain.name)) {
-      return JK_LABS_SPLIT_DESTINATION_DEFAULT;
     }
 
     if (!isSupabaseConfigured) {

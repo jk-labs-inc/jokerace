@@ -3,8 +3,8 @@ import { FC } from "react";
 
 export enum Tab {
   Contest = "Contest",
-  Parameters = "Parameters",
-  Rewards = "Rewards",
+  Rules = "Rules",
+  Rewards = "my rewards",
   Extensions = "Extensions",
 }
 

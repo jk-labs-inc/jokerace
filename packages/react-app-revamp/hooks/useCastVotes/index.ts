@@ -1,32 +1,32 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
+import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { Charge, VoteType } from "@hooks/useDeployContest/types";
+import { useEmailSend } from "@hooks/useEmailSend";
 import { useError } from "@hooks/useError";
 import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
-import { useRewardsStore } from "@hooks/useRewards/store";
+import useRewardsModule from "@hooks/useRewards";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { compareVersions } from "compare-versions";
+import { parseUnits } from "ethers";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
+import { EmailType, VotingEmailParams } from "lib/email/types";
+import moment from "moment";
 import { usePathname } from "next/navigation";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
-import { useEmailSend } from "@hooks/useEmailSend";
-import { EmailType, VotingEmailParams } from "lib/email/types";
-import moment from "moment";
-import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
-import { compareVersions } from "compare-versions";
-import { parseUnits } from "ethers";
 
 interface UserAnalyticsParams {
   contestAddress: string;
@@ -52,16 +52,8 @@ interface RewardsAnalyticsParams {
 interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsParams {}
 
 export function useCastVotes() {
-  const {
-    charge,
-    contestAbi: abi,
-    version,
-    votesClose,
-    anyoneCanVote,
-    rewardsModuleAddress,
-    rewardsAbi,
-  } = useContestStore(state => state);
-  const rewardsStore = useRewardsStore(state => state);
+  const { charge, contestAbi: abi, version, votesClose, anyoneCanVote } = useContestStore(state => state);
+  const { data: rewards } = useRewardsModule();
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
   const {
@@ -75,7 +67,7 @@ export function useCastVotes() {
     setError,
     setTransactionData,
   } = useCastVotesStore(state => state);
-  const { address: userAddress, chain } = useAccount();
+  const { address: userAddress } = useAccount();
   const asPath = usePathname();
   const { updateCurrentUserVotes } = useUser();
   const { currentUserTotalVotesAmount } = useUserStore(state => state);
@@ -90,12 +82,12 @@ export function useCastVotes() {
     contestAddress,
     pickedProposal ?? "",
   );
-  const isEarningsTowardsRewards = rewardsModuleAddress === charge?.splitFeeDestination.address;
+  const isEarningsTowardsRewards = rewards?.contractAddress === charge?.splitFeeDestination.address;
   const { refetch: refetchReleasableRewards } = useReleasableRewards({
-    contractAddress: rewardsModuleAddress,
+    contractAddress: rewards?.contractAddress ?? "",
     chainId,
-    abi: rewardsAbi ?? [],
-    rankings: rewardsStore.rewards.payees,
+    abi: rewards?.abi ?? [],
+    rankings: rewards?.payees ?? [],
   });
   const { sendEmail } = useEmailSend();
   const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
@@ -187,7 +179,7 @@ export function useCastVotes() {
         charge,
         isEarningsTowardsRewards,
         address: contestAddress,
-        rewardsModuleAddress,
+        rewardsModuleAddress: rewards?.contractAddress ?? "",
         operation: "deposit",
         token_address: null,
       });

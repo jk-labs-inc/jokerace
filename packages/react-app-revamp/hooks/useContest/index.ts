@@ -2,7 +2,6 @@ import { chains, config } from "@config/wagmi";
 import { isSupabaseConfigured } from "@helpers/database";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
@@ -11,9 +10,10 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { readContract, readContracts } from "@wagmi/core";
+import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { checkIfContestExists } from "lib/contests";
+import { getRewardsModuleAddress } from "lib/rewards/contracts";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
@@ -51,7 +51,6 @@ export function useContest() {
     isSuccess,
     setIsSuccess,
     setIsLoading,
-    setSupportsRewardsModule,
     setContestPrompt,
     setDownvotingAllowed,
     setContestName,
@@ -68,7 +67,6 @@ export function useContest() {
     setSortingEnabled,
     setVersion,
     setRewardsModuleAddress,
-    setRewardsAbi,
     setCanEditTitleAndDescription,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
@@ -79,9 +77,6 @@ export function useContest() {
   const { fetchProposalsIdsList } = useProposal();
   const { setContestState } = useContestStateStore(state => state);
   const { error: errorMessage, handleError } = useError();
-  const alchemyRpc = chains
-    .filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
-    ?.rpcUrls.default.http[0].includes("alchemy");
 
   // Generate config for the contract
   async function getContractConfig(): Promise<ContractConfigResult | undefined> {
@@ -319,34 +314,15 @@ export function useContest() {
   }
 
   async function fetchRewardsModuleData(contractConfig: ContractConfig) {
-    let contestRewardModuleAddress = "";
+    const moduleAddress = await getRewardsModuleAddress(contractConfig);
 
-    if (contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0) {
-      contestRewardModuleAddress = (await readContract(config, {
-        ...contractConfig,
-        functionName: "officialRewardsModule",
-        args: [],
-      })) as string;
-      if (contestRewardModuleAddress === "0x0000000000000000000000000000000000000000") {
-        setSupportsRewardsModule(false);
-        contestRewardModuleAddress = "";
-      } else {
-        setSupportsRewardsModule(true);
-      }
-    } else {
-      setSupportsRewardsModule(false);
-      contestRewardModuleAddress = "";
+    if (!moduleAddress) {
+      return "";
     }
 
-    setRewardsModuleAddress(contestRewardModuleAddress);
+    setRewardsModuleAddress(moduleAddress);
 
-    if (contestRewardModuleAddress) {
-      const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainId);
-      //@ts-ignore
-      setRewardsAbi(abiRewardsModule);
-    }
-
-    return contestRewardModuleAddress;
+    return moduleAddress;
   }
 
   /**
