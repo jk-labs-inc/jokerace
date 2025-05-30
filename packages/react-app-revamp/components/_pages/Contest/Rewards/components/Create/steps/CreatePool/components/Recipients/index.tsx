@@ -38,7 +38,9 @@ const CreateRewardsPoolRecipients: React.FC = () => {
       error.duplicateRank = "There can't be duplicate ranks";
     }
 
-    const zeroProportionRecipients = recipients.filter(recipient => recipient.proportion === 0);
+    const zeroProportionRecipients = recipients.filter(
+      recipient => recipient.proportion === 0 || recipient.proportion === null,
+    );
     if (zeroProportionRecipients.length > 0) {
       error.zeroProportion = "Recipients with 0% proportion are not allowed";
     }
@@ -103,14 +105,6 @@ const CreateRewardsPoolRecipients: React.FC = () => {
     if (e.key === ".") {
       e.preventDefault();
     }
-  };
-
-  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
-    event.target.select();
-  };
-
-  const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
-    event.currentTarget.select();
   };
 
   const handlePlaceChange = (value: string, id: number) => {
@@ -202,7 +196,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center relative">
                         <input
-                          className="w-[120px] h-8 bg-neutral-9 text-true-black rounded-[8px] font-bold text-center appearance-none focus:outline-none placeholder:text-true-black"
+                          className="w-[120px] h-8 bg-neutral-9 text-true-black rounded-[8px] font-bold text-center appearance-none focus:outline-none placeholder:text-primary-5"
                           type="number"
                           max="100"
                           placeholder="0"

@@ -1,26 +1,26 @@
+import Loader from "@components/UI/Loader";
+import { toastInfo } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalVotingPermission } from "@hooks/useLocationPermission";
+import useRewardsModule from "@hooks/useRewards";
 import { switchChain } from "@wagmi/core";
+import { ModuleType } from "lib/rewards/types";
 import { usePathname } from "next/navigation";
 import { FC, RefObject, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useBalance } from "wagmi";
 import VotingWidgetMobile from "./components/Mobile";
-import VoteAmountInput from "./components/VoteAmountInput";
-import VoteTypeSelector from "./components/VoteTypeSelector";
-import VoteInfoSection from "./components/VoteInfoSection";
-import VoteButton from "./components/VoteButton";
-import VoteSlider from "./components/VoteSlider";
-import { useRewardsStore } from "@hooks/useRewards/store";
-import { useShallow } from "zustand/shallow";
-import Module from "module";
-import { ModuleType } from "lib/rewards/types";
 import VotingNotAllowed from "./components/NotAllowed";
-import Loader from "@components/UI/Loader";
+import VoteAmountInput from "./components/VoteAmountInput";
+import VoteButton from "./components/VoteButton";
+import VoteInfoSection from "./components/VoteInfoSection";
+import VoteSlider from "./components/VoteSlider";
+import VoteTypeSelector from "./components/VoteTypeSelector";
 
 interface VotingWidgetProps {
   proposalId: string;
@@ -37,6 +37,8 @@ export enum VotingButtonText {
 
 const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvoteAllowed, onVote, onAddFunds }) => {
   const { charge } = useContestStore(state => state);
+  const { contestStatus } = useContestStatusStore(state => state);
+  const isVotingClosed = contestStatus === ContestStatus.VotingClosed;
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const asPath = usePathname();
   const { chainId: accountChainId, address: userAddress } = useAccount();
@@ -61,7 +63,12 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
     chainId,
   });
   const insufficientBalance = charge && balanceData ? balanceData.value < BigInt(charge.type.costToVote) : false;
-  const rewards = useRewardsStore(useShallow(state => state.rewards));
+  const {
+    data: rewards,
+    isLoading: isLoadingRewards,
+    isError: isErrorRewards,
+    isSuccess: isSuccessRewards,
+  } = useRewardsModule();
   const { isPermitted, isLoading: isLoadingPermission } = useProposalVotingPermission();
 
   useEffect(() => {
@@ -146,16 +153,22 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
       await switchChain(config, { chainId });
     }
 
+    if (isVotingClosed) {
+      toastInfo("Voting is closed for this contest");
+      return;
+    }
+
     onVote?.(amount, isUpvote);
   };
 
   if (isContestCanceled) return null;
 
-  if (rewards.moduleType === ModuleType.VOTER_REWARDS && isLoadingPermission) {
+  //TODO: check this
+  if (rewards?.moduleType === ModuleType.VOTER_REWARDS && (isLoadingPermission || isLoadingRewards)) {
     return <Loader />;
   }
 
-  if (rewards.moduleType === ModuleType.VOTER_REWARDS && !isPermitted) {
+  if (rewards?.moduleType === ModuleType.VOTER_REWARDS && !isPermitted) {
     return <VotingNotAllowed />;
   }
 

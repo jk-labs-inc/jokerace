@@ -1,20 +1,18 @@
 import GradientText from "@components/UI/GradientText";
 import RefreshButton from "@components/UI/RefreshButton";
 import { useContestStore } from "@hooks/useContest/store";
-import { useRewardsStore } from "@hooks/useRewards/store";
+import { RewardModuleInfo } from "lib/rewards/types";
 import { useSharesByRankings } from "@hooks/useShares";
 import { useTotalRewards } from "@hooks/useTotalRewards";
-import { Abi } from "viem";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import RewardsError from "../Error";
 import RewardsCreatorOptions from "./CreatorOptions";
 import TotalRewardsTable from "./TotalRewardsTable";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
 interface RewardsCreatorViewProps {
-  contestRewardsModuleAddress: `0x${string}`;
-  rewardsModuleAbi: Abi;
+  rewards: RewardModuleInfo;
   chainId: number;
   version: string;
 }
@@ -41,15 +39,9 @@ const TotalRewardsTableSkeleton = ({ payeesCount }: { payeesCount: number }) => 
   </SkeletonTheme>
 );
 
-const RewardsCreatorView = ({
-  contestRewardsModuleAddress,
-  rewardsModuleAbi,
-  chainId,
-  version,
-}: RewardsCreatorViewProps) => {
+const RewardsCreatorView = ({ rewards, chainId, version }: RewardsCreatorViewProps) => {
   const { contestAuthorEthereumAddress, charge } = useContestStore(useShallow(state => state));
-  const isEarningsToRewards = charge?.splitFeeDestination.address === contestRewardsModuleAddress;
-  const rewardsData = useRewardsStore(useShallow(state => state.rewards));
+  const isEarningsToRewards = charge?.splitFeeDestination.address === rewards.contractAddress;
   const { address: userAddress } = useAccount();
   const isCreator = contestAuthorEthereumAddress === userAddress;
   const {
@@ -58,8 +50,8 @@ const RewardsCreatorView = ({
     refetch: refetchTotalRewards,
     isError: isTotalRewardsError,
   } = useTotalRewards({
-    rewardsModuleAddress: contestRewardsModuleAddress,
-    rewardsModuleAbi,
+    rewardsModuleAddress: rewards.contractAddress as `0x${string}`,
+    rewardsModuleAbi: rewards.abi,
     chainId,
   });
 
@@ -69,10 +61,10 @@ const RewardsCreatorView = ({
     refetch: refetchRankShares,
     isError: isRankSharesError,
   } = useSharesByRankings({
-    rewardsModuleAddress: contestRewardsModuleAddress,
-    abi: rewardsModuleAbi,
+    rewardsModuleAddress: rewards.contractAddress as `0x${string}`,
+    abi: rewards.abi,
     chainId,
-    rankings: rewardsData.payees,
+    rankings: rewards.payees ?? [],
   });
 
   if (isTotalRewardsError || isRankSharesError) {
@@ -80,16 +72,16 @@ const RewardsCreatorView = ({
   }
 
   return (
-    <div className="flex flex-col gap-8 md:gap-10">
+    <div className="flex flex-col gap-8 md:gap-12">
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-4">
-          <p className="text-[24px] text-neutral-11 leading-none">total rewards summary</p>
+          <p className="text-[24px] text-neutral-11">total rewards summary</p>
           <RefreshButton onRefresh={() => refetchTotalRewards()} />
         </div>
         {isCreator && (
           <RewardsCreatorOptions
-            rewardsAddress={contestRewardsModuleAddress}
-            abi={rewardsModuleAbi}
+            rewardsAddress={rewards.contractAddress as `0x${string}`}
+            abi={rewards.abi}
             chainId={chainId}
             version={version}
           />
@@ -97,13 +89,9 @@ const RewardsCreatorView = ({
       </div>
       <div className="flex flex-col gap-6">
         {isTotalRewardsLoading || isRankSharesLoading ? (
-          <TotalRewardsTableSkeleton payeesCount={rewardsData.payees.length} />
+          <TotalRewardsTableSkeleton payeesCount={rewards.payees.length} />
         ) : totalRewards && rankShares ? (
-          <TotalRewardsTable
-            totalRewards={totalRewards}
-            shares={rankShares}
-            rewardsModuleType={rewardsData.moduleType}
-          />
+          <TotalRewardsTable totalRewards={totalRewards} shares={rankShares} rewardsModuleType={rewards.moduleType} />
         ) : null}
         {isEarningsToRewards ? (
           <GradientText textSizeClassName="text-[16px] font-bold" isFontSabo={false}>

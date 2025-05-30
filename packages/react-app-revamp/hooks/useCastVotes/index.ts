@@ -12,7 +12,7 @@ import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
-import { useRewardsStore } from "@hooks/useRewards/store";
+import useRewardsModule from "@hooks/useRewards";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
@@ -26,7 +26,6 @@ import moment from "moment";
 import { usePathname } from "next/navigation";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
-import { useShallow } from "zustand/shallow";
 import { useCastVotesStore } from "./store";
 
 interface UserAnalyticsParams {
@@ -54,11 +53,7 @@ interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsP
 
 export function useCastVotes() {
   const { charge, contestAbi: abi, version, votesClose, anyoneCanVote } = useContestStore(state => state);
-  const {
-    contractAddress: rewardsModuleAddress,
-    abi: rewardsAbi,
-    payees,
-  } = useRewardsStore(useShallow(state => state.rewards));
+  const { data: rewards } = useRewardsModule();
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
   const {
@@ -87,12 +82,12 @@ export function useCastVotes() {
     contestAddress,
     pickedProposal ?? "",
   );
-  const isEarningsTowardsRewards = rewardsModuleAddress === charge?.splitFeeDestination.address;
+  const isEarningsTowardsRewards = rewards?.contractAddress === charge?.splitFeeDestination.address;
   const { refetch: refetchReleasableRewards } = useReleasableRewards({
-    contractAddress: rewardsModuleAddress,
+    contractAddress: rewards?.contractAddress ?? "",
     chainId,
-    abi: rewardsAbi ?? [],
-    rankings: payees,
+    abi: rewards?.abi ?? [],
+    rankings: rewards?.payees ?? [],
   });
   const { sendEmail } = useEmailSend();
   const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
@@ -184,7 +179,7 @@ export function useCastVotes() {
         charge,
         isEarningsTowardsRewards,
         address: contestAddress,
-        rewardsModuleAddress,
+        rewardsModuleAddress: rewards?.contractAddress ?? "",
         operation: "deposit",
         token_address: null,
       });

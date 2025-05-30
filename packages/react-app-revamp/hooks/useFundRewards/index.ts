@@ -3,7 +3,7 @@ import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
-import { useRewardsStore } from "@hooks/useRewards/store";
+import useRewardsModule from "@hooks/useRewards";
 import {
   estimateGas,
   sendTransaction,
@@ -18,7 +18,6 @@ import { useEffect } from "react";
 import { erc20Abi, parseUnits } from "viem";
 import { useAccount } from "wagmi";
 import { useFundRewardsStore } from "./store";
-import { useShallow } from "zustand/react/shallow";
 
 export interface RewardData {
   currentUserAddress: string;
@@ -47,16 +46,12 @@ export function useFundRewardsModule() {
     setTransactionData,
   } = useFundRewardsStore(state => state);
   const { error: errorMessage, handleError } = useError();
-  const {
-    contractAddress: rewardsModuleAddress,
-    abi: rewardsAbi,
-    payees,
-  } = useRewardsStore(useShallow(state => state.rewards));
+  const { data: rewards } = useRewardsModule();
   const { refetch: refetchReleasableRewards } = useReleasableRewards({
-    contractAddress: rewardsModuleAddress,
+    contractAddress: rewards?.contractAddress ?? "",
     chainId,
-    abi: rewardsAbi,
-    rankings: payees,
+    abi: rewards?.abi ?? [],
+    rankings: rewards?.payees ?? [],
   });
 
   const sendFundsToRewardsModuleV3 = (rewards: FundPoolToken[]) => {
@@ -95,13 +90,13 @@ export function useFundRewardsModule() {
       const amountBigInt = parseUnits(tokenAmount, tokenDecimals);
 
       await estimateGas(config, {
-        to: rewardsModuleAddress as `0x${string}`,
+        to: rewards?.contractAddress as `0x${string}`,
         chainId: chainId,
         value: amountBigInt,
       });
 
       const hash = await sendTransaction(config, {
-        to: rewardsModuleAddress as `0x${string}`,
+        to: rewards?.contractAddress as `0x${string}`,
         chainId: chainId,
         value: amountBigInt,
       });
@@ -117,7 +112,7 @@ export function useFundRewardsModule() {
         ...contractConfig,
         functionName: "transfer",
         chainId: chainId,
-        args: [rewardsModuleAddress as `0x${string}`, amountBigInt],
+        args: [rewards?.contractAddress as `0x${string}`, amountBigInt],
       });
 
       hash = await writeContract(config, {
@@ -133,7 +128,7 @@ export function useFundRewardsModule() {
     try {
       await updateRewardAnalytics({
         contest_address: contestAddress,
-        rewards_module_address: rewardsModuleAddress,
+        rewards_module_address: rewards?.contractAddress ?? "",
         network_name: chainName,
         amount: parseFloat(tokenAmount),
         operation: "deposit",

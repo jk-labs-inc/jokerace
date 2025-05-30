@@ -1,5 +1,5 @@
+import { RewardModuleInfo } from "lib/rewards/types";
 import { FC } from "react";
-import { Abi } from "viem";
 import RewardsSplitLayout from "../shared/Layout";
 import VoterRewardsPageCreatorView from "./Creator";
 import VoterRewardsPagePlayerView from "./Player";
@@ -7,36 +7,21 @@ import VoterRewardsPagePlayerView from "./Player";
 interface VotersRewardsPageProps {
   contestAddress: `0x${string}`;
   chainId: number;
-  contestRewardsModuleAddress: `0x${string}`;
-  rewardsModuleAbi: Abi;
+  rewards: RewardModuleInfo;
   version: string;
 }
 
-const VotersRewardsPage: FC<VotersRewardsPageProps> = ({
-  contestAddress,
-  chainId,
-  contestRewardsModuleAddress,
-  rewardsModuleAbi,
-  version,
-}) => {
+const VotersRewardsPage: FC<VotersRewardsPageProps> = ({ contestAddress, chainId, rewards, version }) => {
   return (
     <RewardsSplitLayout
       playerView={
         <VoterRewardsPagePlayerView
-          contestRewardsModuleAddress={contestRewardsModuleAddress}
-          rewardsModuleAbi={rewardsModuleAbi}
+          rewards={rewards}
           contestAddress={contestAddress as `0x${string}`}
           chainId={chainId}
         />
       }
-      creatorView={
-        <VoterRewardsPageCreatorView
-          contestRewardsModuleAddress={contestRewardsModuleAddress}
-          rewardsModuleAbi={rewardsModuleAbi}
-          chainId={chainId}
-          version={version}
-        />
-      }
+      creatorView={<VoterRewardsPageCreatorView rewards={rewards} chainId={chainId} version={version} />}
     />
   );
 };

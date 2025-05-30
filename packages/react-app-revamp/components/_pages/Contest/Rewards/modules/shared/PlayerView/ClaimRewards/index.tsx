@@ -46,7 +46,7 @@ const RewardsPlayerViewClaimRewards: FC<RewardsPlayerViewClaimRewardsProps> = ({
           <div className="w-full h-px bg-neutral-6 md:hidden" />
           <div className={`flex flex-col ${isActive ? "gap-6" : "gap-8 md:gap-12"}`}>
             <div className="flex flex-col gap-1">
-              <p className="text-[24px] text-neutral-11 leading-none">distribution</p>
+              <p className="text-[24px] text-neutral-11">distribution</p>
               {isActive ? <p className="text-[12px] text-neutral-9">if contest ended now</p> : null}
             </div>
             <div className="flex flex-col gap-8 md:gap-12">

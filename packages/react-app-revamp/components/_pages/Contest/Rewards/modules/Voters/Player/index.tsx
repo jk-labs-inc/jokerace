@@ -1,34 +1,26 @@
 import { Loader } from "@components/UI/Loader";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { useRewardsStore } from "@hooks/useRewards/store";
 import useTotalVotesPerUser from "@hooks/useTotalVotesPerUser";
 import { useValidateRankings } from "@hooks/useValidateRankings";
-import { ModuleType } from "lib/rewards/types";
+import { ModuleType, RewardModuleInfo } from "lib/rewards/types";
 import { FC } from "react";
-import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
+import RewardsError from "../../shared/Error";
 import RewardsPlayerNotQualified from "../../shared/PlayerView/NotQualified";
 import RewardsNotStarted from "../../shared/PlayerView/RewardsNotStarted";
 import RewardsPlayerViewNotConnected from "../../shared/PlayerView/WalletNotConnected";
 import VoterClaimRewards from "./components/VoterClaimRewards";
-import RewardsError from "../../shared/Error";
+
 interface VoterRewardsPagePlayerViewProps {
   contestAddress: `0x${string}`;
-  contestRewardsModuleAddress: `0x${string}`;
-  rewardsModuleAbi: Abi;
   chainId: number;
+  rewards: RewardModuleInfo;
 }
 
-const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({
-  contestAddress,
-  chainId,
-  contestRewardsModuleAddress,
-  rewardsModuleAbi,
-}) => {
-  const rewardsStore = useRewardsStore(useShallow(state => state.rewards));
+const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({ contestAddress, chainId, rewards }) => {
   const { isConnected, address } = useAccount();
-  const isCreator = address === rewardsStore.creator;
+  const isCreator = address === rewards.creator;
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const {
     hasVoted,
@@ -46,10 +38,10 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({
     isError: isErrorValidateRankings,
     refetch: retryValidateRankings,
   } = useValidateRankings({
-    rankings: rewardsStore.payees,
-    contractAddress: contestRewardsModuleAddress,
+    rankings: rewards.payees,
+    contractAddress: rewards.contractAddress as `0x${string}`,
     chainId,
-    abi: rewardsModuleAbi,
+    abi: rewards.abi,
   });
 
   if (!isConnected) {
@@ -73,27 +65,13 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({
 
   if (!hasVoted) {
     if (isCreator && tiedRankings.length > 0) {
-      return (
-        <VoterClaimRewards
-          contestRewardsModuleAddress={contestRewardsModuleAddress}
-          rewardsModuleAbi={rewardsModuleAbi}
-          chainId={chainId}
-          contestStatus={contestStatus}
-        />
-      );
+      return <VoterClaimRewards rewards={rewards} chainId={chainId} contestStatus={contestStatus} />;
     }
 
     return <RewardsPlayerNotQualified phase={phase} rewardsType={ModuleType.VOTER_REWARDS} />;
   }
 
-  return (
-    <VoterClaimRewards
-      contestRewardsModuleAddress={contestRewardsModuleAddress}
-      rewardsModuleAbi={rewardsModuleAbi}
-      chainId={chainId}
-      contestStatus={contestStatus}
-    />
-  );
+  return <VoterClaimRewards rewards={rewards} chainId={chainId} contestStatus={contestStatus} />;
 };
 
 export default VoterRewardsPagePlayerView;

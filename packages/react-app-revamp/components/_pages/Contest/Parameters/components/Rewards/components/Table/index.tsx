@@ -1,10 +1,10 @@
 import { useSharesByRankings } from "@hooks/useShares";
-import { RewardModuleInfo } from "@hooks/useRewards/store";
 import { FC } from "react";
 import { Abi } from "viem";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import RewardsError from "@components/_pages/Contest/Rewards/modules/shared/Error";
+import { RewardModuleInfo } from "lib/rewards/types";
 
 interface RewardsParametersTableProps {
   rewardsStore: RewardModuleInfo;

@@ -16,6 +16,7 @@ const VotesInfo: FC<VotesInfoProps> = ({ ranking, info, isActive }) => {
       <StatisticsRow
         label={<RankingSuffix ranking={ranking} text="place" />}
         value={<b>{isActive ? "is currently tied" : "tied"}</b>}
+        isLast={true}
       />
     );
 

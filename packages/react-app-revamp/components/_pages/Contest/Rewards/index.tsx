@@ -5,10 +5,8 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { useCancelRewards } from "@hooks/useCancelRewards";
 import { useContestStore } from "@hooks/useContest/store";
 import useRewardsModule from "@hooks/useRewards";
-import { useRewardsStore } from "@hooks/useRewards/store";
 import { ModuleType } from "lib/rewards/types";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
 import { Abi } from "viem";
 import { useAccount, useAccountEffect } from "wagmi";
 import CreateRewardsModule from "./components/CreateRewardsModule";
@@ -26,9 +24,6 @@ const ContestRewards = () => {
   )?.[0]?.id;
 
   const {
-    isSuccess,
-    isLoading,
-    supportsRewardsModule,
     contestAuthorEthereumAddress,
     sortingEnabled,
     contestMaxProposalCount,
@@ -36,18 +31,16 @@ const ContestRewards = () => {
     version,
     downvotingAllowed,
   } = useContestStore(state => state);
-  const rewardsStore = useRewardsStore(state => state);
-  const { getContestRewardsModule } = useRewardsModule();
+  const { data: rewards, isLoading, isError, refetch, isRefetching } = useRewardsModule();
   const { address: accountAddress } = useAccount();
   const creator = contestAuthorEthereumAddress === accountAddress;
   const {
     isCanceled,
-    isLoading: isRewardsCanceledLoading,
     isError: isRewardsCanceledError,
     refetch: refetchRewardsCanceled,
   } = useCancelRewards({
-    rewardsAddress: rewardsStore.rewards.contractAddress as `0x${string}`,
-    abi: rewardsStore.rewards.abi as Abi,
+    rewardsAddress: rewards?.contractAddress as `0x${string}`,
+    abi: rewards?.abi as Abi,
     chainId,
     version,
   });
@@ -60,16 +53,17 @@ const ContestRewards = () => {
     },
   });
 
-  useEffect(() => {
-    if (rewardsStore.isSuccess) return;
-    if (supportsRewardsModule) getContestRewardsModule();
-  }, [supportsRewardsModule, rewardsStore.isSuccess]);
+  if (isLoading || isRefetching) return <Loader>Loading rewards</Loader>;
 
-  if (!supportsRewardsModule && !creator) {
+  if (isRewardsCanceledError || isError) {
+    return <RewardsError onRetry={isRewardsCanceledError ? refetchRewardsCanceled : refetch} />;
+  }
+
+  if (!rewards && !creator) {
     return <NoRewardsInfo />;
   }
 
-  if (!supportsRewardsModule && creator) {
+  if (!rewards && creator) {
     return (
       <CreateRewardsModule
         contestMaxProposalCount={contestMaxProposalCount}
@@ -80,17 +74,15 @@ const ContestRewards = () => {
     );
   }
 
-  if (isRewardsCanceledError || rewardsStore.isError) {
-    return <RewardsError onRetry={refetchRewardsCanceled} />;
-  }
+  if (!rewards) return null;
 
   if (isCanceled) {
     return (
       <RewardsCanceled
         isCreatorView={creator}
-        rewardsModuleAddress={rewardsStore.rewards.contractAddress as `0x${string}`}
-        rewardsAbi={rewardsStore.rewards.abi as Abi}
-        rankings={rewardsStore.rewards.payees}
+        rewardsModuleAddress={rewards.contractAddress as `0x${string}`}
+        rewardsAbi={rewards.abi as Abi}
+        rankings={rewards.payees}
         chainId={chainId}
       />
     );
@@ -98,30 +90,22 @@ const ContestRewards = () => {
 
   return (
     <div className="animate-reveal">
-      {!isLoading && isSuccess && (
-        <>
-          {(rewardsStore.isLoading || isRewardsCanceledLoading) && <Loader>Loading rewards</Loader>}
-          {rewardsStore.isSuccess &&
-            (rewardsStore.rewards.moduleType === ModuleType.VOTER_REWARDS ? (
-              <VotersRewardsPage
-                rewardsModuleAbi={rewardsStore.rewards.abi as Abi}
-                contestAddress={contestAddress as `0x${string}`}
-                chainId={chainId}
-                contestRewardsModuleAddress={rewardsStore.rewards.contractAddress as `0x${string}`}
-                version={version}
-              />
-            ) : rewardsStore.rewards.moduleType === ModuleType.AUTHOR_REWARDS ? (
-              <WinnersRewardsPage
-                contestAddress={contestAddress as `0x${string}`}
-                chainId={chainId}
-                contestRewardsModuleAddress={rewardsStore.rewards.contractAddress as `0x${string}`}
-                contestAbi={contestAbi as Abi}
-                rewardsModuleAbi={rewardsStore.rewards.abi as Abi}
-                version={version}
-              />
-            ) : null)}
-        </>
-      )}
+      {rewards.moduleType === ModuleType.VOTER_REWARDS ? (
+        <VotersRewardsPage
+          rewards={rewards}
+          contestAddress={contestAddress as `0x${string}`}
+          chainId={chainId}
+          version={version}
+        />
+      ) : rewards.moduleType === ModuleType.AUTHOR_REWARDS ? (
+        <WinnersRewardsPage
+          rewards={rewards}
+          contestAddress={contestAddress as `0x${string}`}
+          chainId={chainId}
+          contestAbi={contestAbi}
+          version={version}
+        />
+      ) : null}
     </div>
   );
 };

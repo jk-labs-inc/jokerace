@@ -3,17 +3,14 @@ import { useClaimRewards } from "@hooks/useClaimRewards";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import useUserRewards from "@hooks/useUserRewards";
-import { ModuleType } from "lib/rewards/types";
+import { ModuleType, RewardModuleInfo } from "lib/rewards/types";
 import { FC } from "react";
-import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import RewardsError from "../../../../shared/Error";
 import RewardsPlayerViewClaimRewards from "../../../../shared/PlayerView/ClaimRewards";
 import RewardsPlayerLosingStatus from "../../../../shared/PlayerView/LosingStatus";
-
 interface WinnerClaimRewardsProps {
-  contestRewardsModuleAddress: `0x${string}`;
-  rewardsModuleAbi: Abi;
+  rewards: RewardModuleInfo;
   chainId: number;
   contestStatus: ContestStatus;
   rankingsForAddress: number[];
@@ -21,8 +18,7 @@ interface WinnerClaimRewardsProps {
 }
 
 const WinnerClaimRewards: FC<WinnerClaimRewardsProps> = ({
-  contestRewardsModuleAddress,
-  rewardsModuleAbi,
+  rewards,
   chainId,
   contestStatus,
   rankingsForAddress,
@@ -39,9 +35,9 @@ const WinnerClaimRewards: FC<WinnerClaimRewardsProps> = ({
     refetch: refetchUserRewards,
   } = useUserRewards({
     moduleType: ModuleType.AUTHOR_REWARDS,
-    contractAddress: contestRewardsModuleAddress,
+    contractAddress: rewards.contractAddress as `0x${string}`,
     chainId,
-    abi: rewardsModuleAbi,
+    abi: rewards.abi,
     userAddress: userAddress as `0x${string}`,
     rankings: rankingsForAddress,
     creatorAddress: contestAuthorEthereumAddress as `0x${string}`,
@@ -54,12 +50,13 @@ const WinnerClaimRewards: FC<WinnerClaimRewardsProps> = ({
     isLoading: isClaimLoading,
     isSuccess: isClaimSuccess,
   } = useClaimRewards({
-    contractRewardsModuleAddress: contestRewardsModuleAddress,
-    abiRewardsModule: rewardsModuleAbi,
+    contractRewardsModuleAddress: rewards.contractAddress as `0x${string}`,
+    abiRewardsModule: rewards.abi,
     chainId,
     tokenAddress: "native",
     tokenDecimals: 18,
     moduleType: ModuleType.AUTHOR_REWARDS,
+    userAddress: userAddress as `0x${string}`,
   });
 
   const handleRefresh = async () => {

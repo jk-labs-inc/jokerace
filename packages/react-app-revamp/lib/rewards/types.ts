@@ -40,4 +40,14 @@ export interface RankShare {
   share: bigint;
 }
 
+export interface RewardModuleInfo {
+  abi: Abi;
+  moduleType: ModuleType;
+  contractAddress: string;
+  creator: string;
+  payees: number[];
+  totalShares: number;
+  blockExplorers?: string;
+}
+
 export const VOTER_REWARDS_VERSION = "5.5";

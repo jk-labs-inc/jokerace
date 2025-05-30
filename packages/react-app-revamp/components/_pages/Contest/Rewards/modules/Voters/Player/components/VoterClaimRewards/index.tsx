@@ -1,41 +1,31 @@
 import Loader from "@components/UI/Loader";
 import { useClaimRewards } from "@hooks/useClaimRewards";
-import { ContestStatus } from "@hooks/useContestStatus/store";
 import { useContestStore } from "@hooks/useContest/store";
-import { useRewardsStore } from "@hooks/useRewards/store";
+import { ContestStatus } from "@hooks/useContestStatus/store";
+import { RewardModuleInfo, ModuleType } from "lib/rewards/types";
 import useUserRewards from "@hooks/useUserRewards";
-import { ModuleType } from "lib/rewards/types";
 import { FC } from "react";
-import { Abi } from "viem";
 import { useAccount } from "wagmi";
-import { useShallow } from "zustand/shallow";
+import RewardsError from "../../../../shared/Error";
 import RewardsPlayerViewClaimRewards from "../../../../shared/PlayerView/ClaimRewards";
 import RewardsPlayerLosingStatus from "../../../../shared/PlayerView/LosingStatus";
-import RewardsError from "../../../../shared/Error";
 
 interface VoterClaimRewardsProps {
-  contestRewardsModuleAddress: `0x${string}`;
-  rewardsModuleAbi: Abi;
+  rewards: RewardModuleInfo;
   chainId: number;
   contestStatus: ContestStatus;
 }
 
-const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
-  contestRewardsModuleAddress,
-  rewardsModuleAbi,
-  chainId,
-  contestStatus,
-}) => {
+const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({ rewards, chainId, contestStatus }) => {
   const { address: userAddress } = useAccount();
   const { contestAuthorEthereumAddress, version } = useContestStore(state => state);
-  const rankings = useRewardsStore(useShallow(state => state.rewards.payees));
   const { claimable, claimed, totalRewards, isLoading, refetch, isError } = useUserRewards({
     moduleType: ModuleType.VOTER_REWARDS,
-    contractAddress: contestRewardsModuleAddress,
+    contractAddress: rewards.contractAddress as `0x${string}`,
     chainId,
-    abi: rewardsModuleAbi,
+    abi: rewards.abi,
     userAddress: userAddress as `0x${string}`,
-    rankings,
+    rankings: rewards.payees,
     creatorAddress: contestAuthorEthereumAddress as `0x${string}`,
     claimedEnabled: contestStatus === ContestStatus.VotingClosed,
     version,
@@ -46,12 +36,13 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
     isLoading: isClaimLoading,
     isSuccess: isClaimSuccess,
   } = useClaimRewards({
-    contractRewardsModuleAddress: contestRewardsModuleAddress,
-    abiRewardsModule: rewardsModuleAbi,
+    contractRewardsModuleAddress: rewards.contractAddress as `0x${string}`,
+    abiRewardsModule: rewards.abi,
     chainId,
     tokenAddress: "native",
     tokenDecimals: 18,
     moduleType: ModuleType.VOTER_REWARDS,
+    userAddress: userAddress as `0x${string}`,
   });
 
   const handleClaim = async (rank: number, value: bigint, tokenAddress: string) => {

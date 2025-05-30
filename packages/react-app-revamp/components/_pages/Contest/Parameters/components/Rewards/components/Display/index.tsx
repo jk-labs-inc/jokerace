@@ -1,9 +1,8 @@
-import { RewardModuleInfo } from "@hooks/useRewards/store";
-import { ModuleType } from "lib/rewards/types";
 import { FC } from "react";
 import RewardsParametersTable from "../Table";
 import RewardsParametersInfo from "../Info";
 import { Charge } from "@hooks/useDeployContest/types";
+import { ModuleType, RewardModuleInfo } from "lib/rewards/types";
 interface RewardsParametersDisplayProps {
   rewardsStore: RewardModuleInfo;
   chainId: number;

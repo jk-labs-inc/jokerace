@@ -2,14 +2,14 @@ import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { transform } from "@hooks/useDistributeRewards";
+import { transform } from "@helpers/transform";
 import { useError } from "@hooks/useError";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { ModuleType } from "lib/rewards/types";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Abi } from "viem";
-import { useClaimRewardsStore } from "./store";
 
 interface UseClaimRewardsProps {
   contractRewardsModuleAddress: `0x${string}`;
@@ -18,7 +18,11 @@ interface UseClaimRewardsProps {
   tokenAddress: string;
   tokenDecimals: number;
   moduleType: ModuleType;
+  userAddress?: `0x${string}`;
 }
+
+type ClaimKey = string;
+type ClaimState = Record<ClaimKey, boolean>;
 
 export const useClaimRewards = ({
   contractRewardsModuleAddress,
@@ -27,11 +31,23 @@ export const useClaimRewards = ({
   tokenAddress,
   tokenDecimals,
   moduleType,
+  userAddress,
 }: UseClaimRewardsProps) => {
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { handleError } = useError();
-  const { loadingStates, successStates, setLoading, setSuccess } = useClaimRewardsStore();
+  const [loadingStates, setLoadingStates] = useState<ClaimState>({});
+  const [successStates, setSuccessStates] = useState<ClaimState>({});
+
+  const setLoading = (payee: number, tokenAddress: string, isLoading: boolean) => {
+    const key = `${userAddress}-${payee}-${tokenAddress}`;
+    setLoadingStates(prev => ({ ...prev, [key]: isLoading }));
+  };
+
+  const setSuccess = (payee: number, tokenAddress: string, isSuccess: boolean) => {
+    const key = `${userAddress}-${payee}-${tokenAddress}`;
+    setSuccessStates(prev => ({ ...prev, [key]: isSuccess }));
+  };
 
   const claimRewards = async (
     payee: number,
@@ -87,8 +103,10 @@ export const useClaimRewards = ({
     }
   };
 
-  const isLoading = (payee: number, tokenAddress: string) => loadingStates[`${payee}-${tokenAddress}`] || false;
-  const isSuccess = (payee: number, tokenAddress: string) => successStates[`${payee}-${tokenAddress}`] || false;
+  const isLoading = (payee: number, tokenAddress: string) =>
+    loadingStates[`${userAddress}-${payee}-${tokenAddress}`] || false;
+  const isSuccess = (payee: number, tokenAddress: string) =>
+    successStates[`${userAddress}-${payee}-${tokenAddress}`] || false;
 
   return {
     claimRewards,

@@ -1,139 +1,89 @@
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
-import { useError } from "@hooks/useError";
+import { useQuery } from "@tanstack/react-query";
 import { readContracts } from "@wagmi/core";
 import { getRewardsModuleAddress, getRewardsModuleInfo } from "lib/rewards/contracts";
-import { ModuleType } from "lib/rewards/types";
+import { ModuleType, RewardModuleInfo } from "lib/rewards/types";
 import { usePathname } from "next/navigation";
 import { Abi } from "viem";
-import { useRewardsStore } from "./store";
 
 export function useRewardsModule() {
   const asPath = usePathname();
   const { contestAbi } = useContestStore(state => state);
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const { setRewards, setIsLoading, setIsError, setIsSuccess } = useRewardsStore(state => state);
-  const { handleError } = useError();
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
   )?.[0]?.id;
 
-  function getRewardsConfig(rewardsModuleAddress: string, abi: Abi) {
-    return {
-      address: rewardsModuleAddress as `0x${string}`,
-      abi: abi as Abi,
-      chainId,
-    };
-  }
+  const getRewardsConfig = (rewardsModuleAddress: string, abi: Abi) => ({
+    address: rewardsModuleAddress as `0x${string}`,
+    abi: abi as Abi,
+    chainId,
+  });
 
-  const fetchRewardsModuleAbi = async (rewardsModuleAddress: string) => {
-    try {
-      const { abi, moduleType } = await getRewardsModuleInfo(rewardsModuleAddress, chainId);
-      return { abi, moduleType };
-    } catch (e) {
-      handleError(e, "Error fetching rewards module ABI");
-      return { abi: null, moduleType: null };
-    }
-  };
-
-  const fetchRewardsModuleAddress = async (): Promise<string | null> => {
-    try {
-      if (!contestAbi) {
-        setIsLoading(false);
-        setIsSuccess(false);
-        return null;
-      }
-
-      const contestRewardModuleAddress = await getRewardsModuleAddress({
-        address: contestAddress as `0x${string}`,
-        abi: contestAbi,
-        chainId,
-      });
-
-      if (!contestRewardModuleAddress) {
-        return null;
-      }
-
-      return contestRewardModuleAddress;
-    } catch (error) {
-      handleError(error, "Failed to fetch rewards module address.");
+  const fetchContestRewardsModule = async (): Promise<RewardModuleInfo | null> => {
+    if (!contestAddress || !contestAbi || !chainId) {
       return null;
     }
-  };
 
-  async function getContestRewardsModule() {
-    setIsLoading(true);
-    setIsError(false);
-    setIsSuccess(false);
+    const rewardsConfig = getRewardsConfig(contestAddress as `0x${string}`, contestAbi);
 
-    const rewardsModuleAddress = await fetchRewardsModuleAddress();
+    const rewardsModuleAddress = await getRewardsModuleAddress(rewardsConfig);
     if (!rewardsModuleAddress) {
-      setIsLoading(false);
-      setIsError(true);
-      return;
+      return null;
     }
 
-    const { abi, moduleType } = await fetchRewardsModuleAbi(rewardsModuleAddress);
+    const { abi, moduleType } = await getRewardsModuleInfo(rewardsModuleAddress, chainId);
     if (!abi) {
-      setIsLoading(false);
-      setIsError(true);
-      return;
+      throw new Error("Failed to get rewards module ABI");
     }
 
-    try {
-      const contractsRewardsModule = [
-        {
-          ...getRewardsConfig(rewardsModuleAddress, abi),
-          functionName: "creator",
-        },
-        {
-          ...getRewardsConfig(rewardsModuleAddress, abi),
-          functionName: "getPayees",
-        },
-        {
-          ...getRewardsConfig(rewardsModuleAddress, abi),
-          functionName: "totalShares",
-        },
-      ];
+    const contractsRewardsModule = [
+      {
+        ...getRewardsConfig(rewardsModuleAddress, abi),
+        functionName: "creator",
+      },
+      {
+        ...getRewardsConfig(rewardsModuleAddress, abi),
+        functionName: "getPayees",
+      },
+      {
+        ...getRewardsConfig(rewardsModuleAddress, abi),
+        functionName: "totalShares",
+      },
+    ];
 
-      const rewardsModule = await readContracts(config, {
-        contracts: contractsRewardsModule,
-      });
+    const rewardsModule = await readContracts(config, {
+      contracts: contractsRewardsModule,
+    });
 
-      const creator = rewardsModule[0].result as string;
-      const payees = rewardsModule[1].result as bigint[];
-      const totalShares = rewardsModule[2].result as bigint;
+    const creator = rewardsModule[0].result as string;
+    const payees = rewardsModule[1].result as bigint[];
+    const totalShares = rewardsModule[2].result as bigint;
 
-      const formattedPayees = payees.map(payee => Number(payee));
-      const totalSharesFormatted = Number(totalShares);
+    const formattedPayees = payees.map(payee => Number(payee));
+    const totalSharesFormatted = Number(totalShares);
 
-      setRewards({
-        abi,
-        contractAddress: rewardsModuleAddress,
-        creator,
-        payees: formattedPayees,
-        totalShares: totalSharesFormatted,
-        moduleType: moduleType ?? ModuleType.VOTER_REWARDS,
-        blockExplorers: chains.filter(
-          (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName,
-        )?.[0]?.blockExplorers?.default.url,
-      });
-      setIsLoading(false);
-      setIsError(false);
-      setIsSuccess(true);
-    } catch (e) {
-      handleError(e, "Something went wrong and the rewards module couldn't be retrieved.");
-      setIsError(true);
-      setIsLoading(false);
-      setIsSuccess(false);
-    }
-  }
-
-  return {
-    getContestRewardsModule,
-    fetchRewardsModuleAddress,
+    return {
+      abi,
+      contractAddress: rewardsModuleAddress,
+      creator,
+      payees: formattedPayees,
+      totalShares: totalSharesFormatted,
+      moduleType: moduleType ?? ModuleType.VOTER_REWARDS,
+      blockExplorers: chains.filter(
+        (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName,
+      )?.[0]?.blockExplorers?.default.url,
+    };
   };
+
+  return useQuery({
+    queryKey: ["rewards-module", contestAddress, contestAbi, chainId],
+    queryFn: fetchContestRewardsModule,
+    enabled: Boolean(contestAddress && contestAbi && chainId),
+    staleTime: Infinity,
+  });
 }
 
 export default useRewardsModule;

@@ -51,7 +51,6 @@ export function useContest() {
     isSuccess,
     setIsSuccess,
     setIsLoading,
-    setSupportsRewardsModule,
     setContestPrompt,
     setDownvotingAllowed,
     setContestName,
@@ -318,11 +317,9 @@ export function useContest() {
     const moduleAddress = await getRewardsModuleAddress(contractConfig);
 
     if (!moduleAddress) {
-      setSupportsRewardsModule(false);
       return "";
     }
 
-    setSupportsRewardsModule(true);
     setRewardsModuleAddress(moduleAddress);
 
     return moduleAddress;

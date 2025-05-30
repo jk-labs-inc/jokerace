@@ -10,9 +10,9 @@ import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModu
 import VotingModuleContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { getEthersSigner } from "@helpers/ethers";
 import { extractPathSegments } from "@helpers/extractPath";
-import { useContestStore } from "@hooks/useContest/store";
 import { useCreatorSplitDestination } from "@hooks/useCreatorSplitDestination";
 import { SplitFeeDestinationType } from "@hooks/useDeployContest/types";
+import { useQueryClient } from "@tanstack/react-query";
 import { estimateGas, sendTransaction, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { ContractFactory } from "ethers";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
@@ -26,12 +26,6 @@ export function useDeployRewardsPool() {
   const asPath = usePathname();
   const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
-  const { setSupportsRewardsModule } = useContestStore(
-    useShallow(state => ({
-      setSupportsRewardsModule: state.setSupportsRewardsModule,
-    })),
-  );
-
   const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards, rewardPoolType, resetCreateRewardsStore } =
     useCreateRewardsStore(
       useShallow(state => ({
@@ -50,6 +44,7 @@ export function useDeployRewardsPool() {
     })),
   );
   const { setCreatorSplitDestination } = useCreatorSplitDestination();
+  const queryClient = useQueryClient();
 
   async function deployRewardsPool() {
     let contractRewardsModuleAddress: string;
@@ -69,9 +64,12 @@ export function useDeployRewardsPool() {
         console.error("Failed to insert contest with official module:", error);
       }
 
-      setSupportsRewardsModule(true);
       resetCreateRewardsStore();
       setTokenWidgets([]);
+
+      await queryClient.invalidateQueries({
+        queryKey: ["rewards-module", contestAddress],
+      });
     } catch (e: any) {
       if (didUserReject(e)) {
         setStep(CreationStep.Review);

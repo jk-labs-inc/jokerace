@@ -1,6 +1,6 @@
 import { Charge } from "@hooks/useDeployContest/types";
-import { RewardModuleInfo } from "@hooks/useRewards/store";
 import { FC } from "react";
+import { RewardModuleInfo } from "lib/rewards/types";
 import RewardsParametersTokens from "../Tokens";
 
 interface RewardsParametersInfoProps {

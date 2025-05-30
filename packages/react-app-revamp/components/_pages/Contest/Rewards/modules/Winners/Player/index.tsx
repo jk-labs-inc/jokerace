@@ -3,8 +3,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useHasSubmittedProposal from "@hooks/useHasSubmittedProposal";
 import { usePayoutAddresses } from "@hooks/usePayoutAddresses";
-import { useRewardsStore } from "@hooks/useRewards/store";
-import { ModuleType } from "lib/rewards/types";
+import { RewardModuleInfo, ModuleType } from "lib/rewards/types";
 import { FC } from "react";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
@@ -14,27 +13,23 @@ import RewardsPlayerNotQualified from "../../shared/PlayerView/NotQualified";
 import RewardsNotStarted from "../../shared/PlayerView/RewardsNotStarted";
 import RewardsPlayerViewNotConnected from "../../shared/PlayerView/WalletNotConnected";
 import WinnerClaimRewards from "./components/WinnerClaimRewards";
-
 interface WinnersRewardsPagePlayerViewProps {
+  rewards: RewardModuleInfo;
   contestAddress: `0x${string}`;
   chainId: number;
-  contestRewardsModuleAddress: `0x${string}`;
   contestAbi: Abi;
-  rewardsModuleAbi: Abi;
 }
 
 const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
+  rewards,
   contestAddress,
   chainId,
-  contestRewardsModuleAddress,
   contestAbi,
-  rewardsModuleAbi,
 }) => {
   const { contestStatus } = useContestStatusStore(state => state);
   const { address: accountAddress, isConnected } = useAccount();
   const creator = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
   const isCreator = accountAddress === creator;
-  const rankings = useRewardsStore(useShallow(state => state.rewards.payees));
   const {
     hasSubmitted,
     isLoading: isLoadingHasSubmittedProposal,
@@ -52,10 +47,10 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
     isError: isPayoutAddressesError,
     refetch: refetchPayoutAddresses,
   } = usePayoutAddresses({
-    rewardsModuleAddress: contestRewardsModuleAddress,
-    abi: rewardsModuleAbi,
+    rewardsModuleAddress: rewards.contractAddress as `0x${string}`,
+    abi: rewards.abi,
     chainId,
-    rankings,
+    rankings: rewards.payees,
   });
   const rankingsForAddress = accountAddress ? getRankingsForAddress(accountAddress as `0x${string}`) : [];
   const isEntryOpen = contestStatus === ContestStatus.SubmissionOpen;
@@ -79,8 +74,7 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
     if (isCreator && rankingsForAddress.length > 0) {
       return (
         <WinnerClaimRewards
-          contestRewardsModuleAddress={contestRewardsModuleAddress}
-          rewardsModuleAbi={rewardsModuleAbi}
+          rewards={rewards}
           chainId={chainId}
           contestStatus={contestStatus}
           rankingsForAddress={rankingsForAddress}
@@ -98,8 +92,7 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
 
   return (
     <WinnerClaimRewards
-      contestRewardsModuleAddress={contestRewardsModuleAddress}
-      rewardsModuleAbi={rewardsModuleAbi}
+      rewards={rewards}
       chainId={chainId}
       contestStatus={contestStatus}
       rankingsForAddress={rankingsForAddress}

@@ -1,10 +1,10 @@
-import { RewardModuleInfo } from "@hooks/useRewards/store";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import { formatBalance } from "@helpers/formatBalance";
 import { FC } from "react";
 import { formatUnits } from "viem";
 import Skeleton from "react-loading-skeleton";
 import RewardsError from "@components/_pages/Contest/Rewards/modules/shared/Error";
+import { RewardModuleInfo } from "lib/rewards/types";
 
 interface RewardsParametersTokensProps {
   rewardsStore: RewardModuleInfo;

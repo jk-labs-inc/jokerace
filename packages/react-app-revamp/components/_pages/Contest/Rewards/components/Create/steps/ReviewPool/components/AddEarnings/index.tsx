@@ -13,6 +13,9 @@ const CreateRewardsAddEarningsToggle: FC<CreateRewardsAddEarningsToggleProps> = 
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { addEarningsToRewards, setAddEarningsToRewards } = useCreateRewardsStore(state => state);
   const tooltipId = "earnings-tooltip";
+  const toggleLabel = isMobile
+    ? `send ${percentageToCreator}% of charges to rewards pool`
+    : `send ${percentageToCreator}% of all charges to the rewards pool`;
 
   return (
     <div className="flex gap-4 items-center">
@@ -27,9 +30,7 @@ const CreateRewardsAddEarningsToggle: FC<CreateRewardsAddEarningsToggleProps> = 
         />
       </Switch>
       <div className="flex items-center gap-2">
-        <p className="text-[16px] text-neutral-11">
-          send {percentageToCreator}% of all charges to {isMobile ? "" : "the"} rewards pool
-        </p>
+        <p className="text-[16px] text-neutral-11">{toggleLabel}</p>
         <InformationCircleIcon
           width={24}
           height={24}

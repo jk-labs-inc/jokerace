@@ -1,28 +1,15 @@
 import { FC } from "react";
-import { Abi } from "viem";
 import RewardsCreatorView from "../../shared/CreatorView";
+import { RewardModuleInfo } from "lib/rewards/types";
 
 interface WinnersRewardsPageCreatorViewProps {
-  contestRewardsModuleAddress: `0x${string}`;
-  rewardsModuleAbi: Abi;
+  rewards: RewardModuleInfo;
   chainId: number;
   version: string;
 }
 
-const WinnersRewardsPageCreatorView: FC<WinnersRewardsPageCreatorViewProps> = ({
-  contestRewardsModuleAddress,
-  rewardsModuleAbi,
-  chainId,
-  version,
-}) => {
-  return (
-    <RewardsCreatorView
-      contestRewardsModuleAddress={contestRewardsModuleAddress}
-      rewardsModuleAbi={rewardsModuleAbi}
-      chainId={chainId}
-      version={version}
-    />
-  );
+const WinnersRewardsPageCreatorView: FC<WinnersRewardsPageCreatorViewProps> = ({ rewards, chainId, version }) => {
+  return <RewardsCreatorView rewards={rewards} chainId={chainId} version={version} />;
 };
 
 export default WinnersRewardsPageCreatorView;

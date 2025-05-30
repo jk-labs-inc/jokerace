@@ -1,12 +1,12 @@
 import { config } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
+import useRewardsModule from "@hooks/useRewards";
 import { useQuery } from "@tanstack/react-query";
+import { readContract } from "@wagmi/core";
+import { compareVersions } from "compare-versions";
 import { formatEther } from "ethers";
 import { useAccount } from "wagmi";
-import { readContract } from "@wagmi/core";
-import { useRewardsStore } from "@hooks/useRewards/store";
 import { useShallow } from "zustand/react/shallow";
-import { compareVersions } from "compare-versions";
 
 export interface VoterRewardsStatistics {
   userVotes: bigint;
@@ -24,7 +24,7 @@ export const useVoterRewardsStatistics = (
 ) => {
   const { address } = useAccount();
   const { contestAbi, version } = useContestStore(useShallow(state => state));
-  const { rewards } = useRewardsStore(useShallow(state => state));
+  const { data: rewards } = useRewardsModule();
 
   const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
 
@@ -32,7 +32,7 @@ export const useVoterRewardsStatistics = (
     try {
       const proposalId = await readContract(config, {
         address: rewardsContractAddress as `0x${string}`,
-        abi: rewards.abi,
+        abi: rewards?.abi ?? [],
         chainId,
         functionName: "getProposalIdOfRanking",
         args: [BigInt(ranking)],

@@ -14,9 +14,9 @@ import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useReleasableRewards } from "@hooks/useReleasableRewards";
-import { useRewardsStore } from "@hooks/useRewards/store";
+import useRewardsModule from "@hooks/useRewards";
 import { useUserStore } from "@hooks/useUser/store";
-import { waitForTransactionReceipt, writeContract, simulateContract } from "@wagmi/core";
+import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { EmailType } from "lib/email/types";
@@ -72,7 +72,7 @@ export function useSubmitProposal() {
     votesOpen,
     votesClose,
   } = useContestStore(state => state);
-  const rewardsStore = useRewardsStore(state => state);
+  const { data: rewards } = useRewardsModule();
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
   const { setSubmissionsCount, submissionsCount } = useProposalStore(state => state);
@@ -85,8 +85,8 @@ export function useSubmitProposal() {
   const { refetch: refetchReleasableRewards } = useReleasableRewards({
     contractAddress: rewardsModuleAddress,
     chainId,
-    abi: rewardsStore.rewards.abi ?? [],
-    rankings: rewardsStore.rewards.payees,
+    abi: rewards?.abi ?? [],
+    rankings: rewards?.payees ?? [],
   });
   const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
   const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
