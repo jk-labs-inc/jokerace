@@ -3216,23 +3216,11 @@ contract RewardsModule {
      * @dev Return address to pay out for a given ranking.
      */
     function getAddressToPayOut(uint256 ranking) public view returns (address) {
-        address addressToPayOut;
-        uint256 determinedRankingIdxInSortedRanks = underlyingContest.getRankIndex(ranking);
+        uint256 proposalIdOfRanking = getProposalIdOfRanking(ranking);
+        if (proposalIdOfRanking == 0) return creator;
 
-        // if the ranking that we land on is tied or it's below a tied ranking, send to creator
-        if (underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
-            addressToPayOut = creator;
-        }
-        // otherwise, determine proposal at ranking and pay out according to that
-        else {
-            uint256 rankValue = underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
-            Governor.ProposalCore memory rankingProposal = underlyingContest.getProposal(
-                underlyingContest.getOnlyProposalIdWithThisManyVotes(rankValue) // if no ties there should only be one
-            );
-            addressToPayOut = paysOutTarget ? rankingProposal.targetMetadata.targetAddress : rankingProposal.author;
-        }
-
-        return addressToPayOut;
+        Governor.ProposalCore memory proposalAtRanking = underlyingContest.getProposal(proposalIdOfRanking);
+        return paysOutTarget ? proposalAtRanking.targetMetadata.targetAddress : proposalAtRanking.author;
     }
 
     /**
