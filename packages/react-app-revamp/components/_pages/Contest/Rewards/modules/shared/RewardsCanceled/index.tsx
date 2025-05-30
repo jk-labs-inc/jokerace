@@ -51,12 +51,14 @@ const RewardsCanceled: FC<RewardsCanceledProps> = ({
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2 items-start">
         <p className="text-[24px] text-negative-11">rewards have been canceled</p>
-        <ContestWithdrawRewards
-          rewardsModuleAddress={rewardsModuleAddress}
-          rewardsAbi={rewardsAbi}
-          rankings={rankings}
-          chainId={chainId}
-        />
+        {isCreatorView && (
+          <ContestWithdrawRewards
+            rewardsModuleAddress={rewardsModuleAddress}
+            rewardsAbi={rewardsAbi}
+            rankings={rankings}
+            chainId={chainId}
+          />
+        )}
       </div>
       {canceledDescription()}
     </div>
