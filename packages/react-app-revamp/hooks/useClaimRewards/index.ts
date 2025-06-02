@@ -1,6 +1,6 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
-import { chains, config } from "@config/wagmi";
+import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { transform } from "@helpers/transform";
 import { useError } from "@hooks/useError";
