@@ -74,140 +74,141 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
+
     if (version === "5.5") {
-      return VoterRewardsRewards.abi;
+      return { abi: VoterRewardsRewards.abi, version };
     } else if (version === "5.4") {
-      return OfficialModulePointsToContestRewards.abi;
+      return { abi: OfficialModulePointsToContestRewards.abi, version };
     } else if (version === "5.3") {
-      return EntrantsCanDeleteRewards.abi;
+      return { abi: EntrantsCanDeleteRewards.abi, version };
     } else if (version === "5.2") {
-      return AddErc20CancelledCheckRewards.abi;
+      return { abi: AddErc20CancelledCheckRewards.abi, version };
     } else if (version === "5.1") {
-      return RmDownvotingRewards.abi;
+      return { abi: RmDownvotingRewards.abi, version };
     } else if (version === "4.37") {
-      return EditTitleDescRewards.abi;
+      return { abi: EditTitleDescRewards.abi, version };
     } else if (version === "4.36") {
-      return NoCommentAfterCloseRewards.abi;
+      return { abi: NoCommentAfterCloseRewards.abi, version };
     } else if (version === "4.35") {
-      return OnlyCreatorChangeMerkleRewards.abi;
+      return { abi: OnlyCreatorChangeMerkleRewards.abi, version };
     } else if (version === "4.34") {
-      return AllowJkLabsDestUpdateRewards.abi;
+      return { abi: AllowJkLabsDestUpdateRewards.abi, version };
     } else if (version === "4.33") {
-      return MustCancelToWithdrawRewards.abi;
+      return { abi: MustCancelToWithdrawRewards.abi, version };
     } else if (version === "4.32") {
-      return CheckCanceledRewards.abi;
+      return { abi: CheckCanceledRewards.abi, version };
     } else if (version === "4.31") {
-      return AddMetadataFieldsRewards.abi;
+      return { abi: AddMetadataFieldsRewards.abi, version };
     } else if (version === "4.30") {
-      return MakeJkLabsSplitConfigurableRewards.abi;
+      return { abi: MakeJkLabsSplitConfigurableRewards.abi, version };
     } else if (version === "4.29") {
-      return SetSplitDestinationRewards.abi;
+      return { abi: SetSplitDestinationRewards.abi, version };
     } else if (version === "4.28") {
-      return UpdateForgeLibsRewards.abi;
+      return { abi: UpdateForgeLibsRewards.abi, version };
     } else if (version === "4.27") {
-      return AnyoneCanVoteRewards.abi;
+      return { abi: AnyoneCanVoteRewards.abi, version };
     } else if (version === "4.26") {
-      return CleanUpConstructorsRewards.abi;
+      return { abi: CleanUpConstructorsRewards.abi, version };
     } else if (version === "4.25") {
-      return PayPerVoteRewards.abi;
+      return { abi: PayPerVoteRewards.abi, version };
     } else if (version === "4.24") {
-      return RefactorCostDistroRewards.abi;
+      return { abi: RefactorCostDistroRewards.abi, version };
     } else if (version === "4.23") {
-      return AddCostToVoteRewards.abi;
+      return { abi: AddCostToVoteRewards.abi, version };
     } else if (version === "4.22") {
-      return RefactorDistributionFuncRewards.abi;
+      return { abi: RefactorDistributionFuncRewards.abi, version };
     } else if (version === "4.21") {
-      return AddContentToEventsRewards.abi;
+      return { abi: AddContentToEventsRewards.abi, version };
     } else if (version === "4.20") {
-      return AddGetDeletedAuthorsRewards.abi;
+      return { abi: AddGetDeletedAuthorsRewards.abi, version };
     } else if (version === "4.19") {
-      return AddMoreAttributionRewards.abi;
+      return { abi: AddMoreAttributionRewards.abi, version };
     } else if (version === "4.18") {
-      return AddEmergencyFuncsRewards.abi;
+      return { abi: AddEmergencyFuncsRewards.abi, version };
     } else if (version === "4.17") {
-      return MitToAGPLRewards.abi;
+      return { abi: MitToAGPLRewards.abi, version };
     } else if (version === "4.16") {
-      return PinAllToSameRewards.abi;
+      return { abi: PinAllToSameRewards.abi, version };
     } else if (version === "4.15") {
-      return RmUnusedViewFuncRewards.abi;
+      return { abi: RmUnusedViewFuncRewards.abi, version };
     } else if (version === "4.14") {
-      return RmShadowingPropIdsRewards.abi;
+      return { abi: RmShadowingPropIdsRewards.abi, version };
     } else if (version === "4.13") {
-      return AddCommentsRewards.abi;
+      return { abi: AddCommentsRewards.abi, version };
     } else if (version === "4.12") {
-      return AllowCancelCompletedRewards.abi;
+      return { abi: AllowCancelCompletedRewards.abi, version };
     } else if (version === "4.11") {
-      return GasOptimizeGettersRewards.abi;
+      return { abi: GasOptimizeGettersRewards.abi, version };
     } else if (version === "4.10") {
-      return RmImmutableKeywordRewards.abi;
+      return { abi: RmImmutableKeywordRewards.abi, version };
     } else if (version === "4.9") {
-      return AddGetPropIdsWithForVotesRewards.abi;
+      return { abi: AddGetPropIdsWithForVotesRewards.abi, version };
     } else if (version === "4.8") {
-      return DeleteInMapAfterForLoopRewards.abi;
+      return { abi: DeleteInMapAfterForLoopRewards.abi, version };
     } else if (version === "4.7") {
-      return RmUnnecessaryVirtualsRewards.abi;
+      return { abi: RmUnnecessaryVirtualsRewards.abi, version };
     } else if (version === "4.6") {
-      return RestructureExtensionsAndUtilsRewards.abi;
+      return { abi: RestructureExtensionsAndUtilsRewards.abi, version };
     } else if (version === "4.5") {
-      return CleanUpSortingRewards.abi;
+      return { abi: CleanUpSortingRewards.abi, version };
     } else if (version === "4.4") {
-      return UseCustomErrorsRewards.abi;
+      return { abi: UseCustomErrorsRewards.abi, version };
     } else if (version === "4.3") {
-      return NewValueAlreadyInArrayRewards.abi;
+      return { abi: NewValueAlreadyInArrayRewards.abi, version };
     } else if (version === "4.2") {
-      return UpdateSortingAlgoRewards.abi;
+      return { abi: UpdateSortingAlgoRewards.abi, version };
     } else if (version === "4.1") {
-      return AddEntryChargeRewards.abi;
+      return { abi: AddEntryChargeRewards.abi, version };
     } else if (version === "3.18") {
-      return AddJokeraceCreatedEventRewards.abi;
+      return { abi: AddJokeraceCreatedEventRewards.abi, version };
     } else if (version === "3.17") {
-      return LetJkLabsCancelRewards.abi;
+      return { abi: LetJkLabsCancelRewards.abi, version };
     } else if (version === "3.16") {
-      return MakeVarsPublicRewards.abi;
+      return { abi: MakeVarsPublicRewards.abi, version };
     } else if (version === "3.15") {
-      return TrackVotersRewards.abi;
+      return { abi: TrackVotersRewards.abi, version };
     } else if (version === "3.14") {
-      return TrackProposalAuthorsRewards.abi;
+      return { abi: TrackProposalAuthorsRewards.abi, version };
     } else if (version === "3.13") {
-      return CleanUpContractDocsRewards.abi;
+      return { abi: CleanUpContractDocsRewards.abi, version };
     } else if (version === "3.12") {
-      return AuditInfoAndOptimizationsRewards.abi;
+      return { abi: AuditInfoAndOptimizationsRewards.abi, version };
     } else if (version === "3.11") {
-      return AuditMinorFixesRewards.abi;
+      return { abi: AuditMinorFixesRewards.abi, version };
     } else if (version === "3.10") {
-      return CantVoteOnDeletedPropsRewards.abi;
+      return { abi: CantVoteOnDeletedPropsRewards.abi, version };
     } else if (version === "3.9") {
-      return PrivateDeletedIdsRewards.abi;
+      return { abi: PrivateDeletedIdsRewards.abi, version };
     } else if (version === "3.8") {
-      return DeletedIdAccessorRewards.abi;
+      return { abi: DeletedIdAccessorRewards.abi, version };
     } else if (version === "3.7") {
-      return ArrayOfDeletedIdsRewards.abi;
+      return { abi: ArrayOfDeletedIdsRewards.abi, version };
     } else if (version === "3.6") {
-      return BringBackDeletedIdsRewards.abi;
+      return { abi: BringBackDeletedIdsRewards.abi, version };
     } else if (version === "3.5") {
-      return DeletedDontHitLimitRewards.abi;
+      return { abi: DeletedDontHitLimitRewards.abi, version };
     } else if (version === "3.4") {
-      return AddIsDeletedRewards.abi;
+      return { abi: AddIsDeletedRewards.abi, version };
     } else if (version === "3.3") {
-      return SetCompilerRewards.abi;
+      return { abi: SetCompilerRewards.abi, version };
     } else if (version === "3.2") {
-      return TotalVotesCastRewards.abi;
+      return { abi: TotalVotesCastRewards.abi, version };
     } else if (version === "3.1") {
-      return MerkleVotesRewards.abi;
+      return { abi: MerkleVotesRewards.abi, version };
     } else if (version === "2.5") {
-      return BetterRewardsNotesRewards.abi;
+      return { abi: BetterRewardsNotesRewards.abi, version };
     } else if (version === "2.4") {
-      return GateSubmissionsOpenRewards.abi;
+      return { abi: GateSubmissionsOpenRewards.abi, version };
     } else if (version === "2.3") {
-      return NumberedVersioningRewards.abi;
+      return { abi: NumberedVersioningRewards.abi, version };
     } else if (version === "1") {
-      return LegacyDeployedRewardsModuleContract.abi;
+      return { abi: LegacyDeployedRewardsModuleContract.abi, version };
     } else {
-      return DeployedRewardsContract.abi;
+      return { abi: DeployedRewardsContract.abi, version };
     }
   } catch (error) {
     // If the version method does not exist, use the legacy ABI
-    return LegacyDeployedRewardsModuleContract.abi;
+    return { abi: LegacyDeployedRewardsModuleContract.abi, version: "1" };
   }
 }
 

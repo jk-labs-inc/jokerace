@@ -208,6 +208,10 @@ li {
   background-color: black !important;
 }
 
+.earnings-tooltip {
+  background-color: #a1a1a1 !important;
+}
+
 .my-masonry-grid {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -284,6 +288,20 @@ li {
   line-height: 0 !important;
   width: 100%;
   max-width: 100%;
+}
+
+/*
+ Animate number from motion-plus classes
+*/
+.number-section-post {
+  font-size: 16px;
+  position: relative;
+  bottom: 5px;
+  align-self: flex-end;
+  margin-left: 5px;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: #9d9d9d;
 }
 
 @tailwind base;
