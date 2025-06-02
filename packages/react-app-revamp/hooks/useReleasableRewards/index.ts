@@ -43,6 +43,8 @@ export interface ReleasableRewardsResult {
   refetch: () => void;
 }
 
+export const ONE_WEI = 1n;
+
 export function useReleasableRewards({
   contractAddress,
   chainId,
@@ -73,7 +75,7 @@ export function useReleasableRewards({
         functionName: "releasable",
         args: [BigInt(ranking)],
       },
-      ...(erc20Addresses?.map(tokenAddress => ({
+      ...(erc20Addresses?.map((tokenAddress: any) => ({
         address: contractAddress as `0x${string}`,
         chainId,
         abi,
@@ -101,7 +103,7 @@ export function useReleasableRewards({
             tokens: [],
           };
 
-          if (nativeAmount && nativeAmount > 0n) {
+          if (nativeAmount && nativeAmount > ONE_WEI) {
             result.tokens.push({
               address: "native",
               amount: nativeAmount,
@@ -110,9 +112,9 @@ export function useReleasableRewards({
             });
           }
 
-          erc20Addresses?.forEach((address, index) => {
+          erc20Addresses?.forEach((address: any, index: any) => {
             const amount = data[startIndex + index + 1]?.result as bigint | undefined;
-            if (amount && amount > 0n) {
+            if (amount && amount > ONE_WEI) {
               result.tokens.push({
                 address,
                 amount,

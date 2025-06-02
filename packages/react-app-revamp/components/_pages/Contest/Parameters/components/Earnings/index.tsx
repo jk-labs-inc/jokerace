@@ -66,14 +66,14 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({
   return (
     <div className="flex flex-col gap-8">
       <div className="flex gap-4 items-center">
-        <p className="text-[20px] font-bold text-neutral-10">charges</p>
+        <p className="text-[24px] text-neutral-11">charges</p>
         {isConnectedWalletAuthor && charge.percentageToCreator > 0 && !isContestFinishedOrCanceled && (
           <button onClick={() => setIsEditEarningsModalOpen(true)}>
-            <PencilSquareIcon className="w-6 h-6 text-neutral-10 hover:text-neutral-11 transition-colors duration-300 ease-in-out" />
+            <PencilSquareIcon className="w-6 h-6 text-neutral-11 hover:text-neutral-11 transition-colors duration-300 ease-in-out" />
           </button>
         )}
       </div>
-      <ul className="pl-4 text-[16px] font-bold text-neutral-9">
+      <ul className="pl-4 text-[16px] text-neutral-9">
         <li className="list-disc">
           {formatEther(BigInt(charge.type.costToPropose))} ${nativeCurrencySymbol} to enter
         </li>

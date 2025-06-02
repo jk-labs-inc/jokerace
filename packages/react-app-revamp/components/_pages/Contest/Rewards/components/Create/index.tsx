@@ -1,14 +1,16 @@
 import CreateRewardsPool from "./steps/CreatePool";
 import CreateRewardsDeploymentStatus from "./steps/DeploymentStatus";
-import CreateRewardsFundPool from "./steps/FundPool";
+import CreateRewardsInitialStep from "./steps/Initial";
 import CreateRewardsReviewPool from "./steps/ReviewPool";
 import { CreationStep, useCreateRewardsStore } from "./store";
+import { useShallow } from "zustand/shallow";
 
 export const createRewardsSteps = [
   {
-    step: CreationStep.FundPool,
-    component: CreateRewardsFundPool,
+    step: CreationStep.InitialStep,
+    component: CreateRewardsInitialStep,
   },
+
   {
     step: CreationStep.CreatePool,
     component: CreateRewardsPool,
@@ -25,7 +27,7 @@ export const createRewardsSteps = [
 ];
 
 const CreateRewards = () => {
-  const { currentStep } = useCreateRewardsStore(state => state);
+  const currentStep = useCreateRewardsStore(useShallow(state => state.currentStep));
 
   const CurrentStepComponent = createRewardsSteps.find(step => step.step === currentStep)?.component;
 

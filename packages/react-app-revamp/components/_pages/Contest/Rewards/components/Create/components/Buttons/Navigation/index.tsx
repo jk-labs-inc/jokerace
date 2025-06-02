@@ -15,7 +15,7 @@ const fundPoolErrorMessage = "ruh roh! it looks like you have duplicate widgets 
 const CreateRewardsNavigation: FC<CreateRewardsNavigationProps> = ({ step, isDisabled = false, isError = false }) => {
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
   const { setStep } = useCreateRewardsStore(state => state);
-  const errorMessage = isError && step === CreationStep.FundPool ? fundPoolErrorMessage : "";
+  const errorMessage = isError && step === CreationStep.InitialStep ? fundPoolErrorMessage : "";
   const [showError, setShowError] = useState(false);
 
   const onNextHandler = () => {

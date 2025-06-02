@@ -1,43 +1,243 @@
-import { isSupabaseConfigured } from "@helpers/database";
+import { Distribution } from "@components/_pages/Contest/Rewards/types";
+import { RewardsParams } from "@hooks/useUserRewards";
+import {
+  createERC20TokenRead,
+  createNativeTokenReadBatch,
+  fetchReleasableRewards,
+  prepareRewardsFetching,
+} from "./contracts";
+import { ModuleType } from "./types";
+import { addRewardToDistribution, processERC20TokenRewards, processNativeTokenRewards } from "./utils";
 
-export interface RewardToken {
-  tokenAddress: string;
-  balance: number;
+/**
+ * Fetches claimed (released) rewards
+ */
+export async function fetchClaimedRewards({
+  moduleType,
+  contractAddress,
+  chainId,
+  abi,
+  userAddress,
+  rankings,
+  creatorAddress,
+  contestChainName,
+  nativeTokenInfo,
+  version,
+}: RewardsParams & {
+  contestChainName: string;
+  nativeTokenInfo: { symbol: string; decimals: number };
+}): Promise<Distribution[]> {
+  const { validRankings, tiedRankings, tokenAddresses, tokenInfo } = await prepareRewardsFetching({
+    moduleType,
+    contractAddress,
+    chainId,
+    abi,
+    userAddress,
+    rankings,
+    contestChainName,
+    version,
+    creatorAddress,
+  });
+
+  const distributionsMap = new Map<number, Distribution>();
+  const isCreator = creatorAddress && userAddress === creatorAddress;
+
+  // Process valid rankings
+  if (validRankings.length > 0) {
+    const nativeFunctionName = moduleType === ModuleType.VOTER_REWARDS ? "releasedToVoter" : "released";
+    const nativeReleasedResults = await createNativeTokenReadBatch(
+      moduleType,
+      contractAddress,
+      chainId,
+      abi,
+      validRankings,
+      userAddress,
+      nativeFunctionName,
+    );
+
+    for (let i = 0; i < validRankings.length; i++) {
+      const ranking = validRankings[i];
+      const nativeAmount = nativeReleasedResults[i]?.result as bigint | undefined;
+
+      addRewardToDistribution(
+        distributionsMap,
+        ranking,
+        nativeAmount || 0n,
+        "native",
+        nativeTokenInfo.symbol,
+        nativeTokenInfo.decimals,
+      );
+    }
+
+    // fetch and process ERC20 released rewards if we have token addresses
+    if (tokenAddresses.length > 0) {
+      const erc20FunctionName = moduleType === ModuleType.VOTER_REWARDS ? "erc20ReleasedToVoter" : "erc20Released";
+
+      for (const ranking of validRankings) {
+        for (const tokenAddress of tokenAddresses) {
+          const erc20ReleasedResult = await createERC20TokenRead(
+            moduleType,
+            contractAddress,
+            chainId,
+            abi,
+            tokenAddress,
+            ranking,
+            userAddress,
+            erc20FunctionName,
+          );
+
+          const amount = erc20ReleasedResult[0]?.result as bigint | undefined;
+
+          addRewardToDistribution(
+            distributionsMap,
+            ranking,
+            amount || 0n,
+            tokenAddress,
+            tokenInfo.symbols?.[tokenAddress] || "unknown",
+            tokenInfo.decimals?.[tokenAddress] || 18,
+          );
+        }
+      }
+    }
+  }
+
+  // Process tied rankings if user is the creator
+  if (isCreator && tiedRankings.length > 0) {
+    // For tied rankings, we use "released" instead of "releasedToVoter" for the creator
+    const nativeReleasedResults = await createNativeTokenReadBatch(
+      ModuleType.AUTHOR_REWARDS, // Force author rewards mode to use released instead of releasedToVoter
+      contractAddress,
+      chainId,
+      abi,
+      tiedRankings,
+      userAddress,
+      "released", // Use released for creator
+    );
+
+    for (let i = 0; i < tiedRankings.length; i++) {
+      const ranking = tiedRankings[i];
+      const nativeAmount = nativeReleasedResults[i]?.result as bigint | undefined;
+
+      addRewardToDistribution(
+        distributionsMap,
+        ranking,
+        nativeAmount || 0n,
+        "native",
+        nativeTokenInfo.symbol,
+        nativeTokenInfo.decimals,
+      );
+    }
+
+    // fetch and process ERC20 released rewards for tied rankings if we have token addresses
+    if (tokenAddresses.length > 0) {
+      for (const ranking of tiedRankings) {
+        for (const tokenAddress of tokenAddresses) {
+          const erc20ReleasedResult = await createERC20TokenRead(
+            ModuleType.AUTHOR_REWARDS, // Force author rewards mode to use erc20Released instead of erc20ReleasedToVoter
+            contractAddress,
+            chainId,
+            abi,
+            tokenAddress,
+            ranking,
+            userAddress,
+            "erc20Released", // Use erc20Released for creator
+          );
+
+          const amount = erc20ReleasedResult[0]?.result as bigint | undefined;
+
+          addRewardToDistribution(
+            distributionsMap,
+            ranking,
+            amount || 0n,
+            tokenAddress,
+            tokenInfo.symbols?.[tokenAddress] || "unknown",
+            tokenInfo.decimals?.[tokenAddress] || 18,
+          );
+        }
+      }
+    }
+  }
+
+  return Array.from(distributionsMap.values());
 }
 
 /**
- * Fetches the list of all ERC20 token addresses associated with a specific rewards module address.
- * This function retrieves unique token addresses from the analytics_rewards_v3 table in the database,
- * filtering by the given rewards module address and network name.
- *
- * @param rewardsModuleAddress address of the rewards module
- * @param networkName name of the chain
- * @returns a Promise that resolves to an array of unique ERC20 token addresses
+ * Fetches claimable rewards
  */
-export const getTokenAddresses = async (rewardsModuleAddress: string, networkName: string): Promise<string[]> => {
-  if (isSupabaseConfigured) {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
+export async function fetchClaimableRewards({
+  moduleType,
+  contractAddress,
+  chainId,
+  abi,
+  userAddress,
+  rankings,
+  creatorAddress,
+  version,
+  contestChainName,
+  nativeTokenInfo,
+}: RewardsParams & {
+  contestChainName: string;
+  nativeTokenInfo: { symbol: string; decimals: number };
+}): Promise<Distribution[]> {
+  const { validRankings, tiedRankings, tokenAddresses, tokenInfo } = await prepareRewardsFetching({
+    moduleType,
+    contractAddress,
+    chainId,
+    abi,
+    userAddress,
+    rankings,
+    contestChainName,
+    version,
+  });
 
-    const { data: tokens, error } = await supabase
-      .from("analytics_rewards_v3")
-      .select("token_address")
-      .eq("rewards_module_address", rewardsModuleAddress)
-      .eq("network_name", networkName.toLowerCase())
-      .not("token_address", "is", null);
+  const distributionsMap = new Map<number, Distribution>();
+  const isCreator = creatorAddress && userAddress === creatorAddress;
 
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    const uniqueTokens = new Set(
-      tokens
-        .map((token: { token_address: string }) => token.token_address)
-        .filter((address: string) => address !== "native"),
+  if (validRankings.length > 0) {
+    const rewardResults = await fetchReleasableRewards(
+      moduleType,
+      validRankings,
+      tokenAddresses,
+      contractAddress,
+      chainId,
+      abi,
+      userAddress,
     );
 
-    return Array.from(uniqueTokens);
+    processNativeTokenRewards(validRankings, rewardResults, nativeTokenInfo, distributionsMap);
+    processERC20TokenRewards(
+      validRankings,
+      tokenAddresses,
+      rewardResults,
+      tokenInfo.symbols || {},
+      tokenInfo.decimals || {},
+      distributionsMap,
+    );
   }
 
-  return [];
-};
+  // Process tied rankings if user is the creator
+  if (isCreator && tiedRankings.length > 0) {
+    // For tied rankings, we use "releasable" instead of "releasableToVoter" for the creator
+    const tiedRewardResults = await fetchReleasableRewards(
+      ModuleType.AUTHOR_REWARDS, // Force author rewards mode to use releasable instead of releasableToVoter
+      tiedRankings,
+      tokenAddresses,
+      contractAddress,
+      chainId,
+      abi,
+      userAddress,
+    );
+
+    processNativeTokenRewards(tiedRankings, tiedRewardResults, nativeTokenInfo, distributionsMap);
+    processERC20TokenRewards(
+      tiedRankings,
+      tokenAddresses,
+      tiedRewardResults,
+      tokenInfo.symbols || {},
+      tokenInfo.decimals || {},
+      distributionsMap,
+    );
+  }
+
+  return Array.from(distributionsMap.values());
+}

@@ -26,7 +26,6 @@ export interface ContestState {
   contestMaxProposalCount: number;
   downvotingAllowed: boolean;
   sortingEnabled: boolean;
-  supportsRewardsModule: boolean;
   submissionMerkleRoot: string;
   votingMerkleRoot: string;
   charge: Charge | null;
@@ -35,10 +34,8 @@ export interface ContestState {
   isReadOnly: boolean;
   anyoneCanVote: boolean;
   version: string;
-  rewardsModuleAddress: string;
-  rewardsAbi: Abi | null;
   canEditTitleAndDescription: boolean;
-  setSupportsRewardsModule: (value: boolean) => void;
+  rewardsModuleAddress: string;
   setDownvotingAllowed: (isAllowed: boolean) => void;
   setSortingEnabled: (isAllowed: boolean) => void;
   setContestPrompt: (prompt: string) => void;
@@ -61,9 +58,8 @@ export interface ContestState {
   setContestAbi: (abi: Abi) => void;
   setAnyoneCanVote: (value: boolean) => void;
   setVersion: (version: string) => void;
-  setRewardsModuleAddress: (address: string) => void;
-  setRewardsAbi: (abi: Abi | null) => void;
   setCanEditTitleAndDescription: (value: boolean) => void;
+  setRewardsModuleAddress: (address: string) => void;
 }
 
 export const createContestStore = () =>
@@ -89,13 +85,10 @@ export const createContestStore = () =>
     submissionRequirements: null,
     isV3: false,
     isReadOnly: false,
-    supportsRewardsModule: false,
     anyoneCanVote: false,
     version: "",
-    rewardsModuleAddress: "",
-    rewardsAbi: null,
     canEditTitleAndDescription: false,
-    setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
+    rewardsModuleAddress: "",
     setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
     setSortingEnabled: isAllowed => set({ sortingEnabled: isAllowed }),
     setContestPrompt: prompt => set({ contestPrompt: prompt }),
@@ -118,9 +111,8 @@ export const createContestStore = () =>
     setContestAbi: abi => set({ contestAbi: abi }),
     setAnyoneCanVote: value => set({ anyoneCanVote: value }),
     setVersion: version => set({ version: version }),
-    setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
-    setRewardsAbi: abi => set({ rewardsAbi: abi }),
     setCanEditTitleAndDescription: value => set({ canEditTitleAndDescription: value }),
+    setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);

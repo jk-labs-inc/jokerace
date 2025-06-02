@@ -1,26 +1,14 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
-import { chains, config } from "@config/wagmi";
+import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { transform } from "@hooks/useDistributeRewards";
+import { transform } from "@helpers/transform";
 import { useError } from "@hooks/useError";
-import { useReleasableRewards } from "@hooks/useReleasableRewards";
-import { useRewardsStore } from "@hooks/useRewards/store";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { Abi } from "viem";
-import { create } from "zustand";
-
-type Store = {
-  isLoading: boolean;
-  setIsLoading: (isLoading: boolean) => void;
-};
-
-export const useWithdrawRewardStore = create<Store>(set => ({
-  isLoading: false,
-  setIsLoading: isLoading => set({ isLoading }),
-}));
 
 export const useWithdrawReward = (
   contractRewardsModuleAddress: string,
@@ -28,22 +16,18 @@ export const useWithdrawReward = (
   tokenAddress: string,
   tokenBalance: bigint,
   tokenDecimals: number,
+  onWithdrawStart?: () => void,
+  onWithdrawSuccess?: () => void,
+  onWithdrawError?: () => void,
 ) => {
+  const [isLoading, setIsLoading] = useState(false);
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase());
-  const { setIsLoading } = useWithdrawRewardStore(state => state);
-  const rewardsStore = useRewardsStore(state => state);
   const { handleError } = useError();
-  const { refetch: refetchReleasableRewards } = useReleasableRewards({
-    contractAddress: contractRewardsModuleAddress,
-    chainId: chainId[0].id,
-    abi: abiRewardsModule,
-    rankings: rewardsStore.rewards.payees,
-  });
 
   const handleWithdraw = async () => {
     setIsLoading(true);
+    onWithdrawStart?.();
     toastLoading(`Withdrawing funds...`, LoadingToastMessageType.KEEP_BROWSER_OPEN);
 
     try {
@@ -57,6 +41,7 @@ export const useWithdrawReward = (
       await waitForTransactionReceipt(config, { hash });
 
       setIsLoading(false);
+      onWithdrawSuccess?.();
       toastSuccess("Funds withdrawn successfully!");
 
       try {
@@ -72,12 +57,12 @@ export const useWithdrawReward = (
       } catch (error) {
         console.error("error updating reward analytics", error);
       }
-      refetchReleasableRewards();
     } catch (error: any) {
       handleError(error, `something went wrong and the funds couldn't be withdrawn`);
       setIsLoading(false);
+      onWithdrawError?.();
     }
   };
 
-  return { handleWithdraw };
+  return { handleWithdraw, isLoading };
 };

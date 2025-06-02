@@ -68,6 +68,7 @@ export function useCancelRewards({ rewardsAddress, abi, chainId, version }: UseC
     isLoading: hasCanceledFunction ? isReadLoading : false,
     isSuccess: hasCanceledFunction ? isReadSuccess : true,
     isError: hasCanceledFunction ? isReadError : false,
+    refetch,
     cancelRewards,
     isWritePending,
     isWriteError,
