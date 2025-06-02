@@ -15488,10 +15488,10 @@ react-headless-pagination@1.1.6:
   dependencies:
     clsx "^2.1.0"
 
-react-html-props@2.0.10:
-  version "2.0.10"
-  resolved "https://registry.yarnpkg.com/react-html-props/-/react-html-props-2.0.10.tgz#256afdeeca6fbfc1ad08b8ccb59eb3ccda67fe72"
-  integrity sha512-nnDtzdYhsfjJbp2QRWIG23aB/kNHEJZI6hogY/aA2fAjhcvL9JYPwrd4SjkrB8bD070WJrhuk9Al8GA1iDbGzg==
+react-html-props@2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/react-html-props/-/react-html-props-2.1.1.tgz#0fded09fab434e17a7dd0ed25515b93dc0f565a6"
+  integrity sha512-tM+YCYlr90m3JontKUAa+gNVU2zkyprlCS7OQ9aa3z2MfyJjAioJzrSmi1Vef/+UCTE6CQlPqLX4ebdLIJDKxw==
 
 react-infinite-scroll-component@6.1.0:
   version "6.1.0"
