@@ -7,10 +7,11 @@ import { getRewardsModuleAddress, getRewardsModuleInfo } from "lib/rewards/contr
 import { ModuleType, RewardModuleInfo } from "lib/rewards/types";
 import { usePathname } from "next/navigation";
 import { Abi } from "viem";
+import { useShallow } from "zustand/react/shallow";
 
 export function useRewardsModule() {
   const asPath = usePathname();
-  const { contestAbi } = useContestStore(state => state);
+  const contestAbi = useContestStore(useShallow(state => state.contestAbi));
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),

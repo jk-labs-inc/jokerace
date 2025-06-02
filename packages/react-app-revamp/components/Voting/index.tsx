@@ -1,3 +1,4 @@
+import RewardsError from "@components/_pages/Contest/Rewards/modules/shared/Error";
 import Loader from "@components/UI/Loader";
 import { toastInfo } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
@@ -69,7 +70,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
     isError: isErrorRewards,
     isSuccess: isSuccessRewards,
   } = useRewardsModule();
-  const { isPermitted, isLoading: isLoadingPermission } = useProposalVotingPermission();
+  const { isPermitted, isLoading: isLoadingPermission, isError: isErrorPermission } = useProposalVotingPermission();
 
   useEffect(() => {
     if (insufficientBalance) {
@@ -163,7 +164,10 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
 
   if (isContestCanceled) return null;
 
-  //TODO: check this
+  if (rewards?.moduleType === ModuleType.VOTER_REWARDS && (isErrorRewards || isErrorPermission)) {
+    return <RewardsError />;
+  }
+
   if (rewards?.moduleType === ModuleType.VOTER_REWARDS && (isLoadingPermission || isLoadingRewards)) {
     return <Loader />;
   }

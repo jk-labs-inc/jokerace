@@ -20,7 +20,6 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
   )?.[0]?.id;
 
   const { data: rewards, isLoading, isSuccess, isError } = useRewardsModule();
-  //TODO: use enabled here to wait for abi?
   const { isCanceled } = useCancelRewards({
     rewardsAddress: rewards?.contractAddress as `0x${string}`,
     abi: rewards?.abi as Abi,
