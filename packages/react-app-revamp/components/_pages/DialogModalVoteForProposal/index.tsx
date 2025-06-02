@@ -95,16 +95,14 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
           </div>
         ) : (
           <>
-            <div className="flex justify-between items-start">
-              {showMaxVoteConfirmation || isMobile ? null : (
-                <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
-              )}
+            <div className="hidden md:flex justify-between items-start">
+              {showMaxVoteConfirmation ? null : <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />}
               <img
                 src="/modal/modal_close.svg"
-                width={isMobile ? 25 : 33}
-                height={isMobile ? 24 : 33}
+                width={33}
+                height={33}
                 alt="close"
-                className="cursor-pointer ml-auto"
+                className="hidden md:block cursor-pointer ml-auto"
                 onClick={handleModalClose}
               />
             </div>
@@ -160,6 +158,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
                     )}
                   </div>
                   <div className="flex flex-col gap-4 md:gap-8 md:w-80">
+                    <hr className="hidden md:block border border-neutral-2" />
                     <VotingWidget
                       proposalId={proposal.id}
                       amountOfVotes={currentUserAvailableVotesAmount}
