@@ -139,11 +139,11 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                   <p className="text-[20px] text-primary-5">
                     {isMobile ? (
                       <>
-                        rewards pool <span className="text-[16px]">(winners earn)</span>
+                        rewards pool <span className="text-[16px]">(players earn)</span>
                       </>
                     ) : (
                       <>
-                        the rewards pool <span className="text-[16px]">(i want winners to earn)</span>
+                        the rewards pool <span className="text-[16px]">(i want voters or winners to earn charges)</span>
                       </>
                     )}
                   </p>

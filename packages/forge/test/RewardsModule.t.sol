@@ -212,7 +212,7 @@ contract RewardsModuleTest is Test {
         vm.expectRevert(
             abi.encodeWithSelector(GovernorModuleRegistry.OfficialRewardsModuleMustPointToThisContest.selector)
         );
-        contest.setOfficialRewardsModule(rewardsModulePaysAuthorToRankOneContest);
+        contest.setOfficialRewardsModule(address(rewardsModulePaysAuthorToRankOneContest));
         vm.stopPrank();
     }
 

@@ -8,6 +8,7 @@ import moment from "moment";
 import { usePathname } from "next/navigation";
 import { useAccount } from "wagmi";
 import ContestParametersEarnings from "./components/Earnings";
+import ContestParametersRewards from "./components/Rewards";
 import ContestParametersSubmissions from "./components/Submissions";
 import ContestParametersTimeline from "./components/Timeline";
 import ContestParametersVoting from "./components/Voting";
@@ -26,6 +27,7 @@ const ContestParameters = () => {
     votingMerkleRoot,
     anyoneCanVote,
     charge,
+    version,
   } = useContestStore(state => state);
   const asPath = usePathname();
   const { chainName } = extractPathSegments(asPath ?? "");
@@ -54,6 +56,7 @@ const ContestParameters = () => {
         votesClose={formattedVotesClosing}
       />
       <div className="flex flex-col gap-8">
+        {version && charge && <ContestParametersRewards version={version} charge={charge} />}
         <ContestParametersSubmissions
           anyoneCanSubmit={anyoneCanSubmit}
           currentUserQualifiedToSubmit={currentUserQualifiedToSubmit}

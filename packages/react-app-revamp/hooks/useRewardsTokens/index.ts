@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getTokenAddresses } from "lib/rewards";
+import { getTokenAddresses } from "lib/rewards/database";
 
 export function useRewardTokens(rewardsModuleAddress: string, chainName: string) {
   return useQuery({

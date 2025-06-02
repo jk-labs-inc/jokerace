@@ -1,11 +1,12 @@
 interface LoaderProps {
+  className?: string;
   children?: React.ReactNode;
 }
 
 export const Loader = (props: LoaderProps) => {
-  const { children } = props;
+  const { children, className } = props;
   return (
-    <div className="flex flex-col gap-8 items-center justify-center mt-40">
+    <div className={`flex flex-col gap-8 items-center justify-center mt-40 ${className}`}>
       <img
         src="/contest/mona-lisa-moustache.png"
         alt="mona-lista-moustached"
@@ -13,7 +14,7 @@ export const Loader = (props: LoaderProps) => {
         width={72}
         className="animate-card-rotation rounded-[5px]"
       />
-      <p className="font-sabo text-neutral-14 text-[20px]">{children ?? "Loading, one moment please"}</p>
+      <p className="font-sabo text-neutral-14 text-[16px]">{children ?? "Loading, one moment please"}</p>
     </div>
   );
 };

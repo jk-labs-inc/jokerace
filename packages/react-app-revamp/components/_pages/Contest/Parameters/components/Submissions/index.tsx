@@ -47,8 +47,8 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
 
   return (
     <div className="flex flex-col gap-8">
-      <p className="text-[20px] font-bold text-neutral-10">entering</p>
-      <ul className="pl-4 text-[16px] font-bold text-neutral-9">
+      <p className="text-[24px] text-neutral-11">entering</p>
+      <ul className="pl-4 text-[16px] text-neutral-9">
         <li className="list-disc">
           {anyoneCanSubmit ? "all" : "qualified"} wallets can enter{" "}
           <span>
