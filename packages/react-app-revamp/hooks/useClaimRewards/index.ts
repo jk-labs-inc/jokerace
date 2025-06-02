@@ -4,12 +4,13 @@ import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { transform } from "@helpers/transform";
 import { useError } from "@hooks/useError";
-import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { switchChain, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { ModuleType } from "lib/rewards/types";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Abi } from "viem";
+import { useAccount } from "wagmi";
 
 interface UseClaimRewardsProps {
   contractRewardsModuleAddress: `0x${string}`;
@@ -33,6 +34,7 @@ export const useClaimRewards = ({
   moduleType,
   userAddress,
 }: UseClaimRewardsProps) => {
+  const { chainId: userChainId } = useAccount();
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { handleError } = useError();
@@ -59,6 +61,10 @@ export const useClaimRewards = ({
     setSuccess(payee, tokenAddress, false);
     toastLoading(`Claiming rewards...`, LoadingToastMessageType.KEEP_BROWSER_OPEN);
     const amountReleasableFormatted = transform(tokenBalance, tokenAddress, tokenDecimals);
+
+    if (userChainId && userChainId !== chainId) {
+      await switchChain(config, { chainId });
+    }
 
     try {
       const args =
