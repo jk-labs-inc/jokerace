@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for JokeDAO !
+about: Suggest an idea for JokeRace!
 title: "enhancement: "
 labels: enhancement, question, ux
 assignees: ''

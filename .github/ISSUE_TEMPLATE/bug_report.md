@@ -4,7 +4,7 @@ about: Create a report to help us improve
 title: "bug: "
 labels: bug
 assignees: ''
-projects: jokedao roadmap organization
+projects: jokerace roadmap organization
 
 ---
 
