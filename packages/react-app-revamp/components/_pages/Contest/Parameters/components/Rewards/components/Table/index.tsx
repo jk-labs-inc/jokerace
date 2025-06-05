@@ -36,6 +36,8 @@ const RewardsParametersTable: FC<RewardsParametersTableProps> = ({ rewardsStore,
     chainId,
   });
 
+  console.log(rankShares);
+
   if (isLoading) {
     return <RewardsTableSkeleton payeesCount={rewardsStore.payees.length} />;
   }
@@ -52,8 +54,8 @@ const RewardsParametersTable: FC<RewardsParametersTableProps> = ({ rewardsStore,
           className="flex justify-between font-bold items-center pb-2 border-b border-primary-2 text-neutral-9 last:border-b-0"
         >
           <div className="flex items-center text-[16px]">
-            <span>{index + 1}</span>
-            <sup>{returnOnlySuffix(index + 1)}</sup>
+            <span>{data.rank}</span>
+            <sup>{returnOnlySuffix(data.rank)}</sup>
             <span className="ml-2">place</span>
           </div>
           <div className="text-[16px]">{data.share}% of rewards</div>
