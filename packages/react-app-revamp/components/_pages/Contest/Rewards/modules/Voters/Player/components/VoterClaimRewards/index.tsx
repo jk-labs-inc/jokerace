@@ -9,17 +9,31 @@ import { useAccount } from "wagmi";
 import RewardsError from "../../../../shared/Error";
 import RewardsPlayerViewClaimRewards from "../../../../shared/PlayerView/ClaimRewards";
 import RewardsPlayerLosingStatus from "../../../../shared/PlayerView/LosingStatus";
+import { useUserTiedRankings } from "@hooks/useUserTiedRankings";
+import RewardsPlayerTiedStatus from "../../../../shared/PlayerView/TiedStatus";
 
 interface VoterClaimRewardsProps {
   rewards: RewardModuleInfo;
   chainId: number;
   contestStatus: ContestStatus;
+  contestAddress: `0x${string}`;
+  tiedRankings: number[];
 }
 
-const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({ rewards, chainId, contestStatus }) => {
+const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({ rewards, chainId, contestStatus, contestAddress, tiedRankings }) => {
   const { address: userAddress } = useAccount();
-  const { contestAuthorEthereumAddress, version } = useContestStore(state => state);
-  const { claimable, claimed, totalRewards, isLoading, refetch, isError } = useUserRewards({
+  const { contestAuthorEthereumAddress, version, contestAbi } = useContestStore(state => state);
+  const { data: userTiedRankings = [], isLoading: isTiedRankingsLoading, isError: isTiedRankingsError } = useUserTiedRankings({
+    tiedRankings,
+    contestAddress,
+    chainId,
+    contestAbi,
+    userAddress: userAddress as `0x${string}`,
+    version,
+    enabled: tiedRankings.length > 0 && !!userAddress,
+  });
+
+  const { claimable, claimed, totalRewards, isLoading: isUserRewardsLoading, refetch, isError: isUserRewardsError } = useUserRewards({
     moduleType: ModuleType.VOTER_REWARDS,
     contractAddress: rewards.contractAddress as `0x${string}`,
     chainId,
@@ -49,12 +63,16 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({ rewards, chainId, conte
     await claimRewards(rank, value, tokenAddress, userAddress);
   };
 
-  if (isLoading) {
+  if (isUserRewardsLoading || isTiedRankingsLoading) {
     return <Loader className="mt-8">Loading...</Loader>;
   }
 
-  if (isError) {
+  if (isUserRewardsError || isTiedRankingsError) {
     return <RewardsError onRetry={refetch} />;
+  }
+
+  if (userTiedRankings.length > 0 && !totalRewards.length) {
+    return <RewardsPlayerTiedStatus />;
   }
 
   if (contestStatus === ContestStatus.VotingOpen && !totalRewards.length) {
@@ -65,18 +83,19 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({ rewards, chainId, conte
     return <RewardsPlayerLosingStatus phase="closed" rewardsType={ModuleType.VOTER_REWARDS} />;
   }
 
+
   return (
-    <RewardsPlayerViewClaimRewards
-      totalRewards={totalRewards || []}
-      claimableDistributions={claimable?.distributions || []}
-      claimedDistributions={claimed?.distributions || []}
-      contestStatus={contestStatus}
-      onRefresh={refetch}
-      onClaim={handleClaim}
-      isClaimLoading={(rank: number, tokenAddress: string) => isClaimLoading(rank, tokenAddress)}
-      isClaimSuccess={(rank: number, tokenAddress: string) => isClaimSuccess(rank, tokenAddress)}
-      isAdditionalStatisticsSupported
-    />
+      <RewardsPlayerViewClaimRewards
+        totalRewards={totalRewards || []}
+        claimableDistributions={claimable?.distributions || []}
+        claimedDistributions={claimed?.distributions || []}
+        contestStatus={contestStatus}
+        onRefresh={refetch}
+        onClaim={handleClaim}
+        isClaimLoading={(rank: number, tokenAddress: string) => isClaimLoading(rank, tokenAddress)}
+        isClaimSuccess={(rank: number, tokenAddress: string) => isClaimSuccess(rank, tokenAddress)}
+        isAdditionalStatisticsSupported
+      />
   );
 };
 
