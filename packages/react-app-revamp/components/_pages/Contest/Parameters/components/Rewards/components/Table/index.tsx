@@ -36,7 +36,6 @@ const RewardsParametersTable: FC<RewardsParametersTableProps> = ({ rewardsStore,
     chainId,
   });
 
-  console.log(rankShares);
 
   if (isLoading) {
     return <RewardsTableSkeleton payeesCount={rewardsStore.payees.length} />;
