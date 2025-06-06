@@ -20,20 +20,39 @@ interface VoterClaimRewardsProps {
   tiedRankings: number[];
 }
 
-const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({ rewards, chainId, contestStatus, contestAddress, tiedRankings }) => {
+const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
+  rewards,
+  chainId,
+  contestStatus,
+  contestAddress,
+  tiedRankings,
+}) => {
   const { address: userAddress } = useAccount();
   const { contestAuthorEthereumAddress, version, contestAbi } = useContestStore(state => state);
-  const { data: userTiedRankings = [], isLoading: isTiedRankingsLoading, isError: isTiedRankingsError } = useUserTiedRankings({
+  const isCreator = userAddress === contestAuthorEthereumAddress;
+  const {
+    data: userTiedRankings = [],
+    isLoading: isTiedRankingsLoading,
+    isError: isTiedRankingsError,
+  } = useUserTiedRankings({
     tiedRankings,
     contestAddress,
     chainId,
     contestAbi,
     userAddress: userAddress as `0x${string}`,
     version,
-    enabled: tiedRankings.length > 0 && !!userAddress,
+    moduleType: ModuleType.VOTER_REWARDS,
+    enabled: tiedRankings.length > 0 && !!userAddress && !isCreator,
   });
 
-  const { claimable, claimed, totalRewards, isLoading: isUserRewardsLoading, refetch, isError: isUserRewardsError } = useUserRewards({
+  const {
+    claimable,
+    claimed,
+    totalRewards,
+    isLoading: isUserRewardsLoading,
+    refetch,
+    isError: isUserRewardsError,
+  } = useUserRewards({
     moduleType: ModuleType.VOTER_REWARDS,
     contractAddress: rewards.contractAddress as `0x${string}`,
     chainId,
@@ -72,7 +91,7 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({ rewards, chainId, conte
   }
 
   if (userTiedRankings.length > 0 && !totalRewards.length) {
-    return <RewardsPlayerTiedStatus />;
+    return <RewardsPlayerTiedStatus phase={contestStatus === ContestStatus.VotingOpen ? "active" : "closed"} />;
   }
 
   if (contestStatus === ContestStatus.VotingOpen && !totalRewards.length) {
@@ -83,19 +102,19 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({ rewards, chainId, conte
     return <RewardsPlayerLosingStatus phase="closed" rewardsType={ModuleType.VOTER_REWARDS} />;
   }
 
-
   return (
-      <RewardsPlayerViewClaimRewards
-        totalRewards={totalRewards || []}
-        claimableDistributions={claimable?.distributions || []}
-        claimedDistributions={claimed?.distributions || []}
-        contestStatus={contestStatus}
-        onRefresh={refetch}
-        onClaim={handleClaim}
-        isClaimLoading={(rank: number, tokenAddress: string) => isClaimLoading(rank, tokenAddress)}
-        isClaimSuccess={(rank: number, tokenAddress: string) => isClaimSuccess(rank, tokenAddress)}
-        isAdditionalStatisticsSupported
-      />
+    <RewardsPlayerViewClaimRewards
+      totalRewards={totalRewards || []}
+      claimableDistributions={claimable?.distributions || []}
+      claimedDistributions={claimed?.distributions || []}
+      contestStatus={contestStatus}
+      onRefresh={refetch}
+      onClaim={handleClaim}
+      isClaimLoading={(rank: number, tokenAddress: string) => isClaimLoading(rank, tokenAddress)}
+      isClaimSuccess={(rank: number, tokenAddress: string) => isClaimSuccess(rank, tokenAddress)}
+      userTiedRankings={userTiedRankings}
+      isAdditionalStatisticsSupported
+    />
   );
 };
 
