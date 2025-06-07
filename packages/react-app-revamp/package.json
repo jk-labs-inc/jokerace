@@ -37,7 +37,7 @@
     "@types/papaparse": "5.3.16",
     "@types/react": "19.1.6",
     "@types/react-csv": "1.1.10",
-    "@types/react-dom": "19.1.5",
+    "@types/react-dom": "19.1.6",
     "@types/react-virtualized": "9.22.2",
     "@types/react-window": "1.8.8",
     "@types/underscore": "1.13.0",
