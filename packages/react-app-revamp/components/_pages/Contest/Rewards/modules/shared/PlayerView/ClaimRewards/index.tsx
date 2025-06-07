@@ -5,6 +5,7 @@ import { FC } from "react";
 import RewardsPlayerViewClaimRewardTotalRewards from "./components/MyRewards";
 import RewardItem from "./components/RewardItem";
 import { getSortedRanks, groupRewardsByRank } from "./helpers/distribution";
+import RewardsPlayerTiedRewards from "../TiedRewards";
 
 interface RewardsPlayerViewClaimRewardsProps {
   totalRewards: Reward[];
@@ -15,6 +16,7 @@ interface RewardsPlayerViewClaimRewardsProps {
   isClaimSuccess: (rank: number, tokenAddress: string) => boolean;
   onClaim: (rank: number, value: bigint, tokenAddress: string) => void;
   isAdditionalStatisticsSupported?: boolean;
+  userTiedRankings?: number[];
   onRefresh?: () => void;
 }
 
@@ -28,6 +30,7 @@ const RewardsPlayerViewClaimRewards: FC<RewardsPlayerViewClaimRewardsProps> = ({
   isClaimLoading,
   isClaimSuccess,
   isAdditionalStatisticsSupported,
+  userTiedRankings,
 }) => {
   const isActive = contestStatus === ContestStatus.VotingOpen;
   const groupedByRank = groupRewardsByRank(claimableDistributions, claimedDistributions);
@@ -72,6 +75,9 @@ const RewardsPlayerViewClaimRewards: FC<RewardsPlayerViewClaimRewardsProps> = ({
                       />
                     ))}
                 </div>
+              ))}
+              {userTiedRankings?.map(rank => (
+                <RewardsPlayerTiedRewards key={rank} rank={rank} phase={contestStatus === ContestStatus.VotingOpen ? "active" : "closed"} />
               ))}
             </div>
           </div>

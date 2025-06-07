@@ -13,6 +13,7 @@ import RewardsPlayerNotQualified from "../../shared/PlayerView/NotQualified";
 import RewardsNotStarted from "../../shared/PlayerView/RewardsNotStarted";
 import RewardsPlayerViewNotConnected from "../../shared/PlayerView/WalletNotConnected";
 import WinnerClaimRewards from "./components/WinnerClaimRewards";
+import { useValidateRankings } from "@hooks/useValidateRankings";
 interface WinnersRewardsPagePlayerViewProps {
   rewards: RewardModuleInfo;
   contestAddress: `0x${string}`;
@@ -30,6 +31,18 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
   const { address: accountAddress, isConnected } = useAccount();
   const creator = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
   const isCreator = accountAddress === creator;
+   const {
+     tiedRankings,
+     isLoading: isLoadingValidateRankings,
+     isError: isErrorValidateRankings,
+     refetch: retryValidateRankings,
+   } = useValidateRankings({
+     rankings: rewards.payees,
+     contractAddress: rewards.contractAddress as `0x${string}`,
+     chainId,
+     abi: rewards.abi,
+   });
+
   const {
     hasSubmitted,
     isLoading: isLoadingHasSubmittedProposal,
@@ -60,13 +73,13 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
     return <RewardsPlayerViewNotConnected />;
   }
 
-  if (isLoadingHasSubmittedProposal || isPayoutAddressesLoading) {
+  if (isLoadingHasSubmittedProposal || isPayoutAddressesLoading || isLoadingValidateRankings) {
     return <Loader className="mt-8">Loading...</Loader>;
   }
 
-  if (isErrorHasSubmittedProposal || isPayoutAddressesError) {
+  if (isErrorHasSubmittedProposal || isPayoutAddressesError || isErrorValidateRankings) {
     return (
-      <RewardsError onRetry={isErrorHasSubmittedProposal ? refetchHasSubmittedProposal : refetchPayoutAddresses} />
+      <RewardsError onRetry={isErrorHasSubmittedProposal ? refetchHasSubmittedProposal : isErrorValidateRankings ? retryValidateRankings : refetchPayoutAddresses} />
     );
   }
 
@@ -76,8 +89,11 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
         <WinnerClaimRewards
           rewards={rewards}
           chainId={chainId}
+          contestAddress={contestAddress}
+          contestAbi={contestAbi}
           contestStatus={contestStatus}
           rankingsForAddress={rankingsForAddress}
+          tiedRankings={tiedRankings}
           refetchPayoutAddresses={() => refetchPayoutAddresses()}
         />
       );
@@ -94,8 +110,11 @@ const WinnersRewardsPagePlayerView: FC<WinnersRewardsPagePlayerViewProps> = ({
     <WinnerClaimRewards
       rewards={rewards}
       chainId={chainId}
+      contestAddress={contestAddress}
+      contestAbi={contestAbi}
       contestStatus={contestStatus}
       rankingsForAddress={rankingsForAddress}
+      tiedRankings={tiedRankings}
       refetchPayoutAddresses={() => refetchPayoutAddresses()}
     />
   );

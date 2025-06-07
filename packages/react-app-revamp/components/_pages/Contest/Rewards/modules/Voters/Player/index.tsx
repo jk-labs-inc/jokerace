@@ -44,6 +44,7 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({ conte
     abi: rewards.abi,
   });
 
+
   if (!isConnected) {
     return <RewardsPlayerViewNotConnected />;
   }
@@ -65,13 +66,13 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({ conte
 
   if (!hasVoted) {
     if (isCreator && tiedRankings.length > 0) {
-      return <VoterClaimRewards rewards={rewards} chainId={chainId} contestStatus={contestStatus} />;
+      return <VoterClaimRewards rewards={rewards} chainId={chainId} contestStatus={contestStatus} contestAddress={contestAddress} tiedRankings={tiedRankings} />;
     }
 
     return <RewardsPlayerNotQualified phase={phase} rewardsType={ModuleType.VOTER_REWARDS} />;
   }
 
-  return <VoterClaimRewards rewards={rewards} chainId={chainId} contestStatus={contestStatus} />;
+  return <VoterClaimRewards rewards={rewards} chainId={chainId} contestStatus={contestStatus} contestAddress={contestAddress} tiedRankings={tiedRankings} />;
 };
 
 export default VoterRewardsPagePlayerView;
