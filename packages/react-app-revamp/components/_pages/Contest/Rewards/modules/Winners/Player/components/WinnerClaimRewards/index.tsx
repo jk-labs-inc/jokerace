@@ -118,6 +118,8 @@ const WinnerClaimRewards: FC<WinnerClaimRewardsProps> = ({
       claimableDistributions={claimable?.distributions || []}
       claimedDistributions={claimed?.distributions || []}
       contestStatus={contestStatus}
+      tiedRankings={tiedRankings}
+      isCreator={isCreator}
       onRefresh={handleRefresh}
       onClaim={handleClaim}
       isClaimLoading={(rank: number, tokenAddress: string) => isClaimLoading(rank, tokenAddress)}
