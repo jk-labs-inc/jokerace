@@ -68,7 +68,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
     isError: isUserProfileError,
   } = useProfileData(contestData.author_address ?? "", true);
 
-  const updateInterval = useCallback(() => {
+  const getUpdateInterval = useCallback(() => {
     const now = moment();
     let nextUpdate = moment(contestData.end_at);
 
@@ -98,15 +98,13 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
 
     updateStatus();
 
+    const intervalTime = getUpdateInterval();
     const interval = setInterval(() => {
       updateStatus();
-      clearInterval(interval);
-      const newInterval = updateInterval();
-      setInterval(updateStatus, newInterval);
-    }, updateInterval());
+    }, intervalTime);
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [contestData, updateInterval]);
+    return () => clearInterval(interval);
+  }, [contestData, getUpdateInterval]);
 
   const getContestUrl = (network_name: string, address: string) => {
     return ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", network_name).replace("[address]", address);
@@ -166,7 +164,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
             {contestData.title ? contestData.title : "👀 Contest 👀"}
           </p>
 
-          <p className="flex items-center gap-2 text-[12px] font-bold text-neutral-11">
+          <div className="flex items-center gap-2 text-[12px] font-bold text-neutral-11">
             {isContestActive && !contestData.isCanceled && (
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-positive-10 opacity-75"></span>
@@ -183,7 +181,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
                 {status} <span className="text-true-white">{timeLeft}</span>
               </span>
             )}
-          </p>
+          </div>
         </div>
       </div>
 

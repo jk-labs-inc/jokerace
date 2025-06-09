@@ -8,9 +8,9 @@ import "../../modules/RewardsModule.sol";
  * @dev Extension of {Governor} for module management.
  */
 abstract contract GovernorModuleRegistry is Governor {
-    event OfficialRewardsModuleSet(RewardsModule oldOfficialRewardsModule, RewardsModule newOfficialRewardsModule);
+    event OfficialRewardsModuleSet(address oldOfficialRewardsModule, address newOfficialRewardsModule);
 
-    RewardsModule public officialRewardsModule;
+    address public officialRewardsModule;
 
     error OnlyCreatorCanSetRewardsModule();
     error OfficialRewardsModuleMustPointToThisContest();
@@ -18,12 +18,12 @@ abstract contract GovernorModuleRegistry is Governor {
     /**
      * @dev Get the official rewards module contract for this contest (effectively reverse record).
      */
-    function setOfficialRewardsModule(RewardsModule officialRewardsModule_) public {
+    function setOfficialRewardsModule(address officialRewardsModule_) public {
         if (msg.sender != creator) revert OnlyCreatorCanSetRewardsModule();
-        if (address(officialRewardsModule_.underlyingContest()) != address(this)) {
+        if (address(RewardsModule(payable(officialRewardsModule_)).underlyingContest()) != address(this)) {
             revert OfficialRewardsModuleMustPointToThisContest();
         }
-        RewardsModule oldOfficialRewardsModule = officialRewardsModule;
+        address oldOfficialRewardsModule = officialRewardsModule;
         officialRewardsModule = officialRewardsModule_;
         emit OfficialRewardsModuleSet(oldOfficialRewardsModule, officialRewardsModule_);
     }

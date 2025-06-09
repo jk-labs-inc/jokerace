@@ -1,6 +1,6 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 import { Transport } from "viem";
-import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
+import { cookieStorage, createConfig, createStorage } from "wagmi";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
@@ -28,11 +28,9 @@ import { soneium } from "./custom-chains/soneium";
 import { story } from "./custom-chains/story";
 import { swell } from "./custom-chains/swell";
 import { unichain } from "./custom-chains/unichain";
+import { zksyncEra } from "./custom-chains/zksyncEra";
 import { zora } from "./custom-chains/zora";
-
-type Transports = Record<Chain["id"], Transport>;
-
-const isProduction = process.env.NODE_ENV === "production";
+import createTransports from "./transports";
 
 export const chains: readonly [Chain, ...Chain[]] = [
   polygon,
@@ -60,32 +58,11 @@ export const chains: readonly [Chain, ...Chain[]] = [
   unichain,
   swell,
   manta,
+  zksyncEra,
   sepolia,
   baseTestnet,
   mainnet,
 ];
-
-const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
-  const headers = isProduction ? { Referer: "https://jokerace.io/" } : undefined;
-
-  return chains.reduce<Transports>((acc, chain) => {
-    if (chain.rpcUrls?.default?.http?.[0] && chain.rpcUrls?.public?.http?.[0]) {
-      acc[chain.id] = fallback([
-        http(chain.rpcUrls.default.http[0], {
-          fetchOptions: {
-            headers,
-          },
-        }),
-        http(chain.rpcUrls.public.http[0], {
-          fetchOptions: {
-            headers,
-          },
-        }),
-      ]);
-    }
-    return acc;
-  }, {});
-};
 
 const transports = createTransports(chains);
 

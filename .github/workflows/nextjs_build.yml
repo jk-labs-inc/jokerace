@@ -68,3 +68,5 @@ jobs:
           NEXT_PUBLIC_PARA_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_PARA_ENVIRONMENT || secrets.DEV_NEXT_PUBLIC_PARA_ENVIRONMENT }}
           NEXT_PUBLIC_BREVO_API_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_BREVO_API_KEY || secrets.DEV_NEXT_PUBLIC_BREVO_API_KEY }}
           NEXT_PUBLIC_CDP_PROJECT_ID: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_CDP_PROJECT_ID || secrets.DEV_NEXT_PUBLIC_CDP_PROJECT_ID }}
+          NEXT_PUBLIC_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_ENVIRONMENT || secrets.DEV_NEXT_PUBLIC_ENVIRONMENT }}
+          NEXT_PUBLIC_IP_API_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_IP_API_KEY || secrets.DEV_NEXT_PUBLIC_IP_API_KEY }}

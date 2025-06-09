@@ -201,13 +201,13 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           </div>
         )}
 
-        <div className="mt-20">
+        <div>
           <div
             className={`${totalProposals > 1 ? "fixed" : "hidden"} ${
               isInPwaMode ? "bottom-[88px]" : "bottom-12"
             } left-0 right-0 flex ${
               currentIndex === 0 || currentIndex === totalProposals - 1 ? "justify-center" : "justify-between"
-            } px-8 pt-4 pb-4 z-50 border-t-neutral-2 border-t-2 bg-true-black`}
+            } px-8 pt-4 pb-8 z-50 border-t-neutral-2 border-t-2 bg-true-black`}
           >
             {currentIndex !== 0 && (
               <div

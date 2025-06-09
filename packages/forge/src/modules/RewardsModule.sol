@@ -38,7 +38,8 @@ contract RewardsModule {
     mapping(uint256 => uint256) public shares; // Getter for the amount of shares held by a ranking.
     mapping(uint256 => uint256) public released; // Getter for the amount of Ether already released to a ranking.
     uint256[] public payees;
-    string private constant VERSION = "5.4"; // Private as to not clutter the ABI
+    string public constant MODULE_TYPE = "AUTHOR_REWARDS";
+    string private constant VERSION = "5.5"; // Private as to not clutter the ABI
 
     mapping(IERC20 => uint256) public erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released;
@@ -58,6 +59,7 @@ contract RewardsModule {
     error AccountNotDueNativePayment();
     error CannotPayOutToZeroAddress();
     error AccountNotDueERC20Payment();
+    error OnlyCreatorCanCancel();
     error OnlyCreatorCanWithdraw();
     error RankingCannotBeZero();
     error SharesCannotBeZero();
@@ -154,29 +156,37 @@ contract RewardsModule {
      * @dev Return address to pay out for a given ranking.
      */
     function getAddressToPayOut(uint256 ranking) public view returns (address) {
-        address addressToPayOut;
+        uint256 proposalIdOfRanking = getProposalIdOfRanking(ranking);
+        if (proposalIdOfRanking == 0) return creator;
+
+        Governor.ProposalCore memory proposalAtRanking = underlyingContest.getProposal(proposalIdOfRanking);
+        return paysOutTarget ? proposalAtRanking.targetMetadata.targetAddress : proposalAtRanking.author;
+    }
+
+    /**
+     * @dev Return the proposalId for a given ranking, 0 if tied.
+     */
+    function getProposalIdOfRanking(uint256 ranking) public view returns (uint256) {
+        uint256 proposalIdOfRanking;
         uint256 determinedRankingIdxInSortedRanks = underlyingContest.getRankIndex(ranking);
 
-        // if the ranking that we land on is tied or it's below a tied ranking, send to creator
+        // if the ranking that we land on is tied or it's below a tied ranking, return 0
         if (underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
-            addressToPayOut = creator;
-        }
-        // otherwise, determine proposal at ranking and pay out according to that
-        else {
+            proposalIdOfRanking = 0;
+        } else {
+            // otherwise, determine proposalId at ranking
             uint256 rankValue = underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
-            Governor.ProposalCore memory rankingProposal = underlyingContest.getProposal(
-                underlyingContest.getOnlyProposalIdWithThisManyVotes(rankValue) // if no ties there should only be one
-            );
-            addressToPayOut = paysOutTarget ? rankingProposal.targetMetadata.targetAddress : rankingProposal.author;
+            proposalIdOfRanking = underlyingContest.getOnlyProposalIdWithThisManyVotes(rankValue); // if no ties there should only be one
         }
 
-        return addressToPayOut;
+        return proposalIdOfRanking;
     }
 
     /**
      * @dev Cancels the rewards module.
      */
     function cancel() public {
+        if (msg.sender != creator) revert OnlyCreatorCanCancel();
         canceled = true;
     }
 
