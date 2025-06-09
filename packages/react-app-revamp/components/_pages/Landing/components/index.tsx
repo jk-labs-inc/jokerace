@@ -6,7 +6,7 @@ import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
 import { getRewards, streamFeaturedContests } from "lib/contests";
 import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
-import { Contest, ContestReward } from "lib/contests/types";
+import { Contest } from "lib/contests/types";
 import moment from "moment";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -43,6 +43,7 @@ function useFeaturedContests() {
   const [page] = useState(0);
   const [contests, setContests] = useState<Contest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isStreamingComplete, setIsStreamingComplete] = useState(false);
   const [status, setStatus] = useState<"error" | "pending" | "success">("pending");
 
   useQuery({
@@ -51,6 +52,7 @@ function useFeaturedContests() {
       setIsLoading(true);
       setStatus("pending");
       setContests([]);
+      setIsStreamingComplete(false);
 
       try {
         const tempContests: Contest[] = [];
@@ -80,12 +82,14 @@ function useFeaturedContests() {
         });
 
         setContests(sortedContests);
+        setIsStreamingComplete(true);
         setIsLoading(false);
         return true;
       } catch (e) {
         console.error("Error fetching featured contests:", e);
         setStatus("error");
         setIsLoading(false);
+        setIsStreamingComplete(true);
         return false;
       }
     },
@@ -93,9 +97,9 @@ function useFeaturedContests() {
   });
 
   const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({
-    queryKey: ["rewards", contests],
+    queryKey: ["rewards", isStreamingComplete ? contests.length : "pending"],
     queryFn: () => getRewards(contests),
-    enabled: contests.length > 0,
+    enabled: isStreamingComplete && contests.length > 0,
     refetchOnWindowFocus: false,
   });
 
