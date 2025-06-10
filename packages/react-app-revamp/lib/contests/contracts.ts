@@ -155,7 +155,7 @@ export async function processContestRewardsData(
       args: [],
     })) as string;
 
-    if (rewardsModuleAddress === EMPTY_ADDRESS || rewardsModuleAddress === EMPTY_HASH) return null;
+    if (!rewardsModuleAddress || rewardsModuleAddress === EMPTY_ADDRESS || rewardsModuleAddress === EMPTY_HASH) return null;
 
     const { abi: abiRewardsModule, moduleType } = await getRewardsModuleInfo(rewardsModuleAddress, chain.id);
     if (!abiRewardsModule) return null;
@@ -168,39 +168,72 @@ export async function processContestRewardsData(
         functionName: "getPayees",
       }) as Promise<bigint[]>,
       getTokenAddresses(rewardsModuleAddress, contestChainName),
-    ]);
+    ]).catch(error => {
+      return [null, []];
+    });
 
-    if (!winners.length) return null;
+    if (!winners || !winners.length) return null;
 
     const checkReleasableAndReleased = async (isNative: boolean, tokenAddress?: string) => {
-      const [releasableAmounts, releasedAmounts] = await Promise.all([
-        readContracts(config, {
-          contracts: winners.map(ranking => ({
-            address: rewardsModuleAddress as `0x${string}`,
-            abi: abiRewardsModule as Abi,
-            chainId: chain.id,
-            functionName: "releasable",
-            args: isNative ? [ranking] : [tokenAddress, ranking],
-          })),
-        }),
-        readContracts(config, {
-          contracts: winners.map(ranking => ({
-            address: rewardsModuleAddress as `0x${string}`,
-            abi: abiRewardsModule as Abi,
-            chainId: chain.id,
-            functionName: isNative ? "released" : "erc20Released",
-            args: isNative ? [ranking] : [tokenAddress, ranking],
-          })),
-        }),
-      ]);
+      try {
+        const [releasableAmounts, releasedAmounts] = await Promise.all([
+          readContracts(config, {
+            contracts: winners.map(ranking => ({
+              address: rewardsModuleAddress as `0x${string}`,
+              abi: abiRewardsModule as Abi,
+              chainId: chain.id,
+              functionName: "releasable",
+              args: isNative ? [ranking] : [tokenAddress, ranking],
+            })),
+          }),
+          readContracts(config, {
+            contracts: winners.map(ranking => ({
+              address: rewardsModuleAddress as `0x${string}`,
+              abi: abiRewardsModule as Abi,
+              chainId: chain.id,
+              functionName: isNative ? "released" : "erc20Released",
+              args: isNative ? [ranking] : [tokenAddress, ranking],
+            })),
+          }),
+        ]);
 
-      const totalReleasable = releasableAmounts.reduce((sum, amount) => sum + BigInt(amount.result as string), 0n);
-      const totalReleased = releasedAmounts.reduce((sum, amount) => sum + BigInt(amount.result as string), 0n);
+        if (!releasableAmounts || !releasedAmounts) {
+          return { totalReleasable: 0n, totalReleased: 0n };
+        }
 
-      return { totalReleasable, totalReleased };
+        const validReleasableAmounts = releasableAmounts.filter(amount => 
+          amount && amount.result !== undefined && amount.result !== null
+        );
+        const validReleasedAmounts = releasedAmounts.filter(amount => 
+          amount && amount.result !== undefined && amount.result !== null
+        );
+
+        if (validReleasableAmounts.length !== winners.length || validReleasedAmounts.length !== winners.length) {
+          return { totalReleasable: 0n, totalReleased: 0n };
+        }
+
+        const totalReleasable = validReleasableAmounts.reduce((sum, amount) => {
+          try {
+            return sum + BigInt(amount.result as string);
+          } catch (error) {
+            return sum;
+          }
+        }, 0n);
+
+        const totalReleased = validReleasedAmounts.reduce((sum, amount) => {
+          try {
+            return sum + BigInt(amount.result as string);
+          } catch (error) {
+            return sum;
+          }
+        }, 0n);
+
+        return { totalReleasable, totalReleased };
+      } catch (error) {
+        return { totalReleasable: 0n, totalReleased: 0n };
+      }
     };
 
-    // check native token first
     const { totalReleasable: nativeReleasable, totalReleased: nativeReleased } = await checkReleasableAndReleased(true);
 
     if (nativeReleasable > 0n) {
@@ -228,36 +261,40 @@ export async function processContestRewardsData(
       };
     }
 
-    for (const tokenAddress of erc20TokenAddresses) {
-      const { totalReleasable: erc20Releasable, totalReleased: erc20Released } = await checkReleasableAndReleased(
-        false,
-        tokenAddress,
-      );
+    if (erc20TokenAddresses && erc20TokenAddresses.length > 0) {
+      for (const tokenAddress of erc20TokenAddresses) {
+        const { totalReleasable: erc20Releasable, totalReleased: erc20Released } = await checkReleasableAndReleased(
+          false,
+          tokenAddress,
+        );
 
-      if (erc20Releasable > 0n) {
-        const tokenDetails = await getTokenDetails(tokenAddress, chain.id);
-        return {
-          contestAddress,
-          chain: contestChainName,
-          token: {
-            symbol: tokenDetails.symbol ?? "",
-            value: formatBalance(formatUnits(erc20Releasable, tokenDetails.decimals).toString()),
-          },
-          winners: winners.length,
-          numberOfTokens: erc20TokenAddresses.length,
-          rewardsPaidOut: false,
-        };
-      }
+        if (erc20Releasable > 0n) {
+          const tokenDetails = await getTokenDetails(tokenAddress, chain.id).catch(error => {
+            return { symbol: "Unknown", decimals: 18 };
+          });
+          return {
+            contestAddress,
+            chain: contestChainName,
+            token: {
+              symbol: tokenDetails.symbol ?? "Unknown",
+              value: formatBalance(formatUnits(erc20Releasable, tokenDetails.decimals).toString()),
+            },
+            winners: winners.length,
+            numberOfTokens: erc20TokenAddresses.length,
+            rewardsPaidOut: false,
+          };
+        }
 
-      if (erc20Released > 0n) {
-        return {
-          contestAddress,
-          chain: contestChainName,
-          token: null,
-          winners: winners.length,
-          numberOfTokens: erc20TokenAddresses.length,
-          rewardsPaidOut: true,
-        };
+        if (erc20Released > 0n) {
+          return {
+            contestAddress,
+            chain: contestChainName,
+            token: null,
+            winners: winners.length,
+            numberOfTokens: erc20TokenAddresses.length,
+            rewardsPaidOut: true,
+          };
+        }
       }
     }
 
