@@ -49,12 +49,13 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
     <div className="flex flex-col gap-8">
       <p className="text-[24px] text-neutral-11">entering</p>
       <ul className="pl-4 text-[16px] text-neutral-9">
+        <li className="list-disc">{address || anyoneCanSubmit ? qualifyToSubmitMessage : walletNotConnected}</li>
         <li className="list-disc">
-          {anyoneCanSubmit ? "all" : "qualified"} wallets can enter{" "}
+          {!anyoneCanSubmit && "qualified"} players can enter{" "}
           <span>
             {maxProposalsPerUserCapped
               ? "as many times as desired"
-              : `a max of ${contestMaxNumberSubmissionsPerUser.toString()} ${
+              : `a max of ${formatNumberWithCommas(contestMaxNumberSubmissionsPerUser)} ${
                   contestMaxNumberSubmissionsPerUser > 1 ? "entries" : "entry"
                 } `}
           </span>
@@ -63,7 +64,6 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
           contest accept{contestMaxProposalCount > 1 ? "s" : ""} up to {formatNumberWithCommas(contestMaxProposalCount)}{" "}
           entries
         </li>
-        <li className="list-disc">{address || anyoneCanSubmit ? qualifyToSubmitMessage : walletNotConnected}</li>
         <ContestParametersSubmissionRequirements />
         {!anyoneCanSubmit ? <ContestParamatersCSVSubmitters submissionMerkleRoot={submissionMerkleRoot} /> : null}
       </ul>

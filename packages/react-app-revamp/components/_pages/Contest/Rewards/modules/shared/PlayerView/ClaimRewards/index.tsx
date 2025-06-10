@@ -5,16 +5,20 @@ import { FC } from "react";
 import RewardsPlayerViewClaimRewardTotalRewards from "./components/MyRewards";
 import RewardItem from "./components/RewardItem";
 import { getSortedRanks, groupRewardsByRank } from "./helpers/distribution";
+import RewardsPlayerTiedRewards from "../TiedRewards";
 
 interface RewardsPlayerViewClaimRewardsProps {
   totalRewards: Reward[];
   claimableDistributions: Distribution[];
   claimedDistributions?: Distribution[];
   contestStatus: ContestStatus;
+  tiedRankings: number[];
+  isCreator: boolean;
   isClaimLoading: (rank: number, tokenAddress: string) => boolean;
   isClaimSuccess: (rank: number, tokenAddress: string) => boolean;
   onClaim: (rank: number, value: bigint, tokenAddress: string) => void;
   isAdditionalStatisticsSupported?: boolean;
+  userTiedRankings?: number[];
   onRefresh?: () => void;
 }
 
@@ -23,11 +27,14 @@ const RewardsPlayerViewClaimRewards: FC<RewardsPlayerViewClaimRewardsProps> = ({
   claimableDistributions,
   claimedDistributions = [],
   contestStatus,
+  tiedRankings,
+  isCreator,
   onClaim,
   onRefresh,
   isClaimLoading,
   isClaimSuccess,
   isAdditionalStatisticsSupported,
+  userTiedRankings,
 }) => {
   const isActive = contestStatus === ContestStatus.VotingOpen;
   const groupedByRank = groupRewardsByRank(claimableDistributions, claimedDistributions);
@@ -54,24 +61,30 @@ const RewardsPlayerViewClaimRewards: FC<RewardsPlayerViewClaimRewardsProps> = ({
                 <div key={rank} className="flex flex-col gap-4">
                   <p className="text-[16px] text-neutral-9 font-bold">
                     {rank}
-                    <sup>{returnOnlySuffix(rank)}</sup> place
+                    <sup>{returnOnlySuffix(rank)}</sup> place{" "}
+                    {isCreator && tiedRankings.includes(rank) ? <span className="text-neutral-11">(tie!)</span> : ""}
                   </p>
-                  {groupedByRank
-                    .get(rank)
-                    ?.map((item, idx) => (
-                      <RewardItem
-                        key={`${item.reward.address}-${item.reward.value.toString()}-${item.claimed}-${idx}`}
-                        reward={item.reward}
-                        rank={rank}
-                        isActive={isActive}
-                        isClaimLoading={isClaimLoading}
-                        isRankClaimed={() => item.claimed}
-                        isClaimSuccess={isClaimSuccess}
-                        isAdditionalStatisticsSupported={isAdditionalStatisticsSupported}
-                        onClaim={onClaim}
-                      />
-                    ))}
+                  {groupedByRank.get(rank)?.map((item, idx) => (
+                    <RewardItem
+                      key={`${item.reward.address}-${item.reward.value.toString()}-${item.claimed}-${idx}`}
+                      reward={item.reward}
+                      rank={rank}
+                      isActive={isActive}
+                      isClaimLoading={isClaimLoading}
+                      isRankClaimed={() => item.claimed}
+                      isClaimSuccess={isClaimSuccess}
+                      isAdditionalStatisticsSupported={isAdditionalStatisticsSupported}
+                      onClaim={onClaim}
+                    />
+                  ))}
                 </div>
+              ))}
+              {userTiedRankings?.map(rank => (
+                <RewardsPlayerTiedRewards
+                  key={rank}
+                  rank={rank}
+                  phase={contestStatus === ContestStatus.VotingOpen ? "active" : "closed"}
+                />
               ))}
             </div>
           </div>
