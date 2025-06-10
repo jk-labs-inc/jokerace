@@ -87,7 +87,6 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
     <div className="flex flex-col gap-8">
       <p className="text-[24px] text-neutral-11">voting</p>
       <ul className="pl-4 text-[16px] text-neutral-9">
-        <li className="list-disc">{address ? qualifyToVoteMessage : walletNotConnected}</li>
         {anyoneCanVote ? (
           <li className="list-disc">anyone can vote</li>
         ) : (
@@ -96,6 +95,7 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
             <ContestParamatersCSVVoters votingMerkleRoot={votingMerkleRoot} />
           </>
         )}
+        <li className="list-disc">{address ? qualifyToVoteMessage : walletNotConnected}</li>
       </ul>
     </div>
   );
