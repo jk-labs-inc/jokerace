@@ -2,13 +2,14 @@ import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { FC, Fragment, useEffect, useState } from "react";
+import { FC, Fragment, useEffect, useState, useMemo } from "react";
 
 interface CreateRewardsPoolRecipientsDropdownProps {
   options: Option[];
   defaultOption: Option;
   className?: string;
   onChange?: (option: string) => void;
+  excludedValues?: string[];
 }
 
 const CreateRewardsPoolRecipientsDropdown: FC<CreateRewardsPoolRecipientsDropdownProps> = ({
@@ -16,8 +17,12 @@ const CreateRewardsPoolRecipientsDropdown: FC<CreateRewardsPoolRecipientsDropdow
   defaultOption,
   className,
   onChange,
+  excludedValues = [],
 }) => {
   const [selectedOption, setSelectedOption] = useState<Option>(defaultOption);
+  const filteredOptions = useMemo(() => {
+    return options.filter(option => !excludedValues.includes(option.value));
+  }, [options, excludedValues]);
 
   useEffect(() => {
     setSelectedOption(defaultOption);
@@ -59,12 +64,16 @@ const CreateRewardsPoolRecipientsDropdown: FC<CreateRewardsPoolRecipientsDropdow
               <MenuItems
                 className={` ${className} flex flex-col absolute w-20 z-10 mt-4 bg-true-black border border-neutral-11 rounded-[10px] overflow-hidden animate-appear max-h-40 md:max-h-56 overflow-y-auto`}
               >
-                {options.map(option => (
+                {filteredOptions.map(option => (
                   <MenuItem key={option.value}>
                     {({ focus }) => (
                       <button
-                        className={`text-neutral-10 text-left pt-2 pl-4 pb-2 text-[16px] cursor-pointer w-full ${option.disabled ? "opacity-50 pointer-events-none" : ""} ${focus ? "bg-neutral-3" : ""}
-            ${option.value === selectedOption.value ? "text-neutral-11 font-bold" : ""} hover:bg-neutral-3 transition-colors duration-150
+                        className={`text-neutral-10 text-left pt-2 pl-4 pb-2 text-[16px] cursor-pointer w-full ${
+                          option.disabled ? "opacity-50 pointer-events-none" : ""
+                        } ${focus ? "bg-neutral-3" : ""}
+            ${
+              option.value === selectedOption.value ? "text-neutral-11 font-bold" : ""
+            } hover:bg-neutral-3 transition-colors duration-150
           `}
                         disabled={option.disabled}
                         onClick={() => handleOptionChange(option)}

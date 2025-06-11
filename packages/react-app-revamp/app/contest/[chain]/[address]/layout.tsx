@@ -1,7 +1,6 @@
 "use client";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { ContestWrapper } from "@hooks/useContest/store";
-import { ContractFactoryWrapper } from "@hooks/useContractFactory";
 import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
 import { UserWrapper } from "@hooks/useUser/store";
@@ -15,9 +14,7 @@ const ContestLayout = ({ children }: { children: React.ReactNode }) => {
         <DeleteProposalWrapper>
           <UserWrapper>
             <CastVotesWrapper>
-              <ContractFactoryWrapper>
-                <LayoutViewContest>{children}</LayoutViewContest>
-              </ContractFactoryWrapper>
+              <LayoutViewContest>{children}</LayoutViewContest>
             </CastVotesWrapper>
           </UserWrapper>
         </DeleteProposalWrapper>

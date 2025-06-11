@@ -188,6 +188,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
                       options={rankOptions}
                       defaultOption={rankOptions[recipient.place - 1]}
                       onChange={value => handlePlaceChange(value, recipient.id)}
+                      excludedValues={rewardPoolData.recipients.map(r => r.place.toString())}
                     />
 
                     <span className="text-[16px] text-neutral-14">place</span>
