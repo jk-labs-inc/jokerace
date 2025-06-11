@@ -33,17 +33,6 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
   const qualifyToVoteMessage = useMemo<string | JSX.Element>(() => {
     const canVote = currentUserAvailableVotesAmount > 0;
 
-    if (anyoneCanVote) {
-      return (
-        <p>
-          you have{" "}
-          <span className="font-bold">
-            {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"}
-          </span>
-        </p>
-      );
-    }
-
     if (canVote) {
       return (
         <p>
@@ -95,7 +84,7 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
             <ContestParamatersCSVVoters votingMerkleRoot={votingMerkleRoot} />
           </>
         )}
-        <li className="list-disc">{address ? qualifyToVoteMessage : walletNotConnected}</li>
+        {anyoneCanVote ? null : <li className="list-disc">{address ? qualifyToVoteMessage : walletNotConnected}</li>}
       </ul>
     </div>
   );
