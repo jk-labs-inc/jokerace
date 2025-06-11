@@ -7,7 +7,6 @@ import { getEthersSigner } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { isR2Configured } from "@helpers/r2";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
-import { useContractFactoryStore } from "@hooks/useContractFactory";
 import useEmailSignup from "@hooks/useEmailSignup";
 import { useError } from "@hooks/useError";
 import { readContract } from "@wagmi/core";
@@ -29,7 +28,6 @@ const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000
 export function useDeployContest() {
   const { indexContestV3 } = useV3ContestsIndex();
   const { subscribeUser, checkIfEmailExists } = useEmailSignup();
-  const stateContestDeployment = useContractFactoryStore(state => state);
   const {
     title,
     prompt,
@@ -66,15 +64,11 @@ export function useDeployContest() {
     const isSpoofingDetected = await checkForSpoofing(signer?.address);
 
     if (isSpoofingDetected) {
-      stateContestDeployment.setIsLoading(false);
       toastError("Spoofing detected! None shall pass.");
       setIsLoading(false);
       return;
     }
 
-    stateContestDeployment.setIsLoading(true);
-    stateContestDeployment.setIsSuccess(false);
-    stateContestDeployment.setError("");
     setIsLoading(true);
 
     toastLoading("contest is deploying...");
@@ -116,7 +110,6 @@ export function useDeployContest() {
         });
       } catch (error) {
         toastError("Failed to fetch JK Labs split destination. Please try again later.");
-        stateContestDeployment.setIsLoading(false);
         setIsLoading(false);
         return;
       }
@@ -208,12 +201,8 @@ export function useDeployContest() {
       toastSuccess("contest has been deployed!");
       setIsSuccess(true);
       setIsLoading(false);
-      stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setIsSuccess(true);
     } catch (e) {
       handleError(e, "Something went wrong and the contest couldn't be deployed.");
-      stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setError(error);
       setIsLoading(false);
     }
   }
@@ -247,8 +236,6 @@ export function useDeployContest() {
       await Promise.all(tasks);
     } catch (e) {
       handleError(e, "Something went wrong while saving files to bucket.");
-      stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setError(error);
       setIsLoading(false);
       throw e;
     }
@@ -313,8 +300,6 @@ export function useDeployContest() {
         };
 
         participantsWorker.onerror = error => {
-          stateContestDeployment.setIsLoading(false);
-          stateContestDeployment.setError(error.message);
           setIsLoading(false);
           toastError(`contest deployment failed to index in db`, error.message);
           reject(error);
@@ -327,8 +312,6 @@ export function useDeployContest() {
 
       await Promise.all(tasks);
     } catch (e: any) {
-      stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setError(e.message);
       setIsLoading(false);
       toastError(`contest deployment failed to index in db`, e.message);
       throw e;
