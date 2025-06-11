@@ -6,7 +6,7 @@ const COINVISE_EXTENSIONS: Extension = {
   metadata: {
     title: "reward contestants & voters with NFTs",
     creator: "by coinvise",
-    description: "create a campaign to for contestants and/or voters to claim NFTs as a reward",
+    description: "create a campaign for contestants and/or voters to claim NFTs as a reward",
     buttonLabel: "reward NFTs",
   },
 };
