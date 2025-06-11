@@ -25,7 +25,7 @@ const RewardsTypeInfoWinners = () => {
   return (
     <div className="absolute inset-0 flex flex-col gap-4">
       <p className="text-neutral-11 text-[16px]">
-        let's pick how to fund a rewards pool for <b>winners—</b>then {isMobile ? "" : <br />}
+        let's pick how to fund a rewards pool for <b>contestants—</b>then {isMobile ? "" : <br />}
         decide on the proportions that everyone gets.
       </p>
       <p className="text-neutral-11 text-[16px]">in this case, nobody will be geoblocked from voting.</p>

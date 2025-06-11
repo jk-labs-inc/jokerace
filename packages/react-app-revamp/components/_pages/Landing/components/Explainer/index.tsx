@@ -57,7 +57,7 @@ const LandingPageExplainer = () => {
               let anyone vote—or allowlist. the choice is yours, and it’s anti-bot.
             </li>
             <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-              create a rewards pool for voters or winners
+              create a rewards pool for voters or contestants
             </li>
             <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
               keep the money you earn, or put it back into rewards pool

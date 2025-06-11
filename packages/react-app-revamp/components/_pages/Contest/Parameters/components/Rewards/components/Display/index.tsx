@@ -10,7 +10,7 @@ interface RewardsParametersDisplayProps {
 }
 
 const RewardsParametersDisplay: FC<RewardsParametersDisplayProps> = ({ rewardsStore, chainId, charge }) => {
-  const rewardsType = rewardsStore.moduleType === ModuleType.VOTER_REWARDS ? "voters" : "winners";
+  const rewardsType = rewardsStore.moduleType === ModuleType.VOTER_REWARDS ? "voters" : "contestants";
 
   return (
     <div className="flex flex-col gap-8">

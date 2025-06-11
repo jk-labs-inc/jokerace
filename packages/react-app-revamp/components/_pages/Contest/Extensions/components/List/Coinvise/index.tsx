@@ -4,9 +4,9 @@ import ExtensionCard from "../../Card";
 const COINVISE_EXTENSIONS: Extension = {
   name: "coinvise",
   metadata: {
-    title: "reward winners & voters with NFTs",
+    title: "reward contestants & voters with NFTs",
     creator: "by coinvise",
-    description: "create a campaign to for winners and/or voters to claim NFTs as a reward",
+    description: "create a campaign to for contestants and/or voters to claim NFTs as a reward",
     buttonLabel: "reward NFTs",
   },
 };

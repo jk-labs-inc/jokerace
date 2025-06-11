@@ -132,14 +132,14 @@ const CreateRewardsPoolRecipients: React.FC = () => {
           colorClass="bg-transparent"
           textColorClass="text-neutral-11 border-neutral-11 border hover:bg-neutral-11 hover:border-true-black hover:text-true-black transition-colors duration-300 rounded-[40px] font-normal"
         >
-          + Add {rewardPoolType === RewardPoolType.Voters ? "rank" : "winner"}
+          + Add {rewardPoolType === RewardPoolType.Voters ? "rank" : "contestant"}
         </ButtonV3>
       </div>
       <div className="mt-6 text-[16px]">
         <div className="grid grid-cols-2 justify-between mb-3 text-neutral-10 font-bold">
           <div className="flex items-center gap-2">
             <span className="uppercase text-[12px] font-bold">
-              {rewardPoolType === RewardPoolType.Voters ? "rank" : "winner"}
+              {rewardPoolType === RewardPoolType.Voters ? "rank" : "contestant"}
             </span>
             <button
               onClick={handleAddRecipient}
