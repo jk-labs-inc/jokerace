@@ -14023,23 +14023,23 @@ motion-plus-dom@^1.0.0:
     motion-dom "^12.16.0"
     motion-utils "^12.12.1"
 
-motion-plus-react@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/motion-plus-react/-/motion-plus-react-1.1.4.tgz#43013e7b1a895bde812d871f80f35d162321a69a"
-  integrity sha512-6rylApj10WGBeJFIbNJioLhq4mtW/LvZgNi3VSd1ELEA3W6m1U5OMlggdCPQY9AZ5OuseqCeN5yYE/HjDhb1kw==
+motion-plus-react@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/motion-plus-react/-/motion-plus-react-1.2.0.tgz#1fcbadd2cbc0dee91f8192b413599149c543e36a"
+  integrity sha512-0GSJtCmANZkXGNeKNHUFrT3diaenLDDKeDxazexGnOVu4lgziJMYYCm/BXFt58q+X8mbCx8mf8fs3bxgAJT/UQ==
   dependencies:
     motion "^12.16.0"
     motion-dom "^12.16.0"
     motion-plus-dom "^1.0.0"
     motion-utils "^12.12.1"
 
-motion-plus@1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/motion-plus/-/motion-plus-1.1.4.tgz#852b1ee0d2cb2abd546a5f5257f69a39b352cc38"
-  integrity sha512-n3X/liFA/3msftugzmEx4y8NK12tGwVKzARZiEGAgCX/UbBs6zHPfYERPL9ExkI2YbJ8ocaoxwHwMFkGpmjXXg==
+motion-plus@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/motion-plus/-/motion-plus-1.2.0.tgz#67c66a38ac55dbeba1b87e771820f2b115755115"
+  integrity sha512-OWDtLYiPH03NoJYOK4zO7oDd0ZPTA8+aZrrxOqa60tX8i+/ZEPHUD6T5VxC0GZN6bH+ykUHZSlokYmxTeZjV/g==
   dependencies:
     motion-plus-dom "^1.0.0"
-    motion-plus-react "^1.1.4"
+    motion-plus-react "^1.2.0"
 
 motion-utils@^12.12.1:
   version "12.12.1"
