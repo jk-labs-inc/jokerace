@@ -25,16 +25,20 @@ const CreateContestDeploying = () => {
 
   useEffect(() => {
     return () => {
-      reset();
+      if (isSuccess) {
+        reset();
+      }
     };
-  }, [reset]);
+  }, [reset, isSuccess]);
 
   useEffect(() => {
     if (!isSuccess || !deployContestData) {
       return;
     }
 
-    const contestPath = `/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`;
+    const contestPath = `/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${
+      deployContestData.address
+    }`;
 
     toastDismiss();
 
