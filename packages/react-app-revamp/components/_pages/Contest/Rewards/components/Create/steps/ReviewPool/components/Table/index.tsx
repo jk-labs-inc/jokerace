@@ -20,13 +20,15 @@ const CreateRewardsReviewTable: FC<CreateRewardsReviewTableProps> = ({ rankings,
   return (
     <div className="flex flex-col gap-6">
       <p className="text-[20px] text-neutral-11 font-bold">
-        Rewards Pool for {rewardPoolType === RewardPoolType.Voters ? "Voters" : "Winners"}
+        Rewards Pool for {rewardPoolType === RewardPoolType.Voters ? "Voters" : "Contestants"}
       </p>
       <div className="grid gap-4">
         {rankings.map((ranking, rankingIndex) => (
           <div
             key={ranking}
-            className={`${tokens.length > 0 ? "rewards-review-table-grid" : "rewards-review-table-grid-without-tokens"} gap-4 items-center text-neutral-14`}
+            className={`${
+              tokens.length > 0 ? "rewards-review-table-grid" : "rewards-review-table-grid-without-tokens"
+            } gap-4 items-center text-neutral-14`}
           >
             <p className="text-[16px]">
               {ranking}

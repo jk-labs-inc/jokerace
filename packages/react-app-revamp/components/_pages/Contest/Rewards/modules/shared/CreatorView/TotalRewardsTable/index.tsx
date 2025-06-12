@@ -11,7 +11,7 @@ interface TotalRewardsTableProps {
 }
 
 const TotalRewardsTable = ({ totalRewards, shares, rewardsModuleType }: TotalRewardsTableProps) => {
-  const rewardType = rewardsModuleType === ModuleType.VOTER_REWARDS ? "voters" : "winner";
+  const rewardType = rewardsModuleType === ModuleType.VOTER_REWARDS ? "voters" : "contestant";
   const totalSharesValue = shares.reduce((acc, { share }) => acc + share, 0n);
   const { value: totalValue, symbol, decimals } = totalRewards?.native || { value: 0n, symbol: "ETH", decimals: 18 };
 
@@ -70,7 +70,9 @@ const TotalRewardsTable = ({ totalRewards, shares, rewardsModuleType }: TotalRew
         {ranksWithPercentage.map(({ rank, percentage, rewardAmount, tokenRewards }, idx) => (
           <div
             key={rank}
-            className={`flex flex-col gap-2 text-neutral-9 ${idx !== ranksWithPercentage.length - 1 ? "border-b border-primary-2 pb-2" : ""}`}
+            className={`flex flex-col gap-2 text-neutral-9 ${
+              idx !== ranksWithPercentage.length - 1 ? "border-b border-primary-2 pb-2" : ""
+            }`}
           >
             <div className="flex justify-between items-center text-[16px] font-bold">
               <p>
