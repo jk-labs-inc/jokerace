@@ -1,19 +1,22 @@
 import { getClient, getConnectorClient } from "@wagmi/core";
-import { BrowserProvider, ethers, FallbackProvider, FetchRequest, JsonRpcProvider, JsonRpcSigner } from "ethers";
+import { BrowserProvider, FallbackProvider, FetchRequest, JsonRpcProvider, JsonRpcSigner } from "ethers";
 import type { Account, Chain, Client, Transport } from "viem";
 import { type Config } from "wagmi";
 
 const isProduction = process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "production";
 const headers = isProduction ? { Referer: "https://jokerace.io/" } : { Referer: "" };
 
-const createJsonRpcProvider = (url: string, chainId: number, name: string) => {
+const createJsonRpcProvider = (url: string, chainId: number, name: string, ensAddress?: string) => {
   const request = new FetchRequest(url);
   request.setHeader("Referer", headers.Referer);
-  const network = new ethers.Network(name, chainId);
 
-  return new JsonRpcProvider(request, network, {
-    staticNetwork: true,
-  });
+  const network = {
+    chainId,
+    name,
+    ensAddress,
+  };
+
+  return new JsonRpcProvider(request, network);
 };
 
 export function clientToProvider(client: Client<Transport, Chain>) {
@@ -27,7 +30,7 @@ export function clientToProvider(client: Client<Transport, Chain>) {
     );
   }
 
-  return createJsonRpcProvider(transport.url, chain.id, chain.name);
+  return createJsonRpcProvider(transport.url, chain.id, chain.name, chain.contracts?.ensRegistry?.address);
 }
 
 /** Action to convert a viem Public Client to an ethers.js Provider. */
