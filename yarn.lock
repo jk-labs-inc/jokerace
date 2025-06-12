@@ -7037,17 +7037,17 @@
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.66.4.tgz#44b87bff289466adbfa0de8daa5756cbd2d61c61"
   integrity sha512-skM/gzNX4shPkqmdTCSoHtJAPMTtmIJNS0hE+xwTTUVYwezArCT34NMermABmBVUg5Ls5aiUXEDXfqwR1oVkcA==
 
-"@tanstack/query-core@5.80.6":
-  version "5.80.6"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.80.6.tgz#d2e54fa9eabebc953c675b74b17d6cd45a2a4cb4"
-  integrity sha512-nl7YxT/TAU+VTf+e2zTkObGTyY8YZBMnbgeA1ee66lIVqzKlYursAII6z5t0e6rXgwUMJSV4dshBTNacNpZHbQ==
+"@tanstack/query-core@5.80.7":
+  version "5.80.7"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.80.7.tgz#e029b26cad02fc5fe64116ac245aad0c3e5f83b4"
+  integrity sha512-s09l5zeUKC8q7DCCCIkVSns8zZrK4ZDT6ryEjxNBFi68G4z2EBobBS7rdOY3r6W1WbUDpc1fe5oY+YO/+2UVUg==
 
-"@tanstack/react-query@5.80.6":
-  version "5.80.6"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.80.6.tgz#9c77f05f3236b95693caaea155e5eaa4459f0197"
-  integrity sha512-izX+5CnkpON3NQGcEm3/d7LfFQNo9ZpFtX2QsINgCYK9LT2VCIdi8D3bMaMSNhrAJCznRoAkFic76uvLroALBw==
+"@tanstack/react-query@5.80.7":
+  version "5.80.7"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.80.7.tgz#664f62f42d9ae892c07543fc64f53898aad57afa"
+  integrity sha512-u2F0VK6+anItoEvB3+rfvTO9GEh2vb00Je05OwlUe/A0lkJBgW1HckiY3f9YZa+jx6IOe4dHPh10dyp9aY3iRQ==
   dependencies:
-    "@tanstack/query-core" "5.80.6"
+    "@tanstack/query-core" "5.80.7"
 
 "@tanstack/react-query@^5.0.0":
   version "5.66.4"
@@ -15738,10 +15738,10 @@ react-toastify@11.0.5:
   dependencies:
     clsx "^2.1.1"
 
-react-tooltip@5.28.1:
-  version "5.28.1"
-  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-5.28.1.tgz#5b25c7c53ce008b7ad0685e9f516101d80925cbc"
-  integrity sha512-ZA4oHwoIIK09TS7PvSLFcRlje1wGZaxw6xHvfrzn6T82UcMEfEmHVCad16Gnr4NDNDh93HyN037VK4HDi5odfQ==
+react-tooltip@5.29.0:
+  version "5.29.0"
+  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-5.29.0.tgz#65261cac2ae8c5c31634cc2a36285430f9e1960e"
+  integrity sha512-L8yDheA9C8rNL4762MQE3h+08URWqSg1Mn+fgjuaELohEzZg+OhxHWtUparb889ni1WdLFd32uo17XBuoguSdQ==
   dependencies:
     "@floating-ui/dom" "^1.6.1"
     classnames "^2.3.0"
@@ -18948,10 +18948,10 @@ zod@3.22.4:
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.4.tgz#f31c3a9386f61b1f228af56faa9255e845cf3fff"
   integrity sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==
 
-zod@3.25.57:
-  version "3.25.57"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-3.25.57.tgz#317c8a6eb8a8460bb4b58defb19e8b50c1200e51"
-  integrity sha512-6tgzLuwVST5oLUxXTmBqoinKMd3JeesgbgseXeFasKKj8Q1FCZrHnbqJOyiEvr4cVAlbug+CgIsmJ8cl/pU5FA==
+zod@3.25.61:
+  version "3.25.61"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.25.61.tgz#2e09ece796c182d44b7defc8efb27aa792eb4c8b"
+  integrity sha512-fzfJgUw78LTNnHujj9re1Ov/JJQkRZZGDMcYqSx7Hp4rPOkKywaFHq0S6GoHeXs0wGNE/sIOutkXgnwzrVOGCQ==
 
 zod@^3.20.6:
   version "3.23.8"
