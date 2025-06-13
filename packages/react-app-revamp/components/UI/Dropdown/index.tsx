@@ -21,7 +21,7 @@ const Dropdown: FC<DropdownProps> = ({ menuItems, onSelectionChange }) => {
   return (
     <Menu as="div" className="relative inline-block text-left w-[100px]">
       <div>
-        <MenuButton className="inline-flex w-full items-center justify-center gap-x-1.5 rounded-[5px] border border-neutral-11 bg-transparent px-1 py-1 text-[14px] sm:text-[16px] font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+        <MenuButton className="inline-flex w-full items-center justify-center gap-x-1.5 rounded-[5px] border border-neutral-11 bg-transparent px-1 py-1 text-[14px] sm:text-[16px] font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
           {selectedValue}
           <ChevronDownIcon className="-mr-1 h-4 w-4 text-gray-400" aria-hidden="true" />
         </MenuButton>

@@ -24,7 +24,7 @@ export const FormSelect = (props: FormSelectProps) => {
         {children}
       </select>
       <div
-        className={`${styles.indicator} absolute inline-end-0 top-0 aspect-square rounded-ie-md h-full z-10 pointer-events-none bg-neutral-12 bg-opacity-5 border-is border-neutral-12 border-opacity-10`}
+        className={`${styles.indicator} absolute inline-end-0 top-0 aspect-square rounded-ie-md h-full z-10 pointer-events-none bg-neutral-12/5 border-is border-neutral-12/10`}
       />
     </div>
   );

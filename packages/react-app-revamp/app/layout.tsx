@@ -79,7 +79,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const cookie = headersList.get("cookie") ?? "";
 
   return (
-    <html lang="en" className={`${lato.variable} ${sabo.variable}`}>
+    // TODO: add lang and classname attributes
+    <html>
       <body>
         <div id="__next">
           <NextTopLoader color="#BB65FF" shadow="0 0 10px #BB65FF, 0 0 5px #78FFC6" showSpinner={false} />

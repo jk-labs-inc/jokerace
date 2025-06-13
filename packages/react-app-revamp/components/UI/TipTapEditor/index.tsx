@@ -41,14 +41,11 @@ const TipTapEditor = (props: TipTapEditorProps) => {
       {!showPreview && (
         <>
           <div className="flex flex-col min-h-[12rem] rounded-md ">
-            <div className="relative px-1 py-1 border-b-2 border-b-true-white border-opacity-10">
+            <div className="relative px-1 py-1 border-b-2 border-b-true-white/10">
               <TipTapEditorControls editor={editor} />
             </div>
 
-            <EditorContent
-              className="flex flex-col flex-grow min-h-[20em] max-h-[26em] overflow-y-auto"
-              editor={editor}
-            />
+            <EditorContent className="flex flex-col grow min-h-[20em] max-h-[26em] overflow-y-auto" editor={editor} />
           </div>
         </>
       )}

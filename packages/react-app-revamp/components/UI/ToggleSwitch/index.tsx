@@ -15,8 +15,8 @@ export const ToggleSwitch = (props: any) => {
             type="button"
             className={`${
               checked
-                ? "bg-positive-11 focus-visible:ring-positive-9 focus-visible:ring-opacity-25"
-                : "focus-visible:ring-true-white bg-neutral-7 focus-visible:ring-opacity-30"
+                ? "bg-positive-11 focus-visible:ring-positive-9/25"
+                : "focus-visible:ring-true-white/30 bg-neutral-7"
             }
           disabled:opacity-50 disabled:cursor-not-allowed
           relative inline-flex h-5 lg:h-6 w-10 lg:w-12 shrink-0 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-4  border-2 border-transparent`}
