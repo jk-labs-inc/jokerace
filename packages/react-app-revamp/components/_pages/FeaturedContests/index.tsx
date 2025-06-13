@@ -20,7 +20,7 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
   isRewardsFetching,
 }) => {
   const SkeletonCard = () => (
-    <div className="w-[320px] h-[216px] flex-shrink-0 lg:w-auto border border-neutral-0 rounded-[16px] bg-gradient-radial p-4 pb-3 flex flex-col justify-between">
+    <div className="w-[320px] h-[216px] shrink-0 lg:w-auto border border-neutral-0 rounded-[16px] bg-gradient-radial p-4 pb-3 flex flex-col justify-between">
       <div className="flex flex-col gap-8">
         <div className="flex items-center gap-2">
           <Skeleton width={60} height={24} baseColor="#212121" highlightColor="#100816" borderRadius={8} />
@@ -48,7 +48,7 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
             <div className="flex lg:featured-contests-grid gap-4 pb-4">
               {/* Show loaded contests */}
               {contestData?.map((contest, index) => (
-                <div className="w-[320px] flex-shrink-0 lg:w-auto" key={`contest-${index}`}>
+                <div className="w-[320px] shrink-0 lg:w-auto" key={`contest-${index}`}>
                   <FeaturedContestCard
                     contestData={contest}
                     rewardsData={rewardsData?.[index]}

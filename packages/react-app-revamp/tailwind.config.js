@@ -417,5 +417,5 @@ module.exports = {
       transform: ["hover"],
     },
   },
-  plugins: [require("tailwindcss-logical"), require("@tailwindcss/typography"), require("tailwind-scrollbar-hide")],
+  plugins: [require("tailwindcss-logical"), require("@tailwindcss/typography")],
 };

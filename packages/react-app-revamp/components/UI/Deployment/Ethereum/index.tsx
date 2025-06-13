@@ -19,7 +19,7 @@ const EthereumDeploymentModal: FC<EthereumDeploymentModalProps> = ({ isOpen, set
 
   return (
     <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
-      <div className="fixed inset-0 pointer-events-none bg-neutral-8 bg-opacity-60" aria-hidden="true" />
+      <div className="fixed inset-0 pointer-events-none bg-neutral-8/60" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="flex min-h-full w-full items-center justify-center">
           <DialogPanel
