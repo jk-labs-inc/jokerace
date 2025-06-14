@@ -24,7 +24,6 @@ export interface ContestState {
   isSuccess: boolean;
   isV3: boolean;
   contestMaxProposalCount: number;
-  downvotingAllowed: boolean;
   sortingEnabled: boolean;
   submissionMerkleRoot: string;
   votingMerkleRoot: string;
@@ -36,7 +35,6 @@ export interface ContestState {
   version: string;
   canEditTitleAndDescription: boolean;
   rewardsModuleAddress: string;
-  setDownvotingAllowed: (isAllowed: boolean) => void;
   setSortingEnabled: (isAllowed: boolean) => void;
   setContestPrompt: (prompt: string) => void;
   setContestMaxProposalCount: (amount: number) => void;
@@ -79,7 +77,6 @@ export const createContestStore = () =>
     charge: null,
     isSuccess: false,
     contestMaxProposalCount: 0,
-    downvotingAllowed: false,
     sortingEnabled: false,
     votingRequirements: null,
     submissionRequirements: null,
@@ -89,7 +86,6 @@ export const createContestStore = () =>
     version: "",
     canEditTitleAndDescription: false,
     rewardsModuleAddress: "",
-    setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
     setSortingEnabled: isAllowed => set({ sortingEnabled: isAllowed }),
     setContestPrompt: prompt => set({ contestPrompt: prompt }),
     setContestMaxProposalCount: amount => set({ contestMaxProposalCount: amount }),

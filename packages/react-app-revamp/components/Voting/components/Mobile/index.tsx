@@ -9,7 +9,6 @@ import { FC, useEffect, useState } from "react";
 import { GetBalanceData } from "wagmi/query";
 
 interface VotingWidgetMobileProps {
-  downvoteAllowed: boolean;
   isUpvote: boolean;
   isInvalid: boolean;
   inputRef: React.RefObject<HTMLInputElement | null>;
@@ -34,7 +33,6 @@ interface VotingWidgetMobileProps {
 }
 
 const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
-  downvoteAllowed,
   isUpvote,
   isInvalid,
   inputRef,
@@ -70,26 +68,6 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
-        {downvoteAllowed ? (
-          <div className="flex w-full border border-neutral-10 rounded-[25px] overflow-hidden text-[16px] text-center">
-            <div
-              className={`w-full px-4 py-1 cursor-pointer ${
-                isUpvote ? "bg-neutral-11 text-true-black font-bold" : "bg-true-black text-neutral-10"
-              }`}
-              onClick={() => handleClick(true)}
-            >
-              upvote
-            </div>
-            <div
-              className={`w-full px-4 py-1 cursor-pointer ${
-                !isUpvote ? "bg-neutral-11 text-true-black font-bold" : "bg-true-black text-neutral-10"
-              }`}
-              onClick={() => handleClick(false)}
-            >
-              downvote
-            </div>
-          </div>
-        ) : null}
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
@@ -110,7 +88,9 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
             <div
               className={`relative flex w-full md:w-80 h-16 items-center px-8 text-[16px] bg-transparent font-bold ${
                 isInvalid ? "text-negative-11" : "text-neutral-11"
-              } border-2 ${isFocused && !isInvalid ? "border-neutral-11" : isInvalid ? "border-negative-11" : "border-neutral-10"} rounded-[40px] transition-colors duration-300`}
+              } border-2 ${
+                isFocused && !isInvalid ? "border-neutral-11" : isInvalid ? "border-negative-11" : "border-neutral-10"
+              } rounded-[40px] transition-colors duration-300`}
             >
               <input
                 ref={inputRef}

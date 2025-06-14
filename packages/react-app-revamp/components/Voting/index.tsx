@@ -21,12 +21,10 @@ import VoteAmountInput from "./components/VoteAmountInput";
 import VoteButton from "./components/VoteButton";
 import VoteInfoSection from "./components/VoteInfoSection";
 import VoteSlider from "./components/VoteSlider";
-import VoteTypeSelector from "./components/VoteTypeSelector";
 
 interface VotingWidgetProps {
   proposalId: string;
   amountOfVotes: number;
-  downvoteAllowed?: boolean;
   onVote?: (amount: number, isUpvote: boolean) => void;
   onAddFunds?: () => void;
 }
@@ -36,7 +34,7 @@ export enum VotingButtonText {
   ADD_VOTES = "add votes to entry",
 }
 
-const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvoteAllowed, onVote, onAddFunds }) => {
+const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote, onAddFunds }) => {
   const { charge } = useContestStore(state => state);
   const { contestStatus } = useContestStatusStore(state => state);
   const isVotingClosed = contestStatus === ContestStatus.VotingClosed;
@@ -188,7 +186,6 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
         charge={charge}
         amountOfVotes={amountOfVotes}
         balanceData={balanceData}
-        downvoteAllowed={downvoteAllowed ?? false}
         isFocused={isFocused}
         setIsFocused={setIsFocused}
         isInvalid={isInvalid}
@@ -208,7 +205,6 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
-        {downvoteAllowed ? <VoteTypeSelector isUpvote={isUpvote} onTypeChange={handleVoteTypeChange} /> : null}
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-6">
             <VoteAmountInput

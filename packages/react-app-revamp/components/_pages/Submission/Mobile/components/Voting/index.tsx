@@ -21,9 +21,8 @@ interface SubmissionPageMobileVotingProps {
     chainId: number;
     version: string;
   };
-  downvoteAllowed: boolean;
-  onVote: (amount: number, isUpvote: boolean) => void;
-  onClose: () => void;
+  onVote?: (amount: number) => void;
+  onClose?: () => void;
 }
 const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
   isOpen,
@@ -35,28 +34,28 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
   isPayPerVote,
   currentUserAvailableVotesAmount,
   onVote,
-  downvoteAllowed,
 }) => {
   const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
-  const [pendingVote, setPendingVote] = useState<{ amount: number; isUpvote: boolean } | null>(null);
+  const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
   const [totalCharge, setTotalCharge] = useState("");
   const nativeToken = getNativeTokenSymbol(contestInfo.chain);
   const backdropRef = useRef<HTMLDivElement>(null);
   const [showOnrampModal, setShowOnrampModal] = useState(false);
-  const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
+
+  const onSubmitCastVotes = (amount: number) => {
     if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
       setShowMaxVoteConfirmation(true);
-      setPendingVote({ amount, isUpvote });
+      setPendingVote({ amount });
       setTotalCharge(getTotalCharge(amount, charge?.type.costToVote ?? 0));
       return;
     }
 
-    onVote?.(amount, isUpvote);
+    onVote?.(amount);
   };
 
   const confirmMaxVote = () => {
     if (pendingVote) {
-      onVote?.(pendingVote.amount, pendingVote.isUpvote);
+      onVote?.(pendingVote.amount);
       setShowMaxVoteConfirmation(false);
       setPendingVote(null);
     }
@@ -69,7 +68,7 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === backdropRef.current) {
-      onClose();
+      onClose?.();
     }
   };
 
@@ -100,7 +99,6 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
             proposalId={proposalId}
             amountOfVotes={amountOfVotes}
             onVote={onSubmitCastVotes}
-            downvoteAllowed={downvoteAllowed}
             onAddFunds={() => {
               setShowOnrampModal(true);
             }}

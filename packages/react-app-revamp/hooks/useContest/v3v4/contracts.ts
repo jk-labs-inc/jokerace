@@ -10,7 +10,6 @@ export function getContracts(contractConfig: any, version: string) {
     "contestDeadline",
     "voteStart",
     "prompt",
-    "downvotingAllowed",
     "state",
   ];
 

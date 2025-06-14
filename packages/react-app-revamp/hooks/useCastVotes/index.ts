@@ -17,7 +17,6 @@ import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
-import { compareVersions } from "compare-versions";
 import { parseUnits } from "ethers";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
@@ -93,10 +92,7 @@ export function useCastVotes() {
   const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
   const contestLink = `${window.location.origin}/contest/${chainName.toLowerCase()}/${contestAddress}`;
 
-  // feature flags based on version
-  const features = {
-    hasDownvotes: version ? compareVersions(version, "5.1") < 0 : false,
-  };
+
 
   const calculateChargeAmount = (amountOfVotes: number) => {
     if (!charge) return undefined;
@@ -114,7 +110,7 @@ export function useCastVotes() {
     return Number(formatEther(BigInt(amount)));
   };
 
-  async function castVotes(amountOfVotes: number, isPositive: boolean) {
+  async function castVotes(amountOfVotes: number) {
     toastLoading("votes are deploying...", LoadingToastMessageType.KEEP_BROWSER_OPEN);
     setIsLoading(true);
     setIsSuccess(false);
@@ -130,9 +126,7 @@ export function useCastVotes() {
       let request;
 
       if (!isVerified) {
-        const castVoteArgs = features.hasDownvotes
-          ? [pickedProposal, isPositive ? 0 : 1, totalVoteAmount, parseUnits(amountOfVotes.toString()), proofs]
-          : [pickedProposal, totalVoteAmount, parseUnits(amountOfVotes.toString()), proofs];
+        const castVoteArgs = [pickedProposal, totalVoteAmount, parseUnits(amountOfVotes.toString()), proofs];
 
         const { request: simulatedRequest } = await simulateContract(config, {
           address: contestAddress as `0x${string}`,
@@ -145,10 +139,7 @@ export function useCastVotes() {
         });
         request = simulatedRequest;
       } else {
-        // prepare args based on version
-        const castVoteWithoutProofArgs = features.hasDownvotes
-          ? [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amountOfVotes}`)]
-          : [pickedProposal, parseUnits(`${amountOfVotes}`)];
+        const castVoteWithoutProofArgs = [pickedProposal, parseUnits(`${amountOfVotes}`)];
 
         const { request: simulatedRequest } = await simulateContract(config, {
           address: contestAddress as `0x${string}`,
@@ -188,30 +179,15 @@ export function useCastVotes() {
         hash: receipt.transactionHash,
       });
 
-      let votes: number;
 
-      if (features.hasDownvotes) {
-        const voteResponse = (await readContract(config, {
-          address: contestAddress as `0x${string}`,
-          abi: DeployedContestContract.abi,
-          functionName: "proposalVotes",
-          args: [pickedProposal],
-        })) as bigint[];
-
-        const forVotes = voteResponse[0] as bigint;
-        const againstVotes = voteResponse[1] as bigint;
-        const finalVotes = forVotes - againstVotes;
-        votes = Number(formatEther(finalVotes));
-      } else {
-        const voteCount = (await readContract(config, {
+      const voteCount = (await readContract(config, {
           address: contestAddress as `0x${string}`,
           abi: DeployedContestContract.abi,
           functionName: "proposalVotes",
           args: [pickedProposal],
         })) as bigint;
 
-        votes = Number(formatEther(voteCount));
-      }
+      const votes = Number(formatEther(voteCount));
 
       const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
 
