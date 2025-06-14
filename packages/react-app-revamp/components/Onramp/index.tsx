@@ -21,7 +21,7 @@ const Onramp: FC<OnrampProps> = ({ chain, asset, onGoBack, showBackButton = true
         <div className="flex flex-col gap-2">
           <p className="text-[24px] font-bold text-neutral-11">add funds</p>
           <p className="text-neutral-11 text-[16px] font-bold">
-            add $20 of tokens <span className="text-neutral-9">(or edit to get more or less)</span>
+            add $5 of tokens <span className="text-neutral-9">(or edit to get more or less)</span>
           </p>
         </div>
       </div>
