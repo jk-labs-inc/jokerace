@@ -5,3 +5,7 @@
 	path = packages/forge/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts.git
 	branch = release-v4.9
+[submodule "packages/forge/lib/prb-math"]
+	path = packages/forge/lib/prb-math
+	url = https://github.com/PaulRBerg/prb-math
+	branch = release-v4
