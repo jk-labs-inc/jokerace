@@ -388,12 +388,13 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     function currentPricePerVote() public view returns (uint256) {
         if (payPerVote == 0) revert NotAPayPerVoteContest();
 
-        if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Flat) return costToVote;
         if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Exponential) {
             uint256 currentMinute = (block.timestamp - voteStart()) / PRICE_CURVE_UPDATE_INTERVAL;
-            UD60x18 percentThroughVotingPeriod = ud(currentMinute) / (ud(votingPeriod) / ud(60));
+            UD60x18 percentThroughVotingPeriod = (ud(currentMinute) / (ud(votingPeriod) / ud(60))) * ud(100); // percentage as whole number so curve is 0 to 100
             UD60x18 exponent = percentThroughVotingPeriod.mul(ud(exponentMultiple));
             return exponent.exp2().intoUint256() + costToVote; // costToVote is the minimum cost per vote for exponential curves
+        } else {
+            return costToVote;
         }
     }
 
