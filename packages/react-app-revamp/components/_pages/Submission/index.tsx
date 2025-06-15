@@ -40,8 +40,8 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, proposalId }) =>
     router.prefetch(contestRoute);
   }, [contestInfo.chain, contestInfo.address, router]);
 
-  const handleCastVotes = (amount: number, isUpvote: boolean) => {
-    castVotes(amount, isUpvote);
+  const handleCastVotes = (amount: number) => {
+    castVotes(amount);
   };
 
   async function requestAccount() {

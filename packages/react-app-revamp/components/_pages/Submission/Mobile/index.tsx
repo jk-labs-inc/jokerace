@@ -46,7 +46,7 @@ interface SubmissionPageMobileLayoutProps {
   isProposalLoading: boolean;
   isProposalError: boolean;
   onClose?: () => void;
-  onVote?: (amount: number, isUpvote: boolean) => void;
+  onVote?: (amount: number) => void;
   onPreviousEntry?: () => void;
   onNextEntry?: () => void;
   onConnectWallet?: () => void;
@@ -69,7 +69,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const { openConnectModal } = useConnectModal();
   const { contestStatus } = useContestStatusStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
-  const { downvotingAllowed, charge, contestAuthorEthereumAddress } = useContestStore(state => state);
+  const { charge, contestAuthorEthereumAddress } = useContestStore(state => state);
   const isPayPerVote = charge?.voteType === VoteType.PerVote;
   const { listProposalsIds } = useProposalStore(state => state);
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
@@ -248,8 +248,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           onClose={() => setShowVotingModal(false)}
           proposalId={proposalId}
           amountOfVotes={currentUserAvailableVotesAmount}
-          onVote={(amount, isUpvote) => onVote?.(amount, isUpvote)}
-          downvoteAllowed={downvotingAllowed}
+          onVote={onVote}
           charge={charge}
           isPayPerVote={isPayPerVote}
           currentUserAvailableVotesAmount={currentUserAvailableVotesAmount}
