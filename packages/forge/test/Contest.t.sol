@@ -24,7 +24,7 @@ contract ContestTest is Test {
     uint256 public constant ZERO_COST_TO_VOTE = 0;
     uint256 public constant PAY_PER_VOTE_OFF = 0;
     uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
-    uint256 public constant EXPONENT_MULTIPLE = 1;
+    uint256 public constant ZERO_EXPONENT_MULTIPLE = 0;
     address public constant CREATOR_SPLIT_DESTINATION = CREATOR_ADDRESS_1;
     address public constant JK_LABS_SPLIT_DESTINATION = JK_LABS_ADDRESS;
 
@@ -49,7 +49,7 @@ contract ContestTest is Test {
         ZERO_COST_TO_VOTE,
         PAY_PER_VOTE_OFF,
         FLAT_PRICE_CURVE_TYPE,
-        EXPONENT_MULTIPLE
+        ZERO_EXPONENT_MULTIPLE
     );
 
     Governor.IntConstructorArgs public oneEthIntConstructorArgs = Governor.IntConstructorArgs(
@@ -65,7 +65,7 @@ contract ContestTest is Test {
         ZERO_COST_TO_VOTE,
         PAY_PER_VOTE_OFF,
         FLAT_PRICE_CURVE_TYPE,
-        EXPONENT_MULTIPLE
+        ZERO_EXPONENT_MULTIPLE
     );
 
     Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
