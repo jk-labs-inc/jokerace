@@ -32,6 +32,11 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         Vote
     }
 
+    enum PriceCurveTypes {
+        Flat,
+        Exponential
+    }
+
     struct IntConstructorArgs {
         uint256 contestStart;
         uint256 votingDelay;
@@ -44,6 +49,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 costToPropose;
         uint256 costToVote;
         uint256 payPerVote;
+        uint256 priceCurveType;
+        uint256 exponentMultiple;
     }
 
     struct ConstructorArgs {
@@ -98,6 +105,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant MAX_FIELDS_METADATA_LENGTH = 10;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // our hot wallet that we collect revenue to
+    uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // how often the price curve updates if applicable
     string private constant VERSION = "5.5"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
@@ -112,6 +120,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public costToPropose;
     uint256 public costToVote;
     uint256 public payPerVote; // If this contest is pay per vote (as opposed to pay per vote transaction).
+    uint256 public priceCurveType; // Enum value of PriceCurveType.
+    uint256 public exponentMultiple; // Exponent multiple for an exponential price curve if applicable.
     address public creatorSplitDestination; // Where the creator split of revenue goes.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
     string public metadataFieldsSchema; // JSON Schema of what the metadata fields are
@@ -182,6 +192,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         costToPropose = constructorArgs_.intConstructorArgs.costToPropose;
         costToVote = constructorArgs_.intConstructorArgs.costToVote;
         payPerVote = constructorArgs_.intConstructorArgs.payPerVote;
+        priceCurveType = constructorArgs_.intConstructorArgs.priceCurveType;
+        exponentMultiple = constructorArgs_.intConstructorArgs.exponentMultiple;
         creatorSplitDestination = constructorArgs_.creatorSplitDestination;
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
         metadataFieldsSchema = constructorArgs_.metadataFieldsSchema;
