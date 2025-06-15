@@ -24,6 +24,8 @@ contract RewardsModuleTest is Test {
     uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
     uint256 public constant ZERO_COST_TO_VOTE = 0;
     uint256 public constant PAY_PER_VOTE_OFF = 0;
+    uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
+    uint256 public constant EXPONENT_MULTIPLE = 1;
     address public constant CREATOR_SPLIT_DESTINATION = CREATOR_ADDRESS_1;
     address public constant JK_LABS_SPLIT_DESTINATION = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
 
@@ -47,7 +49,9 @@ contract RewardsModuleTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         ZERO_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
-        PAY_PER_VOTE_OFF
+        PAY_PER_VOTE_OFF,
+        FLAT_PRICE_CURVE_TYPE,
+        EXPONENT_MULTIPLE
     );
 
     Governor.IntConstructorArgs public zeroCostAndRankLimitIntConstructorArgs = Governor.IntConstructorArgs(
@@ -61,7 +65,9 @@ contract RewardsModuleTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         ZERO_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
-        PAY_PER_VOTE_OFF
+        PAY_PER_VOTE_OFF,
+        FLAT_PRICE_CURVE_TYPE,
+        EXPONENT_MULTIPLE
     );
 
     Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
