@@ -4,6 +4,7 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/utils/math/SafeCast.sol";
 import "@openzeppelin/utils/Address.sol";
+import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
 import "./utils/GovernorMerkleVotes.sol";
 import "./utils/GovernorSorting.sol";
 
@@ -118,9 +119,9 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public maxProposalCount; // Max number of proposals allowed in this contest.
     uint256 public percentageToCreator;
     uint256 public costToPropose;
-    uint256 public costToVote;
+    uint256 public costToVote; // Per txn if payPerVote is 0, per vote if 1 and flat price curve, starting/minimum price if 1 and exp curve
     uint256 public payPerVote; // If this contest is pay per vote (as opposed to pay per vote transaction).
-    uint256 public priceCurveType; // Enum value of PriceCurveType.
+    uint256 public priceCurveType; // Enum value of PriceCurveTypes.
     uint256 public exponentMultiple; // Exponent multiple for an exponential price curve if applicable.
     address public creatorSplitDestination; // Where the creator split of revenue goes.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
@@ -159,6 +160,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
     error CannotVoteOnDeletedProposal();
     error NeedAtLeastOneVoteToVote();
+    error NotAPayPerVoteContest();
     error CannotVoteLessThanOneVoteInPayPerVote();
 
     error NeedToSubmitWithProofFirst();
@@ -381,6 +383,21 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     /**
+     * @dev Returns the current cost per vote if the contest is payPerVote.
+     */
+    function currentPricePerVote() public view returns (uint256) {
+        if (payPerVote == 0) revert NotAPayPerVoteContest();
+
+        if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Flat) return costToVote;
+        if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Exponential) {
+            uint256 currentMinute = (block.timestamp - voteStart()) / PRICE_CURVE_UPDATE_INTERVAL;
+            UD60x18 percentThroughVotingPeriod = ud(currentMinute) / (ud(votingPeriod) / ud(60));
+            UD60x18 exponent = percentThroughVotingPeriod.mul(ud(exponentMultiple));
+            return exponent.exp2().intoUint256() + costToVote; // costToVote is the minimum cost per vote for exponential curves
+        }
+    }
+
+    /**
      * @dev Determines that the correct amount was sent with the transaction and returns that correct amount.
      */
     function _determineCorrectAmountSent(Actions currentAction, uint256 numVotes) internal returns (uint256) {
@@ -390,7 +407,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         } else if (currentAction == Actions.Vote) {
             if (payPerVote == 1) {
                 if (numVotes < 1 ether) revert CannotVoteLessThanOneVoteInPayPerVote();
-                actionCost = costToVote * (numVotes / 1 ether); // we don't allow <1 vote to be cast in a pay per vote txn bc of this, would underflow
+                actionCost = currentPricePerVote * (numVotes / 1 ether); // we don't allow <1 vote to be cast in a pay per vote txn bc this would underflow
             } else {
                 actionCost = costToVote;
             }
