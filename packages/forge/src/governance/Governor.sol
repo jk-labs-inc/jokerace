@@ -154,6 +154,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error AddressNotPermissionedToSubmit();
     error ContestMustBeQueuedToPropose(ContestState currentState);
     error ContestMustBeActiveToVote(ContestState currentState);
+    error ContestMustBeActiveToGetCurrentVotePrice(ContestState currentState);
     error SenderSubmissionLimitReached(uint256 numAllowedProposalSubmissions);
     error ContestSubmissionLimitReached(uint256 maxProposalCount);
     error DuplicateSubmission(uint256 proposalId);
@@ -386,7 +387,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      * @dev Returns the current cost per vote if the contest is payPerVote.
      */
     function currentPricePerVote() public view returns (uint256) {
-        if (payPerVote == 0) revert NotAPayPerVoteContest();
+        if (payPerVote != 1) revert NotAPayPerVoteContest();
+        if (state() != ContestState.Active) revert ContestMustBeActiveToGetCurrentVotePrice(state());
 
         if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Exponential) {
             uint256 currentMinute = (block.timestamp - voteStart()) / PRICE_CURVE_UPDATE_INTERVAL;
