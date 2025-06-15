@@ -26,7 +26,10 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
             revert PayPerVoteMustBeEnabledForAnyoneCanVote();
         }
 
-        if ((_constructorArgs.intConstructorArgs.votingDelay > SECONDS_IN_WEEK) || (_constructorArgs.intConstructorArgs.votingPeriod > SECONDS_IN_WEEK)) {
+        if (
+            (_constructorArgs.intConstructorArgs.votingDelay > SECONDS_IN_WEEK)
+                || (_constructorArgs.intConstructorArgs.votingPeriod > SECONDS_IN_WEEK)
+        ) {
             revert PeriodsCannotBeMoreThanAWeek();
         }
     }
