@@ -6,7 +6,10 @@ import "./governance/extensions/GovernorModuleRegistry.sol";
 import "./governance/extensions/GovernorEngagement.sol";
 
 contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEngagement {
+    uint256 public constant SECONDS_IN_WEEK = 604800;
+
     error PayPerVoteMustBeEnabledForAnyoneCanVote();
+    error PeriodsCannotBeMoreThanAWeek();
 
     constructor(
         string memory _name,
@@ -21,6 +24,13 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
     {
         if (_votingMerkleRoot == 0 && _constructorArgs.intConstructorArgs.payPerVote == 0) {
             revert PayPerVoteMustBeEnabledForAnyoneCanVote();
+        }
+
+        if (
+            (_constructorArgs.intConstructorArgs.votingDelay > SECONDS_IN_WEEK)
+                || (_constructorArgs.intConstructorArgs.votingPeriod > SECONDS_IN_WEEK)
+        ) {
+            revert PeriodsCannotBeMoreThanAWeek();
         }
     }
 }
