@@ -407,7 +407,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         } else if (currentAction == Actions.Vote) {
             if (payPerVote == 1) {
                 if (numVotes < 1 ether) revert CannotVoteLessThanOneVoteInPayPerVote();
-                actionCost = currentPricePerVote * (numVotes / 1 ether); // we don't allow <1 vote to be cast in a pay per vote txn bc this would underflow
+                actionCost = currentPricePerVote() * (numVotes / 1 ether); // we don't allow <1 vote to be cast in a pay per vote txn bc this would underflow
             } else {
                 actionCost = costToVote;
             }
