@@ -4,7 +4,7 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/utils/math/SafeCast.sol";
 import "@openzeppelin/utils/Address.sol";
-import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
+import {UD60x18, ud} from "@prb/math/src/UD60x18.sol";
 import "./utils/GovernorMerkleVotes.sol";
 import "./utils/GovernorSorting.sol";
 
@@ -392,11 +392,13 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
         if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Exponential) {
             uint256 currentInterval = (block.timestamp - voteStart()) / PRICE_CURVE_UPDATE_INTERVAL;
-            UD60x18 percentThroughVotingPeriod = (ud(currentInterval * 1e18) / (ud(votingPeriod * 1e18) / ud(PRICE_CURVE_UPDATE_INTERVAL * 1e18))) * ud(100 * 1e18); // percentage as whole number so curve is 0 to 100
+            UD60x18 percentThroughVotingPeriod = (
+                ud(currentInterval * 1e18) / (ud(votingPeriod * 1e18) / ud(PRICE_CURVE_UPDATE_INTERVAL * 1e18))
+            ) * ud(100 * 1e18); // percentage as whole number so curve is 0 to 100
             UD60x18 exponent = percentThroughVotingPeriod * (ud(exponentMultiple) / ud(1e18));
             UD60x18 curveMultiple = exponent.exp2();
-
-            return ((ud(costToVote) / ud(1e18)) * curveMultiple).intoUint256(); // costToVote is the minimum cost per vote for exponential curves
+            uint256 result = ((ud(costToVote) / ud(1e18)) * curveMultiple).intoUint256(); // costToVote is the minimum cost per vote for exponential curves
+            return (result / 1e10) * 1e10; // min never less than 0.00000001
         } else {
             return costToVote;
         }

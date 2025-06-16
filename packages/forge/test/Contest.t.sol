@@ -29,7 +29,7 @@ contract ContestTest is Test {
     uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
     uint256 public constant EXPONENTIAL_PRICE_CURVE_TYPE = 1;
     uint256 public constant ZERO_EXPONENT_MULTIPLE = 0;
-    uint256 public constant STANDARD_EXPONENT_MULTIPLE = 33000000000000000;
+    uint256 public constant STANDARD_EXPONENT_MULTIPLE = 33000000000000000; // for a terminal value 10x from min
     address public constant CREATOR_SPLIT_DESTINATION = CREATOR_ADDRESS_1;
     address public constant JK_LABS_SPLIT_DESTINATION = JK_LABS_ADDRESS;
 
@@ -98,7 +98,10 @@ contract ContestTest is Test {
     );
 
     Governor.ConstructorArgs public payPerVoteExpCurveNumParams = Governor.ConstructorArgs(
-        payPerVoteExpCurveIntConstructorArgs, CREATOR_SPLIT_DESTINATION, JK_LABS_SPLIT_DESTINATION, METADATA_FIELDS_SCHEMA
+        payPerVoteExpCurveIntConstructorArgs,
+        CREATOR_SPLIT_DESTINATION,
+        JK_LABS_SPLIT_DESTINATION,
+        METADATA_FIELDS_SCHEMA
     );
 
     // MERKLE TREE PARAMS
@@ -405,14 +408,13 @@ contract ContestTest is Test {
 
     function testVoteExpCurve1() public {
         vm.warp(1681665000);
-        assertEq(payPerVoteExpCurveContest.currentPricePerVote(), 312401201041220); // 49.8% of way through
+        assertEq(payPerVoteExpCurveContest.currentPricePerVote(), 312400000000000); // 49.8% of way through
     }
 
     function testVoteExpCurve2() public {
         vm.warp(1681670000);
-        assertEq(payPerVoteExpCurveContest.currentPricePerVote(), 975945104119969); // 99.6% of way through
+        assertEq(payPerVoteExpCurveContest.currentPricePerVote(), 975940000000000); // 99.6% of way through
     }
-
 
     /////////////////////////////
 }
