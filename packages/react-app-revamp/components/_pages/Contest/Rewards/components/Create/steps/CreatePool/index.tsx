@@ -31,7 +31,7 @@ const CreateRewardsPoolWinnersInfo = () => {
   return (
     <p className="text-[16px] text-neutral-11">
       now decide what percent of the rewards pool <br />
-      each winner gets.
+      each contestant gets.
     </p>
   );
 };
@@ -44,7 +44,7 @@ const CreateRewardsPool = () => {
       rewardPoolType: state.rewardPoolType,
     })),
   );
-  const title = rewardPoolType === RewardPoolType.Voters ? "how much do voters get?" : "how much does winner get?";
+  const title = rewardPoolType === RewardPoolType.Voters ? "how much do voters get?" : "how much does contestant get?";
   const isError = hasValidationErrors(rewardPoolData.validationError);
 
   return (

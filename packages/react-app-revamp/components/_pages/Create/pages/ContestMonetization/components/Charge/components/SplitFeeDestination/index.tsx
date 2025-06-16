@@ -143,7 +143,8 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                       </>
                     ) : (
                       <>
-                        the rewards pool <span className="text-[16px]">(i want voters or winners to earn charges)</span>
+                        the rewards pool{" "}
+                        <span className="text-[16px]">(i want voters or contestants to earn charges)</span>
                       </>
                     )}
                   </p>

@@ -1,9 +1,10 @@
 import { RewardPoolType, useCreateRewardsStore } from "@components/_pages/Contest/Rewards/components/Create/store";
 import { motion } from "motion/react";
 import { useShallow } from "zustand/shallow";
+
 const options = [
   { type: RewardPoolType.Voters, label: "voters" },
-  { type: RewardPoolType.Winners, label: "winners" },
+  { type: RewardPoolType.Winners, label: "contestants" },
 ];
 
 const RewardTypeSwitcher = () => {

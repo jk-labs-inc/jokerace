@@ -416,7 +416,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
                 {rewardsLoading || loading ? (
                   <Skeleton />
                 ) : (
-                  `to ${contestReward.winners} ${contestReward.winners > 1 ? "winners" : "winner"}`
+                  `to ${contestReward.winners} ${contestReward.winners > 1 ? "contestants" : "contestant"}`
                 )}
               </p>
             )}
@@ -496,7 +496,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
                     <li>
                       {contestReward.token.value}
                       <span className="uppercase"> ${contestReward.token.symbol} </span>
-                      to {contestReward.winners} {contestReward.winners > 1 ? "winners" : "winner"}
+                      to {contestReward.winners} {contestReward.winners > 1 ? "contestants" : "contestant"}
                     </li>
                   ) : contestReward && contestReward.rewardsPaidOut ? (
                     <li>rewards paid out! </li>

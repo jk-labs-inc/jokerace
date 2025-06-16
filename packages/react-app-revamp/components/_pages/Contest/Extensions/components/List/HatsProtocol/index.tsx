@@ -4,14 +4,15 @@ import ExtensionCard from "../../Card";
 const HATS_PROTOCOL_EXTENSION: Extension = {
   name: "hats-protocol",
   metadata: {
-    title: "give winners roles and powers",
+    title: "give contestants roles and powers",
     creator: "by hats protocol",
-    description: "enable winners to claim NFTs (hats) that give them rights and roles in your community",
-    buttonLabel: "give winners a hat",
+    description: "enable contestants to claim NFTs (hats) that give them rights and roles in your community",
+    buttonLabel: "give contestants a hat",
   },
 };
 
-const HATS_PROTOCOL_EXTENSION_LINK = "https://docs.hatsprotocol.xyz/hats-integrations/eligibility-modules/jokerace-eligibility";
+const HATS_PROTOCOL_EXTENSION_LINK =
+  "https://docs.hatsprotocol.xyz/hats-integrations/eligibility-modules/jokerace-eligibility";
 
 const HatsProtocolExtension = () => {
   const onHatsProtocolExtensionClick = () => {

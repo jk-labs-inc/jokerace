@@ -17,7 +17,7 @@ export enum CreationStep {
 }
 
 export enum RewardPoolType {
-  Winners = "winners",
+  Winners = "contestants",
   Voters = "voters",
 }
 

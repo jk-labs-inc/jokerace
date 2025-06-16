@@ -18,15 +18,15 @@ const CreateContestTypesVotingBased: FC<CreateContestTypesVotingBasedProps> = ({
     if (isMobile) {
       return (
         <>
-          <b>tip: recommended for rewarding voters.</b> if you want to reward winners, pick "anyone can play" so they
-          can enter.
+          <b>tip: recommended for rewarding voters.</b> if you want to reward contestants, pick "anyone can play" so
+          they can enter.
         </>
       );
     }
 
     return (
       <>
-        <b>tip: recommended if you want to reward voters.</b> if you want to reward winners,
+        <b>tip: recommended if you want to reward voters.</b> if you want to reward contestants,
         <br /> pick “anyone can play” so they can enter and win.
       </>
     );
