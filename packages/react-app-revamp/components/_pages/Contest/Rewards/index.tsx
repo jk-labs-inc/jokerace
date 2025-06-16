@@ -9,12 +9,12 @@ import { ModuleType } from "lib/rewards/types";
 import { usePathname } from "next/navigation";
 import { Abi } from "viem";
 import { useAccount, useAccountEffect } from "wagmi";
-import CreateRewardsModule from "./components/CreateRewardsModule";
 import NoRewardsInfo from "./components/NoRewards";
 import RewardsError from "./modules/shared/Error";
 import RewardsCanceled from "./modules/shared/RewardsCanceled";
 import VotersRewardsPage from "./modules/Voters";
 import WinnersRewardsPage from "./modules/Winners";
+import CreateRewards from "./components/Create";
 
 const ContestRewards = () => {
   const asPath = usePathname();
@@ -23,14 +23,7 @@ const ContestRewards = () => {
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
 
-  const {
-    contestAuthorEthereumAddress,
-    sortingEnabled,
-    contestMaxProposalCount,
-    contestAbi,
-    version,
-    downvotingAllowed,
-  } = useContestStore(state => state);
+  const { contestAuthorEthereumAddress, contestAbi, version } = useContestStore(state => state);
   const { data: rewards, isLoading, isError, refetch, isRefetching } = useRewardsModule();
   const { address: accountAddress } = useAccount();
   const creator = contestAuthorEthereumAddress === accountAddress;
@@ -64,14 +57,7 @@ const ContestRewards = () => {
   }
 
   if (!rewards && creator) {
-    return (
-      <CreateRewardsModule
-        contestMaxProposalCount={contestMaxProposalCount}
-        downvotingAllowed={downvotingAllowed}
-        sortingEnabled={sortingEnabled}
-        version={version}
-      />
-    );
+    return <CreateRewards />;
   }
 
   if (!rewards) return null;

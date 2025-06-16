@@ -45,7 +45,7 @@ interface DialogModalProposalProps {
   isProposalError: boolean;
   setIsOpen?: (isOpen: boolean) => void;
   onClose?: () => void;
-  onVote?: (amount: number, isUpvote: boolean) => void;
+  onVote?: (amount: number) => void;
   onPreviousEntry?: () => void;
   onNextEntry?: () => void;
   onConnectWallet?: () => void;
@@ -86,7 +86,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
   const totalProposals = listProposalsIds.length;
-  const { downvotingAllowed, charge, votesOpen, contestAuthorEthereumAddress } = useContestStore(state => state);
+  const { charge, votesOpen, contestAuthorEthereumAddress } = useContestStore(state => state);
   const isPayPerVote = charge?.voteType === VoteType.PerVote;
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
@@ -129,12 +129,12 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
       return;
     }
 
-    onVote?.(amount, isUpvote);
+    onVote?.(amount);
   };
 
   const confirmMaxVote = () => {
     if (pendingVote) {
-      onVote?.(pendingVote.amount, pendingVote.isUpvote);
+      onVote?.(pendingVote.amount);
       setShowMaxVoteConfirmation(false);
       setPendingVote(null);
     }
@@ -238,7 +238,6 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                       proposalId={proposalId}
                       amountOfVotes={currentUserAvailableVotesAmount}
                       onVote={onSubmitCastVotes}
-                      downvoteAllowed={downvotingAllowed}
                       onAddFunds={() => {
                         setShowOnrampModal(true);
                       }}

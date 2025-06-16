@@ -34,33 +34,33 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   const asPath = usePathname();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { chainName } = extractPathSegments(asPath ?? "");
-  const { downvotingAllowed, contestPrompt, charge: contestCharge } = useContestStore(state => state);
+  const { contestPrompt, charge: contestCharge } = useContestStore(state => state);
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
   const isPayPerVote = contestCharge?.voteType === VoteType.PerVote;
   const { castVotes, isSuccess } = useCastVotes();
   const [readFullEntry, setReadFullEntry] = useState(false);
   const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
-  const [pendingVote, setPendingVote] = useState<{ amount: number; isUpvote: boolean } | null>(null);
+  const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
   const [totalCharge, setTotalCharge] = useState("");
   const nativeToken = getNativeTokenSymbol(chainName);
   const [showOnramp, setShowOnramp] = useState(false);
   const { isPermitted } = useProposalVotingPermission();
   const { data: rewards } = useRewardsModule();
 
-  const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
+  const onSubmitCastVotes = (amount: number) => {
     if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
       setShowMaxVoteConfirmation(true);
-      setPendingVote({ amount, isUpvote });
+      setPendingVote({ amount });
       setTotalCharge(getTotalCharge(amount, contestCharge?.type.costToVote ?? 0));
       return;
     }
 
-    castVotes(amount, isUpvote);
+    castVotes(amount);
   };
 
   const confirmMaxVote = () => {
     if (pendingVote) {
-      castVotes(pendingVote.amount, pendingVote.isUpvote);
+      castVotes(pendingVote.amount);
       setShowMaxVoteConfirmation(false);
       setPendingVote(null);
     }
@@ -169,7 +169,6 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
                     <VotingWidget
                       proposalId={proposal.id}
                       amountOfVotes={currentUserAvailableVotesAmount}
-                      downvoteAllowed={downvotingAllowed}
                       onVote={onSubmitCastVotes}
                       onAddFunds={onAddFunds}
                     />
