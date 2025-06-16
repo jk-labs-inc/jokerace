@@ -105,9 +105,10 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant MAX_FIELDS_METADATA_LENGTH = 10;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
-    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // our hot wallet that we collect revenue to
-    uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // how often the price curve updates if applicable
-    string private constant VERSION = "5.5"; // Private as to not clutter the ABI
+    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
+    uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
+    uint256 public constant COST_ROUNDING_VALUE = 1e10; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
+    string private constant VERSION = "5.5"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -398,7 +399,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
             UD60x18 exponent = percentThroughVotingPeriod * (ud(exponentMultiple) / ud(1e18));
             UD60x18 curveMultiple = exponent.exp2();
             uint256 result = ((ud(costToVote) / ud(1e18)) * curveMultiple).intoUint256(); // costToVote is the minimum cost per vote for exponential curves
-            return (result / 1e10) * 1e10; // min never less than 0.00000001
+            return (result / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE; // round to keep things clean on frontend
         } else {
             return costToVote;
         }
