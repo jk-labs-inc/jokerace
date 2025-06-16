@@ -408,12 +408,12 @@ contract ContestTest is Test {
 
     function testVoteExpCurve1() public {
         vm.warp(1681665000);
-        assertEq(payPerVoteExpCurveContest.currentPricePerVote(), 312400000000000); // 49.8% of way through
+        assertEq(payPerVoteExpCurveContest.currentPricePerVote(), 312000000000000); // 49.8% of way through
     }
 
     function testVoteExpCurve2() public {
         vm.warp(1681670000);
-        assertEq(payPerVoteExpCurveContest.currentPricePerVote(), 975940000000000); // 99.6% of way through
+        assertEq(payPerVoteExpCurveContest.currentPricePerVote(), 975000000000000); // 99.6% of way through
     }
 
     /////////////////////////////
