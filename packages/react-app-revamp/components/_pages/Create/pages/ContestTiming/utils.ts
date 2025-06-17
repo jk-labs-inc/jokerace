@@ -13,7 +13,6 @@ export enum TimingPeriod {
   OneDay = "1d",
   TwoDays = "2d",
   ThreeDays = "3d",
-  OneMonth = "1m",
   Custom = "custom",
 }
 
@@ -37,10 +36,6 @@ export const timingPeriodsOptions = [
   {
     value: TimingPeriod.ThreeDays,
     label: "three days",
-  },
-  {
-    value: TimingPeriod.OneMonth,
-    label: "one month",
   },
   {
     value: TimingPeriod.Custom,
@@ -70,8 +65,6 @@ export const addTimeBasedOnPeriod = (startDate: Date, period: TimingPeriod): Dat
       return moment(startDate).add(2, "days").toDate();
     case TimingPeriod.ThreeDays:
       return moment(startDate).add(3, "days").toDate();
-    case TimingPeriod.OneMonth:
-      return moment(startDate).add(1, "months").toDate();
 
     default:
       return startDate;

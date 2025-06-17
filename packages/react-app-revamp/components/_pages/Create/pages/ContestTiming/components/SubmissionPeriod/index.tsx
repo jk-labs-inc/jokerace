@@ -19,6 +19,7 @@ const CreateSubmissionPeriod = () => {
   const { timingOption: votingPeriodTimingOption, setTimingOption: setVotingPeriodTimingOption } =
     useTimingOptionForVotingPeriod(state => state);
   const isRecommendedTime = Math.abs(submissionOpen.getTime() - new Date().getTime()) < 1000;
+  const maxVotingOpenDate = new Date(submissionOpen.getTime() + 7 * 24 * 60 * 60 * 1000);
 
   const onSubmissionDateChange = (value: Date) => {
     setSubmissionOpen(value);
@@ -27,9 +28,13 @@ const CreateSubmissionPeriod = () => {
       value: "custom",
     });
 
+    // calculate new max date for voting open
+    const newMaxVotingOpenDate = new Date(value.getTime() + 7 * 24 * 60 * 60 * 1000);
+
     // only adjust votingOpen if the new submissionOpen is after the current votingOpen
-    if (value > votingOpen) {
-      // set voting open to 1 hour after the new voting open time
+    // or if current votingOpen exceeds the 7-day limit
+    if (value > votingOpen || votingOpen > newMaxVotingOpenDate) {
+      // set voting open to 1 hour after the new submission open time
       const newVotingOpen = new Date(value.getTime() + 60 * 60 * 1000);
       setVotingOpen(newVotingOpen);
 
@@ -39,6 +44,16 @@ const CreateSubmissionPeriod = () => {
   };
 
   const onVotesOpenChange = (value: Date) => {
+    // check if the selected date exceeds 7 days from submission open
+    const maxAllowedDate = new Date(submissionOpen.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    if (value > maxAllowedDate) {
+      // if it exceeds 7 days, set it to the maximum allowed date
+      setVotingOpen(maxAllowedDate);
+      updateVotingCloseTime(maxAllowedDate);
+      return;
+    }
+
     if (value > submissionOpen) {
       setVotingOpen(value);
       setSubmissionPeriodTimingOption({
@@ -83,10 +98,14 @@ const CreateSubmissionPeriod = () => {
     const timingOption = option as TimingPeriod;
 
     const votingOpenDate = addTimeBasedOnPeriod(now, timingOption);
-    setVotingOpen(votingOpenDate);
+    const maxAllowedVotingOpen = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    // ensure voting open doesn't exceed 7 days from submission open
+    const finalVotingOpenDate = votingOpenDate > maxAllowedVotingOpen ? maxAllowedVotingOpen : votingOpenDate;
+    setVotingOpen(finalVotingOpenDate);
 
     if (votingPeriodTimingOption.value !== TimingPeriod.Custom) {
-      const votingCloseDate = addTimeBasedOnPeriod(votingOpenDate, votingPeriodTimingOption.value as TimingPeriod);
+      const votingCloseDate = addTimeBasedOnPeriod(finalVotingOpenDate, votingPeriodTimingOption.value as TimingPeriod);
       setVotingClose(votingCloseDate);
     }
   };
@@ -115,6 +134,7 @@ const CreateSubmissionPeriod = () => {
             onChange={onVotesOpenChange}
             defaultDate={votingOpen}
             minDate={submissionOpen}
+            maxDate={maxVotingOpenDate}
             error={currentVotesOpenError}
           />
         </div>
