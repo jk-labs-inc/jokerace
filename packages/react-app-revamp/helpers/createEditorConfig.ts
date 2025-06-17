@@ -24,7 +24,7 @@ export const createEditorConfig = ({ content, placeholderText, onUpdate }: Creat
   content: content,
   editorProps: {
     attributes: {
-      class: "prose prose-invert flex-grow focus:outline-none",
+      class: "prose prose-invert grow focus:outline-none",
     },
   },
   onUpdate: onUpdate,

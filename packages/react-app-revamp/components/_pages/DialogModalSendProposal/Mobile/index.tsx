@@ -84,9 +84,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   return (
     <DialogModalV3 isOpen={isOpen} title="sendProposalMobile" isMobile>
       <div
-        className={`${
-          isMobileConfirmModalOpen ? "fixed" : "hidden"
-        } inset-0 z-50 pointer-events-none bg-neutral-8 bg-opacity-60`}
+        className={`${isMobileConfirmModalOpen ? "fixed" : "hidden"} inset-0 z-50 pointer-events-none bg-neutral-8/60`}
         aria-hidden="true"
       />
       <div
