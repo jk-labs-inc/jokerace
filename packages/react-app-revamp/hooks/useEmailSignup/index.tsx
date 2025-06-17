@@ -6,6 +6,12 @@ import { EmailType } from "lib/email/types";
 import moment from "moment";
 import { useState } from "react";
 
+interface CheckIfEmailExistsProps {
+  emailAddress: string;
+  displayToasts?: boolean;
+  userAddress?: string;
+}
+
 const useEmailSignup = () => {
   const [isLoading, setLoading] = useState(false);
   const { sendEmail } = useEmailSend();
@@ -19,6 +25,23 @@ const useEmailSignup = () => {
       setLoading(true);
       showToasts && toastLoading("Subscribing...");
       try {
+        let successMessage = "You have been subscribed successfully.";
+
+        if (user_address) {
+          const { data: existingUser } = await supabase
+            .from("email_signups")
+            .select("email_address")
+            .eq("user_address", user_address);
+
+          if (existingUser && existingUser.length > 0) {
+            // User address exists, show replacement message
+            successMessage = "We'll replace your old email associated with this address with this new one.";
+          } else {
+            // First time subscription for this address
+            successMessage = "We'll add notifications for this address to your email.";
+          }
+        }
+
         const { error } = await supabase.from("email_signups").insert([
           {
             email_address,
@@ -27,13 +50,15 @@ const useEmailSignup = () => {
           },
         ]);
 
-        await sendEmail(user_address ?? "", EmailType.SignUpConfirmation);
-        setLoading(false);
         if (error) {
+          setLoading(false);
           showToasts && toastError("There was an error while subscribing. Please try again later.", error.message);
           return;
         }
-        showToasts && toastSuccess("You have been subscribed successfully.");
+
+        await sendEmail(user_address ?? "", EmailType.SignUpConfirmation);
+        setLoading(false);
+        showToasts && toastSuccess(successMessage);
       } catch (error: any) {
         setLoading(false);
         showToasts && toastError("There was an error while subscribing. Please try again later.", error.message);
@@ -41,14 +66,22 @@ const useEmailSignup = () => {
     }
   };
 
-  const checkIfEmailExists = async (emailAddress: string, displayToasts: boolean = true) => {
+  const checkIfEmailExists = async ({ emailAddress, displayToasts = true, userAddress }: CheckIfEmailExistsProps) => {
     if (isSupabaseConfigured) {
       setLoading(true);
       try {
-        const { data, error } = await supabase
+        let query = supabase
           .from("email_signups")
-          .select("email_address")
+          .select("email_address, user_address")
           .eq("email_address", emailAddress);
+
+        if (userAddress) {
+          // Check if both email AND user address match (tied together)
+          query = query.eq("user_address", userAddress);
+        }
+
+        const { data, error } = await query;
+
         setLoading(false);
         if (error) {
           displayToasts && toastError("There was an error while checking. Please try again later.", error.message);

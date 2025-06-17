@@ -121,7 +121,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     }
 
     // Check if the email already exists
-    const emailExists = await checkIfEmailExists(emailForSubscription);
+    const emailExists = await checkIfEmailExists({ emailAddress: emailForSubscription, userAddress: address });
     if (emailExists) {
       setEmailAlreadyExists(true);
       return null;
