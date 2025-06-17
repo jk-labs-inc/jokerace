@@ -43,8 +43,6 @@ const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timin
         return `open to enter for one hour: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
       case TimingPeriod.OneWeek:
         return `open to enter for one week: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
-      case TimingPeriod.OneMonth:
-        return `open to enter for one month: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
       default:
         return `open to enter: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
     }
@@ -64,8 +62,6 @@ const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timin
         return `open to vote for one hour: ${formattedVoteOpen} to ${formattedVotesClose}`;
       case TimingPeriod.OneWeek:
         return `open to vote for one week: ${formattedVoteOpen} to ${formattedVotesClose}`;
-      case TimingPeriod.OneMonth:
-        return `open to vote for one month: ${formattedVoteOpen} to ${formattedVotesClose}`;
       default:
         return `open to vote: ${formattedVoteOpen} to ${formattedVotesClose}`;
     }

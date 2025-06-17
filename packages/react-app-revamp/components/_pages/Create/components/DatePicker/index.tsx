@@ -5,6 +5,7 @@ import ErrorMessage from "../Error";
 interface CreateDatePicker {
   error?: string;
   minDate?: Date;
+  maxDate?: Date;
   defaultDate?: Date;
   onChange?: (date: Date) => void;
 }
@@ -22,7 +23,7 @@ const CustomInput = forwardRef<HTMLInputElement, { value: string; onClick: () =>
 
 CustomInput.displayName = "CustomInput";
 
-const CreateDatePicker: React.FC<CreateDatePicker> = ({ onChange, minDate, error, defaultDate }) => {
+const CreateDatePicker: React.FC<CreateDatePicker> = ({ onChange, minDate, maxDate, error, defaultDate }) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -50,6 +51,7 @@ const CreateDatePicker: React.FC<CreateDatePicker> = ({ onChange, minDate, error
         timeCaption="time"
         dateFormat="MMMM d, yyyy h:mm aa z"
         minDate={minDate}
+        maxDate={maxDate}
         popperClassName="popper-custom"
         customInput={
           <CustomInput

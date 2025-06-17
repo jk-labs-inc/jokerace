@@ -4,6 +4,5 @@ create table
     email_address character varying not null,
     user_address character varying null,
     date timestamp with time zone null,
-    constraint email_signups_pkey primary key (id),
-    constraint email_signups_email_address_key unique (email_address)
+    constraint email_signups_pkey primary key (id)
   ) tablespace pg_default;
