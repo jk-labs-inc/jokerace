@@ -27,7 +27,7 @@ const Subscribe = () => {
       return;
     }
 
-    const emailExists = await checkIfEmailExists(email);
+    const emailExists = await checkIfEmailExists({ emailAddress: email, userAddress: address });
 
     if (!emailExists) {
       await subscribeUser(email, address);
@@ -62,7 +62,9 @@ const Subscribe = () => {
           />
           <button
             className={`flex justify-center cursor-pointer items-center absolute right-0 w-36 md:w-48 rounded-r-[8px] top-0 h-full 
-           bg-gradient-purple-white hover:opacity-90 ${isLoading ? "opacity-50 pointer-events-none" : ""} transition-all duration-300`}
+           bg-gradient-purple-white hover:opacity-90 ${
+             isLoading ? "opacity-50 pointer-events-none" : ""
+           } transition-all duration-300`}
             onClick={address ? handleSubscribe : openConnectModal}
           >
             <p className="text-[16px] md:text-[18px] font-bold text-true-black whitespace-nowrap px-2">

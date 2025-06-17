@@ -52,7 +52,6 @@ export function useContest() {
     setIsSuccess,
     setIsLoading,
     setContestPrompt,
-    setDownvotingAllowed,
     setContestName,
     setContestAuthor,
     setContestMaxProposalCount,
@@ -130,14 +129,13 @@ export function useContest() {
     const closingVoteDate = new Date(Number(results[5].result) * 1000 + 1000);
     const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
     const contestPrompt = results[7].result as string;
-    const isDownvotingAllowed = Number(results[8].result) === 1;
-    const contestState = results[9].result as ContestStateEnum;
+    const contestState = results[8].result as ContestStateEnum;
 
     if (compareVersions(version, "4.0") >= 0) {
-      const costToPropose = Number(results[11].result);
+      const costToPropose = Number(results[10].result);
 
       if (compareVersions(version, "4.2") >= 0) {
-        const sortingEnabled = Number(results[12].result) === 1;
+        const sortingEnabled = Number(results[11].result) === 1;
         setSortingEnabled(sortingEnabled);
       }
 
@@ -148,20 +146,20 @@ export function useContest() {
       if (costToPropose === 0) {
         setCharge(null);
       } else {
-        const percentageToCreator = Number(results[10].result);
+        const percentageToCreator = Number(results[9].result);
         let costToVote = 0;
         let payPerVote = 0;
         let creatorSplitDestination = "";
 
         if (compareVersions(version, "4.23") >= 0) {
           if (compareVersions(version, "4.25") >= 0) {
-            payPerVote = Number(results[14].result);
+            payPerVote = Number(results[13].result);
           }
-          costToVote = Number(results[13].result);
+          costToVote = Number(results[12].result);
         }
 
         if (compareVersions(version, "4.29") >= 0) {
-          creatorSplitDestination = results[15].result as string;
+          creatorSplitDestination = results[14].result as string;
         }
 
         setCharge({
@@ -194,9 +192,7 @@ export function useContest() {
     setVotesClose(closingVoteDate);
     setVotesOpen(votesOpenDate);
     setContestPrompt(contestPrompt);
-    setDownvotingAllowed(isDownvotingAllowed);
     setContestState(contestState);
-
     setError(null);
     setIsSuccess(true);
     setIsLoading(false);

@@ -250,7 +250,7 @@ export function useDeployContest() {
       return;
     }
 
-    const emailExists = await checkIfEmailExists(emailAddress, false);
+    const emailExists = await checkIfEmailExists({ emailAddress, userAddress: address, displayToasts: false });
 
     if (emailExists || !address) {
       return;

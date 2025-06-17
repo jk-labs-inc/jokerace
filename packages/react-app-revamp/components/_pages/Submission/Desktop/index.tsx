@@ -15,7 +15,7 @@ interface SubmissionPageDesktopLayoutProps {
   isProposalLoading: boolean;
   isProposalError: boolean;
   onClose?: () => void;
-  onVote?: (amount: number, isUpvote: boolean) => void;
+  onVote?: (amount: number) => void;
   onPreviousEntry?: () => void;
   onNextEntry?: () => void;
   onConnectWallet?: () => void;
