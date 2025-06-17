@@ -51,7 +51,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 costToVote;
         uint256 payPerVote;
         uint256 priceCurveType;
-        uint256 exponentMultiple;
+        uint256 multiple;
     }
 
     struct ConstructorArgs {
@@ -123,7 +123,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public costToVote; // Per txn if payPerVote is 0, per vote if 1 and flat price curve, starting/minimum price if 1 and exp curve
     uint256 public payPerVote; // If this contest is pay per vote (as opposed to pay per vote transaction).
     uint256 public priceCurveType; // Enum value of PriceCurveTypes.
-    uint256 public exponentMultiple; // Exponent multiple for an exponential price curve if applicable.
+    uint256 public multiple; // Exponent multiple for an exponential price curve if applicable.
     address public creatorSplitDestination; // Where the creator split of revenue goes.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
     string public metadataFieldsSchema; // JSON Schema of what the metadata fields are
@@ -197,7 +197,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         costToVote = constructorArgs_.intConstructorArgs.costToVote;
         payPerVote = constructorArgs_.intConstructorArgs.payPerVote;
         priceCurveType = constructorArgs_.intConstructorArgs.priceCurveType;
-        exponentMultiple = constructorArgs_.intConstructorArgs.exponentMultiple;
+        multiple = constructorArgs_.intConstructorArgs.multiple;
         creatorSplitDestination = constructorArgs_.creatorSplitDestination;
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
         metadataFieldsSchema = constructorArgs_.metadataFieldsSchema;
@@ -396,7 +396,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
             UD60x18 percentThroughVotingPeriod = (
                 ud(currentInterval * 1e18) / (ud(votingPeriod * 1e18) / ud(PRICE_CURVE_UPDATE_INTERVAL * 1e18))
             ) * ud(100 * 1e18); // percentage as whole number so curve is 0 to 100
-            UD60x18 exponent = percentThroughVotingPeriod * (ud(exponentMultiple) / ud(1e18));
+            UD60x18 exponent = percentThroughVotingPeriod * (ud(multiple) / ud(1e18));
             UD60x18 curveMultiple = exponent.exp2();
             uint256 result = ((ud(costToVote) / ud(1e18)) * curveMultiple).intoUint256(); // costToVote is the minimum cost per vote for exponential curves
             return (result / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE; // round to keep things clean on frontend
