@@ -10,8 +10,22 @@ const CreateVotingPeriod = () => {
   const currentVotesOpenError = currentStepError?.message.startsWith("Voting ends") ? currentStepError.message : "";
   const { timingOption, setTimingOption } = useTimingOptionForVotingPeriod(state => state);
   const formattedVoteOpen = moment(votingOpen).format("MMMM D, YYYY h:mm A z");
+  const maxVotingCloseDate = new Date(votingOpen.getTime() + 7 * 24 * 60 * 60 * 1000);
 
   const onEndContesDateChange = (value: Date) => {
+    // check if the selected date exceeds 7 days from voting open
+    const maxAllowedDate = new Date(votingOpen.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    if (value > maxAllowedDate) {
+      // if it exceeds 7 days, set it to the maximum allowed date
+      setVotingClose(maxAllowedDate);
+      setTimingOption({
+        label: "custom",
+        value: "custom",
+      });
+      return;
+    }
+
     setVotingClose(value);
     setTimingOption({
       label: "custom",
@@ -28,7 +42,11 @@ const CreateVotingPeriod = () => {
     const timingOption = option as TimingPeriod;
 
     const votingCloseDate = addTimeBasedOnPeriod(votingOpen, timingOption);
-    setVotingClose(votingCloseDate);
+    const maxAllowedVotingClose = new Date(votingOpen.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    // ensure voting close doesn't exceed 7 days from voting open
+    const finalVotingCloseDate = votingCloseDate > maxAllowedVotingClose ? maxAllowedVotingClose : votingCloseDate;
+    setVotingClose(finalVotingCloseDate);
   };
 
   return (
@@ -57,6 +75,7 @@ const CreateVotingPeriod = () => {
             onChange={onEndContesDateChange}
             defaultDate={votingClose}
             minDate={votingOpen}
+            maxDate={maxVotingCloseDate}
           />
         </div>
       </div>
