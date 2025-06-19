@@ -1,5 +1,3 @@
-import RewardsError from "@components/_pages/Contest/Rewards/modules/shared/Error";
-import Loader from "@components/UI/Loader";
 import { toastInfo } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
@@ -7,16 +5,12 @@ import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { useProposalVotingPermission } from "@hooks/useLocationPermission";
-import useRewardsModule from "@hooks/useRewards";
 import { switchChain } from "@wagmi/core";
-import { ModuleType } from "lib/rewards/types";
 import { usePathname } from "next/navigation";
 import { FC, RefObject, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useBalance } from "wagmi";
 import VotingWidgetMobile from "./components/Mobile";
-import VotingNotAllowed from "./components/NotAllowed";
 import VoteAmountInput from "./components/VoteAmountInput";
 import VoteButton from "./components/VoteButton";
 import VoteInfoSection from "./components/VoteInfoSection";
@@ -62,13 +56,6 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote
     chainId,
   });
   const insufficientBalance = charge && balanceData ? balanceData.value < BigInt(charge.type.costToVote) : false;
-  const {
-    data: rewards,
-    isLoading: isLoadingRewards,
-    isError: isErrorRewards,
-    isSuccess: isSuccessRewards,
-  } = useRewardsModule();
-  const { isPermitted, isLoading: isLoadingPermission, isError: isErrorPermission } = useProposalVotingPermission();
 
   useEffect(() => {
     if (insufficientBalance) {
@@ -161,18 +148,6 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote
   };
 
   if (isContestCanceled) return null;
-
-  if (rewards?.moduleType === ModuleType.VOTER_REWARDS && (isErrorRewards || isErrorPermission)) {
-    return <RewardsError />;
-  }
-
-  if (rewards?.moduleType === ModuleType.VOTER_REWARDS && (isLoadingPermission || isLoadingRewards)) {
-    return <Loader />;
-  }
-
-  if (rewards?.moduleType === ModuleType.VOTER_REWARDS && !isPermitted) {
-    return <VotingNotAllowed />;
-  }
 
   if (isMobile) {
     return (

@@ -15,14 +15,12 @@ import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
 import { VoteType } from "@hooks/useDeployContest/types";
+import useRewardsModule from "@hooks/useRewards";
 import { useUserStore } from "@hooks/useUser/store";
 import { usePathname } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Proposal } from "../ProposalContent";
-import { useProposalVotingPermission } from "@hooks/useLocationPermission";
-import useRewardsModule from "@hooks/useRewards";
-import { ModuleType } from "lib/rewards/types";
 
 interface DialogModalVoteForProposalProps {
   isOpen: boolean;
@@ -44,7 +42,6 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   const [totalCharge, setTotalCharge] = useState("");
   const nativeToken = getNativeTokenSymbol(chainName);
   const [showOnramp, setShowOnramp] = useState(false);
-  const { isPermitted } = useProposalVotingPermission();
   const { data: rewards } = useRewardsModule();
 
   const onSubmitCastVotes = (amount: number) => {
@@ -163,9 +160,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
                     )}
                   </div>
                   <div className="flex flex-col gap-4 md:gap-8 md:w-80">
-                    {!(rewards?.moduleType === ModuleType.VOTER_REWARDS && !isPermitted) && (
-                      <hr className="hidden md:block border border-neutral-2" />
-                    )}
+                    <hr className="hidden md:block border border-neutral-2" />
                     <VotingWidget
                       proposalId={proposal.id}
                       amountOfVotes={currentUserAvailableVotesAmount}
