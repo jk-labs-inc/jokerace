@@ -33,6 +33,7 @@ const useChargeDetails = (chainName: string) => {
         type: {
           costToPropose: 0,
           costToVote: 0,
+          costToVoteEndPrice: 0,
         },
         error: true,
       });
@@ -48,6 +49,7 @@ const useChargeDetails = (chainName: string) => {
       setMinCharge({
         minCostToPropose: details.minCostToPropose,
         minCostToVote: details.minCostToVote,
+        minCostToVoteEndPrice: details.minCostToVote * 10,
       });
 
       setCharge({
@@ -57,6 +59,7 @@ const useChargeDetails = (chainName: string) => {
         type: {
           costToPropose: details.defaultCostToPropose,
           costToVote: details.defaultCostToVote,
+          costToVoteEndPrice: details.defaultCostToVote * 10,
         },
         error: false,
       });

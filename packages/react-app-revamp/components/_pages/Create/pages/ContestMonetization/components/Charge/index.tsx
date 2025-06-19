@@ -11,6 +11,7 @@ import {
   validateCostToVote,
   validateSplitFeeDestination,
   validateSplitFeeDestinationAddress,
+  validateStartAndEndPrice,
 } from "./validation";
 import { ContestType } from "@components/_pages/Create/types";
 
@@ -134,6 +135,26 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ chain, onError }) =
     });
   };
 
+  const handleCostToVoteEndPriceChange = (value: number) => {
+    const error = validateStartAndEndPrice(charge.type.costToVote, value);
+
+    if (error) {
+      //TODO: we should show only cost to vote end price error
+      setCostToVoteError(error);
+      onError?.(true);
+      return;
+    }
+
+    setCostToVoteError("");
+    setCharge({
+      ...charge,
+      type: {
+        ...charge.type,
+        costToVoteEndPrice: value,
+      },
+    });
+  };
+
   return (
     <div className="flex flex-col gap-12">
       <ContestParamsSplitFeeDestination
@@ -141,7 +162,7 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ chain, onError }) =
         splitFeeDestinationError={splitFeeDestinationError}
         onSplitFeeDestinationTypeChange={handleSplitFeeDestinationTypeChange}
         onSplitFeeDestinationAddressChange={handleSplitFeeDestinationAddressChange}
-        includeRewardsInfo
+        includeRewardsInfo  
       />
       <div className="flex flex-col gap-8">
         <ContestParamsChargeSubmission
@@ -152,10 +173,12 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ chain, onError }) =
         />
         <ContestParamsChargeVote
           costToVote={charge.type.costToVote}
+          costToVoteEndPrice={charge.type.costToVoteEndPrice}
           type={charge.voteType}
           chainUnitLabel={chainUnitLabel ?? ""}
           costToVoteError={costToVoteError}
           onCostToVoteChange={handleCostToVoteChange}
+          onCostToVoteEndPriceChange={handleCostToVoteEndPriceChange}
           onVoteTypeChange={handleVoteTypeChange}
           isAnyoneCanVote={isAnyoneCanVote}
         />

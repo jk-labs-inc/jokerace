@@ -1,4 +1,4 @@
-import CreateNumberInput from "@components/_pages/Create/components/NumberInput";
+import CreateFlowMonetizationInput from "@components/_pages/Create/components/MonetizationInput";
 import { FC } from "react";
 
 interface ContestParamsChargeSubmissionProps {
@@ -20,13 +20,11 @@ const ContestParamsChargeSubmission: FC<ContestParamsChargeSubmissionProps> = ({
         what is the charge to <b>enter</b> the contest?
       </p>
       <div className="flex flex-col gap-2">
-        <CreateNumberInput
-          className="text-center"
+        <CreateFlowMonetizationInput
           value={costToPropose}
           onChange={onCostToProposeChange}
-          unitLabel={chainUnitLabel}
+          label={chainUnitLabel}
           errorMessage={costToProposeError}
-          textClassName="font-bold text-center pl-0 pr-4 -ml-4"
         />
       </div>
     </div>

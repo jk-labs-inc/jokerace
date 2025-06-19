@@ -1,6 +1,6 @@
 import { verifyEntryPreviewPrompt } from "@components/_pages/DialogModalSendProposal/utils";
 import { Switch } from "@headlessui/react";
-import { EntryPreview } from "@hooks/useDeployContest/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import { FC } from "react";
 import { useEntryPreviewTitleToggleStore } from "./store";

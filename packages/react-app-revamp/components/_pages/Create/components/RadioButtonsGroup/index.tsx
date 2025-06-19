@@ -17,9 +17,9 @@ export enum RadioButtonsLabelFontSize {
 interface RadioButtonsGroupProps {
   options: RadioOption[];
   value: any;
-  onChange: (value: any) => void;
   className?: string;
   labelFontSize?: RadioButtonsLabelFontSize;
+  onChange?: (value: any) => void;
 }
 
 const CreateRadioButtonsGroup = ({
@@ -27,7 +27,7 @@ const CreateRadioButtonsGroup = ({
   value,
   onChange,
   className = "",
-  labelFontSize = RadioButtonsLabelFontSize.MEDIUM,
+  labelFontSize = RadioButtonsLabelFontSize.SMALL,
 }: RadioButtonsGroupProps) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
@@ -37,8 +37,8 @@ const CreateRadioButtonsGroup = ({
         {options.map((option, index) => (
           <Radio key={index} value={option.value}>
             {({ checked }) => (
-              <div className={`transition-all duration-200 ${!checked ? "cursor-pointer" : ""}`}>
-                <div className="flex gap-4 items-center">
+              <div className={`flex flex-col gap-4 transition-all duration-200 ${!checked ? "cursor-pointer" : ""}`}>
+                <div className="flex gap-4 items-start">
                   <div
                     className={`relative flex items-center justify-center w-6 h-6 rounded-full transition-colors ${
                       checked ? "border-0" : "border border-neutral-9"
@@ -51,21 +51,25 @@ const CreateRadioButtonsGroup = ({
                       </>
                     )}
                   </div>
-                  <div className="flex flex-col">
-                    <p className={`normal-case ${labelFontSize} ${checked ? "text-neutral-11" : "text-neutral-9"}`}>
+                  <div className="flex flex-col gap-4">
+                    <p
+                      className={`normal-case ${labelFontSize} ${
+                        checked ? "text-neutral-11 font-bold" : "text-neutral-9 font-normal"
+                      }`}
+                    >
                       {isMobile && option.mobileLabel ? option.mobileLabel : option.label}
                     </p>
+                    {option.content && (
+                      <div
+                        className={`transition-opacity duration-200 ${
+                          checked ? "opacity-100" : "opacity-20 pointer-events-none"
+                        }`}
+                      >
+                        {option.content}
+                      </div>
+                    )}
                   </div>
                 </div>
-                {option.content && (
-                  <div
-                    className={`mt-4 transition-opacity duration-200 ${
-                      checked ? "opacity-100" : "opacity-20 pointer-events-none"
-                    }`}
-                  >
-                    {option.content}
-                  </div>
-                )}
               </div>
             )}
           </Radio>

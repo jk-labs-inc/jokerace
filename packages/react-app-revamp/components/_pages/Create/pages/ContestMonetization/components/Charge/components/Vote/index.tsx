@@ -1,8 +1,9 @@
-import CreateNumberInput from "@components/_pages/Create/components/NumberInput";
+import CreateFlowMonetizationInput from "@components/_pages/Create/components/MonetizationInput";
+import CreateRadioButtonsGroup, { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import CreateRadioButtonsGroup, { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup";
+import CreateContestChargeVoteCurves from "./components/Curves";
 
 interface ContestParamsChargeVoteProps {
   costToVote: number;
@@ -10,6 +11,8 @@ interface ContestParamsChargeVoteProps {
   chainUnitLabel: string;
   costToVoteError: string;
   isAnyoneCanVote: boolean;
+  costToVoteEndPrice?: number;
+  onCostToVoteEndPriceChange?: (value: number) => void;
   onCostToVoteChange?: (value: number | null) => void;
   onVoteTypeChange?: (value: VoteType) => void;
 }
@@ -20,6 +23,8 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
   chainUnitLabel,
   costToVoteError,
   isAnyoneCanVote,
+  costToVoteEndPrice,
+  onCostToVoteEndPriceChange,
   onCostToVoteChange,
   onVoteTypeChange,
 }) => {
@@ -48,12 +53,11 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
         value: VoteType.PerTransaction,
         content:
           selected === VoteType.PerTransaction ? (
-            <CreateNumberInput
+            <CreateFlowMonetizationInput
               value={costToVote}
               onChange={onCostToVoteChange}
-              unitLabel={chainUnitLabel}
               errorMessage={costToVoteError}
-              textClassName="font-bold text-center pl-0 pr-4 -ml-4"
+              label={chainUnitLabel}
             />
           ) : null,
       },
@@ -62,12 +66,11 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
         value: VoteType.PerVote,
         content:
           selected === VoteType.PerVote ? (
-            <CreateNumberInput
+            <CreateFlowMonetizationInput
               value={costToVote}
               onChange={onCostToVoteChange}
-              unitLabel={chainUnitLabel}
               errorMessage={costToVoteError}
-              textClassName="font-bold text-center pl-0 pr-4 -ml-4"
+              label={chainUnitLabel}
             />
           ) : null,
       },
@@ -75,6 +78,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
   };
 
   return (
+    // TODO: check spacing here
     <div className="flex flex-col gap-4">
       <p className="text-[20px] text-neutral-11">
         {isAnyoneCanVote ? (
@@ -92,15 +96,14 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
         )}
       </p>
       {isAnyoneCanVote ? (
-        <div className="flex flex-col gap-4">
-          <CreateNumberInput
-            value={costToVote}
-            onChange={onCostToVoteChange}
-            unitLabel={chainUnitLabel}
-            errorMessage={costToVoteError}
-            textClassName="font-bold text-center pl-0 pr-4 -ml-4"
-          />
-        </div>
+        <CreateContestChargeVoteCurves
+          costToVote={costToVote}
+          label={chainUnitLabel}
+          errorMessage={costToVoteError}
+          costToVoteEndPrice={costToVoteEndPrice}
+          onCostToVoteEndPriceChange={onCostToVoteEndPriceChange}
+          onCostToVoteChange={onCostToVoteChange}
+        />
       ) : (
         <CreateRadioButtonsGroup options={getOptions()} value={selected} onChange={handleVoteTypeChange} />
       )}

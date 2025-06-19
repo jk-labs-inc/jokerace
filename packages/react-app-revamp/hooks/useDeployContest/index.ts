@@ -17,8 +17,9 @@ import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
 import { Abi, parseEther } from "viem";
 import { useAccount } from "wagmi";
-import { EntryPreviewConfig, MetadataField, useDeployContestStore } from "./store";
-import { SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle } from "./types";
+import { useDeployContestStore } from "./store";
+import { PriceCurveType, SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle } from "./types";
+import { EntryPreviewConfig, MetadataField } from "./slices/contestMetadataSlice";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000;
 export const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c6118e8a52fa738";
@@ -45,6 +46,7 @@ export function useDeployContest() {
     entryPreviewConfig,
     emailSubscriptionAddress,
     charge,
+    priceCurve,
     setIsLoading,
     setIsSuccess,
   } = useDeployContestStore(state => state);
@@ -126,6 +128,8 @@ export function useDeployContest() {
         costToPropose: parseEther(chargeType.costToPropose.toString()),
         costToVote: parseEther(chargeType.costToVote.toString()),
         payPerVote: charge.voteType === VoteType.PerVote ? 1 : 0,
+        priceCurveType: priceCurve.type === PriceCurveType.Flat ? 0 : 1,
+        multiple: parseEther(priceCurve.multiple.toString()),
       };
 
       const constructorArgs = {
