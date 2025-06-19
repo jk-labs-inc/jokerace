@@ -6,6 +6,8 @@ import {
   VoteType 
 } from "../types";
 
+type ReactStyleStateSetter<T> = T | ((prev: T) => T);
+
 export interface MonetizationSliceState {
   charge: Charge;
   minCharge: {
@@ -17,10 +19,10 @@ export interface MonetizationSliceState {
 }
 
 export interface MonetizationSliceActions {
-  setCharge: (charge: Charge) => void;
+  setCharge: (charge: ReactStyleStateSetter<Charge>) => void;
   setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number; minCostToVoteEndPrice?: number }) => void;
   setPrevChainRefInCharge: (chain: string) => void;
-  setPriceCurve: (priceCurve: PriceCurve) => void;
+  setPriceCurve: (priceCurve: ReactStyleStateSetter<PriceCurve>) => void;
 }
 
 export type MonetizationSlice = MonetizationSliceState & MonetizationSliceActions;
@@ -47,8 +49,14 @@ export const createMonetizationSlice = (set: any): MonetizationSlice => ({
     multiple: 1,
   },
 
-  setCharge: (charge: Charge) => set({ charge }),
+  setCharge: (charge: ReactStyleStateSetter<Charge>) => 
+    set((state: any) => ({
+      charge: typeof charge === "function" ? charge(state.charge) : charge,
+    })),
   setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => set({ minCharge }),
   setPrevChainRefInCharge: (chain: string) => set({ prevChainRefInCharge: chain }),
-  setPriceCurve: (priceCurve: PriceCurve) => set({ priceCurve }),
+  setPriceCurve: (priceCurve: ReactStyleStateSetter<PriceCurve>) => 
+    set((state: any) => ({
+      priceCurve: typeof priceCurve === "function" ? priceCurve(state.priceCurve) : priceCurve,
+    })),
 });

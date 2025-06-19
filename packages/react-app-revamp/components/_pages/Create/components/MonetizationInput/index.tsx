@@ -17,6 +17,7 @@ const CreateFlowMonetizationInput: FC<CreateFlowMonetizationInputProps> = ({
   const [width, setWidth] = useState(0);
 
   useEffect(() => {
+    setInputValue(value.toString());
     setWidth(value.toString().length);
   }, [value]);
 
@@ -37,13 +38,17 @@ const CreateFlowMonetizationInput: FC<CreateFlowMonetizationInputProps> = ({
           type="number"
           value={inputValue}
           onChange={handleChange}
+          min={0}
           placeholder="0.00"
           className="bg-transparent box-content font-bold border-b outline-none text-neutral-11 placeholder:text-neutral-9 text-[40px]"
           style={{ width: Math.max(width, 4) + "ch" }}
         />
-        <span className="text-neutral-10 text-[40px] uppercase font-bold ml-2">{label}</span>
+        <span className="text-neutral-10 text-[40px] uppercase font-bold">{label}</span>
       </div>
-      {errorMessage && <p className="text-negative-11 text-[14px] font-bold animate-reveal">{errorMessage}</p>}
+
+      <div className={`transition-all duration-200 ${errorMessage ? "min-h-[20px]" : "min-h-0"}`}>
+        {errorMessage && <p className="text-negative-11 text-[14px] font-bold animate-reveal">{errorMessage}</p>}
+      </div>
     </div>
   );
 };

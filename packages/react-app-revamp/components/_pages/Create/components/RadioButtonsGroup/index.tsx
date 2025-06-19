@@ -18,6 +18,7 @@ interface RadioButtonsGroupProps {
   options: RadioOption[];
   value: any;
   className?: string;
+  gapClassName?: string;
   labelFontSize?: RadioButtonsLabelFontSize;
   onChange?: (value: any) => void;
 }
@@ -27,13 +28,14 @@ const CreateRadioButtonsGroup = ({
   value,
   onChange,
   className = "",
+  gapClassName = "gap-4",
   labelFontSize = RadioButtonsLabelFontSize.SMALL,
 }: RadioButtonsGroupProps) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
   return (
     <RadioGroup value={value} onChange={onChange} className={className}>
-      <div className="flex flex-col gap-4">
+      <div className={`flex flex-col ${gapClassName}`}>
         {options.map((option, index) => (
           <Radio key={index} value={option.value}>
             {({ checked }) => (
@@ -60,11 +62,7 @@ const CreateRadioButtonsGroup = ({
                       {isMobile && option.mobileLabel ? option.mobileLabel : option.label}
                     </p>
                     {option.content && (
-                      <div
-                        className={`transition-opacity duration-200 ${
-                          checked ? "opacity-100" : "opacity-20 pointer-events-none"
-                        }`}
-                      >
+                      <div className={`transition-opacity duration-200 ${checked ? "block" : "hidden"}`}>
                         {option.content}
                       </div>
                     )}

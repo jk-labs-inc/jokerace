@@ -10,7 +10,13 @@ interface PriceCurveSelectorProps {
 
 const PriceCurveSelector: FC<PriceCurveSelectorProps> = ({ selectedCurve, options, onCurveChange }) => {
   return (
-    <CreateRadioButtonsGroup value={selectedCurve} onChange={onCurveChange} options={options} className="w-full" />
+    <CreateRadioButtonsGroup
+      gapClassName="gap-8"
+      value={selectedCurve}
+      onChange={onCurveChange}
+      options={options}
+      className="w-full"
+    />
   );
 };
 
