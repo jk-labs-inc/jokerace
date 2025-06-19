@@ -1,5 +1,3 @@
-import RewardsError from "@components/_pages/Contest/Rewards/modules/shared/Error";
-import Loader from "@components/UI/Loader";
 import { toastInfo } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
@@ -7,9 +5,7 @@ import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import useRewardsModule from "@hooks/useRewards";
 import { switchChain } from "@wagmi/core";
-import { ModuleType } from "lib/rewards/types";
 import { usePathname } from "next/navigation";
 import { FC, RefObject, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -60,12 +56,6 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote
     chainId,
   });
   const insufficientBalance = charge && balanceData ? balanceData.value < BigInt(charge.type.costToVote) : false;
-  const {
-    data: rewards,
-    isLoading: isLoadingRewards,
-    isError: isErrorRewards,
-    isSuccess: isSuccessRewards,
-  } = useRewardsModule();
 
   useEffect(() => {
     if (insufficientBalance) {
@@ -158,14 +148,6 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote
   };
 
   if (isContestCanceled) return null;
-
-  if (rewards?.moduleType === ModuleType.VOTER_REWARDS && isErrorRewards) {
-    return <RewardsError />;
-  }
-
-  if (rewards?.moduleType === ModuleType.VOTER_REWARDS && isLoadingRewards) {
-    return <Loader />;
-  }
 
   if (isMobile) {
     return (
