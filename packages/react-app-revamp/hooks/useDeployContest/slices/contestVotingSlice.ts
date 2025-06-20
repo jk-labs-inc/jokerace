@@ -27,7 +27,7 @@ export interface VotingSliceActions {
 
 export type VotingSlice = VotingSliceState & VotingSliceActions;
 
-const emptyVotingRequirements = {
+export const emptyVotingRequirements = {
   type: "erc20",
   nftType: "erc721",
   chain: "mainnet",

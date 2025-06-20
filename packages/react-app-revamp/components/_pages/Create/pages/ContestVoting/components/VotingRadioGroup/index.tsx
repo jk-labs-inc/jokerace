@@ -1,4 +1,5 @@
-import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MerkleKey } from "@hooks/useDeployContest/slices/contestVotingSlice";
 import { VotingMerkle } from "@hooks/useDeployContest/types";
 import { useState } from "react";
 import CreateVotingRequirements from "../VotingRequirements";

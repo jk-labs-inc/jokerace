@@ -19,6 +19,7 @@ export type SubmissionSlice = SubmissionSliceState & SubmissionSliceActions;
 
 export const createSubmissionSlice = (set: any): SubmissionSlice => ({
   submissionMerkle: null,
+  //TODO: move this to advanced options?
   customization: {
     allowedSubmissionsPerUser: DEFAULT_ALLOWED_SUBMISSIONS_PER_USER,
     maxSubmissions: MAX_SUBMISSIONS_PER_CONTEST,

@@ -2,7 +2,8 @@ import { toastDismiss, toastError, toastLoading, toastSuccess } from "@component
 import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { addressRegex } from "@helpers/regex";
-import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MerkleKey } from "@hooks/useDeployContest/slices/contestVotingSlice";
 import { VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";

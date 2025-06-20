@@ -1,7 +1,8 @@
-import { useDeployContestStore, MetadataField } from "@hooks/useDeployContest/store";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import ContestParamsMetadataField from "./components/Field";
 import { useState } from "react";
 import { metadataFields } from "./utils";
+import { MetadataField } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 
 const ContestParamsMetadataFields = () => {
   const { metadataFields: storeFields, setMetadataFields } = useDeployContestStore();
