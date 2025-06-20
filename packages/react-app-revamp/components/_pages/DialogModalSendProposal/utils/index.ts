@@ -1,4 +1,4 @@
-import { EntryPreview } from "@hooks/useDeployContest/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 
 export const DESCRIPTION_ENABLED = "_DESCRIPTION_ENABLED";
 export const DESCRIPTION_NOT_ENABLED = "_DESCRIPTION_NOT_ENABLED";

@@ -2,7 +2,7 @@ import moment from "moment";
 import { ContestType, StepTitle } from "../../types";
 import { TemplateConfig, TemplateType } from "../types";
 import { TimingPeriod } from "../../pages/ContestTiming/utils";
-import { EntryPreview } from "@hooks/useDeployContest/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 
 export const grantsRoundConfig: TemplateConfig = {
   type: TemplateType.grantsRound,

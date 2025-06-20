@@ -1,7 +1,7 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
-import { MetadataField } from "@hooks/useDeployContest/store";
+import { MetadataField } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { compareVersions } from "compare-versions";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";

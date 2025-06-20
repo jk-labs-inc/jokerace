@@ -1,5 +1,5 @@
 import { Option } from "@components/_pages/Create/components/DefaultDropdown";
-import { MetadataField } from "@hooks/useDeployContest/store";
+import { MetadataField } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 
 export const fieldsDropdownOptions: Option[] = [
   { value: "string", label: "string" },

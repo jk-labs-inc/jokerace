@@ -1,32 +1,60 @@
-import CreateNumberInput from "@components/_pages/Create/components/NumberInput";
-import { FC } from "react";
+import CreateFlowMonetizationInput from "@components/_pages/Create/components/MonetizationInput";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { useShallow } from "zustand/react/shallow";
+import { FC, useState } from "react";
+import { validateCostToPropose } from "../../validation";
 
 interface ContestParamsChargeSubmissionProps {
-  costToPropose: number;
-  costToProposeError: string;
   chainUnitLabel: string;
-  onCostToProposeChange?: (value: number | null) => void;
+  onError?: (value: boolean) => void;
 }
 
-const ContestParamsChargeSubmission: FC<ContestParamsChargeSubmissionProps> = ({
-  costToPropose,
-  chainUnitLabel,
-  costToProposeError,
-  onCostToProposeChange,
-}) => {
+const ContestParamsChargeSubmission: FC<ContestParamsChargeSubmissionProps> = ({ chainUnitLabel, onError }) => {
+  const [costToProposeError, setCostToProposeError] = useState("");
+  const { costToPropose, minCostToPropose, setCharge } = useDeployContestStore(
+    useShallow(state => ({
+      costToPropose: state.charge.type.costToPropose,
+      minCostToPropose: state.minCharge.minCostToPropose,
+      setCharge: state.setCharge,
+    })),
+  );
+
+  const handleCostToProposeChange = (value: number | null) => {
+    const error = validateCostToPropose(value, minCostToPropose);
+    if (error) {
+      setCostToProposeError(error);
+      onError?.(true);
+      setCharge(prev => ({
+        ...prev,
+        error: true,
+      }));
+      return;
+    } else {
+      setCostToProposeError("");
+      onError?.(false);
+    }
+
+    setCharge(prev => ({
+      ...prev,
+      type: {
+        ...prev.type,
+        costToPropose: value ?? 0,
+      },
+      error: false,
+    }));
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <p className="text-[20px] text-neutral-11">
         what is the charge to <b>enter</b> the contest?
       </p>
       <div className="flex flex-col gap-2">
-        <CreateNumberInput
-          className="text-center"
+        <CreateFlowMonetizationInput
           value={costToPropose}
-          onChange={onCostToProposeChange}
-          unitLabel={chainUnitLabel}
+          onChange={handleCostToProposeChange}
+          label={chainUnitLabel}
           errorMessage={costToProposeError}
-          textClassName="font-bold text-center pl-0 pr-4 -ml-4"
         />
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { verifyEntryPreviewPrompt } from "@components/_pages/DialogModalSendProposal/utils";
-import { EntryPreview } from "@hooks/useDeployContest/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import { Editor } from "@tiptap/react";
 import { FC } from "react";

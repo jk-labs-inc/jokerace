@@ -10,8 +10,16 @@ export enum ErrorType {
   IS_NOT_JOKERACE_CONTRACT = "IS_NOT_JOKERACE_CONTRACT",
 }
 
+export interface ContestInfoData {
+  contestAddress: string;
+  contestChainName: string;
+  contestChainId: number;
+  contestChainNativeCurrencySymbol: string;
+}
+
 export interface ContestState {
   contestName: string;
+  contestInfoData: ContestInfoData;
   contestPrompt: string;
   contestAbi: Abi;
   contestAuthorEthereumAddress: string;
@@ -58,11 +66,18 @@ export interface ContestState {
   setVersion: (version: string) => void;
   setCanEditTitleAndDescription: (value: boolean) => void;
   setRewardsModuleAddress: (address: string) => void;
+  setContestInfoData: (contestInfoData: ContestInfoData) => void;
 }
 
 export const createContestStore = () =>
   createStore<ContestState>(set => ({
     contestName: "",
+    contestInfoData: {
+      contestAddress: "",
+      contestChainName: "",
+      contestChainId: 0,
+      contestChainNativeCurrencySymbol: "",
+    },
     contestPrompt: "",
     contestAbi: [],
     contestAuthorEthereumAddress: "",
@@ -109,6 +124,7 @@ export const createContestStore = () =>
     setVersion: version => set({ version: version }),
     setCanEditTitleAndDescription: value => set({ canEditTitleAndDescription: value }),
     setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
+    setContestInfoData: contestInfoData => set({ contestInfoData: contestInfoData }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);

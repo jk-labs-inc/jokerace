@@ -1,6 +1,5 @@
 import ContestImage from "@components/_pages/Contest/components/ContestImage";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { Prompt } from "@hooks/useDeployContest/store";
 import { useLineCount } from "@hooks/useLineCount";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
@@ -8,6 +7,7 @@ import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import CreateContestConfirmLayout from "../Layout";
 import { calculateContentBreakpoint } from "@helpers/textUtils";
+import { Prompt } from "@hooks/useDeployContest/slices/contestInfoSlice";
 
 interface CreateContestConfirmDescriptionProps {
   prompt: Prompt;

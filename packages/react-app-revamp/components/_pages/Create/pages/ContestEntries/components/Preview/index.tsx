@@ -1,4 +1,5 @@
-import { EntryPreview, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useMediaQuery } from "react-responsive";
 import CreateRadioButtonsGroup, { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup";
 

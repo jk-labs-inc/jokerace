@@ -1,10 +1,9 @@
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { DeployContestStore, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useCallback } from "react";
 import { StepTitle } from "../types";
-import type { DeployContestState } from "@hooks/useDeployContest/store";
 import { useAccount } from "wagmi";
 
-const stepValidations: Record<StepTitle, (state: DeployContestState, isConnected: boolean) => boolean> = {
+const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected: boolean) => boolean> = {
   [StepTitle.Type]: state => {
     return true;
   },
