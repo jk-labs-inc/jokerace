@@ -23,7 +23,6 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ chain, onError }) =
       setCharge: state.setCharge,
     })),
   );
-
   const [splitFeeDestinationError, setSplitFeeDestinationError] = useState("");
 
   if (isError) {

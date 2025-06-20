@@ -4,6 +4,7 @@ import { calculateExponentialMultiple } from "@helpers/exponentialMultiplier";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useShallow } from "zustand/react/shallow";
 import { validateCostToVote, validateStartAndEndPrice } from "../../../../../../validation";
+import { useMediaQuery } from "react-responsive";
 
 interface ExponentialPricingOptionProps {
   chainUnitLabel: string;
@@ -11,6 +12,7 @@ interface ExponentialPricingOptionProps {
 }
 
 const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnitLabel, onError }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [costToVoteError, setCostToVoteError] = useState("");
   const [costToVoteEndPriceError, setCostToVoteEndPriceError] = useState("");
   const { costToVote, costToVoteEndPrice, setCharge, minCostToVote } = useDeployContestStore(
@@ -114,11 +116,19 @@ const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnit
   return (
     <div className="flex flex-col gap-6">
       <p className="text-[16px] text-neutral-9">
-        set the price at start and finish of contest. this will generate an <br />
-        exponential price curve so the price increases every minute.
+        {isMobile ? (
+          <>
+            this will generate an exponential price curve <br /> so the price increases every minute.
+          </>
+        ) : (
+          <>
+            set the price at start and finish of contest. this will generate an <br />
+            exponential price curve so the price increases every minute.
+          </>
+        )}
       </p>
-      <div className="flex gap-6 items-start">
-        <div className="flex flex-col gap-2 min-h-[100px]">
+      <div className="flex flex-col md:flex-row gap-6 items-start">
+        <div className="flex flex-col gap-2">
           <p className="text-[12px] font-bold text-neutral-9">price at start</p>
           <div className="flex-1 flex items-end">
             <CreateFlowMonetizationInput
@@ -129,10 +139,15 @@ const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnit
             />
           </div>
         </div>
-        <div className="flex self-center justify-center items-center">
+        {/* TODO: check centering style here, maybe use a grid layout*/}
+        <div
+          className={`hidden md:flex self-center justify-center items-center ${
+            costToVoteEndPriceError || costToVoteError ? "mt-0" : "mt-6"
+          }`}
+        >
           <p className="text-[40px] font-bold text-neutral-10">to</p>
         </div>
-        <div className="flex flex-col gap-2 min-h-[100px]">
+        <div className="flex flex-col gap-2">
           <p className="text-[12px] font-bold text-neutral-9">price at finish</p>
           <div className="flex-1 flex items-end">
             <CreateFlowMonetizationInput

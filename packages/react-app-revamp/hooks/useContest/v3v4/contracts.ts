@@ -1,13 +1,11 @@
 import { compareVersions } from "compare-versions";
 
-
 enum VERSIONS {
   V4_0 = "4.0",
   V4_2 = "4.2",
   V4_23 = "4.23",
   V4_25 = "4.25",
   V4_29 = "4.29",
-  V5_7 = "5.7",
 }
 
 export function getContracts(contractConfig: any, version: string) {
@@ -27,7 +25,6 @@ export function getContracts(contractConfig: any, version: string) {
 
   const v4_2FunctionNames = ["sortingEnabled"];
 
-  const v5_7FunctionNames = ["priceCurveType, multiple"];
 
   let contractFunctionNames = [...commonFunctionNames];
 
@@ -48,10 +45,6 @@ export function getContracts(contractConfig: any, version: string) {
 
   if (compareVersions(version, VERSIONS.V4_29) >= 0) {
     contractFunctionNames = [...contractFunctionNames, "creatorSplitDestination"];
-  }
-
-  if (compareVersions(version, VERSIONS.V5_7) >= 0) {
-    contractFunctionNames = [...contractFunctionNames, "priceCurve"];
   }
 
   const contracts = contractFunctionNames.map(functionName => ({

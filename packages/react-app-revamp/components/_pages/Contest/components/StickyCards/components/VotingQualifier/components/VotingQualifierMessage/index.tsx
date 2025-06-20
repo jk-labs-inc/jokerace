@@ -1,7 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import OnrampModal from "@components/Onramp/components/Modal";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { LINK_BRIDGE_DOCS } from "@config/links";
 import { chains } from "@config/wagmi";
 import { formatBalance } from "@helpers/formatBalance";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";

@@ -1,13 +1,13 @@
 import CreateFlowMonetizationInput from "@components/_pages/Create/components/MonetizationInput";
 import CreateRadioButtonsGroup, { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup";
+import { ContestType } from "@components/_pages/Create/types";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import CreateContestChargeVoteCurves from "./components/Curves";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { ContestType } from "@components/_pages/Create/types";
 import { useShallow } from "zustand/react/shallow";
-import { validateCostToVote, validateStartAndEndPrice } from "../../validation";
+import { validateCostToVote } from "../../validation";
+import CreateContestChargeVoteCurves from "./components/Curves";
 
 interface ContestParamsChargeVoteProps {
   chainUnitLabel: string;
@@ -72,24 +72,6 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({ chainUnitLa
     setCharge(prev => ({
       ...prev,
       voteType: value,
-    }));
-  };
-
-  const handleCostToVoteEndPriceChange = (value: number) => {
-    const error = validateStartAndEndPrice(costToVote, value);
-
-    if (error) {
-      //TODO: we should show only cost to vote end price error
-      onError?.(true);
-      return;
-    }
-
-    setCharge(prev => ({
-      ...prev,
-      type: {
-        ...prev.type,
-        costToVoteEndPrice: value,
-      },
     }));
   };
 

@@ -54,7 +54,7 @@ export const validateSplitFeeDestinationAddress = (
 
 export const validateStartAndEndPrice = (start: number | null, end: number | null): string | null => {
   if (start === null || end === null || end <= start) {
-    return "end price must be greater than start price";
+    return "finish price must be greater than start price";
   }
   return null;
 };
