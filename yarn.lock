@@ -11708,15 +11708,6 @@ framer-motion@11.3.28:
   dependencies:
     tslib "^2.4.0"
 
-framer-motion@^12.16.0:
-  version "12.16.0"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-12.16.0.tgz#d715b81b1b41ba61ce842e7085390e1533ec3814"
-  integrity sha512-xryrmD4jSBQrS2IkMdcTmiS4aSKckbS7kLDCuhUn9110SQKG1w3zlq1RTqCblewg+ZYe+m3sdtzQA6cRwo5g8Q==
-  dependencies:
-    motion-dom "^12.16.0"
-    motion-utils "^12.12.1"
-    tslib "^2.4.0"
-
 framer-motion@^12.18.1:
   version "12.18.1"
   resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-12.18.1.tgz#783dc9ea7c816d315c6eebc49cd3a82c5fc50615"
@@ -11724,6 +11715,15 @@ framer-motion@^12.18.1:
   dependencies:
     motion-dom "^12.18.1"
     motion-utils "^12.18.1"
+    tslib "^2.4.0"
+
+framer-motion@^12.19.1:
+  version "12.19.1"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-12.19.1.tgz#1d078c04d2ef15bec180cd3573218fad1f4ee871"
+  integrity sha512-nq9hwWAEKf4gzprbOZzKugLV5OVKF7zrNDY6UOVu+4D3ZgIkg8L9Jy6AMrpBM06fhbKJ6LEG6UY5+t7Eq6wNlg==
+  dependencies:
+    motion-dom "^12.19.0"
+    motion-utils "^12.19.0"
     tslib "^2.4.0"
 
 fresh@0.5.2:
@@ -14030,13 +14030,6 @@ moment@2.30.1, moment@^2.29.4:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.30.1.tgz#f8c91c07b7a786e30c59926df530b4eac96974ae"
   integrity sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==
 
-motion-dom@^12.16.0:
-  version "12.16.0"
-  resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-12.16.0.tgz#ccf88d45db04214f32d455e12621f5213968bfd5"
-  integrity sha512-Z2nGwWrrdH4egLEtgYMCEN4V2qQt1qxlKy/uV7w691ztyA41Q5Rbn0KNGbsNVDZr9E8PD2IOQ3hSccRnB6xWzw==
-  dependencies:
-    motion-utils "^12.12.1"
-
 motion-dom@^12.18.1:
   version "12.18.1"
   resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-12.18.1.tgz#3a4d6b7f4a7940393ffdd60ec44f636d3472948f"
@@ -14044,42 +14037,49 @@ motion-dom@^12.18.1:
   dependencies:
     motion-utils "^12.18.1"
 
-motion-plus-dom@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/motion-plus-dom/-/motion-plus-dom-1.0.0.tgz#1dcf0e1e618ac35d5c2adbdf9586326b9c2cd8c1"
-  integrity sha512-2P0qzvM0s9Xjt1+ZvC5ZtSPxQvC8tlMt7yIO46iQ/ZnPEB4PwwOWfLLVqS1vIlV/3DUGrYimdpZ28TsxykXTEQ==
+motion-dom@^12.19.0:
+  version "12.19.0"
+  resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-12.19.0.tgz#c31c943bd1e9a48a641f2e57e2ed96d5f48f3d8e"
+  integrity sha512-m96uqq8VbwxFLU0mtmlsIVe8NGGSdpBvBSHbnnOJQxniPaabvVdGgxSamhuDwBsRhwX7xPxdICgVJlOpzn/5bw==
   dependencies:
-    motion "^12.16.0"
-    motion-dom "^12.16.0"
-    motion-utils "^12.12.1"
+    motion-utils "^12.19.0"
 
-motion-plus-react@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/motion-plus-react/-/motion-plus-react-1.3.0.tgz#da6860609d64548e997c19d77ef5d39b667d0c29"
-  integrity sha512-lJcU0fwxvLCgZBP78NFDMzoZj9GOoa+jqiSxzT6xyAlrpvH7KlLLMvVetgjwuTbHeKCo1hLbkC9F1XfOWzRS/A==
+motion-plus-dom@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/motion-plus-dom/-/motion-plus-dom-1.3.1.tgz#597667bc0a55883a17907a47d9d556c19aec3467"
+  integrity sha512-NsVz3pShaoiJT/1DVCgYaMmKFmCQxZw7SQ71w52634/TCyw/ItGcWh3khxfe0+tsZhoNGQWSgLeeeS4myNyaiA==
   dependencies:
-    motion "^12.16.0"
-    motion-dom "^12.16.0"
-    motion-plus-dom "^1.0.0"
-    motion-utils "^12.12.1"
+    motion "^12.19.0"
+    motion-dom "^12.19.0"
+    motion-utils "^12.19.0"
 
-motion-plus@1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/motion-plus/-/motion-plus-1.3.0.tgz#15a0ecbdade6b1951124e5ab19de521415bf8a9b"
-  integrity sha512-asdgVwJgREGKFBVTVGIno3BlqvNtsop8aR3GyF9VbgyP6xgBdzcCcwiea8q29qF69I1CvNP6Or41ifQqJicRgw==
+motion-plus-react@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/motion-plus-react/-/motion-plus-react-1.3.2.tgz#2403b7d7ff20c0e1e62a38f68bcdeb0cdf2db990"
+  integrity sha512-c5ZsTtJOSfC+M+NW3ahoocdyNtBdLdNXm1XHPWu9t5XtVJuFMn8wd8BjU8pE1ugiIY21myFzJLMZj4iLh+fWXA==
   dependencies:
-    motion-plus-dom "^1.0.0"
-    motion-plus-react "^1.3.0"
+    motion "^12.19.0"
+    motion-dom "^12.19.0"
+    motion-plus-dom "^1.3.1"
+    motion-utils "^12.19.0"
 
-motion-utils@^12.12.1:
-  version "12.12.1"
-  resolved "https://registry.yarnpkg.com/motion-utils/-/motion-utils-12.12.1.tgz#63e28751325cb9d1cd684f3c273a570022b0010e"
-  integrity sha512-f9qiqUHm7hWSLlNW8gS9pisnsN7CRFRD58vNjptKdsqFLpkVnX00TNeD6Q0d27V9KzT7ySFyK1TZ/DShfVOv6w==
+motion-plus@1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/motion-plus/-/motion-plus-1.3.2.tgz#21c8dd7f2c387dc27a11082aad428439a744d389"
+  integrity sha512-YJxRCR/bs9p9cQcZeA28pR29jvW7DAFeGLkjW8eLBtZmrYCAgVzUupRwjwQnn8P9obrXtxySf0nGQl09WfLR8w==
+  dependencies:
+    motion-plus-dom "^1.3.1"
+    motion-plus-react "^1.3.2"
 
 motion-utils@^12.18.1:
   version "12.18.1"
   resolved "https://registry.yarnpkg.com/motion-utils/-/motion-utils-12.18.1.tgz#d7543c2bc15e843286cbb86119f011da0a78515b"
   integrity sha512-az26YDU4WoDP0ueAkUtABLk2BIxe28d8NH1qWT8jPGhPyf44XTdDUh8pDk9OPphaSrR9McgpcJlgwSOIw/sfkA==
+
+motion-utils@^12.19.0:
+  version "12.19.0"
+  resolved "https://registry.yarnpkg.com/motion-utils/-/motion-utils-12.19.0.tgz#a7cc102f756e97093793cac7c218533d3b27f509"
+  integrity sha512-BuFTHINYmV07pdWs6lj6aI63vr2N4dg0vR+td0rtrdpWOhBzIkEklZyLcvKBoEtwSqx8Jg06vUB5RS0xDiUybw==
 
 motion@12.18.1:
   version "12.18.1"
@@ -14089,12 +14089,12 @@ motion@12.18.1:
     framer-motion "^12.18.1"
     tslib "^2.4.0"
 
-motion@^12.16.0:
-  version "12.16.0"
-  resolved "https://registry.yarnpkg.com/motion/-/motion-12.16.0.tgz#7f428ac20778da002282d45bc97296ef8fd1ff79"
-  integrity sha512-P3HA83fnPMEGBLfKdD5vDdjH1Aa3wM3jT3+HX3fCVpy/4/lJiqvABajLgZenBu+rzkFzmeaPkvT7ouf9Tq5tVQ==
+motion@^12.19.0:
+  version "12.19.1"
+  resolved "https://registry.yarnpkg.com/motion/-/motion-12.19.1.tgz#f37b1d48f392cd4293d6a322d85518a25cc9879e"
+  integrity sha512-OhoHWrht+zwDPccr2wGltJdwgz2elFBBt/sLei2g0hwICvy2hOBFUkA4Ylup3VnDgz+vUtecf694EV7bJK4XjA==
   dependencies:
-    framer-motion "^12.16.0"
+    framer-motion "^12.19.1"
     tslib "^2.4.0"
 
 mri@1.2.0, mri@^1.2.0:
