@@ -11,6 +11,7 @@
     "before 6am every weekday",
     "every weekend"
   ],
+  "ignoreDeps": ["tiptap-monorepo"],
   "packageRules": [
     {
       "enabled": false,
