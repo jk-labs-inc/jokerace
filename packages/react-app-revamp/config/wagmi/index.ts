@@ -46,6 +46,7 @@ import { scroll } from "./custom-chains/scroll";
 import { sei } from "./custom-chains/sei";
 import { sepolia } from "./custom-chains/sepolia";
 import { soneium } from "./custom-chains/soneium";
+import { sonic } from "./custom-chains/sonic";
 import { story } from "./custom-chains/story";
 import { swell } from "./custom-chains/swell";
 import { unichain } from "./custom-chains/unichain";
@@ -87,6 +88,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   swell,
   manta,
   zksyncEra,
+  sonic,
   sepolia,
   baseTestnet,
   mainnet,
