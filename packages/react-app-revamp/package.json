@@ -11,7 +11,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.837.0",
     "@aws-sdk/s3-request-presigner": "3.837.0",
-    "@babel/core": "7.27.4",
+    "@babel/core": "7.27.7",
     "@babel/preset-env": "7.27.2",
     "@clustersxyz/sdk": "1.0.2",
     "@getbrevo/brevo": "2.2.0",
