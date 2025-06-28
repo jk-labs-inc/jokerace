@@ -3391,10 +3391,10 @@
   dependencies:
     tslib "^2.4.0"
 
-"@getbrevo/brevo@2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@getbrevo/brevo/-/brevo-2.2.0.tgz#3a1a85d6f0766d4750170a37dd394b3db06c24f9"
-  integrity sha512-mNCkXtgqn6jqLglAx1JzZcTj53kBZ5dK9Yd6zVuEyXAvhz68f5Ps6dSJar9HvkHH0Lfr3NrqW76xurjcoxqhIg==
+"@getbrevo/brevo@2.5.0":
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/@getbrevo/brevo/-/brevo-2.5.0.tgz#0be96006af4c2c0e62faad6249a78a3b6352755d"
+  integrity sha512-0V+EpMX3pcPQb7XC+kkNwA1N/ka/z5aOElll4WFRkUq8utrGs/vHaeLYg8d+L2P572S+6rWjfLoZqyKnO/q4/Q==
   dependencies:
     bluebird "^3.5.0"
     request "^2.81.0"
