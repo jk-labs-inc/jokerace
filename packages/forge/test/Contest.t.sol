@@ -9,6 +9,7 @@ contract ContestTest is Test {
     Contest public contest;
     Contest public anyoneCanSubmitContest;
     Contest public anyoneCanSubmitCostsAnEthContest;
+    Contest public payPerVoteExpCurveContest;
 
     // BASIC INT PARAMS
     uint64 public constant CONTEST_START = 1681650000;
@@ -22,7 +23,13 @@ contract ContestTest is Test {
     uint256 public constant ZERO_COST_TO_PROPOSE = 0;
     uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
     uint256 public constant ZERO_COST_TO_VOTE = 0;
+    uint256 public constant STANDARD_COST_TO_VOTE = 100000000000000;
     uint256 public constant PAY_PER_VOTE_OFF = 0;
+    uint256 public constant PAY_PER_VOTE_ON = 1;
+    uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
+    uint256 public constant EXPONENTIAL_PRICE_CURVE_TYPE = 1;
+    uint256 public constant ZERO_EXPONENT_MULTIPLE = 0;
+    uint256 public constant STANDARD_EXPONENT_MULTIPLE = 33000000000000000; // for a terminal value 10x from min
     address public constant CREATOR_SPLIT_DESTINATION = CREATOR_ADDRESS_1;
     address public constant JK_LABS_SPLIT_DESTINATION = JK_LABS_ADDRESS;
 
@@ -45,7 +52,9 @@ contract ContestTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         ZERO_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
-        PAY_PER_VOTE_OFF
+        PAY_PER_VOTE_OFF,
+        FLAT_PRICE_CURVE_TYPE,
+        ZERO_EXPONENT_MULTIPLE
     );
 
     Governor.IntConstructorArgs public oneEthIntConstructorArgs = Governor.IntConstructorArgs(
@@ -59,7 +68,25 @@ contract ContestTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         ONE_ETH_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
-        PAY_PER_VOTE_OFF
+        PAY_PER_VOTE_OFF,
+        FLAT_PRICE_CURVE_TYPE,
+        ZERO_EXPONENT_MULTIPLE
+    );
+
+    Governor.IntConstructorArgs public payPerVoteExpCurveIntConstructorArgs = Governor.IntConstructorArgs(
+        CONTEST_START,
+        VOTING_DELAY,
+        VOTING_PERIOD,
+        NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
+        MAX_PROPOSAL_COUNT,
+        SORTING_ENABLED,
+        RANK_LIMIT_250,
+        FIFTY_PERCENT_TO_CREATOR,
+        ZERO_COST_TO_PROPOSE,
+        STANDARD_COST_TO_VOTE,
+        PAY_PER_VOTE_ON,
+        EXPONENTIAL_PRICE_CURVE_TYPE,
+        STANDARD_EXPONENT_MULTIPLE
     );
 
     Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
@@ -68,6 +95,13 @@ contract ContestTest is Test {
 
     Governor.ConstructorArgs public oneEthToProposeNumParams = Governor.ConstructorArgs(
         oneEthIntConstructorArgs, CREATOR_SPLIT_DESTINATION, JK_LABS_SPLIT_DESTINATION, METADATA_FIELDS_SCHEMA
+    );
+
+    Governor.ConstructorArgs public payPerVoteExpCurveNumParams = Governor.ConstructorArgs(
+        payPerVoteExpCurveIntConstructorArgs,
+        CREATOR_SPLIT_DESTINATION,
+        JK_LABS_SPLIT_DESTINATION,
+        METADATA_FIELDS_SCHEMA
     );
 
     // MERKLE TREE PARAMS
@@ -182,6 +216,9 @@ contract ContestTest is Test {
 
         anyoneCanSubmitCostsAnEthContest =
             new Contest("test", "hello world", SUB_ZERO_MERKLE_ROOT, VOTING_MERKLE_ROOT, oneEthToProposeNumParams);
+
+        payPerVoteExpCurveContest =
+            new Contest("test", "hello world", SUB_ZERO_MERKLE_ROOT, VOTING_MERKLE_ROOT, payPerVoteExpCurveNumParams);
 
         vm.stopPrank();
     }
@@ -367,6 +404,16 @@ contract ContestTest is Test {
         vm.stopPrank();
 
         assertEq(totalVotesWithoutProof, 10 ether);
+    }
+
+    function testVoteExpCurve1() public {
+        vm.warp(1681665000);
+        assertEq(payPerVoteExpCurveContest.currentPricePerVote(), 312000000000000); // 49.8% of way through
+    }
+
+    function testVoteExpCurve2() public {
+        vm.warp(1681670000);
+        assertEq(payPerVoteExpCurveContest.currentPricePerVote(), 975000000000000); // 99.6% of way through
     }
 
     /////////////////////////////
