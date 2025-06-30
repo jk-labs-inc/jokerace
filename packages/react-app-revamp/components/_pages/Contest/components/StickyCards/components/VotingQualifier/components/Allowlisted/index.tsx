@@ -7,7 +7,7 @@ const VotingQualifierAllowlisted: FC = () => {
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <img src="/contest/ballot.svg" width={16} height={16} alt="timer" />
-        <p className="text-[12px] md:text-[16px] uppercase text-neutral-9">my votes</p>
+        <p className="text-[12px] md:text-[16px] font-bold text-neutral-9">my votes</p>
       </div>
       <VotingQualifierBalance type={VotingQualifierType.ALLOWLISTED} />
     </div>

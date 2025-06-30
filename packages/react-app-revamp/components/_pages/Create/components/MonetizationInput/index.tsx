@@ -18,7 +18,10 @@ const CreateFlowMonetizationInput: FC<CreateFlowMonetizationInputProps> = ({
 
   useEffect(() => {
     setInputValue(value.toString());
-    setWidth(value.toString().length);
+    const valueString = value.toString();
+    const dotCount = (valueString.match(/\./g) || []).length;
+    const adjustedWidth = valueString.length - dotCount * 0.5;
+    setWidth(adjustedWidth);
   }, [value]);
 
   const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
@@ -28,7 +31,11 @@ const CreateFlowMonetizationInput: FC<CreateFlowMonetizationInputProps> = ({
 
     target.value = cleanedValue;
     setInputValue(cleanedValue);
-    setWidth(cleanedValue.length || 1);
+
+    // Adjust width calculation to account for narrower "." characters
+    const dotCount = (cleanedValue.match(/\./g) || []).length;
+    const adjustedWidth = cleanedValue.length - dotCount * 0.5; // Subtract 0.5ch for each dot
+    setWidth(adjustedWidth || 1);
 
     const numericValue = cleanedValue === "" ? 0 : Number(cleanedValue);
     onChange?.(numericValue);
@@ -43,8 +50,8 @@ const CreateFlowMonetizationInput: FC<CreateFlowMonetizationInputProps> = ({
           value={inputValue}
           onInput={handleInput}
           placeholder="0"
+          style={{ width: `${width}ch` }}
           className="bg-transparent box-content font-bold border-b outline-none text-neutral-11 placeholder:text-neutral-9 text-[40px]"
-          style={{ width: Math.max(width, 1) + "ch" }}
         />
         <span className="text-neutral-10 text-[40px] uppercase font-bold">{label}</span>
       </div>

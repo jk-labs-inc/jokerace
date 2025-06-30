@@ -59,7 +59,7 @@ const useChargeDetails = (chainName: string) => {
         type: {
           costToPropose: details.defaultCostToPropose,
           costToVote: details.defaultCostToVote,
-          costToVoteEndPrice: details.defaultCostToVote * 10,
+          costToVoteEndPrice: details.defaultCostToVote * 1000,
         },
         error: false,
       });

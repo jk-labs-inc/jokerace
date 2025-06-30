@@ -129,7 +129,7 @@ export function useDeployContest() {
         costToVote: parseEther(chargeType.costToVote.toString()),
         payPerVote: charge.voteType === VoteType.PerVote ? 1 : 0,
         priceCurveType: priceCurve.type === PriceCurveType.Flat ? 0 : 1,
-        multiple: parseEther(priceCurve.multiple.toString()),
+        multiple: priceCurve.type === PriceCurveType.Flat ? 1 : parseEther(priceCurve.multiple.toString()),
       };
 
       const constructorArgs = {
@@ -138,8 +138,8 @@ export function useDeployContest() {
           charge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet
             ? signer.address
             : charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit
-              ? jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT
-              : charge.splitFeeDestination.address,
+            ? jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT
+            : charge.splitFeeDestination.address,
         jkLabsSplitDestination: jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT,
         metadataFieldsSchema: createMetadataFieldsSchema(metadataFields),
       };

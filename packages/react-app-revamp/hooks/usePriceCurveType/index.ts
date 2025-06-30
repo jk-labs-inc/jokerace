@@ -19,6 +19,7 @@ const usePriceCurveType = ({ address, abi, chainId }: PriceCurveTypeParams): Pri
     address: address as `0x${string}`,
     abi,
     functionName: 'priceCurveType',
+    scopeKey: 'priceCurveType',
     chainId,
     query: {
       select: (data) => {

@@ -1,16 +1,11 @@
 import { useContestStore } from "@hooks/useContest/store";
 import { PriceCurveType } from "@hooks/useDeployContest/types";
 import usePriceCurveType from "@hooks/usePriceCurveType";
-import { FC } from "react";
 import { useShallow } from "zustand/react/shallow";
-import VotingQualifierAnyoneCanVoteFlat from "../Flat";
-import VotingQualifierAnyoneCanVoteExponential from "../Exponential";
+import ChargeInfoFlat from "./Flat";
+import ChargeInfoExponential from "./Exponential";
 
-interface VotingQualifierAnyoneCanVoteCurveProps {
-  votingTimeLeft: number;
-}
-
-const VotingQualifierAnyoneCanVoteCurve: FC<VotingQualifierAnyoneCanVoteCurveProps> = ({ votingTimeLeft }) => {
+const ChargeInfoCurve = () => {
   const { contestInfo, contestAbi } = useContestStore(
     useShallow(state => ({
       contestInfo: state.contestInfoData,
@@ -23,16 +18,15 @@ const VotingQualifierAnyoneCanVoteCurve: FC<VotingQualifierAnyoneCanVoteCurvePro
     chainId: contestInfo.contestChainId,
   });
 
-  //TODO: add loading and error states
   if (isLoading) return <p>Loading...</p>;
 
   if (isError) return <p>Error</p>;
 
   if (priceCurveType === PriceCurveType.Flat) {
-    return <VotingQualifierAnyoneCanVoteFlat />;
+    return <ChargeInfoFlat />;
   }
 
-  return <VotingQualifierAnyoneCanVoteExponential votingTimeLeft={votingTimeLeft} />;
+  return <ChargeInfoExponential />;
 };
 
-export default VotingQualifierAnyoneCanVoteCurve;
+export default ChargeInfoCurve;

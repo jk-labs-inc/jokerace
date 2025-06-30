@@ -1,41 +1,45 @@
-import { chains } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
 import { Charge, VoteType } from "@hooks/useDeployContest/types";
-import { usePathname } from "next/navigation";
 import React from "react";
-import { formatEther } from "viem";
+import ChargeInfoContainer from "./components/Container";
+import ChargeInfoFlat from "./components/Curve/Flat";
+import { useContestStore } from "@hooks/useContest/store";
+import { useShallow } from "zustand/shallow";
+import { compareVersions } from "compare-versions";
+import ChargeInfoCurve from "./components/Curve";
 
 interface ChargeInfoProps {
   charge: Charge;
 }
 
 const ChargeInfo: React.FC<ChargeInfoProps> = ({ charge }) => {
-  const asPath = usePathname();
-  const { chainName } = extractPathSegments(asPath ?? "");
-  const chainUnitLabel = chains.find((c: { name: string }) => c.name.toLowerCase() === chainName.toLowerCase())
-    ?.nativeCurrency.symbol;
-  const chargeAmount = charge.type.costToVote;
+  const version = useContestStore(useShallow(state => state.version));
   const chargeLabel = charge.voteType === VoteType.PerVote ? "charge per vote" : "charge to vote";
-  const entryChargeFormatted = formatEther(BigInt(chargeAmount));
 
   if (charge.type.costToPropose === 0 && charge.type.costToVote === 0) {
     return (
-      <div className="flex justify-between text-neutral-9 text-[16px]">
+      <ChargeInfoContainer>
         <p>charge to vote:</p>
         <p>gas fees only</p>
-      </div>
+      </ChargeInfoContainer>
+    );
+  }
+
+  if (compareVersions(version, "5.7") < 0) {
+    return (
+      <ChargeInfoContainer
+        className={charge.voteType === VoteType.PerTransaction ? "text-neutral-11" : "text-neutral-9"}
+      >
+        <p>{chargeLabel}:</p>
+        <ChargeInfoFlat />
+      </ChargeInfoContainer>
     );
   }
 
   return (
-    <div
-      className={`flex justify-between ${charge.voteType === VoteType.PerTransaction ? "text-neutral-11" : "text-neutral-9"} text-[16px]`}
-    >
+    <ChargeInfoContainer className={charge.voteType === VoteType.PerTransaction ? "text-neutral-11" : "text-neutral-9"}>
       <p>{chargeLabel}:</p>
-      <p>
-        {entryChargeFormatted} {chainUnitLabel}
-      </p>
-    </div>
+      <ChargeInfoCurve />
+    </ChargeInfoContainer>
   );
 };
 

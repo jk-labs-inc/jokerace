@@ -17,7 +17,7 @@ const VotingQualifierAnyoneCanVoteFlat = () => {
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <img src="/contest/ballot.svg" width={16} height={16} alt="timer" />
-        <p className="text-[12px] md:text-[16px] uppercase text-neutral-9">my wallet</p>
+        <p className="text-[12px] md:text-[16px] font-bold text-neutral-9">my wallet</p>
         <span className="hidden md:flex text-[16px] text-neutral-9">|</span>
         <p className="hidden md:flex text-[16px] text-neutral-9">
           1 vote = {costToVoteFormatted} {nativeCurrencySymbol}

@@ -26,20 +26,20 @@ const VotingQualifierAllowlistedBalance: FC<VotingQualifierAllowlistedBalancePro
 
   if (!canVote) return <p className="text-[16px] md:text-[24px] text-secondary-11 font-bold">ineligible to vote</p>;
 
-  if (canVote && votingOpen) {
-    return (
-      <p className="text-[16px] md:text-[24px] text-neutral-11 font-bold">
-        {formatNumberAbbreviated(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"}{" "}
-        left
-      </p>
-    );
-  }
-
   if (canVote) {
+    if (votingOpen) {
+      return (
+        <p className="text-[16px] md:text-[24px] text-neutral-11 font-bold">
+          {formatNumberAbbreviated(currentUserAvailableVotesAmount)} vote
+          {currentUserAvailableVotesAmount == 1 ? "" : "s"} left
+        </p>
+      );
+    }
+
     return (
       <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">
-        {formatNumberAbbreviated(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"}{" "}
-        {isMobile ? "to use" : "to deploy"}
+        {formatNumberAbbreviated(currentUserAvailableVotesAmount)} vote
+        {currentUserAvailableVotesAmount == 1 ? "" : "s"} {isMobile ? "to use" : "to deploy"}
       </p>
     );
   }

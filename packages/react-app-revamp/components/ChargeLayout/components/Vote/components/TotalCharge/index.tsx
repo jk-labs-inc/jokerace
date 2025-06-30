@@ -1,10 +1,10 @@
-import { chains } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
 import { getTotalCharge } from "@helpers/totalCharge";
+import { useContestStore } from "@hooks/useContest/store";
+import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import { Charge, VoteType } from "@hooks/useDeployContest/types";
-import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { formatEther } from "viem";
+import { useShallow } from "zustand/shallow";
 interface TotalChargeProps {
   charge: Charge;
   amountOfVotes: number;
@@ -12,10 +12,23 @@ interface TotalChargeProps {
 
 const TotalCharge: React.FC<TotalChargeProps> = ({ charge: contestCharge, amountOfVotes }) => {
   const [totalCharge, setTotalCharge] = useState("0");
-  const asPath = usePathname();
-  const { chainName } = extractPathSegments(asPath ?? "");
-  const chainUnitLabel = chains.find((c: { name: string }) => c.name.toLowerCase() === chainName.toLowerCase())
-    ?.nativeCurrency.symbol;
+  const { contestInfo, contestAbi, version, votingClose } = useContestStore(
+    useShallow(state => ({
+      contestInfo: state.contestInfoData,
+      contestAbi: state.contestAbi,
+      version: state.version,
+      votingClose: state.votesClose,
+    })),
+  );
+  const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged } = useCurrentPricePerVoteWithRefetch({
+    address: contestInfo.contestAddress,
+    abi: contestAbi,
+    chainId: contestInfo.contestChainId,
+    version,
+    votingClose,
+    //TODO: add fn to fetch interval
+    priceCurveUpdateInterval: 60,
+  });
 
   useEffect(() => {
     if (isNaN(amountOfVotes)) {
@@ -29,7 +42,7 @@ const TotalCharge: React.FC<TotalChargeProps> = ({ charge: contestCharge, amount
     }
 
     if (contestCharge.voteType === VoteType.PerVote) {
-      setTotalCharge(getTotalCharge(amountOfVotes, contestCharge.type.costToVote));
+      setTotalCharge(getTotalCharge(amountOfVotes, currentPricePerVote));
     } else {
       setTotalCharge(formatEther(BigInt(contestCharge.type.costToVote)));
     }
@@ -43,7 +56,7 @@ const TotalCharge: React.FC<TotalChargeProps> = ({ charge: contestCharge, amount
     <div className="flex items-center justify-between text-neutral-11 text-[16px]">
       <p>total charge:</p>
       <p className="text-[24px] font-bold">
-        {totalCharge} {chainUnitLabel}
+        {totalCharge} {contestInfo.contestChainNativeCurrencySymbol}
       </p>
     </div>
   );

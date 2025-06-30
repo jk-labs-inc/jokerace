@@ -5,6 +5,7 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useShallow } from "zustand/react/shallow";
 import { validateCostToVote, validateStartAndEndPrice } from "../../../../../../validation";
 import { useMediaQuery } from "react-responsive";
+import { PriceCurveType } from "@hooks/useDeployContest/types";
 
 interface ExponentialPricingOptionProps {
   chainUnitLabel: string;
@@ -15,17 +16,21 @@ const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnit
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [costToVoteError, setCostToVoteError] = useState("");
   const [costToVoteEndPriceError, setCostToVoteEndPriceError] = useState("");
-  const { costToVote, costToVoteEndPrice, setCharge, minCostToVote } = useDeployContestStore(
-    useShallow(state => ({
-      costToVote: state.charge.type.costToVote,
-      costToVoteEndPrice: state.charge.type.costToVoteEndPrice,
-      setCharge: state.setCharge,
-      minCostToVote: state.minCharge.minCostToVote,
-    })),
-  );
+  const { costToVote, costToVoteEndPrice, setCharge, setPriceCurve, minCostToVote, priceCurveType } =
+    useDeployContestStore(
+      useShallow(state => ({
+        costToVote: state.charge.type.costToVote,
+        costToVoteEndPrice: state.charge.type.costToVoteEndPrice,
+        minCostToVote: state.minCharge.minCostToVote,
+        priceCurveType: state.priceCurve.type,
+        setCharge: state.setCharge,
+        setPriceCurve: state.setPriceCurve,
+      })),
+    );
 
+  //TODO: check why this is triggered when flat option is enabled (prolly because costToVote is triggered)
   useEffect(() => {
-    if (!costToVoteEndPrice) return;
+    if (!costToVoteEndPrice || priceCurveType === PriceCurveType.Flat) return;
 
     const error = validateStartAndEndPrice(costToVote, costToVoteEndPrice);
     if (error) {
@@ -49,12 +54,12 @@ const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnit
         console.error("Error calculating exponential multiple:", error);
       }
     }
-  }, [costToVote, costToVoteEndPrice]);
+  }, [costToVote, costToVoteEndPrice, priceCurveType]);
 
   const handleMultipleChange = (value: number) => {
-    setCharge(prev => ({
+    setPriceCurve(prev => ({
       ...prev,
-      type: { ...prev.type, multiple: value },
+      multiple: value,
     }));
   };
 

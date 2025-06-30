@@ -23,9 +23,10 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { EmailType, VotingEmailParams } from "lib/email/types";
 import moment from "moment";
 import { usePathname } from "next/navigation";
-import { formatEther } from "viem";
+import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
+import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 
 interface UserAnalyticsParams {
   contestAddress: string;
@@ -91,8 +92,16 @@ export function useCastVotes() {
   const { sendEmail } = useEmailSend();
   const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
   const contestLink = `${window.location.origin}/contest/${chainName.toLowerCase()}/${contestAddress}`;
-
-
+  const {
+    currentPricePerVote,
+    isLoading: isLoadingCurrentPricePerVote,
+    isError: isErrorCurrentPricePerVote,
+  } = useCurrentPricePerVote({
+    address: contestAddress,
+    abi: abi,
+    chainId: chainId,
+    version,
+  });
 
   const calculateChargeAmount = (amountOfVotes: number) => {
     if (!charge) return undefined;
@@ -101,7 +110,10 @@ export function useCastVotes() {
       return BigInt(charge.type.costToVote);
     }
 
-    const totalCost = BigInt(amountOfVotes) * BigInt(charge.type.costToVote);
+    // Convert the ETH string back to Wei (BigInt) before calculation
+    //TODO: check if this is correct
+    const pricePerVoteInWei = parseEther(currentPricePerVote);
+    const totalCost = BigInt(amountOfVotes) * pricePerVoteInWei;
 
     return totalCost;
   };
@@ -179,13 +191,12 @@ export function useCastVotes() {
         hash: receipt.transactionHash,
       });
 
-
       const voteCount = (await readContract(config, {
-          address: contestAddress as `0x${string}`,
-          abi: DeployedContestContract.abi,
-          functionName: "proposalVotes",
-          args: [pickedProposal],
-        })) as bigint;
+        address: contestAddress as `0x${string}`,
+        abi: DeployedContestContract.abi,
+        functionName: "proposalVotes",
+        args: [pickedProposal],
+      })) as bigint;
 
       const votes = Number(formatEther(voteCount));
 
