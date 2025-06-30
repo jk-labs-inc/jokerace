@@ -27,7 +27,7 @@ const useChargeDetails = (chainName: string) => {
 
     if (details.isError) {
       setCharge({
-        percentageToCreator: 70,
+        percentageToCreator: 90,
         splitFeeDestination: { type: SplitFeeDestinationType.CreatorWallet, address: "" },
         voteType: isAnyoneCanVote ? VoteType.PerVote : VoteType.PerTransaction,
         type: {
@@ -51,7 +51,7 @@ const useChargeDetails = (chainName: string) => {
       });
 
       setCharge({
-        percentageToCreator: 70,
+        percentageToCreator: 90,
         splitFeeDestination: { type: SplitFeeDestinationType.CreatorWallet, address: "" },
         voteType: isAnyoneCanVote ? VoteType.PerVote : VoteType.PerTransaction,
         type: {
