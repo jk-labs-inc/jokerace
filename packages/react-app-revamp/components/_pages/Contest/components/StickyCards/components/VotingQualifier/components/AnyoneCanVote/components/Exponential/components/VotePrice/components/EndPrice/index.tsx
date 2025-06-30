@@ -25,7 +25,7 @@ const VotingQualifierAnyoneCanVoteExponentialEndPrice: FC = () => {
   if (isError) return <p className="text-[24px] text-neutral-11 font-bold">Error</p>;
 
   return (
-    <p className="text-[24px] text-neutral-11 font-bold">
+    <p className="text-[16px] md:text-[24px] text-neutral-11 font-bold">
       {/* //TODO: add formatting */}
       {formatBalance(formatEther(BigInt(costToVote ?? 0)))} -{" "}
       {formatBalance(formatEther(calculateEndPrice(costToVote ?? 0, Number(priceCurveMultiple))))}

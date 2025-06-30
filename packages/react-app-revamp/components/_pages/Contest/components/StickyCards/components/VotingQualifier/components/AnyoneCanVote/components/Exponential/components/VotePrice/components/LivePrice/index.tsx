@@ -41,7 +41,7 @@ const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC<VotingQualifierAnyone
 
   return (
     <motion.p
-      className="text-[24px] text-neutral-11 font-bold"
+      className="text-[16px] md:text-[24px] text-neutral-11 font-bold"
       animate={{
         color: hasPriceChanged ? "#78FFC6" : "#E5E5E5",
       }}

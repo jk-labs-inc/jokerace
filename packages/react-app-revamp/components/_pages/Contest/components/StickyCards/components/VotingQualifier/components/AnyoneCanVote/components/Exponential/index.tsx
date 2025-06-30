@@ -33,8 +33,8 @@ const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteEx
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
+    <div className="flex flex-col gap-2 md:gap-4">
+      <div className="flex items-center gap-1 md:gap-2">
         {/* TODO: check quality of image */}
         <img src="/contest/price-interval.png" width={16} height={16} alt="timer" />
         <p className="text-[12px] md:text-[16px] font-bold text-neutral-9">price per vote</p>
