@@ -32,7 +32,7 @@
       "matchCurrentVersion": "!/^0/",
       "automerge": true,
       "automergeStrategy": "squash"
-    }
+    },
     {
       "matchPackageNames":[
         "@tiptap/**"
