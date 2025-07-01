@@ -14,6 +14,7 @@ import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useDeleteProposalStore } from "./store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
+import { compareVersions } from "compare-versions";
 
 export const ENTRANT_CAN_DELETE_VERSION = "5.3";
 
@@ -99,7 +100,7 @@ export function useDeleteProposal() {
   }
 
   function isEntrantCanDeleteVersion() {
-    return version === ENTRANT_CAN_DELETE_VERSION;
+    return compareVersions(version, ENTRANT_CAN_DELETE_VERSION) >= 0;
   }
 
   function canDeleteProposal(
