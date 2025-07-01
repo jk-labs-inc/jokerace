@@ -1,10 +1,4 @@
-import { 
-  Charge, 
-  PriceCurve, 
-  PriceCurveType, 
-  SplitFeeDestinationType, 
-  VoteType 
-} from "../types";
+import { Charge, PriceCurve, PriceCurveType, SplitFeeDestinationType, VoteType } from "../types";
 
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
 
@@ -20,7 +14,11 @@ export interface MonetizationSliceState {
 
 export interface MonetizationSliceActions {
   setCharge: (charge: ReactStyleStateSetter<Charge>) => void;
-  setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number; minCostToVoteEndPrice?: number }) => void;
+  setMinCharge: (minCharge: {
+    minCostToPropose: number;
+    minCostToVote: number;
+    minCostToVoteEndPrice?: number;
+  }) => void;
   setPrevChainRefInCharge: (chain: string) => void;
   setPriceCurve: (priceCurve: ReactStyleStateSetter<PriceCurve>) => void;
 }
@@ -29,7 +27,7 @@ export type MonetizationSlice = MonetizationSliceState & MonetizationSliceAction
 
 export const createMonetizationSlice = (set: any): MonetizationSlice => ({
   charge: {
-    percentageToCreator: 70,
+    percentageToCreator: 90,
     splitFeeDestination: { type: SplitFeeDestinationType.CreatorWallet, address: "" },
     voteType: VoteType.PerVote,
     type: {
@@ -49,13 +47,13 @@ export const createMonetizationSlice = (set: any): MonetizationSlice => ({
     multiple: 1,
   },
 
-  setCharge: (charge: ReactStyleStateSetter<Charge>) => 
+  setCharge: (charge: ReactStyleStateSetter<Charge>) =>
     set((state: any) => ({
       charge: typeof charge === "function" ? charge(state.charge) : charge,
     })),
   setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => set({ minCharge }),
   setPrevChainRefInCharge: (chain: string) => set({ prevChainRefInCharge: chain }),
-  setPriceCurve: (priceCurve: ReactStyleStateSetter<PriceCurve>) => 
+  setPriceCurve: (priceCurve: ReactStyleStateSetter<PriceCurve>) =>
     set((state: any) => ({
       priceCurve: typeof priceCurve === "function" ? priceCurve(state.priceCurve) : priceCurve,
     })),

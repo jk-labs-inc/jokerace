@@ -48,6 +48,17 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
     }
   }, [chainChanged]);
 
+  const renderEarningsSplitMessage = () => {
+    if (
+      splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet ||
+      splitFeeDestination.type === SplitFeeDestinationType.AnotherWallet
+    ) {
+      return <li className="text-[16px] list-disc normal-case">all charges split 90 (you)/10 (jk labs inc.)</li>;
+    } else {
+      return <li className="text-[16px] list-disc normal-case">all charges go to jk labs inc.</li>;
+    }
+  };
+
   if (isError) {
     return (
       <CreateContestConfirmLayout onClick={() => refetchChargeDetails()} onHover={value => setIsHovered(value)}>
