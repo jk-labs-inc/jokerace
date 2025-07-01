@@ -1,5 +1,6 @@
 import { useContestStore } from "@hooks/useContest/store";
 import { compareVersions } from "compare-versions";
+import { VOTING_PRICE_CURVES_VERSION } from "constants/versions";
 import { Abi, formatEther } from "viem";
 import { useReadContract } from "wagmi";
 import { useShallow } from "zustand/shallow";
@@ -29,7 +30,7 @@ const useCurrentPricePerVote = ({
   enabled = true,
 }: CurrentPricePerVoteParams): CurrentPricePerVoteResponse => {
   const costToVote = useContestStore(useShallow(state => state.charge?.type.costToVote));
-  const isFnSupported = compareVersions(version, "5.7") >= 0;
+  const isFnSupported = compareVersions(version, VOTING_PRICE_CURVES_VERSION) >= 0;
 
   const { data, refetch, isLoading, isError, isRefetching, isRefetchError } = useReadContract({
     address: address as `0x${string}`,

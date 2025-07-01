@@ -5,6 +5,7 @@ import { FC } from "react";
 import { useShallow } from "zustand/react/shallow";
 import VotingQualifierAnyoneCanVoteFlat from "../Flat";
 import VotingQualifierAnyoneCanVoteExponential from "../Exponential";
+import VotingQualifierSkeleton from "../../../../shared/Skeleton";
 
 interface VotingQualifierAnyoneCanVoteCurveProps {
   votingTimeLeft: number;
@@ -24,7 +25,7 @@ const VotingQualifierAnyoneCanVoteCurve: FC<VotingQualifierAnyoneCanVoteCurvePro
   });
 
   //TODO: add loading and error states
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <VotingQualifierSkeleton />;
 
   if (isError) return <p>Error</p>;
 

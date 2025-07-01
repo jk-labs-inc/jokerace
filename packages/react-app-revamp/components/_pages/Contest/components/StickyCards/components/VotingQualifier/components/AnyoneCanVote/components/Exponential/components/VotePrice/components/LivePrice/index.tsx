@@ -21,21 +21,21 @@ const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC<VotingQualifierAnyone
     })),
   );
 
-  const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged } = useCurrentPricePerVoteWithRefetch({
-    address: contestInfoData.contestAddress,
-    abi: contestAbi,
-    chainId: contestInfoData.contestChainId,
-    version,
-    votingClose,
-    priceCurveUpdateInterval,
-  });
+  const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged, isPreloading } =
+    useCurrentPricePerVoteWithRefetch({
+      address: contestInfoData.contestAddress,
+      abi: contestAbi,
+      chainId: contestInfoData.contestChainId,
+      version,
+      votingClose,
+      priceCurveUpdateInterval,
+    });
 
   if (isError) {
     return <div className="text-red-500">Failed to load price</div>;
   }
 
-  //TODO: add preloader since we are fetching 1s after the minute boundary
-  if (isLoading || isRefetching) {
+  if (isLoading || isRefetching || isPreloading) {
     return <Skeleton width={100} height={24} baseColor="#6A6A6A" highlightColor="#BB65FF" />;
   }
 

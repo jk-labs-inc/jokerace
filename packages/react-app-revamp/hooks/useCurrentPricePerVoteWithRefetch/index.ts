@@ -1,5 +1,5 @@
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Abi } from "viem";
 
 interface CurrentPricePerVoteWithRefetchParams {
@@ -20,6 +20,7 @@ interface CurrentPricePerVoteWithRefetchResponse {
   isRefetchError: boolean;
   refetch: () => void;
   hasPriceChanged: boolean;
+  isPreloading: boolean;
 }
 
 const useCurrentPricePerVoteWithRefetch = ({
@@ -38,6 +39,7 @@ const useCurrentPricePerVoteWithRefetch = ({
     version,
     enabled,
   });
+  const [isPreloading, setIsPreloading] = useState(false);
 
   const now = Date.now();
   const votingCloseTime = votingClose.getTime();
@@ -51,6 +53,8 @@ const useCurrentPricePerVoteWithRefetch = ({
     const prevSeconds = prevSecondsRef.current;
 
     if (prevSeconds <= 1 && secondsInCycle >= priceCurveUpdateInterval - 1) {
+      setIsPreloading(true);
+
       setTimeout(() => {
         refetch();
       }, 1000);
@@ -58,6 +62,12 @@ const useCurrentPricePerVoteWithRefetch = ({
 
     prevSecondsRef.current = secondsInCycle;
   }, [secondsInCycle, priceCurveUpdateInterval, refetch]);
+
+  useEffect(() => {
+    if (isRefetching) {
+      setIsPreloading(false);
+    }
+  }, [isRefetching]);
 
   const hasPriceChanged =
     prevPriceRef.current !== null && prevPriceRef.current !== currentPricePerVote && !isLoading && !isRefetching;
@@ -76,6 +86,7 @@ const useCurrentPricePerVoteWithRefetch = ({
     isRefetchError,
     refetch,
     hasPriceChanged,
+    isPreloading,
   };
 };
 
