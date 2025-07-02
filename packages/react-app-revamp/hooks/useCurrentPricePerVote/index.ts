@@ -12,7 +12,8 @@ interface CurrentPricePerVoteParams {
   version: string;
   enabled?: boolean;
   scopeKey?: string;
-  cacheTime?: number;
+  priceCurveUpdateInterval?: number;
+  votingClose?: Date;
 }
 
 interface CurrentPricePerVoteResponse {
@@ -31,7 +32,8 @@ const useCurrentPricePerVote = ({
   version,
   enabled = true,
   scopeKey,
-  cacheTime = 0,
+  priceCurveUpdateInterval,
+  votingClose,
 }: CurrentPricePerVoteParams): CurrentPricePerVoteResponse => {
   const costToVote = useContestStore(useShallow(state => state.charge?.type.costToVote));
   const isFnSupported = compareVersions(version, VOTING_PRICE_CURVES_VERSION) >= 0;
@@ -44,7 +46,18 @@ const useCurrentPricePerVote = ({
     chainId,
     query: {
       enabled: !!address && !!chainId && !!abi && enabled && isFnSupported,
-      staleTime: cacheTime,
+      staleTime: query => {
+        if (!priceCurveUpdateInterval || !votingClose) return 0;
+
+        const now = Date.now();
+        const votingCloseTime = votingClose.getTime();
+        const votingTimeLeft = Math.max(0, Math.floor((votingCloseTime - now) / 1000));
+        const secondsInCycle = votingTimeLeft % priceCurveUpdateInterval;
+
+        const timeUntilNextUpdate = Math.max(1, priceCurveUpdateInterval - secondsInCycle - 2);
+
+        return timeUntilNextUpdate * 1000;
+      },
       select: data => {
         return formatEther(data as bigint);
       },

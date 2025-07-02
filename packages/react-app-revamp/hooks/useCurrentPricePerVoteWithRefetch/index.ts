@@ -46,9 +46,6 @@ const useCurrentPricePerVoteWithRefetch = ({
   const votingCloseTime = votingClose.getTime();
   const votingTimeLeft = Math.max(0, Math.floor((votingCloseTime - now) / 1000));
   const secondsInCycle = priceCurveUpdateInterval ? votingTimeLeft % priceCurveUpdateInterval : 0;
-  const cacheTimeUntilNextUpdate = priceCurveUpdateInterval
-    ? Math.max(1, priceCurveUpdateInterval - secondsInCycle)
-    : 0;
 
   const {
     currentPricePerVote,
@@ -64,7 +61,8 @@ const useCurrentPricePerVoteWithRefetch = ({
     version,
     enabled,
     scopeKey: "useCurrentPricePerVoteWithRefetch",
-    cacheTime: cacheTimeUntilNextUpdate * 1000,
+    priceCurveUpdateInterval,
+    votingClose,
   });
 
   const [isPreloading, setIsPreloading] = useState(false);
