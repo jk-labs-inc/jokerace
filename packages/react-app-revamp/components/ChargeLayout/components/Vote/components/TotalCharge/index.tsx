@@ -26,8 +26,6 @@ const TotalCharge: React.FC<TotalChargeProps> = ({ charge: contestCharge, amount
     chainId: contestInfo.contestChainId,
     version,
     votingClose,
-    //TODO: add fn to fetch interval
-    priceCurveUpdateInterval: 60,
   });
 
   useEffect(() => {

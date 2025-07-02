@@ -5,13 +5,7 @@ import Skeleton from "react-loading-skeleton";
 import { useShallow } from "zustand/react/shallow";
 import { motion } from "motion/react";
 
-interface VotingQualifierAnyoneCanVoteExponentialLivePriceProps {
-  priceCurveUpdateInterval: number;
-}
-
-const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC<VotingQualifierAnyoneCanVoteExponentialLivePriceProps> = ({
-  priceCurveUpdateInterval,
-}) => {
+const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC = () => {
   const { contestInfoData, contestAbi, version, votingClose } = useContestStore(
     useShallow(state => ({
       contestInfoData: state.contestInfoData,
@@ -28,7 +22,6 @@ const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC<VotingQualifierAnyone
       chainId: contestInfoData.contestChainId,
       version,
       votingClose,
-      priceCurveUpdateInterval,
     });
 
   if (isError) {

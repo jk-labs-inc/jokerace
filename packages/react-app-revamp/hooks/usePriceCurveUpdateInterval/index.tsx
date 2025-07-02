@@ -15,7 +15,12 @@ interface PriceCurveUpdateIntervalResponse {
   isError: boolean;
 }
 
-const usePriceCurveUpdateInterval = ({ address, abi, chainId, enabled = true }: PriceCurveUpdateIntervalParams): PriceCurveUpdateIntervalResponse => {
+const usePriceCurveUpdateInterval = ({
+  address,
+  abi,
+  chainId,
+  enabled = true,
+}: PriceCurveUpdateIntervalParams): PriceCurveUpdateIntervalResponse => {
   const {
     data: contractPriceCurveUpdateInterval,
     isLoading,
@@ -24,10 +29,11 @@ const usePriceCurveUpdateInterval = ({ address, abi, chainId, enabled = true }: 
     address: address as `0x${string}`,
     abi,
     functionName: "PRICE_CURVE_UPDATE_INTERVAL",
+    scopeKey: "priceCurveUpdateInterval",
     chainId,
     query: {
       select: data => {
-        return Number(data)
+        return Number(data);
       },
       enabled: !!address && !!abi && enabled,
     },

@@ -4,9 +4,12 @@ import { ButtonSize } from "@components/UI/ButtonV3";
 import VotingWidget from "@components/Voting";
 import { getNativeTokenSymbol } from "@helpers/nativeToken";
 import { getTotalCharge } from "@helpers/totalCharge";
+import { useContestStore } from "@hooks/useContest/store";
+import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import { Charge } from "@hooks/useDeployContest/types";
 import { FC, useRef, useState } from "react";
 import ReactDOM from "react-dom";
+import { useShallow } from "zustand/shallow";
 
 interface SubmissionPageMobileVotingProps {
   isOpen: boolean;
@@ -35,18 +38,32 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
   currentUserAvailableVotesAmount,
   onVote,
 }) => {
+  const { contestAbi, votesClose } = useContestStore(
+    useShallow(state => ({
+      contestAbi: state.contestAbi,
+      votesClose: state.votesClose,
+    })),
+  );
   const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
   const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
   const [totalCharge, setTotalCharge] = useState("");
   const nativeToken = getNativeTokenSymbol(contestInfo.chain);
   const backdropRef = useRef<HTMLDivElement>(null);
   const [showOnrampModal, setShowOnrampModal] = useState(false);
+  const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged, isPreloading } =
+    useCurrentPricePerVoteWithRefetch({
+      address: contestInfo.address,
+      abi: contestAbi,
+      chainId: contestInfo.chainId,
+      version: contestInfo.version,
+      votingClose: votesClose,
+    });
 
   const onSubmitCastVotes = (amount: number) => {
     if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
       setShowMaxVoteConfirmation(true);
       setPendingVote({ amount });
-      setTotalCharge(getTotalCharge(amount, charge?.type.costToVote ?? 0));
+      setTotalCharge(getTotalCharge(amount, currentPricePerVote));
       return;
     }
 

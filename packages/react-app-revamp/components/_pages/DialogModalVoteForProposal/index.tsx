@@ -6,7 +6,6 @@ import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import DialogMaxVotesAlert from "@components/_pages/DialogMaxVotesAlert";
-import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { getNativeTokenSymbol } from "@helpers/nativeToken";
 import ordinalize from "@helpers/ordinalize";
@@ -14,12 +13,12 @@ import { getTotalCharge } from "@helpers/totalCharge";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
+import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import { VoteType } from "@hooks/useDeployContest/types";
-import useRewardsModule from "@hooks/useRewards";
 import { useUserStore } from "@hooks/useUser/store";
-import { usePathname } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/react/shallow";
 import { Proposal } from "../ProposalContent";
 
 interface DialogModalVoteForProposalProps {
@@ -29,26 +28,57 @@ interface DialogModalVoteForProposalProps {
 }
 
 export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = ({ isOpen, setIsOpen, proposal }) => {
-  const asPath = usePathname();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const { chainName } = extractPathSegments(asPath ?? "");
-  const { contestPrompt, charge: contestCharge } = useContestStore(state => state);
-  const { currentUserAvailableVotesAmount } = useUserStore(state => state);
+  const {
+    contestPrompt,
+    charge: contestCharge,
+    contestInfoData,
+    contestAbi,
+    contestVersion,
+    votingClose,
+  } = useContestStore(
+    useShallow(state => ({
+      contestPrompt: state.contestPrompt,
+      charge: state.charge,
+      contestInfoData: state.contestInfoData,
+      contestAbi: state.contestAbi,
+      contestVersion: state.version,
+      votingClose: state.votesClose,
+    })),
+  );
+  const { currentUserAvailableVotesAmount } = useUserStore(
+    useShallow(state => ({
+      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
+    })),
+  );
   const isPayPerVote = contestCharge?.voteType === VoteType.PerVote;
   const { castVotes, isSuccess } = useCastVotes();
   const [readFullEntry, setReadFullEntry] = useState(false);
   const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
   const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
   const [totalCharge, setTotalCharge] = useState("");
-  const nativeToken = getNativeTokenSymbol(chainName);
+  const nativeToken = getNativeTokenSymbol(contestInfoData.contestChainName);
   const [showOnramp, setShowOnramp] = useState(false);
-  const { data: rewards } = useRewardsModule();
+  const {
+    currentPricePerVote,
+    isLoading: isCurrentPricePerVoteLoading,
+    isError: isCurrentPricePerVoteError,
+    isPreloading: isCurrentPricePerVotePreloading,
+    isRefetching: isCurrentPricePerVoteRefetching,
+    isRefetchError: isCurrentPricePerVoteRefetchError,
+  } = useCurrentPricePerVoteWithRefetch({
+    address: contestInfoData.contestAddress,
+    abi: contestAbi,
+    chainId: contestInfoData.contestChainId,
+    version: contestVersion,
+    votingClose: votingClose,
+  });
 
   const onSubmitCastVotes = (amount: number) => {
     if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
       setShowMaxVoteConfirmation(true);
       setPendingVote({ amount });
-      setTotalCharge(getTotalCharge(amount, contestCharge?.type.costToVote ?? 0));
+      setTotalCharge(getTotalCharge(amount, currentPricePerVote));
       return;
     }
 
@@ -86,11 +116,11 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   return (
     <DialogModalV4 isOpen={isOpen} onClose={handleModalClose}>
       <div className="flex flex-col gap-4 pt-6 pb-4 md:py-16 px-6 md:pl-32 md:pr-16">
-        {showOnramp && nativeToken && chainName ? (
+        {showOnramp && nativeToken && contestInfoData.contestChainName ? (
           <div className="animate-swingInLeft">
             <Onramp
               className="md:w-[400px]"
-              chain={chainName}
+              chain={contestInfoData.contestChainName}
               asset={nativeToken ?? ""}
               onGoBack={() => setShowOnramp(false)}
             />

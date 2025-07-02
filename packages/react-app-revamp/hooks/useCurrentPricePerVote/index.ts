@@ -11,6 +11,8 @@ interface CurrentPricePerVoteParams {
   chainId: number;
   version: string;
   enabled?: boolean;
+  scopeKey?: string;
+  cacheTime?: number;
 }
 
 interface CurrentPricePerVoteResponse {
@@ -28,6 +30,8 @@ const useCurrentPricePerVote = ({
   chainId,
   version,
   enabled = true,
+  scopeKey,
+  cacheTime = 0,
 }: CurrentPricePerVoteParams): CurrentPricePerVoteResponse => {
   const costToVote = useContestStore(useShallow(state => state.charge?.type.costToVote));
   const isFnSupported = compareVersions(version, VOTING_PRICE_CURVES_VERSION) >= 0;
@@ -36,11 +40,11 @@ const useCurrentPricePerVote = ({
     address: address as `0x${string}`,
     abi,
     functionName: "currentPricePerVote",
-    scopeKey: "currentPricePerVote",
+    scopeKey: scopeKey,
     chainId,
     query: {
       enabled: !!address && !!chainId && !!abi && enabled && isFnSupported,
-      staleTime: 0,
+      staleTime: cacheTime,
       select: data => {
         return formatEther(data as bigint);
       },
@@ -48,7 +52,7 @@ const useCurrentPricePerVote = ({
   });
 
   return {
-    currentPricePerVote: isFnSupported ? data ?? "0" : costToVote?.toString() ?? "0",
+    currentPricePerVote: isFnSupported ? data ?? "0" : formatEther(BigInt(costToVote ?? 0)),
     isLoading,
     isError,
     isRefetching,

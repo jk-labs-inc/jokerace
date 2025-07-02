@@ -43,7 +43,7 @@ const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteEx
           priceCurveUpdateInterval={priceCurveUpdateInterval}
         />
       </div>
-      <VotingQualifierAnyoneCanVoteExponentialVotePrice priceCurveUpdateInterval={priceCurveUpdateInterval} />
+      <VotingQualifierAnyoneCanVoteExponentialVotePrice />
     </div>
   );
 };

@@ -29,6 +29,7 @@ import ListProposalVotes from "../ListProposalVotes";
 import DialogModalProposalHeader from "./components/Header";
 import DialogModalProposalVoteCountdown from "./components/VoteCountdown";
 import { useShallow } from "zustand/shallow";
+import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -86,7 +87,15 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
   const totalProposals = listProposalsIds.length;
-  const { charge, votesOpen, contestAuthorEthereumAddress } = useContestStore(state => state);
+  const { charge, votesOpen, votesClose, contestAuthorEthereumAddress, contestAbi } = useContestStore(
+    useShallow(state => ({
+      charge: state.charge,
+      votesOpen: state.votesOpen,
+      votesClose: state.votesClose,
+      contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
+      contestAbi: state.contestAbi,
+    })),
+  );
   const isPayPerVote = charge?.voteType === VoteType.PerVote;
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
@@ -107,6 +116,13 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
     contestStatus,
   );
   const isUserOnCorrectChain = userChainId === contestInfo.chainId;
+  const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged } = useCurrentPricePerVoteWithRefetch({
+    address: contestInfo.address,
+    abi: contestAbi,
+    chainId: contestInfo.chainId,
+    version: contestInfo.version,
+    votingClose: votesClose,
+  });
 
   const tabsOptionalInfo = {
     ...(addressesVoted?.length > 0 && { [DialogTab.Voters]: addressesVoted.length }),
@@ -125,7 +141,8 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
     if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
       setShowMaxVoteConfirmation(true);
       setPendingVote({ amount, isUpvote });
-      setTotalCharge(getTotalCharge(amount, charge?.type.costToVote ?? 0));
+      //TODO: figure out loading/error states
+      setTotalCharge(getTotalCharge(amount, currentPricePerVote));
       return;
     }
 

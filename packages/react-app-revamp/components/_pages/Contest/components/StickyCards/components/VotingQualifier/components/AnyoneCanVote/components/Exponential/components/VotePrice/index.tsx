@@ -4,13 +4,7 @@ import { useShallow } from "zustand/react/shallow";
 import VotingQualifierAnyoneCanVoteExponentialEndPrice from "./components/EndPrice";
 import VotingQualifierAnyoneCanVoteExponentialLivePrice from "./components/LivePrice";
 
-interface VotingQualifierAnyoneCanVoteExponentialVotePriceProps {
-  priceCurveUpdateInterval: number;
-}
-
-const VotingQualifierAnyoneCanVoteExponentialVotePrice: FC<VotingQualifierAnyoneCanVoteExponentialVotePriceProps> = ({
-  priceCurveUpdateInterval,
-}) => {
+const VotingQualifierAnyoneCanVoteExponentialVotePrice: FC = () => {
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
 
@@ -18,7 +12,7 @@ const VotingQualifierAnyoneCanVoteExponentialVotePrice: FC<VotingQualifierAnyone
     return <VotingQualifierAnyoneCanVoteExponentialEndPrice />;
   }
 
-  return <VotingQualifierAnyoneCanVoteExponentialLivePrice priceCurveUpdateInterval={priceCurveUpdateInterval} />;
+  return <VotingQualifierAnyoneCanVoteExponentialLivePrice />;
 };
 
 export default VotingQualifierAnyoneCanVoteExponentialVotePrice;

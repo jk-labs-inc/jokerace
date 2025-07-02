@@ -22,6 +22,7 @@ const CreateVotingRadioGroup = () => {
     keys.forEach(key => setVotingMerkle(key, value));
   };
 
+  //TODO: revert design for options where one option is faded
   const tabOptions: RadioOption[] = [
     {
       label: "upload a spreadsheet",

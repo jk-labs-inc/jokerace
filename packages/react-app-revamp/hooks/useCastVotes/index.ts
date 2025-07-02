@@ -27,6 +27,9 @@ import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
+import { useShallow } from "zustand/shallow";
+import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
+import { useCallback } from "react";
 
 interface UserAnalyticsParams {
   contestAddress: string;
@@ -52,7 +55,21 @@ interface RewardsAnalyticsParams {
 interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsParams {}
 
 export function useCastVotes() {
-  const { charge, contestAbi: abi, version, votesClose, anyoneCanVote } = useContestStore(state => state);
+  const {
+    charge,
+    contestAbi: abi,
+    version,
+    votesClose,
+    anyoneCanVote,
+  } = useContestStore(
+    useShallow(state => ({
+      charge: state.charge,
+      contestAbi: state.contestAbi,
+      version: state.version,
+      votesClose: state.votesClose,
+      anyoneCanVote: state.anyoneCanVote,
+    })),
+  );
   const { data: rewards } = useRewardsModule();
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
@@ -96,27 +113,30 @@ export function useCastVotes() {
     currentPricePerVote,
     isLoading: isLoadingCurrentPricePerVote,
     isError: isErrorCurrentPricePerVote,
-  } = useCurrentPricePerVote({
+  } = useCurrentPricePerVoteWithRefetch({
     address: contestAddress,
     abi: abi,
     chainId: chainId,
     version,
+    votingClose: votesClose,
   });
 
-  const calculateChargeAmount = (amountOfVotes: number) => {
-    if (!charge) return undefined;
+  const calculateChargeAmount = useCallback(
+    (amountOfVotes: number) => {
+      if (!charge) return undefined;
 
-    if (charge.voteType === VoteType.PerTransaction) {
-      return BigInt(charge.type.costToVote);
-    }
+      if (charge.voteType === VoteType.PerTransaction) {
+        return BigInt(charge.type.costToVote);
+      }
 
-    // Convert the ETH string back to Wei (BigInt) before calculation
-    //TODO: check if this is correct
-    const pricePerVoteInWei = parseEther(currentPricePerVote);
-    const totalCost = BigInt(amountOfVotes) * pricePerVoteInWei;
+      const pricePerVoteInWei = parseEther(currentPricePerVote);
+      const totalCost = BigInt(amountOfVotes) * pricePerVoteInWei;
 
-    return totalCost;
-  };
+
+      return totalCost;
+    },
+    [charge, currentPricePerVote],
+  );
 
   const formatChargeAmount = (amount: number) => {
     return Number(formatEther(BigInt(amount)));

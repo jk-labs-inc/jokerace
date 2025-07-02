@@ -1,5 +1,6 @@
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import { useContestStore } from "@hooks/useContest/store";
+import Skeleton from "react-loading-skeleton";
 import { useShallow } from "zustand/react/shallow";
 
 const ChargeInfoExponential = () => {
@@ -12,21 +13,28 @@ const ChargeInfoExponential = () => {
     })),
   );
 
-  const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged } = useCurrentPricePerVoteWithRefetch({
-    address: contestInfo.contestAddress,
-    abi: contestAbi,
-    chainId: contestInfo.contestChainId,
-    version,
-    votingClose,
-    //TODO: add fn to fetch interval
-    priceCurveUpdateInterval: 60,
-  });
+  const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged, isPreloading } =
+    useCurrentPricePerVoteWithRefetch({
+      address: contestInfo.contestAddress,
+      abi: contestAbi,
+      chainId: contestInfo.contestChainId,
+      version,
+      votingClose,
+    });
+
+  if (isError) {
+    return <div className="text-red-500">Failed to load price</div>;
+  }
+
+  if (isLoading || isRefetching || isPreloading) {
+    return <Skeleton width={100} height={24} baseColor="#6A6A6A" highlightColor="#BB65FF" />;
+  }
+
   return (
-    <div>
-      <p>
-        {currentPricePerVote} {contestInfo.contestChainNativeCurrencySymbol}
-      </p>
-    </div>
+    <p>
+      {/* TODO: figure out how we wanna timer for the price per vote */}
+      {currentPricePerVote} {contestInfo.contestChainNativeCurrencySymbol}
+    </p>
   );
 };
 
