@@ -1,7 +1,8 @@
 import { useContestStore } from "@hooks/useContest/store";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { compareVersions } from "compare-versions";
 import { VOTING_PRICE_CURVES_VERSION } from "constants/versions";
-import { Abi, formatEther } from "viem";
+import { Abi, formatEther, ReadContractErrorType } from "viem";
 import { useReadContract } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
@@ -22,7 +23,9 @@ interface CurrentPricePerVoteResponse {
   isError: boolean;
   isRefetching: boolean;
   isRefetchError: boolean;
-  refetch: () => void;
+  refetch: (
+    options?: RefetchOptions | undefined,
+  ) => Promise<QueryObserverResult<string | undefined, ReadContractErrorType>>;
 }
 
 const useCurrentPricePerVote = ({

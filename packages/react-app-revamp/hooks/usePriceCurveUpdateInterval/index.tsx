@@ -1,5 +1,6 @@
 import { PriceCurveType } from "@hooks/useDeployContest/types";
-import { Abi } from "viem";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import { Abi, ReadContractErrorType } from "viem";
 import { useReadContract } from "wagmi";
 
 interface PriceCurveUpdateIntervalParams {
@@ -13,6 +14,9 @@ interface PriceCurveUpdateIntervalResponse {
   priceCurveUpdateInterval: number;
   isLoading: boolean;
   isError: boolean;
+  refetch: (
+    options?: RefetchOptions | undefined,
+  ) => Promise<QueryObserverResult<number | undefined, ReadContractErrorType>>;
 }
 
 const usePriceCurveUpdateInterval = ({
@@ -25,6 +29,7 @@ const usePriceCurveUpdateInterval = ({
     data: contractPriceCurveUpdateInterval,
     isLoading,
     isError,
+    refetch,
   } = useReadContract({
     address: address as `0x${string}`,
     abi,
@@ -32,6 +37,7 @@ const usePriceCurveUpdateInterval = ({
     scopeKey: "priceCurveUpdateInterval",
     chainId,
     query: {
+      staleTime: Infinity,
       select: data => {
         return Number(data);
       },
@@ -43,6 +49,7 @@ const usePriceCurveUpdateInterval = ({
     priceCurveUpdateInterval: contractPriceCurveUpdateInterval as number,
     isLoading,
     isError,
+    refetch,
   };
 };
 

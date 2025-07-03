@@ -4,6 +4,8 @@ import VotingQualifierAnyoneCanVoteExponentialVotePrice from "./components/VoteP
 import { useContestStore } from "@hooks/useContest/store";
 import { useShallow } from "zustand/react/shallow";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
+import VotingQualifierSkeleton from "../../../../shared/Skeleton";
+import VotingQualifierError from "../../../../shared/Error";
 
 interface VotingQualifierAnyoneCanVoteExponentialProps {
   votingTimeLeft: number;
@@ -18,18 +20,18 @@ const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteEx
       contestAbi: state.contestAbi,
     })),
   );
-  const { priceCurveUpdateInterval, isLoading, isError } = usePriceCurveUpdateInterval({
+  const { priceCurveUpdateInterval, isLoading, isError, refetch } = usePriceCurveUpdateInterval({
     address: contestInfoData.contestAddress,
     abi: contestAbi,
     chainId: contestInfoData.contestChainId,
   });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <VotingQualifierSkeleton />;
   }
 
   if (isError) {
-    return <div>Error</div>;
+    return <VotingQualifierError onClick={() => refetch()} />;
   }
 
   return (

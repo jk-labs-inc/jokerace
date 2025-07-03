@@ -1,5 +1,4 @@
 import { ArrowLongUpIcon } from "@heroicons/react/24/outline";
-import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -21,6 +20,11 @@ const VotingQualifierAnyoneCanVoteExponentialTimer: FC<VotingQualifierAnyoneCanV
 
   if (!isVotingOpen) {
     return <p className="text-[12px] text-neutral-9">(start - finish of voting)</p>;
+  }
+
+  // Hide timer in the last 60 seconds of voting
+  if (votingTimeLeft <= 60) {
+    return null;
   }
 
   return (

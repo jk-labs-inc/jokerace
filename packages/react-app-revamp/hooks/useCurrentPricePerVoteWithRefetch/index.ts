@@ -1,7 +1,8 @@
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { Abi } from "viem";
+import { Abi, ReadContractErrorType } from "viem";
 
 interface CurrentPricePerVoteWithRefetchParams {
   address: string;
@@ -18,11 +19,14 @@ interface CurrentPricePerVoteWithRefetchResponse {
   isError: boolean;
   isRefetching: boolean;
   isRefetchError: boolean;
-  refetch: () => void;
   hasPriceChanged: boolean;
   isPreloading: boolean;
+  refetch: (
+    options?: RefetchOptions | undefined,
+  ) => Promise<QueryObserverResult<string | undefined, ReadContractErrorType>>;
 }
 
+//TODO check why initially when voting is open, the price is not updated
 const useCurrentPricePerVoteWithRefetch = ({
   address,
   abi,
@@ -84,7 +88,7 @@ const useCurrentPricePerVoteWithRefetch = ({
     }
 
     prevSecondsRef.current = secondsInCycle;
-  }, [secondsInCycle, priceCurveUpdateInterval, refetch, isIntervalLoading]);
+  }, [secondsInCycle, priceCurveUpdateInterval, refetch, isIntervalLoading, votingTimeLeft]);
 
   useEffect(() => {
     if (isRefetching) {

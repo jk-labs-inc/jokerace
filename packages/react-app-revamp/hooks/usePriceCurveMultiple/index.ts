@@ -1,4 +1,5 @@
-import { Abi, formatEther } from "viem";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import { Abi, formatEther, ReadContractErrorType } from "viem";
 import { useReadContract } from "wagmi";
 
 interface PriceCurveMultipleParams {
@@ -12,6 +13,9 @@ interface PriceCurveMultipleResponse {
   priceCurveMultiple: string;
   isLoading: boolean;
   isError: boolean;
+  refetch: (
+    options?: RefetchOptions | undefined,
+  ) => Promise<QueryObserverResult<string | undefined, ReadContractErrorType>>;
 }
 
 const usePriceCurveMultiple = ({
@@ -24,12 +28,14 @@ const usePriceCurveMultiple = ({
     data: contractPriceCurveMultiple,
     isLoading,
     isError,
+    refetch,
   } = useReadContract({
     address: address as `0x${string}`,
     abi,
     functionName: "multiple",
     chainId,
     query: {
+      staleTime: Infinity,
       select: data => {
         return formatEther(data as bigint);
       },
@@ -41,6 +47,7 @@ const usePriceCurveMultiple = ({
     priceCurveMultiple: contractPriceCurveMultiple ?? "0",
     isLoading,
     isError,
+    refetch,
   };
 };
 

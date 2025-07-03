@@ -2,6 +2,7 @@ import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWith
 import { useContestStore } from "@hooks/useContest/store";
 import Skeleton from "react-loading-skeleton";
 import { useShallow } from "zustand/react/shallow";
+import VotingQualifierError from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Error";
 
 const ChargeInfoExponential = () => {
   const { contestInfo, contestAbi, version, votingClose } = useContestStore(
@@ -13,7 +14,7 @@ const ChargeInfoExponential = () => {
     })),
   );
 
-  const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged, isPreloading } =
+  const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged, isPreloading, refetch } =
     useCurrentPricePerVoteWithRefetch({
       address: contestInfo.contestAddress,
       abi: contestAbi,
@@ -23,7 +24,7 @@ const ChargeInfoExponential = () => {
     });
 
   if (isError) {
-    return <div className="text-red-500">Failed to load price</div>;
+    return <VotingQualifierError onClick={() => refetch()} />;
   }
 
   if (isLoading || isRefetching || isPreloading) {
@@ -32,7 +33,7 @@ const ChargeInfoExponential = () => {
 
   return (
     <p>
-      {/* TODO: figure out how we wanna timer for the price per vote */}
+      {/* TODO: figure out how we wanna style the timer for the price per vote */}
       {currentPricePerVote} {contestInfo.contestChainNativeCurrencySymbol}
     </p>
   );

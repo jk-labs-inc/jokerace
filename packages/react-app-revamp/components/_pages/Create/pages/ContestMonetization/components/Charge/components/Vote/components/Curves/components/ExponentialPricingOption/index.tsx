@@ -28,7 +28,6 @@ const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnit
       })),
     );
 
-  //TODO: check why this is triggered when flat option is enabled (prolly because costToVote is triggered)
   useEffect(() => {
     if (!costToVoteEndPrice || priceCurveType === PriceCurveType.Flat) return;
 

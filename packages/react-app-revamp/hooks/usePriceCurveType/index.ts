@@ -1,5 +1,6 @@
 import { PriceCurveType } from "@hooks/useDeployContest/types";
-import { Abi } from "viem";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import { Abi, ReadContractErrorType } from "viem";
 import { useReadContract } from "wagmi";
 
 interface PriceCurveTypeParams {
@@ -12,17 +13,26 @@ interface PriceCurveTypeResponse {
   priceCurveType: PriceCurveType;
   isLoading: boolean;
   isError: boolean;
+  refetch: (
+    options?: RefetchOptions | undefined,
+  ) => Promise<QueryObserverResult<PriceCurveType | undefined, ReadContractErrorType>>;
 }
 
 const usePriceCurveType = ({ address, abi, chainId }: PriceCurveTypeParams): PriceCurveTypeResponse => {
-  const { data: contractPriceCurveType, isLoading, isError } = useReadContract({
+  const {
+    data: contractPriceCurveType,
+    refetch,
+    isLoading,
+    isError,
+  } = useReadContract({
     address: address as `0x${string}`,
     abi,
-    functionName: 'priceCurveType',
-    scopeKey: 'priceCurveType',
+    functionName: "priceCurveType",
+    scopeKey: "priceCurveType",
     chainId,
     query: {
-      select: (data) => {
+      staleTime: Infinity,
+      select: data => {
         if (data === 0n || data === 0) {
           return PriceCurveType.Flat;
         } else if (data === 1n || data === 1) {
@@ -33,12 +43,12 @@ const usePriceCurveType = ({ address, abi, chainId }: PriceCurveTypeParams): Pri
     },
   });
 
-
-   return {
+  return {
     priceCurveType: contractPriceCurveType as PriceCurveType,
+    refetch,
     isLoading,
     isError,
-   }
+  };
 };
 
 export default usePriceCurveType;

@@ -1,3 +1,5 @@
+import VotingQualifierError from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Error";
+import VotingQualifierSkeleton from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Skeleton";
 import { calculateEndPrice } from "@helpers/exponentialMultiplier";
 import { formatBalance } from "@helpers/formatBalance";
 import { useContestStore } from "@hooks/useContest/store";
@@ -14,19 +16,18 @@ const VotingQualifierAnyoneCanVoteExponentialEndPrice: FC = () => {
       contestAbi: state.contestAbi,
     })),
   );
-  const { priceCurveMultiple, isLoading, isError } = usePriceCurveMultiple({
+  const { priceCurveMultiple, isLoading, isError, refetch } = usePriceCurveMultiple({
     address: contestInfoData.contestAddress,
     abi: contestAbi,
     chainId: contestInfoData.contestChainId,
   });
 
-  //TODO: add loading
-  if (isLoading) return <p className="text-[24px] text-neutral-11 font-bold">Loading...</p>;
-  if (isError) return <p className="text-[24px] text-neutral-11 font-bold">Error</p>;
+
+  if (isLoading) return <VotingQualifierSkeleton />;
+  if (isError) return <VotingQualifierError onClick={() => refetch()} />;
 
   return (
     <p className="text-[16px] md:text-[24px] text-neutral-11 font-bold">
-      {/* //TODO: add formatting */}
       {formatBalance(formatEther(BigInt(costToVote ?? 0)))} -{" "}
       {formatBalance(formatEther(calculateEndPrice(costToVote ?? 0, Number(priceCurveMultiple))))}
       <span className="text-[16px] text-neutral-9"> {contestInfoData.contestChainNativeCurrencySymbol}</span>
