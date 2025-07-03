@@ -7,6 +7,7 @@ import { PriceCurveType } from "@hooks/useDeployContest/types";
 export interface ExponentialCurveData {
   updateInterval: number;
   contestDeadline: number;
+  voteStart: number;
   isLoaded: boolean;
 }
 

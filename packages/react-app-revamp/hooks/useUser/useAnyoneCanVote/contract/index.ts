@@ -33,15 +33,24 @@ export const fetchExponentialCurveData = async (
           functionName: "contestDeadline",
           args: [],
         },
+        {
+          address: address as `0x${string}`,
+          abi: abi,
+          chainId: chainId,
+          functionName: "voteStart",
+          args: [],
+        },
       ],
     });
 
     const updateInterval = Number(results[0].result);
     const contestDeadline = Number(results[1].result);
+    const voteStart = Number(results[2].result);
 
     return {
       updateInterval,
       contestDeadline,
+      voteStart,
       isLoaded: true,
     };
   } catch (error) {
@@ -49,6 +58,7 @@ export const fetchExponentialCurveData = async (
     return {
       updateInterval: 0,
       contestDeadline: 0,
+      voteStart: 0,
       isLoaded: false,
     };
   }

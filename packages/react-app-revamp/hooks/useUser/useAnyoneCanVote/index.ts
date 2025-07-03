@@ -18,6 +18,7 @@ export const useAnyoneCanVote = (
   const [exponentialCurveData, setExponentialCurveData] = useState<ExponentialCurveData>({
     updateInterval: 0,
     contestDeadline: 0,
+    voteStart: 0,
     isLoaded: false,
   });
 
@@ -80,7 +81,7 @@ export const useAnyoneCanVote = (
             const curveData = await fetchExponentialCurveData(address, abi, chainId);
             setExponentialCurveData(curveData);
 
-            // Set up periodic updates with the fresh data
+            // Set up smart updates that handle both pre-voting and voting states
             if (curveData.isLoaded) {
               setupExponentialUpdates(
                 address,
@@ -93,7 +94,7 @@ export const useAnyoneCanVote = (
               );
             }
           } else {
-            // Data already loaded, just set up updates
+            // Data already loaded, set up smart updates
             setupExponentialUpdates(
               address,
               userAddress,

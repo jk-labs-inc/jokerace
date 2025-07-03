@@ -5,7 +5,8 @@ import { ExponentialCurveData, UserVoteQualificationSetter } from "../types";
 import { calculateCycleInfo, hasVotingEnded, shouldUpdateVotes } from "../utils";
 
 /**
- * Set up periodic updates for exponential price curves
+ * Set up smart periodic updates for exponential price curves
+ * Handles both "waiting for voting to start" and "voting in progress" states
  * @param address - Contract address
  * @param userAddress - User wallet address
  * @param chainId - Chain ID
@@ -23,30 +24,37 @@ export const setupExponentialUpdates = (
   setUserVoteQualification: UserVoteQualificationSetter,
   updateIntervalRef: RefObject<NodeJS.Timeout | null>,
 ) => {
-  const { updateInterval, contestDeadline } = curveData;
+  const { updateInterval, contestDeadline, voteStart } = curveData;
 
-  if (!updateInterval || !contestDeadline) return;
+  if (!updateInterval || !contestDeadline || !voteStart) return;
 
   // Clear any existing interval
   if (updateIntervalRef.current) {
     clearInterval(updateIntervalRef.current);
   }
 
-  // Set up new interval to check for price updates
-  updateIntervalRef.current = setInterval(async () => {
-    const { votingTimeLeft, secondsInCycle } = calculateCycleInfo(contestDeadline, updateInterval);
+  // Check if voting has already started
+  const currentTime = Math.floor(Date.now() / 1000);
+  const hasVotingStarted = voteStart <= currentTime;
 
-    // If voting has ended, clear the interval
-    if (hasVotingEnded(votingTimeLeft)) {
-      if (updateIntervalRef.current) {
-        clearInterval(updateIntervalRef.current);
-        updateIntervalRef.current = null;
-      }
+  // If voting has already started, do immediate calculation
+  if (hasVotingStarted) {
+    calculateUserVoteQualification(address, userAddress, chainId, abi, "currentPricePerVote", setUserVoteQualification);
+  }
+
+  // Set up interval for future updates
+  updateIntervalRef.current = setInterval(async () => {
+    const now = Math.floor(Date.now() / 1000);
+    const votingStarted = voteStart <= now;
+
+    // If voting hasn't started yet, just wait
+    if (!votingStarted) {
       return;
     }
 
-    // Update user votes at the start of each cycle
-    if (shouldUpdateVotes(secondsInCycle, updateInterval)) {
+    // If voting just started this cycle, do immediate calculation
+    const timeSinceVotingStart = now - voteStart;
+    if (timeSinceVotingStart >= 0 && timeSinceVotingStart < 1) {
       await calculateUserVoteQualification(
         address,
         userAddress,
@@ -55,6 +63,34 @@ export const setupExponentialUpdates = (
         "currentPricePerVote",
         setUserVoteQualification,
       );
+      return;
+    }
+
+    // Check if voting has ended
+    const { votingTimeLeft, secondsInCycle } = calculateCycleInfo(contestDeadline, updateInterval);
+
+    if (hasVotingEnded(votingTimeLeft)) {
+      // Voting has ended, clean up
+      if (updateIntervalRef.current) {
+        clearInterval(updateIntervalRef.current);
+        updateIntervalRef.current = null;
+      }
+      return;
+    }
+
+    // Update user votes at the start of each cycle with 2-second buffer
+    if (shouldUpdateVotes(secondsInCycle, updateInterval)) {
+      // Add 2-second buffer to ensure smart contract has updated
+      setTimeout(async () => {
+        await calculateUserVoteQualification(
+          address,
+          userAddress,
+          chainId,
+          abi,
+          "currentPricePerVote",
+          setUserVoteQualification,
+        );
+      }, 2000);
     }
   }, 1000); // Check every second
 };
