@@ -4,6 +4,8 @@ import { calculateUserVoteQualification } from "../qualification";
 import { ExponentialCurveData, UserVoteQualificationSetter } from "../types";
 import { calculateCycleInfo, hasVotingEnded, shouldUpdateVotes } from "../utils";
 
+const focusListeners = new Set<() => void>();
+
 /**
  * Set up smart periodic updates for exponential price curves
  * Handles both "waiting for voting to start" and "voting in progress" states
@@ -32,6 +34,34 @@ export const setupExponentialUpdates = (
   if (updateIntervalRef.current) {
     clearInterval(updateIntervalRef.current);
   }
+
+  // Function to calculate votes if voting is active
+  const calculateVotesIfActive = async () => {
+    const now = Math.floor(Date.now() / 1000);
+    const votingStarted = voteStart <= now;
+
+    if (!votingStarted) return;
+
+    const { votingTimeLeft } = calculateCycleInfo(contestDeadline, updateInterval);
+    if (hasVotingEnded(votingTimeLeft)) return;
+
+    await calculateUserVoteQualification(
+      address,
+      userAddress,
+      chainId,
+      abi,
+      "currentPricePerVote",
+      setUserVoteQualification,
+    );
+  };
+
+  // Add window focus event listener (same pattern as TanStack Query)
+  const handleWindowFocus = () => {
+    calculateVotesIfActive();
+  };
+
+  window.addEventListener("focus", handleWindowFocus);
+  focusListeners.add(handleWindowFocus);
 
   // Check if voting has already started
   const currentTime = Math.floor(Date.now() / 1000);
@@ -75,6 +105,9 @@ export const setupExponentialUpdates = (
         clearInterval(updateIntervalRef.current);
         updateIntervalRef.current = null;
       }
+      // Clean up focus event listener
+      window.removeEventListener("focus", handleWindowFocus);
+      focusListeners.delete(handleWindowFocus);
       return;
     }
 
@@ -104,4 +137,10 @@ export const cleanupExponentialUpdates = (updateIntervalRef: RefObject<NodeJS.Ti
     clearInterval(updateIntervalRef.current);
     updateIntervalRef.current = null;
   }
+
+  // Clean up all focus event listeners
+  focusListeners.forEach(listener => {
+    window.removeEventListener("focus", listener);
+  });
+  focusListeners.clear();
 };
