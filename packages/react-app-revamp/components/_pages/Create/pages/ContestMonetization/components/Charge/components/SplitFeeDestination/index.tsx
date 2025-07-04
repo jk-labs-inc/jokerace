@@ -1,4 +1,5 @@
-import CreateRadioButtonsGroup, { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup";
+import CreateRadioButtonsGroup from "@components/_pages/Create/components/RadioButtonsGroup";
+import { RadioButtonsGroupType, RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup/types";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { SplitFeeDestination, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
@@ -122,6 +123,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
       <div className="flex flex-col gap-4">
         <p className="text-[20px] text-neutral-11 font-bold">{splitFeeDestinationTitle}</p>
         <CreateRadioButtonsGroup
+          type={RadioButtonsGroupType.NORMAL}
           options={getOptions()}
           value={selected}
           onChange={handleSplitFeeDestinationTypeChange}

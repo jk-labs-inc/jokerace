@@ -23,9 +23,13 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { EmailType, VotingEmailParams } from "lib/email/types";
 import moment from "moment";
 import { usePathname } from "next/navigation";
-import { formatEther } from "viem";
+import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
+import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
+import { useShallow } from "zustand/shallow";
+import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
+import { useCallback } from "react";
 
 interface UserAnalyticsParams {
   contestAddress: string;
@@ -51,7 +55,21 @@ interface RewardsAnalyticsParams {
 interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsParams {}
 
 export function useCastVotes() {
-  const { charge, contestAbi: abi, version, votesClose, anyoneCanVote } = useContestStore(state => state);
+  const {
+    charge,
+    contestAbi: abi,
+    version,
+    votesClose,
+    anyoneCanVote,
+  } = useContestStore(
+    useShallow(state => ({
+      charge: state.charge,
+      contestAbi: state.contestAbi,
+      version: state.version,
+      votesClose: state.votesClose,
+      anyoneCanVote: state.anyoneCanVote,
+    })),
+  );
   const { data: rewards } = useRewardsModule();
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
@@ -91,20 +109,34 @@ export function useCastVotes() {
   const { sendEmail } = useEmailSend();
   const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
   const contestLink = `${window.location.origin}/contest/${chainName.toLowerCase()}/${contestAddress}`;
+  const {
+    currentPricePerVote,
+    isLoading: isLoadingCurrentPricePerVote,
+    isError: isErrorCurrentPricePerVote,
+  } = useCurrentPricePerVoteWithRefetch({
+    address: contestAddress,
+    abi: abi,
+    chainId: chainId,
+    version,
+    votingClose: votesClose,
+  });
+
+  const calculateChargeAmount = useCallback(
+    (amountOfVotes: number) => {
+      if (!charge) return undefined;
+
+      if (charge.voteType === VoteType.PerTransaction) {
+        return BigInt(charge.type.costToVote);
+      }
+
+      const pricePerVoteInWei = parseEther(currentPricePerVote);
+      const totalCost = BigInt(amountOfVotes) * pricePerVoteInWei;
 
 
-
-  const calculateChargeAmount = (amountOfVotes: number) => {
-    if (!charge) return undefined;
-
-    if (charge.voteType === VoteType.PerTransaction) {
-      return BigInt(charge.type.costToVote);
-    }
-
-    const totalCost = BigInt(amountOfVotes) * BigInt(charge.type.costToVote);
-
-    return totalCost;
-  };
+      return totalCost;
+    },
+    [charge, currentPricePerVote],
+  );
 
   const formatChargeAmount = (amount: number) => {
     return Number(formatEther(BigInt(amount)));
@@ -179,13 +211,12 @@ export function useCastVotes() {
         hash: receipt.transactionHash,
       });
 
-
       const voteCount = (await readContract(config, {
-          address: contestAddress as `0x${string}`,
-          abi: DeployedContestContract.abi,
-          functionName: "proposalVotes",
-          args: [pickedProposal],
-        })) as bigint;
+        address: contestAddress as `0x${string}`,
+        abi: DeployedContestContract.abi,
+        functionName: "proposalVotes",
+        args: [pickedProposal],
+      })) as bigint;
 
       const votes = Number(formatEther(voteCount));
 

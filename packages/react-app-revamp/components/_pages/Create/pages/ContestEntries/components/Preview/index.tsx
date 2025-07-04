@@ -1,6 +1,8 @@
-import { EntryPreview, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useMediaQuery } from "react-responsive";
-import CreateRadioButtonsGroup, { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup";
+import CreateRadioButtonsGroup from "@components/_pages/Create/components/RadioButtonsGroup";
+import { RadioButtonsGroupType, RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup/types";
 
 const ContestEntriesPreview = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -57,7 +59,12 @@ const ContestEntriesPreview = () => {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-[20px] text-neutral-11 font-bold">what kind of preview should a player enter?</p>
-      <CreateRadioButtonsGroup options={options} value={entryPreviewConfig.preview} onChange={handlePreviewChange} />
+      <CreateRadioButtonsGroup
+        type={RadioButtonsGroupType.NORMAL}
+        options={options}
+        value={entryPreviewConfig.preview}
+        onChange={handlePreviewChange}
+      />
     </div>
   );
 };

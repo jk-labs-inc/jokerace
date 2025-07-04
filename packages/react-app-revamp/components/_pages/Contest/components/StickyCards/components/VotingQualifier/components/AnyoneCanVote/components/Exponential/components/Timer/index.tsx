@@ -1,0 +1,40 @@
+import { ArrowLongUpIcon } from "@heroicons/react/24/outline";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { FC } from "react";
+import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/react/shallow";
+
+interface VotingQualifierAnyoneCanVoteExponentialTimerProps {
+  votingTimeLeft: number;
+  priceCurveUpdateInterval: number;
+}
+
+const VotingQualifierAnyoneCanVoteExponentialTimer: FC<VotingQualifierAnyoneCanVoteExponentialTimerProps> = ({
+  votingTimeLeft,
+  priceCurveUpdateInterval,
+}) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
+  const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
+  const secondsUntilNextUpdate = votingTimeLeft % priceCurveUpdateInterval;
+
+  if (!isVotingOpen) {
+    return <p className="text-[12px] text-neutral-9">(start - finish of voting)</p>;
+  }
+
+  // Hide timer in the last 60 seconds of voting
+  if (votingTimeLeft <= 60) {
+    return null;
+  }
+
+  return (
+    <div className="flex items-center gap-1">
+      <ArrowLongUpIcon className="w-4 h-4 text-neutral-9" />
+      <p className="text-[12px] text-neutral-9">
+        in {secondsUntilNextUpdate} {isMobile ? "sec" : "seconds"}
+      </p>
+    </div>
+  );
+};
+
+export default VotingQualifierAnyoneCanVoteExponentialTimer;

@@ -1,5 +1,5 @@
 import { ContestType } from "@components/_pages/Create/types";
-import { EntryPreview } from "@hooks/useDeployContest/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { Charge } from "@hooks/useDeployContest/types";
 import moment from "moment";
 

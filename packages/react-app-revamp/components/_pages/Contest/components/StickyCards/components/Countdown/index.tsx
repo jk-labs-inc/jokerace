@@ -1,14 +1,17 @@
 import { useContestStore } from "@hooks/useContest/store";
-import moment from "moment";
-import { useEffect, useMemo, useState } from "react";
+import { FC, useMemo } from "react";
 import { useMediaQuery } from "react-responsive";
 import ContestCountdownTimeUnit from "./components/TimeUnit";
 
-const formatDuration = (duration: moment.Duration) => {
-  const days = Math.floor(duration.asDays());
-  const hours = Math.floor(duration.asHours()) % 24;
-  const minutes = Math.floor(duration.asMinutes()) % 60;
-  const seconds = Math.floor(duration.asSeconds()) % 60;
+interface ContestCountdownProps {
+  votingTimeLeft: number;
+}
+
+const formatDuration = (totalSeconds: number) => {
+  const days = Math.floor(totalSeconds / (24 * 60 * 60));
+  const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
+  const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+  const seconds = totalSeconds % 60;
   return { days, hours, minutes, seconds };
 };
 
@@ -16,44 +19,31 @@ const pluralizeLabel = (count: number, singular: string, plural: string) => {
   return count === 1 ? singular : plural;
 };
 
-const ContestCountdown = () => {
+const ContestCountdown: FC<ContestCountdownProps> = ({ votingTimeLeft }) => {
   const { submissionsOpen, votesOpen, votesClose } = useContestStore(state => state);
-  const [duration, setDuration] = useState(formatDuration(moment.duration(0)));
-  const [phase, setPhase] = useState("start");
-  const memoizedSubmissionsOpen = useMemo(() => submissionsOpen, [submissionsOpen]);
-  const memoizedVotesOpen = useMemo(() => votesOpen, [votesOpen]);
-  const memoizedVotesClose = useMemo(() => votesClose, [votesClose]);
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
-  useEffect(() => {
-    const calculateDuration = () => {
-      const currentTime = moment();
-      let diffTime;
+  // Determine current phase based on voting time left and dates
+  const { phase, timeLeft } = useMemo(() => {
+    const now = new Date();
 
-      if (currentTime.isBefore(memoizedSubmissionsOpen)) {
-        setPhase("start");
-        diffTime = moment(memoizedSubmissionsOpen).diff(currentTime);
-      } else if (currentTime.isBefore(memoizedVotesOpen)) {
-        setPhase("submit");
-        diffTime = moment(memoizedVotesOpen).diff(currentTime);
-      } else if (currentTime.isBefore(memoizedVotesClose)) {
-        setPhase("vote");
-        diffTime = moment(memoizedVotesClose).diff(currentTime);
-      } else {
-        setDuration(formatDuration(moment.duration(0)));
-        return;
-      }
-      setDuration(formatDuration(moment.duration(diffTime)));
-    };
+    if (now < submissionsOpen) {
+      // Calculate time to submissions
+      const timeToSubmissions = Math.max(0, Math.floor((submissionsOpen.getTime() - now.getTime()) / 1000));
+      return { phase: "start", timeLeft: timeToSubmissions };
+    } else if (now < votesOpen) {
+      // Calculate time to voting
+      const timeToVoting = Math.max(0, Math.floor((votesOpen.getTime() - now.getTime()) / 1000));
+      return { phase: "submit", timeLeft: timeToVoting };
+    } else if (now < votesClose) {
+      // Use the passed voting time left for consistency
+      return { phase: "vote", timeLeft: votingTimeLeft };
+    } else {
+      return { phase: "ended", timeLeft: 0 };
+    }
+  }, [submissionsOpen, votesOpen, votesClose, votingTimeLeft]);
 
-    calculateDuration();
-
-    const interval = setInterval(calculateDuration, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [memoizedSubmissionsOpen, memoizedVotesOpen, memoizedVotesClose]);
+  const duration = formatDuration(timeLeft);
 
   const displayTime = () => {
     const elements = [];
@@ -87,14 +77,29 @@ const ContestCountdown = () => {
         return "Deadline to enter";
       case "vote":
         return "Deadline to vote";
+      case "ended":
+        return "Contest ended";
+      default:
+        return "";
     }
   };
+
+  if (phase === "ended") {
+    return (
+      <div className="w-full flex flex-col gap-2 md:gap-4 border-r-primary-2 border-r-2 pr-3">
+        <div className="flex gap-2">
+          <img src="/contest/timer.svg" width={16} height={16} alt="timer" />
+          <p className="text-[12px] md:text-[16px] font-bold text-neutral-9">Contest ended</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col gap-2 md:gap-4 border-r-primary-2 border-r-2 pr-3">
       <div className="flex gap-2">
         <img src="/contest/timer.svg" width={16} height={16} alt="timer" />
-        <p className="text-[12px] md:text-[16px] uppercase text-neutral-9">{displayText(phase)}</p>
+        <p className="text-[12px] md:text-[16px] font-bold text-neutral-9">{displayText(phase)}</p>
       </div>
       <div className="flex items-center">
         <span className={`font-bold ${phase === "start" ? "text-neutral-9" : "text-neutral-11"} text-neutral-11`}>

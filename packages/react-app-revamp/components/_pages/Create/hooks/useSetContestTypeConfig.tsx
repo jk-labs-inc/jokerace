@@ -12,7 +12,7 @@ import {
 import { useAccount } from "wagmi";
 import { useSubmissionMerkle } from "./useSubmissionMerkle";
 
-const emptyVotingRequirements = {
+export const emptyVotingRequirements = {
   type: "erc20",
   nftType: "erc721",
   chain: "mainnet",

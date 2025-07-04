@@ -1,4 +1,4 @@
-import { EntryPreview } from "@hooks/useDeployContest/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import moment from "moment";
 import { TimingPeriod } from "../../pages/ContestTiming/utils";
 import { ContestType, StepTitle } from "../../types";

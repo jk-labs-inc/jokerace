@@ -1,10 +1,12 @@
-import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MerkleKey } from "@hooks/useDeployContest/slices/contestVotingSlice";
 import { VotingMerkle } from "@hooks/useDeployContest/types";
 import { useState } from "react";
 import CreateVotingRequirements from "../VotingRequirements";
 import CreateVotingCSVUploader from "../VotingUploadCsv";
-import CreateRadioButtonsGroup, { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup";
+import CreateRadioButtonsGroup from "@components/_pages/Create/components/RadioButtonsGroup";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
+import { RadioButtonsGroupType, RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup/types";
 
 const CreateVotingRadioGroup = () => {
   const { setVotingTab, votingTab, setVotingMerkle, step, votingAllowlist } = useDeployContestStore(state => state);
@@ -38,7 +40,12 @@ const CreateVotingRadioGroup = () => {
 
   return (
     <div className="flex flex-col gap-16">
-      <CreateRadioButtonsGroup options={tabOptions} value={votingTab} onChange={onVotingRadioChange} />
+      <CreateRadioButtonsGroup
+        type={RadioButtonsGroupType.FADED}
+        options={tabOptions}
+        value={votingTab}
+        onChange={onVotingRadioChange}
+      />
       <CreateNextButton
         step={step + 1}
         onClick={() => setIsNextClicked(true)}

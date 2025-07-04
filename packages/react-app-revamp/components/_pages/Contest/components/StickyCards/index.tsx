@@ -1,13 +1,17 @@
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { useContestStore } from "@hooks/useContest/store";
+import { useCountdownTimer } from "@hooks/useTimer";
+import { useShallow } from "zustand/shallow";
 import ContestCountdown from "./components/Countdown";
 import VotingContestQualifier from "./components/VotingQualifier";
-import { useShallow } from "zustand/shallow";
 
 const ContestStickyCards = () => {
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const { contestState } = useContestStateStore(state => state);
+  const { votesClose } = useContestStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
+  const votingTimeLeft = useCountdownTimer(votesClose);
 
   if (isContestCanceled || contestStatus === ContestStatus.VotingClosed) {
     return (
@@ -20,8 +24,8 @@ const ContestStickyCards = () => {
   return (
     <div className="flex flex-col bg-true-black sticky -top-[1px] z-10 mt-8">
       <div className="flex gap-4 py-4">
-        <ContestCountdown />
-        <VotingContestQualifier />
+        <ContestCountdown votingTimeLeft={votingTimeLeft} />
+        <VotingContestQualifier votingTimeLeft={votingTimeLeft} />
       </div>
       <hr className="border-primary-2 border" />
     </div>

@@ -1,5 +1,5 @@
 import { isEntryPreviewPrompt, verifyEntryPreviewPrompt } from "@components/_pages/DialogModalSendProposal/utils";
-import { EntryPreview } from "@hooks/useDeployContest/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { MetadataFieldWithInput } from "@hooks/useMetadataFields/store";
 import { parseEther } from "viem";
 

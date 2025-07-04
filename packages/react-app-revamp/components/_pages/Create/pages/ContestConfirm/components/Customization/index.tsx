@@ -1,7 +1,8 @@
 import { formatNumber } from "@helpers/formatNumber";
-import { AdvancedOptions, CustomizationOptions } from "@hooks/useDeployContest/store";
 import { FC } from "react";
 import CreateContestConfirmLayout from "../Layout";
+import { CustomizationOptions } from "@hooks/useDeployContest/slices/contestSubmissionsSlice";
+import { AdvancedOptions } from "@hooks/useDeployContest/slices/contestAdvancedOptionsSlice";
 
 interface CreateContestConfirmCustomizationProps {
   customization: {

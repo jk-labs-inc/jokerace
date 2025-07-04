@@ -1,4 +1,5 @@
-import { EntryPreviewConfig, Prompt } from "@hooks/useDeployContest/store";
+import { EntryPreviewConfig } from "@hooks/useDeployContest/slices/contestMetadataSlice";
+import { Prompt } from "@hooks/useDeployContest/slices/contestInfoSlice";
 import { Option } from "../components/DefaultDropdown";
 import { ContestType, StepTitle } from "../types";
 

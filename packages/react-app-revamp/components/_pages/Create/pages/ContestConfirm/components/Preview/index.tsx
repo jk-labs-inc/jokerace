@@ -1,4 +1,5 @@
-import { EntryPreview, EntryPreviewConfig, MetadataField } from "@hooks/useDeployContest/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
+import { EntryPreviewConfig, MetadataField } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { FC, useMemo } from "react";
 import CreateContestConfirmLayout from "../Layout";
 interface CreateContestConfirmPreviewProps {

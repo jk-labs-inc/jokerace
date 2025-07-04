@@ -21,7 +21,7 @@ export function formatBalance(balance: string): string {
   }
 
   // handle numbers >= 0.001
-  const truncated = num.decimalPlaces(5, BigNumber.ROUND_FLOOR);
+  const truncated = num.decimalPlaces(5, BigNumber.ROUND_HALF_UP);
 
   // add comma separators only for numbers >= 1000
   if (truncated.abs().isGreaterThanOrEqualTo(MIN_VALUE_FOR_COMMA_SEPARATION)) {
