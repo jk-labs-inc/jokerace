@@ -1,4 +1,3 @@
-import { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { PriceCurveType } from "@hooks/useDeployContest/types";
 import { FC } from "react";
@@ -8,20 +7,20 @@ import CreateFlowMonetizationInput from "@components/_pages/Create/components/Mo
 import FlatPricingOption from "./components/FlatPricingOption";
 import { PRICE_CURVE_LABELS } from "./constants";
 import ExponentialPricingOption from "./components/ExponentialPricingOption";
+import { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup/types";
 
 interface CreateContestChargeVoteCurvesProps {
   label: string;
   onError?: (value: boolean) => void;
 }
 
-const CreateContestChargeVoteCurves: FC<CreateContestChargeVoteCurvesProps> = ({
-  label,
-  onError,
-}) => {
-  const { priceCurve, setPriceCurve } = useDeployContestStore(useShallow(state => ({
-    priceCurve: state.priceCurve,
-    setPriceCurve: state.setPriceCurve,
-  })));
+const CreateContestChargeVoteCurves: FC<CreateContestChargeVoteCurvesProps> = ({ label, onError }) => {
+  const { priceCurve, setPriceCurve } = useDeployContestStore(
+    useShallow(state => ({
+      priceCurve: state.priceCurve,
+      setPriceCurve: state.setPriceCurve,
+    })),
+  );
 
   const getOptions = (): RadioOption[] => {
     return [
