@@ -43,6 +43,7 @@ const useCurrentPricePerVoteWithRefetch = ({
     address,
     abi,
     chainId,
+    version,
     enabled,
   });
 

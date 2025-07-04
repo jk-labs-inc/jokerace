@@ -1,12 +1,14 @@
 import CreateTextInput from "@components/_pages/Create/components/TextInput";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useUploadImageStore } from "@hooks/useUploadImage";
-import CreateRadioButtonsGroup, {
-  RadioButtonsLabelFontSize,
-  RadioOption,
-} from "components/_pages/Create/components/RadioButtonsGroup";
+import CreateRadioButtonsGroup from "components/_pages/Create/components/RadioButtonsGroup";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { ACCEPTED_FILE_TYPES } from "./utils";
+import {
+  RadioButtonsGroupType,
+  RadioButtonsLabelFontSize,
+  RadioOption,
+} from "@components/_pages/Create/components/RadioButtonsGroup/types";
 
 interface ImageUploadProps {
   initialImageUrl?: string;
@@ -273,6 +275,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, onImageLoad }) => 
       ) : isNetworkError ? (
         <div className="flex flex-col gap-4">
           <CreateRadioButtonsGroup
+            type={RadioButtonsGroupType.NORMAL}
             options={networkErrorRadioOptions}
             value={inputMethod}
             onChange={setInputMethod}

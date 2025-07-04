@@ -1,5 +1,6 @@
 import CreateFlowMonetizationInput from "@components/_pages/Create/components/MonetizationInput";
-import CreateRadioButtonsGroup, { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup";
+import CreateRadioButtonsGroup from "@components/_pages/Create/components/RadioButtonsGroup";
+import { RadioButtonsGroupType, RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup/types";
 import { ContestType } from "@components/_pages/Create/types";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { VoteType } from "@hooks/useDeployContest/types";
@@ -107,7 +108,6 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({ chainUnitLa
   };
 
   return (
-    // TODO: check spacing here
     <div className="flex flex-col gap-4">
       <p className="text-[20px] text-neutral-11">
         {isAnyoneCanVote ? (
@@ -128,6 +128,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({ chainUnitLa
         <CreateContestChargeVoteCurves label={chainUnitLabel} onError={onError} />
       ) : (
         <CreateRadioButtonsGroup
+          type={RadioButtonsGroupType.NORMAL}
           options={getOptions()}
           value={voteType}
           onChange={handleVoteTypeChange}

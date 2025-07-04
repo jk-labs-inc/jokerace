@@ -14,16 +14,18 @@ interface VotingQualifierAnyoneCanVoteExponentialProps {
 const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteExponentialProps> = ({
   votingTimeLeft,
 }) => {
-  const { contestInfoData, contestAbi } = useContestStore(
+  const { contestInfoData, contestAbi, contestVersion } = useContestStore(
     useShallow(state => ({
       contestInfoData: state.contestInfoData,
       contestAbi: state.contestAbi,
+      contestVersion: state.version,
     })),
   );
   const { priceCurveUpdateInterval, isLoading, isError, refetch } = usePriceCurveUpdateInterval({
     address: contestInfoData.contestAddress,
     abi: contestAbi,
     chainId: contestInfoData.contestChainId,
+    version: contestVersion,
   });
 
   if (isLoading) {

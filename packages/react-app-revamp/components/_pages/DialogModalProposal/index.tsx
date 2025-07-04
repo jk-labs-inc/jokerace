@@ -21,7 +21,7 @@ import { switchChain } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
 import { usePathname } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import SimpleBar from "simplebar-react";
 import { useAccount } from "wagmi";
 import DialogMaxVotesAlert from "../DialogMaxVotesAlert";
@@ -105,7 +105,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const dialogTabs = Object.values(DialogTab);
   const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
   const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
-  const [pendingVote, setPendingVote] = useState<{ amount: number; isUpvote: boolean } | null>(null);
+  const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
   const [totalCharge, setTotalCharge] = useState("");
   const nativeToken = getNativeTokenSymbol(chainName);
   const [showOnrampModal, setShowOnrampModal] = useState(false);
@@ -116,13 +116,27 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
     contestStatus,
   );
   const isUserOnCorrectChain = userChainId === contestInfo.chainId;
-  const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged } = useCurrentPricePerVoteWithRefetch({
+  const {
+    currentPricePerVote,
+    isLoading: isCurrentPricePerVoteLoading,
+    isError: isCurrentPricePerVoteError,
+    isPreloading: isCurrentPricePerVotePreloading,
+    isRefetching: isCurrentPricePerVoteRefetching,
+    isRefetchError: isCurrentPricePerVoteRefetchError,
+  } = useCurrentPricePerVoteWithRefetch({
     address: contestInfo.address,
     abi: contestAbi,
     chainId: contestInfo.chainId,
     version: contestInfo.version,
     votingClose: votesClose,
   });
+  const earlyReturn =
+    isCurrentPricePerVoteLoading ||
+    isCurrentPricePerVoteError ||
+    isCurrentPricePerVotePreloading ||
+    isCurrentPricePerVoteRefetching ||
+    isCurrentPricePerVoteRefetchError ||
+    !currentPricePerVote;
 
   const tabsOptionalInfo = {
     ...(addressesVoted?.length > 0 && { [DialogTab.Voters]: addressesVoted.length }),
@@ -137,17 +151,23 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
     if (isDeleteSuccess) setIsOpen?.(false);
   }, [isDeleteSuccess, setIsOpen]);
 
-  const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
-    if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
-      setShowMaxVoteConfirmation(true);
-      setPendingVote({ amount, isUpvote });
-      //TODO: figure out loading/error states
-      setTotalCharge(getTotalCharge(amount, currentPricePerVote));
-      return;
-    }
+  const onSubmitCastVotes = useCallback(
+    (amount: number) => {
+      if (earlyReturn) {
+        return;
+      }
 
-    onVote?.(amount);
-  };
+      if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
+        setShowMaxVoteConfirmation(true);
+        setPendingVote({ amount });
+        setTotalCharge(getTotalCharge(amount, currentPricePerVote));
+        return;
+      }
+
+      onVote?.(amount);
+    },
+    [currentUserAvailableVotesAmount, isPayPerVote, currentPricePerVote, onVote],
+  );
 
   const confirmMaxVote = () => {
     if (pendingVote) {

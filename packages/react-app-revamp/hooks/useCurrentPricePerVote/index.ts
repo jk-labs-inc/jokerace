@@ -38,7 +38,12 @@ const useCurrentPricePerVote = ({
   priceCurveUpdateInterval,
   votingClose,
 }: CurrentPricePerVoteParams): CurrentPricePerVoteResponse => {
-  const costToVote = useContestStore(useShallow(state => state.charge?.type.costToVote));
+  const { costToVote, anyoneCanVote } = useContestStore(
+    useShallow(state => ({
+      costToVote: state.charge?.type.costToVote,
+      anyoneCanVote: state.anyoneCanVote,
+    })),
+  );
   const isFnSupported = compareVersions(version, VOTING_PRICE_CURVES_VERSION) >= 0;
 
   const { data, refetch, isLoading, isError, isRefetching, isRefetchError } = useReadContract({
@@ -48,7 +53,7 @@ const useCurrentPricePerVote = ({
     scopeKey: scopeKey,
     chainId,
     query: {
-      enabled: !!address && !!chainId && !!abi && enabled && isFnSupported,
+      enabled: !!address && !!chainId && !!abi && enabled && isFnSupported && anyoneCanVote,
       staleTime: query => {
         if (!priceCurveUpdateInterval || !votingClose) return 0;
 
@@ -68,7 +73,7 @@ const useCurrentPricePerVote = ({
   });
 
   return {
-    currentPricePerVote: isFnSupported ? data ?? "0" : formatEther(BigInt(costToVote ?? 0)),
+    currentPricePerVote: isFnSupported && anyoneCanVote ? data ?? "0" : formatEther(BigInt(costToVote ?? 0)),
     isLoading,
     isError,
     isRefetching,

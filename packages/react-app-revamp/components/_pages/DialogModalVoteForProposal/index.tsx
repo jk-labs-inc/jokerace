@@ -16,7 +16,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { useUserStore } from "@hooks/useUser/store";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useCallback } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/react/shallow";
 import { Proposal } from "../ProposalContent";
@@ -73,17 +73,31 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     version: contestVersion,
     votingClose: votingClose,
   });
+  const earlyReturn =
+    isCurrentPricePerVoteLoading ||
+    isCurrentPricePerVoteError ||
+    isCurrentPricePerVotePreloading ||
+    isCurrentPricePerVoteRefetching ||
+    isCurrentPricePerVoteRefetchError ||
+    !currentPricePerVote;
 
-  const onSubmitCastVotes = (amount: number) => {
-    if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
-      setShowMaxVoteConfirmation(true);
-      setPendingVote({ amount });
-      setTotalCharge(getTotalCharge(amount, currentPricePerVote));
-      return;
-    }
+  const onSubmitCastVotes = useCallback(
+    (amount: number) => {
+      if (earlyReturn) {
+        return;
+      }
 
-    castVotes(amount);
-  };
+      if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
+        setShowMaxVoteConfirmation(true);
+        setPendingVote({ amount });
+        setTotalCharge(getTotalCharge(amount, currentPricePerVote));
+        return;
+      }
+
+      castVotes(amount);
+    },
+    [currentUserAvailableVotesAmount, isPayPerVote, currentPricePerVote, castVotes],
+  );
 
   const confirmMaxVote = () => {
     if (pendingVote) {

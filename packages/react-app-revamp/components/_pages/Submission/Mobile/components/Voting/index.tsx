@@ -7,7 +7,7 @@ import { getTotalCharge } from "@helpers/totalCharge";
 import { useContestStore } from "@hooks/useContest/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import { Charge } from "@hooks/useDeployContest/types";
-import { FC, useRef, useState } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { useShallow } from "zustand/shallow";
 
@@ -50,25 +50,45 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
   const nativeToken = getNativeTokenSymbol(contestInfo.chain);
   const backdropRef = useRef<HTMLDivElement>(null);
   const [showOnrampModal, setShowOnrampModal] = useState(false);
-  const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged, isPreloading } =
-    useCurrentPricePerVoteWithRefetch({
-      address: contestInfo.address,
-      abi: contestAbi,
-      chainId: contestInfo.chainId,
-      version: contestInfo.version,
-      votingClose: votesClose,
-    });
+  const {
+    currentPricePerVote,
+    isLoading: isCurrentPricePerVoteLoading,
+    isError: isCurrentPricePerVoteError,
+    isPreloading: isCurrentPricePerVotePreloading,
+    isRefetching: isCurrentPricePerVoteRefetching,
+    isRefetchError: isCurrentPricePerVoteRefetchError,
+  } = useCurrentPricePerVoteWithRefetch({
+    address: contestInfo.address,
+    abi: contestAbi,
+    chainId: contestInfo.chainId,
+    version: contestInfo.version,
+    votingClose: votesClose,
+  });
+  const earlyReturn =
+    isCurrentPricePerVoteLoading ||
+    isCurrentPricePerVoteError ||
+    isCurrentPricePerVotePreloading ||
+    isCurrentPricePerVoteRefetching ||
+    isCurrentPricePerVoteRefetchError ||
+    !currentPricePerVote;
 
-  const onSubmitCastVotes = (amount: number) => {
-    if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
-      setShowMaxVoteConfirmation(true);
-      setPendingVote({ amount });
-      setTotalCharge(getTotalCharge(amount, currentPricePerVote));
-      return;
-    }
+  const onSubmitCastVotes = useCallback(
+    (amount: number) => {
+      if (earlyReturn) {
+        return;
+      }
 
-    onVote?.(amount);
-  };
+      if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
+        setShowMaxVoteConfirmation(true);
+        setPendingVote({ amount });
+        setTotalCharge(getTotalCharge(amount, currentPricePerVote));
+        return;
+      }
+
+      onVote?.(amount);
+    },
+    [currentUserAvailableVotesAmount, isPayPerVote, currentPricePerVote, onVote],
+  );
 
   const confirmMaxVote = () => {
     if (pendingVote) {
