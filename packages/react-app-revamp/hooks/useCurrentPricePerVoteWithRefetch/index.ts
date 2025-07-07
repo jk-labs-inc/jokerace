@@ -26,7 +26,6 @@ interface CurrentPricePerVoteWithRefetchResponse {
   ) => Promise<QueryObserverResult<string | undefined, ReadContractErrorType>>;
 }
 
-//TODO check why initially when voting is open, the price is not updated
 const useCurrentPricePerVoteWithRefetch = ({
   address,
   abi,
@@ -72,7 +71,7 @@ const useCurrentPricePerVoteWithRefetch = ({
 
   const [isPreloading, setIsPreloading] = useState(false);
   const prevPriceRef = useRef<string | null>(null);
-  const prevSecondsRef = useRef<number>(0);
+  const prevSecondsRef = useRef<number | null>(null);
 
   useEffect(() => {
     // Don't run the effect if we don't have the interval yet
@@ -80,7 +79,8 @@ const useCurrentPricePerVoteWithRefetch = ({
 
     const prevSeconds = prevSecondsRef.current;
 
-    if (prevSeconds <= 1 && secondsInCycle >= priceCurveUpdateInterval - 1) {
+    // Only run preloading logic if we have a previous value to compare against (issue here is that price won't load initially)
+    if (prevSeconds !== null && prevSeconds <= 1 && secondsInCycle >= priceCurveUpdateInterval - 1) {
       setIsPreloading(true);
 
       setTimeout(() => {

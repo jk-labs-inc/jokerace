@@ -7,6 +7,7 @@ interface PriceCurveTypeParams {
   address: string;
   abi: Abi;
   chainId: number;
+  enabled?: boolean;
 }
 
 interface PriceCurveTypeResponse {
@@ -18,7 +19,7 @@ interface PriceCurveTypeResponse {
   ) => Promise<QueryObserverResult<PriceCurveType | undefined, ReadContractErrorType>>;
 }
 
-const usePriceCurveType = ({ address, abi, chainId }: PriceCurveTypeParams): PriceCurveTypeResponse => {
+const usePriceCurveType = ({ address, abi, chainId, enabled = true }: PriceCurveTypeParams): PriceCurveTypeResponse => {
   const {
     data: contractPriceCurveType,
     refetch,
@@ -39,7 +40,7 @@ const usePriceCurveType = ({ address, abi, chainId }: PriceCurveTypeParams): Pri
           return PriceCurveType.Exponential;
         }
       },
-      enabled: !!address && !!abi,
+      enabled: !!address && !!abi && enabled,
     },
   });
 

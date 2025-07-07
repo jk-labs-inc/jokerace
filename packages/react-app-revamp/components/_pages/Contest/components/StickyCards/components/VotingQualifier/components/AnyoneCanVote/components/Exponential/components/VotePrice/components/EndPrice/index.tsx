@@ -26,6 +26,8 @@ const VotingQualifierAnyoneCanVoteExponentialEndPrice: FC = () => {
   if (isLoading) return <VotingQualifierSkeleton />;
   if (isError) return <VotingQualifierError onClick={() => refetch()} />;
 
+  
+
   return (
     <p className="text-[16px] md:text-[24px] text-neutral-11 font-bold">
       {formatBalance(formatEther(BigInt(costToVote ?? 0)))} -{" "}
