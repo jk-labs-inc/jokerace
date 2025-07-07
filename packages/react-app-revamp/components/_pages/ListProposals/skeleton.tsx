@@ -1,5 +1,5 @@
 import { EntryPreview } from "@hooks/useDeployContest/store";
-import { FC } from "react";
+import { forwardRef } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
 interface ListProposalsSkeletonProps {
@@ -8,45 +8,53 @@ interface ListProposalsSkeletonProps {
   count?: number;
 }
 
-const ProposalSkeleton = ({ highlightColor, children }: { highlightColor: string; children: React.ReactNode }) => (
-  <SkeletonTheme baseColor="#141414" highlightColor={highlightColor} duration={1}>
-    {children}
-  </SkeletonTheme>
+const ProposalSkeleton = forwardRef<HTMLDivElement, { highlightColor: string; children: React.ReactNode }>(
+  ({ highlightColor, children }, ref) => (
+    <SkeletonTheme baseColor="#141414" highlightColor={highlightColor} duration={1}>
+      <div ref={ref}>{children}</div>
+    </SkeletonTheme>
+  ),
 );
 
-const ListProposalsSkeleton: FC<ListProposalsSkeletonProps> = ({ enabledPreview, highlightColor, count = 1 }) => {
-  switch (enabledPreview) {
-    case EntryPreview.TITLE:
-      return (
-        <ProposalSkeleton highlightColor={highlightColor}>
-          <Skeleton
-            borderRadius={16}
-            count={count}
-            className="flex flex-col w-full h-24 md:h-[88px] animate-appear rounded-2xl mt-3"
-          />
-        </ProposalSkeleton>
-      );
-    case EntryPreview.IMAGE:
-    case EntryPreview.IMAGE_AND_TITLE:
-    case EntryPreview.TWEET:
-      return (
-        <ProposalSkeleton highlightColor={highlightColor}>
-          <div className="flex flex-col gap-4">
-            <Skeleton borderRadius={16} className="flex flex-col w-full h-52 animate-appear rounded-2xl" />
-          </div>
-        </ProposalSkeleton>
-      );
-    default:
-      return (
-        <ProposalSkeleton highlightColor={highlightColor}>
-          <Skeleton
-            borderRadius={10}
-            count={count}
-            className="flex flex-col w-full h-80 animate-appear rounded-[10px] mt-3"
-          />
-        </ProposalSkeleton>
-      );
-  }
-};
+ProposalSkeleton.displayName = "ProposalSkeleton";
+
+const ListProposalsSkeleton = forwardRef<HTMLDivElement, ListProposalsSkeletonProps>(
+  ({ enabledPreview, highlightColor, count = 1 }, ref) => {
+    switch (enabledPreview) {
+      case EntryPreview.TITLE:
+        return (
+          <ProposalSkeleton ref={ref} highlightColor={highlightColor}>
+            <Skeleton
+              borderRadius={16}
+              count={count}
+              className="flex flex-col w-full h-24 md:h-[88px] animate-appear rounded-2xl mt-3"
+            />
+          </ProposalSkeleton>
+        );
+      case EntryPreview.IMAGE:
+      case EntryPreview.IMAGE_AND_TITLE:
+      case EntryPreview.TWEET:
+        return (
+          <ProposalSkeleton ref={ref} highlightColor={highlightColor}>
+            <div className="flex flex-col gap-4">
+              <Skeleton borderRadius={16} className="flex flex-col w-full h-52 animate-appear rounded-2xl" />
+            </div>
+          </ProposalSkeleton>
+        );
+      default:
+        return (
+          <ProposalSkeleton ref={ref} highlightColor={highlightColor}>
+            <Skeleton
+              borderRadius={10}
+              count={count}
+              className="flex flex-col w-full h-80 animate-appear rounded-[10px] mt-3"
+            />
+          </ProposalSkeleton>
+        );
+    }
+  },
+);
+
+ListProposalsSkeleton.displayName = "ListProposalsSkeleton";
 
 export default ListProposalsSkeleton;

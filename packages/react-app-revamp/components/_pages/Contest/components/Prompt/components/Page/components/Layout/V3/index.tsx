@@ -4,10 +4,8 @@ import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import { FC, useState } from "react";
 import EditContestPrompt from "./components/EditContestPrompt";
-import { useLineCount } from "@hooks/useLineCount";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import { useMediaQuery } from "react-responsive";
-import { calculateContentBreakpoint } from "@helpers/textUtils";
 
 interface ContestPromptPageV3LayoutProps {
   prompt: string;
@@ -16,25 +14,14 @@ interface ContestPromptPageV3LayoutProps {
 
 const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt, canEditTitleAndDescription }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { elementRef, lineCount } = useLineCount();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const { contestSummary, contestEvaluate, contestContactDetails } = parsePrompt(prompt);
-  const maxVisibleLines = 6;
-  const shouldShowReadMore = lineCount > maxVisibleLines;
-
-  const breakpoint = calculateContentBreakpoint({
-    elementRef,
-    shouldShowReadMore,
-    isExpanded,
-    maxVisibleLines,
-    sections: [
-      { id: "contestSummary", content: contestSummary },
-      { id: "contestEvaluate", content: contestEvaluate },
-      { id: "contestContactDetails", content: contestContactDetails },
-    ],
-  });
+  const fullText = [contestSummary, contestEvaluate, contestContactDetails].filter(Boolean).join("\n\n");
+  const characterLimit = 250;
+  const shouldShowReadMore = fullText.length > characterLimit;
+  const displayText = !isExpanded && shouldShowReadMore ? fullText.slice(0, characterLimit) + "..." : fullText;
 
   const renderSection = (content: string, showDivider: boolean) => {
     if (!content) return null;
@@ -47,11 +34,9 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
     );
   };
 
-  const shouldShowEvaluate =
-    isExpanded || !shouldShowReadMore || (breakpoint && breakpoint.section !== "contestSummary");
-
-  const shouldShowContactDetails =
-    isExpanded || !shouldShowReadMore || (breakpoint && breakpoint.section === "contestContactDetails");
+  const handleToggleExpanded = () => {
+    setIsExpanded(!isExpanded);
+  };
 
   return (
     <div className="flex items-start relative w-full">
@@ -60,54 +45,45 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
       </div>
 
       <div className="flex flex-col gap-2 md:gap-4 w-80 xs:w-[460px] sm:w-[560px]">
-        <div
-          className="relative"
-          style={{
-            overflow: "hidden",
-            height: !isExpanded && shouldShowReadMore ? `${Math.min(lineCount, maxVisibleLines) * 1.6}em` : "auto",
-          }}
-        >
-          <div ref={elementRef} className="prose prose-invert flex flex-col invisible absolute w-full">
-            {renderSection(contestSummary, false)}
-            {renderSection(contestEvaluate, true)}
-            {renderSection(contestContactDetails, true)}
-          </div>
-
+        <div className="relative">
           <div
             className={`
               prose prose-invert flex flex-col 
               ${isContestCanceled ? "line-through" : ""}
-              ${!isExpanded && shouldShowReadMore ? "overflow-hidden" : ""}
             `}
-            style={{
-              ...(!isExpanded && shouldShowReadMore
-                ? {
-                    maskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
-                    WebkitMaskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
-                    maxHeight: `${Math.min(lineCount, maxVisibleLines) * 1.6}em`,
-                    height: `${Math.min(lineCount, maxVisibleLines) * 1.6}em`,
-                  }
-                : {}),
-            }}
           >
-            {renderSection(contestSummary, false)}
-            {shouldShowEvaluate && renderSection(contestEvaluate, true)}
-            {shouldShowContactDetails && renderSection(contestContactDetails, true)}
+            {isExpanded ? (
+              <>
+                {renderSection(contestSummary, false)}
+                {renderSection(contestEvaluate, true)}
+                {renderSection(contestContactDetails, true)}
+              </>
+            ) : (
+              <Interweave content={displayText} matchers={[new UrlMatcher("url")]} />
+            )}
           </div>
         </div>
 
-        {shouldShowReadMore && !isExpanded && (
-          <div className="w-full flex items-center justify-center z-10 -mt-12">
+        {shouldShowReadMore && (
+          <div className="w-full flex items-center justify-start">
             <button
-              onClick={() => setIsExpanded(true)}
-              className="text-[12px] md:text-[16px] font-bold flex z-50 w-[120px] md:w-40 h-10 rounded-lg items-center justify-center bg-primary-1 gap-1 text-positive-11 hover:bg-positive-11 hover:text-primary-1 transition-all duration-300 ease-in-out"
+              onClick={handleToggleExpanded}
+              className="text-[12px] md:text-[16px] font-bold flex items-center justify-center gap-1 text-positive-11  hover:text-positive-10 transition-all duration-300 ease-in-out"
             >
-              <span>full description</span>
-              <ChevronDownIcon
-                width={isMobile ? 16 : 21}
-                height={isMobile ? 16 : 21}
-                className="md:mt-1 transition-transform duration-300"
-              />
+              <span>{isExpanded ? "show less" : "show more"}</span>
+              {isExpanded ? (
+                <ChevronUpIcon
+                  width={isMobile ? 16 : 21}
+                  height={isMobile ? 16 : 21}
+                  className="md:mt-1 transition-transform duration-300"
+                />
+              ) : (
+                <ChevronDownIcon
+                  width={isMobile ? 16 : 21}
+                  height={isMobile ? 16 : 21}
+                  className="md:mt-1 transition-transform duration-300"
+                />
+              )}
             </button>
           </div>
         )}

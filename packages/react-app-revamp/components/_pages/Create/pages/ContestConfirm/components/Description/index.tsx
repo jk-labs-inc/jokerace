@@ -1,13 +1,11 @@
 import ContestImage from "@components/_pages/Contest/components/ContestImage";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import { Prompt } from "@hooks/useDeployContest/store";
-import { useLineCount } from "@hooks/useLineCount";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import CreateContestConfirmLayout from "../Layout";
-import { calculateContentBreakpoint } from "@helpers/textUtils";
 
 interface CreateContestConfirmDescriptionProps {
   prompt: Prompt;
@@ -23,22 +21,11 @@ const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> 
   onClick,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { elementRef, lineCount } = useLineCount();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const maxVisibleLines = 6;
-  const shouldShowReadMore = lineCount > maxVisibleLines;
-
-  const breakpoint = calculateContentBreakpoint({
-    elementRef,
-    shouldShowReadMore,
-    isExpanded,
-    maxVisibleLines,
-    sections: [
-      { id: "summarize", content: prompt.summarize },
-      { id: "evaluateVoters", content: prompt.evaluateVoters },
-      { id: "contactDetails", content: prompt.contactDetails },
-    ],
-  });
+  const fullText = [prompt.summarize, prompt.evaluateVoters, prompt.contactDetails].filter(Boolean).join("\n\n");
+  const characterLimit = 250;
+  const shouldShowReadMore = fullText.length > characterLimit;
+  const displayText = !isExpanded && shouldShowReadMore ? fullText.slice(0, characterLimit) + "..." : fullText;
 
   const renderSection = (content: string, showDivider: boolean) => {
     if (!content) return null;
@@ -51,10 +38,9 @@ const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> 
     );
   };
 
-  const shouldShowEvaluate = isExpanded || !shouldShowReadMore || (breakpoint && breakpoint.section !== "summarize");
-
-  const shouldShowContactDetails =
-    isExpanded || !shouldShowReadMore || (breakpoint && breakpoint.section === "contactDetails");
+  const handleToggleExpanded = () => {
+    setIsExpanded(!isExpanded);
+  };
 
   return (
     <CreateContestConfirmLayout onClick={() => onClick?.(step)}>
@@ -62,51 +48,41 @@ const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> 
         <div className="text-[12px] uppercase font-bold text-neutral-9">Description</div>
         <div className="flex flex-col gap-4">
           {imageUrl ? <ContestImage imageUrl={imageUrl} /> : null}
-          <div
-            className="relative"
-            style={{
-              overflow: "hidden",
-              height: !isExpanded && shouldShowReadMore ? `${Math.min(lineCount, maxVisibleLines) * 1.6}em` : "auto",
-            }}
-          >
-            <div ref={elementRef} className="prose prose-invert flex flex-col invisible absolute w-full">
-              {renderSection(prompt.summarize, false)}
-              {renderSection(prompt.evaluateVoters, true)}
-              {renderSection(prompt.contactDetails || "", true)}
-            </div>
-
-            <div
-              className={`prose prose-invert flex flex-col text-neutral-11 transition-color duration-300`}
-              style={{
-                ...(!isExpanded && shouldShowReadMore
-                  ? {
-                      maskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
-                      WebkitMaskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
-                      maxHeight: `${Math.min(lineCount, maxVisibleLines) * 1.6}em`,
-                      height: `${Math.min(lineCount, maxVisibleLines) * 1.6}em`,
-                    }
-                  : {}),
-              }}
-            >
-              {renderSection(prompt.summarize, false)}
-              {shouldShowEvaluate && renderSection(prompt.evaluateVoters, true)}
-              {shouldShowContactDetails && renderSection(prompt.contactDetails || "", true)}
+          <div className="relative">
+            <div className="prose prose-invert flex flex-col text-neutral-11 transition-color duration-300">
+              {isExpanded ? (
+                <>
+                  {renderSection(prompt.summarize, false)}
+                  {renderSection(prompt.evaluateVoters, true)}
+                  {renderSection(prompt.contactDetails || "", true)}
+                </>
+              ) : (
+                <Interweave content={displayText} matchers={[new UrlMatcher("url")]} />
+              )}
             </div>
           </div>
         </div>
 
-        {shouldShowReadMore && !isExpanded && (
-          <div className="w-full flex -mt-12 items-center justify-center">
+        {shouldShowReadMore && (
+          <div className="w-full flex items-center justify-start">
             <button
-              onClick={() => setIsExpanded(true)}
-              className="text-[12px] md:text-[16px] font-bold flex z-50 w-[120px] md:w-40 h-10 rounded-lg items-center justify-center bg-primary-1 gap-1 text-positive-11 hover:bg-positive-11 hover:text-primary-1 transition-all duration-300 ease-in-out"
+              onClick={handleToggleExpanded}
+              className="text-[12px] md:text-[16px] font-bold flex items-center justify-center gap-1 text-positive-11 hover:text-positive-10 transition-all duration-300 ease-in-out"
             >
-              <span>full description</span>
-              <ChevronDownIcon
-                width={isMobile ? 16 : 21}
-                height={isMobile ? 16 : 21}
-                className="md:mt-1 transition-transform duration-300"
-              />
+              <span>{isExpanded ? "show less" : "show more"}</span>
+              {isExpanded ? (
+                <ChevronUpIcon
+                  width={isMobile ? 16 : 21}
+                  height={isMobile ? 16 : 21}
+                  className="md:mt-1 transition-transform duration-300"
+                />
+              ) : (
+                <ChevronDownIcon
+                  width={isMobile ? 16 : 21}
+                  height={isMobile ? 16 : 21}
+                  className="md:mt-1 transition-transform duration-300"
+                />
+              )}
             </button>
           </div>
         )}

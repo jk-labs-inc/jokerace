@@ -3,7 +3,6 @@ import ProposalContent from "@components/_pages/ProposalContent";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useProposal, { PROPOSALS_PER_PAGE } from "@hooks/useProposal";
@@ -11,16 +10,14 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
+import useInfiniteScroll from "react-infinite-scroll-hook";
 import { useAccount } from "wagmi";
 import { verifyEntryPreviewPrompt } from "../DialogModalSendProposal/utils";
 import ListProposalsContainer from "./container";
 import ListProposalsSkeleton from "./skeleton";
-import { useMediaQuery } from "react-responsive";
 
 export const ListProposals = () => {
   const { address, chainId: userChainId } = useAccount();
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const asPath = usePathname();
   const { address: contestAddress, chainName: contestChainName } = extractPathSegments(asPath);
   const contestChainId = chains.filter(
@@ -52,6 +49,30 @@ export const ListProposals = () => {
     metadataFieldsConfig.length > 0
       ? verifyEntryPreviewPrompt(metadataFieldsConfig[0].prompt)
       : { enabledPreview: null };
+
+  const hasNextPage = listProposalsData.length < submissionsCount;
+
+  const handleLoadMore = () => {
+    fetchProposalsPage(
+      {
+        chainId: contestChainId,
+        address: contestAddress as `0x${string}`,
+        abi,
+      },
+      version,
+      currentPagePaginationProposals + 1,
+      indexPaginationProposals[currentPagePaginationProposals + 1],
+      totalPagesPaginationProposals,
+      initialMappedProposalIds,
+    );
+  };
+
+  const [infiniteRef] = useInfiniteScroll({
+    loading: isPageProposalsLoading,
+    hasNextPage,
+    onLoadMore: handleLoadMore,
+    disabled: false,
+  });
 
   const onDeleteSelectedProposals = async () => {
     setDeletingProposalIds(selectedProposalIds);
@@ -92,46 +113,22 @@ export const ListProposals = () => {
   }
 
   return (
-    <InfiniteScroll
-      className="infiniteScroll"
-      dataLength={listProposalsData.length}
-      next={() =>
-        fetchProposalsPage(
-          {
-            chainId: contestChainId,
-            address: contestAddress as `0x${string}`,
-            abi,
-          },
-          version,
-          currentPagePaginationProposals + 1,
-          indexPaginationProposals[currentPagePaginationProposals + 1],
-          totalPagesPaginationProposals,
-          initialMappedProposalIds,
-        )
-      }
-      hasMore={listProposalsData.length < submissionsCount}
-      loader={
-        <ListProposalsSkeleton
-          enabledPreview={enabledPreview}
-          highlightColor="#BB65FF"
-          count={skeletonRemainingLoaderCount}
-        />
-      }
-    >
+    <div className="infiniteScroll">
       <ListProposalsContainer enabledPreview={enabledPreview}>
         {listProposalsData.map((proposal, index) => {
           if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
             return (
               <ListProposalsSkeleton
+                key={`deleting-${proposal.id}`}
                 enabledPreview={enabledPreview}
                 highlightColor="#FF78A9"
-                count={selectedProposalIds.length}
+                count={1}
               />
             );
           }
           return (
             <ProposalContent
-              key={index}
+              key={proposal.id}
               proposal={{
                 id: proposal.id,
                 authorEthereumAddress: proposal.author,
@@ -154,6 +151,15 @@ export const ListProposals = () => {
         })}
       </ListProposalsContainer>
 
+      {hasNextPage && (
+        <ListProposalsSkeleton
+          ref={infiniteRef}
+          enabledPreview={enabledPreview}
+          highlightColor="#BB65FF"
+          count={skeletonRemainingLoaderCount}
+        />
+      )}
+
       {showDeleteButton && (
         <div className="flex sticky bottom-0 left-0 right-0 p-4 bg-white shadow-lg">
           <ButtonV3
@@ -165,7 +171,7 @@ export const ListProposals = () => {
           </ButtonV3>
         </div>
       )}
-    </InfiniteScroll>
+    </div>
   );
 };
 
