@@ -2,7 +2,7 @@ import moment from "moment";
 import { TimingPeriod } from "../../pages/ContestTiming/utils";
 import { ContestType, StepTitle } from "../../types";
 import { TemplateConfig, TemplateType } from "../types";
-import { EntryPreview } from "@hooks/useDeployContest/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 
 export const leaderboardConfig: TemplateConfig = {
   type: TemplateType.leaderboard,

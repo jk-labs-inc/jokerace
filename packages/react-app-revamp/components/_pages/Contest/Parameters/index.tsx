@@ -58,6 +58,7 @@ const ContestParameters = () => {
       <div className="flex flex-col gap-8">
         {version && charge && <ContestParametersRewards version={version} charge={charge} />}
         <ContestParametersSubmissions
+          charge={charge}
           anyoneCanSubmit={anyoneCanSubmit}
           currentUserQualifiedToSubmit={currentUserQualifiedToSubmit}
           contestMaxNumberSubmissionsPerUser={contestMaxNumberSubmissionsPerUser}
@@ -84,7 +85,6 @@ const ContestParameters = () => {
             charge={charge}
             contestAuthor={contestAuthor}
             blockExplorerUrl={blockExplorerUrl}
-            nativeCurrencySymbol={nativeCurrency?.symbol}
           />
         ) : null}
       </div>

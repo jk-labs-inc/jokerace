@@ -2,7 +2,6 @@ import { formatBalance } from "@helpers/formatBalance";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { Charge, VoteType } from "@hooks/useDeployContest/types";
 import React from "react";
-import { useAccount, useBalance } from "wagmi";
 import { GetBalanceData } from "wagmi/query";
 
 interface MyVotesProps {
@@ -18,7 +17,9 @@ const MyVotes: React.FC<MyVotesProps> = ({ charge, balanceData, amountOfVotes, o
 
   return (
     <div
-      className={`flex justify-between items-center text-[16px] ${insufficientBalance ? "text-negative-11" : "text-neutral-11"} transition-colors duration-300`}
+      className={`flex justify-between items-center text-[16px] ${
+        insufficientBalance ? "text-negative-11" : "text-neutral-11"
+      } transition-colors duration-300`}
     >
       <p className="text-neutral-9">
         {isPerVote ? "my wallet" : "my votes:"}{" "}

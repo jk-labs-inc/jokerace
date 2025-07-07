@@ -1,10 +1,11 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { MetadataField, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 import ContestParamsMetadataFieldsDropdown from "../../../Dropdown";
 import { fieldsDropdownOptions, metadataFields } from "../../utils";
 import CreateTextInput from "@components/_pages/Create/components/TextInput";
+import { MetadataField } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 
 interface ContestParamsMetadataFieldProps {
   index: number;

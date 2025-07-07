@@ -1,44 +1,79 @@
-import CreateNumberInput from "@components/_pages/Create/components/NumberInput";
+import CreateFlowMonetizationInput from "@components/_pages/Create/components/MonetizationInput";
+import CreateRadioButtonsGroup from "@components/_pages/Create/components/RadioButtonsGroup";
+import { RadioButtonsGroupType, RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup/types";
+import { ContestType } from "@components/_pages/Create/types";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import CreateRadioButtonsGroup, { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup";
+import { useShallow } from "zustand/react/shallow";
+import { validateCostToVote } from "../../validation";
+import CreateContestChargeVoteCurves from "./components/Curves";
 
 interface ContestParamsChargeVoteProps {
-  costToVote: number;
-  type: VoteType;
   chainUnitLabel: string;
-  costToVoteError: string;
-  isAnyoneCanVote: boolean;
-  onCostToVoteChange?: (value: number | null) => void;
-  onVoteTypeChange?: (value: VoteType) => void;
+  onError?: (value: boolean) => void;
 }
 
-const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
-  costToVote,
-  type,
-  chainUnitLabel,
-  costToVoteError,
-  isAnyoneCanVote,
-  onCostToVoteChange,
-  onVoteTypeChange,
-}) => {
-  const [selected, setSelected] = useState<VoteType>(type);
+const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({ chainUnitLabel, onError }) => {
+  const { costToVote, costToVoteEndPrice, voteType, minCostToVote, setCharge, contestType } = useDeployContestStore(
+    useShallow(state => ({
+      costToVote: state.charge.type.costToVote,
+      costToVoteEndPrice: state.charge.type.costToVoteEndPrice,
+      voteType: state.charge.voteType,
+      minCostToVote: state.minCharge.minCostToVote,
+      setCharge: state.setCharge,
+      contestType: state.contestType,
+    })),
+  );
+  const [costToVoteError, setCostToVoteError] = useState("");
+  const isAnyoneCanVote = contestType === ContestType.AnyoneCanPlay || contestType === ContestType.VotingContest;
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   useEffect(() => {
     if (isAnyoneCanVote) {
-      setSelected(VoteType.PerVote);
-      onVoteTypeChange?.(VoteType.PerVote);
+      setCharge(prev => ({
+        ...prev,
+        voteType: VoteType.PerVote,
+      }));
     } else {
-      setSelected(VoteType.PerTransaction);
-      onVoteTypeChange?.(VoteType.PerTransaction);
+      setCharge(prev => ({
+        ...prev,
+        voteType: VoteType.PerTransaction,
+      }));
     }
-  }, [isAnyoneCanVote]);
+  }, [isAnyoneCanVote, setCharge]);
+
+  const handleCostToVoteChange = (value: number | null) => {
+    const error = validateCostToVote(value, minCostToVote);
+    if (error) {
+      setCostToVoteError(error);
+      onError?.(true);
+      setCharge(prev => ({
+        ...prev,
+        error: true,
+      }));
+      return;
+    } else {
+      setCostToVoteError("");
+      onError?.(false);
+    }
+
+    setCharge(prev => ({
+      ...prev,
+      type: {
+        ...prev.type,
+        costToVote: value ?? 0,
+      },
+      error: false,
+    }));
+  };
 
   const handleVoteTypeChange = (value: VoteType) => {
-    setSelected(value);
-    onVoteTypeChange?.(value);
+    setCharge(prev => ({
+      ...prev,
+      voteType: value,
+    }));
   };
 
   const getOptions = (): RadioOption[] => {
@@ -47,13 +82,12 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
         label: "a charge each time they vote (recommended)",
         value: VoteType.PerTransaction,
         content:
-          selected === VoteType.PerTransaction ? (
-            <CreateNumberInput
+          voteType === VoteType.PerTransaction ? (
+            <CreateFlowMonetizationInput
               value={costToVote}
-              onChange={onCostToVoteChange}
-              unitLabel={chainUnitLabel}
+              onChange={handleCostToVoteChange}
               errorMessage={costToVoteError}
-              textClassName="font-bold text-center pl-0 pr-4 -ml-4"
+              label={chainUnitLabel}
             />
           ) : null,
       },
@@ -61,13 +95,12 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
         label: "a charge per vote",
         value: VoteType.PerVote,
         content:
-          selected === VoteType.PerVote ? (
-            <CreateNumberInput
+          voteType === VoteType.PerVote ? (
+            <CreateFlowMonetizationInput
               value={costToVote}
-              onChange={onCostToVoteChange}
-              unitLabel={chainUnitLabel}
+              onChange={handleCostToVoteChange}
               errorMessage={costToVoteError}
-              textClassName="font-bold text-center pl-0 pr-4 -ml-4"
+              label={chainUnitLabel}
             />
           ) : null,
       },
@@ -92,17 +125,15 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
         )}
       </p>
       {isAnyoneCanVote ? (
-        <div className="flex flex-col gap-4">
-          <CreateNumberInput
-            value={costToVote}
-            onChange={onCostToVoteChange}
-            unitLabel={chainUnitLabel}
-            errorMessage={costToVoteError}
-            textClassName="font-bold text-center pl-0 pr-4 -ml-4"
-          />
-        </div>
+        <CreateContestChargeVoteCurves label={chainUnitLabel} onError={onError} />
       ) : (
-        <CreateRadioButtonsGroup options={getOptions()} value={selected} onChange={handleVoteTypeChange} />
+        <CreateRadioButtonsGroup
+          type={RadioButtonsGroupType.NORMAL}
+          options={getOptions()}
+          value={voteType}
+          onChange={handleVoteTypeChange}
+          gapClassName="gap-8"
+        />
       )}
     </div>
   );

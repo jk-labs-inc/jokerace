@@ -8,17 +8,14 @@ import CreateContestTemplate from "./pages/ContestUseTemplate";
 const CreateFlow = () => {
   const { startContest, startContestWithTemplate, setStartContest, setStartContestWithTemplate } =
     useCreateContestStartStore(state => state);
-  const { reset } = useDeployContestStore(state => state);
   const { steps } = useContestSteps();
 
   useEffect(() => {
     setStartContest(false);
     setStartContestWithTemplate(false);
-    reset();
   }, []);
 
   const handleStartCreating = (withTemplate: boolean) => {
-    reset();
     if (withTemplate) {
       setStartContestWithTemplate(true);
     } else {

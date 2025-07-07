@@ -1,10 +1,12 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
-import { emptyVotingRequirements, MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { VoteType, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { FC, useEffect } from "react";
 import VotingCSVFileUploader, { VotingFieldObject } from "./components";
+import { MerkleKey } from "@hooks/useDeployContest/slices/contestVotingSlice";
+import { emptyVotingRequirements } from "@components/_pages/Create/hooks/useSetContestTypeConfig";
 
 type WorkerMessageData = {
   merkleRoot: string;
