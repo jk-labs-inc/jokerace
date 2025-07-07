@@ -1,4 +1,4 @@
-import { MetadataField } from "@hooks/useDeployContest/store";
+import { MetadataField } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { create } from "zustand";
 
 export interface ParsedMetadataField {

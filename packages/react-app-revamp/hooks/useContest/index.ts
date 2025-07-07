@@ -17,7 +17,7 @@ import { getRewardsModuleAddress } from "lib/rewards/contracts";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
-import { ErrorType, useContestStore } from "./store";
+import { ContestInfoData, ErrorType, useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
 import { getContracts } from "./v3v4/contracts";
 
@@ -67,6 +67,7 @@ export function useContest() {
     setVersion,
     setRewardsModuleAddress,
     setCanEditTitleAndDescription,
+    setContestInfoData,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
     state => state,
@@ -299,6 +300,8 @@ export function useContest() {
 
       const rewardsModuleAddress = await fetchRewardsModuleData(contractConfig);
 
+      setContestData(addressFromUrl, chainFromUrl);
+
       if (compareVersions(version, "3.0") == -1) {
         await fetchV1ContestInfo(contractConfig, version);
       } else {
@@ -390,6 +393,21 @@ export function useContest() {
     }
 
     return SplitFeeDestinationType.AnotherWallet;
+  }
+
+  //TODO: this could maybe be a separate store?
+  function setContestData(contestAddress: string, contestChainName: string) {
+    const contestChainNativeCurrencySymbol = chains.filter(
+      chain => chain.name.toLowerCase().replace(" ", "") === contestChainName,
+    )?.[0]?.nativeCurrency.symbol;
+    const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.[0]?.id;
+
+    setContestInfoData({
+      contestAddress: contestAddress,
+      contestChainName: contestChainName,
+      contestChainId: chainId,
+      contestChainNativeCurrencySymbol: contestChainNativeCurrencySymbol,
+    });
   }
 
   return {

@@ -2,8 +2,11 @@ import { FC, useMemo } from "react";
 import ContestParamatersCSVSubmitters from "../CSV/Submitters";
 import ContestParametersSubmissionRequirements from "../Requirements/Submission";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
+import { Charge } from "@hooks/useDeployContest/types";
+import { formatEther } from "viem";
 
 interface ContestParametersSubmissionsProps {
+  charge: Charge | null;
   anyoneCanSubmit: boolean;
   currentUserQualifiedToSubmit: boolean;
   contestMaxNumberSubmissionsPerUser: number;
@@ -16,6 +19,7 @@ interface ContestParametersSubmissionsProps {
 }
 
 const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
+  charge,
   anyoneCanSubmit,
   currentUserQualifiedToSubmit,
   contestMaxNumberSubmissionsPerUser,
@@ -50,6 +54,9 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
       <p className="text-[24px] text-neutral-11">entering</p>
       <ul className="pl-4 text-[16px] text-neutral-9">
         <li className="list-disc">{address || anyoneCanSubmit ? qualifyToSubmitMessage : walletNotConnected}</li>
+        <li className="list-disc">
+          {formatEther(BigInt(charge?.type.costToPropose ?? 0))} {nativeCurrencySymbol} to enter
+        </li>
         <li className="list-disc">
           {!anyoneCanSubmit && "qualified"} players can enter{" "}
           <span>

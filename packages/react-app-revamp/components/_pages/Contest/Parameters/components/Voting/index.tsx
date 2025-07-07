@@ -3,6 +3,7 @@ import { FC, useMemo } from "react";
 import ContestParamatersCSVVoters from "../CSV/Voters";
 import ContestParametersVotingRequirements from "../Requirements/Voting";
 import { VoteType } from "@hooks/useDeployContest/types";
+import ContestParametersVotingPrice from "../VotingPrice";
 
 interface ContestParametersVotingProps {
   anyoneCanVote: boolean;
@@ -77,9 +78,13 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
       <p className="text-[24px] text-neutral-11">voting</p>
       <ul className="pl-4 text-[16px] text-neutral-9">
         {anyoneCanVote ? (
-          <li className="list-disc">anyone can vote</li>
+          <>
+            <li className="list-disc">anyone can vote</li>
+            <ContestParametersVotingPrice />
+          </>
         ) : (
           <>
+            <ContestParametersVotingPrice />
             <ContestParametersVotingRequirements />
             <ContestParamatersCSVVoters votingMerkleRoot={votingMerkleRoot} />
           </>

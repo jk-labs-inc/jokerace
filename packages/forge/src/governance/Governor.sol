@@ -4,6 +4,7 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/utils/math/SafeCast.sol";
 import "@openzeppelin/utils/Address.sol";
+import {UD60x18, ud} from "@prb/math/src/UD60x18.sol";
 import "./utils/GovernorMerkleVotes.sol";
 import "./utils/GovernorSorting.sol";
 
@@ -32,6 +33,11 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         Vote
     }
 
+    enum PriceCurveTypes {
+        Flat,
+        Exponential
+    }
+
     struct IntConstructorArgs {
         uint256 contestStart;
         uint256 votingDelay;
@@ -44,6 +50,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 costToPropose;
         uint256 costToVote;
         uint256 payPerVote;
+        uint256 priceCurveType;
+        uint256 multiple;
     }
 
     struct ConstructorArgs {
@@ -97,8 +105,10 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant MAX_FIELDS_METADATA_LENGTH = 10;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
-    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // our hot wallet that we collect revenue to
-    string private constant VERSION = "5.6"; // Private as to not clutter the ABI
+    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
+    uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
+    uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
+    string private constant VERSION = "5.7"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -110,8 +120,10 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public maxProposalCount; // Max number of proposals allowed in this contest.
     uint256 public percentageToCreator;
     uint256 public costToPropose;
-    uint256 public costToVote;
+    uint256 public costToVote; // Per txn if payPerVote is 0, per vote if 1 and flat price curve, starting/minimum price if 1 and exp curve
     uint256 public payPerVote; // If this contest is pay per vote (as opposed to pay per vote transaction).
+    uint256 public priceCurveType; // Enum value of PriceCurveTypes.
+    uint256 public multiple; // Exponent multiple for an exponential price curve if applicable.
     address public creatorSplitDestination; // Where the creator split of revenue goes.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
     string public metadataFieldsSchema; // JSON Schema of what the metadata fields are
@@ -143,12 +155,14 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error AddressNotPermissionedToSubmit();
     error ContestMustBeQueuedToPropose(ContestState currentState);
     error ContestMustBeActiveToVote(ContestState currentState);
+    error ContestMustBeActiveToGetCurrentVotePrice(ContestState currentState);
     error SenderSubmissionLimitReached(uint256 numAllowedProposalSubmissions);
     error ContestSubmissionLimitReached(uint256 maxProposalCount);
     error DuplicateSubmission(uint256 proposalId);
 
     error CannotVoteOnDeletedProposal();
     error NeedAtLeastOneVoteToVote();
+    error NotAPayPerVoteContest();
     error CannotVoteLessThanOneVoteInPayPerVote();
 
     error NeedToSubmitWithProofFirst();
@@ -182,6 +196,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         costToPropose = constructorArgs_.intConstructorArgs.costToPropose;
         costToVote = constructorArgs_.intConstructorArgs.costToVote;
         payPerVote = constructorArgs_.intConstructorArgs.payPerVote;
+        priceCurveType = constructorArgs_.intConstructorArgs.priceCurveType;
+        multiple = constructorArgs_.intConstructorArgs.multiple;
         creatorSplitDestination = constructorArgs_.creatorSplitDestination;
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
         metadataFieldsSchema = constructorArgs_.metadataFieldsSchema;
@@ -369,6 +385,27 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     /**
+     * @dev Returns the current cost per vote if the contest is payPerVote.
+     */
+    function currentPricePerVote() public view returns (uint256) {
+        if (payPerVote != 1) revert NotAPayPerVoteContest();
+        if (state() != ContestState.Active) revert ContestMustBeActiveToGetCurrentVotePrice(state());
+
+        if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Exponential) {
+            uint256 currentInterval = (block.timestamp - voteStart()) / PRICE_CURVE_UPDATE_INTERVAL;
+            UD60x18 percentThroughVotingPeriod = (
+                ud(currentInterval * 1e18) / (ud(votingPeriod * 1e18) / ud(PRICE_CURVE_UPDATE_INTERVAL * 1e18))
+            ) * ud(100 * 1e18); // percentage as whole number so curve is 0 to 100
+            UD60x18 exponent = percentThroughVotingPeriod * (ud(multiple) / ud(1e18));
+            UD60x18 curveMultiple = exponent.exp2();
+            uint256 result = ((ud(costToVote) / ud(1e18)) * curveMultiple).intoUint256(); // costToVote is the minimum cost per vote for exponential curves
+            return (result / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE; // round to keep things clean on frontend
+        } else {
+            return costToVote;
+        }
+    }
+
+    /**
      * @dev Determines that the correct amount was sent with the transaction and returns that correct amount.
      */
     function _determineCorrectAmountSent(Actions currentAction, uint256 numVotes) internal returns (uint256) {
@@ -378,7 +415,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         } else if (currentAction == Actions.Vote) {
             if (payPerVote == 1) {
                 if (numVotes < 1 ether) revert CannotVoteLessThanOneVoteInPayPerVote();
-                actionCost = costToVote * (numVotes / 1 ether); // we don't allow <1 vote to be cast in a pay per vote txn bc of this, would underflow
+                actionCost = currentPricePerVote() * (numVotes / 1 ether); // we don't allow <1 vote to be cast in a pay per vote txn bc this would underflow
             } else {
                 actionCost = costToVote;
             }
