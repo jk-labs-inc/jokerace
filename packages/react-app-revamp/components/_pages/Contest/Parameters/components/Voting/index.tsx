@@ -84,6 +84,7 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
           </>
         ) : (
           <>
+            <ContestParametersVotingPrice />
             <ContestParametersVotingRequirements />
             <ContestParamatersCSVVoters votingMerkleRoot={votingMerkleRoot} />
           </>

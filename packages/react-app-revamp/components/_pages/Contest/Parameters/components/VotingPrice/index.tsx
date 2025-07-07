@@ -9,13 +9,13 @@ import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import VotingQualifierSkeleton from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Skeleton";
 import VotingQualifierError from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Error";
 import usePriceCurveType from "@hooks/usePriceCurveType";
-import { PriceCurveType } from "@hooks/useDeployContest/types";
+import { PriceCurveType, VoteType } from "@hooks/useDeployContest/types";
 
 const ContestParametersVotingPrice = () => {
-  const { version, costToVote, contestInfoData, contestAbi } = useContestStore(
+  const { version, charge, contestInfoData, contestAbi } = useContestStore(
     useShallow(state => ({
       version: state.version,
-      costToVote: state.charge?.type.costToVote,
+      charge: state.charge,
       contestInfoData: state.contestInfoData,
       contestAbi: state.contestAbi,
     })),
@@ -47,19 +47,27 @@ const ContestParametersVotingPrice = () => {
   });
 
   if (isPriceCurveTypeLoading || isPriceCurveMultipleLoading) return <VotingQualifierSkeleton />;
-  if (isPriceCurveTypeError || isPriceCurveMultipleError)
+  if (isPriceCurveTypeError || isPriceCurveMultipleError || !charge)
     return (
       <VotingQualifierError
         onClick={() => (isPriceCurveTypeError ? refetchPriceCurveType() : refetchPriceCurveMultiple())}
       />
     );
 
-  if (!isVotingPriceCurveEnabled || priceCurveType !== PriceCurveType.Exponential) return null;
+  if (!isVotingPriceCurveEnabled || priceCurveType !== PriceCurveType.Exponential) {
+    return (
+      <li className="list-disc">
+        {formatEther(BigInt(charge.type.costToVote ?? 0))} {contestInfoData.contestChainNativeCurrencySymbol}
+        {charge.voteType === VoteType.PerVote ? " per vote" : " to vote"}
+      </li>
+    );
+  }
 
   return (
     <li className="list-disc">
-      {formatBalance(formatEther(BigInt(costToVote ?? 0)))} {contestInfoData.contestChainNativeCurrencySymbol} (at
-      start) to {formatBalance(formatEther(calculateEndPrice(costToVote ?? 0, Number(priceCurveMultiple))))}{" "}
+      {formatBalance(formatEther(BigInt(charge?.type.costToVote ?? 0)))}{" "}
+      {contestInfoData.contestChainNativeCurrencySymbol} (at start) to{" "}
+      {formatBalance(formatEther(calculateEndPrice(charge?.type.costToVote ?? 0, Number(priceCurveMultiple))))}{" "}
       {contestInfoData.contestChainNativeCurrencySymbol} (at finish) per vote
     </li>
   );
