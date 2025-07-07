@@ -7,7 +7,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
-import { EntryPreview } from "@hooks/useDeployContest/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { VoteType } from "@hooks/useDeployContest/types";
 import useProfileData from "@hooks/useProfileData";
 import { RawMetadataFields } from "@hooks/useProposal/utils";

@@ -1,29 +1,28 @@
-import { fetchUserBalance } from "lib/fetchUserBalance";
-import { useState, useEffect } from "react";
+import { formatBalance } from "@helpers/formatBalance";
+import { formatEther } from "viem";
+import { useBalance } from "wagmi";
 
-export const useUserBalance = (address: string, chainId: number, token?: string) => {
-  const [qualified, setQualified] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+interface UseUserNativeBalanceProps {
+  address: `0x${string}`;
+  chainId: number;
+}
 
-  useEffect(() => {
-    if (!address) {
-      setLoading(false);
-      return;
-    }
+export const useUserNativeBalance = ({ address, chainId }: UseUserNativeBalanceProps) => {
+  const { data, isLoading, error } = useBalance({
+    address,
+    chainId,
+    query: {
+      select(data) {
+        const formattedToEther = formatEther(data.value ?? 0);
 
-    async function fetchData() {
-      try {
-        const fetchedBalance = await fetchUserBalance(address, chainId, token);
-        setQualified(fetchedBalance.value > 0);
-      } catch (error) {
-        console.error("Error fetching balance:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
+        return formatBalance(formattedToEther);
+      },
+    },
+  });
 
-    fetchData();
-  }, [address, chainId, token]);
-
-  return { qualified, loading };
+  return {
+    data,
+    isLoading,
+    error,
+  };
 };

@@ -1,6 +1,7 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useMediaQuery } from "react-responsive";
-import CreateRadioButtonsGroup, { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup";
+import CreateRadioButtonsGroup from "@components/_pages/Create/components/RadioButtonsGroup";
+import { RadioButtonsGroupType, RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup/types";
 
 const ContestEntriesAdditionalDescription = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -38,6 +39,7 @@ const ContestEntriesAdditionalDescription = () => {
         can players include an "additional description" for their preview?
       </p>
       <CreateRadioButtonsGroup
+        type={RadioButtonsGroupType.NORMAL}
         options={options}
         value={entryPreviewConfig.isAdditionalDescriptionEnabled}
         onChange={handleAddDescriptionChange}
