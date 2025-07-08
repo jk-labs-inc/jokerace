@@ -1,26 +1,19 @@
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
-import { Charge, SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
+import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
+import { Charge, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
 import ContestParamsEarningsModal from "./components/Modal";
-import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
-import { formatEther } from "viem";
 
 interface ContestParametersEarningsProps {
   charge: Charge;
   contestAuthor: string;
   blockExplorerUrl?: string;
-  nativeCurrencySymbol?: string;
 }
 
-const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({
-  charge,
-  blockExplorerUrl,
-  contestAuthor,
-  nativeCurrencySymbol,
-}) => {
+const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge, blockExplorerUrl, contestAuthor }) => {
   const { address } = useAccount();
   const isConnectedWalletAuthor = address === contestAuthor;
   const isCreatorSplit = charge.splitFeeDestination.type !== SplitFeeDestinationType.NoSplit;
@@ -28,7 +21,11 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({
     ? charge.splitFeeDestination.address
     : contestAuthor;
   const blockExplorerAddressUrl = blockExplorerUrl
-    ? `${blockExplorerUrl}/address/${charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit ? JK_LABS_SPLIT_DESTINATION_DEFAULT : creatorSplitDestination}`
+    ? `${blockExplorerUrl}/address/${
+        charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit
+          ? JK_LABS_SPLIT_DESTINATION_DEFAULT
+          : creatorSplitDestination
+      }`
     : "";
   const [isEditEarningsModalOpen, setIsEditEarningsModalOpen] = useState(false);
   const { contestState } = useContestStateStore(state => state);
@@ -74,13 +71,6 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({
         )}
       </div>
       <ul className="pl-4 text-[16px] text-neutral-9">
-        <li className="list-disc">
-          {formatEther(BigInt(charge.type.costToPropose))} ${nativeCurrencySymbol} to enter
-        </li>
-        <li className="list-disc">
-          {formatEther(BigInt(charge.type.costToVote))} ${nativeCurrencySymbol}
-          {charge.voteType === VoteType.PerVote ? " per vote" : " to vote"}
-        </li>
         {isCreatorSplit ? <li className="list-disc">{creatorEarningsDestinationMessage()}</li> : null}
         {renderEarningsSplitMessage()}
       </ul>

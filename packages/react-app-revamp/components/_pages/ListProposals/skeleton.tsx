@@ -1,4 +1,4 @@
-import { EntryPreview } from "@hooks/useDeployContest/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { forwardRef } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 

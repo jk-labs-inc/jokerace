@@ -67,6 +67,17 @@ export type Charge = {
   type: {
     costToPropose: number;
     costToVote: number;
+    costToVoteEndPrice?: number;
   };
   error?: boolean;
 };
+
+export enum PriceCurveType {
+  Flat = "Flat",
+  Exponential = "Exponential",
+}
+
+export interface PriceCurve {
+  type: PriceCurveType;
+  multiple: number;
+}

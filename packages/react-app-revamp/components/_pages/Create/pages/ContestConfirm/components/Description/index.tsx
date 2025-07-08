@@ -1,11 +1,11 @@
 import ContestImage from "@components/_pages/Contest/components/ContestImage";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
-import { Prompt } from "@hooks/useDeployContest/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import CreateContestConfirmLayout from "../Layout";
+import { Prompt } from "@hooks/useDeployContest/slices/contestInfoSlice";
 
 interface CreateContestConfirmDescriptionProps {
   prompt: Prompt;

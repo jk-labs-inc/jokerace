@@ -1,4 +1,4 @@
-import { EntryPreview } from "@hooks/useDeployContest/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import React, { ReactNode } from "react";
 import { useMediaQuery } from "react-responsive";
 

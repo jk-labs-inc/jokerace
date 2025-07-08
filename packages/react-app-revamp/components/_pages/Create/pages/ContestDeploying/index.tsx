@@ -18,7 +18,12 @@ const WARNING_MESSAGE_THRESHOLD = 10000;
 
 const CreateContestDeploying = () => {
   const router = useRouter();
-  const { isSuccess, deployContestData, votingMerkle: votingMerkleData, reset } = useDeployContestStore(state => state);
+  const {
+    isSuccess,
+    deployContestData,
+    votingMerkle: votingMerkleData,
+    resetStore,
+  } = useDeployContestStore(state => state);
   const { setShowRewards } = useShowRewardsStore(state => state);
   const votingMerkle = votingMerkleData.prefilled || votingMerkleData.csv;
   const hasLargeVoterList = votingMerkle && votingMerkle.voters.length > WARNING_MESSAGE_THRESHOLD;
@@ -26,10 +31,10 @@ const CreateContestDeploying = () => {
   useEffect(() => {
     return () => {
       if (isSuccess) {
-        reset();
+        resetStore();
       }
     };
-  }, [reset, isSuccess]);
+  }, [resetStore, isSuccess]);
 
   useEffect(() => {
     if (!isSuccess || !deployContestData) {

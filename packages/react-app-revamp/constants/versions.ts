@@ -1,0 +1,1 @@
+export const VOTING_PRICE_CURVES_VERSION = "5.7";
