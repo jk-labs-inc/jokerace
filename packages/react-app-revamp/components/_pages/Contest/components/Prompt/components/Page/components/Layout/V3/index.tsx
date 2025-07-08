@@ -2,10 +2,11 @@ import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils"
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import EditContestPrompt from "./components/EditContestPrompt";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import { useMediaQuery } from "react-responsive";
+import { useDescriptionExpansionStore } from "./store";
 
 interface ContestPromptPageV3LayoutProps {
   prompt: string;
@@ -16,6 +17,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
   const [isExpanded, setIsExpanded] = useState(false);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { contestState } = useContestStateStore(state => state);
+  const { triggerRecalculation } = useDescriptionExpansionStore();
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const { contestSummary, contestEvaluate, contestContactDetails } = parsePrompt(prompt);
   const fullText = [contestSummary, contestEvaluate, contestContactDetails].filter(Boolean).join("\n\n");
@@ -36,6 +38,10 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
 
   const handleToggleExpanded = () => {
     setIsExpanded(!isExpanded);
+    // Trigger masonry recalculation after a short delay to allow for DOM update
+    setTimeout(() => {
+      triggerRecalculation();
+    }, 100);
   };
 
   return (
@@ -44,7 +50,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
         <EditContestPrompt canEditPrompt={canEditTitleAndDescription} prompt={prompt} />
       </div>
 
-      <div className="flex flex-col gap-2 md:gap-4 w-80 xs:w-[460px] sm:w-[560px]">
+      <div className="flex flex-col gap-2 w-80 xs:w-[460px] sm:w-[560px]">
         <div className="relative">
           <div
             className={`
@@ -75,7 +81,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
                 <ChevronUpIcon
                   width={isMobile ? 16 : 21}
                   height={isMobile ? 16 : 21}
-                  className="md:mt-1 transition-transform duration-300"
+                  className="transition-transform duration-300"
                 />
               ) : (
                 <ChevronDownIcon

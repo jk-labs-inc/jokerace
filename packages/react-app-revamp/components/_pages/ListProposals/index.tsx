@@ -14,6 +14,8 @@ import useInfiniteScroll from "react-infinite-scroll-hook";
 import { useAccount } from "wagmi";
 import { verifyEntryPreviewPrompt } from "../DialogModalSendProposal/utils";
 import ListProposalsContainer from "./container";
+import { useDescriptionExpansionStore } from "../Contest/components/Prompt/components/Page/components/Layout/V3/store";
+import ListProposalsLoader from "./loader";
 import ListProposalsSkeleton from "./skeleton";
 
 export const ListProposals = () => {
@@ -37,6 +39,7 @@ export const ListProposals = () => {
     listProposalsData,
   } = useProposalStore(state => state);
   const { contestAuthorEthereumAddress, contestAbi: abi, version } = useContestStore(state => state);
+  const { expansionKey } = useDescriptionExpansionStore(state => state);
 
   const [deletingProposalIds, setDeletingProposalIds] = useState<string[]>([]);
   const [selectedProposalIds, setSelectedProposalIds] = useState<string[]>([]);
@@ -103,18 +106,12 @@ export const ListProposals = () => {
   };
 
   if (isPageProposalsLoading && !listProposalsData.length) {
-    return (
-      <ListProposalsSkeleton
-        enabledPreview={enabledPreview}
-        highlightColor="#BB65FF"
-        count={listProposalsIds.length > PROPOSALS_PER_PAGE ? PROPOSALS_PER_PAGE : listProposalsIds.length}
-      />
-    );
+    return <ListProposalsLoader ref={infiniteRef} />;
   }
 
   return (
-    <div className="infiniteScroll">
-      <ListProposalsContainer enabledPreview={enabledPreview}>
+    <>
+      <ListProposalsContainer enabledPreview={enabledPreview} recalculateKey={expansionKey}>
         {listProposalsData.map((proposal, index) => {
           if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
             return (
@@ -151,14 +148,7 @@ export const ListProposals = () => {
         })}
       </ListProposalsContainer>
 
-      {hasNextPage && (
-        <ListProposalsSkeleton
-          ref={infiniteRef}
-          enabledPreview={enabledPreview}
-          highlightColor="#BB65FF"
-          count={skeletonRemainingLoaderCount}
-        />
-      )}
+      {hasNextPage && <ListProposalsLoader ref={infiniteRef} />}
 
       {showDeleteButton && (
         <div className="flex sticky bottom-0 left-0 right-0 p-4 bg-white shadow-lg">
@@ -171,7 +161,7 @@ export const ListProposals = () => {
           </ButtonV3>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
