@@ -1,15 +1,14 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import CustomLink from "@components/UI/Link";
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
+import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
+import ProposalContentVoteSecondary from "../../Buttons/Vote/Secondary";
 import ProposalContentProfile from "../../Profile";
 import { Tweet } from "./components/CustomTweet";
 import ProposalLayoutTweetRankOrPlaceholder from "./components/RankOrPlacehoder";
-import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
-import ProposalContentVoteSecondary from "../../Buttons/Vote/Secondary";
 
 interface ProposalLayoutTweetProps {
   proposal: Proposal;

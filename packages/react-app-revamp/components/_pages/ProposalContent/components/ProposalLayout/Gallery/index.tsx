@@ -1,14 +1,13 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import CustomLink from "@components/UI/Link";
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { FC, useEffect, useState } from "react";
+import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
 import ImageWithFallback from "../../ImageWithFallback";
 import ProposalContentProfile from "../../Profile";
 import ProposalLayoutGalleryRankOrPlaceholder from "./components/RankOrPlaceholder";
-import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
 
 interface ProposalLayoutGalleryProps {
   proposal: Proposal;
@@ -82,10 +81,10 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
     <CustomLink
       scroll={false}
       href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
-      className="flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out"
+      className="flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full max-h-[70vh] border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out"
     >
       <div className="rounded-2xl overflow-hidden relative">
-        <ImageWithFallback mediumSrc={imgUrl} fullSrc={imgUrl} alt="entry image" />
+        <ImageWithFallback fullSrc={imgUrl} alt="entry image" />
 
         {proposal.rank ? (
           <div className="absolute top-1 left-2">

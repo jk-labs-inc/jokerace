@@ -13670,7 +13670,7 @@ marky@^1.2.2:
   resolved "https://registry.yarnpkg.com/marky/-/marky-1.2.5.tgz#55796b688cbd72390d2d399eaaf1832c9413e3c0"
   integrity sha512-q9JtQJKjpsVxCRVgQ+WapguSbKC3SQ5HEzFGPAJMStgh3QjCawp00UKv3MTTAArTmGmmPUvllHZoNbZ3gs0I+Q==
 
-masonic@4.1.0:
+masonic@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/masonic/-/masonic-4.1.0.tgz#deabf94902420b139922a3864a110b8f5a0cc1df"
   integrity sha512-3RNbAG5qLve7qNtGp1UM/u7vI39jO73ZFHDBAg3xl8AVh7A6Ikx7I7mBeC0NY0h1r1jJn2Wqeol1QMa09MQbyQ==
@@ -15761,12 +15761,17 @@ react-html-props@2.1.1:
   resolved "https://registry.yarnpkg.com/react-html-props/-/react-html-props-2.1.1.tgz#0fded09fab434e17a7dd0ed25515b93dc0f565a6"
   integrity sha512-tM+YCYlr90m3JontKUAa+gNVU2zkyprlCS7OQ9aa3z2MfyJjAioJzrSmi1Vef/+UCTE6CQlPqLX4ebdLIJDKxw==
 
-react-infinite-scroll-component@6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/react-infinite-scroll-component/-/react-infinite-scroll-component-6.1.0.tgz#7e511e7aa0f728ac3e51f64a38a6079ac522407f"
-  integrity sha512-SQu5nCqy8DxQWpnUVLx7V7b7LcA37aM7tvoWjTLZp1dk6EJibM5/4EJKzOnl07/BsM1Y40sKLuqjCwwH/xV0TQ==
+react-infinite-scroll-hook@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/react-infinite-scroll-hook/-/react-infinite-scroll-hook-6.0.1.tgz#b8cfa62760ac460007cc23dd08ceb5bf6c677328"
+  integrity sha512-5FtJnor4Zyd3uafHCzOlXFCuhFJ2ZzLm3d9XTKbvAN6A/SH+XNFo5IOFk/T1hV5AYy+vOZYoXeH4jkufFB2JVA==
   dependencies:
-    throttle-debounce "^2.1.0"
+    react-intersection-observer-hook "^4.0.0"
+
+react-intersection-observer-hook@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-intersection-observer-hook/-/react-intersection-observer-hook-4.0.0.tgz#6bc010e020d5820883ee0d488bdee004efb552db"
+  integrity sha512-g9hWp741AA6w0RlGiaTtmIuceRd61q7soZmx2keB1OPstLcZffCKpTxWaYA2LVKNYME3B3ZOGwX3iuYyCBLAag==
 
 react-is@^16.13.1:
   version "16.13.1"
@@ -17509,11 +17514,6 @@ throat@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/throat/-/throat-5.0.0.tgz#c5199235803aad18754a667d659b5e72ce16764b"
   integrity sha512-fcwX4mndzpLQKBS1DVYhGAcYaYt7vsHNIvQV+WXMvnow5cgjPphq5CaayLaGsjRdSCKZFNGt7/GYAuXaNOiYCA==
-
-throttle-debounce@^2.1.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-2.3.0.tgz#fd31865e66502071e411817e241465b3e9c372e2"
-  integrity sha512-H7oLPV0P7+jgvrk+6mwwwBDmxTaxnu9HMXmloNLXwnNO0ZxZ31Orah2n8lU1eMPvsaowP2CX+USCgyovXfdOFQ==
 
 throttle-debounce@^3.0.1:
   version "3.0.1"
