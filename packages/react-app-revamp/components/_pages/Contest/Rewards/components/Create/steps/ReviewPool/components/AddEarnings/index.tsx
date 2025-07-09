@@ -44,7 +44,7 @@ const CreateRewardsAddEarningsToggle: FC<CreateRewardsAddEarningsToggleProps> = 
         >
           <div className="text-[12px] text-true-black">
             <b>
-              you get 70% of all charges from <br />
+              you get 90% of all charges from <br />
               entries and votes.
             </b>{" "}
             turn the toggle on <br />
