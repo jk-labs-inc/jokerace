@@ -67,10 +67,12 @@ export interface ContestState {
   setCanEditTitleAndDescription: (value: boolean) => void;
   setRewardsModuleAddress: (address: string) => void;
   setContestInfoData: (contestInfoData: ContestInfoData) => void;
+  getTotalVotingMinutes: () => number;
+  getCurrentVotingMinute: () => number;
 }
 
 export const createContestStore = () =>
-  createStore<ContestState>(set => ({
+  createStore<ContestState>((set, get) => ({
     contestName: "",
     contestInfoData: {
       contestAddress: "",
@@ -125,6 +127,22 @@ export const createContestStore = () =>
     setCanEditTitleAndDescription: value => set({ canEditTitleAndDescription: value }),
     setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
     setContestInfoData: contestInfoData => set({ contestInfoData: contestInfoData }),
+    getTotalVotingMinutes: () => {
+      const state = get();
+      const diffMs = state.votesClose.getTime() - state.votesOpen.getTime();
+      return Math.floor(diffMs / (1000 * 60)); // Convert to minutes
+    },
+
+    getCurrentVotingMinute: () => {
+      const state = get();
+      const now = new Date();
+      const diffMs = now.getTime() - state.votesOpen.getTime();
+      const currentMinute = Math.floor(diffMs / (1000 * 60)); // Convert to minutes
+
+      // Ensure we don't go below 0 or above total minutes
+      const totalMinutes = state.getTotalVotingMinutes();
+      return Math.max(0, Math.min(currentMinute, totalMinutes));
+    },
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);
