@@ -29,7 +29,9 @@ const VotingQualifierAnyoneCanVoteExponentialEndPrice: FC = () => {
     <p className="text-[16px] md:text-[24px] text-neutral-11 font-bold">
       {formatBalance(formatEther(BigInt(costToVote ?? 0)))} →{" "}
       {formatBalance(formatEther(calculateEndPrice(costToVote ?? 0, Number(priceCurveMultiple))))}
-      <span className="text-[16px] text-neutral-9"> {contestInfoData.contestChainNativeCurrencySymbol}</span>
+      <span className="text-[16px] md:text-[24px] text-neutral-9 uppercase">
+        {contestInfoData.contestChainNativeCurrencySymbol}
+      </span>
     </p>
   );
 };
