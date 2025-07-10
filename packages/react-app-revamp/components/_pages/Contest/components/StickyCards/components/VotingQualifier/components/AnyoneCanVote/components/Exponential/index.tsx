@@ -6,6 +6,8 @@ import { useShallow } from "zustand/react/shallow";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
 import VotingQualifierSkeleton from "../../../../shared/Skeleton";
 import VotingQualifierError from "../../../../shared/Error";
+import { useMediaQuery } from "react-responsive";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 
 interface VotingQualifierAnyoneCanVoteExponentialProps {
   votingTimeLeft: number;
@@ -14,6 +16,8 @@ interface VotingQualifierAnyoneCanVoteExponentialProps {
 const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteExponentialProps> = ({
   votingTimeLeft,
 }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const { contestInfoData, contestAbi, contestVersion } = useContestStore(
     useShallow(state => ({
       contestInfoData: state.contestInfoData,
@@ -40,7 +44,9 @@ const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteEx
     <div className="flex flex-col gap-2 md:gap-4">
       <div className="flex items-center gap-1 md:gap-2">
         <img src="/contest/price-interval.svg" alt="timer" />
-        <p className="text-[12px] md:text-[16px] font-bold text-neutral-9">price per vote</p>
+        <p className="text-[12px] md:text-[16px] font-bold text-neutral-9">
+          {isMobile && contestStatus === ContestStatus.VotingOpen ? "price" : "price per vote"}
+        </p>
         <VotingQualifierAnyoneCanVoteExponentialTimer
           votingTimeLeft={votingTimeLeft}
           priceCurveUpdateInterval={priceCurveUpdateInterval}

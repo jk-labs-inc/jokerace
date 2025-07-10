@@ -4,8 +4,10 @@ import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
 import { useShallow } from "zustand/react/shallow";
 import { motion } from "motion/react";
+import { useMediaQuery } from "react-responsive";
 
 const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC = () => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { contestInfoData, contestAbi, version, votingClose } = useContestStore(
     useShallow(state => ({
       contestInfoData: state.contestInfoData,
@@ -43,8 +45,11 @@ const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC = () => {
         ease: "easeInOut",
       }}
     >
-      {currentPricePerVote}{" "}
-      <span className="text-[16px] text-neutral-9">{contestInfoData.contestChainNativeCurrencySymbol}</span>
+      {currentPricePerVote}
+      <span className="text-[16px] md:text-[24px] text-neutral-9 uppercase">
+        {contestInfoData.contestChainNativeCurrencySymbol}
+      </span>{" "}
+      {isMobile && <span className="text-[12px] text-neutral-11">/ vote</span>}
     </motion.p>
   );
 };
