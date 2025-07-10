@@ -102,7 +102,7 @@ export const useCreateRewardsStore = create<CreateRewardsState>(set => ({
   currentStep: CreationStep.InitialStep,
   rewardPoolType: RewardPoolType.Voters,
   rewardPoolData: getInitialRewardPoolData(RewardPoolType.Voters),
-  addEarningsToRewards: false,
+  addEarningsToRewards: true,
   addFundsToRewards: false,
   setAddEarningsToRewards: addEarningsToRewards => set({ addEarningsToRewards }),
   setAddFundsToRewards: addFundsToRewards => set({ addFundsToRewards }),
@@ -121,7 +121,7 @@ export const useCreateRewardsStore = create<CreateRewardsState>(set => ({
       currentStep: CreationStep.InitialStep,
       rewardPoolType: RewardPoolType.Voters,
       rewardPoolData: getInitialRewardPoolData(RewardPoolType.Voters),
-      addEarningsToRewards: false,
+      addEarningsToRewards: true,
       addFundsToRewards: false,
     }),
 }));

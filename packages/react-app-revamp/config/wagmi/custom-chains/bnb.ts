@@ -10,8 +10,8 @@ export const bnb: Chain = {
     symbol: "BNB",
   },
   rpcUrls: {
-    public: { http: ["https://binance.llamarpc.com"] },
-    default: { http: ["https://binance.llamarpc.com"] },
+    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.bsc.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
+    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.bsc.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
   },
   blockExplorers: {
     etherscan: { name: "BNB Mainnet Scan", url: "https://bnbscan.org/" },

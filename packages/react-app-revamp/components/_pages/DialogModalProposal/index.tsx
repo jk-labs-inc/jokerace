@@ -30,6 +30,7 @@ import DialogModalProposalHeader from "./components/Header";
 import DialogModalProposalVoteCountdown from "./components/VoteCountdown";
 import { useShallow } from "zustand/shallow";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -82,18 +83,20 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   } = useDeleteProposal();
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const { isConnected, address: userAddress, chainId: userChainId } = useAccount();
+  const { openConnectModal } = useConnectModal();
   const { isSuccess } = useCastVotes();
   const { listProposalsIds } = useProposalStore(state => state);
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
   const totalProposals = listProposalsIds.length;
-  const { charge, votesOpen, votesClose, contestAuthorEthereumAddress, contestAbi } = useContestStore(
+  const { charge, votesOpen, votesClose, contestAuthorEthereumAddress, contestAbi, anyoneCanVote } = useContestStore(
     useShallow(state => ({
       charge: state.charge,
       votesOpen: state.votesOpen,
       votesClose: state.votesClose,
       contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
       contestAbi: state.contestAbi,
+      anyoneCanVote: state.anyoneCanVote,
     })),
   );
   const isPayPerVote = charge?.voteType === VoteType.PerVote;
@@ -270,7 +273,17 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                       onCancel={cancelMaxVote}
                       buttonSize={ButtonSize.FULL}
                     />
-                  ) : isConnected ? (
+                  ) : !isConnected ? (
+                    <button className="text-[16px] text-neutral-11" onClick={openConnectModal}>
+                      <span className="text-positive-11 font-bold">connect your wallet</span>{" "}
+                      {anyoneCanVote ? "to add votes" : "to see if you qualify"}
+                    </button>
+                  ) : outOfVotes ? (
+                    <p className="text-[16px] text-neutral-11">
+                      looks like you've used up all your votes this contest <br />
+                      feel free to try connecting another wallet to see if it has more votes!
+                    </p>
+                  ) : (
                     <VotingWidget
                       proposalId={proposalId}
                       amountOfVotes={currentUserAvailableVotesAmount}
@@ -279,16 +292,6 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                         setShowOnrampModal(true);
                       }}
                     />
-                  ) : outOfVotes ? (
-                    <p className="text-[16px] text-neutral-11">
-                      looks like you've used up all your votes this contest <br />
-                      feel free to try connecting another wallet to see if it has more votes!
-                    </p>
-                  ) : (
-                    <p className="text-[16px] text-neutral-11">
-                      unfortunately your wallet didn't qualify to vote in this contest <br />
-                      feel free to try connecting another wallet!
-                    </p>
                   )}
                 </div>
               ) : (
