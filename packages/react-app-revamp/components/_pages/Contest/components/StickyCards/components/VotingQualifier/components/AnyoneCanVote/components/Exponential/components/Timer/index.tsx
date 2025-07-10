@@ -38,7 +38,7 @@ const VotingQualifierAnyoneCanVoteExponentialTimer: FC<VotingQualifierAnyoneCanV
   });
 
   if (!isVotingOpen) {
-    return <p className="text-[12px] text-neutral-9">(start - finish of voting)</p>;
+    return <p className="text-[12px] text-neutral-9">(start - {isMobile ? "finish" : "finish of voting"})</p>;
   }
 
   // Hide timer in the last 60 seconds of voting
