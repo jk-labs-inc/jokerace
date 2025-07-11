@@ -4,6 +4,12 @@ export interface ExponentialPricingInput {
 }
 
 /**
+ * Threshold below which percentage increase is considered negligible
+ * Set to 0.1% since anything below this rounds to 0.0% when displayed with 1 decimal place
+ */
+const PERCENTAGE_INCREASE_THRESHOLD = 0.1;
+
+/**
  * Calculates the 'c' value for y = 2^(cx) formula
  * This 'c' becomes the 'multiple' parameter for smart contract deployment
  */
@@ -79,7 +85,7 @@ export const calculateNextMinutePrice = (
  * @param multiple - The exponential multiplier (c)
  * @param currentMinute - The current minute in the contest
  * @param totalMinutes - Total minutes in the contest
- * @returns Object containing nextPrice and percentageIncrease
+ * @returns Object containing nextPrice, percentageIncrease, and isBelowThreshold
  */
 export const calculateNextPriceAndIncrease = (
   currentPrice: number,
@@ -87,7 +93,7 @@ export const calculateNextPriceAndIncrease = (
   multiple: number,
   currentMinute: number,
   totalMinutes: number,
-): { nextPrice: number; percentageIncrease: number } => {
+): { nextPrice: number; percentageIncrease: number; isBelowThreshold: boolean } => {
   if (currentPrice <= 0) {
     throw new Error("Current price must be greater than 0");
   }
@@ -98,11 +104,14 @@ export const calculateNextPriceAndIncrease = (
 
   const percentageIncrease = ((nextPrice - currentPrice) / currentPrice) * 100;
 
+  const isBelowThreshold = percentageIncrease < PERCENTAGE_INCREASE_THRESHOLD;
+
   const percentageIncreaseRounded = Math.floor(percentageIncrease * 10) / 10;
 
   return {
     nextPrice,
     percentageIncrease: percentageIncreaseRounded,
+    isBelowThreshold,
   };
 };
 
@@ -112,14 +121,14 @@ export const calculateNextPriceAndIncrease = (
  * @param currentPrice - The current price
  * @param costToVote - The current cost to vote (start price)
  * @param multiple - The exponential multiplier (c)
- * @returns Object containing nextPrice and percentageIncrease (as decimal)
+ * @returns Object containing nextPrice, percentageIncrease, and isBelowThreshold
  */
 export const calculateNextPriceAndIncreaseFromStore = (
   contestStore: { getCurrentVotingMinute: () => number; getTotalVotingMinutes: () => number },
   currentPrice: number,
   costToVote: number,
   multiple: number,
-): { nextPrice: number; percentageIncrease: number } => {
+): { nextPrice: number; percentageIncrease: number; isBelowThreshold: boolean } => {
   const currentMinute = contestStore.getCurrentVotingMinute();
   const totalMinutes = contestStore.getTotalVotingMinutes();
 

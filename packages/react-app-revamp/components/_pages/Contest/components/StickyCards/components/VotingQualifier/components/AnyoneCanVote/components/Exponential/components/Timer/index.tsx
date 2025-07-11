@@ -29,7 +29,7 @@ const VotingQualifierAnyoneCanVoteExponentialTimer: FC<VotingQualifierAnyoneCanV
     })),
   );
 
-  const { currentPercentageIncrease, isError } = useCurrentPricePercentageIncrease({
+  const { currentPricePercentageData, isError } = useCurrentPricePercentageIncrease({
     address,
     abi,
     chainId,
@@ -46,13 +46,15 @@ const VotingQualifierAnyoneCanVoteExponentialTimer: FC<VotingQualifierAnyoneCanV
     return null;
   }
 
-  if (isError) {
-    <div className="flex items-center gap-1">
-      <ArrowLongUpIcon className="w-4 h-4 text-neutral-9" />
-      <p className="text-[12px] text-neutral-9">
-        in {secondsUntilNextUpdate} {isMobile ? "sec" : "seconds"}
-      </p>
-    </div>;
+  if (isError || !currentPricePercentageData || currentPricePercentageData.isBelowThreshold) {
+    return (
+      <div className="flex items-center gap-1">
+        <ArrowLongUpIcon className="w-4 h-4 text-neutral-9" />
+        <p className="text-[12px] text-neutral-9">
+          in {secondsUntilNextUpdate} {isMobile ? "sec" : "seconds"}
+        </p>
+      </div>
+    );
   }
 
   if (isMobile) {
@@ -60,7 +62,7 @@ const VotingQualifierAnyoneCanVoteExponentialTimer: FC<VotingQualifierAnyoneCanV
       <div className="flex items-center">
         <ArrowLongUpIcon className="w-4 h-4 text-neutral-9" />
         <p className="text-[12px] text-neutral-9">
-          {currentPercentageIncrease}% in {secondsUntilNextUpdate} sec
+          {currentPricePercentageData.percentageIncrease}% in {secondsUntilNextUpdate} sec
         </p>
       </div>
     );
@@ -69,7 +71,7 @@ const VotingQualifierAnyoneCanVoteExponentialTimer: FC<VotingQualifierAnyoneCanV
   return (
     <div className="flex items-center gap-1">
       <p className="text-[12px] text-neutral-9">
-        | increases {currentPercentageIncrease}% in {secondsUntilNextUpdate} seconds
+        | increases {currentPricePercentageData.percentageIncrease}% in {secondsUntilNextUpdate} seconds
       </p>
     </div>
   );
