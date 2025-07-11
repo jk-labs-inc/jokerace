@@ -16,7 +16,7 @@ interface CurrentPricePercentageIncreaseParams {
 }
 
 interface CurrentPricePercentageIncreaseResponse {
-  currentPercentageIncrease: number | null;
+  currentPricePercentageData: { percentageIncrease: number; isBelowThreshold: boolean } | null;
   isLoading: boolean;
   isError: boolean;
 }
@@ -63,7 +63,7 @@ const useCurrentPricePercentageIncrease = ({
     enabled,
   });
 
-  const currentPercentageIncrease = useMemo(() => {
+  const currentPricePercentageData = useMemo(() => {
     if (!costToVote || !priceCurveMultiple || !currentPricePerVote || isMultipleLoading || isPriceLoading) {
       return null;
     }
@@ -73,14 +73,14 @@ const useCurrentPricePercentageIncrease = ({
       const multiple = Number(priceCurveMultiple);
       const costToVoteNumber = Number(formatEther(BigInt(costToVote)));
 
-      const { percentageIncrease } = calculateNextPriceAndIncreaseFromStore(
+      const { percentageIncrease, isBelowThreshold } = calculateNextPriceAndIncreaseFromStore(
         { getCurrentVotingMinute, getTotalVotingMinutes },
         currentPriceNumber,
         costToVoteNumber,
         multiple,
       );
 
-      return percentageIncrease;
+      return { percentageIncrease, isBelowThreshold };
     } catch (error) {
       return null;
     }
@@ -90,7 +90,7 @@ const useCurrentPricePercentageIncrease = ({
   const isError = isPriceError || isMultipleError;
 
   return {
-    currentPercentageIncrease,
+    currentPricePercentageData,
     isLoading,
     isError,
   };
