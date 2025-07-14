@@ -36,7 +36,8 @@
     {
       "matchPackageNames":[
         "@tiptap/**"
-      ]
+      ],
+      "enabled": false
     }
   ]
 }
