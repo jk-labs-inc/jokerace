@@ -18,7 +18,7 @@ export const story: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Story Mainnet Scan", url: "https://storyscan.xyz/" },
-    default: { name: "Story Mainnet Scan", url: "https://storyscan.xyz/" },
+    etherscan: { name: "Story Mainnet Scan", url: "https://storyscan.io/" },
+    default: { name: "Story Mainnet Scan", url: "https://storyscan.io/" },
   },
 };
