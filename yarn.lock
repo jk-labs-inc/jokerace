@@ -18323,10 +18323,10 @@ viem@2.23.2:
     ox "0.6.7"
     ws "8.18.0"
 
-viem@2.32.0:
-  version "2.32.0"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.32.0.tgz#6994fce43c5feed21367c80dd488a755838101da"
-  integrity sha512-pHwKXQSyEWX+8ttOQJdU5dSBfYd6L9JxARY/Sx0MBj3uF/Zaiqt6o1SbzjFjQXkNzWSgtxK7H89ZI1SMIA2iLQ==
+viem@2.32.1:
+  version "2.32.1"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.32.1.tgz#ef2eed98e57142e6fb07c7f92c15e66d1080a5d2"
+  integrity sha512-OWjT/o5RlZAINU5hUlIypppXUg5WKHtifZTuM9qE23kmMf8N8xkUp8GBa6pP+14nHGQBl8HWNZZLGmOO9TFYaQ==
   dependencies:
     "@noble/curves" "1.9.2"
     "@noble/hashes" "1.8.0"
