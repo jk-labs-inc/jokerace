@@ -43,7 +43,7 @@ export const calculateEndPrice = (startPrice: number, multiple: number, x: numbe
   // Formula: y = b * 2^(cx)
   const endPrice = startPrice * Math.pow(2, multiple * x);
 
-  return BigInt(endPrice);
+  return BigInt(Math.round(endPrice));
 };
 
 /**
