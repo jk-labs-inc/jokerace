@@ -22,6 +22,7 @@ import {
   zerionWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { cookieStorage, createConfig, createStorage } from "wagmi";
+import { abstract } from "./custom-chains/abstract";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
@@ -32,6 +33,7 @@ import { celo } from "./custom-chains/celo";
 import { cyber } from "./custom-chains/cyber";
 import { forma } from "./custom-chains/forma";
 import { gnosis } from "./custom-chains/gnosis";
+import { hyperliquid } from "./custom-chains/hyperliquid";
 import { ink } from "./custom-chains/ink";
 import { linea } from "./custom-chains/linea";
 import { mainnet } from "./custom-chains/mainnet";
@@ -50,6 +52,7 @@ import { sonic } from "./custom-chains/sonic";
 import { story } from "./custom-chains/story";
 import { swell } from "./custom-chains/swell";
 import { unichain } from "./custom-chains/unichain";
+import { world } from "./custom-chains/world";
 import { zksyncEra } from "./custom-chains/zksyncEra";
 import { zora } from "./custom-chains/zora";
 import { isParaWalletConfigured, paraWallet } from "./para";
@@ -89,6 +92,9 @@ export const chains: readonly [Chain, ...Chain[]] = [
   manta,
   zksyncEra,
   sonic,
+  world,
+  abstract,
+  hyperliquid,
   sepolia,
   baseTestnet,
   mainnet,
