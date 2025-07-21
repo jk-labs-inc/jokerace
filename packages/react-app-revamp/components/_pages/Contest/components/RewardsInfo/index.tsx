@@ -43,7 +43,9 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
         rewardsModuleAddress={rewards.contractAddress as `0x${string}`}
         rewardsAbi={rewards.abi as Abi}
         chainId={chainId}
-        payees={rewards.payees}
+        rewards={rewards}
+        isRewardsModuleLoading={isLoading}
+        isRewardsModuleError={isError}
       />
     </div>
   );

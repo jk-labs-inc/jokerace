@@ -4,6 +4,7 @@ import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
+import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import { Charge, VoteType } from "@hooks/useDeployContest/types";
 import { useEmailSend } from "@hooks/useEmailSend";
 import { useError } from "@hooks/useError";
@@ -11,8 +12,8 @@ import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal"
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { useReleasableRewards } from "@hooks/useReleasableRewards";
 import useRewardsModule from "@hooks/useRewards";
+import { useTotalRewards } from "@hooks/useTotalRewards";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
@@ -23,13 +24,11 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { EmailType, VotingEmailParams } from "lib/email/types";
 import moment from "moment";
 import { usePathname } from "next/navigation";
+import { useCallback } from "react";
 import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
-import { useCastVotesStore } from "./store";
-import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { useShallow } from "zustand/shallow";
-import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
-import { useCallback } from "react";
+import { useCastVotesStore } from "./store";
 
 interface UserAnalyticsParams {
   contestAddress: string;
@@ -100,11 +99,10 @@ export function useCastVotes() {
     pickedProposal ?? "",
   );
   const isEarningsTowardsRewards = rewards?.contractAddress === charge?.splitFeeDestination.address;
-  const { refetch: refetchReleasableRewards } = useReleasableRewards({
-    contractAddress: rewards?.contractAddress ?? "",
+  const { refetch: refetchTotalRewards } = useTotalRewards({
+    rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
+    rewardsModuleAbi: rewards?.abi,
     chainId,
-    abi: rewards?.abi ?? [],
-    rankings: rewards?.payees ?? [],
   });
   const { sendEmail } = useEmailSend();
   const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
@@ -131,7 +129,6 @@ export function useCastVotes() {
 
       const pricePerVoteInWei = parseEther(currentPricePerVote);
       const totalCost = BigInt(amountOfVotes) * pricePerVoteInWei;
-
 
       return totalCost;
     },
@@ -284,7 +281,7 @@ export function useCastVotes() {
       } catch (error) {
         console.error("Error while updating reward analytics", error);
       }
-      refetchReleasableRewards();
+      refetchTotalRewards();
     }
   }
 
