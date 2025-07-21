@@ -47,19 +47,18 @@ export const calculateEndPrice = (startPrice: number, multiple: number, x: numbe
 };
 
 /**
- * Calculates what the price will be at the next minute
+ * Calculates the static minute-to-minute percentage increase for an exponential curve
+ * Since the exponential curve has consistent rate of change, this only needs to be calculated once
  * @param costToVote - The current cost to vote (start price)
  * @param multiple - The exponential multiplier (c)
- * @param nextMinute - The next minute in the contest
  * @param totalMinutes - Total minutes in the contest
- * @returns The calculated price at the next minute
+ * @returns Object containing the static percentageIncrease and isBelowThreshold
  */
-export const calculateNextMinutePrice = (
+export const calculateStaticMinuteToMinutePercentage = (
   costToVote: number,
   multiple: number,
-  nextMinute: number,
   totalMinutes: number,
-): number => {
+): { percentageIncrease: number; isBelowThreshold: boolean } => {
   if (costToVote <= 0) {
     throw new Error("Cost to vote must be greater than 0");
   }
@@ -68,69 +67,21 @@ export const calculateNextMinutePrice = (
     throw new Error("Total minutes must be greater than 0");
   }
 
-  if (nextMinute < 0 || nextMinute > totalMinutes) {
-    throw new Error("Next minute must be between 0 and total minutes");
-  }
+  // Calculate price at any minute (using minute 1 as example)
+  const priceAtMinuteN = costToVote * Math.pow(2, multiple * (1 / totalMinutes) * 100);
 
-  // Formula: costToVote * 2^(c * (nextMinute / totalMinutes) * 100)
-  const nextPrice = costToVote * Math.pow(2, multiple * (nextMinute / totalMinutes) * 100);
+  // Calculate price at next minute (minute 2)
+  const priceAtMinuteNPlus1 = costToVote * Math.pow(2, multiple * (2 / totalMinutes) * 100);
 
-  return nextPrice;
-};
-
-/**
- * Calculates both the next minute's price and the percentage increase from current price
- * @param currentPrice - The current price
- * @param costToVote - The current cost to vote (start price)
- * @param multiple - The exponential multiplier (c)
- * @param currentMinute - The current minute in the contest
- * @param totalMinutes - Total minutes in the contest
- * @returns Object containing nextPrice, percentageIncrease, and isBelowThreshold
- */
-export const calculateNextPriceAndIncrease = (
-  currentPrice: number,
-  costToVote: number,
-  multiple: number,
-  currentMinute: number,
-  totalMinutes: number,
-): { nextPrice: number; percentageIncrease: number; isBelowThreshold: boolean } => {
-  if (currentPrice <= 0) {
-    throw new Error("Current price must be greater than 0");
-  }
-
-  // Calculate next minute's price (currentMinute + 1)
-  const nextMinute = currentMinute + 1;
-  const nextPrice = calculateNextMinutePrice(costToVote, multiple, nextMinute, totalMinutes);
-
-  const percentageIncrease = ((nextPrice - currentPrice) / currentPrice) * 100;
+  // Calculate percentage increase between consecutive minutes
+  const percentageIncrease = ((priceAtMinuteNPlus1 - priceAtMinuteN) / priceAtMinuteN) * 100;
 
   const isBelowThreshold = percentageIncrease < PERCENTAGE_INCREASE_THRESHOLD;
 
   const percentageIncreaseRounded = Math.floor(percentageIncrease * 10) / 10;
 
   return {
-    nextPrice,
     percentageIncrease: percentageIncreaseRounded,
     isBelowThreshold,
   };
-};
-
-/**
- * Calculates the next minute's price and percentage increase using contest store data
- * @param contestStore - The contest store containing timing data
- * @param currentPrice - The current price
- * @param costToVote - The current cost to vote (start price)
- * @param multiple - The exponential multiplier (c)
- * @returns Object containing nextPrice, percentageIncrease, and isBelowThreshold
- */
-export const calculateNextPriceAndIncreaseFromStore = (
-  contestStore: { getCurrentVotingMinute: () => number; getTotalVotingMinutes: () => number },
-  currentPrice: number,
-  costToVote: number,
-  multiple: number,
-): { nextPrice: number; percentageIncrease: number; isBelowThreshold: boolean } => {
-  const currentMinute = contestStore.getCurrentVotingMinute();
-  const totalMinutes = contestStore.getTotalVotingMinutes();
-
-  return calculateNextPriceAndIncrease(currentPrice, costToVote, multiple, currentMinute, totalMinutes);
 };
