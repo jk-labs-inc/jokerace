@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import { erc20Abi, parseUnits } from "viem";
 import { useAccount } from "wagmi";
 import { useFundRewardsStore } from "./store";
+import { useTotalRewards } from "@hooks/useTotalRewards";
 
 export interface RewardData {
   currentUserAddress: string;
@@ -47,11 +48,10 @@ export function useFundRewardsModule() {
   } = useFundRewardsStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const { data: rewards } = useRewardsModule();
-  const { refetch: refetchReleasableRewards } = useReleasableRewards({
-    contractAddress: rewards?.contractAddress ?? "",
+  const { refetch: refetchTotalRewards } = useTotalRewards({
+    rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
+    rewardsModuleAbi: rewards?.abi,
     chainId,
-    abi: rewards?.abi ?? [],
-    rankings: rewards?.payees ?? [],
   });
 
   const sendFundsToRewardsModuleV3 = (rewards: FundPoolToken[]) => {
@@ -139,7 +139,7 @@ export function useFundRewardsModule() {
       console.error("Error while updating reward analytics", error);
     }
 
-    refetchReleasableRewards();
+    refetchTotalRewards();
     setIsLoading(false);
     setIsSuccess(true);
 
