@@ -1,19 +1,27 @@
 import { useTotalRewards } from "@hooks/useTotalRewards";
+import { ModuleType, RewardsModuleInfo } from "lib/rewards/types";
 import { AnimatePresence } from "motion/react";
 import { FC, useEffect, useMemo, useState } from "react";
 import { Abi } from "viem";
 import RewardCounter from "../RewardsCounter";
-import useRewardsModule from "@hooks/useRewards";
-import { ModuleType } from "lib/rewards/types";
 
 interface RewardsDisplayProps {
+  rewards: RewardsModuleInfo;
   rewardsModuleAddress: `0x${string}`;
   rewardsAbi: Abi;
   chainId: number;
-  payees: number[];
+  isRewardsModuleLoading: boolean;
+  isRewardsModuleError: boolean;
 }
 
-const RewardsDisplay: FC<RewardsDisplayProps> = ({ rewardsModuleAddress, rewardsAbi, chainId, payees }) => {
+const RewardsDisplay: FC<RewardsDisplayProps> = ({
+  rewards,
+  rewardsModuleAddress,
+  rewardsAbi,
+  chainId,
+  isRewardsModuleLoading,
+  isRewardsModuleError,
+}) => {
   const {
     data: totalRewards,
     isLoading: isTotalRewardsLoading,
@@ -23,11 +31,8 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({ rewardsModuleAddress, rewards
     rewardsModuleAbi: rewardsAbi,
     chainId,
   });
-  const { data: rewards, isLoading: isRewardsLoading, isError: isRewardsError } = useRewardsModule();
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const isLoading = isTotalRewardsLoading || isRewardsLoading;
-  const isError = isTotalRewardsError || isRewardsError;
 
   const rewardsToDisplay = useMemo(() => {
     const rewards = [];
@@ -71,7 +76,8 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({ rewardsModuleAddress, rewards
     }
   }, [rewardsToDisplay]);
 
-  if (isLoading || isError || !currentReward) return null;
+  if (isRewardsModuleLoading || isRewardsModuleError || !currentReward || isTotalRewardsLoading || isTotalRewardsError)
+    return null;
 
   return (
     <>
