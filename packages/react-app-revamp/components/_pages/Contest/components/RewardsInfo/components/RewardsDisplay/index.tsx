@@ -81,7 +81,7 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
 
   return (
     <>
-      <div className="h-4 w-[2px] bg-primary-2"></div>
+      <div className="hidden md:block h-4 w-[2px] bg-primary-2"></div>
       <div className="flex items-baseline gap-1">
         <AnimatePresence mode="wait">
           <RewardCounter
