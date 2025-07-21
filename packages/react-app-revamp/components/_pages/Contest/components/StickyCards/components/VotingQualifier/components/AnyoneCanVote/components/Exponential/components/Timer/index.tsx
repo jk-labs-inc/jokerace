@@ -19,7 +19,7 @@ const VotingQualifierAnyoneCanVoteExponentialTimer: FC<VotingQualifierAnyoneCanV
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
   const secondsUntilNextUpdate = votingTimeLeft % priceCurveUpdateInterval;
-  const { address, abi, chainId, version, votingClose } = useContestStore(
+  const { address, abi, chainId } = useContestStore(
     useShallow(state => ({
       address: state.contestInfoData.contestAddress,
       abi: state.contestAbi,
@@ -28,13 +28,10 @@ const VotingQualifierAnyoneCanVoteExponentialTimer: FC<VotingQualifierAnyoneCanV
       votingClose: state.votesClose,
     })),
   );
-
   const { currentPricePercentageData, isError } = useCurrentPricePercentageIncrease({
     address,
     abi,
     chainId,
-    version,
-    votingClose,
   });
 
   if (!isVotingOpen) {

@@ -1,6 +1,5 @@
-import { calculateNextPriceAndIncreaseFromStore } from "@helpers/exponentialMultiplier";
+import { calculateStaticMinuteToMinutePercentage } from "@helpers/exponentialMultiplier";
 import { useContestStore } from "@hooks/useContest/store";
-import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import { useMemo } from "react";
 import { Abi, formatEther } from "viem";
@@ -10,8 +9,6 @@ interface CurrentPricePercentageIncreaseParams {
   address: string;
   abi: Abi;
   chainId: number;
-  version: string;
-  votingClose: Date;
   enabled?: boolean;
 }
 
@@ -25,30 +22,12 @@ const useCurrentPricePercentageIncrease = ({
   address,
   abi,
   chainId,
-  version,
-  votingClose,
   enabled = true,
 }: CurrentPricePercentageIncreaseParams): CurrentPricePercentageIncreaseResponse => {
-  const {
-    currentPricePerVote,
-    isLoading: isPriceLoading,
-    isRefetching: isPriceRefetching,
-    isPreloading: isPricePreloading,
-    isError: isPriceError,
-  } = useCurrentPricePerVoteWithRefetch({
-    address,
-    abi,
-    chainId,
-    version,
-    votingClose,
-    enabled,
-  });
-
-  const { costToVote, getTotalVotingMinutes, getCurrentVotingMinute } = useContestStore(
+  const { costToVote, getTotalVotingMinutes } = useContestStore(
     useShallow(state => ({
       costToVote: state?.charge?.type.costToVote,
       getTotalVotingMinutes: state.getTotalVotingMinutes,
-      getCurrentVotingMinute: state.getCurrentVotingMinute,
     })),
   );
 
@@ -64,30 +43,29 @@ const useCurrentPricePercentageIncrease = ({
   });
 
   const currentPricePercentageData = useMemo(() => {
-    if (!costToVote || !priceCurveMultiple || !currentPricePerVote || isMultipleLoading || isPriceLoading) {
+    if (!costToVote || !priceCurveMultiple || isMultipleLoading) {
       return null;
     }
 
     try {
-      const currentPriceNumber = Number(currentPricePerVote);
       const multiple = Number(priceCurveMultiple);
       const costToVoteNumber = Number(formatEther(BigInt(costToVote)));
+      const totalMinutes = getTotalVotingMinutes();
 
-      const { percentageIncrease, isBelowThreshold } = calculateNextPriceAndIncreaseFromStore(
-        { getCurrentVotingMinute, getTotalVotingMinutes },
-        currentPriceNumber,
+      const { percentageIncrease, isBelowThreshold } = calculateStaticMinuteToMinutePercentage(
         costToVoteNumber,
         multiple,
+        totalMinutes,
       );
 
       return { percentageIncrease, isBelowThreshold };
     } catch (error) {
       return null;
     }
-  }, [currentPricePerVote, costToVote, priceCurveMultiple, isMultipleLoading, isPriceLoading]);
+  }, [costToVote, priceCurveMultiple, isMultipleLoading, getTotalVotingMinutes]);
 
-  const isLoading = isPriceLoading || isMultipleLoading || isPriceRefetching || isPricePreloading;
-  const isError = isPriceError || isMultipleError;
+  const isLoading = isMultipleLoading;
+  const isError = isMultipleError;
 
   return {
     currentPricePercentageData,
