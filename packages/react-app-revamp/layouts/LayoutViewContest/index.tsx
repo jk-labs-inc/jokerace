@@ -189,7 +189,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                     </div>
 
                     <div className={`flex flex-row gap-3 md:gap-4 items-center`}>
-                      <div className="flex items-center gap-4">
+                      <div className="flex flex-col md:flex-row md:items-center gap-4">
                         <UserProfileDisplay
                           ethereumAddress={contestAuthorEthereumAddress}
                           shortenOnFallback

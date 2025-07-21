@@ -7,6 +7,7 @@ import { FC } from "react";
 import { Abi } from "viem";
 import RewardsDisplay from "./components/RewardsDisplay";
 import RewardsLoader from "./components/RewardsLoader";
+import RewardsMarquee from "./components/RewardsMarquee";
 
 interface ContestRewardsInfoProps {
   version: string;
@@ -36,12 +37,17 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
   if (!rewards) return null;
 
   return (
-    <RewardsDisplay
-      rewardsModuleAddress={rewards.contractAddress as `0x${string}`}
-      rewardsAbi={rewards.abi as Abi}
-      chainId={chainId}
-      payees={rewards.payees}
-    />
+    <div className="flex items-center gap-4">
+      <RewardsMarquee moduleType={rewards.moduleType} />
+      <RewardsDisplay
+        rewardsModuleAddress={rewards.contractAddress as `0x${string}`}
+        rewardsAbi={rewards.abi as Abi}
+        chainId={chainId}
+        rewards={rewards}
+        isRewardsModuleLoading={isLoading}
+        isRewardsModuleError={isError}
+      />
+    </div>
   );
 };
 
