@@ -1,10 +1,10 @@
-import { returnOnlySuffix } from "@helpers/ordinalSuffix";
-import { useReleasableRewards } from "@hooks/useReleasableRewards";
-import { useReleasedRewards } from "@hooks/useReleasedRewards";
+import { useTotalRewards } from "@hooks/useTotalRewards";
 import { AnimatePresence } from "motion/react";
 import { FC, useEffect, useMemo, useState } from "react";
 import { Abi } from "viem";
 import RewardCounter from "../RewardsCounter";
+import useRewardsModule from "@hooks/useRewards";
+import { ModuleType } from "lib/rewards/types";
 
 interface RewardsDisplayProps {
   rewardsModuleAddress: `0x${string}`;
@@ -15,78 +15,80 @@ interface RewardsDisplayProps {
 
 const RewardsDisplay: FC<RewardsDisplayProps> = ({ rewardsModuleAddress, rewardsAbi, chainId, payees }) => {
   const {
-    data: releasableRewards,
-    isLoading: isReleasableLoading,
-    isContractError: isReleasableError,
-  } = useReleasableRewards({
-    contractAddress: rewardsModuleAddress,
+    data: totalRewards,
+    isLoading: isTotalRewardsLoading,
+    isError: isTotalRewardsError,
+  } = useTotalRewards({
+    rewardsModuleAddress: rewardsModuleAddress,
+    rewardsModuleAbi: rewardsAbi,
     chainId,
-    abi: rewardsAbi,
-    rankings: payees,
   });
-
-  const {
-    data: releasedRewards,
-    isLoading: isReleasedLoading,
-    isContractError: isReleasedError,
-  } = useReleasedRewards({
-    contractAddress: rewardsModuleAddress,
-    chainId,
-    abi: rewardsAbi,
-    rankings: payees,
-  });
+  const { data: rewards, isLoading: isRewardsLoading, isError: isRewardsError } = useRewardsModule();
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const isLoading = isReleasableLoading || isReleasedLoading;
-  const isError = isReleasableError || isReleasedError;
+  const isLoading = isTotalRewardsLoading || isRewardsLoading;
+  const isError = isTotalRewardsError || isRewardsError;
 
-  const flattenedRewards = useMemo(() => {
-    const released =
-      releasedRewards?.flatMap(reward =>
-        reward.tokens.map(token => ({ ...token, isReleased: true, ranking: reward.ranking })),
-      ) || [];
-    const releasable =
-      releasableRewards?.flatMap(reward =>
-        reward.tokens.map(token => ({ ...token, isReleased: false, ranking: reward.ranking })),
-      ) || [];
-    return [...released, ...releasable];
-  }, [releasedRewards, releasableRewards]);
+  const rewardsToDisplay = useMemo(() => {
+    const rewards = [];
 
-  const currentReward = flattenedRewards[currentIndex];
+    // Add native token if it exists and has value
+    if (totalRewards?.native && totalRewards.native.value > 0n) {
+      rewards.push({
+        amount: totalRewards.native.value,
+        decimals: totalRewards.native.decimals,
+        symbol: totalRewards.native.symbol,
+      });
+    }
+
+    // Add all token rewards if they exist and have value
+    if (totalRewards?.tokens) {
+      Object.entries(totalRewards.tokens).forEach(([address, tokenData]) => {
+        if (tokenData.value > 0n) {
+          rewards.push({
+            amount: tokenData.value,
+            decimals: tokenData.decimals,
+            symbol: tokenData.symbol,
+          });
+        }
+      });
+    }
+
+    return rewards;
+  }, [totalRewards]);
+
+  const currentReward = rewardsToDisplay[currentIndex];
 
   useEffect(() => {
-    if (flattenedRewards.length > 1) {
+    if (rewardsToDisplay.length > 1) {
       const interval = setInterval(() => {
-        setCurrentIndex(prevIndex => (prevIndex + 1) % flattenedRewards.length);
+        setCurrentIndex(prevIndex => (prevIndex + 1) % rewardsToDisplay.length);
       }, 2000);
 
       return () => clearInterval(interval);
-    } else if (flattenedRewards.length === 1) {
+    } else if (rewardsToDisplay.length === 1) {
       setCurrentIndex(0);
     }
-  }, [flattenedRewards]);
+  }, [rewardsToDisplay]);
 
   if (isLoading || isError || !currentReward) return null;
 
   return (
     <>
-      <div className="h-4 w-[2px] bg-primary-2"></div>
-      <div className="flex items-baseline">
+      <div className="hidden md:block h-4 w-[2px] bg-primary-2"></div>
+      <div className="flex items-baseline gap-1">
         <AnimatePresence mode="wait">
           <RewardCounter
             key={`reward-${currentIndex}`}
-            amount={currentReward.amount ?? 0n}
-            decimals={currentReward.decimals ?? 18}
+            amount={currentReward.amount}
+            decimals={currentReward.decimals}
             symbol={currentReward.symbol}
             index={currentIndex}
           />
         </AnimatePresence>
-
-        <span className="text-[12px] md:text-[16px] font-bold text-neutral-11 ml-1">
-          {currentReward.isReleased ? "paid to" : "to"} {currentReward.ranking}
-          <sup>{returnOnlySuffix(currentReward.ranking)}</sup>
-        </span>
-        <span className="text-[12px] md:text-[16px] font-bold text-neutral-11 ml-1">place</span>
+        <p className="text-[16px] text-neutral-11">
+          to <b>{rewards?.moduleType === ModuleType.VOTER_REWARDS ? "voters" : "contestants"}</b>
+        </p>
       </div>
     </>
   );

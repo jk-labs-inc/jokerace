@@ -27,14 +27,10 @@ const RewardCounter: FC<RewardCounterProps> = ({ amount, decimals, symbol, index
       }}
       style={{ willChange: "transform, opacity" }}
     >
-      <GradientText
-        gradientClassName="bg-gradient-create"
-        textSizeClassName="text-[14px] md:text-[24px] font-bold"
-        isFontSabo={false}
-      >
+      <p className="text-neutral-11 text-[16px] md:text-[24px]">
         {formatBalance(formatUnits(amount ?? 0n, decimals ?? 18))}{" "}
-        <span className="uppercase text-[12px] md:text-[16px] font-bold">${symbol}</span>
-      </GradientText>
+        <span className="uppercase text-[16px]">${symbol}</span>
+      </p>
     </motion.div>
   );
 };

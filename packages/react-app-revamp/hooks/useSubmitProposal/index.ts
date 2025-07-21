@@ -26,6 +26,7 @@ import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useSubmitProposalStore } from "./store";
+import { useTotalRewards } from "@hooks/useTotalRewards";
 
 const targetMetadata = {
   targetAddress: "0x0000000000000000000000000000000000000000",
@@ -82,11 +83,10 @@ export function useSubmitProposal() {
     useSubmitProposalStore(state => state);
   const { fields: metadataFields, setFields: setMetadataFields } = useMetadataStore(state => state);
   const isEarningsTowardsRewards = rewardsModuleAddress === charge?.splitFeeDestination.address;
-  const { refetch: refetchReleasableRewards } = useReleasableRewards({
-    contractAddress: rewardsModuleAddress,
+  const { refetch: refetchTotalRewards } = useTotalRewards({
+    rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
+    rewardsModuleAbi: rewards?.abi,
     chainId,
-    abi: rewards?.abi ?? [],
-    rankings: rewards?.payees ?? [],
   });
   const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
   const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
@@ -180,7 +180,9 @@ export function useSubmitProposal() {
         } as TransactionResponse;
 
         const proposalId = await getProposalId(proposalCore, contractConfig);
-        const contestEntryLink = `${window.location.origin}/contest/${chainName.toLowerCase()}/${address}/submission/${proposalId}`;
+        const contestEntryLink = `${
+          window.location.origin
+        }/contest/${chainName.toLowerCase()}/${address}/submission/${proposalId}`;
 
         setTransactionData({
           chainId: chainId,
@@ -259,7 +261,7 @@ export function useSubmitProposal() {
       } catch (error) {
         console.error("Error while updating reward analytics", error);
       }
-      refetchReleasableRewards();
+      refetchTotalRewards();
     }
   }
 
