@@ -1,6 +1,8 @@
 import { LINK_BRIDGE_DOCS } from "@config/links";
 import { FC } from "react";
 import OnrampProviders from "./providers";
+import { useMediaQuery } from "react-responsive";
+import FundFromAnotherChainButton from "./components/Buttons/FundFromAnotherChain";
 
 interface OnrampProps {
   chain: string;
@@ -11,6 +13,8 @@ interface OnrampProps {
 }
 
 const Onramp: FC<OnrampProps> = ({ chain, asset, onGoBack, showBackButton = true, className }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+
   const handleFundFromAnotherChain = () => {
     window.open(LINK_BRIDGE_DOCS, "_blank");
   };
@@ -18,21 +22,25 @@ const Onramp: FC<OnrampProps> = ({ chain, asset, onGoBack, showBackButton = true
   return (
     <div className={`flex flex-col gap-4 md:gap-6 w-full ${className}`}>
       <div className="flex items-start md:items-center justify-between w-full">
-        <div className="flex flex-col gap-2">
-          <p className="text-[24px] font-bold text-neutral-11">add funds</p>
-          <p className="text-neutral-11 text-[16px] font-bold">
-            add $5 of tokens <span className="text-neutral-9">(or edit to get more or less)</span>
+        <div className="flex flex-col gap-1 md:gap-2">
+          <p className="text-[24px] font-bold text-neutral-11">
+            add funds <span className="text-[12px]">on {chain}</span>
           </p>
+          {isMobile ? (
+            <FundFromAnotherChainButton handleFundFromAnotherChain={handleFundFromAnotherChain} />
+          ) : (
+            <p className="text-neutral-11 text-[16px] font-bold hidden md:block">
+              add $5 of tokens <span className="text-neutral-9">(or edit to get more or less)</span>
+            </p>
+          )}
         </div>
       </div>
       <OnrampProviders chain={chain} asset={asset} />
       <div className="flex items-start flex-col gap-4 md:gap-2">
-        <button
-          className="text-positive-11 hover:text-positive-9 transition-colors duration-300 ease-in-out font-bold text-[16px]"
-          onClick={handleFundFromAnotherChain}
-        >
-          or fund from another chain
-        </button>
+        <FundFromAnotherChainButton
+          handleFundFromAnotherChain={handleFundFromAnotherChain}
+          className="hidden md:block"
+        />
         {showBackButton && (
           <div className="relative w-full pt-3 md:pt-0">
             <div
