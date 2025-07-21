@@ -47,7 +47,7 @@
     "@wagmi/connectors": "5.8.5",
     "@wagmi/core": "2.18.0",
     "autoprefixer": "10.4.21",
-    "cheerio": "1.1.0",
+    "cheerio": "1.1.1",
     "class-variance-authority": "0.7.1",
     "compare-versions": "6.1.1",
     "date-fns": "4.1.0",
