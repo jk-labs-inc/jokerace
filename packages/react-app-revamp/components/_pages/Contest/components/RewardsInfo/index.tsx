@@ -21,18 +21,22 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
   )?.[0]?.id;
 
   const { data: rewards, isLoading, isSuccess, isError } = useRewardsModule();
-  const { isCanceled } = useCancelRewards({
+  const {
+    isCanceled,
+    isLoading: isCancelLoading,
+    isError: isCancelError,
+  } = useCancelRewards({
     rewardsAddress: rewards?.contractAddress as `0x${string}`,
     abi: rewards?.abi as Abi,
     chainId,
     version,
   });
 
-  if (isLoading) {
+  if (isLoading || isCancelLoading) {
     return <RewardsLoader />;
   }
 
-  if (isError || !isSuccess || isCanceled) return null;
+  if (isError || !isSuccess || isCanceled || isCancelError) return null;
 
   if (!rewards) return null;
 
