@@ -43,7 +43,7 @@ export const createMonetizationSlice = (set: any): MonetizationSlice => ({
   },
   prevChainRefInCharge: "",
   priceCurve: {
-    type: PriceCurveType.Flat,
+    type: PriceCurveType.Exponential,
     multiple: 1,
   },
 
