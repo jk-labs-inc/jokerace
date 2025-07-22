@@ -1,5 +1,6 @@
 import { TimingPeriod } from "@components/_pages/Create/pages/ContestTiming/utils";
 import { ContestTypeConfig } from "@components/_pages/Create/types";
+import { PriceCurveType } from "@hooks/useDeployContest/types";
 import moment from "moment";
 
 export const anyoneCanPlayConfig: ContestTypeConfig = {
@@ -23,6 +24,10 @@ export const anyoneCanPlayConfig: ContestTypeConfig = {
     votingMerkle: {
       csv: null,
       prefilled: null,
+    },
+    priceCurve: {
+      type: PriceCurveType.Exponential,
+      multiple: 1,
     },
   },
 };

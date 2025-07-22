@@ -7,7 +7,7 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import {
   DEFAULT_ALLOWED_SUBMISSIONS_PER_USER,
   MAX_ALLOWED_SUBMISSIONS_PER_USER,
-  MAX_SUBMISSIONS_PER_CONTEST,
+  MAX_SUBMISSIONS_PER_CONTEST
 } from "@hooks/useDeployContest/types";
 import { useAccount } from "wagmi";
 import { useSubmissionMerkle } from "./useSubmissionMerkle";
@@ -36,6 +36,7 @@ const useSetContestTypeConfig = () => {
     setVotingClose,
     setVotingAllowlist,
     setVotingMerkle,
+    setPriceCurve,
     setVotingRequirements,
     setVotingRequirementsOption,
     setSubmissionMerkle,
@@ -85,6 +86,7 @@ const useSetContestTypeConfig = () => {
       evaluateVoters: "Voters should evaluate based on 50% relevance to the prompt and 50% originality.",
       contactDetails: "Join the JokeRace telegram: https://t.co/j7Fp3u7pqS.",
     });
+    setPriceCurve(config.data.priceCurve);
   };
 
   return setContestTypeConfig;
