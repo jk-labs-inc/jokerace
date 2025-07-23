@@ -1,4 +1,4 @@
-import { VotingMerkle } from "@hooks/useDeployContest/types";
+import { PriceCurve, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Option } from "./components/DefaultDropdown";
 
 export enum StepTitle {
@@ -31,6 +31,7 @@ export interface ContestDataForType {
     csv: VotingMerkle | null;
     prefilled: VotingMerkle | null;
   };
+  priceCurve: PriceCurve;
 }
 
 export interface ContestTypeConfig {

@@ -383,8 +383,9 @@ export function useDeployContest() {
     chargeType: { costToPropose: number; costToVote: number },
   ): Promise<string> {
     const chain = chains.find(c => c.id === chainId);
-    // check if either costToPropose or costToVote is 0 ( this means no monetization )
-    if (chargeType.costToPropose === 0 || chargeType.costToVote === 0) {
+
+    // check if costToVote is 0 ( this means no monetization )
+    if (chargeType.costToVote === 0) {
       return "";
     }
 

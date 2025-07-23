@@ -4,6 +4,7 @@ import { useMediaQuery } from "react-responsive";
 import { FC } from "react";
 import { Tooltip } from "react-tooltip";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { PERCENTAGE_TO_CREATOR_DEFAULT } from "constants/monetization";
 
 interface CreateRewardsAddEarningsToggleProps {
   percentageToCreator: number;
@@ -44,7 +45,7 @@ const CreateRewardsAddEarningsToggle: FC<CreateRewardsAddEarningsToggleProps> = 
         >
           <div className="text-[12px] text-true-black">
             <b>
-              you get 90% of all charges from <br />
+              you get {PERCENTAGE_TO_CREATOR_DEFAULT}% of all charges from <br />
               entries and votes.
             </b>{" "}
             turn the toggle on <br />

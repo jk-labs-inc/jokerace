@@ -34,7 +34,7 @@ const TotalCharge: React.FC<TotalChargeProps> = ({ charge: contestCharge, amount
       return;
     }
 
-    if (contestCharge.type.costToVote === 0 && contestCharge.type.costToPropose === 0) {
+    if (contestCharge.type.costToVote === 0) {
       setTotalCharge("0");
       return;
     }
