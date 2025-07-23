@@ -3,7 +3,7 @@ import { RadioButtonsGroupType, RadioOption } from "@components/_pages/Create/co
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { SplitFeeDestination, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
-import { PERCENTAGE_TO_CREATOR_DEFAULT } from "constants/monetization";
+import { PERCENTAGE_TO_CREATOR_DEFAULT, PERCENTAGE_TO_JKLABS_DEFAULT } from "constants/monetization";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -36,7 +36,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const splitFeeDestinationTitle = isMobile
     ? "who should we split charges with?"
-    : `we split all charges ${PERCENTAGE_TO_CREATOR_DEFAULT} (you)/10 (us). who should receive these?`;
+    : `we split all charges ${PERCENTAGE_TO_CREATOR_DEFAULT} (you)/${PERCENTAGE_TO_JKLABS_DEFAULT} (us). who should receive these?`;
 
   useEffect(() => {
     setSelected(splitFeeDestination.type);

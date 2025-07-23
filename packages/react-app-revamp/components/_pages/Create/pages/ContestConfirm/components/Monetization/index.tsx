@@ -10,7 +10,7 @@ import CostToEnterMessage from "./components/CostToEnter";
 import CostToVoteMessage from "./components/CostToVote";
 import CreatorChargesMessage from "./components/CreatorCharges";
 import SplitMessage from "./components/Split";
-import { PERCENTAGE_TO_CREATOR_DEFAULT } from "constants/monetization";
+import { PERCENTAGE_TO_CREATOR_DEFAULT, PERCENTAGE_TO_JKLABS_DEFAULT } from "constants/monetization";
 
 interface CreateContestConfirmMonetizationProps {
   charge: Charge;
@@ -56,7 +56,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
     ) {
       return (
         <li className="text-[16px] list-disc normal-case">
-          all charges split {PERCENTAGE_TO_CREATOR_DEFAULT} (you)/10 (jk labs inc.)
+          all charges split {PERCENTAGE_TO_CREATOR_DEFAULT} (you)/{PERCENTAGE_TO_JKLABS_DEFAULT} (jk labs inc.)
         </li>
       );
     } else {
