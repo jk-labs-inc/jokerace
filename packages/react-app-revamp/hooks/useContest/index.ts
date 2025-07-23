@@ -156,9 +156,6 @@ export function useContest() {
         costToVote = Number(results[12].result);
       }
 
-      console.log("results:", results);
-      console.log("results 12 result:", results[12].result);
-
       if (compareVersions(version, "4.29") >= 0) {
         creatorSplitDestination = results[14].result as string;
       }
