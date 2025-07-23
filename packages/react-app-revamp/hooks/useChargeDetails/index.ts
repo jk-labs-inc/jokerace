@@ -1,5 +1,6 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
+import { PERCENTAGE_TO_CREATOR_DEFAULT } from "constants/monetization";
 import { fetchChargeDetails } from "lib/monetization";
 import { useCallback, useEffect, useState } from "react";
 
@@ -27,7 +28,7 @@ const useChargeDetails = (chainName: string) => {
 
     if (details.isError) {
       setCharge({
-        percentageToCreator: 90,
+        percentageToCreator: PERCENTAGE_TO_CREATOR_DEFAULT,
         splitFeeDestination: { type: SplitFeeDestinationType.CreatorWallet, address: "" },
         voteType: isAnyoneCanVote ? VoteType.PerVote : VoteType.PerTransaction,
         type: {
@@ -53,7 +54,7 @@ const useChargeDetails = (chainName: string) => {
       });
 
       setCharge({
-        percentageToCreator: 90,
+        percentageToCreator: PERCENTAGE_TO_CREATOR_DEFAULT,
         splitFeeDestination: { type: SplitFeeDestinationType.CreatorWallet, address: "" },
         voteType: isAnyoneCanVote ? VoteType.PerVote : VoteType.PerTransaction,
         type: {

@@ -1,0 +1,1 @@
+export const PERCENTAGE_TO_CREATOR_DEFAULT = 90;

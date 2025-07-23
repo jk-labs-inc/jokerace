@@ -4,6 +4,7 @@ import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import CustomLink from "@components/UI/Link";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { PERCENTAGE_TO_CREATOR_DEFAULT } from "constants/monetization";
 
 const LandingPageExplainer = () => {
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -51,7 +52,7 @@ const LandingPageExplainer = () => {
         <>
           <ul className="flex flex-col pl-4 gap-2">
             <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-              make a contest, make money: we split all charges 90 (you)/10 (us)
+              make a contest, make money: we split all charges {PERCENTAGE_TO_CREATOR_DEFAULT} (you)/10 (us)
             </li>
             <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
               let anyone vote—or allowlist. the choice is yours, and it’s anti-bot.
