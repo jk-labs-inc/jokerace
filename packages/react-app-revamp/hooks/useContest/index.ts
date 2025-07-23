@@ -144,43 +144,42 @@ export function useContest() {
         setCanEditTitleAndDescription(true);
       }
 
-      if (costToPropose === 0) {
-        setCharge(null);
-      } else {
-        const percentageToCreator = Number(results[9].result);
-        let costToVote = 0;
-        let payPerVote = 0;
-        let creatorSplitDestination = "";
+      const percentageToCreator = Number(results[9].result);
+      let costToVote = 0;
+      let payPerVote = 0;
+      let creatorSplitDestination = "";
 
-        if (compareVersions(version, "4.23") >= 0) {
-          if (compareVersions(version, "4.25") >= 0) {
-            payPerVote = Number(results[13].result);
-          }
-          costToVote = Number(results[12].result);
+      if (compareVersions(version, "4.23") >= 0) {
+        if (compareVersions(version, "4.25") >= 0) {
+          payPerVote = Number(results[13].result);
         }
-
-        if (compareVersions(version, "4.29") >= 0) {
-          creatorSplitDestination = results[14].result as string;
-        }
-
-        setCharge({
-          percentageToCreator,
-          voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
-          splitFeeDestination: {
-            type: determineSplitFeeDestination(
-              creatorSplitDestination,
-              percentageToCreator,
-              contestAuthor,
-              rewardsModuleAddress,
-            ),
-            address: creatorSplitDestination,
-          },
-          type: {
-            costToPropose,
-            costToVote,
-          },
-        });
+        costToVote = Number(results[12].result);
       }
+
+      console.log("results:", results);
+      console.log("results 12 result:", results[12].result);
+
+      if (compareVersions(version, "4.29") >= 0) {
+        creatorSplitDestination = results[14].result as string;
+      }
+
+      setCharge({
+        percentageToCreator,
+        voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
+        splitFeeDestination: {
+          type: determineSplitFeeDestination(
+            creatorSplitDestination,
+            percentageToCreator,
+            contestAuthor,
+            rewardsModuleAddress,
+          ),
+          address: creatorSplitDestination,
+        },
+        type: {
+          costToPropose,
+          costToVote,
+        },
+      });
     } else {
       setCharge(null);
     }
