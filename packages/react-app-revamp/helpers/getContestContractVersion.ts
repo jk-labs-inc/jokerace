@@ -70,6 +70,7 @@ import OfficialModulePointsToContestContract from "@contracts/bytecodeAndAbi/Con
 import VoterRewardsContract from "@contracts/bytecodeAndAbi/Contest.5.5.voterRewards.sol/Contest.json";
 import SetPeriodLimitsContract from "@contracts/bytecodeAndAbi/Contest.5.6.setPeriodLimits.sol/Contest.json";
 import VotingPriceCurvesContract from "@contracts/bytecodeAndAbi/Contest.5.7.votingPriceCurves.sol/Contest.json";
+import AddModuleTrackingContract from "@contracts/bytecodeAndAbi/Contest.5.8.addModuleTracking.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, id } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -85,7 +86,9 @@ export async function getContestContractVersion(address: string, chainId: number
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
     const defaultReturn = { abi: null, version: "unknown" };
-    if (version === "5.7") {
+    if (version === "5.8") {
+      return { abi: AddModuleTrackingContract.abi, version };
+    } else  if (version === "5.7") {
       return { abi: VotingPriceCurvesContract.abi, version };
     } else if (version === "5.6") {
       return { abi: SetPeriodLimitsContract.abi, version };
