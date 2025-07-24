@@ -13,7 +13,10 @@ const isEthereumMainnet = (chainId: number) => {
 };
 
 const displayCoinbaseWalletWarning = () => {
-  return toastError("coinbase wallet does not support creating a contest.", "", ErrorToastType.SIMPLE);
+  return toastError({
+    message: "coinbase wallet does not support creating a contest.",
+    type: ErrorToastType.SIMPLE,
+  });
 };
 
 export { isWalletForbidden, isEthereumMainnet, displayCoinbaseWalletWarning };

@@ -36,7 +36,9 @@ const CreateContestTypes = () => {
 
   const handleTypeSelection = (type: ContestType) => {
     if (type === ContestType.VotingContest && !address) {
-      toastInfo("please connect your wallet first");
+      toastInfo({
+        message: "please connect your wallet first",
+      });
       return;
     }
 

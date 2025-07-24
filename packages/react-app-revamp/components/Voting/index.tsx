@@ -140,7 +140,9 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote
     }
 
     if (isVotingClosed) {
-      toastInfo("Voting is closed for this contest");
+      toastInfo({
+        message: "Voting is closed for this contest",
+      });
       return;
     }
 
