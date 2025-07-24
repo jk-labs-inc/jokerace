@@ -107,7 +107,11 @@ export function useSubmitProposal() {
   };
 
   async function sendProposal(proposalContent: string): Promise<{ tx: TransactionResponse; proposalId: string }> {
-    if (showToast) toastLoading("proposal is deploying...", LoadingToastMessageType.KEEP_BROWSER_OPEN);
+    if (showToast)
+      toastLoading({
+        message: "proposal is deploying...",
+        additionalMessageType: LoadingToastMessageType.KEEP_BROWSER_OPEN,
+      });
     setIsLoading(true);
     setIsSuccess(false);
     setError("");
@@ -207,7 +211,10 @@ export function useSubmitProposal() {
 
         setIsLoading(false);
         setIsSuccess(true);
-        if (showToast) toastSuccess("proposal submitted successfully!");
+        if (showToast)
+          toastSuccess({
+            message: "proposal submitted successfully!",
+          });
         await sendEntryEmail(contestEntryLink);
         increaseCurrentUserProposalCount();
         setSubmissionsCount(submissionsCount + 1);

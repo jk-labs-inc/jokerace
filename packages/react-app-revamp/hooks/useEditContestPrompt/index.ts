@@ -16,7 +16,9 @@ const useEditContestPrompt = ({ contestAbi, contestAddress }: UseEditContestProm
   const { handleError } = useError();
 
   const editPrompt = async (newPrompt: string) => {
-    toastLoading("updating contest prompt...");
+    toastLoading({
+      message: "updating contest prompt...",
+    });
 
     try {
       const { request } = await simulateContract(config, {
@@ -27,7 +29,9 @@ const useEditContestPrompt = ({ contestAbi, contestAddress }: UseEditContestProm
       });
 
       if (!request) {
-        toastError("failed to update contest prompt");
+        toastError({
+          message: "failed to update contest prompt",
+        });
         return;
       }
 
@@ -35,7 +39,9 @@ const useEditContestPrompt = ({ contestAbi, contestAddress }: UseEditContestProm
 
       if (hash) {
         setContestPrompt(newPrompt);
-        toastSuccess("contest prompt updated successfully");
+        toastSuccess({
+          message: "contest prompt updated successfully",
+        });
       }
     } catch (error) {
       handleError(error, "failed to update contest prompt");

@@ -25,9 +25,16 @@ export function useError() {
     setError(handledError.message);
 
     if (handledError.codeFound) {
-      toastError(handledError.message);
+      toastError({
+        message: handledError.message,
+        additionalMessage: handledError.additionalMessage,
+        codeFound: true,
+      });
     } else {
-      toastError(defaultMessage, handledError.message);
+      toastError({
+        message: defaultMessage,
+        messageToCopy: handledError.message,
+      });
     }
   };
 

@@ -64,9 +64,13 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
   };
 
   const copyLink = () => {
-    const url = `${window.location.origin}/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`;
+    const url = `${window.location.origin}/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${
+      proposal.id
+    }`;
     navigator.clipboard.writeText(url);
-    toastInfo("link copied!");
+    toastInfo({
+      message: "link copied!",
+    });
   };
 
   if (isMobile) {
@@ -126,7 +130,9 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                   <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={handleVotingModalOpen} />
                 ) : null}
                 <ChevronDownIcon
-                  className={`w-6 h-6 text-positive-11 cursor-pointer transition-transform duration-300 ${isContentHidden ? "" : "transform rotate-180"}`}
+                  className={`w-6 h-6 text-positive-11 cursor-pointer transition-transform duration-300 ${
+                    isContentHidden ? "" : "transform rotate-180"
+                  }`}
                   onClick={handleToggleVisibility}
                 />
               </div>

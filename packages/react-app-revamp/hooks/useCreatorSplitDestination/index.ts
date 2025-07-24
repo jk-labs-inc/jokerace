@@ -27,7 +27,9 @@ export function useCreatorSplitDestination(): SetCreatorSplitDestinationResult {
     if (!splitFeeDestination.address || !charge) return;
     setIsLoading(true);
     setIsConfirmed(false);
-    toastLoading("Setting creator split destination...");
+    toastLoading({
+      message: "Setting creator split destination...",
+    });
 
     try {
       const { request } = await simulateContract(config, {
@@ -43,7 +45,9 @@ export function useCreatorSplitDestination(): SetCreatorSplitDestinationResult {
 
       if (receipt.status === "success") {
         setIsConfirmed(true);
-        toastSuccess("Creator split destination set successfully");
+        toastSuccess({
+          message: "Creator split destination set successfully",
+        });
         setCharge({
           ...charge,
           splitFeeDestination,

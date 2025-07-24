@@ -28,10 +28,14 @@ export function useSendToken(options?: UseSendTokenOptions) {
         args: [to, amount],
       });
 
-      toastLoading("sending transfer transaction...");
+      toastLoading({
+        message: "sending transfer transaction...",
+      });
       const hash = await writeContract(config, request);
 
-      toastSuccess("transfer transaction sent successfully!");
+      toastSuccess({
+        message: "transfer transaction sent successfully!",
+      });
       options?.onSuccess?.();
       return hash;
     } catch (error) {
@@ -41,12 +45,16 @@ export function useSendToken(options?: UseSendTokenOptions) {
 
   const sendToken = async (token: FilteredToken, chainId: number, recipientAddress: string, amount: string) => {
     if (!recipientAddress) {
-      toastError("recipient address is required");
+      toastError({
+        message: "recipient address is required",
+      });
       return;
     }
 
     if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
-      toastError("please enter a valid amount");
+      toastError({
+        message: "please enter a valid amount",
+      });
       return;
     }
 
@@ -55,19 +63,25 @@ export function useSendToken(options?: UseSendTokenOptions) {
         const parsedAmount = parseUnits(amount, token.decimals);
 
         try {
-          toastLoading("sending transfer transaction...");
+          toastLoading({
+            message: "sending transfer transaction...",
+          });
           const hash = await sendTransaction(config, {
             chainId,
             to: recipientAddress as `0x${string}`,
             value: parsedAmount,
           });
 
-          toastSuccess("transaction sent successfully!");
+          toastSuccess({
+            message: "transaction sent successfully!",
+          });
           options?.onSuccess?.();
           return hash;
         } catch (error) {
           const err = error as Error;
-          toastError(err.message || "transaction failed");
+          toastError({
+            message: err.message || "transaction failed",
+          });
           options?.onError?.(err);
           throw error;
         }

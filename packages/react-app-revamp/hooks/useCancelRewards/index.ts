@@ -42,7 +42,9 @@ export function useCancelRewards({ rewardsAddress, abi, chainId, version }: UseC
   const cancelRewards = async () => {
     if (!hasCanceledFunction) return;
 
-    toastLoading("Cancelling rewards..");
+    toastLoading({
+      message: "Cancelling rewards..",
+    });
 
     try {
       writeContract({
@@ -58,7 +60,9 @@ export function useCancelRewards({ rewardsAddress, abi, chainId, version }: UseC
 
   useEffect(() => {
     if (isConfirmed) {
-      toastSuccess("Rewards cancelled!");
+      toastSuccess({
+        message: "Rewards cancelled!",
+      });
       refetch();
     }
   }, [isConfirmed, refetch]);

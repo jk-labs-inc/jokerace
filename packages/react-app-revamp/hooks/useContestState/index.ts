@@ -27,7 +27,9 @@ export function useContestState(): CancelContestResult {
   const cancelContest = async (): Promise<void> => {
     setIsLoading(true);
     setIsConfirmed(false);
-    toastLoading("Cancelling contest...");
+    toastLoading({
+      message: "Cancelling contest...",
+    });
 
     try {
       const { request } = await simulateContract(config, {
@@ -43,7 +45,9 @@ export function useContestState(): CancelContestResult {
 
       if (receipt.status === "success") {
         setIsConfirmed(true);
-        toastSuccess("Contest cancelled successfully");
+        toastSuccess({
+          message: "Contest cancelled successfully",
+        });
         setContestState(ContestStateEnum.Canceled);
       }
     } catch (err: any) {

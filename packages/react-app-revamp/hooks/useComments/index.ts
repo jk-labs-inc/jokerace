@@ -261,7 +261,9 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
   async function addComment(content: string) {
     setIsAdding(true);
     setIsAddingSuccess(false);
-    toastLoading("Adding comment...");
+    toastLoading({
+      message: "Adding comment...",
+    });
     try {
       const contractConfig = getContractConfig();
 
@@ -308,7 +310,9 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
       const combinedComments = [...comments, newComment];
 
       setComments(combinedComments);
-      toastSuccess("Comment added successfully!");
+      toastSuccess({
+        message: "Comment added successfully!",
+      });
       setIsAddingSuccess(true);
       setIsAdding(false);
     } catch (error: any) {
@@ -321,7 +325,9 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
   async function deleteComments(commentsIds: string[]) {
     setIsDeleting(true);
     setIsDeletingSuccess(false);
-    toastLoading(`Deleting ${commentsIds.length} comment${commentsIds.length > 1 ? "s" : ""}...`);
+    toastLoading({
+      message: `Deleting ${commentsIds.length} comment${commentsIds.length > 1 ? "s" : ""}...`,
+    });
     try {
       const contractConfig = getContractConfig();
 
@@ -356,7 +362,9 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
       const newComments = comments.filter(comment => !commentsIds.includes(comment.id));
 
       setComments(newComments);
-      toastSuccess("Comment deleted successfully!");
+      toastSuccess({
+        message: "Comment deleted successfully!",
+      });
       setIsDeletingSuccess(true);
       setIsDeleting(false);
     } catch (error: any) {

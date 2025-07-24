@@ -74,7 +74,9 @@ export const saveFileToBucket = async ({ fileId, content }: SaveFileOptions): Pr
 };
 
 export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions): Promise<string> => {
-  toastLoading("Uploading image...");
+  toastLoading({
+    message: "Uploading image...",
+  });
   try {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
@@ -90,10 +92,15 @@ export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions
     await s3.send(command);
 
     const originalUrl = `${IMAGE_PUBLIC_URL}/${fileId}`;
-    toastSuccess("Image uploaded successfully!");
+    toastSuccess({
+      message: "Image uploaded successfully!",
+    });
     return originalUrl;
   } catch (error: any) {
-    toastError("Failed to upload an image, please try again.", error.message);
+    toastError({
+      message: "Failed to upload an image, please try again.",
+      messageToCopy: error.message,
+    });
     console.error("Upload error:", error);
     throw new Error(`Failed to upload image with ID ${fileId} to bucket ${IMAGE_UPLOAD_BUCKET}`);
   }

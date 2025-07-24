@@ -15,7 +15,9 @@ const useEditContestTitle = ({ contestAbi, contestAddress }: UseEditContestTitle
   const { handleError } = useError();
 
   const editTitle = async (newName: string) => {
-    toastLoading("updating contest title...");
+    toastLoading({
+      message: "updating contest title...",
+    });
 
     try {
       const { request } = await simulateContract(config, {
@@ -26,7 +28,9 @@ const useEditContestTitle = ({ contestAbi, contestAddress }: UseEditContestTitle
       });
 
       if (!request) {
-        toastError("failed to update contest title");
+        toastError({
+          message: "failed to update contest title",
+        });
         return;
       }
 
@@ -34,7 +38,9 @@ const useEditContestTitle = ({ contestAbi, contestAddress }: UseEditContestTitle
 
       if (hash) {
         setContestName(newName);
-        toastSuccess("contest title updated successfully");
+        toastSuccess({
+          message: "contest title updated successfully",
+        });
       }
     } catch (error) {
       handleError(error, "failed to update contest title");

@@ -1,10 +1,9 @@
 import { toast } from "react-toastify";
-import ErrorToast, { ErrorToastType } from "./components/Error";
-import LoadingToast, { LoadingToastMessageType } from "./components/Loading";
-import SuccessToast from "./components/Success";
-import WarningToast from "./components/Warning";
+import ErrorToast from "./components/Error";
 import InfoToast from "./components/Info";
-import { ReactNode } from "react";
+import LoadingToast from "./components/Loading";
+import SuccessToast from "./components/Success";
+import { ErrorToastConfig, InfoToastConfig, LoadingToastConfig, SuccessToastConfig } from "./types";
 
 let toastId: any = null;
 
@@ -26,27 +25,35 @@ const createToast = (type: any, content: JSX.Element, additionalSettings: any = 
   toastId = toast(content, settings);
 };
 
-export const toastInfo = (message: ReactNode, additionalMessage?: string) => {
-  createToast("info", <InfoToast message={message} additionalMessage={additionalMessage} />, { autoClose: 2000 });
-};
-
-export const toastSuccess = (message: string) => {
-  createToast("success", <SuccessToast message={message} />);
-};
-
-export const toastError = (message: string, messageToCopy?: string, type?: ErrorToastType) => {
-  createToast("error", <ErrorToast messageToShow={message} messageToCopy={messageToCopy} type={type} />, {
-    autoClose: false,
-    className: "error-toast",
+export const toastInfo = (config: InfoToastConfig) => {
+  createToast("info", <InfoToast message={config.message} additionalMessage={config.additionalMessage} />, {
+    autoClose: 2000,
   });
 };
 
-export const toastWarning = (message: string) => {
-  createToast("warning", <WarningToast message={message} />);
+export const toastSuccess = (config: SuccessToastConfig) => {
+  createToast("success", <SuccessToast message={config.message} />);
 };
 
-export const toastLoading = (message: string, additionalMessageType?: LoadingToastMessageType) => {
-  createToast("info", <LoadingToast message={message} additionalMessageType={additionalMessageType} />, {
+export const toastError = (config: ErrorToastConfig) => {
+  createToast(
+    "error",
+    <ErrorToast
+      messageToShow={config.message}
+      messageToCopy={config.messageToCopy}
+      additionalMessage={config.additionalMessage}
+      type={config.type}
+      codeFound={config.codeFound}
+    />,
+    {
+      autoClose: false,
+      className: "error-toast",
+    },
+  );
+};
+
+export const toastLoading = (config: LoadingToastConfig) => {
+  createToast("info", <LoadingToast message={config.message} additionalMessageType={config.additionalMessageType} />, {
     autoClose: false,
   });
 };
