@@ -5,7 +5,6 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Conte
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
-import { Charge, VoteType } from "@hooks/useDeployContest/types";
 import { useEmailSend } from "@hooks/useEmailSend";
 import { useError } from "@hooks/useError";
 import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
@@ -19,39 +18,18 @@ import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { parseUnits } from "ethers";
-import { addUserActionForAnalytics } from "lib/analytics/participants";
-import { updateRewardAnalytics } from "lib/analytics/rewards";
-import { EmailType, VotingEmailParams } from "lib/email/types";
 import moment from "moment";
 import { usePathname } from "next/navigation";
 import { useCallback } from "react";
-import { formatEther, parseEther } from "viem";
+import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import { useCastVotesStore } from "./store";
-
-interface UserAnalyticsParams {
-  contestAddress: string;
-  userAddress: `0x${string}` | undefined;
-  chainName: string;
-  pickedProposal: string | null;
-  amountOfVotes: number;
-  costToVote: bigint | undefined;
-  charge: Charge | null;
-}
-
-interface RewardsAnalyticsParams {
-  isEarningsTowardsRewards: boolean;
-  address: string;
-  rewardsModuleAddress: string;
-  charge: Charge | null;
-  chainName: string;
-  costToVote: bigint | undefined;
-  operation: "deposit" | "withdraw";
-  token_address: string | null;
-}
-
-interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsParams {}
+import { performAnalytics, CombinedAnalyticsParams } from "./utils/analytics";
+import { calculateChargeAmount } from "./utils/helpers";
+import { createVotingEmailSender } from "./utils/email";
+import { checkAndMarkPriceChangeError } from "utils/error";
+import { usePriceTracking } from "./utils/priceTracking";
 
 export function useCastVotes() {
   const {
@@ -69,6 +47,7 @@ export function useCastVotes() {
       anyoneCanVote: state.anyoneCanVote,
     })),
   );
+
   const { data: rewards } = useRewardsModule();
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
@@ -83,6 +62,7 @@ export function useCastVotes() {
     setError,
     setTransactionData,
   } = useCastVotesStore(state => state);
+
   const { address: userAddress } = useAccount();
   const asPath = usePathname();
   const { updateCurrentUserVotes } = useUser();
@@ -105,50 +85,39 @@ export function useCastVotes() {
     chainId,
   });
   const { sendEmail } = useEmailSend();
+  const sendVotingEmail = createVotingEmailSender(sendEmail);
   const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
   const contestLink = `${window.location.origin}/contest/${chainName.toLowerCase()}/${contestAddress}`;
-  const {
-    currentPricePerVote,
-    isLoading: isLoadingCurrentPricePerVote,
-    isError: isErrorCurrentPricePerVote,
-  } = useCurrentPricePerVoteWithRefetch({
+
+  const { currentPricePerVote } = useCurrentPricePerVoteWithRefetch({
     address: contestAddress,
     abi: abi,
     chainId: chainId,
     version,
     votingClose: votesClose,
   });
-
-  const calculateChargeAmount = useCallback(
-    (amountOfVotes: number) => {
-      if (!charge) return undefined;
-
-      if (charge.voteType === VoteType.PerTransaction) {
-        return BigInt(charge.type.costToVote);
-      }
-
-      const pricePerVoteInWei = parseEther(currentPricePerVote);
-      const totalCost = BigInt(amountOfVotes) * pricePerVoteInWei;
-
-      return totalCost;
-    },
+  const { startNewVotingSession, getPrices } = usePriceTracking(currentPricePerVote);
+  const getChargeAmount = useCallback(
+    (amountOfVotes: number) => calculateChargeAmount(amountOfVotes, charge, currentPricePerVote),
     [charge, currentPricePerVote],
   );
 
-  const formatChargeAmount = (amount: number) => {
-    return Number(formatEther(BigInt(amount)));
-  };
-
   async function castVotes(amountOfVotes: number) {
-    toastLoading("votes are deploying...", LoadingToastMessageType.KEEP_BROWSER_OPEN);
+    toastLoading({
+      message: "votes are deploying...",
+      additionalMessageType: LoadingToastMessageType.KEEP_BROWSER_OPEN,
+    });
     setIsLoading(true);
     setIsSuccess(false);
     setError("");
     setTransactionData(null);
 
+    // Capture the price when voting starts
+    startNewVotingSession();
+
     try {
       const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
-      const costToVote = calculateChargeAmount(amountOfVotes);
+      const costToVote = getChargeAmount(amountOfVotes);
       const totalVoteAmount = anyoneCanVote ? 0 : parseUnits(currentUserTotalVotesAmount.toString());
 
       let hash: `0x${string}`;
@@ -156,7 +125,6 @@ export function useCastVotes() {
 
       if (!isVerified) {
         const castVoteArgs = [pickedProposal, totalVoteAmount, parseUnits(amountOfVotes.toString()), proofs];
-
         const { request: simulatedRequest } = await simulateContract(config, {
           address: contestAddress as `0x${string}`,
           abi: abi ? abi : DeployedContestContract.abi,
@@ -169,7 +137,6 @@ export function useCastVotes() {
         request = simulatedRequest;
       } else {
         const castVoteWithoutProofArgs = [pickedProposal, parseUnits(`${amountOfVotes}`)];
-
         const { request: simulatedRequest } = await simulateContract(config, {
           address: contestAddress as `0x${string}`,
           abi: abi ? abi : DeployedContestContract.abi,
@@ -183,13 +150,10 @@ export function useCastVotes() {
       }
 
       hash = await writeContract(config, request);
+      const receipt = await waitForTransactionReceipt(config, { chainId, hash });
 
-      const receipt = await waitForTransactionReceipt(config, {
-        chainId,
-        hash: hash,
-      });
-
-      await performAnalytics({
+      // Perform analytics
+      const analyticsParams: CombinedAnalyticsParams = {
         contestAddress,
         userAddress,
         chainName,
@@ -202,12 +166,14 @@ export function useCastVotes() {
         rewardsModuleAddress: rewards?.contractAddress ?? "",
         operation: "deposit",
         token_address: null,
-      });
+      };
+      await performAnalytics(analyticsParams, refetchTotalRewards);
 
       setTransactionData({
         hash: receipt.transactionHash,
       });
 
+      // Update proposal votes
       const voteCount = (await readContract(config, {
         address: contestAddress as `0x${string}`,
         abi: DeployedContestContract.abi,
@@ -216,7 +182,6 @@ export function useCastVotes() {
       })) as bigint;
 
       const votes = Number(formatEther(voteCount));
-
       const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
 
       if (existingProposal) {
@@ -229,73 +194,30 @@ export function useCastVotes() {
         );
       }
 
+      // Refresh data and complete
       await updateCurrentUserVotes(abi, version, anyoneCanVote);
       refetchTotalVotesCastOnContest();
       refetchCurrentUserVotesOnProposal();
       setIsLoading(false);
       setIsSuccess(true);
-      toastSuccess("your votes have been deployed successfully");
+      toastSuccess({
+        message: "your votes have been deployed successfully",
+      });
 
-      await sendVotingEmail({
+      await sendVotingEmail(userAddress ?? "", {
         contest_link: contestLink,
         contest_end_date: formattedVotesClose,
       });
     } catch (e) {
-      handleError(e, "something went wrong while casting your votes");
+      const { initialPrice, currentPrice } = getPrices();
+
+      const processedError = checkAndMarkPriceChangeError(e, initialPrice, currentPrice);
+
+      handleError(processedError, "something went wrong while casting your votes");
       setError(errorMessage);
       setIsLoading(false);
-      throw e;
+      throw processedError;
     }
-  }
-
-  async function addUserActionAnalytics(params: UserAnalyticsParams) {
-    try {
-      await addUserActionForAnalytics({
-        contest_address: params.contestAddress,
-        user_address: params.userAddress,
-        network_name: params.chainName,
-        proposal_id: params.pickedProposal !== null ? params.pickedProposal : undefined,
-        vote_amount: params.amountOfVotes,
-        created_at: Math.floor(Date.now() / 1000),
-        amount_sent: params.costToVote ? formatChargeAmount(parseFloat(params.costToVote.toString())) : null,
-        percentage_to_creator: params.charge ? params.charge.percentageToCreator : null,
-      });
-    } catch (error) {
-      console.error("Error in addUserActionForAnalytics:", error);
-    }
-  }
-
-  async function updateRewardAnalyticsIfNeeded(params: RewardsAnalyticsParams) {
-    if (params.isEarningsTowardsRewards && params.costToVote && params.charge) {
-      try {
-        await updateRewardAnalytics({
-          contest_address: params.address,
-          rewards_module_address: params.rewardsModuleAddress,
-          network_name: params.chainName,
-          amount:
-            formatChargeAmount(parseFloat(params.costToVote.toString())) * (params.charge.percentageToCreator / 100),
-          operation: "deposit",
-          token_address: null,
-          created_at: Math.floor(Date.now() / 1000),
-        });
-      } catch (error) {
-        console.error("Error while updating reward analytics", error);
-      }
-      refetchTotalRewards();
-    }
-  }
-
-  async function performAnalytics(params: CombinedAnalyticsParams) {
-    try {
-      await addUserActionAnalytics(params);
-      await updateRewardAnalyticsIfNeeded(params);
-    } catch (error) {
-      console.error("Error in performAnalytics:", error);
-    }
-  }
-
-  async function sendVotingEmail(params: VotingEmailParams) {
-    await sendEmail(userAddress ?? "", EmailType.VotingEmail, params);
   }
 
   return {

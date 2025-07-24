@@ -59,7 +59,10 @@ export const useClaimRewards = ({
   ) => {
     setLoading(payee, tokenAddress, true);
     setSuccess(payee, tokenAddress, false);
-    toastLoading(`Claiming rewards...`, LoadingToastMessageType.KEEP_BROWSER_OPEN);
+    toastLoading({
+      message: "Claiming rewards...",
+      additionalMessageType: LoadingToastMessageType.KEEP_BROWSER_OPEN,
+    });
     const amountReleasableFormatted = transform(tokenBalance, tokenAddress, tokenDecimals);
 
     if (userChainId && userChainId !== chainId) {
@@ -73,8 +76,8 @@ export const useClaimRewards = ({
             ? [payee]
             : [tokenAddress, payee]
           : tokenAddress === "native"
-            ? [voterAddress, payee]
-            : [tokenAddress, voterAddress, payee];
+          ? [voterAddress, payee]
+          : [tokenAddress, voterAddress, payee];
 
       const hash = await writeContract(config, {
         address: contractRewardsModuleAddress,
@@ -88,7 +91,9 @@ export const useClaimRewards = ({
 
       setLoading(payee, tokenAddress, false);
       setSuccess(payee, tokenAddress, true);
-      toastSuccess("Rewards claimed successfully!");
+      toastSuccess({
+        message: "Rewards claimed successfully!",
+      });
 
       try {
         await updateRewardAnalytics({

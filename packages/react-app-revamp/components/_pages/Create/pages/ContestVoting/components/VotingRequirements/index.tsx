@@ -84,7 +84,9 @@ const CreateVotingRequirements: FC<CreateVotingRequirementsProps> = ({ isNextCli
       ...votingRequirements,
       timestamp: Date.now(),
     });
-    toastSuccess("allowlist processed successfully.");
+    toastSuccess({
+      message: "allowlist processed successfully.",
+    });
     resetUploadedAllowlist();
     onNextStep();
     terminateWorker(event.target as Worker);
@@ -92,7 +94,9 @@ const CreateVotingRequirements: FC<CreateVotingRequirementsProps> = ({ isNextCli
 
   const handleWorkerError = (error: ErrorEvent): void => {
     console.error("Worker error:", error);
-    toastError("something went wrong, please try again.");
+    toastError({
+      message: "something went wrong, please try again.",
+    });
 
     terminateWorker(error.target as Worker);
   };
@@ -123,7 +127,9 @@ const CreateVotingRequirements: FC<CreateVotingRequirementsProps> = ({ isNextCli
   };
 
   const fetchRequirementsMerkleData = async (type: string) => {
-    toastLoading("processing your allowlist...");
+    toastLoading({
+      message: "processing your allowlist...",
+    });
 
     try {
       let votingAllowlist: Record<string, number> | Error;

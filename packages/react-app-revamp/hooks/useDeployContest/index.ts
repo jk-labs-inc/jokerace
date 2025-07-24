@@ -56,6 +56,8 @@ export function useDeployContest() {
   async function deployContest() {
     let signer: JsonRpcSigner;
 
+    console.log("charge", charge);
+
     try {
       signer = await getEthersSigner(config, { chainId: chain?.id });
     } catch (error: any) {
@@ -66,14 +68,18 @@ export function useDeployContest() {
     const isSpoofingDetected = await checkForSpoofing(signer?.address);
 
     if (isSpoofingDetected) {
-      toastError("Spoofing detected! None shall pass.");
+      toastError({
+        message: "Spoofing detected! None shall pass.",
+      });
       setIsLoading(false);
       return;
     }
 
     setIsLoading(true);
 
-    toastLoading("contest is deploying...");
+    toastLoading({
+      message: "contest is deploying...",
+    });
     try {
       const factoryCreateContest = new ContractFactory(
         DeployedContestContract.abi,
@@ -111,7 +117,9 @@ export function useDeployContest() {
           costToVote: chargeType.costToVote,
         });
       } catch (error) {
-        toastError("Failed to fetch JK Labs split destination. Please try again later.");
+        toastError({
+          message: "Failed to fetch JK Labs split destination. Please try again later.",
+        });
         setIsLoading(false);
         return;
       }
@@ -202,7 +210,9 @@ export function useDeployContest() {
       await saveFilesToBucket(votingMerkle, submissionMerkle);
       await indexContest(contestData, votingMerkle, submissionMerkle);
 
-      toastSuccess("contest has been deployed!");
+      toastSuccess({
+        message: "contest has been deployed!",
+      });
       setIsSuccess(true);
       setIsLoading(false);
     } catch (e) {
@@ -305,7 +315,9 @@ export function useDeployContest() {
 
         participantsWorker.onerror = error => {
           setIsLoading(false);
-          toastError(`contest deployment failed to index in db`, error.message);
+          toastError({
+            message: "contest deployment failed to index in db",
+          });
           reject(error);
         };
 
@@ -317,7 +329,9 @@ export function useDeployContest() {
       await Promise.all(tasks);
     } catch (e: any) {
       setIsLoading(false);
-      toastError(`contest deployment failed to index in db`, e.message);
+      toastError({
+        message: "contest deployment failed to index in db",
+      });
       throw e;
     } finally {
       participantsWorker.terminate();

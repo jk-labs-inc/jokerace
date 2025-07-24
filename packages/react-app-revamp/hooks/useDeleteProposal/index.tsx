@@ -42,7 +42,9 @@ export function useDeleteProposal() {
   const { error: errorMessage, handleError } = useError();
 
   async function deleteProposal(proposalIds: string[]) {
-    toastLoading(`Deleting proposal...`);
+    toastLoading({
+      message: "Deleting proposal...",
+    });
     setIsLoading(true);
     setIsSuccess(false);
     setError("");
@@ -90,7 +92,9 @@ export function useDeleteProposal() {
       setSubmissionsCount(submissionsCount - proposalIds.length);
       setIsLoading(false);
       setIsSuccess(true);
-      toastSuccess(`Proposal deleted successfully!`);
+      toastSuccess({
+        message: "Proposal deleted successfully!",
+      });
     } catch (e) {
       handleError(e, `something went wrong and the proposal couldn't be deleted`);
       setError(errorMessage);

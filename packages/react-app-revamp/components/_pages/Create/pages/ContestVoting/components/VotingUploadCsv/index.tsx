@@ -60,7 +60,9 @@ const CreateVotingCSVUploader: FC<CreateVotingCSVUploaderProps> = ({ isNextClick
     const { merkleRoot, recipients } = event.data;
 
     setVotingMerkle("csv", { merkleRoot, voters: recipients });
-    toastSuccess("allowlist processed successfully.");
+    toastSuccess({
+      message: "allowlist processed successfully.",
+    });
     resetPrefilledAllowlist();
 
     onNextStep();
@@ -70,7 +72,9 @@ const CreateVotingCSVUploader: FC<CreateVotingCSVUploaderProps> = ({ isNextClick
 
   const handleWorkerError = (error: ErrorEvent): void => {
     console.error("Worker error:", error);
-    toastError("something went wrong, please try again.");
+    toastError({
+      message: "something went wrong, please try again.",
+    });
     terminateWorker(error.target as Worker);
   };
 
@@ -86,7 +90,9 @@ const CreateVotingCSVUploader: FC<CreateVotingCSVUploaderProps> = ({ isNextClick
       return;
     }
 
-    toastLoading("Processing your allowlist...");
+    toastLoading({
+      message: "Processing your allowlist...",
+    });
     setCharge({
       ...charge,
       voteType: VoteType.PerTransaction,

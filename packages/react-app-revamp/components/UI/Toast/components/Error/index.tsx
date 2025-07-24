@@ -12,10 +12,18 @@ export enum ErrorToastType {
 interface ErrorToastProps {
   messageToShow: string;
   messageToCopy?: string;
+  additionalMessage?: string;
   type?: ErrorToastType;
+  codeFound?: boolean;
 }
 
-const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy, type = ErrorToastType.ADVANCED }) => {
+const ErrorToast: FC<ErrorToastProps> = ({
+  messageToShow,
+  messageToCopy,
+  additionalMessage,
+  type = ErrorToastType.ADVANCED,
+  codeFound,
+}) => {
   const url = useUrl();
   const { address } = useAccount();
   const [copySuccess, setCopySuccess] = useState(false);
@@ -34,6 +42,18 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy, type = 
       console.error("Failed to copy text: ", err);
     }
   };
+
+  if (codeFound) {
+    return (
+      <div className="flex items-center pl-3 md:pl-6">
+        <img className="hidden md:block mr-4" src="/toast/sadboi.png" width={40} height={40} alt="error" />
+        <div className="flex flex-col gap-1">
+          <p className="text-[14px] font-medium">{messageToShow}</p>
+          {additionalMessage && <p className="text-[11px]">{additionalMessage}</p>}
+        </div>
+      </div>
+    );
+  }
 
   if (type === ErrorToastType.SIMPLE) {
     return (

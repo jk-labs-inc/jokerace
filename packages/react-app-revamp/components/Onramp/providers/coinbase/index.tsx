@@ -32,7 +32,9 @@ const OnrampCoinbaseProvider: FC<OnrampCoinbaseProviderProps> = ({ chain, asset 
     });
 
     if (!url) {
-      toastError("Unable to get onramp url");
+      toastError({
+        message: "Unable to get onramp url",
+      });
       return;
     }
 

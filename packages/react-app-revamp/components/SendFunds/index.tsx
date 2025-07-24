@@ -43,12 +43,16 @@ const SendFunds: FC<SendFundsProps> = ({ isOpen, onClose, recipientAddress }) =>
 
   const handleSubmitTransfer = async (data: { token: FilteredToken; recipient: string; amount: string }) => {
     if (!recipientAddress) {
-      toastError("recipient address is required");
+      toastError({
+        message: "recipient address is required",
+      });
       return;
     }
 
     if (!data.token.balance || data.token.balance === 0) {
-      toastError("insufficient token balance");
+      toastError({
+        message: "insufficient token balance",
+      });
       return;
     }
 

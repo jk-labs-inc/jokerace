@@ -9,7 +9,9 @@ if (!IMGUR_CLIENT_ID) {
 
 export async function uploadToImgur(base64Image: string): Promise<string> {
   try {
-    toastLoading("Uploading image...");
+    toastLoading({
+      message: "Uploading image...",
+    });
 
     const response = await fetch(IMGUR_API_ENDPOINT, {
       method: "POST",
@@ -21,17 +23,23 @@ export async function uploadToImgur(base64Image: string): Promise<string> {
     });
 
     if (!response.ok) {
-      toastError("Failed to upload an image, please try again.");
+      toastError({
+        message: "Failed to upload an image, please try again.",
+      });
       throw new Error(`Imgur API responded with ${response.status}: ${response.statusText}`);
     }
 
     const jsonResponse = await response.json();
-    toastSuccess("Image uploaded successfully!");
+    toastSuccess({
+      message: "Image uploaded successfully!",
+    });
 
     return jsonResponse.data.link;
   } catch (error) {
     toastDismiss();
-    toastError("Failed to upload an image, please try again.");
+    toastError({
+      message: "Failed to upload an image, please try again.",
+    });
     throw error;
   }
 }
