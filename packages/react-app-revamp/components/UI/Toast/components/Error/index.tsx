@@ -43,7 +43,8 @@ const ErrorToast: FC<ErrorToastProps> = ({
     }
   };
 
-  if (codeFound) {
+  // We use this only in case when we know that there is not a point of opening a bug report (e.g. price changed and any other error that we consider as a user error)
+  if (additionalMessage) {
     return (
       <div className="flex items-center pl-3 md:pl-6">
         <img className="hidden md:block mr-4" src="/toast/sadboi.png" width={40} height={40} alt="error" />

@@ -56,8 +56,6 @@ export function useDeployContest() {
   async function deployContest() {
     let signer: JsonRpcSigner;
 
-    console.log("charge", charge);
-
     try {
       signer = await getEthersSigner(config, { chainId: chain?.id });
     } catch (error: any) {

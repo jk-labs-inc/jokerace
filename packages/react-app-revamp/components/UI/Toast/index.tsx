@@ -41,6 +41,7 @@ export const toastError = (config: ErrorToastConfig) => {
     <ErrorToast
       messageToShow={config.message}
       messageToCopy={config.messageToCopy}
+      additionalMessage={config.additionalMessage}
       type={config.type}
       codeFound={config.codeFound}
     />,

@@ -27,17 +27,29 @@ const errorMessages: { [key in ErrorCodes]?: string } = {
   [ErrorCodes.UNPREDICTABLE_GAS_LIMIT]:
     "Gas estimation failed. Consider setting a gas limit manually, or ensure the transaction is valid.",
   [ErrorCodes.DUPLICATE_PROPOSAL]: "Duplicate proposals are not allowed. Please check your proposal details.",
-  [ErrorCodes.PRICE_CHANGED]: "Ahh, looks like the price has gone up. Please try voting again.",
+  [ErrorCodes.PRICE_CHANGED]: "Ahh, looks like the price has gone up.",
 };
 
 const dynamicMessageCodes: readonly ErrorCodes[] = [ErrorCodes.EXECUTION_REVERTED, ErrorCodes.INSUFFICIENT_FUNDS];
 
-function handleContractFunctionExecutionError(error: any): { message: string; codeFound: boolean } {
+function handleContractFunctionExecutionError(error: any): {
+  message: string;
+  codeFound: boolean;
+  additionalMessage?: string;
+} {
   if (error.message.includes("duplicate proposals not allowed")) {
-    return { message: errorMessages[ErrorCodes.DUPLICATE_PROPOSAL]!, codeFound: true };
+    return {
+      message: errorMessages[ErrorCodes.DUPLICATE_PROPOSAL]!,
+      codeFound: true,
+      additionalMessage: error.additionalMessage,
+    };
   }
 
-  return { message: error.message, codeFound: false };
+  return {
+    message: error.message,
+    codeFound: false,
+    additionalMessage: error.additionalMessage,
+  };
 }
 
 function customCodeMessage(code: ErrorCodes, error: any, chainName?: string) {
@@ -50,11 +62,16 @@ function customCodeMessage(code: ErrorCodes, error: any, chainName?: string) {
       return {
         message: `please make sure you have enough ${chainNativeCurrency.symbol} on ${chainName}`,
         codeFound: true,
+        additionalMessage: error.additionalMessage,
       };
     }
   }
 
-  return { message: errorMessages[code]!, codeFound: true };
+  return {
+    message: errorMessages[code]!,
+    codeFound: true,
+    additionalMessage: error.additionalMessage,
+  };
 }
 
 export function didUserReject(error: any): boolean {
@@ -77,6 +94,7 @@ export function handleError(
     return {
       message: errorMessages[error.code as ErrorCodes]!,
       codeFound: true,
+      additionalMessage: error.additionalMessage,
     };
   }
 
@@ -107,7 +125,11 @@ export function handleError(
     return customCodeMessage(code, error, chainName);
   }
 
-  return { message: error.message ?? error.reason, codeFound: false };
+  return {
+    message: error.message ?? error.reason,
+    codeFound: false,
+    additionalMessage: error.additionalMessage,
+  };
 }
 
 export function isKnownErrorCodeMessage(message: string): boolean {
@@ -120,7 +142,7 @@ export function checkAndMarkPriceChangeError(error: any, initialPrice: string | 
     return {
       ...error,
       code: ErrorCodes.PRICE_CHANGED,
-      additionalMessage: "please try again with a different price.",
+      additionalMessage: `please tap "add votes" again to confirm updated prices`,
       originalError: error,
     };
   }
