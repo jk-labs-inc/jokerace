@@ -16,7 +16,7 @@
     "@clustersxyz/sdk": "1.0.2",
     "@getbrevo/brevo": "2.5.0",
     "@getpara/rainbowkit-wallet": "1.4.0",
-    "@headlessui/react": "2.2.5",
+    "@headlessui/react": "2.2.6",
     "@heroicons/react": "2.2.0",
     "@next/third-parties": "15.4.3",
     "@rainbow-me/rainbowkit": "2.2.8",
