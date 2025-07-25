@@ -31,6 +31,7 @@ contract RewardsModule {
     event PaymentReceived(address from, uint256 amount);
     event RewardWithdrawn(address by, uint256 amount);
     event ERC20RewardWithdrawn(IERC20 indexed token, address by, uint256 amount);
+    event JokeraceRewardsModuleCreated(string version, address underlyingContest);
 
     uint256 public totalShares;
     uint256 public totalReleased;
@@ -39,7 +40,7 @@ contract RewardsModule {
     mapping(uint256 => uint256) public released; // Getter for the amount of Ether already released to a ranking.
     uint256[] public payees;
     string public constant MODULE_TYPE = "AUTHOR_REWARDS";
-    string private constant VERSION = "5.7"; // Private as to not clutter the ABI
+    string private constant VERSION = "5.8"; // Private as to not clutter the ABI
 
     mapping(IERC20 => uint256) public erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released;
@@ -92,6 +93,7 @@ contract RewardsModule {
         paysOutTarget = paysOutTarget_;
         underlyingContest = underlyingContest_;
         creator = msg.sender;
+        emit JokeraceRewardsModuleCreated(VERSION, address(underlyingContest)); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
     /**

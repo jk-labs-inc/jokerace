@@ -33,6 +33,7 @@ contract VoterRewardsModule {
     event PaymentReceived(address from, uint256 amount);
     event RewardWithdrawn(address by, uint256 amount);
     event ERC20RewardWithdrawn(IERC20 indexed token, address by, uint256 amount);
+    event JokeraceVoterRewardsModuleCreated(string version, address underlyingContest);
 
     uint256 public totalShares;
     uint256 public totalReleased;
@@ -46,7 +47,7 @@ contract VoterRewardsModule {
 
     uint256[] public payees;
     string public constant MODULE_TYPE = "VOTER_REWARDS";
-    string private constant VERSION = "5.7"; // Private as to not clutter the ABI
+    string private constant VERSION = "5.8"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;
@@ -91,6 +92,7 @@ contract VoterRewardsModule {
 
         underlyingContest = underlyingContest_;
         creator = msg.sender;
+        emit JokeraceVoterRewardsModuleCreated(VERSION, address(underlyingContest)); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
     /**
