@@ -9,10 +9,7 @@
   background-color: white !important;
   color: #e5e5e5 !important;
   border-radius: 10px !important;
-  box-shadow:
-    0 -2px 4px #28282c,
-    0 2px 4px #28282c,
-    0 1px 2px #28282c !important;
+  box-shadow: 0 -2px 4px #28282c, 0 2px 4px #28282c, 0 1px 2px #28282c !important;
 }
 
 .Toastify__close-button {
@@ -324,7 +321,7 @@ li {
   }
 
   html {
-    --brand: theme("colors.secondary.11");
+    /* --brand: theme("colors.secondary.11"); */ /* TODO: fix this */
     color-scheme: dark;
     overflow-y: scroll;
   }
@@ -522,20 +519,12 @@ li {
 .joke-3d {
   position: relative;
   color: white;
-  text-shadow:
-    -5px 4px 0 #6a6a6a,
-    -5px -1px 0 #6a6a6a,
-    -1px 1px 0 #6a6a6a,
-    1px 1px 0 #6a6a6a;
+  text-shadow: -5px 4px 0 #6a6a6a, -5px -1px 0 #6a6a6a, -1px 1px 0 #6a6a6a, 1px 1px 0 #6a6a6a;
 }
 
 @media (max-width: 768px) {
   .joke-3d {
-    text-shadow:
-      -3px 2px 0 #6a6a6a,
-      -3px 0px 0 #6a6a6a,
-      -1px 1px 0 #6a6a6a,
-      1px 1px 0 #6a6a6a;
+    text-shadow: -3px 2px 0 #6a6a6a, -3px 0px 0 #6a6a6a, -1px 1px 0 #6a6a6a, 1px 1px 0 #6a6a6a;
   }
 }
 
@@ -694,4 +683,3 @@ li {
 #para-modal > cpsl-auth-modal {
   z-index: 9999999999;
 }
-
