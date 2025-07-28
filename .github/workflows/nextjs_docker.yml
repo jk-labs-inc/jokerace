@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - chore/url-issue
 
 permissions:
   packages: write
