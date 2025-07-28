@@ -48,7 +48,7 @@ const CreateRewardsPool = () => {
   const isError = hasValidationErrors(rewardPoolData.validationError);
 
   return (
-    <div className="flex flex-col gap-12 animate-swingInLeft">
+    <div className="flex flex-col gap-12 animate-swing-in-left">
       <div className="flex flex-col gap-4">
         <p className="text-[24px] font-bold text-true-white">{title}</p>
         {rewardPoolType === RewardPoolType.Voters ? <CreateRewardsPoolVotersInfo /> : <CreateRewardsPoolWinnersInfo />}

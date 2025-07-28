@@ -60,7 +60,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <MenuItems className="absolute right-0 z-10 mt-2 w-52 overflow-x-auto origin-top-right rounded-md bg-true-black shadow-sortProposalDropdown focus:outline-none">
+        <MenuItems className="absolute right-0 z-10 mt-2 w-52 overflow-x-auto origin-top-right rounded-md bg-true-black shadow-sort-proposal-dropdown focus:outline-none">
           <MenuItem>
             {({ focus, close }) => (
               <a

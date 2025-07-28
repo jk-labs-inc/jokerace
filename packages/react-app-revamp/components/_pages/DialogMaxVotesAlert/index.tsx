@@ -19,7 +19,7 @@ const DialogMaxVotesAlert: FC<DialogMaxVotesAlertProps> = ({
   buttonSize = ButtonSize.EXTRA_LARGE_LONG_MOBILE,
 }) => {
   return (
-    <div className="flex flex-col gap-8 animate-swingInLeft">
+    <div className="flex flex-col gap-8 animate-swing-in-left">
       <p className="text-neutral-11 text-[24px] font-bold">vote it all 😈</p>
       <div className="flex flex-col gap-4">
         <p className="text-neutral-11 text-[16px]">

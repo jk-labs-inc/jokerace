@@ -91,7 +91,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
         <ButtonV3
           isDisabled={isDisabled}
           colorClass={`bg-gradient-create text-[20px] rounded-[10px] font-bold ${
-            shake ? "animate-shakeTop" : ""
+            shake ? "animate-shake-top" : ""
           }  text-true-black`}
           size={ButtonSize.LARGE}
           type={ButtonType.TX_ACTION}

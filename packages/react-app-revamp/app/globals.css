@@ -275,6 +275,14 @@ li {
     --grid-rewards-review-table-without-tokens: 0.2fr 0.3fr 1fr;
     --grid-rewards-review-table: 0.2fr 0.3fr 1fr;
 
+    @media (max-width: 768px) {
+      --grid-rewards-review-table: repeat(3, minmax(0, 1fr));
+    }
+
+    @media (max-width: 768px) {
+      --grid-rewards-review-table-without-tokens: repeat(2, minmax(0, 1fr));
+    }
+
     accent-color: var(--brand);
     --toastify-color-success: #78ffc6 !important;
     --toastify-color-error: #ff78a9 !important;
@@ -493,18 +501,6 @@ li {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
     max-width: 1024px;
-  }
-
-  @media (max-width: 768px) {
-    .grid-rewards-review-table {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-
-  @media (max-width: 768px) {
-    .grid-rewards-review-table-without-tokens {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
   }
 
   .dropdownBorder {
