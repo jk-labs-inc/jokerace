@@ -10,12 +10,8 @@ export const avalanche: Chain = {
     symbol: "AVAX",
   },
   rpcUrls: {
-    public: {
-      http: ["https://api.avax.network/ext/bc/C/rpc"],
-    },
-    default: {
-      http: ["https://api.avax.network/ext/bc/C/rpc"],
-    },
+    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.avalanche-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
+    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.avalanche-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
   },
   blockExplorers: {
     etherscan: { name: "Snowtrace", url: "https://snowscan.xyz/" },
