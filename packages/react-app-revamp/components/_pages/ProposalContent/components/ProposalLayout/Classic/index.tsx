@@ -95,7 +95,7 @@ const ProposalLayoutClassic = ({
                   className="min-w-36 shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-primary-1 rounded-[16px] cursor-pointer border border-transparent hover:border-positive-11 transition-colors duration-300 ease-in-out"
                 >
                   <img src="/contest/upvote.svg" width={21.56} height={20.44} alt="upvote" className="shrink-0" />
-                  <p className="text-[16px] text-positive-11 font-bold flex-grow text-center">
+                  <p className="text-[16px] text-positive-11 font-bold grow text-center">
                     {formatNumberAbbreviated(proposal.votes)} vote{proposal.votes !== 1 ? "s" : ""}
                   </p>
                 </button>
@@ -111,7 +111,7 @@ const ProposalLayoutClassic = ({
                 scroll={false}
               >
                 <ChatBubbleLeftEllipsisIcon className="w-6 h-6 text-neutral-9 shrink-0" />
-                <p className="text-[16px] text-neutral-9 font-bold flex-grow text-center">{proposal.commentsCount}</p>
+                <p className="text-[16px] text-neutral-9 font-bold grow text-center">{proposal.commentsCount}</p>
               </CustomLink>
             </div>
             {allowDelete && (

@@ -281,7 +281,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
       <CustomLink href={getContestUrl(contest)}>
         <div
-          className="hidden lg:grid lg:grid-cols-[var(--grid-full-width)] md:items-center border-t border-neutral-9 py-4 p-3 
+          className="hidden lg:grid lg:grid-cols-(--grid-full-width) md:items-center border-t border-neutral-9 py-4 p-3 
         hover:bg-neutral-3 transition-colors duration-500 ease-in-out cursor-pointer"
           key={`live-contest-${contest.id}`}
         >
@@ -309,7 +309,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
               <p className="text-neutral-9 font-bold">canceled</p>
             ) : (
               <div className={`flex items-center ${submissionClass} md:justify-between gap-3`}>
-                <div className="min-w-[185px] min-h-[3rem] flex flex-col justify-center">
+                <div className="min-w-[185px] min-h-12 flex flex-col justify-center">
                   <p className="font-bold">
                     {loading ? (
                       <Skeleton width={185} />
@@ -353,7 +353,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
           {!contest.isCanceled ? (
             <div className="flex items-center gap-4">
               <div className={`flex items-center ${votingClass} md:justify-between gap-3`}>
-                <div className="min-w-[185px] min-h-[3rem] flex flex-col justify-center">
+                <div className="min-w-[185px] min-h-12 flex flex-col justify-center">
                   <p className="font-bold">
                     {loading ? (
                       <Skeleton width={185} />

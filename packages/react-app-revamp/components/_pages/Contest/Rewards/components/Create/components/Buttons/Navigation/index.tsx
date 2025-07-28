@@ -80,7 +80,7 @@ const CreateRewardsNavigation: FC<CreateRewardsNavigationProps> = ({ step, isDis
             onClick={() => onBackHandler(step)}
           >
             <div className="transition-transform duration-200 group-hover:-translate-x-1">
-              <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-[1px]" />
+              <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-px" />
             </div>
             <p className="text-[16px]">back</p>
           </div>

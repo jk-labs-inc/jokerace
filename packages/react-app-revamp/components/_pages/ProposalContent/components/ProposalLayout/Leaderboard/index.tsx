@@ -161,7 +161,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                     scroll={false}
                   >
                     <ChatBubbleLeftEllipsisIcon className="w-4 h-4 shrink-0" />
-                    <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
+                    <p className="text-[16px] font-bold grow text-center">{proposal.commentsCount}</p>
                   </CustomLink>
                   <button
                     onClick={copyLink}

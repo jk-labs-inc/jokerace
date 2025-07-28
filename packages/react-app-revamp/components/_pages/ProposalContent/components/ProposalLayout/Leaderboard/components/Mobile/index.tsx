@@ -85,7 +85,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
               className="min-w-12 shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-gradient-vote rounded-[16px] cursor-pointer text-true-black"
             >
               <img src="/contest/upvote-mobile.svg" width={11} height={15} alt="upvote" className="shrink-0" />
-              <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
+              <p className="text-[16px] font-bold grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
             </button>
           ) : null}
         </div>

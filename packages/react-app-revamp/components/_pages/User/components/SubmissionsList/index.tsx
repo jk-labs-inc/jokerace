@@ -122,7 +122,7 @@ const UserSubmission: FC<UserSubmissionsProps> = ({ submissions, page, itemsPerP
                     <span className="sr-only sm:not-sr-only text-xs">Previous</span>
                   </Pagination.PrevButton>
 
-                  <div className="flex items-center flex-wrap justify-center flex-grow no-marker">
+                  <div className="flex items-center flex-wrap justify-center grow no-marker">
                     <Pagination.PageButton
                       activeClassName="bg-primary-10 text-primary-1 hover:bg-primary-10/90 focus:bg-primary-11"
                       inactiveClassName="bg-true-black text-neutral-10 hover:bg-true-white/5 focus:bg-true-white/10"

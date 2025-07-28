@@ -67,8 +67,8 @@ export const ListContests: FC<ListContestsProps> = ({
   return (
     <div className={`${className}`}>
       <div className="text-[16px] transition-opacity duration-300 ease-in-out">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-[var(--grid-full-width)] lg:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
-          <div className="order-3 md:order-none">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-(--grid-full-width) lg:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
+          <div className="order-3 md:order-0">
             {customTitle ? (
               <span className="text-[20px] font-bold font-sabo">{customTitle}</span>
             ) : (
@@ -80,13 +80,13 @@ export const ListContests: FC<ListContestsProps> = ({
             )}
           </div>
           {includeSearch && totalCount !== null && (
-            <div className="order-1 md:order-none">
+            <div className="order-1 md:order-0">
               <Search onSearchChange={onSearchChange} />
             </div>
           )}
 
           {sortOptions && totalCount !== null && (
-            <div className="order-2 md:order-none">
+            <div className="order-2 md:order-0">
               <Sort sortOptions={sortOptions} onSortChange={onSortChange} />
             </div>
           )}
@@ -147,7 +147,7 @@ export const ListContests: FC<ListContestsProps> = ({
             <span className="sr-only sm:not-sr-only text-xs">Previous</span>
           </Pagination.PrevButton>
 
-          <div className="flex items-center flex-wrap justify-center flex-grow no-marker">
+          <div className="flex items-center flex-wrap justify-center grow no-marker">
             <Pagination.PageButton
               activeClassName="bg-primary-10 text-primary-1 hover:bg-primary-10/90 focus:bg-primary-11"
               inactiveClassName="bg-true-black text-neutral-10 hover:bg-true-white/5 focus:bg-true-white/10"

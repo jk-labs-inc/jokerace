@@ -30,7 +30,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
 
     return (
       <>
-        {showDivider && <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6" />}
+        {showDivider && <div className="bg-linear-to-r from-neutral-7 w-full h-px my-6" />}
         <Interweave content={content} matchers={[new UrlMatcher("url")]} />
       </>
     );

@@ -112,7 +112,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
               className="min-w-16 shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
             >
               <ChatBubbleLeftEllipsisIcon className="w-4 h-4 shrink-0" />
-              <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
+              <p className="text-[16px] font-bold grow text-center">{proposal.commentsCount}</p>
             </button>
           </div>
           <div className="ml-auto" onClick={e => e.stopPropagation()}>

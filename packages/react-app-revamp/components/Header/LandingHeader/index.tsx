@@ -129,7 +129,7 @@ const LandingHeader = () => {
                   ))}
                 </div>
               </div>
-              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-true-black to-transparent pointer-events-none"></div>
+              <div className="absolute right-0 top-0 bottom-0 w-12 bg-linear-to-l from-true-black to-transparent pointer-events-none"></div>
             </div>
             <div className="flex flex-row items-center justify-between pt-2 px-8">
               <CustomLink href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>

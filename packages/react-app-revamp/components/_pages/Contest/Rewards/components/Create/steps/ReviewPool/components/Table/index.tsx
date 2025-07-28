@@ -28,8 +28,8 @@ const CreateRewardsReviewTable: FC<CreateRewardsReviewTableProps> = ({ rankings,
             key={ranking}
             className={`${
               tokens.length > 0
-                ? "grid grid-cols-[var(--grid-rewards-review-table)]"
-                : "grid grid-cols-[var(--grid-rewards-review-table-without-tokens)]"
+                ? "grid grid-cols-(--grid-rewards-review-table)"
+                : "grid grid-cols-(--grid-rewards-review-table-without-tokens)"
             } gap-4 items-center text-neutral-14`}
           >
             <p className="text-[16px]">

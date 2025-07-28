@@ -117,7 +117,7 @@ const UserComments: FC<UserCommentsProps> = ({ comments, page, itemsPerPage, set
                     <span className="sr-only sm:not-sr-only text-xs">Previous</span>
                   </Pagination.PrevButton>
 
-                  <div className="flex items-center flex-wrap justify-center flex-grow no-marker">
+                  <div className="flex items-center flex-wrap justify-center grow no-marker">
                     <Pagination.PageButton
                       activeClassName="bg-secondary-11 text-secondary-1 hover:bg-secondary-11/90 focus:bg-secondary-11"
                       inactiveClassName="bg-true-black text-neutral-10 hover:bg-true-white/5 focus:bg-true-white/10"

@@ -23,13 +23,13 @@ const CreateFlowPromptPreview: FC<CreateFlowPromptPreviewProps> = ({ summarize, 
       <Interweave content={summarize.content} matchers={[new UrlMatcher("url")]} />
       {!evaluateVoters.isEmpty && (
         <>
-          <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
+          <div className="bg-linear-to-r from-neutral-7 w-full h-px my-6"></div>
           <Interweave content={evaluateVoters.content} matchers={[new UrlMatcher("url")]} />
         </>
       )}
       {!contactDetails.isEmpty && (
         <div>
-          <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
+          <div className="bg-linear-to-r from-neutral-7 w-full h-px my-6"></div>
           <Interweave content={contactDetails.content} matchers={[new UrlMatcher("url")]} />
         </div>
       )}

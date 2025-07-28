@@ -19,7 +19,7 @@ const ProposalContentVotePrimary: FC<ProposalContentVotePrimaryProps> = ({ propo
       className="group min-w-16 shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-gradient-vote hover:shadow-button-embossed-hover transition-all duration-200 rounded-[16px] cursor-pointer text-true-black"
     >
       <img src="/contest/upvote-2.svg" width={13} height={15} alt="upvote" className="shrink-0" />
-      <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
+      <p className="text-[16px] font-bold grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
     </button>
   );
 };

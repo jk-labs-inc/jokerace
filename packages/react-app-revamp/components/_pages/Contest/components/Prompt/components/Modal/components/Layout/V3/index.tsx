@@ -44,13 +44,13 @@ const ContestPromptModalV3Layout: FC<ContestPromptModalV3LayoutProps> = ({
                 <Interweave content={contestSummary} matchers={[new UrlMatcher("url")]} />
                 {contestEvaluate ? (
                   <div>
-                    <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
+                    <div className="bg-linear-to-r from-neutral-7 w-full h-px my-6"></div>
                     <Interweave content={contestEvaluate} matchers={[new UrlMatcher("url")]} />
                   </div>
                 ) : null}
                 {contestContactDetails ? (
                   <div>
-                    <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
+                    <div className="bg-linear-to-r from-neutral-7 w-full h-px my-6"></div>
                     <Interweave content={contestContactDetails} matchers={[new UrlMatcher("url")]} />
                   </div>
                 ) : null}

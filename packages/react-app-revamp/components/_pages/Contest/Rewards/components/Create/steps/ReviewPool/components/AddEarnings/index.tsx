@@ -23,11 +23,11 @@ const CreateRewardsAddEarningsToggle: FC<CreateRewardsAddEarningsToggleProps> = 
       <Switch
         checked={addEarningsToRewards}
         onChange={setAddEarningsToRewards}
-        className="group relative flex w-12 h-6 cursor-pointer rounded-full bg-neutral-10 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-secondary-11"
+        className="group relative flex w-12 h-6 cursor-pointer rounded-full bg-neutral-10 transition-colors duration-200 ease-in-out focus:outline-none data-focus:outline-1 data-[focus]:outline-white data-checked:bg-secondary-11"
       >
         <span
           aria-hidden="true"
-          className="pointer-events-none inline-block size-6 translate-x-0 rounded-full bg-neutral-11 ring-0 shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-7"
+          className="pointer-events-none inline-block size-6 translate-x-0 rounded-full bg-neutral-11 ring-0 shadow-lg transition duration-200 ease-in-out group-data-checked:translate-x-7"
         />
       </Switch>
       <div className="flex items-center gap-2">
@@ -41,7 +41,7 @@ const CreateRewardsAddEarningsToggle: FC<CreateRewardsAddEarningsToggleProps> = 
         />
         <Tooltip
           id={tooltipId}
-          className="max-w-56 p-2 !opacity-100 !z-50 border border-transparent rounded-lg earnings-tooltip focus:outline-none"
+          className="max-w-56 p-2 opacity-100! z-50! border border-transparent rounded-lg earnings-tooltip focus:outline-none"
         >
           <div className="text-[12px] text-true-black">
             <b>
