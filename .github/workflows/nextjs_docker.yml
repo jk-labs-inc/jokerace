@@ -3,7 +3,6 @@ name: nextjs-docker
 on: 
   push:
     branches:
-      - main
       - chore/url-issue
 
 permissions:
@@ -38,7 +37,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: ${{ github.ref == 'chore/url-issue' }}
           tags: ghcr.io/jk-labs-inc/jokerace:main
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL= ${{ secrets.PROD_NEXT_PUBLIC_SUPABASE_URL }}
