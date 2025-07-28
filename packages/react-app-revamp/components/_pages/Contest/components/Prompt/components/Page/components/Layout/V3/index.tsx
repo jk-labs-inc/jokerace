@@ -76,7 +76,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
               onClick={handleToggleExpanded}
               className="text-[12px] md:text-[16px] font-bold flex items-center justify-center gap-1 text-positive-11  hover:text-positive-10 transition-all duration-300 ease-in-out"
             >
-              <span>{isExpanded ? "show less" : "show more"}</span>
+              {isExpanded ? "show less" : "show more"}
               {isExpanded ? (
                 <ChevronUpIcon
                   width={isMobile ? 16 : 21}

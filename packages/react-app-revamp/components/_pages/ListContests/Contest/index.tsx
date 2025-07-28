@@ -281,7 +281,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
       <CustomLink href={getContestUrl(contest)}>
         <div
-          className="hidden lg:full-width-grid-cols md:items-center border-t border-neutral-9 py-4 p-3 
+          className="hidden lg:grid lg:grid-cols-[var(--grid-full-width)] md:items-center border-t border-neutral-9 py-4 p-3 
         hover:bg-neutral-3 transition-colors duration-500 ease-in-out cursor-pointer"
           key={`live-contest-${contest.id}`}
         >

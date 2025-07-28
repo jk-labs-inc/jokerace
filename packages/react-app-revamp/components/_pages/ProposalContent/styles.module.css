@@ -1,3 +1,3 @@
 .content * {
-  @apply normal-case !important;
+  text-transform: normal !important;
 }

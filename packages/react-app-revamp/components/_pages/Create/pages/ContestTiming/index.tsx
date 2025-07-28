@@ -28,7 +28,7 @@ const CreateContestTiming = () => {
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
-      <div className="full-width-create-flow-grid mt-12 lg:mt-[70px] animate-swingInLeft">
+      <div className="grid grid-cols-[var(--grid-full-width-create-flow)] mt-12 lg:mt-[70px] animate-swingInLeft">
         <div className="col-span-1">
           <StepCircle step={step + 1} />
         </div>

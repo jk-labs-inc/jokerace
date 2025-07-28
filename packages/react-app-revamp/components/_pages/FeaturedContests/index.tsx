@@ -44,8 +44,9 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
       ) : (
         <div className="flex flex-col gap-4">
           <p className="text-[16px] text-neutral-14 font-bold uppercase">featured contests</p>
-          <div className="overflow-x-auto scrollbar-hide">
-            <div className="flex lg:featured-contests-grid gap-4 pb-4">
+          <div className="overflow-x-auto no-scrollbar">
+            {/* Using arbitrary values with CSS custom property */}
+            <div className="flex lg:grid lg:grid-cols-[var(--grid-featured-contests)] gap-4 pb-4">
               {/* Show loaded contests */}
               {contestData?.map((contest, index) => (
                 <div className="w-[320px] shrink-0 lg:w-auto" key={`contest-${index}`}>

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
+@plugin "@tailwindcss/typography";
 
 /* // Edit simplebar styles */
 .simplebar-scrollbar::before {
@@ -19,58 +20,8 @@
   color: black !important;
 }
 
-.list-entry-charge {
-  list-style: none !important;
-}
-
-.list-entry-charge li::before {
-  content: "";
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  background-image: url("/explainer/small-ellipse-gray.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  margin-right: 10px;
-  vertical-align: middle;
-  transition: transform 0.3s ease;
-  margin-top: 5px;
-}
-
-li.funds-distributed::before {
-  background: url("/rewards/distributed-ellipse.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-
-li.no-funds-distributed::before {
-  background: url("/rewards/no-funds-distributed-ellipse.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-
 .list-explainer li:hover::before {
   transform: rotate(15deg);
-}
-
-.list-entry-charge li:hover::before {
-  transform: rotate(15deg);
-}
-
-.list-gray-dot li::before {
-  content: "\2022";
-  color: #9d9d9d;
-  font-weight: bold;
-  display: inline-block;
-  width: 1em;
-}
-
-.list-white-dot li::before {
-  content: "\2022";
-  color: #e5e5e5;
-  font-weight: bold;
-  display: inline-block;
-  width: 1em;
 }
 
 .list-bullet-points li::before {
@@ -79,10 +30,6 @@ li.no-funds-distributed::before {
   font-weight: bold;
   display: inline-block;
   width: 1em;
-}
-
-.createHeaderShadows {
-  filter: drop-shadow(0px 3px 4px rgba(255, 226, 91, 0.6));
 }
 
 .infinite-submissions {
@@ -106,20 +53,10 @@ li {
 
 /* Edit react-datepicker styles */
 
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
 .react-datepicker {
   background-color: black !important;
   font-size: 14px !important;
   font-family: "Lato" !important;
-  animation: fadeIn 0.3s ease-in-out;
 }
 
 .popper-custom {
@@ -193,10 +130,6 @@ li {
   .standalone-pwa {
     display: flex;
   }
-}
-
-.infiniteScroll {
-  overflow: visible !important;
 }
 
 .button-delete-state {
@@ -309,6 +242,11 @@ li {
     text-transform: lowercase;
   }
 
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
   .templates-normal-case * {
     text-transform: none !important;
   }
@@ -320,12 +258,23 @@ li {
   }
 
   html {
-    /* --brand: theme("colors.secondary.11"); */ /* TODO: fix this */
+    --brand: #bb65ff;
     color-scheme: dark;
+    background-color: black;
+    color: white;
+    overflow-x: hidden;
     overflow-y: scroll;
   }
 
   :root {
+    /* Grid templates */
+    --grid-featured-contests: repeat(4, minmax(0, 320px));
+    --grid-full-width: repeat(3, minmax(auto, 1fr)) 0.4fr;
+    --grid-rewards-funding: 0.1fr 0.8fr 1.5fr 1fr 0.5fr;
+    --grid-full-width-create-flow: auto auto 1fr;
+    --grid-rewards-review-table-without-tokens: 0.2fr 0.3fr 1fr;
+    --grid-rewards-review-table: 0.2fr 0.3fr 1fr;
+
     accent-color: var(--brand);
     --toastify-color-success: #78ffc6 !important;
     --toastify-color-error: #ff78a9 !important;
@@ -348,7 +297,7 @@ li {
     color: var(--brand);
   }
   *::selection {
-    @apply text-true-black;
+    color: var(--color-true-black);
   }
 
   .placeholder-bold::placeholder {
@@ -363,31 +312,43 @@ li {
     ) {
     color: var(--brand);
   }
-  html {
-    @apply bg-true-black text-true-white overflow-x-hidden;
-  }
+
   body {
-    @apply text-base flex flex-col min-h-screen;
+    font-size: var(--text-base);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     caret-color: #bb65ff !important;
   }
 
   #__next,
   #__next > [data-rk=""] {
-    @apply grow flex flex-col;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .navLink-desktop {
-    @apply py-2 px-3 rounded-full font-semibold;
+    padding: 0.5rem 0.75rem;
+    border-radius: 9999px;
+    font-weight: 600;
   }
   .navLink-desktop--inactive {
-    @apply text-true-white hover:bg-true-white/10 focus:text-primary-10;
+    color: var(--color-true-white);
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    &:focus {
+      color: var(--color-primary-10);
+    }
   }
   .navLink-desktop--active {
-    @apply text-primary-10;
+    color: var(--color-primary-10);
   }
 
   .navLink-mobile {
-    @apply font-bold px-4 py-3;
+    font-weight: 700;
+    padding: 0.75rem 1rem;
   }
 
   .error-toast {
@@ -470,7 +431,7 @@ li {
   }
 
   .arrow-list-item {
-    @apply list-none;
+    list-style: none;
     position: relative;
   }
 
@@ -529,58 +490,25 @@ li {
 
 @layer components {
   .container {
-    @apply px-5 lg:px-3 max-w-screen-lg;
-  }
-
-  .full-width-grid-cols {
-    @apply grid;
-    grid-template-columns: repeat(3, minmax(auto, 1fr)) 0.4fr;
-    gap: 1rem;
-  }
-
-  .rewards-funding-grid {
-    @apply grid;
-    grid-template-columns: 0.1fr 0.8fr 1.5fr 1fr 0.5fr;
-  }
-
-  .full-width-create-flow-grid {
-    @apply grid;
-    grid-template-columns: auto auto 1fr;
-  }
-
-  .rewards-review-table-grid-without-tokens {
-    @apply grid;
-    grid-template-columns: 0.2fr 0.3fr 1fr;
-  }
-
-  .rewards-review-table-grid {
-    @apply grid;
-    grid-template-columns: 0.2fr 0.3fr 1fr;
-  }
-
-  .featured-contests-grid {
-    @apply grid;
-    grid-template-columns: repeat(4, minmax(0, 320px));
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    max-width: 1024px;
   }
 
   @media (max-width: 768px) {
-    .rewards-review-table-grid {
+    .grid-rewards-review-table {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 
   @media (max-width: 768px) {
-    .rewards-review-table-grid-without-tokens {
+    .grid-rewards-review-table-without-tokens {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   .dropdownBorder {
-    @apply border-2 border-primary-10;
-  }
-
-  .needle {
-    @apply -mt-0.5 -ml-0.5;
+    border: 2px solid #bb65ff;
   }
 
   .no-marker li {
@@ -588,94 +516,51 @@ li {
   }
 
   .form-field--disabled {
-    @apply opacity-50 cursor-not-allowed;
+    opacity: 50%;
+    cursor: not-allowed;
   }
   .input--invalid,
   .input[aria-invalid="true"],
   .input:not(:placeholder-shown, [type="datetime-local"]):invalid,
   .input[aria-invalid="true"][type="datetime-local"] {
-    @apply bg-negative-1 bg-negative-2 border-negative-6 focus:border-negative-8 placeholder:text-negative-11 text-negative-11 !important;
+    background-color: #ff78a9;
+    border: 2px solid #ff78a9;
+    &:focus {
+      border: 2px solid #ff78a9;
+    }
+    &::placeholder {
+      color: #ff78a9;
+    }
   }
 
   .twitter-tweet.twitter-tweet-rendered,
   .twitter-tweet.twitter-tweet-rendered > iframe {
-    @apply !max-w-full !xs:max-w-screen-2xs;
-  }
-
-  /* Customize the label (the container) */
-  .checkbox-container {
-    display: block;
-    position: relative;
-    padding-left: 25px;
-    margin-bottom: 12px;
-    cursor: pointer;
-    font-size: 22px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
-  /* Hide the browser's default checkbox */
-  .checkbox-container input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
-  }
-
-  /* Create a custom checkbox */
-  .checkmark {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 24px;
-    width: 24px;
-    background-color: transparent;
-    border-radius: 4px;
-    border: 1px solid #9d9d9d;
-  }
-
-  /* Create the checkmark/indicator (hidden when not checked) */
-  .checkmark:after {
-    content: "";
-    position: absolute;
-    display: none;
-  }
-
-  /* Show the checkmark when checked */
-  .checkbox-container input:checked ~ .checkmark:after {
-    display: block;
-  }
-
-  /* Change the border of the checkmark when the checkbox is checked */
-  .checkbox-container input:checked ~ .checkmark {
-    border: 1px solid #78ffc6;
-  }
-
-  /* Style the checkmark/indicator */
-  .checkbox-container .checkmark:after {
-    left: 8px;
-    top: 3px;
-    width: 6px;
-    height: 15px;
-    border: 1px solid #78ffc6;
-    border-width: 0 3px 3px 0;
-    -webkit-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    transform: rotate(45deg);
+    max-width: 100%;
+    @media (max-width: 768px) {
+      max-width: 320px;
+    }
   }
 }
 
 @layer utilities {
   .placeholder-bold::placeholder {
-    @apply font-bold;
+    font-weight: bold;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 
 [aria-labelledby="rk_chain_modal_title"] [tabindex="0"] ~ [role="document"] > div > div {
-  @apply overflow-y-auto md:max-h-unset;
+  overflow-y: auto;
+  @media (min-width: 768px) {
+    max-height: unset;
+  }
   max-height: calc(100vh - 60px);
 }
 

@@ -1,8 +1,8 @@
+import "./globals.css";
 import LayoutBase from "@layouts/LayoutBase";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "@getpara/react-sdk/styles.css";
 import "@rainbow-me/rainbowkit/styles.css";
-import "./globals.css";
 import { polyfill } from "interweave-ssr";
 import { GA_TRACKING_ID } from "lib/gtag";
 import { Metadata, Viewport } from "next";

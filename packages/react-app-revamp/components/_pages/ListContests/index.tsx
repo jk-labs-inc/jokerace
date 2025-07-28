@@ -67,7 +67,7 @@ export const ListContests: FC<ListContestsProps> = ({
   return (
     <div className={`${className}`}>
       <div className="text-[16px] transition-opacity duration-300 ease-in-out">
-        <div className="grid grid-cols-1 gap-4 md:full-width-grid-cols lg:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-[var(--grid-full-width)] lg:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
           <div className="order-3 md:order-none">
             {customTitle ? (
               <span className="text-[20px] font-bold font-sabo">{customTitle}</span>
