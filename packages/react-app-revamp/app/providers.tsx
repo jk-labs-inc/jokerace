@@ -1,7 +1,6 @@
 "use client";
-import { jokeraceTheme } from "@config/rainbowkit";
 import { config } from "@config/wagmi";
-import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FC, ReactNode } from "react";
 import { WagmiProvider, cookieToInitialState } from "wagmi";
@@ -18,7 +17,7 @@ const Providers: FC<ProvidersProps> = ({ cookie, children }) => {
   return (
     <WagmiProvider config={config} {...(initialState ? { initialState } : {})}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={jokeraceTheme} modalSize="wide">
+        <RainbowKitProvider theme={darkTheme()} modalSize="wide">
           {children}
         </RainbowKitProvider>
       </QueryClientProvider>

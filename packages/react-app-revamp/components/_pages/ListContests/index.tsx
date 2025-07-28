@@ -149,8 +149,8 @@ export const ListContests: FC<ListContestsProps> = ({
 
           <div className="flex items-center flex-wrap justify-center flex-grow no-marker">
             <Pagination.PageButton
-              activeClassName="bg-primary-10 text-primary-1 hover:bg-opacity-90 focus:bg-primary-11"
-              inactiveClassName="bg-true-black text-neutral-10 hover:bg-true-white hover:bg-opacity-5 focus:bg-true-white focus:bg-opacity-10"
+              activeClassName="bg-primary-10 text-primary-1 hover:bg-primary-10/90 focus:bg-primary-11"
+              inactiveClassName="bg-true-black text-neutral-10 hover:bg-true-white/5 focus:bg-true-white/10"
               className="cursor-pointer flex items-center justify-center rounded-full font-bold w-12 h-12 text-xs border-solid border-4 border-true-black"
             />
           </div>

@@ -1,3 +1,6 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
 /* // Edit simplebar styles */
 .simplebar-scrollbar::before {
   background-color: #6a6a6a;
@@ -301,10 +304,6 @@ li {
   color: #9d9d9d;
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @layer base {
   *:not(.normal-case, .uppercase, input, textarea) {
     text-transform: lowercase;
@@ -381,7 +380,7 @@ li {
     @apply py-2 px-3 rounded-full font-semibold;
   }
   .navLink-desktop--inactive {
-    @apply text-true-white hover:bg-true-white hover:bg-opacity-10 focus:text-primary-10;
+    @apply text-true-white hover:bg-true-white/10 focus:text-primary-10;
   }
   .navLink-desktop--active {
     @apply text-primary-10;

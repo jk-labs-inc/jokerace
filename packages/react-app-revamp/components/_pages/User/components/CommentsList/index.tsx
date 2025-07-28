@@ -119,8 +119,8 @@ const UserComments: FC<UserCommentsProps> = ({ comments, page, itemsPerPage, set
 
                   <div className="flex items-center flex-wrap justify-center flex-grow no-marker">
                     <Pagination.PageButton
-                      activeClassName="bg-secondary-11 text-secondary-1 hover:bg-opacity-90 focus:bg-secondary-11"
-                      inactiveClassName="bg-true-black text-neutral-10 hover:bg-true-white hover:bg-opacity-5 focus:bg-true-white focus:bg-opacity-10"
+                      activeClassName="bg-secondary-11 text-secondary-1 hover:bg-secondary-11/90 focus:bg-secondary-11"
+                      inactiveClassName="bg-true-black text-neutral-10 hover:bg-true-white/5 focus:bg-true-white/10"
                       className="cursor-pointer flex items-center justify-center rounded-full font-bold w-12 h-12 text-xs border-solid border-4 border-true-black"
                     />
                   </div>

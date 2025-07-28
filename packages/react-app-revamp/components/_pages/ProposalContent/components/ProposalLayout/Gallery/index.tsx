@@ -115,7 +115,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 
         {allowDelete ? (
           <div className="absolute bottom-1 left-2" onClick={e => e.stopPropagation()}>
-            <div className="bg-true-black bg-opacity-75 w-8 h-6 rounded-full flex items-center justify-center">
+            <div className="bg-true-black bg-true-black/75 w-8 h-6 rounded-full flex items-center justify-center">
               <button className="relative w-4 h-4 cursor-pointer" onClick={onDeleteClick}>
                 <CheckIcon
                   className={`absolute inset-0 transform transition-all ease-in-out duration-300 

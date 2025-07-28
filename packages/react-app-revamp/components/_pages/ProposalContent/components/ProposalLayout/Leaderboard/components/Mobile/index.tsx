@@ -82,9 +82,9 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
           {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
             <button
               onClick={navigateToVotingModal}
-              className="min-w-12 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-gradient-vote rounded-[16px] cursor-pointer text-true-black"
+              className="min-w-12 shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-gradient-vote rounded-[16px] cursor-pointer text-true-black"
             >
-              <img src="/contest/upvote-mobile.svg" width={11} height={15} alt="upvote" className="flex-shrink-0" />
+              <img src="/contest/upvote-mobile.svg" width={11} height={15} alt="upvote" className="shrink-0" />
               <p className="text-[16px] font-bold flex-grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
             </button>
           ) : null}

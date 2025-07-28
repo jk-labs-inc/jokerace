@@ -1,4 +1,3 @@
-import Button from "@components/UI/Button";
 import CustomLink from "@components/UI/Link";
 import {
   ROUTE_VIEW_CONTESTS,
@@ -96,7 +95,8 @@ const LayoutContests = (props: LayoutContestsProps) => {
               </a>{" "}
               for contest chain and address information!
             </p>
-            <Button onClick={resetErrorBoundary}>Try loading live contests again</Button>
+            {/* TODO: replace this with button v3 component */}
+            {/* <Button onClick={resetErrorBoundary}>Try loading live contests again</Button> */}
           </div>
         )}
       >

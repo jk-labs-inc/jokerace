@@ -44,7 +44,9 @@ const OnrampCard: FC<OnrampCardProps> = ({
             <div className="flex flex-col items-start">
               <p className="text-neutral-11 font-bold text-[24px]">{name}</p>
               <p
-                className={`text-neutral-9 font-bold normal-case ${descriptionClassName || "text-[12px] md:text-[16px]"}`}
+                className={`text-neutral-9 font-bold normal-case ${
+                  descriptionClassName || "text-[12px] md:text-[16px]"
+                }`}
               >
                 {description}
               </p>
@@ -61,7 +63,7 @@ const OnrampCard: FC<OnrampCardProps> = ({
       {disabled && disabledMessage && (
         <div className="absolute inset-0 pointer-events-none">
           <div className="flex items-start h-full px-4 pt-4">
-            <div className="w-10 flex-shrink-0"></div>
+            <div className="w-10 shrink-0"></div>
             <div className="ml-4">
               <div className="h-[36px]"></div>
               <div className="py-1 px-2 bg-neutral-3 rounded-lg inline-block">
