@@ -1,0 +1,59 @@
+name: nextjs-docker
+
+on: 
+  push:
+    branches:
+      - main
+
+permissions:
+  packages: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set short git commit SHA
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: https://ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: ghcr.io/jk-labs-inc/jokerace:main
+          build-args: |
+            NEXT_PUBLIC_SUPABASE_URL= ${{ secrets.PROD_NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY= ${{ secrets.PROD_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+            NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID= ${{ secrets.PROD_NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
+            NEXT_PUBLIC_R2_ACCOUNT_ID= ${{ secrets.PROD_NEXT_PUBLIC_R2_ACCOUNT_ID }}
+            NEXT_PUBLIC_R2_ACCESS_KEY_ID= ${{ secrets.PROD_NEXT_PUBLIC_R2_ACCESS_KEY_ID }}
+            NEXT_PUBLIC_R2_SECRET_ACCESS_KEY= ${{ secrets.PROD_NEXT_PUBLIC_R2_SECRET_ACCESS_KEY }}
+            NEXT_PUBLIC_MERKLE_TREES_BUCKET= ${{ secrets.PROD_NEXT_PUBLIC_MERKLE_TREES_BUCKET }}
+            NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET= ${{ secrets.PROD_NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET }}
+            NEXT_PUBLIC_ETHERSCAN_KEY= ${{ secrets.PROD_NEXT_PUBLIC_ETHERSCAN_KEY }}
+            NEXT_PUBLIC_QUICKNODE_SLUG= ${{ secrets.PROD_NEXT_PUBLIC_QUICKNODE_SLUG }}
+            NEXT_PUBLIC_QUICKNODE_KEY= ${{ secrets.PROD_NEXT_PUBLIC_QUICKNODE_KEY }}
+            NEXT_PUBLIC_ALCHEMY_KEY= ${{ secrets.PROD_NEXT_PUBLIC_ALCHEMY_KEY }}
+            NEXT_PUBLIC_PARA_API_KEY= ${{ secrets.PROD_NEXT_PUBLIC_PARA_API_KEY }}
+            NEXT_PUBLIC_PARA_ENVIRONMENT= ${{ secrets.PROD_NEXT_PUBLIC_PARA_ENVIRONMENT }}
+            NEXT_PUBLIC_BREVO_API_KEY= ${{ secrets.PROD_NEXT_PUBLIC_BREVO_API_KEY }}
+            NEXT_PUBLIC_CDP_PROJECT_ID= ${{ secrets.PROD_NEXT_PUBLIC_CDP_PROJECT_ID }}
+            NEXT_PUBLIC_ENVIRONMENT= ${{ secrets.PROD_NEXT_PUBLIC_ENVIRONMENT }}

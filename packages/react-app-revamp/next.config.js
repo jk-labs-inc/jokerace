@@ -25,6 +25,7 @@ const nextConfig = {
     ],
   },
   transpilePackages: ["react-tweet"],
+  output: "standalone",
 };
 
 module.exports = withPWA({
