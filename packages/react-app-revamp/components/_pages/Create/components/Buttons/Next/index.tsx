@@ -71,7 +71,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
       <div className={`flex flex-col gap-4 items-center`}>
         <ButtonV3
           colorClass={`text-[20px] bg-gradient-purple rounded-[10px] font-bold ${
-            shake ? "animate-shakeTop" : ""
+            shake ? "animate-shake-top" : ""
           } text-true-black hover:scale-105 transition-transform duration-200 ease-in-out`}
           size={ButtonSize.LARGE}
           onClick={handleClick}
@@ -84,7 +84,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
           onClick={() => onBackHandler(step)}
         >
           <div className="transition-transform duration-200 group-hover:-translate-x-1">
-            <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-[1px]" />
+            <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-px" />
           </div>
           <p className="text-[16px]">back</p>
         </div>

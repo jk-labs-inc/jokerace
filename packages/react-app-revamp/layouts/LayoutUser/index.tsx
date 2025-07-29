@@ -1,6 +1,5 @@
 "use client";
 import SendFunds from "@components/SendFunds";
-import Button from "@components/UI/Button";
 import CustomLink from "@components/UI/Link";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import {
@@ -139,7 +138,8 @@ const LayoutUser = (props: LayoutUserProps) => {
               </a>{" "}
               for contest chain and address information!
             </p>
-            <Button onClick={resetErrorBoundary}>Try loading live contests again</Button>
+            {/* TODO: replace this with button v3 component */}
+            {/* <Button onClick={resetErrorBoundary}>Try loading live contests again</Button> */}
           </div>
         )}
       >

@@ -86,7 +86,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
       <div
         className={`${
           isMobileConfirmModalOpen ? "fixed" : "hidden"
-        } inset-0 z-50 pointer-events-none bg-neutral-8 bg-opacity-60`}
+        } inset-0 z-50 pointer-events-none bg-neutral-8 bg-neutral-8/60`}
         aria-hidden="true"
       />
       <div

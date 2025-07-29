@@ -25,7 +25,7 @@ const EditContestNameTextInput: FC<EditContestNameTextInputProps> = ({
         bg-transparent
         text-transparent
         placeholder:text-neutral-10
-        [&:not(:placeholder-shown)]:bg-gradient-purple [&:not(:placeholder-shown)]:bg-clip-text
+        not-placeholder-shown:bg-gradient-purple not-placeholder-shown:bg-clip-text
         w-full
         resize-none
         overflow-hidden
@@ -46,7 +46,7 @@ const EditContestNameTextInput: FC<EditContestNameTextInputProps> = ({
       bg-transparent
       text-transparent
       placeholder:text-neutral-10
-      [&:not(:placeholder-shown)]:bg-gradient-purple [&:not(:placeholder-shown)]:bg-clip-text
+      not-placeholder-shown:bg-gradient-purple not-placeholder-shown:bg-clip-text
       w-full
       resize-none
       overflow-hidden

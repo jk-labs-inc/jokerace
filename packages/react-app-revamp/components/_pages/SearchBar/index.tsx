@@ -91,7 +91,9 @@ export const SearchBar: FC<SearchBarProps> = ({ isInline, onSearch }) => {
       </FormField>
 
       <ButtonV3
-        colorClass={`bg-gradient-purple rounded-[10px] font-bold text-true-black mb-2 ${error ? "animate-shakeTop" : ""}`}
+        colorClass={`bg-gradient-purple rounded-[10px] font-bold text-true-black mb-2 ${
+          error ? "animate-shake-top" : ""
+        }`}
         size={isMobile ? ButtonSize.DEFAULT : ButtonSize.LARGE}
         onClick={executeSearch}
       >

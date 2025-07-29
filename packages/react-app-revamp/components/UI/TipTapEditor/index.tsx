@@ -1,5 +1,4 @@
 import Iframe from "@components/tiptap/Iframe";
-import Button from "@components/UI/Button";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import Image from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
@@ -40,13 +39,13 @@ const TipTapEditor = (props: TipTapEditorProps) => {
     <>
       {!showPreview && (
         <>
-          <div className="flex flex-col min-h-[12rem] rounded-md ">
-            <div className="relative px-1 py-1 border-b-2 border-b-true-white border-opacity-10">
+          <div className="flex flex-col min-h-48 rounded-md ">
+            <div className="relative px-1 py-1 border-b-2 border-b-true-white/10">
               <TipTapEditorControls editor={editor} />
             </div>
 
             <EditorContent
-              className="flex flex-col flex-grow min-h-[20em] max-h-[26em] overflow-y-auto"
+              className="flex flex-col grow min-h-[20em] max-h-[26em] overflow-y-auto"
               editor={editor}
             />
           </div>
@@ -54,7 +53,8 @@ const TipTapEditor = (props: TipTapEditorProps) => {
       )}
       {showPreview && <TipTapPreview content={editor?.getHTML()} />}
       <div className="mt-4">
-        <Button
+        {/* TODO: replace this with button v3 component */}
+        {/* <Button
           intent="neutral-outline"
           scale="xs"
           type="button"
@@ -63,7 +63,7 @@ const TipTapEditor = (props: TipTapEditorProps) => {
           }}
         >
           Toggle preview
-        </Button>
+        </Button> */}
       </div>
     </>
   );

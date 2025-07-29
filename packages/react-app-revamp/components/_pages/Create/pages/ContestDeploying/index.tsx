@@ -55,7 +55,7 @@ const CreateContestDeploying = () => {
   }, [deployContestData, isSuccess, router, setShowRewards]);
 
   return (
-    <div className="flex flex-col gap-4 mt-12 lg:mt-[100px] animate-swingInLeft">
+    <div className="flex flex-col gap-4 mt-12 lg:mt-[100px] animate-swing-in-left">
       <p className="text-[24px] font-bold text-neutral-11 uppercase font-sabo">
         congratulations, you created a contest 👑
       </p>

@@ -60,7 +60,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <MenuItems className="absolute right-0 z-10 mt-2 w-52 overflow-x-auto origin-top-right rounded-md bg-true-black shadow-sortProposalDropdown focus:outline-none">
+        <MenuItems className="absolute right-0 z-10 mt-2 w-52 overflow-x-auto origin-top-right rounded-md bg-true-black shadow-sort-proposal-dropdown focus:outline-none">
           <MenuItem>
             {({ focus, close }) => (
               <a
@@ -68,7 +68,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 href={generateLensShareUrlForContest(contestName, contestAddress, chain)}
                 className={classNames(
                   focus ? "bg-neutral-3 text-gray-900" : "text-gray-700",
-                  "flex items-center text-[16px] gap-1 px-4 py-2 hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
+                  "flex text-neutral-11 items-center text-[16px] gap-1 px-4 py-2 hover:bg-gray-700  border-b border-neutral-3",
                 )}
                 rel="noreferrer"
                 onClick={close}
@@ -85,7 +85,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 target="_blank"
                 className={classNames(
                   focus ? "bg-neutral-3 text-gray-900" : "text-gray-700",
-                  "flex items-center text-[16px] gap-1 px-4 py-2 hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
+                  "flex text-neutral-11 items-center text-[16px] gap-1 px-4 py-2 hover:bg-gray-700  border-b border-neutral-3",
                 )}
                 rel="noreferrer"
                 onClick={close}
@@ -108,7 +108,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 target="_blank"
                 className={classNames(
                   focus ? "bg-neutral-3 text-gray-900" : "text-gray-700",
-                  "flex items-center text-[16px] gap-1 px-4 py-2 hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
+                  "flex text-neutral-11 items-center text-[16px] gap-1 px-4 py-2 hover:bg-gray-700  border-b border-neutral-3",
                 )}
                 rel="noreferrer"
                 onClick={close}
@@ -130,7 +130,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 onClick={handleCopyLink}
                 className={classNames(
                   focus ? "bg-neutral-3 text-gray-900" : "text-gray-700",
-                  "flex items-center gap-1 px-4 py-2 text-[16px] hover:bg-gray-100 hover:text-gray-900 cursor-pointer",
+                  "flex text-neutral-11 items-center gap-1 px-4 py-2 text-[16px] hover:bg-gray-700  cursor-pointer",
                 )}
               >
                 {isCopied ? (

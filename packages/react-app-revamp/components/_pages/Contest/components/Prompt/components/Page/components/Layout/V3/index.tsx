@@ -30,7 +30,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
 
     return (
       <>
-        {showDivider && <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6" />}
+        {showDivider && <div className="bg-linear-to-r from-neutral-7 w-full h-px my-6" />}
         <Interweave content={content} matchers={[new UrlMatcher("url")]} />
       </>
     );
@@ -76,7 +76,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
               onClick={handleToggleExpanded}
               className="text-[12px] md:text-[16px] font-bold flex items-center justify-center gap-1 text-positive-11  hover:text-positive-10 transition-all duration-300 ease-in-out"
             >
-              <span>{isExpanded ? "show less" : "show more"}</span>
+              {isExpanded ? "show less" : "show more"}
               {isExpanded ? (
                 <ChevronUpIcon
                   width={isMobile ? 16 : 21}

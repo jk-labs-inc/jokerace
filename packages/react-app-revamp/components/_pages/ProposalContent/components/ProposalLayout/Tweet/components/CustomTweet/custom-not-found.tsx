@@ -19,7 +19,7 @@ const CustomTweetNotFound: FC<CustomTweetNotFoundProps> = ({ error, onError, id 
   };
 
   return (
-    <TweetContainer className="w-full md:!w-[360px] !min-w-full !text-neutral-9 !bg-true-black !m-0 !border-primary-1">
+    <TweetContainer className="w-full md:w-[360px]! min-w-full! text-neutral-9! bg-true-black! m-0! border-primary-1!">
       <div className="flex flex-col p-4 gap-4 min-w-full text-neutral-9">
         <div className="flex flex-col gap-2">
           <p className="text-[16px] text-neutral-9">sorry, we couldn't load this tweet</p>

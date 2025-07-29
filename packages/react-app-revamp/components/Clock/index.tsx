@@ -123,7 +123,7 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
               r={strokeWidth * 1.3}
               fill={`${color}`}
               filter="url(#shadow)"
-              className="animate-blinkShadow"
+              className="animate-blink-shadow"
             />
           </svg>
 
