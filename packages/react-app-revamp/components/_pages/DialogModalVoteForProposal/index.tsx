@@ -131,7 +131,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     <DialogModalV4 isOpen={isOpen} onClose={handleModalClose}>
       <div className="flex flex-col gap-4 pt-6 pb-4 md:py-16 px-6 md:pl-32 md:pr-16">
         {showOnramp && nativeToken && contestInfoData.contestChainName ? (
-          <div className="animate-swingInLeft">
+          <div className="animate-swing-in-left">
             <Onramp
               className="md:w-[400px]"
               chain={contestInfoData.contestChainName}

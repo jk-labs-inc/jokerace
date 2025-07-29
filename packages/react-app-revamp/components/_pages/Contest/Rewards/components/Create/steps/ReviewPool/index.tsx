@@ -32,7 +32,7 @@ const CreateRewardsReviewPool = () => {
   };
 
   return (
-    <div className="flex flex-col gap-16 animate-swingInLeft">
+    <div className="flex flex-col gap-16 animate-swing-in-left">
       <div className="flex flex-col gap-8">
         <p className="text-[24px] text-true-white font-bold">let's confirm</p>
         <CreateRewardsReviewTable

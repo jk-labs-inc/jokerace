@@ -120,7 +120,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                 <CustomLink
                   scroll={false}
                   href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
-                  className="flex-shrink-0 w-4 h-4 flex justify-center items-center rounded-full border text-positive-11 border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out group"
+                  className="shrink-0 w-4 h-4 flex justify-center items-center rounded-full border text-positive-11 border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out group"
                 >
                   <ChevronRightIcon className="w-4 h-4 group-hover:brightness-0 group-hover:saturate-0" />
                 </CustomLink>
@@ -158,16 +158,16 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                   )}
                   <CustomLink
                     href={commentLink}
-                    className="min-w-16 flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
+                    className="min-w-16 shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
                     shallow
                     scroll={false}
                   >
-                    <ChatBubbleLeftEllipsisIcon className="w-4 h-4 flex-shrink-0" />
-                    <p className="text-[16px] font-bold flex-grow text-center">{proposal.commentsCount}</p>
+                    <ChatBubbleLeftEllipsisIcon className="w-4 h-4 shrink-0" />
+                    <p className="text-[16px] font-bold grow text-center">{proposal.commentsCount}</p>
                   </CustomLink>
                   <button
                     onClick={copyLink}
-                    className="min-w-16 text-[16px] font-bold flex-shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
+                    className="min-w-16 text-[16px] font-bold shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
                   >
                     <LinkIcon className="w-4 h-4" />
                     copy link

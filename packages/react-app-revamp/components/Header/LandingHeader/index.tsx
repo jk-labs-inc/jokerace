@@ -113,7 +113,7 @@ const LandingHeader = () => {
             }`}
           >
             <div className="text-neutral-10 border-b text-[14px] border-neutral-2 py-3 overflow-hidden relative">
-              <div className="flex items-center w-full overflow-x-auto scrollbar-hide px-4 pb-1">
+              <div className="flex items-center w-full overflow-x-auto no-scrollbar px-4 pb-1">
                 <div className="flex gap-4 items-center min-w-max">
                   {filteredLinks.map((link, key) => (
                     <a
@@ -129,7 +129,7 @@ const LandingHeader = () => {
                   ))}
                 </div>
               </div>
-              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-true-black to-transparent pointer-events-none"></div>
+              <div className="absolute right-0 top-0 bottom-0 w-12 bg-linear-to-l from-true-black to-transparent pointer-events-none"></div>
             </div>
             <div className="flex flex-row items-center justify-between pt-2 px-8">
               <CustomLink href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
@@ -148,7 +148,10 @@ const LandingHeader = () => {
 
               <CustomLink
                 href={ROUTE_VIEW_LIVE_CONTESTS}
-                className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
+                className={`flex flex-col text-neutral-11 ${isOneOfActive([
+                  ROUTE_VIEW_LIVE_CONTESTS,
+                  ROUTE_VIEW_CONTEST,
+                ])}`}
               >
                 {isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST]) ? (
                   <TrophyIconSolid width={24} />

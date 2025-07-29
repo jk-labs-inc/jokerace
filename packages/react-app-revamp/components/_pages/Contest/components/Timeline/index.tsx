@@ -47,7 +47,7 @@ const ContestTimeline = () => {
       {stages.map((stage, index) => (
         <div key={index} className={`opacity-${currentStageIndex === index ? "100" : "50"} text-neutral-11`}>
           <div className="text-[16px] font-bold mb-1">{moment(stage.date).format("MMMM D, h:mm a")}</div>
-          <div className="h-[1px] bg-neutral-11"></div>
+          <div className="h-px bg-neutral-11"></div>
           <div className="text-[16px] font-bold mt-1">
             {index === currentStageIndex
               ? stage.action

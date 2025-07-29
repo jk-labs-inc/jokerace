@@ -96,9 +96,9 @@ const Tabs: FC<TabsProps> = ({ tabs, activeTab, onChange, optionalInfo }) => {
           </div>
         ))}
       </div>
-      <div className="absolute left-0 w-full h-[1px] bottom-0 bg-neutral-0" />
+      <div className="absolute left-0 w-full h-px bottom-0 bg-neutral-0" />
       <motion.div
-        className="absolute bottom-0 h-[1px] bg-positive-11"
+        className="absolute bottom-0 h-px bg-positive-11"
         style={{
           x: indicatorX,
           width: indicatorWidth,

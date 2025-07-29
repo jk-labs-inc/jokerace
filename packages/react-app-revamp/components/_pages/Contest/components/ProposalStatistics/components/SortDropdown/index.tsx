@@ -45,7 +45,7 @@ const SortProposalsDropdown: FC<SortProposalsDropdownProps> = ({ defaultValue, o
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <MenuItems className="absolute overflow-x-auto md:-right-2 z-10 mt-4 w-36 rounded-md shadow-sortProposalDropdown focus:outline-none">
+        <MenuItems className="absolute overflow-x-auto md:-right-2 z-10 mt-4 w-36 rounded-md shadow-sort-proposal-dropdown focus:outline-none">
           {options.map(option => (
             <MenuItem key={option.value}>
               {({ focus }) => (

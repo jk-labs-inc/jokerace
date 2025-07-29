@@ -20,7 +20,7 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
   isRewardsFetching,
 }) => {
   const SkeletonCard = () => (
-    <div className="w-[320px] h-[216px] flex-shrink-0 lg:w-auto border border-neutral-0 rounded-[16px] bg-gradient-radial p-4 pb-3 flex flex-col justify-between">
+    <div className="w-[320px] h-[216px] shrink-0 lg:w-auto border border-neutral-0 rounded-[16px] bg-gradient-radial p-4 pb-3 flex flex-col justify-between">
       <div className="flex flex-col gap-8">
         <div className="flex items-center gap-2">
           <Skeleton width={60} height={24} baseColor="#212121" highlightColor="#100816" borderRadius={8} />
@@ -44,11 +44,12 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
       ) : (
         <div className="flex flex-col gap-4">
           <p className="text-[16px] text-neutral-14 font-bold uppercase">featured contests</p>
-          <div className="overflow-x-auto scrollbar-hide">
-            <div className="flex lg:featured-contests-grid gap-4 pb-4">
+          <div className="overflow-x-auto no-scrollbar">
+            {/* Using arbitrary values with CSS custom property */}
+            <div className="flex lg:grid lg:grid-cols-(--grid-featured-contests) gap-4 pb-4">
               {/* Show loaded contests */}
               {contestData?.map((contest, index) => (
-                <div className="w-[320px] flex-shrink-0 lg:w-auto" key={`contest-${index}`}>
+                <div className="w-[320px] shrink-0 lg:w-auto" key={`contest-${index}`}>
                   <FeaturedContestCard
                     contestData={contest}
                     rewardsData={rewardsData?.[index]}

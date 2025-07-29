@@ -91,7 +91,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
         <ButtonV3
           isDisabled={isDisabled}
           colorClass={`bg-gradient-create text-[20px] rounded-[10px] font-bold ${
-            shake ? "animate-shakeTop" : ""
+            shake ? "animate-shake-top" : ""
           }  text-true-black`}
           size={ButtonSize.LARGE}
           type={ButtonType.TX_ACTION}
@@ -105,7 +105,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
           onClick={onPreviousStep}
         >
           <div className="transition-transform duration-200 group-hover:-translate-x-1">
-            <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-[1px]" />
+            <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-px" />
           </div>
           <p className="text-[16px]">back</p>
         </div>
