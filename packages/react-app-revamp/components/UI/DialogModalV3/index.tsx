@@ -50,7 +50,7 @@ const DialogModalV3: FC<DialogModalProps> = ({
                 title="Close this"
                 className={`${
                   isMobile || disableClose ? "hidden" : "absolute"
-                } z-10 top-0 p-2 inline-start-0 2xs:inline-start-auto 2xs:inline-end-0 pt-4 hover:scale-[1.1] text-neutral-11`}
+                } z-10 top-0 p-2 left-0 2xs:left-auto 2xs:right-0 pt-4 hover:scale-[1.1] text-neutral-11`}
               >
                 <img
                   src="/modal/modal_close.svg"

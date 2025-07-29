@@ -14,7 +14,7 @@ const DialogModalV4: FC<DialogModalV4Props> = ({
   onClose,
   children,
   width = "w-full",
-  lgWidth = "lg:max-w-lg",
+  lgWidth = "lg:max-w-[1024px]",
 }) => {
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">

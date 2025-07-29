@@ -7,7 +7,6 @@ import { polyfill } from "interweave-ssr";
 import { GA_TRACKING_ID } from "lib/gtag";
 import { Metadata, Viewport } from "next";
 import dynamic from "next/dynamic";
-import localFont from "next/font/local";
 import { headers } from "next/headers";
 import NextTopLoader from "nextjs-toploader";
 import "react-datepicker/dist/react-datepicker.css";
@@ -44,34 +43,6 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-const lato = localFont({
-  src: [
-    {
-      path: "./_fonts/Lato-Regular.woff2",
-      weight: "400",
-    },
-    {
-      path: "./_fonts/Lato-Bold.woff2",
-      weight: "700",
-    },
-    {
-      path: "./_fonts/Lato-Black.woff2",
-      weight: "900",
-    },
-  ],
-  variable: "--font-lato",
-});
-
-const sabo = localFont({
-  src: [
-    {
-      path: "./_fonts/Sabo-Filled.otf",
-      weight: "400",
-    },
-  ],
-  variable: "--font-sabo",
-});
-
 const DynamicPortal = dynamic(() => import("./portal"), { ssr: !!false });
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -79,7 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const cookie = headersList.get("cookie") ?? "";
 
   return (
-    <html lang="en" className={`${lato.variable} ${sabo.variable}`}>
+    <html lang="en">
       <body>
         <div id="__next">
           <NextTopLoader color="#BB65FF" shadow="0 0 10px #BB65FF, 0 0 5px #78FFC6" showSpinner={false} />

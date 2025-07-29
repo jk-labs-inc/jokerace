@@ -1,6 +1,365 @@
 @import "tailwindcss";
-@config "../tailwind.config.js";
 @plugin "@tailwindcss/typography";
+
+/* Font Face Declarations */
+@font-face {
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Lato-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/Lato-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("/fonts/Lato-Black.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Sabo";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Sabo-Filled.otf") format("opentype");
+}
+
+@theme {
+  /* Breakpoints */
+  --breakpoint-min: 320px;
+  --breakpoint-2xs: 480px;
+  --breakpoint-xs: 576px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1350px;
+  --breakpoint-3xl: 1500px;
+  --breakpoint-4xl: 1660px;
+
+  /* Font Families */
+  --font-sabo: "Sabo", sans-serif;
+  --font-sans: "Lato", sans-serif;
+  --font-mono: monospace;
+
+  /* Font Sizes */
+  --font-size-3xs: 0.625rem;
+  --font-size-2xs: 0.75rem;
+  --font-size-xs: 0.875rem;
+  --font-size-sm: 0.9375rem;
+  --font-size-base: 1rem;
+  --font-size-prose: 1rem;
+  --font-size-md: 1.0625rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  --font-size-6xl: 3.75rem;
+  --font-size-7xl: 4.5rem;
+  --font-size-8xl: 6rem;
+  --font-size-9xl: 8rem;
+  --font-size-custom-h1: 1.875rem;
+  --font-size-custom-h2: 1.375rem;
+  --font-size-custom-h3: 1.25rem;
+  --font-size-custom-h4: 1.0625rem;
+
+  /* Colors */
+  --color-transparent: transparent;
+  --color-inherit: inherit;
+  --color-current: currentColor;
+  --color-true-white: #ffffff;
+  --color-true-black: #000000;
+  --color-blue: #1e81e2;
+
+  /* Primary Colors */
+  --color-primary-1: #1a1a1a;
+  --color-primary-2: #242424;
+  --color-primary-3: #3d3d3d;
+  --color-primary-4: #352800;
+  --color-primary-5: #3e3e3e;
+  --color-primary-6: #493c00;
+  --color-primary-7: #645822;
+  --color-primary-8: #705e00;
+  --color-primary-9: #f5d90a;
+  --color-primary-10: #ffe25b;
+  --color-primary-11: #f0c000;
+  --color-primary-12: #fffad1;
+
+  /* Secondary Colors */
+  --color-secondary-1: #141414;
+  --color-secondary-2: #221527;
+  --color-secondary-3: #301a3a;
+  --color-secondary-4: #3a1e48;
+  --color-secondary-5: #432155;
+  --color-secondary-6: #4e2667;
+  --color-secondary-7: #5f2d84;
+  --color-secondary-8: #7938b2;
+  --color-secondary-9: #8e4ec6;
+  --color-secondary-10: #9d5bd2;
+  --color-secondary-11: #bb65ff;
+  --color-secondary-12: #f7ecfc;
+
+  /* Positive Colors */
+  --color-positive-1: #081917;
+  --color-positive-2: #05201e;
+  --color-positive-3: #052926;
+  --color-positive-4: #04312c;
+  --color-positive-5: #033a34;
+  --color-positive-6: #01453d;
+  --color-positive-7: #00564a;
+  --color-positive-8: #006d5b;
+  --color-positive-9: #70e1c8;
+  --color-positive-10: #95f3d9;
+  --color-positive-11: #78ffc6;
+  --color-positive-12: #e7fcf7;
+
+  /* Negative Colors */
+  --color-negative-1: #1d1418;
+  --color-negative-2: #27141c;
+  --color-negative-3: #3c1827;
+  --color-negative-4: #481a2d;
+  --color-negative-5: #541b33;
+  --color-negative-6: #641d3b;
+  --color-negative-7: #801d45;
+  --color-negative-8: #ae1955;
+  --color-negative-9: #e93d82;
+  --color-negative-10: #f04f88;
+  --color-negative-11: #ff78a9;
+  --color-negative-12: #feecf4;
+
+  /* Neutral Colors */
+  --color-neutral-0: #212121;
+  --color-neutral-1: #151515;
+  --color-neutral-2: #1e1e1e;
+  --color-neutral-3: #232326;
+  --color-neutral-4: #28282c;
+  --color-neutral-5: #2e2e32;
+  --color-neutral-6: #303030;
+  --color-neutral-7: #323232;
+  --color-neutral-8: #5e707699;
+  --color-neutral-9: #9d9d9d;
+  --color-neutral-10: #6a6a6a;
+  --color-neutral-11: #e5e5e5;
+  --color-neutral-12: #cdcdcd;
+  --color-neutral-13: #8e8e8e;
+  --color-neutral-14: #a1a1a1;
+  --color-neutral-15: #d0d0d0;
+
+  /* Additional Colors */
+  --color-ffdd3e: #ffdd3e;
+  --color-78ffc6: #78ffc6;
+
+  /* Keyframes */
+  --animate-card-rotation: card-rotation 2000ms linear infinite;
+  --animate-appear: appear 300ms ease-in forwards;
+  --animate-fade-in: fadeIn 1s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+  --animate-fade-out: fadeOut 2s ease-out both;
+  --animate-blink-shadow: blink 1s ease-in-out infinite;
+  --animate-shake-top: shakeTop 0.8s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
+  --animate-swing-in-left: swingInLeft 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  --animate-flicker: flicker 1s linear;
+  --animate-flicker-infinite: flicker 1s linear infinite;
+  --animate-reveal: reveal 1s ease-in-out;
+  --animate-flicker-number: flicker-number 0.5s infinite;
+
+  /* Scale */
+  --scale-120: 1.1;
+
+  /* Background Images */
+  --background-image-gradient-next: linear-gradient(90deg, #ffdd3e 0%, #78ffc6 96.62%);
+  --background-image-gradient-create: linear-gradient(90deg, #bb65ff 0%, #78ffc6 100%);
+  --background-image-gradient-share-submission: linear-gradient(90deg, #ffe25b 0%, #bb65ff 96.62%);
+  --background-image-gradient-vote: linear-gradient(93.06deg, #78ffc6 0%, #bb65ff 100%);
+  --background-image-gradient-distribute: linear-gradient(180deg, #b0fed4 0%, #78ffc6 50%, #4a9575 100%);
+  --background-image-gradient-withdraw: linear-gradient(180deg, #ff78a9 0%, #f04f88 50%, #e93d82 100%);
+  --background-image-gradient-reward-recipients: linear-gradient(90deg, #78ffc6 0%, #ffe25b 100%);
+  --background-image-gradient-purple: linear-gradient(90deg, #bb65ff 0%, #e5e5e5 100%);
+  --background-image-gradient-green: linear-gradient(90deg, #78ffc6 0%, #ffffff 100%);
+  --background-image-gradient-radial: radial-gradient(50% 50% at 50% 50%, #391f4d 0%, #000000 100%);
+  --background-image-gradient-fade-black-purple: linear-gradient(
+    to bottom,
+    #000000 0%,
+    #050408 15%,
+    #0a0610 25%,
+    #100816 40%,
+    #100816 60%,
+    #0a0610 75%,
+    #050408 85%,
+    #000000 100%
+  );
+  --background-image-gradient-purple-white: linear-gradient(90deg, #c293ff 0%, #ffffff 100%);
+  --background-image-gradient-gray: linear-gradient(90deg, #a1a1a1 0%, #e5e5e5 100%);
+  --background-image-gradient-light-pink: linear-gradient(90deg, #ff78a9 0%, #e5e5e5 100%);
+  --background-image-gradient-title: linear-gradient(180deg, #ffffff 0%, #a1a1a1 100%);
+  --background-image-gradient-vote-rainbow: linear-gradient(90deg, #ffe25b 0%, #ff78a9 50%, #78ffc6 75%, #bb65ff 100%);
+  --background-image-gradient-vote-purple: linear-gradient(90deg, #bb65ff 0%, #bb65ff 50%, #ff78a9 75%, #ffe25b 100%);
+  --background-image-gradient-gold: linear-gradient(90deg, #ffe25b 0%, #fffae1 100%);
+
+  /* Box Shadows */
+  --shadow-create-header: 0 3px 4px 0 rgba(106, 106, 106, 1);
+  --shadow-timer-container: 3px 3px 4px rgba(106, 106, 106, 1);
+  --shadow-dialog: 0px 1px 6px 1px rgba(157, 157, 157, 1);
+  --shadow-sort-proposal-dropdown: 0px 1px 6px 1px #6a6a6a;
+  --shadow-proposal-card: 1px 1px 5px 0px #e5e5e5;
+  --shadow-file-upload: 0 0px 15px rgba(121, 121, 121, 0.3);
+  --shadow-prompt-preview: 0px 0px 4px 2px #3e3e3e;
+  --shadow-entry-card: 0 0 8px 2px #3c3c3c;
+  --shadow-split-fee-destination: 0 0 1px 1px rgba(106, 106, 106, 1);
+  --shadow-button-embossed-hover: 0 0 10px 4px rgba(255, 255, 255, 0.4), 0 0 10px 4px rgba(0, 0, 0, 0.3);
+
+  /* Heights */
+  --height-fit-content: fit-content;
+
+  /* Logical Positioning Properties - Only what we need */
+  --inset-inline-start-0: 0px;
+  --inset-inline-start-auto: auto;
+  --inset-inline-start--5: -1.25rem;
+  --inset-inline-end-0: 0px;
+
+  /* Opacity */
+  --opacity-2_5: 0.025;
+  --opacity-3_5: 0.035;
+  --opacity-7_5: 0.075;
+
+  /* Spacing */
+  --spacing-7_12: 58.333333%;
+  --spacing-1ex: 1ex;
+
+  /* Keyframe Definitions */
+  @keyframes card-rotation {
+    from {
+      transform: rotateY(360deg);
+    }
+    to {
+      transform: rotateY(0);
+    }
+  }
+
+  @keyframes appear {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeOut {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes swingInLeft {
+    0% {
+      transform: rotateY(70deg);
+      transform-origin: left;
+      opacity: 0;
+    }
+    100% {
+      transform: rotateY(0deg);
+      transform-origin: left;
+      opacity: 1;
+    }
+  }
+
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    60% {
+      opacity: 0.8;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes shakeTop {
+    0% {
+      transform: translateY(0);
+    }
+    10%,
+    90% {
+      transform: translateY(-2px);
+    }
+    20%,
+    80% {
+      transform: translateY(2px);
+    }
+    30%,
+    50%,
+    70% {
+      transform: translateY(-4px);
+    }
+    40%,
+    60% {
+      transform: translateY(4px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes flicker {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes reveal {
+    0% {
+      mask: linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 150% 0 / 400% no-repeat;
+      opacity: 0.2;
+    }
+    100% {
+      mask: linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 0 / 400% no-repeat;
+      opacity: 1;
+    }
+  }
+
+  @keyframes flicker-number {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
 
 /* // Edit simplebar styles */
 .simplebar-scrollbar::before {
