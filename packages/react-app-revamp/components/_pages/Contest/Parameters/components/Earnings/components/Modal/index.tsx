@@ -88,7 +88,9 @@ const ContestParamsEarningsModal: FC<ContestParamsEarningsModalProps> = ({ charg
     }
 
     if (!userAddress && localCharge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet) {
-      toastInfo("Please connect your wallet to set this option");
+      toastInfo({
+        message: "Please connect your wallet to set this option",
+      });
       return;
     }
 

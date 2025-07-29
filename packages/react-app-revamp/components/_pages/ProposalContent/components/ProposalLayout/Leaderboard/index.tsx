@@ -68,7 +68,9 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
       proposal.id
     }`;
     navigator.clipboard.writeText(url);
-    toastInfo("link copied!");
+    toastInfo({
+      message: "link copied!",
+    });
   };
 
   if (isMobile) {

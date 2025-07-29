@@ -23,7 +23,10 @@ const useEmailSignup = () => {
   ) => {
     if (isSupabaseConfigured) {
       setLoading(true);
-      showToasts && toastLoading("Subscribing...");
+      showToasts &&
+        toastLoading({
+          message: "Subscribing...",
+        });
       try {
         let successMessage = "You have been subscribed successfully.";
 
@@ -52,16 +55,26 @@ const useEmailSignup = () => {
 
         if (error) {
           setLoading(false);
-          showToasts && toastError("There was an error while subscribing. Please try again later.", error.message);
+          showToasts &&
+            toastError({
+              message: "There was an error while subscribing. Please try again later.",
+            });
           return;
         }
 
         await sendEmail(user_address ?? "", EmailType.SignUpConfirmation);
         setLoading(false);
-        showToasts && toastSuccess(successMessage);
+        showToasts &&
+          toastSuccess({
+            message: successMessage,
+          });
       } catch (error: any) {
         setLoading(false);
-        showToasts && toastError("There was an error while subscribing. Please try again later.", error.message);
+        showToasts &&
+          toastError({
+            message: "There was an error while subscribing. Please try again later.",
+            messageToCopy: error.message,
+          });
       }
     }
   };
@@ -84,7 +97,11 @@ const useEmailSignup = () => {
 
         setLoading(false);
         if (error) {
-          displayToasts && toastError("There was an error while checking. Please try again later.", error.message);
+          displayToasts &&
+            toastError({
+              message: "There was an error while checking. Please try again later.",
+              messageToCopy: error.message,
+            });
           return false;
         }
         if (data?.length) {
@@ -94,7 +111,11 @@ const useEmailSignup = () => {
         }
       } catch (error: any) {
         setLoading(false);
-        displayToasts && toastError("There was an error while checking. Please try again later.", error.message);
+        displayToasts &&
+          toastError({
+            message: "There was an error while checking. Please try again later.",
+            messageToCopy: error.message,
+          });
         return false;
       }
     }

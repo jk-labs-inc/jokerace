@@ -94,7 +94,9 @@ const ProposalContent: FC<ProposalContentProps> = ({
     }
 
     if (contestStatus === ContestStatus.VotingClosed) {
-      toastInfo("Voting is closed for this contest.");
+      toastInfo({
+        message: "Voting is closed for this contest.",
+      });
       return;
     }
 
@@ -110,7 +112,9 @@ const ProposalContent: FC<ProposalContentProps> = ({
         return;
       }
 
-      toastInfo("You need to be allowlisted to vote for this contest.");
+      toastInfo({
+        message: "You need to be allowlisted to vote for this contest.",
+      });
       return;
     }
 

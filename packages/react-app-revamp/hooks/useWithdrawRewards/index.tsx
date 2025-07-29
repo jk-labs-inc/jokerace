@@ -28,7 +28,10 @@ export const useWithdrawReward = (
   const handleWithdraw = async () => {
     setIsLoading(true);
     onWithdrawStart?.();
-    toastLoading(`Withdrawing funds...`, LoadingToastMessageType.KEEP_BROWSER_OPEN);
+    toastLoading({
+      message: "Withdrawing funds...",
+      additionalMessageType: LoadingToastMessageType.KEEP_BROWSER_OPEN,
+    });
 
     try {
       const hash = await writeContract(config, {
@@ -42,7 +45,9 @@ export const useWithdrawReward = (
 
       setIsLoading(false);
       onWithdrawSuccess?.();
-      toastSuccess("Funds withdrawn successfully!");
+      toastSuccess({
+        message: "Funds withdrawn successfully!",
+      });
 
       try {
         await updateRewardAnalytics({
