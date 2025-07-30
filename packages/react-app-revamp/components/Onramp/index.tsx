@@ -3,6 +3,8 @@ import { FC } from "react";
 import OnrampProviders from "./providers";
 import { useMediaQuery } from "react-responsive";
 import FundFromAnotherChainButton from "./components/Buttons/FundFromAnotherChain";
+import { getChainLogo } from "@helpers/getChainLogo";
+import Image from "next/image";
 
 interface OnrampProps {
   chain: string;
@@ -14,6 +16,7 @@ interface OnrampProps {
 
 const Onramp: FC<OnrampProps> = ({ chain, asset, onGoBack, showBackButton = true, className }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const chainLogo = getChainLogo(chain);
 
   const handleFundFromAnotherChain = () => {
     window.open(LINK_BRIDGE_DOCS, "_blank");
@@ -22,25 +25,25 @@ const Onramp: FC<OnrampProps> = ({ chain, asset, onGoBack, showBackButton = true
   return (
     <div className={`flex flex-col gap-4 md:gap-6 w-full ${className}`}>
       <div className="flex items-start md:items-center justify-between w-full">
-        <div className="flex flex-col gap-1 md:gap-2">
-          <p className="text-[24px] font-bold text-neutral-11">
-            add funds <span className="text-[12px]">on {chain}</span>
-          </p>
-          {isMobile ? (
-            <FundFromAnotherChainButton handleFundFromAnotherChain={handleFundFromAnotherChain} />
-          ) : (
-            <p className="text-neutral-11 text-[16px] font-bold hidden md:block">
-              add $5 of tokens <span className="text-neutral-9">(or edit to get more or less)</span>
+        <div className="flex flex-col items-start gap-1 md:gap-2">
+          <div className="flex items-center gap-3">
+            <p className="text-[24px] font-bold text-neutral-11">
+              add funds <span className="text-[12px]">on </span>
             </p>
-          )}
+            <div className="flex items-center gap-3">
+              <Image src={chainLogo} alt={chain} width={32} height={32} />
+              <p className="text-[24px] font-normal">{chain}</p>
+            </div>
+          </div>
+
+          <p className="text-neutral-11 text-[16px] font-bold">
+            add $5 of tokens <span className="text-neutral-9">(or edit to get more or less)</span>
+          </p>
         </div>
       </div>
       <OnrampProviders chain={chain} asset={asset} />
       <div className="flex items-start flex-col gap-4 md:gap-2">
-        <FundFromAnotherChainButton
-          handleFundFromAnotherChain={handleFundFromAnotherChain}
-          className="hidden md:block"
-        />
+        <FundFromAnotherChainButton handleFundFromAnotherChain={handleFundFromAnotherChain} />
         {showBackButton && (
           <div className="relative w-full pt-3 md:pt-0">
             <div
