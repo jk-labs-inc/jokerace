@@ -281,7 +281,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
       <CustomLink href={getContestUrl(contest)}>
         <div
-          className="hidden lg:grid lg:grid-cols-(--grid-full-width) md:items-center border-t border-neutral-9 py-4 p-3 
+          className="hidden lg:grid lg:grid-cols-(--grid-list-contests) md:items-center border-t border-neutral-9 py-4 p-3 
         hover:bg-neutral-3 transition-colors duration-500 ease-in-out cursor-pointer"
           key={`live-contest-${contest.id}`}
         >
@@ -344,7 +344,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
                     />
                   </div>
                 ) : (
-                  <div className="w-50 h-50"></div>
+                  <div className="w-12 h-12"></div>
                 )}
               </div>
             )}
@@ -389,7 +389,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
                   />
                 </div>
               ) : (
-                <div className="w-50 h-50"></div>
+                <div className="w-12 h-12"></div>
               )}
             </div>
           ) : null}

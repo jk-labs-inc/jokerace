@@ -7,11 +7,18 @@ import { SortOptions, useProposalStore } from "@hooks/useProposal/store";
 import { usePathname } from "next/navigation";
 import { FC } from "react";
 import ProposalStatisticsPanel from "./components/Panel";
-import SortProposalsDropdown from "./components/SortDropdown";
+import SortDropdown from "./components/SortDropdown";
 
 interface ProposalStatisticsProps {
   contestStatus: ContestStatus;
 }
+
+const sortOptions = [
+  { property: "random", label: "Random" },
+  { property: "mostRecent", label: "Most Recent" },
+  { property: "leastRecent", label: "Least Recent" },
+  { property: "votes", label: "Votes" },
+];
 
 const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
   const asPath = usePathname();
@@ -32,7 +39,7 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
         {submissionsCount > 1 ? (
           <>
             <div className="text-primary-2 font-bold">|</div>
-            <SortProposalsDropdown defaultValue={sortBy ?? ""} onChange={handleSortTypeChange} />
+            <SortDropdown options={sortOptions} defaultValue={sortBy ?? ""} onChange={handleSortTypeChange} />
           </>
         ) : null}
       </div>
