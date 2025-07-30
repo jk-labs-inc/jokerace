@@ -103,14 +103,14 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange }) => {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <MenuItems className="absolute w-[220px] z-10 mt-4 origin-top-right rounded-md bg-true-black shadow-lg dropdownBorder  focus:outline-none">
+                <MenuItems className="absolute w-[220px] z-10 mt-4 origin-top-right rounded-md bg-true-black shadow-lg dropdownBorder focus:outline-none">
                   {sortOptions.map(({ property, label }) => (
                     <MenuItem key={property}>
                       {({ focus, close }) => (
                         <div
                           className={classNames(
-                            focus ? "bg-neutral-3 text-gray-900" : "text-gray-700",
-                            "flex items-center gap-1 px-4 py-2 text-[16px] font-normal hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors duration-300 ease-in-out",
+                            focus ? "bg-primary-10 text-neutral-11" : "text-neutral-11",
+                            "flex items-center gap-1 px-4 py-2 text-[16px] font-normal hover:bg-neutral-3 hover:text-neutral-11 cursor-pointer transition-colors duration-300 ease-in-out",
                           )}
                           onClick={() => handleSortChange(property, label)}
                         >

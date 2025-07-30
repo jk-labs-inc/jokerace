@@ -628,7 +628,7 @@ li {
   :root {
     /* Grid templates */
     --grid-featured-contests: repeat(4, minmax(0, 320px));
-    --grid-full-width: repeat(3, minmax(auto, 1fr)) 0.4fr;
+    --grid-list-contests: repeat(3, minmax(auto, 1fr)) 0.4fr;
     --grid-rewards-funding: 0.1fr 0.8fr 1.5fr 1fr 0.5fr;
     --grid-full-width-create-flow: auto auto 1fr;
     --grid-rewards-review-table-without-tokens: 0.2fr 0.3fr 1fr;
@@ -859,11 +859,11 @@ li {
   .container {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
-    max-width: 1024px;
+    max-width: 1024px !important;
   }
 
   .dropdownBorder {
-    border: 2px solid #bb65ff;
+    border: 2px solid #ffe25b;
   }
 
   .no-marker li {
