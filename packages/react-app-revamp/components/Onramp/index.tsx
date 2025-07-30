@@ -1,10 +1,9 @@
 import { LINK_BRIDGE_DOCS } from "@config/links";
-import { FC } from "react";
-import OnrampProviders from "./providers";
-import { useMediaQuery } from "react-responsive";
-import FundFromAnotherChainButton from "./components/Buttons/FundFromAnotherChain";
 import { getChainLogo } from "@helpers/getChainLogo";
 import Image from "next/image";
+import { FC } from "react";
+import FundFromAnotherChainButton from "./components/Buttons/FundFromAnotherChain";
+import OnrampProviders from "./providers";
 
 interface OnrampProps {
   chain: string;
@@ -15,7 +14,6 @@ interface OnrampProps {
 }
 
 const Onramp: FC<OnrampProps> = ({ chain, asset, onGoBack, showBackButton = true, className }) => {
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const chainLogo = getChainLogo(chain);
 
   const handleFundFromAnotherChain = () => {
