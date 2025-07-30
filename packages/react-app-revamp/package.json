@@ -33,7 +33,7 @@
     "@tiptap/starter-kit": "2.4.0",
     "@types/gtag.js": "0.0.20",
     "@types/lodash": "4.17.20",
-    "@types/node": "22.16.5",
+    "@types/node": "22.17.0",
     "@types/papaparse": "5.3.16",
     "@types/react": "19.1.9",
     "@types/react-csv": "1.1.10",
