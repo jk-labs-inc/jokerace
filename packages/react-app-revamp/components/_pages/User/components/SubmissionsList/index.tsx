@@ -119,19 +119,19 @@ const UserSubmission: FC<UserSubmissionsProps> = ({ submissions, page, itemsPerP
                 >
                   <Pagination.PrevButton className="disabled:opacity-50 disabled:pointer-events-none flex items-center space-i-4">
                     <ArrowLeftIcon className="w-5" />
-                    <span className="sr-only sm:not-sr-only text-xs">Previous</span>
+                    <span className="sr-only sm:not-sr-only text-[16px]">Previous</span>
                   </Pagination.PrevButton>
 
                   <div className="flex items-center flex-wrap justify-center grow no-marker">
                     <Pagination.PageButton
                       activeClassName="bg-primary-10 text-primary-1 hover:bg-primary-10/90 focus:bg-primary-11"
                       inactiveClassName="bg-true-black text-neutral-10 hover:bg-true-white/5 focus:bg-true-white/10"
-                      className="cursor-pointer flex items-center justify-center rounded-full font-bold w-12 h-12 text-xs border-solid border-4 border-true-black"
+                      className="cursor-pointer flex items-center justify-center rounded-full font-bold w-12 h-12 text-[16px] border-solid border-4 border-true-black"
                     />
                   </div>
 
                   <Pagination.NextButton className="disabled:opacity-50 disabled:pointer-events-none flex items-center space-i-4">
-                    <span className="sr-only sm:not-sr-only text-xs">Next</span>
+                    <span className="sr-only sm:not-sr-only text-[16px]">Next</span>
                     <ArrowRightIcon className="w-5" />
                   </Pagination.NextButton>
                 </Pagination>
