@@ -7108,24 +7108,24 @@
     isows "^1.0.7"
     ws "^8.18.2"
 
-"@supabase/storage-js@2.7.1":
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/@supabase/storage-js/-/storage-js-2.7.1.tgz#761482f237deec98a59e5af1ace18c7a5e0a69af"
-  integrity sha512-asYHcyDR1fKqrMpytAS1zjyEfvxuOIp1CIXX7ji4lHHcJKqyk+sLl/Vxgm4sN6u8zvuUtae9e4kDxQP2qrwWBA==
+"@supabase/storage-js@^2.10.4":
+  version "2.10.4"
+  resolved "https://registry.yarnpkg.com/@supabase/storage-js/-/storage-js-2.10.4.tgz#b7188adef265df8ce52fc54d289c36de85dac936"
+  integrity sha512-cvL02GarJVFcNoWe36VBybQqTVRq6wQSOCvTS64C+eyuxOruFIm1utZAY0xi2qKtHJO3EjKaj8iWJKySusDmAQ==
   dependencies:
     "@supabase/node-fetch" "^2.6.14"
 
-"@supabase/supabase-js@2.52.1":
-  version "2.52.1"
-  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.52.1.tgz#f88e4a724a238fb76473c77cede3a2c6af54c147"
-  integrity sha512-IxYljprgl381j4SuFrW4JimjTb59WJ98DqxhMvEOJjpGJWuZ7kwttIWn7E4NBnvkYwZ948zJkJ7dSI6B0oO0Xw==
+"@supabase/supabase-js@2.53.0":
+  version "2.53.0"
+  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.53.0.tgz#ccf1d97e66b47ae4d7e0c7982a5b02b45afb94df"
+  integrity sha512-Vg9sl0oFn55cCPaEOsDsRDbxOVccxRrK/cikjL1XbywHEOfyA5SOOEypidMvQLwgoAfnC2S4D9BQwJDcZs7/TQ==
   dependencies:
     "@supabase/auth-js" "2.71.1"
     "@supabase/functions-js" "2.4.5"
     "@supabase/node-fetch" "2.6.15"
     "@supabase/postgrest-js" "1.19.4"
     "@supabase/realtime-js" "2.11.15"
-    "@supabase/storage-js" "2.7.1"
+    "@supabase/storage-js" "^2.10.4"
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"
