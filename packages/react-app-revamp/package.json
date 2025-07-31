@@ -14,7 +14,7 @@
     "@babel/core": "7.28.0",
     "@babel/preset-env": "7.28.0",
     "@clustersxyz/sdk": "1.0.2",
-    "@getbrevo/brevo": "2.5.0",
+    "@getbrevo/brevo": "3.0.1",
     "@getpara/rainbowkit-wallet": "1.4.0",
     "@headlessui/react": "2.2.7",
     "@heroicons/react": "2.2.0",
