@@ -1,12 +1,10 @@
 import { chains, config } from "@config/wagmi";
-import { formatBalance } from "@helpers/formatBalance";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { ContestStateEnum } from "@hooks/useContestState/store";
-import { getBalance, readContract, readContracts } from "@wagmi/core";
+import { readContract, readContracts } from "@wagmi/core";
 import { getRewardsModuleInfo } from "lib/rewards/contracts";
-import { getTokenAddresses } from "lib/rewards/database";
-import { Abi, erc20Abi, formatUnits } from "viem";
-import { ContestReward } from "./types";
+import { fetchTotalRewards } from "lib/rewards/contracts/rewards-module";
+import { Contest, ContestWithTotalRewards } from "./types";
 
 export const EMPTY_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
 export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
@@ -78,229 +76,117 @@ export async function getContestTitleAndState(
   }
 }
 
-export async function fetchNativeBalance(contestRewardModuleAddress: string, chainId: number) {
-  try {
-    const nativeBalance = await getBalance(config, {
-      address: contestRewardModuleAddress as `0x${string}`,
-      chainId: chainId,
-    });
-    return nativeBalance;
-  } catch (error) {
-    console.error("Error fetching native balance:", error);
-    return null;
-  }
-}
-
-export async function fetchFirstToken(contestRewardModuleAddress: string, chainId: number, tokenAddress: string) {
-  try {
-    const firstToken = await getBalance(config, {
-      address: contestRewardModuleAddress as `0x${string}`,
-      chainId: chainId,
-      token: tokenAddress as `0x${string}`,
-    });
-    return firstToken;
-  } catch (error) {
-    console.error("Error fetching first token balance:", error);
-    return null;
-  }
-}
-
-export async function getTokenDetails(tokenAddress: string, chainId: number) {
-  try {
-    const result = await readContracts(config, {
-      contracts: [
-        {
-          address: tokenAddress as `0x${string}`,
-          abi: erc20Abi,
-          functionName: "symbol",
-          chainId,
-        },
-        {
-          address: tokenAddress as `0x${string}`,
-          abi: erc20Abi,
-          functionName: "decimals",
-          chainId,
-        },
-      ],
-    });
-
-    return {
-      symbol: result[0].result as string,
-      decimals: result[1].result as number,
-    };
-  } catch (error) {
-    console.error("Error fetching token details:", error);
-    return { symbol: "Unknown", decimals: 18 };
-  }
-}
-
-export async function processContestRewardsData(
-  contestAddress: string,
-  contestChainName: string,
-): Promise<ContestReward | null> {
-  try {
-    const chain = chains.find(
-      c => c.name.replace(/\s+/g, "").toLowerCase() === contestChainName.replace(/\s+/g, "").toLowerCase(),
-    );
-    if (!chain) throw new Error("Chain not found");
-
-    const contractConfig = await getContractConfig(contestAddress, chain.id);
-    if (!contractConfig || !contractConfig.abi?.some((el: { name: string }) => el.name === "officialRewardsModule")) {
-      return null;
-    }
-
-    const rewardsModuleAddress = (await readContract(config, {
-      ...contractConfig,
-      functionName: "officialRewardsModule",
-      args: [],
-    })) as string;
-
-    if (!rewardsModuleAddress || rewardsModuleAddress === EMPTY_ADDRESS || rewardsModuleAddress === EMPTY_HASH) return null;
-
-    const { abi: abiRewardsModule, moduleType } = await getRewardsModuleInfo(rewardsModuleAddress, chain.id);
-    if (!abiRewardsModule) return null;
-
-    const [winners, erc20TokenAddresses] = await Promise.all([
-      readContract(config, {
-        address: rewardsModuleAddress as `0x${string}`,
-        abi: abiRewardsModule,
-        chainId: chain.id,
-        functionName: "getPayees",
-      }) as Promise<bigint[]>,
-      getTokenAddresses(rewardsModuleAddress, contestChainName),
-    ]).catch(error => {
-      return [null, []];
-    });
-
-    if (!winners || !winners.length) return null;
-
-    const checkReleasableAndReleased = async (isNative: boolean, tokenAddress?: string) => {
+/**
+ * Fetches total rewards for multiple contests using the fetchTotalRewards function
+ * @param contests Array of contests with address and network_name
+ * @returns Array of contests with their total rewards data
+ */
+export async function fetchTotalRewardsForContests(contests: Contest[]): Promise<ContestWithTotalRewards[]> {
+  const results = await Promise.allSettled(
+    contests.map(async (contest): Promise<ContestWithTotalRewards> => {
       try {
-        const [releasableAmounts, releasedAmounts] = await Promise.all([
-          readContracts(config, {
-            contracts: winners.map(ranking => ({
-              address: rewardsModuleAddress as `0x${string}`,
-              abi: abiRewardsModule as Abi,
-              chainId: chain.id,
-              functionName: "releasable",
-              args: isNative ? [ranking] : [tokenAddress, ranking],
-            })),
-          }),
-          readContracts(config, {
-            contracts: winners.map(ranking => ({
-              address: rewardsModuleAddress as `0x${string}`,
-              abi: abiRewardsModule as Abi,
-              chainId: chain.id,
-              functionName: isNative ? "released" : "erc20Released",
-              args: isNative ? [ranking] : [tokenAddress, ranking],
-            })),
-          }),
-        ]);
-
-        if (!releasableAmounts || !releasedAmounts) {
-          return { totalReleasable: 0n, totalReleased: 0n };
+        if (!contest.address || !contest.network_name) {
+          return {
+            contestAddress: contest.address || "unknown",
+            chain: contest.network_name || "unknown",
+            hasRewards: false,
+            rewardsData: null,
+          };
         }
 
-        const validReleasableAmounts = releasableAmounts.filter(amount => 
-          amount && amount.result !== undefined && amount.result !== null
-        );
-        const validReleasedAmounts = releasedAmounts.filter(amount => 
-          amount && amount.result !== undefined && amount.result !== null
+        const contestAddress = contest.address;
+        const contestChainName = contest.network_name;
+
+        const chain = chains.find(
+          c => c.name.replace(/\s+/g, "").toLowerCase() === contestChainName.replace(/\s+/g, "").toLowerCase(),
         );
 
-        if (validReleasableAmounts.length !== winners.length || validReleasedAmounts.length !== winners.length) {
-          return { totalReleasable: 0n, totalReleased: 0n };
+        if (!chain) {
+          console.warn(`Chain not found for ${contestChainName}`);
+          return {
+            contestAddress,
+            chain: contestChainName,
+            hasRewards: false,
+            rewardsData: null,
+          };
         }
 
-        const totalReleasable = validReleasableAmounts.reduce((sum, amount) => {
-          try {
-            return sum + BigInt(amount.result as string);
-          } catch (error) {
-            return sum;
-          }
-        }, 0n);
+        // Get contract config and check if it has rewards module
+        const contractConfig = await getContractConfig(contestAddress, chain.id);
+        if (
+          !contractConfig ||
+          !contractConfig.abi?.some((el: { name: string }) => el.name === "officialRewardsModule")
+        ) {
+          return {
+            contestAddress,
+            chain: contestChainName,
+            hasRewards: false,
+            rewardsData: null,
+          };
+        }
 
-        const totalReleased = validReleasedAmounts.reduce((sum, amount) => {
-          try {
-            return sum + BigInt(amount.result as string);
-          } catch (error) {
-            return sum;
-          }
-        }, 0n);
+        const rewardsModuleAddress = (await readContract(config, {
+          ...contractConfig,
+          functionName: "officialRewardsModule",
+          args: [],
+        })) as string;
 
-        return { totalReleasable, totalReleased };
+        if (!rewardsModuleAddress || rewardsModuleAddress === EMPTY_ADDRESS || rewardsModuleAddress === EMPTY_HASH) {
+          return {
+            contestAddress,
+            chain: contestChainName,
+            hasRewards: false,
+            rewardsData: null,
+          };
+        }
+
+        const { abi: rewardsModuleAbi } = await getRewardsModuleInfo(rewardsModuleAddress, chain.id);
+        if (!rewardsModuleAbi) {
+          return {
+            contestAddress,
+            chain: contestChainName,
+            hasRewards: false,
+            rewardsData: null,
+          };
+        }
+
+        // Fetch total rewards using the existing function
+        const rewardsData = await fetchTotalRewards({
+          rewardsModuleAddress: rewardsModuleAddress as `0x${string}`,
+          rewardsModuleAbi,
+          chainId: chain.id,
+        });
+
+        return {
+          contestAddress,
+          chain: contestChainName,
+          hasRewards: true,
+          rewardsData,
+        };
       } catch (error) {
-        return { totalReleasable: 0n, totalReleased: 0n };
+        console.error(`Error fetching rewards for contest ${contest.address}:`, error);
+        return {
+          contestAddress: contest.address || "unknown",
+          chain: contest.network_name || "unknown",
+          hasRewards: false,
+          rewardsData: null,
+        };
       }
-    };
+    }),
+  );
 
-    const { totalReleasable: nativeReleasable, totalReleased: nativeReleased } = await checkReleasableAndReleased(true);
-
-    if (nativeReleasable > 0n) {
+  // Extract the values from Promise.allSettled results
+  return results.map(result => {
+    if (result.status === "fulfilled") {
+      return result.value;
+    } else {
+      console.error("Failed to process contest:", result.reason);
       return {
-        contestAddress,
-        chain: contestChainName,
-        token: {
-          symbol: chain.nativeCurrency.symbol,
-          value: formatBalance(formatUnits(nativeReleasable, chain.nativeCurrency.decimals).toString()),
-        },
-        winners: winners.length,
-        numberOfTokens: 1,
-        rewardsPaidOut: false,
+        contestAddress: "unknown",
+        chain: "unknown",
+        hasRewards: false,
+        rewardsData: null,
       };
     }
-
-    if (nativeReleased > 0n) {
-      return {
-        contestAddress,
-        chain: contestChainName,
-        token: null,
-        winners: winners.length,
-        numberOfTokens: 1,
-        rewardsPaidOut: true,
-      };
-    }
-
-    if (erc20TokenAddresses && erc20TokenAddresses.length > 0) {
-      for (const tokenAddress of erc20TokenAddresses) {
-        const { totalReleasable: erc20Releasable, totalReleased: erc20Released } = await checkReleasableAndReleased(
-          false,
-          tokenAddress,
-        );
-
-        if (erc20Releasable > 0n) {
-          const tokenDetails = await getTokenDetails(tokenAddress, chain.id).catch(error => {
-            return { symbol: "Unknown", decimals: 18 };
-          });
-          return {
-            contestAddress,
-            chain: contestChainName,
-            token: {
-              symbol: tokenDetails.symbol ?? "Unknown",
-              value: formatBalance(formatUnits(erc20Releasable, tokenDetails.decimals).toString()),
-            },
-            winners: winners.length,
-            numberOfTokens: erc20TokenAddresses.length,
-            rewardsPaidOut: false,
-          };
-        }
-
-        if (erc20Released > 0n) {
-          return {
-            contestAddress,
-            chain: contestChainName,
-            token: null,
-            winners: winners.length,
-            numberOfTokens: erc20TokenAddresses.length,
-            rewardsPaidOut: true,
-          };
-        }
-      }
-    }
-
-    return null;
-  } catch (error) {
-    console.error("Error:", error);
-    return null;
-  }
+  });
 }

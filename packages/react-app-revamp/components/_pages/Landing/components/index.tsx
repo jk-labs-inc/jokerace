@@ -4,7 +4,6 @@ import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
-import { getRewards, streamFeaturedContests } from "lib/contests";
 import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
 import { Contest } from "lib/contests/types";
 import moment from "moment";
@@ -13,6 +12,8 @@ import { useMediaQuery } from "react-responsive";
 import { TypeAnimation } from "react-type-animation";
 import LandingPageExplainer from "./Explainer";
 import LandingPageUsedBy from "./UsedBy";
+import { fetchTotalRewardsForContests } from "lib/contests/contracts";
+import { streamFeaturedContests } from "lib/contests";
 
 const wordConfig = {
   desktop: [
@@ -97,8 +98,8 @@ function useFeaturedContests() {
   });
 
   const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({
-    queryKey: ["rewards", isStreamingComplete ? contests.length : "pending"],
-    queryFn: () => getRewards(contests),
+    queryKey: ["totalRewards", isStreamingComplete ? contests.length : "pending"],
+    queryFn: () => fetchTotalRewardsForContests(contests),
     enabled: isStreamingComplete && contests.length > 0,
     refetchOnWindowFocus: false,
   });

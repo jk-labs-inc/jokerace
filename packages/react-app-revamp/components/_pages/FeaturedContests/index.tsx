@@ -2,14 +2,14 @@ import { FC } from "react";
 import FeaturedContestCard from "./components/Contest";
 import Skeleton from "react-loading-skeleton";
 import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
-import { Contest, ContestReward } from "lib/contests/types";
+import { Contest, ContestWithTotalRewards } from "lib/contests/types";
 
 interface FeaturedContestsProps {
   status: "error" | "pending" | "success";
   isContestDataFetching: boolean;
   isRewardsFetching: boolean;
   contestData?: Contest[];
-  rewardsData?: (ContestReward | null)[];
+  rewardsData?: ContestWithTotalRewards[];
 }
 
 const FeaturedContests: FC<FeaturedContestsProps> = ({
