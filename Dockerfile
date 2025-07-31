@@ -1,8 +1,10 @@
-FROM node:22-slim AS base
+FROM node:22-alpine AS base
 
 FROM base AS builder
 
 # Install
+RUN apk add --update python3 make g++\
+   && rm -rf /var/cache/apk/*
 WORKDIR /app
 COPY . .
 
@@ -59,7 +61,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 # Set the correct permission for prerender cache
 RUN addgroup nodejs
-RUN adduser nextjs
+RUN adduser -SDH nextjs
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
