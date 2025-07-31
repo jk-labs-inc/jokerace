@@ -66,6 +66,7 @@ import VoterRewardsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule
 import SetPeriodLimitsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.6.setPeriodLimits.sol/RewardsModule.json";
 import VotingPriceCurvesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.7.votingPriceCurves.sol/RewardsModule.json";
 import AddModuleTrackingRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.8.addModuleTracking.sol/RewardsModule.json";
+import CalcCorrectMinuteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.9.calcCorrectMinute.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -78,9 +79,11 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "5.8") {
+    if (version === "5.9") {
+      return { abi: CalcCorrectMinuteRewards.abi, version };
+    } else if (version === "5.8") {
       return { abi: AddModuleTrackingRewards.abi, version };
-    } else  if (version === "5.7") {
+    } else if (version === "5.7") {
       return { abi: VotingPriceCurvesRewards.abi, version };
     } else if (version === "5.6") {
       return { abi: SetPeriodLimitsRewards.abi, version };
