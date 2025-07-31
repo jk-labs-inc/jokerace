@@ -40,8 +40,7 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
     // Add native token if it exists and has value
     if (totalRewards?.native && totalRewards.native.value > 0n) {
       rewards.push({
-        amount: totalRewards.native.value,
-        decimals: totalRewards.native.decimals,
+        valueFormatted: totalRewards.native.formatted,
         symbol: totalRewards.native.symbol,
       });
     }
@@ -51,8 +50,7 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
       Object.entries(totalRewards.tokens).forEach(([address, tokenData]) => {
         if (tokenData.value > 0n) {
           rewards.push({
-            amount: tokenData.value,
-            decimals: tokenData.decimals,
+            valueFormatted: tokenData.formatted,
             symbol: tokenData.symbol,
           });
         }
@@ -86,8 +84,7 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
         <AnimatePresence mode="wait">
           <RewardCounter
             key={`reward-${currentIndex}`}
-            amount={currentReward.amount}
-            decimals={currentReward.decimals}
+            valueFormatted={currentReward.valueFormatted}
             symbol={currentReward.symbol}
             index={currentIndex}
           />

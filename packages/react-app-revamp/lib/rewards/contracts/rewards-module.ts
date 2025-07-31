@@ -3,6 +3,7 @@ import { getBalance, readContract, readContracts } from "@wagmi/core";
 import { Abi, Address, erc20Abi, formatUnits } from "viem";
 import { getTokenAddresses } from "../database";
 import { ContractQuery, TokenData, TotalRewardsData } from "../types";
+import { formatBalance } from "@helpers/formatBalance";
 
 /**
  * Fetches total rewards for a rewards module
@@ -122,7 +123,7 @@ export async function fetchTotalRewards({
 
           tokensData[tokenAddress as string] = {
             value: tokenTotal,
-            formatted: formatUnits(tokenTotal, decimals),
+            formatted: formatBalance(formatUnits(tokenTotal, decimals)),
             symbol,
             decimals,
           };
@@ -132,7 +133,7 @@ export async function fetchTotalRewards({
       return {
         native: {
           value: nativeTotal,
-          formatted: formatUnits(nativeTotal, 18),
+          formatted: formatBalance(formatUnits(nativeTotal, 18)),
           symbol: nativeBalance.symbol || "ETH",
           decimals: 18,
         },
@@ -147,7 +148,7 @@ export async function fetchTotalRewards({
   return {
     native: {
       value: nativeTotal,
-      formatted: formatUnits(nativeTotal, 18),
+      formatted: formatBalance(formatUnits(nativeTotal, 18)),
       symbol: nativeBalance.symbol || "ETH",
       decimals: 18,
     },

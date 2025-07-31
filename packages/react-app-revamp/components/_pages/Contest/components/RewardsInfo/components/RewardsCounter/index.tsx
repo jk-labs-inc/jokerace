@@ -1,17 +1,15 @@
-import GradientText from "@components/UI/GradientText";
 import { formatBalance } from "@helpers/formatBalance";
 import { motion } from "motion/react";
 import { FC } from "react";
 import { formatUnits } from "viem";
 
 interface RewardCounterProps {
-  amount: bigint;
-  decimals: number;
+  valueFormatted: string;
   symbol: string;
   index: number;
 }
 
-const RewardCounter: FC<RewardCounterProps> = ({ amount, decimals, symbol, index }) => {
+const RewardCounter: FC<RewardCounterProps> = ({ valueFormatted, symbol, index }) => {
   return (
     <motion.div
       key={`amount-${index}`}
@@ -28,8 +26,7 @@ const RewardCounter: FC<RewardCounterProps> = ({ amount, decimals, symbol, index
       style={{ willChange: "transform, opacity" }}
     >
       <p className="text-neutral-11 text-[16px] md:text-[24px]">
-        {formatBalance(formatUnits(amount ?? 0n, decimals ?? 18))}{" "}
-        <span className="uppercase text-[16px]">${symbol}</span>
+        {valueFormatted} <span className="uppercase text-[16px]">${symbol}</span>
       </p>
     </motion.div>
   );
