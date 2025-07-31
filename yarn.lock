@@ -3573,10 +3573,10 @@
     node-forge "1.3.1"
     ua-parser-js "^2.0.2"
 
-"@headlessui/react@2.2.6":
-  version "2.2.6"
-  resolved "https://registry.yarnpkg.com/@headlessui/react/-/react-2.2.6.tgz#0e2b1f2ce7a69b5d338200c8aef7dab6f68b7418"
-  integrity sha512-gN5CT8Kf4IWwL04GQOjZ/ZnHMFoeFHZmVSFoDKeTmbtmy9oFqQqJMthdBiO3Pl5LXk2w03fGFLpQV6EW84vjjQ==
+"@headlessui/react@2.2.7":
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/@headlessui/react/-/react-2.2.7.tgz#689443e19756f51ecc869866b3cdda19aebc38c3"
+  integrity sha512-WKdTymY8Y49H8/gUc/lIyYK1M+/6dq0Iywh4zTZVAaiTDprRfioxSgD0wnXTQTBpjpGJuTL1NO/mqEvc//5SSg==
   dependencies:
     "@floating-ui/react" "^0.26.16"
     "@react-aria/focus" "^3.20.2"
