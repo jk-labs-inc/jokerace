@@ -4,6 +4,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { FC, useState, useEffect } from "react";
 import { Pagination } from "react-headless-pagination";
 import Contest from "./Contest";
+import { ContestWithTotalRewards } from "lib/contests/types";
 
 interface ListContestsProps {
   status: "error" | "pending" | "success";
@@ -13,7 +14,7 @@ interface ListContestsProps {
   isRewardsFetching: boolean;
   itemsPerPage: number;
   contestData?: any;
-  rewardsData?: any;
+  rewardsData?: ContestWithTotalRewards[];
   error?: any;
   className?: string;
   includeFullSearch?: boolean;
@@ -98,7 +99,7 @@ export const ListContests: FC<ListContestsProps> = ({
               key={`placeholder-contest-${index}`}
               contest={{}}
               loading={true}
-              rewards={rewardsData}
+              rewards={null}
               rewardsLoading={isRewardsFetching}
             />
           ))
@@ -114,19 +115,23 @@ export const ListContests: FC<ListContestsProps> = ({
                     key={`placeholder-contest-${index}`}
                     contest={{}}
                     loading={true}
-                    rewards={rewardsData}
+                    rewards={null}
                     rewardsLoading={isRewardsFetching}
                   />
                 ))
-              : contestData?.data.map((contest: any, index: number) => (
-                  <Contest
-                    key={`contest-${index}`}
-                    contest={contest}
-                    loading={false}
-                    rewards={rewardsData}
-                    rewardsLoading={isRewardsFetching}
-                  />
-                ))}
+              : contestData?.data.map((contest: any, index: number) => {
+                  const contestReward = rewardsData?.find(reward => reward.contestAddress === contest.address) || null;
+
+                  return (
+                    <Contest
+                      key={`contest-${index}`}
+                      contest={contest}
+                      loading={false}
+                      rewards={contestReward}
+                      rewardsLoading={isRewardsFetching}
+                    />
+                  );
+                })}
           </div>
         )}
       </div>

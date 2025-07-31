@@ -9,16 +9,18 @@ import { pluralize } from "@helpers/pluralize";
 import useContestInfo from "@hooks/useContestInfo";
 import { useError } from "@hooks/useError";
 import useTokenDetails from "@hooks/useTokenDetails";
+import { ContestWithTotalRewards } from "lib/contests/types";
 import moment from "moment";
+import { AnimatePresence, motion } from "motion/react";
 import { usePathname } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount } from "wagmi";
 
 interface ContestProps {
   contest: any;
-  rewards: any;
+  rewards: ContestWithTotalRewards | null;
   loading: boolean;
   rewardsLoading: boolean;
 }
@@ -31,7 +33,7 @@ export type TimeLeft = {
 const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }) => {
   const { address } = useAccount();
   const pathname = usePathname();
-  const [contestReward, setContestReward] = useState<any>(null);
+
   const isUpcomingContest = pathname === ROUTE_VIEW_UPCOMING_CONTESTS;
   const [submissionStatus, setSubmissionStatus] = useState("");
   const [votingStatus, setVotingStatus] = useState("");
@@ -46,6 +48,54 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
     value: 0,
     type: "minutes",
   });
+
+  const [currentRewardIndex, setCurrentRewardIndex] = useState(0);
+
+  const rewardsToDisplay = useMemo(() => {
+    if (!rewards?.hasRewards || !rewards.rewardsData) return [];
+
+    const rewardsArray = [];
+    const { native, tokens } = rewards.rewardsData;
+
+    if (native && native.value > 0n) {
+      rewardsArray.push({
+        amount: native.value,
+        decimals: native.decimals,
+        symbol: native.symbol,
+        formatted: native.formatted,
+      });
+    }
+
+    if (tokens) {
+      Object.entries(tokens).forEach(([address, tokenData]) => {
+        if (tokenData.value > 0n) {
+          rewardsArray.push({
+            amount: tokenData.value,
+            decimals: tokenData.decimals,
+            symbol: tokenData.symbol,
+            formatted: tokenData.formatted,
+          });
+        }
+      });
+    }
+
+    return rewardsArray;
+  }, [rewards]);
+
+  const currentReward = rewardsToDisplay[currentRewardIndex];
+
+  // Cycle through rewards if there are multiple
+  useEffect(() => {
+    if (rewardsToDisplay.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentRewardIndex(prevIndex => (prevIndex + 1) % rewardsToDisplay.length);
+      }, 2000);
+
+      return () => clearInterval(interval);
+    } else if (rewardsToDisplay.length === 1) {
+      setCurrentRewardIndex(0);
+    }
+  }, [rewardsToDisplay]);
   const [onCountdownComplete, setOnCountdownComplete] = useState(false);
   const { submissionClass, votingClass, submissionMessage, votingMessage } = useContestInfo({
     loading,
@@ -83,14 +133,6 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
   const getContestUrl = (contest: { network_name: string; address: string }) => {
     return ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", contest.network_name).replace("[address]", contest.address);
   };
-
-  useEffect(() => {
-    if (rewardsLoading || loading) return;
-
-    const contestReward = rewards.find((reward: any) => reward && reward.contestAddress === contest.address);
-
-    setContestReward(contestReward || null);
-  }, [rewardsLoading, loading, rewards, contest.address]);
 
   useEffect(() => {
     const now = moment();
@@ -397,29 +439,22 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
           <div className="flex flex-col">
             {rewardsLoading || loading ? (
               <Skeleton />
-            ) : (
+            ) : currentReward ? (
               <>
-                {contestReward && contestReward.token ? (
-                  <p className="font-bold w-full text-neutral-11">
-                    {contestReward.token.value} <span className="uppercase">${contestReward.token.symbol}</span>
-                  </p>
-                ) : contestReward && contestReward.rewardsPaidOut ? (
-                  <p className="font-bold w-full text-positive-11">
-                    rewards <br /> paid out!
-                  </p>
-                ) : null}
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={`reward-${currentRewardIndex}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="font-bold w-full text-neutral-11"
+                  >
+                    {currentReward.formatted} <span className="uppercase">{currentReward.symbol}</span>
+                  </motion.p>
+                </AnimatePresence>
               </>
-            )}
-
-            {contestReward && contestReward.token && (
-              <p>
-                {rewardsLoading || loading ? (
-                  <Skeleton />
-                ) : (
-                  `to ${contestReward.winners} ${contestReward.winners > 1 ? "contestants" : "contestant"}`
-                )}
-              </p>
-            )}
+            ) : null}
           </div>
         </div>
 
@@ -492,14 +527,21 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
                     <li>
                       <Skeleton width={100} />
                     </li>
-                  ) : contestReward && contestReward.token ? (
+                  ) : currentReward ? (
                     <li>
-                      {contestReward.token.value}
-                      <span className="uppercase"> ${contestReward.token.symbol} </span>
-                      to {contestReward.winners} {contestReward.winners > 1 ? "contestants" : "contestant"}
+                      <AnimatePresence mode="wait">
+                        <motion.span
+                          key={`mobile-reward-${currentRewardIndex}`}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          {currentReward.formatted}
+                          <span className="uppercase"> {currentReward.symbol} </span>
+                        </motion.span>
+                      </AnimatePresence>
                     </li>
-                  ) : contestReward && contestReward.rewardsPaidOut ? (
-                    <li>rewards paid out! </li>
                   ) : null}
                 </>
               )}

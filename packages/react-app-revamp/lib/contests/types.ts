@@ -1,3 +1,5 @@
+import { TotalRewardsData } from "lib/rewards/types";
+
 export interface ContestReward {
   contestAddress: string;
   chain: string;
@@ -30,4 +32,11 @@ export interface Contest {
   percentage_to_propose: number | null;
   cost_to_vote: number | null;
   isCanceled: boolean;
+}
+
+export interface ContestWithTotalRewards {
+  contestAddress: string;
+  chain: string;
+  hasRewards: boolean;
+  rewardsData: TotalRewardsData | null;
 }
