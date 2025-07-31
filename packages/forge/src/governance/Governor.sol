@@ -108,7 +108,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "5.8"; // Private as to not clutter the ABI.
+    string private constant VERSION = "5.9"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -290,7 +290,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     /**
-     * @dev Returns if a proposal has been deleted or not.
+     * @dev Timestamp the contest vote ends. Votes close at the end of this block, so it is not possible to vote in a block with a timestamp after this.
      */
     function contestDeadline() public view returns (uint256) {
         return voteStart() + votingPeriod;
@@ -392,7 +392,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         if (state() != ContestState.Active) revert ContestMustBeActiveToGetCurrentVotePrice(state());
 
         if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Exponential) {
-            uint256 currentInterval = (block.timestamp - voteStart()) / PRICE_CURVE_UPDATE_INTERVAL;
+            uint256 currentInterval = (block.timestamp - (voteStart() + 1)) / PRICE_CURVE_UPDATE_INTERVAL; // voteStart is the last block that one can enter, so voting period is exclusive of it, hence the plus 1
             UD60x18 percentThroughVotingPeriod = (
                 ud(currentInterval * 1e18) / (ud(votingPeriod * 1e18) / ud(PRICE_CURVE_UPDATE_INTERVAL * 1e18))
             ) * ud(100 * 1e18); // percentage as whole number so curve is 0 to 100

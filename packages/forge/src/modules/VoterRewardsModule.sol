@@ -47,7 +47,7 @@ contract VoterRewardsModule {
 
     uint256[] public payees;
     string public constant MODULE_TYPE = "VOTER_REWARDS";
-    string private constant VERSION = "5.8"; // Private as to not clutter the ABI
+    string private constant VERSION = "5.9"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;
