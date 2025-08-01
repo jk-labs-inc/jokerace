@@ -14748,6 +14748,20 @@ ox@0.8.1:
     abitype "^1.0.8"
     eventemitter3 "5.0.1"
 
+ox@0.8.6:
+  version "0.8.6"
+  resolved "https://registry.yarnpkg.com/ox/-/ox-0.8.6.tgz#7dd666216ee8cda2eb2e5fef3fe4cb20dec3dcad"
+  integrity sha512-eiKcgiVVEGDtEpEdFi1EGoVVI48j6icXHce9nFwCNM7CKG3uoCXKdr4TPhS00Iy1TR2aWSF1ltPD0x/YgqIL9w==
+  dependencies:
+    "@adraffy/ens-normalize" "^1.11.0"
+    "@noble/ciphers" "^1.3.0"
+    "@noble/curves" "^1.9.1"
+    "@noble/hashes" "^1.8.0"
+    "@scure/bip32" "^1.7.0"
+    "@scure/bip39" "^1.6.0"
+    abitype "^1.0.8"
+    eventemitter3 "5.0.1"
+
 p-limit@^2.2.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/p-limit/-/p-limit-2.3.0.tgz#3dd33c647a214fdfffd835933eb086da0dc21db1"
@@ -17990,10 +18004,10 @@ viem@2.23.2:
     ox "0.6.7"
     ws "8.18.0"
 
-viem@2.33.1:
-  version "2.33.1"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.33.1.tgz#47ae1de711a1052f03f0f585be224383de812b03"
-  integrity sha512-++Dkj8HvSOLPMKEs+ZBNNcWbBRlUHcXNWktjIU22hgr6YmbUldV1sPTGLZa6BYRm06WViMjXj6HIsHt8rD+ZKQ==
+viem@2.33.2:
+  version "2.33.2"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.33.2.tgz#039732775976efb821a2f7c6c6d4cd6029f5af4f"
+  integrity sha512-/720OaM4dHWs8vXwNpyet+PRERhPaW+n/1UVSCzyb9jkmwwVfaiy/R6YfCFb4v+XXbo8s3Fapa3DM5yCRSkulA==
   dependencies:
     "@noble/curves" "1.9.2"
     "@noble/hashes" "1.8.0"
@@ -18001,7 +18015,7 @@ viem@2.33.1:
     "@scure/bip39" "1.6.0"
     abitype "1.0.8"
     isows "1.0.7"
-    ox "0.8.1"
+    ox "0.8.6"
     ws "8.18.2"
 
 viem@>=2.29.0:
