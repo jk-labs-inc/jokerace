@@ -14,14 +14,7 @@ abstract contract GovernorEngagement is Governor {
         string commentContent;
     }
 
-    /**
-     * @dev Emitted when a comment is created.
-     */
     event CommentCreated(uint256 commentId);
-
-    /**
-     * @dev Emitted when comments are deleted.
-     */
     event CommentsDeleted(uint256[] commentIds);
 
     uint256[] public commentIds;
@@ -32,6 +25,7 @@ abstract contract GovernorEngagement is Governor {
 
     error OnlyCreatorOrAuthorCanDeleteComments(uint256 failedToDeleteCommentId);
     error CannotCommentWhenCompletedOrCanceled();
+    error CannotDeleteWhenCompletedOrCanceled();
 
     /**
      * @dev Hashing function used to build the comment id from the comment details.

@@ -108,7 +108,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "5.9"; // Private as to not clutter the ABI.
+    string private constant VERSION = "5.10"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -171,7 +171,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error OnlyCreatorOrEntrantCanDelete();
     error OnlyCreatorCanSetName();
     error OnlyCreatorCanSetPrompt();
-    error CannotDeleteWhenCompletedOrCanceled();
+    error CanOnlyDeleteInEntryPeriod();
     error CannotSetWhenCompletedOrCanceled();
 
     error OnlyCreatorOrJkLabsCanCancel();
@@ -508,8 +508,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      * Emits a {IGovernor-ProposalsDeleted} event.
      */
     function deleteProposals(uint256[] calldata proposalIdsToDelete) public {
-        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
-            revert CannotDeleteWhenCompletedOrCanceled();
+        if (state() != ContestState.Queued) {
+            revert CanOnlyDeleteInEntryPeriod();
         }
 
         for (uint256 index = 0; index < proposalIdsToDelete.length; index++) {
