@@ -2,10 +2,10 @@ import { isSupabaseConfigured } from "@helpers/database";
 import getPagination from "@helpers/getPagination";
 import { SearchOptions } from "types/search";
 import { FEATURED_CONTEST_COLUMNS } from "./constants";
-import { Contest, ContestReward } from "./types";
+import { EMPTY_HASH, getContestTitleAndState } from "./contracts";
+import { Contest } from "./types";
 import { sortContests } from "./utils/sortContests";
-import { streamProcessItems, streamPromiseResults } from "./utils/streamItems";
-import { EMPTY_HASH, getContestTitleAndState, processContestRewardsData } from "./contracts";
+import { streamProcessItems } from "./utils/streamItems";
 
 export const ITEMS_PER_PAGE = 7;
 
@@ -119,10 +119,6 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
       console.error(e);
     }
   }
-}
-
-export async function getRewards(contests: any[]) {
-  return Promise.all(contests.map(contest => processContestRewardsData(contest.address, contest.network_name)));
 }
 
 export async function getUserContests(

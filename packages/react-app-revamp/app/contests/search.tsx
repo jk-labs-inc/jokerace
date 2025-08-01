@@ -6,7 +6,8 @@ import { isSupabaseConfigured } from "@helpers/database";
 import useContestSortOptions from "@hooks/useSortOptions";
 import { useQuery } from "@tanstack/react-query";
 import { getEnsAddress } from "@wagmi/core";
-import { ITEMS_PER_PAGE, getRewards, searchContests } from "lib/contests";
+import { ITEMS_PER_PAGE, searchContests } from "lib/contests";
+import { fetchTotalRewardsForContests } from "lib/contests/contracts";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
@@ -45,7 +46,7 @@ function useContests(searchCriteria: SearchCriteria, sortBy?: string) {
 
   const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({
     queryKey: ["rewards", contestData],
-    queryFn: () => getRewards(contestData?.data ?? []),
+    queryFn: () => fetchTotalRewardsForContests(contestData?.data ?? []),
     enabled: !!contestData,
   });
 

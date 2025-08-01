@@ -3,15 +3,16 @@ import { Avatar } from "@components/UI/Avatar";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import useProfileData from "@hooks/useProfileData";
-import { Contest, ContestReward } from "lib/contests/types";
+import { Contest, ContestWithTotalRewards } from "lib/contests/types";
 import moment from "moment";
-import { FC, useCallback, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 
 interface FeaturedContestCardProps {
   isRewardsFetching: boolean;
   contestData: Contest;
-  rewardsData?: ContestReward | null;
+  rewardsData?: ContestWithTotalRewards | null;
 }
 
 function getContestStatus(contest: Contest): { status: string; timeLeft: string } {
@@ -59,6 +60,54 @@ function formatDuration(duration: moment.Duration): string {
 
 const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, rewardsData, isRewardsFetching }) => {
   const [contestStatus, setContestStatus] = useState(getContestStatus(contestData));
+  const [currentRewardIndex, setCurrentRewardIndex] = useState(0);
+
+  const rewardsToDisplay = useMemo(() => {
+    if (!rewardsData?.hasRewards || !rewardsData.rewardsData) return [];
+
+    const rewards = [];
+    const { native, tokens } = rewardsData.rewardsData;
+
+    if (native && native.value > 0n) {
+      rewards.push({
+        amount: native.value,
+        decimals: native.decimals,
+        symbol: native.symbol,
+        formatted: native.formatted,
+      });
+    }
+
+    if (tokens) {
+      Object.entries(tokens).forEach(([address, tokenData]) => {
+        if (tokenData.value > 0n) {
+          rewards.push({
+            amount: tokenData.value,
+            decimals: tokenData.decimals,
+            symbol: tokenData.symbol,
+            formatted: tokenData.formatted,
+          });
+        }
+      });
+    }
+
+    return rewards;
+  }, [rewardsData]);
+
+  const currentReward = rewardsToDisplay[currentRewardIndex];
+
+  // Cycle through rewards if there are multiple
+  useEffect(() => {
+    if (rewardsToDisplay.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentRewardIndex(prevIndex => (prevIndex + 1) % rewardsToDisplay.length);
+      }, 2000);
+
+      return () => clearInterval(interval);
+    } else if (rewardsToDisplay.length === 1) {
+      setCurrentRewardIndex(0);
+    }
+  }, [rewardsToDisplay]);
+
   const { status, timeLeft } = contestStatus;
   const isContestActive = status === "enter to win within" || status === "Voting closes in";
   const {
@@ -143,15 +192,20 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
               borderRadius={8}
               duration={1}
             />
-          ) : rewardsData && (rewardsData.token || rewardsData.rewardsPaidOut) ? (
+          ) : currentReward ? (
             <div className="animate-appear flex items-center h-6 border border-neutral-10 rounded-[8px] px-2">
-              {rewardsData.token ? (
-                <p className="text-positive-11 font-bold text-[12px]">
-                  {rewardsData.token.value} <span className="uppercase">${rewardsData.token.symbol}</span>
-                </p>
-              ) : rewardsData.rewardsPaidOut ? (
-                <p className="font-bold text-positive-11 text-[12px]">rewards paid out!</p>
-              ) : null}
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={`reward-${currentRewardIndex}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-positive-11 font-bold text-[12px]"
+                >
+                  {currentReward.formatted} <span className="uppercase">{currentReward.symbol}</span>
+                </motion.p>
+              </AnimatePresence>
             </div>
           ) : null}
 

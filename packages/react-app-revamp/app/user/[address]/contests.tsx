@@ -3,7 +3,8 @@ import ListContests from "@components/_pages/ListContests";
 import { isSupabaseConfigured } from "@helpers/database";
 import useContestSortOptions from "@hooks/useSortOptions";
 import { useQuery } from "@tanstack/react-query";
-import { getRewards, getUserContests, ITEMS_PER_PAGE } from "lib/contests";
+import { getUserContests, ITEMS_PER_PAGE } from "lib/contests";
+import { fetchTotalRewardsForContests } from "lib/contests/contracts";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 
@@ -28,7 +29,7 @@ function useContests(profileAddress: string, currentUserAddress: string, sortBy?
     isFetching: isRewardsFetching,
   } = useQuery({
     queryKey: ["rewards", contestData],
-    queryFn: () => getRewards(contestData?.data ?? []),
+    queryFn: () => fetchTotalRewardsForContests(contestData?.data ?? []),
     enabled: !!contestData,
   });
 
