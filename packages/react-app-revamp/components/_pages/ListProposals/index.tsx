@@ -40,7 +40,6 @@ export const ListProposals = () => {
   } = useProposalStore(state => state);
   const { contestAuthorEthereumAddress, contestAbi: abi, version } = useContestStore(state => state);
   const { expansionKey } = useDescriptionExpansionStore(state => state);
-
   const [deletingProposalIds, setDeletingProposalIds] = useState<string[]>([]);
   const [selectedProposalIds, setSelectedProposalIds] = useState<string[]>([]);
   const showDeleteButton = selectedProposalIds.length > 0 && !isDeleteInProcess;
@@ -74,6 +73,7 @@ export const ListProposals = () => {
     loading: isPageProposalsLoading,
     hasNextPage,
     onLoadMore: handleLoadMore,
+    rootMargin: "0px 0px 600px 0px",
     disabled: false,
   });
 
