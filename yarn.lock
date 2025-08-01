@@ -2545,6 +2545,20 @@
     viem "^2.31.7"
     zustand "5.0.3"
 
+"@base-org/account@1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@base-org/account/-/account-1.1.1.tgz#779f1fa7d10501201c4b6d5e21bfe17580cfddbc"
+  integrity sha512-IfVJPrDPhHfqXRDb89472hXkpvJuQQR7FDI9isLPHEqSYt/45whIoBxSPgZ0ssTt379VhQo4+87PWI1DoLSfAQ==
+  dependencies:
+    "@noble/hashes" "1.4.0"
+    clsx "1.2.1"
+    eventemitter3 "5.0.1"
+    idb-keyval "6.2.1"
+    ox "0.6.9"
+    preact "10.24.2"
+    viem "^2.31.7"
+    zustand "5.0.3"
+
 "@celo/base@^7.0.2":
   version "7.0.2"
   resolved "https://registry.yarnpkg.com/@celo/base/-/base-7.0.2.tgz#30acee3fd78b0c97a870892b029c1a3245d35cf4"
@@ -8170,10 +8184,32 @@
     "@walletconnect/ethereum-provider" "2.21.1"
     cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
 
+"@wagmi/connectors@5.9.1":
+  version "5.9.1"
+  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.9.1.tgz#b85872cdb50d190c921d0f12e727ded4f69258fb"
+  integrity sha512-o50e6reSYkVi2d72WWwbKSZ7xgLAeQ1Ja64tTWq3UhU1XtJPvQXWieCInIGInOajAAsZsYCPKYrPj6WoSl0Hqw==
+  dependencies:
+    "@base-org/account" "1.1.1"
+    "@coinbase/wallet-sdk" "4.3.6"
+    "@metamask/sdk" "0.32.0"
+    "@safe-global/safe-apps-provider" "0.18.6"
+    "@safe-global/safe-apps-sdk" "9.1.0"
+    "@walletconnect/ethereum-provider" "2.21.1"
+    cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
+
 "@wagmi/core@2.18.0":
   version "2.18.0"
   resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.18.0.tgz#8869275bf872b519ae24eb38175a7faf0cd8feaf"
   integrity sha512-33Wc/nnc/Q4qrqSL0F8BIDsG0iFTPrB4avjL/9vIE2DrA3GS3scVnrn6OtxpyF2TrwDZVfA+XUmfvoKuqtWPgw==
+  dependencies:
+    eventemitter3 "5.0.1"
+    mipd "0.0.7"
+    zustand "5.0.0"
+
+"@wagmi/core@2.18.1":
+  version "2.18.1"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.18.1.tgz#ddcd90b7f9d26c55f4eb05a5cb4a1d9e4d49db6b"
+  integrity sha512-mU+qXeeY2/0lq8bf4uFm5RtMrc8FgOToqzMVMf6MzNdNbKxpNlmlbuTyRbyd9cxn4UnYa6+S6Bmx1x42FV7w3g==
   dependencies:
     eventemitter3 "5.0.1"
     mipd "0.0.7"
