@@ -8077,10 +8077,10 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@5.3.7":
-  version "5.3.7"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.3.7.tgz#1d4c0d6aede7a0ebf4b48e9a4c91fceb85df50e2"
-  integrity sha512-1g1yITH7wq3okruA7TCCPjPV5Fp8wsxTwTg8Pz7N8+fW5a/F4evjzvBgTXV+ZYx4C3DFwpc5t3Jbm079Kgksug==
+"@vercel/node@5.3.8":
+  version "5.3.8"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.3.8.tgz#258bf9afb9a95857ceb6b609928067f92f83aeab"
+  integrity sha512-PiLs/5WqZMeXUH4FV8sHIIfhNFtTkFFE683GjRsoffXEx/4KS1NQvavEJK/BUxLntACBD/Q+J6tAtDOwb3IzOQ==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
