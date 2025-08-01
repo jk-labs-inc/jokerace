@@ -6,10 +6,16 @@ import { useMediaQuery } from "react-responsive";
 interface ListProposalsContainerProps {
   enabledPreview: EntryPreview | null;
   children: ReactNode;
-  recalculateKey?: string | number; // Add this prop to force re-render
+  recalculateKey?: string | number;
 }
 
-const MasonicCard = ({ data, width }: { data: ReactNode; width: number }) => <div style={{ width }}>{data}</div>;
+const TitleContainer = ({ children }: { children: ReactNode }) => <div className="flex flex-col gap-4">{children}</div>;
+
+const MasonicCard = ({ data, width }: { data: ReactNode; width: number }) => (
+  <div style={{ width }} className="min-h-52">
+    {data}
+  </div>
+);
 
 const MasonicContainer = ({
   children,
@@ -37,7 +43,7 @@ const ListProposalsContainer = ({ enabledPreview, children, recalculateKey }: Li
 
   switch (enabledPreview) {
     case EntryPreview.TITLE:
-      return <MasonicContainer children={children} columnCount={1} recalculateKey={recalculateKey} />;
+      return <TitleContainer children={children} />;
 
     case EntryPreview.IMAGE:
     case EntryPreview.IMAGE_AND_TITLE:
@@ -45,7 +51,7 @@ const ListProposalsContainer = ({ enabledPreview, children, recalculateKey }: Li
       return <MasonicContainer children={children} columnCount={isMobile ? 1 : 2} recalculateKey={recalculateKey} />;
 
     default:
-      return <MasonicContainer children={children} columnCount={1} recalculateKey={recalculateKey} />;
+      return <TitleContainer children={children} />;
   }
 };
 
