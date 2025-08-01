@@ -1,19 +1,21 @@
+"use client";
+
 import FeaturedContests from "@components/_pages/FeaturedContests";
 import CustomLink from "@components/UI/Link";
+import TypewriterCycler from "@components/UI/TypewriterCycler";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
+import { streamFeaturedContests } from "lib/contests";
 import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
+import { fetchTotalRewardsForContests } from "lib/contests/contracts";
 import { Contest } from "lib/contests/types";
 import moment from "moment";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { TypeAnimation } from "react-type-animation";
 import LandingPageExplainer from "./Explainer";
 import LandingPageUsedBy from "./UsedBy";
-import { fetchTotalRewardsForContests } from "lib/contests/contracts";
-import { streamFeaturedContests } from "lib/contests";
 
 const wordConfig = {
   desktop: [
@@ -125,13 +127,7 @@ const LandingPage = () => {
           <p className="text-[28px] md:text-[48px] font-bold">
             contests for{" "}
             <span className="text-transparent bg-clip-text bg-gradient-purple inline-block">
-              <TypeAnimation
-                sequence={[...words.flatMap(word => [word, 500, "", 50])]}
-                wrapper="span"
-                speed={50}
-                style={{ display: "inline-block" }}
-                repeat={Infinity}
-              />
+              <TypewriterCycler words={words} delayBetweenWords={1} />
             </span>
           </p>
           <p className="text-[16px] md:text-[24px] font-bold">for communities to grow, run, and monetize</p>
