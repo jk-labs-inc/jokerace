@@ -2,6 +2,7 @@ import { Charge } from "@hooks/useDeployContest/types";
 import { FC } from "react";
 import { RewardModuleInfo } from "lib/rewards/types";
 import RewardsParametersTokens from "../Tokens";
+import { useMediaQuery } from "react-responsive";
 
 interface RewardsParametersInfoProps {
   rewardsStore: RewardModuleInfo;
@@ -10,13 +11,14 @@ interface RewardsParametersInfoProps {
 }
 
 const RewardsParametersInfo: FC<RewardsParametersInfoProps> = ({ rewardsStore, charge, chainId }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const isRewardsPoolSelfFunded = charge.splitFeeDestination.address === rewardsStore.contractAddress;
 
   return (
     <ul className="pl-4 text-[16px] text-neutral-9">
       {isRewardsPoolSelfFunded ? (
         <li className="list-disc">
-          <b>rewards go up as players enter and vote,</b> with {charge.percentageToCreator}% of <br />
+          <b>rewards go up as players enter and vote,</b> with {charge.percentageToCreator}% of {isMobile ? "" : <br />}
           their charges going into pool
         </li>
       ) : null}
