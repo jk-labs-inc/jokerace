@@ -1,5 +1,4 @@
-import { ContestValues } from "@hooks/useContestsIndexV3";
-import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/types";
+import { ContestValues, SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/types";
 import { indexContestParticipantsV3 } from "lib/participants";
 
 interface EventData {

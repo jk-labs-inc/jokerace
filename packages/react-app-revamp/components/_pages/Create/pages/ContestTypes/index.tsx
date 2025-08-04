@@ -26,7 +26,6 @@ const contestTypeConfigs = {
 
 const CreateContestTypes = () => {
   const { steps } = useContestSteps();
-  const { address } = useAccount();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { step, setContestType, contestType } = useDeployContestStore(state => state);
   const typeTitle = isMobile ? "what type of contest?" : "what kind of contest do you want to create?";
@@ -35,13 +34,6 @@ const CreateContestTypes = () => {
   const faqLink = FOOTER_LINKS.find(link => link.label === "FAQ")?.href;
 
   const handleTypeSelection = (type: ContestType) => {
-    if (type === ContestType.VotingContest && !address) {
-      toastInfo({
-        message: "please connect your wallet first",
-      });
-      return;
-    }
-
     setContestType(type);
     setContestTypeConfig(type, contestTypeConfigs[type]);
   };
