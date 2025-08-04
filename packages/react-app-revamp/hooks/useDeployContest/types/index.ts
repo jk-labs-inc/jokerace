@@ -81,3 +81,39 @@ export interface PriceCurve {
   type: PriceCurveType;
   multiple: number;
 }
+
+export type VotingRequirementsSchema = {
+  type: string;
+  tokenAddress: string;
+  chain: string;
+  description: string;
+  minTokensRequired: number;
+  timestamp: number;
+};
+
+export type SubmissionRequirementsSchema = {
+  type: string;
+  chain: string;
+  tokenAddress: string;
+  minTokensRequired: number;
+  timestamp: number;
+};
+
+export interface ContestValues {
+  datetimeOpeningSubmissions: Date;
+  datetimeOpeningVoting: Date;
+  datetimeClosingVoting: Date;
+  title: string;
+  type: string;
+  prompt: string;
+  contractAddress: string;
+  networkName: string;
+  votingMerkleRoot: string;
+  submissionMerkleRoot: string;
+  voting_requirements: VotingRequirementsSchema | null;
+  cost_to_propose: number;
+  cost_to_vote: number;
+  percentage_to_creator: number;
+  authorAddress?: string;
+  featured?: boolean;
+}

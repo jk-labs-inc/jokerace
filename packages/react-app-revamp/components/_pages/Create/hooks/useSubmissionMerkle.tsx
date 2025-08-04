@@ -18,6 +18,8 @@ export const useSubmissionMerkle = () => {
 
   const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>) => {
     const { merkleRoot, recipients } = event.data;
+    console.log("merkleRoot", merkleRoot);
+    console.log("recipients", recipients);
     setSubmissionMerkle({ merkleRoot, submitters: recipients });
     terminateWorker(event.target as Worker);
   };
@@ -35,12 +37,38 @@ export const useSubmissionMerkle = () => {
     }
   };
 
-  const processCreatorAllowlist = (address: string | undefined) => {
-    if (!address) return;
-    const worker = initializeWorker();
-    worker.postMessage({
-      decimals: 18,
-      allowList: { [address]: 10 },
+  const processCreatorAllowlist = (address: string | undefined): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      if (!address) {
+        resolve();
+        return;
+      }
+
+      console.log("address", address);
+
+      const worker = initializeWorker();
+
+      // Override the worker message handler to resolve the promise
+      worker.onmessage = (event: MessageEvent<WorkerMessageData>) => {
+        const { merkleRoot, recipients } = event.data;
+        console.log("merkleRoot", merkleRoot);
+        console.log("recipients", recipients);
+        setSubmissionMerkle({ merkleRoot, submitters: recipients });
+        terminateWorker(worker);
+        resolve();
+      };
+
+      // Override the error handler to reject the promise
+      worker.onerror = (error: ErrorEvent) => {
+        console.error("Worker error:", error);
+        terminateWorker(worker);
+        reject(new Error(`Worker error: ${error.message}`));
+      };
+
+      worker.postMessage({
+        decimals: 18,
+        allowList: { [address]: 10 },
+      });
     });
   };
 
