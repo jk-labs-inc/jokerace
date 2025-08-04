@@ -10,10 +10,8 @@ import {
   MAX_ALLOWED_SUBMISSIONS_PER_USER,
   MAX_SUBMISSIONS_PER_CONTEST,
 } from "@hooks/useDeployContest/types";
-import { useAccount } from "wagmi";
 
 const useSetContestTemplate = () => {
-  const { address } = useAccount();
   const {
     setContestType,
     setPrompt,
