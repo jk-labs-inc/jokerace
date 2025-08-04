@@ -26,8 +26,8 @@ const CreateContestTypesVotingBased: FC<CreateContestTypesVotingBasedProps> = ({
 
     return (
       <>
-        <b>tip: recommended if you want to reward voters.</b> if you want to reward contestants,
-        <br /> pick “anyone can play” so they can enter and win.
+        <b>tip: recommended if you want to reward voters.</b> if you want to reward contestants, pick “anyone can play”
+        so they can enter and win.
       </>
     );
   };

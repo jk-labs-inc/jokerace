@@ -7,10 +7,8 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import {
   DEFAULT_ALLOWED_SUBMISSIONS_PER_USER,
   MAX_ALLOWED_SUBMISSIONS_PER_USER,
-  MAX_SUBMISSIONS_PER_CONTEST
+  MAX_SUBMISSIONS_PER_CONTEST,
 } from "@hooks/useDeployContest/types";
-import { useAccount } from "wagmi";
-import { useSubmissionMerkle } from "./useSubmissionMerkle";
 
 export const emptyVotingRequirements = {
   type: "erc20",
@@ -28,7 +26,6 @@ export const emptyVotingRequirements = {
 };
 
 const useSetContestTypeConfig = () => {
-  const { address } = useAccount();
   const {
     contestType,
     setSubmissionOpen,
@@ -44,8 +41,6 @@ const useSetContestTypeConfig = () => {
     setCustomization,
   } = useDeployContestStore(state => state);
   const { setTimingOption: setSubmissionTimingOption } = useTimingOptionForSubmissionPeriod(state => state);
-  const { processCreatorAllowlist } = useSubmissionMerkle();
-
   const { setTimingOption: setVotingTimingOption } = useTimingOptionForVotingPeriod(state => state);
 
   const setContestTypeConfig = (type: ContestType, config: ContestTypeConfig) => {
@@ -54,7 +49,6 @@ const useSetContestTypeConfig = () => {
     }
 
     if (type === ContestType.VotingContest) {
-      processCreatorAllowlist(address);
       setCustomization({
         maxSubmissions: MAX_SUBMISSIONS_PER_CONTEST,
         allowedSubmissionsPerUser: MAX_ALLOWED_SUBMISSIONS_PER_USER,
