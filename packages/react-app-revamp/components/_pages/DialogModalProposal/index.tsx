@@ -80,11 +80,12 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
     deleteProposal,
     isLoading: isDeleteLoading,
     isSuccess: isDeleteSuccess,
+    resetStore: resetDeleteStore,
   } = useDeleteProposal();
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const { isConnected, address: userAddress, chainId: userChainId } = useAccount();
   const { openConnectModal } = useConnectModal();
-  const { isSuccess } = useCastVotes();
+  const { isSuccess, resetStore } = useCastVotes();
   const { listProposalsIds } = useProposalStore(state => state);
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
@@ -147,12 +148,18 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   };
 
   useEffect(() => {
-    if (isSuccess) setIsOpen?.(false);
-  }, [isSuccess, setIsOpen]);
+    if (isSuccess) {
+      resetStore();
+      setIsOpen?.(false);
+    }
+  }, [isSuccess, setIsOpen, resetStore]);
 
   useEffect(() => {
-    if (isDeleteSuccess) setIsOpen?.(false);
-  }, [isDeleteSuccess, setIsOpen]);
+    if (isDeleteSuccess) {
+      resetDeleteStore();
+      setIsOpen?.(false);
+    }
+  }, [isDeleteSuccess, setIsOpen, resetDeleteStore]);
 
   const onSubmitCastVotes = useCallback(
     (amount: number) => {

@@ -16,17 +16,22 @@ interface CastVotesState {
   setIsSuccess: (value: boolean) => void;
   setCastPositiveAmountOfVotes: (value: boolean) => void;
   setError: (value: string) => void;
+  resetStore: () => void;
 }
+
+const initialState = {
+  pickedProposal: null,
+  isModalOpen: false,
+  isLoading: false,
+  isSuccess: false,
+  error: "",
+  transactionData: null,
+  castPositiveAmountOfVotes: true,
+};
 
 export const createCastVotesStore = () =>
   createStore<CastVotesState>(set => ({
-    pickedProposal: null,
-    isModalOpen: false,
-    isLoading: false,
-    isSuccess: false,
-    error: "",
-    transactionData: null,
-    castPositiveAmountOfVotes: true,
+    ...initialState, // Spread initial state
     setTransactionData: value => set({ transactionData: value }),
     setPickedProposal: value => set({ pickedProposal: value }),
     setIsModalOpen: value => set({ isModalOpen: value }),
@@ -34,6 +39,7 @@ export const createCastVotesStore = () =>
     setIsSuccess: value => set({ isSuccess: value }),
     setCastPositiveAmountOfVotes: value => set({ castPositiveAmountOfVotes: value }),
     setError: value => set({ error: value }),
+    resetStore: () => set(initialState),
   }));
 
 export const CastVotesContext = createContext<ReturnType<typeof createCastVotesStore> | null>(null);

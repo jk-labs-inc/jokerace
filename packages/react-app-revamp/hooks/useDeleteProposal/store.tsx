@@ -13,21 +13,27 @@ interface DeleteProposalState {
   setIsSuccess: (value: boolean) => void;
   setError: (value: string) => void;
   setTransactionData: (data: any) => void;
+  resetStore: () => void;
 }
+
+const initialState = {
+  isLoading: false,
+  error: "",
+  isSuccess: false,
+  transactionData: null,
+  pickedProposal: null,
+  isModalOpen: false,
+};
 
 export const createDeleteProposalStore = () =>
   createStore<DeleteProposalState>(set => ({
-    isLoading: false,
-    error: "",
-    isSuccess: false,
-    transactionData: null,
-    pickedProposal: null,
-    isModalOpen: false,
+    ...initialState,
     setIsModalOpen: isOpen => set({ isModalOpen: isOpen }),
     setIsLoading: value => set({ isLoading: value }),
     setIsSuccess: value => set({ isSuccess: value }),
     setError: value => set({ error: value }),
     setTransactionData: data => set({ transactionData: data }),
+    resetStore: () => set(initialState),
   }));
 
 export const DeleteProposalContext = createContext<ReturnType<typeof createDeleteProposalStore> | null>(null);
