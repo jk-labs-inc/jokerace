@@ -18,8 +18,6 @@ export const useSubmissionMerkle = () => {
 
   const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>) => {
     const { merkleRoot, recipients } = event.data;
-    console.log("merkleRoot", merkleRoot);
-    console.log("recipients", recipients);
     setSubmissionMerkle({ merkleRoot, submitters: recipients });
     terminateWorker(event.target as Worker);
   };
@@ -44,15 +42,11 @@ export const useSubmissionMerkle = () => {
         return;
       }
 
-      console.log("address", address);
-
       const worker = initializeWorker();
 
       // Override the worker message handler to resolve the promise
       worker.onmessage = (event: MessageEvent<WorkerMessageData>) => {
         const { merkleRoot, recipients } = event.data;
-        console.log("merkleRoot", merkleRoot);
-        console.log("recipients", recipients);
         setSubmissionMerkle({ merkleRoot, submitters: recipients });
         terminateWorker(worker);
         resolve();
