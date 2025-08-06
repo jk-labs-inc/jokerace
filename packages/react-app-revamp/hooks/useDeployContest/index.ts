@@ -110,9 +110,6 @@ export function useDeployContest() {
       submissionMerkleData: currentSubmissionMerkleData,
     } = preparationResult;
 
-    console.log("currentVotingMerkleData", currentVotingMerkleData);
-    console.log("currentSubmissionMerkleData", currentSubmissionMerkleData);
-
     try {
       const factoryCreateContest = new ContractFactory(
         DeployedContestContract.abi,

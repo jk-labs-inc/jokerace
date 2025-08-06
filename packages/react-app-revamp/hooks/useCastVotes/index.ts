@@ -61,8 +61,8 @@ export function useCastVotes() {
     setIsSuccess,
     setError,
     setTransactionData,
+    resetStore,
   } = useCastVotesStore(state => state);
-
   const { address: userAddress } = useAccount();
   const asPath = usePathname();
   const { updateCurrentUserVotes } = useUser();
@@ -88,7 +88,6 @@ export function useCastVotes() {
   const sendVotingEmail = createVotingEmailSender(sendEmail);
   const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
   const contestLink = `${window.location.origin}/contest/${chainName.toLowerCase()}/${contestAddress}`;
-
   const { currentPricePerVote } = useCurrentPricePerVoteWithRefetch({
     address: contestAddress,
     abi: abi,
@@ -227,6 +226,7 @@ export function useCastVotes() {
     isSuccess,
     error,
     castPositiveAmountOfVotes,
+    resetStore,
   };
 }
 

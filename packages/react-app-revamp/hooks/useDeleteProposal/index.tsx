@@ -38,6 +38,7 @@ export function useDeleteProposal() {
     setIsSuccess,
     setError,
     setTransactionData,
+    resetStore,
   } = useDeleteProposalStore(state => state);
   const { error: errorMessage, handleError } = useError();
 
@@ -140,6 +141,7 @@ export function useDeleteProposal() {
     transactionData,
     isEntrantCanDeleteVersion,
     canDeleteProposal,
+    resetStore,
   };
 }
 
