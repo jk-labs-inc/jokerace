@@ -34,15 +34,16 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
-  const { accumulatedVotesData, currentPage, totalPages, setCurrentPage, isLoading, fetchVotesPerPage } =
+
+  const { accumulatedVotesData, currentPage, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useProposalVotes(address, proposalId, chainId);
+
   const onLoadMoreCalledRef = useRef(false);
   const initialSkeletonCount = votedAddresses ? Math.min(votedAddresses.length, VOTES_PER_PAGE) : VOTES_PER_PAGE;
   const remainingItems =
     onLoadMoreCalledRef.current && votedAddresses ? votedAddresses.length - currentPage * VOTES_PER_PAGE : 0;
   const count =
-    isLoading && onLoadMoreCalledRef.current ? Math.min(remainingItems, VOTES_PER_PAGE) : initialSkeletonCount;
-  const showLoadMore = currentPage < totalPages - 1;
+    isFetchingNextPage && onLoadMoreCalledRef.current ? Math.min(remainingItems, VOTES_PER_PAGE) : initialSkeletonCount;
   const [hasScrollbar, setHasScrollbar] = useState(false);
   const simpleBarRef = useRef<any>(null);
 
@@ -51,9 +52,8 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
   }, [proposalId]);
 
   const onLoadMore = () => {
-    if (currentPage < totalPages - 1) {
-      fetchVotesPerPage(currentPage + 1);
-      setCurrentPage(currentPage + 1);
+    if (hasNextPage) {
+      fetchNextPage();
       onLoadMoreCalledRef.current = true;
     }
   };
@@ -103,13 +103,13 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
                         className={className}
                       />
                     ))}
-                    {showLoadMore && (
+                    {hasNextPage && (
                       <button className="flex gap-2 items-center" onClick={onLoadMore}>
                         <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
                         <ChevronUpIcon height={20} className="text-positive-11" />
                       </button>
                     )}
-                    {isLoading && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
+                    {isFetchingNextPage && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
                   </div>
                 </SimpleBar>
               </div>
