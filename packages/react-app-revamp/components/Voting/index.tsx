@@ -42,7 +42,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote
   const [sliderValue, setSliderValue] = useState(0);
   const [isInvalid, setIsInvalid] = useState(false);
   const [isFocused, setIsFocused] = useState(true);
-  const voteDisabled = isLoading || isInvalid || isNaN(amount);
+  const voteDisabled = isLoading || isInvalid || isNaN(amount) || amount === 0;
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;

@@ -63,7 +63,7 @@ const CreateContestDeploying = () => {
       <p className="text-[18px] text-neutral-11">while it's deploying, here's a fun gif:</p>
 
       <div className="relative w-[400px] border-4 border-true-black rounded-[10px] overflow-hidden">
-        <div className="absolute top-0 left-0 bg-black py-1 px-2">
+        <div className="absolute top-0 left-0 bg-transparent py-1 px-2">
           <span className="text-[14px] text-true-black font-sabo font-bold">JOKETV</span>
         </div>
         <img
