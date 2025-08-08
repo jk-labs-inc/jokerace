@@ -151,7 +151,7 @@ export const ListProposals = () => {
       {hasNextPage && <ListProposalsLoader ref={infiniteRef} />}
 
       {showDeleteButton && (
-        <div className="flex sticky bottom-0 left-0 right-0 p-4 bg-white shadow-lg">
+        <div className="flex sticky bottom-0 left-0 right-0 p-4">
           <ButtonV3
             size={ButtonSize.EXTRA_LARGE}
             colorClass="bg-gradient-light-pink mx-auto animate-appear"

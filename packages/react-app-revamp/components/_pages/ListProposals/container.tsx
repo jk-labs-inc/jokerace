@@ -1,7 +1,8 @@
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { Masonry } from "masonic";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useMemo, useRef } from "react";
 import { useMediaQuery } from "react-responsive";
+import { usePrevious } from "react-use";
 
 interface ListProposalsContainerProps {
   enabledPreview: EntryPreview | null;
@@ -27,14 +28,26 @@ const MasonicContainer = ({
   recalculateKey?: string | number;
 }) => {
   const childrenArray = React.Children.toArray(children);
+
+  const itemsCount = childrenArray.length;
+  const prevItemsCount = usePrevious(itemsCount);
+  const removesCount = useRef(0);
+
+  const gridKeyPostfix = useMemo(() => {
+    if (prevItemsCount === undefined) return removesCount.current;
+
+    if (itemsCount < prevItemsCount) {
+      removesCount.current += 1;
+      return removesCount.current;
+    }
+
+    return removesCount.current;
+  }, [itemsCount, prevItemsCount]);
+
+  const masonryKey = recalculateKey ? `${recalculateKey}-${gridKeyPostfix}` : `masonry-${gridKeyPostfix}`;
+
   return (
-    <Masonry
-      key={recalculateKey}
-      items={childrenArray}
-      columnGutter={16}
-      columnCount={columnCount}
-      render={MasonicCard}
-    />
+    <Masonry key={masonryKey} items={childrenArray} columnGutter={16} columnCount={columnCount} render={MasonicCard} />
   );
 };
 
