@@ -11,7 +11,7 @@ import { useAccount } from "wagmi";
 
 const CreateContestRulesDescription = () => {
   const { chainId } = useAccount();
-  const { prompt, setPrompt, contestType, charge, submissionOpen, votingOpen, votingClose, entryPreviewConfig } =
+  const { prompt, setPrompt, contestType, charge, submissionOpen, votingOpen, votingClose, entryPreviewConfig, priceCurve } =
     useDeployContestStore(state => state);
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -92,6 +92,7 @@ const CreateContestRulesDescription = () => {
         const defaultContent = generateDynamicSummary(
           contestType,
           charge,
+          priceCurve,
           submissionOpen,
           votingOpen,
           votingClose,
