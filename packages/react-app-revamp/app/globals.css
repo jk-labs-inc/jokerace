@@ -577,7 +577,6 @@ li {
 }
 
 .interweave-container {
-  line-height: 0 !important;
   width: 100%;
   max-width: 100%;
 }
