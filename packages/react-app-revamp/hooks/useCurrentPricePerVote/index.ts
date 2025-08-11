@@ -40,7 +40,7 @@ const useCurrentPricePerVote = ({
 }: CurrentPricePerVoteParams): CurrentPricePerVoteResponse => {
   const { costToVote, anyoneCanVote } = useContestStore(
     useShallow(state => ({
-      costToVote: state.charge?.type.costToVote,
+      costToVote: state.charge.type.costToVote,
       anyoneCanVote: state.anyoneCanVote,
     })),
   );

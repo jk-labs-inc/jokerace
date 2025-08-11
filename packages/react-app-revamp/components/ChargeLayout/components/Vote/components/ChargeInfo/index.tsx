@@ -16,15 +16,6 @@ const ChargeInfo: React.FC<ChargeInfoProps> = ({ charge }) => {
   const version = useContestStore(useShallow(state => state.version));
   const chargeLabel = charge.voteType === VoteType.PerVote ? "charge per vote" : "charge to vote";
 
-  if (charge.type.costToPropose === 0 && charge.type.costToVote === 0) {
-    return (
-      <ChargeInfoContainer>
-        <p>charge to vote:</p>
-        <p>gas fees only</p>
-      </ChargeInfoContainer>
-    );
-  }
-
   if (compareVersions(version, VOTING_PRICE_CURVES_VERSION) < 0) {
     return (
       <ChargeInfoContainer

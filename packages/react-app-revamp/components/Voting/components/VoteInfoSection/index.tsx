@@ -16,9 +16,9 @@ const VoteInfoSection: FC<VoteInfoSectionProps> = ({ balanceData, amountOfVotes,
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <MyVotes balanceData={balanceData} amountOfVotes={amountOfVotes} charge={charge} onAddFunds={onAddFunds} />
-        {charge ? <ChargeInfo charge={charge} /> : null}
+        <ChargeInfo charge={charge} />
       </div>
-      {charge ? <TotalCharge charge={charge} amountOfVotes={voteAmount} /> : null}
+      <TotalCharge charge={charge} amountOfVotes={voteAmount} />
     </div>
   );
 };

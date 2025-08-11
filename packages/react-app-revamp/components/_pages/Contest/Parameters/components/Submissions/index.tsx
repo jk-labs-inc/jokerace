@@ -6,7 +6,7 @@ import { Charge } from "@hooks/useDeployContest/types";
 import { formatEther } from "viem";
 
 interface ContestParametersSubmissionsProps {
-  charge: Charge | null;
+  charge: Charge;
   anyoneCanSubmit: boolean;
   currentUserQualifiedToSubmit: boolean;
   contestMaxNumberSubmissionsPerUser: number;
@@ -55,7 +55,7 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
       <ul className="pl-4 text-[16px] text-neutral-9">
         <li className="list-disc">{address || anyoneCanSubmit ? qualifyToSubmitMessage : walletNotConnected}</li>
         <li className="list-disc">
-          {formatEther(BigInt(charge?.type.costToPropose ?? 0))} {nativeCurrencySymbol} to enter
+          {formatEther(BigInt(charge.type.costToPropose))} {nativeCurrencySymbol} to enter
         </li>
         <li className="list-disc">
           {!anyoneCanSubmit && "qualified"} players can enter{" "}

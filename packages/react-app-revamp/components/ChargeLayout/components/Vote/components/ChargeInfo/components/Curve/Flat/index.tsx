@@ -9,7 +9,7 @@ const ChargeInfoFlat = () => {
       contestInfoData: state.contestInfoData,
     })),
   );
-  const entryChargeFormatted = formatEther(BigInt(charge?.type.costToVote ?? 0));
+  const entryChargeFormatted = formatEther(BigInt(charge.type.costToVote));
 
   return (
     <p>

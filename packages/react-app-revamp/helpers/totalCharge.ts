@@ -1,5 +1,3 @@
-import { formatEther } from "viem";
-
 export const getTotalCharge = (amount: number, costToVote: string) => {
   const chargeAmount = parseFloat(costToVote);
   const multipliedCharge = chargeAmount * amount;

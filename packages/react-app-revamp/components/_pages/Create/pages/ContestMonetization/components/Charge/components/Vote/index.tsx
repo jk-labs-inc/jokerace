@@ -16,7 +16,7 @@ interface ContestParamsChargeVoteProps {
 }
 
 const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({ chainUnitLabel, onError }) => {
-  const { costToVote, costToVoteEndPrice, voteType, minCostToVote, setCharge, contestType } = useDeployContestStore(
+  const { costToVote, voteType, minCostToVote, setCharge, contestType } = useDeployContestStore(
     useShallow(state => ({
       costToVote: state.charge.type.costToVote,
       costToVoteEndPrice: state.charge.type.costToVoteEndPrice,

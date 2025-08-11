@@ -10,14 +10,14 @@ interface UserAnalyticsParams {
   pickedProposal: string | null;
   amountOfVotes: number;
   costToVote: bigint | undefined;
-  charge: Charge | null;
+  charge: Charge;
 }
 
 interface RewardsAnalyticsParams {
   isEarningsTowardsRewards: boolean;
   address: string;
   rewardsModuleAddress: string;
-  charge: Charge | null;
+  charge: Charge;
   chainName: string;
   costToVote: bigint | undefined;
   operation: "deposit" | "withdraw";
@@ -40,7 +40,7 @@ export const addUserActionAnalytics = async (params: UserAnalyticsParams) => {
       vote_amount: params.amountOfVotes,
       created_at: Math.floor(Date.now() / 1000),
       amount_sent: params.costToVote ? formatChargeAmount(parseFloat(params.costToVote.toString())) : null,
-      percentage_to_creator: params.charge ? params.charge.percentageToCreator : null,
+      percentage_to_creator: params.charge.percentageToCreator,
     });
   } catch (error) {
     console.error("Error in addUserActionForAnalytics:", error);
@@ -51,7 +51,7 @@ export const updateRewardAnalyticsIfNeeded = async (
   params: RewardsAnalyticsParams,
   refetchTotalRewards: () => void,
 ) => {
-  if (params.isEarningsTowardsRewards && params.costToVote && params.charge) {
+  if (params.isEarningsTowardsRewards && params.costToVote) {
     try {
       await updateRewardAnalytics({
         contest_address: params.address,

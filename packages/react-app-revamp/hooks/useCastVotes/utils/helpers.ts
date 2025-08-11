@@ -3,11 +3,9 @@ import { parseEther, formatEther } from "viem";
 
 export const calculateChargeAmount = (
   amountOfVotes: number,
-  charge: Charge | null,
+  charge: Charge,
   currentPricePerVote: string,
 ): bigint | undefined => {
-  if (!charge) return undefined;
-
   if (charge.voteType === VoteType.PerTransaction) {
     return BigInt(charge.type.costToVote);
   }
