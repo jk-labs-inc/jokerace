@@ -32,13 +32,9 @@ export function formatNumberAbbreviated(num: number): string {
     { value: 1e3, symbol: "k" },
   ];
 
-  if (num < 10000) {
-    return num.toLocaleString("en-US");
-  }
-
   for (const { value, symbol } of abbreviations) {
     if (num >= value) {
-      const formatted = (num / value).toFixed(2).replace(/\.00$/, "");
+      const formatted = parseFloat((num / value).toFixed(2)).toString();
       return `${formatted}${symbol}`;
     }
   }

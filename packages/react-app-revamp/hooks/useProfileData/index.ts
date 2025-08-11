@@ -18,10 +18,6 @@ interface ProfileData {
   };
 }
 
-const normalizeClusterName = (clusterName: string): string => {
-  return clusterName.split("/")[0] + "/";
-};
-
 const checkImageUrl = async (url: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -81,15 +77,16 @@ const fetchProfileData = async (
       }
     } else {
       const clusterName = (await clusters.getName(ethereumAddress)).clusterName;
+
       if (clusterName) {
         try {
-          const imageUrl = getImageUrl(normalizeClusterName(clusterName).slice(0, -1));
+          const imageUrl = getImageUrl(clusterName);
 
           await checkImageUrl(imageUrl ?? DEFAULT_AVATAR_URL);
           profileAvatar = imageUrl ?? DEFAULT_AVATAR_URL;
-          profileName = normalizeClusterName(clusterName);
+          profileName = clusterName;
         } catch {
-          profileName = normalizeClusterName(clusterName);
+          profileName = clusterName;
           profileAvatar = DEFAULT_AVATAR_URL;
         }
       }
@@ -100,7 +97,7 @@ const fetchProfileData = async (
       let clusterProfileUrl = "";
 
       if (clusterName) {
-        const clusterMetadata = getProfileUrl(normalizeClusterName(clusterName));
+        const clusterMetadata = getProfileUrl(clusterName);
         clusterProfileUrl = clusterMetadata ?? "";
       }
 
