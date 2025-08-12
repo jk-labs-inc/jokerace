@@ -1,4 +1,4 @@
-const projectId = process.env.NEXT_PUBLIC_CDP_PROJECT_ID || "";
+const projectId = "";
 
 export type OnrampParams = {
   address: string;

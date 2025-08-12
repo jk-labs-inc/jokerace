@@ -20,7 +20,8 @@ const COINBASE_PARAMS = {
 const OnrampCoinbaseProvider: FC<OnrampCoinbaseProviderProps> = ({ chain, asset }) => {
   const isEntryPage = usePathname().includes("submission");
   const { address } = useAccount();
-  const isSupported = isChainSupported(chain);
+  // TODO: remove this once we have a new logic for coinbase (session token etc.)
+  const isSupported = false;
 
   const handleOnramp = () => {
     if (!address) return;
@@ -47,7 +48,7 @@ const OnrampCoinbaseProvider: FC<OnrampCoinbaseProviderProps> = ({ chain, asset 
       onClick={handleOnramp}
       descriptionClassName={isEntryPage ? "text-[14px]" : ""}
       disabled={!isSupported}
-      disabledMessage={!isSupported ? `not available on this chain` : ""}
+      disabledMessage={!isSupported ? `not available at the moment` : ""}
     />
   );
 };
