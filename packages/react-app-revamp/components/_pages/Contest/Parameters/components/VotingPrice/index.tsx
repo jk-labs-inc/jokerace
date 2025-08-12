@@ -47,7 +47,7 @@ const ContestParametersVotingPrice = () => {
   });
 
   if (isPriceCurveTypeLoading || isPriceCurveMultipleLoading) return <VotingQualifierSkeleton />;
-  if (isPriceCurveTypeError || isPriceCurveMultipleError || !charge)
+  if (isPriceCurveTypeError || isPriceCurveMultipleError)
     return (
       <VotingQualifierError
         onClick={() => (isPriceCurveTypeError ? refetchPriceCurveType() : refetchPriceCurveMultiple())}
@@ -57,7 +57,7 @@ const ContestParametersVotingPrice = () => {
   if (!isVotingPriceCurveEnabled || priceCurveType !== PriceCurveType.Exponential) {
     return (
       <li className="list-disc">
-        {formatEther(BigInt(charge.type.costToVote ?? 0))} {contestInfoData.contestChainNativeCurrencySymbol}
+        {formatEther(BigInt(charge.type.costToVote))} {contestInfoData.contestChainNativeCurrencySymbol}
         {charge.voteType === VoteType.PerVote ? " per vote" : " to vote"}
       </li>
     );
@@ -65,9 +65,8 @@ const ContestParametersVotingPrice = () => {
 
   return (
     <li className="list-disc">
-      {formatBalance(formatEther(BigInt(charge?.type.costToVote ?? 0)))}{" "}
-      {contestInfoData.contestChainNativeCurrencySymbol} (at start) to{" "}
-      {formatBalance(formatEther(calculateEndPrice(charge?.type.costToVote ?? 0, Number(priceCurveMultiple))))}{" "}
+      {formatBalance(formatEther(BigInt(charge.type.costToVote)))} {contestInfoData.contestChainNativeCurrencySymbol}{" "}
+      (at start) to {formatBalance(formatEther(calculateEndPrice(charge.type.costToVote, Number(priceCurveMultiple))))}{" "}
       {contestInfoData.contestChainNativeCurrencySymbol} (at finish) per vote
     </li>
   );

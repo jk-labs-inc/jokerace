@@ -13,7 +13,7 @@ const CreateRewardsFundPool = () => {
   const contestState = useContestStateStore(useShallow(state => state.contestState));
   const isContestFinishedOrCanceled =
     contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
-  const enableEarningsToggle = charge && charge.percentageToCreator > 0 && !isContestFinishedOrCanceled;
+  const enableEarningsToggle = charge.percentageToCreator > 0 && !isContestFinishedOrCanceled;
   const { currentStep, addFundsToRewards, addEarningsToRewards } = useCreateRewardsStore(
     useShallow(state => ({
       currentStep: state.currentStep,
@@ -39,7 +39,7 @@ const CreateRewardsFundPool = () => {
   return (
     <div className="flex flex-col gap-16">
       <div className="flex flex-col gap-8">
-        {enableEarningsToggle && <CreateRewardsAddEarningsToggle percentageToCreator={charge?.percentageToCreator} />}
+        {enableEarningsToggle && <CreateRewardsAddEarningsToggle percentageToCreator={charge.percentageToCreator} />}
         <CreateRewardsAddFundsToggle />
 
         {addFundsToRewards && <TokenWidgets />}

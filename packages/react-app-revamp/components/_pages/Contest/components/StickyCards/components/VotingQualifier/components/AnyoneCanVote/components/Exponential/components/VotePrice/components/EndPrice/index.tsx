@@ -11,7 +11,7 @@ import { useShallow } from "zustand/react/shallow";
 const VotingQualifierAnyoneCanVoteExponentialEndPrice: FC = () => {
   const { costToVote, contestInfoData, contestAbi } = useContestStore(
     useShallow(state => ({
-      costToVote: state?.charge?.type.costToVote,
+      costToVote: state.charge.type.costToVote,
       contestInfoData: state.contestInfoData,
       contestAbi: state.contestAbi,
     })),

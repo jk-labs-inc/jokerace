@@ -12,7 +12,7 @@ import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useEffect, useState } from "react";
 
 interface SendProposalMobileLayoutConfirmInitialContentProps {
-  charge: Charge | null;
+  charge: Charge;
   accountData: GetBalanceReturnType | undefined;
   chainName: string;
   onConfirm?: () => void;
@@ -34,7 +34,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   const { emailForSubscription, setWantsSubscription, setEmailForSubscription, emailAlreadyExists } =
     useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const insufficientBalance = (accountData?.value ?? 0) < (charge?.type.costToPropose ?? 0);
+  const insufficientBalance = (accountData?.value ?? 0) < charge.type.costToPropose;
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
   const [showOnramp, setShowOnramp] = useState(false);
@@ -88,7 +88,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
               handleEmailChange={handleEmailChange}
             />
           </div>
-          {charge && charge.type.costToPropose && accountData ? (
+          {charge.type.costToPropose && accountData ? (
             <ChargeLayoutSubmission charge={charge} accountData={accountData} />
           ) : null}
 

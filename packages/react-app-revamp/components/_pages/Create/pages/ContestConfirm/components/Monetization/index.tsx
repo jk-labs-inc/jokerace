@@ -10,7 +10,6 @@ import CostToEnterMessage from "./components/CostToEnter";
 import CostToVoteMessage from "./components/CostToVote";
 import CreatorChargesMessage from "./components/CreatorCharges";
 import SplitMessage from "./components/Split";
-import { PERCENTAGE_TO_CREATOR_DEFAULT, PERCENTAGE_TO_JKLABS_DEFAULT } from "constants/monetization";
 
 interface CreateContestConfirmMonetizationProps {
   charge: Charge;
@@ -31,7 +30,6 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain?.name.toLowerCase() ?? "");
   const [isHovered, setIsHovered] = useState(false);
   const nativeCurrencySymbol = chain?.nativeCurrency.symbol;
-  const chargeEnabled = type.costToPropose !== 0 || type.costToVote !== 0;
   const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
   const [highlightChainChange, setHighlightChainChange] = useState(false);
   const blockExplorerUrl = chain?.blockExplorers?.default.url;
@@ -49,29 +47,10 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
     }
   }, [chainChanged]);
 
-  const renderEarningsSplitMessage = () => {
-    if (
-      splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet ||
-      splitFeeDestination.type === SplitFeeDestinationType.AnotherWallet
-    ) {
-      return (
-        <li className="text-[16px] list-disc normal-case">
-          all charges split {PERCENTAGE_TO_CREATOR_DEFAULT} (you)/{PERCENTAGE_TO_JKLABS_DEFAULT} (jk labs inc.)
-        </li>
-      );
-    } else {
-      return <li className="text-[16px] list-disc normal-case">all charges go to jk labs inc.</li>;
-    }
-  };
-
   if (isError) {
     return (
       <CreateContestConfirmLayout onClick={() => refetchChargeDetails()} onHover={value => setIsHovered(value)}>
         <div className={`flex flex-col gap-4 ${isHovered || isMobileOrTablet ? "text-neutral-11" : "text-neutral-14"}`}>
-          <p className="text-[16px] font-bold">
-            monetization:
-            {!chargeEnabled ? <b className="uppercase"> OFF</b> : null}
-          </p>
           <p className="text-[16px] text-negative-11 font-bold">
             ruh roh, we couldn't load charge details for this chain!{" "}
             <span className="underline cursor-pointer" onClick={refetchChargeDetails}>
@@ -93,7 +72,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
         <p className="text-neutral-9 text-[12px] font-bold uppercase">monetization</p>
         {isLoading ? (
           <p className="loadingDots font-sabo text-[14px] text-neutral-14">loading charge fees</p>
-        ) : chargeEnabled ? (
+        ) : (
           <ul className="flex flex-col pl-6 list-disc">
             <CostToEnterMessage costToPropose={type.costToPropose} nativeCurrencySymbol={nativeCurrencySymbol} />
             <CostToVoteMessage
@@ -111,7 +90,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
               blockExplorerAddressUrl={blockExplorerAddressUrl}
             />
           </ul>
-        ) : null}
+        )}
       </div>
     </CreateContestConfirmLayout>
   );

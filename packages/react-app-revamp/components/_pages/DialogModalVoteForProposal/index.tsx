@@ -51,7 +51,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
       currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
     })),
   );
-  const isPayPerVote = contestCharge?.voteType === VoteType.PerVote;
+  const isPayPerVote = contestCharge.voteType === VoteType.PerVote;
   const { castVotes, isSuccess } = useCastVotes();
   const [readFullEntry, setReadFullEntry] = useState(false);
   const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);

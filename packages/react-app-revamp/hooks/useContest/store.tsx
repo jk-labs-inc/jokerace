@@ -1,4 +1,4 @@
-import { Charge, VotingRequirementsSchema } from "@hooks/useDeployContest/types";
+import { Charge, VoteType, SplitFeeDestinationType, VotingRequirementsSchema } from "@hooks/useDeployContest/types";
 import { createContext, useContext, useRef } from "react";
 import { Abi } from "viem";
 import { createStore, useStore } from "zustand";
@@ -7,6 +7,7 @@ export enum ErrorType {
   RPC = "RPC",
   CONTRACT = "CONTRACT",
   IS_NOT_JOKERACE_CONTRACT = "IS_NOT_JOKERACE_CONTRACT",
+  UNSUPPORTED_VERSION = "UNSUPPORTED_VERSION",
 }
 
 export interface ContestInfoData {
@@ -34,7 +35,7 @@ export interface ContestState {
   sortingEnabled: boolean;
   submissionMerkleRoot: string;
   votingMerkleRoot: string;
-  charge: Charge | null;
+  charge: Charge;
   votingRequirements: VotingRequirementsSchema | null;
   submissionRequirements: VotingRequirementsSchema | null;
   isReadOnly: boolean;
@@ -58,7 +59,7 @@ export interface ContestState {
   setError: (value: ErrorType | null) => void;
   setIsSuccess: (value: boolean) => void;
   setIsV3: (value: boolean) => void;
-  setCharge: (charge: Charge | null) => void;
+  setCharge: (charge: Charge) => void;
   setIsReadOnly: (value: boolean) => void;
   setContestAbi: (abi: Abi) => void;
   setAnyoneCanVote: (value: boolean) => void;
@@ -90,7 +91,18 @@ export const createContestStore = () =>
     votingMerkleRoot: "",
     isLoading: true,
     error: null,
-    charge: null,
+    charge: {
+      percentageToCreator: 0,
+      voteType: VoteType.PerTransaction,
+      splitFeeDestination: {
+        type: SplitFeeDestinationType.CreatorWallet,
+        address: "",
+      },
+      type: {
+        costToPropose: 0,
+        costToVote: 0,
+      },
+    },
     isSuccess: false,
     contestMaxProposalCount: 0,
     sortingEnabled: false,

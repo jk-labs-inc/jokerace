@@ -24,7 +24,7 @@ export function useCreatorSplitDestination(): SetCreatorSplitDestinationResult {
   const { handleError } = useError();
 
   const setCreatorSplitDestination = async (splitFeeDestination: SplitFeeDestination): Promise<void> => {
-    if (!splitFeeDestination.address || !charge) return;
+    if (!splitFeeDestination.address) return;
     setIsLoading(true);
     setIsConfirmed(false);
     toastLoading({

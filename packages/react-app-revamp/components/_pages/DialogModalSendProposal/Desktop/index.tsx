@@ -33,7 +33,7 @@ interface DialogModalSendProposalDesktopLayoutProps {
   isOpen: boolean;
   isCorrectNetwork: boolean;
   isDragging: boolean;
-  charge: Charge | null;
+  charge: Charge;
   accountData: GetBalanceReturnType | undefined;
   setIsOpen: (isOpen: boolean) => void;
   handleDrop?: (event: React.DragEvent<HTMLDivElement>) => void;
@@ -77,9 +77,9 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const { isLoading, isSuccess } = useSubmitProposal();
   const { proposalId } = useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const insufficientBalance = (accountData?.value ?? 0) < (charge?.type.costToPropose ?? 0);
+  const insufficientBalance = (accountData?.value ?? 0) < charge.type.costToPropose;
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
-  const showEntryCharge = charge && charge.type.costToPropose && accountData && isCorrectNetwork;
+  const showEntryCharge = charge.type.costToPropose && accountData && isCorrectNetwork;
   const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields();
   const { fields: metadataFields } = useMetadataStore(state => state);
   const [error, setError] = useState<ReactNode | null>(null);

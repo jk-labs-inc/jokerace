@@ -51,6 +51,18 @@ const LayoutViewContestError: FC<LayoutViewContestErrorProps> = ({ error, bugRep
     );
   }
 
+  if (error === ErrorType.UNSUPPORTED_VERSION) {
+    return (
+      <div className="flex flex-col gap-6 m-auto animate-appear">
+        <h1 className="text-[40px] lg:text-[40px] font-sabo text-negative-10 text-center">ruh-roh!</h1>
+        <p className="text-[16px] font-bold text-neutral-11 text-center">
+          this contest is of an outdated version that is no longer supported - you can always check the transactions
+          onchain though!
+        </p>
+      </div>
+    );
+  }
+
   return null;
 };
 

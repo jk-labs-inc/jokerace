@@ -42,14 +42,14 @@ interface UserAnalyticsParams {
   userAddress: `0x${string}` | undefined;
   chainName: string;
   proposalId: string;
-  charge: Charge | null;
+  charge: Charge;
 }
 
 interface RewardsAnalyticsParams {
   isEarningsTowardsRewards: boolean;
   address: string;
   rewardsModuleAddress: string;
-  charge: Charge | null;
+  charge: Charge;
   chainName: string;
   amount: number;
   operation: "deposit" | "withdraw";
@@ -82,7 +82,7 @@ export function useSubmitProposal() {
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
   const { fields: metadataFields, setFields: setMetadataFields } = useMetadataStore(state => state);
-  const isEarningsTowardsRewards = rewardsModuleAddress === charge?.splitFeeDestination.address;
+  const isEarningsTowardsRewards = rewardsModuleAddress === charge.splitFeeDestination.address;
   const { refetch: refetchTotalRewards } = useTotalRewards({
     rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
     rewardsModuleAbi: rewards?.abi,
@@ -93,8 +93,6 @@ export function useSubmitProposal() {
   const { sendEmail } = useEmailSend();
 
   const calculateChargeAmount = () => {
-    if (!charge) return undefined;
-
     return BigInt(charge.type.costToPropose);
   };
 
@@ -244,8 +242,10 @@ export function useSubmitProposal() {
         network_name: params.chainName,
         proposal_id: params.proposalId,
         created_at: Math.floor(Date.now() / 1000),
-        amount_sent: params.charge ? Number(formatEther(BigInt(params.charge.type.costToPropose))) : null,
-        percentage_to_creator: params.charge ? params.charge.percentageToCreator : null,
+        amount_sent: params.charge.type.costToPropose
+          ? Number(formatEther(BigInt(params.charge.type.costToPropose)))
+          : null,
+        percentage_to_creator: params.charge.percentageToCreator,
       });
     } catch (error) {
       console.error("Error in addUserActionForAnalytics:", error);
@@ -253,14 +253,15 @@ export function useSubmitProposal() {
   }
 
   async function updateRewardAnalyticsIfNeeded(params: RewardsAnalyticsParams) {
-    if (params.isEarningsTowardsRewards && params.charge) {
+    if (params.isEarningsTowardsRewards) {
       try {
         await updateRewardAnalytics({
           contest_address: params.address,
           rewards_module_address: params.rewardsModuleAddress,
           network_name: params.chainName,
-          amount:
-            Number(formatEther(BigInt(params.charge.type.costToPropose))) * (params.charge.percentageToCreator / 100),
+          amount: params.charge.type.costToPropose
+            ? Number(formatEther(BigInt(params.charge.type.costToPropose))) * (params.charge.percentageToCreator / 100)
+            : 0,
           operation: "deposit",
           token_address: null,
           created_at: Math.floor(Date.now() / 1000),
