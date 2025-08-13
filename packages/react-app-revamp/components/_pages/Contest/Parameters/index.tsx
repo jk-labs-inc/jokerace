@@ -56,7 +56,7 @@ const ContestParameters = () => {
         votesClose={formattedVotesClosing}
       />
       <div className="flex flex-col gap-8">
-        {version && charge && <ContestParametersRewards version={version} charge={charge} />}
+        {version && <ContestParametersRewards version={version} charge={charge} />}
         <ContestParametersSubmissions
           charge={charge}
           anyoneCanSubmit={anyoneCanSubmit}
@@ -75,18 +75,12 @@ const ContestParameters = () => {
           address={address ?? ""}
           currentUserAvailableVotesAmount={currentUserAvailableVotesAmount}
           currentUserTotalVotesAmount={currentUserTotalVotesAmount}
-          voteCharge={charge && { type: charge.voteType, cost: charge.type.costToVote }}
+          voteCharge={{ type: charge.voteType, cost: charge.type.costToVote }}
           nativeCurrencySymbol={nativeCurrency?.symbol}
           votingRequirementsDescription={votingRequirements?.description}
           openConnectModal={openConnectModal}
         />
-        {charge ? (
-          <ContestParametersEarnings
-            charge={charge}
-            contestAuthor={contestAuthor}
-            blockExplorerUrl={blockExplorerUrl}
-          />
-        ) : null}
+        <ContestParametersEarnings charge={charge} contestAuthor={contestAuthor} blockExplorerUrl={blockExplorerUrl} />
       </div>
     </div>
   );

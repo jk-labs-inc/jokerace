@@ -26,7 +26,9 @@ const TotalRewardsTableSkeleton = ({ payeesCount }: { payeesCount: number }) => 
         {[...Array(payeesCount)].map((_, index) => (
           <div
             key={index}
-            className={`flex flex-col gap-2 text-neutral-9 ${index !== payeesCount - 1 ? "border-b border-primary-2 pb-2" : ""}`}
+            className={`flex flex-col gap-2 text-neutral-9 ${
+              index !== payeesCount - 1 ? "border-b border-primary-2 pb-2" : ""
+            }`}
           >
             <div className="flex justify-between items-center text-[16px] font-bold">
               <Skeleton width={150} height={16} />
@@ -41,7 +43,7 @@ const TotalRewardsTableSkeleton = ({ payeesCount }: { payeesCount: number }) => 
 
 const RewardsCreatorView = ({ rewards, chainId, version }: RewardsCreatorViewProps) => {
   const { contestAuthorEthereumAddress, charge } = useContestStore(useShallow(state => state));
-  const isEarningsToRewards = charge?.splitFeeDestination.address === rewards.contractAddress;
+  const isEarningsToRewards = charge.splitFeeDestination.address === rewards.contractAddress;
   const { address: userAddress } = useAccount();
   const isCreator = contestAuthorEthereumAddress === userAddress;
   const {

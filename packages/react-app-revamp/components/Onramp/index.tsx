@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FC } from "react";
 import FundFromAnotherChainButton from "./components/Buttons/FundFromAnotherChain";
 import OnrampProviders from "./providers";
+import { handleFundFromAnotherChain } from "./helpers/bridge";
 
 interface OnrampProps {
   chain: string;
@@ -15,10 +16,6 @@ interface OnrampProps {
 
 const Onramp: FC<OnrampProps> = ({ chain, asset, onGoBack, showBackButton = true, className }) => {
   const chainLogo = getChainLogo(chain);
-
-  const handleFundFromAnotherChain = () => {
-    window.open(LINK_BRIDGE_DOCS, "_blank");
-  };
 
   return (
     <div className={`flex flex-col gap-4 md:gap-6 w-full ${className}`}>

@@ -78,7 +78,7 @@ export function useCastVotes() {
     contestAddress,
     pickedProposal ?? "",
   );
-  const isEarningsTowardsRewards = rewards?.contractAddress === charge?.splitFeeDestination.address;
+  const isEarningsTowardsRewards = rewards?.contractAddress === charge.splitFeeDestination.address;
   const { refetch: refetchTotalRewards } = useTotalRewards({
     rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
     rewardsModuleAbi: rewards?.abi,

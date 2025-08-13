@@ -22,7 +22,7 @@ interface DialogModalSendProposalMobileLayoutProps {
   contestId: string;
   proposal: string;
   editorProposal: Editor | null;
-  charge: Charge | null;
+  charge: Charge;
   accountData: GetBalanceReturnType | undefined;
   address: string;
   isOpen: boolean;

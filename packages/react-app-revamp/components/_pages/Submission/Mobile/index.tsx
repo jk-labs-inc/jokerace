@@ -64,7 +64,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const { contestStatus } = useContestStatusStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const { charge, contestAuthorEthereumAddress } = useContestStore(state => state);
-  const isPayPerVote = charge?.voteType === VoteType.PerVote;
+  const isPayPerVote = charge.voteType === VoteType.PerVote;
   const { listProposalsIds } = useProposalStore(state => state);
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
@@ -236,7 +236,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
         </div>
       </div>
 
-      {showVotingModal && charge && (
+      {showVotingModal && (
         <SubmissionPageMobileVoting
           isOpen={showVotingModal}
           onClose={() => setShowVotingModal(false)}

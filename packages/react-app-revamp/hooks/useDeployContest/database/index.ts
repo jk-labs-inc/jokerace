@@ -11,11 +11,6 @@ export async function getJkLabsSplitDestinationAddress(
 ): Promise<string> {
   const chain = chains.find(c => c.id === chainId);
 
-  // check if costToVote is 0 ( this means no monetization )
-  if (chargeType.costToVote === 0) {
-    return "";
-  }
-
   if (!chain) {
     throw new Error(`Chain with id ${chainId} not found`);
   }

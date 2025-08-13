@@ -7,13 +7,13 @@ import { GetBalanceData } from "wagmi/query";
 interface MyVotesProps {
   amountOfVotes: number;
   balanceData: GetBalanceData | undefined;
-  charge: Charge | null;
+  charge: Charge;
   onAddFunds?: () => void;
 }
 
 const MyVotes: React.FC<MyVotesProps> = ({ charge, balanceData, amountOfVotes, onAddFunds }) => {
-  const insufficientBalance = charge && balanceData ? balanceData.value < BigInt(charge.type.costToVote) : false;
-  const isPerVote = charge?.voteType === VoteType.PerVote;
+  const insufficientBalance = balanceData ? balanceData.value < BigInt(charge.type.costToVote) : false;
+  const isPerVote = charge.voteType === VoteType.PerVote;
 
   return (
     <div

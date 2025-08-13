@@ -132,54 +132,50 @@ export function useContest() {
     const contestPrompt = results[7].result as string;
     const contestState = results[8].result as ContestStateEnum;
 
-    if (compareVersions(version, "4.0") >= 0) {
-      const costToPropose = Number(results[10].result);
+    const costToPropose = Number(results[10].result);
 
-      if (compareVersions(version, "4.2") >= 0) {
-        const sortingEnabled = Number(results[11].result) === 1;
-        setSortingEnabled(sortingEnabled);
-      }
-
-      if (compareVersions(version, "4.27") >= 0) {
-        setCanEditTitleAndDescription(true);
-      }
-
-      const percentageToCreator = Number(results[9].result);
-      let costToVote = 0;
-      let payPerVote = 0;
-      let creatorSplitDestination = "";
-
-      if (compareVersions(version, "4.23") >= 0) {
-        if (compareVersions(version, "4.25") >= 0) {
-          payPerVote = Number(results[13].result);
-        }
-        costToVote = Number(results[12].result);
-      }
-
-      if (compareVersions(version, "4.29") >= 0) {
-        creatorSplitDestination = results[14].result as string;
-      }
-
-      setCharge({
-        percentageToCreator,
-        voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
-        splitFeeDestination: {
-          type: determineSplitFeeDestination(
-            creatorSplitDestination,
-            percentageToCreator,
-            contestAuthor,
-            rewardsModuleAddress,
-          ),
-          address: creatorSplitDestination,
-        },
-        type: {
-          costToPropose,
-          costToVote,
-        },
-      });
-    } else {
-      setCharge(null);
+    if (compareVersions(version, "4.2") >= 0) {
+      const sortingEnabled = Number(results[11].result) === 1;
+      setSortingEnabled(sortingEnabled);
     }
+
+    if (compareVersions(version, "4.27") >= 0) {
+      setCanEditTitleAndDescription(true);
+    }
+
+    const percentageToCreator = Number(results[9].result);
+    let costToVote = 0;
+    let payPerVote = 0;
+    let creatorSplitDestination = "";
+
+    if (compareVersions(version, "4.23") >= 0) {
+      if (compareVersions(version, "4.25") >= 0) {
+        payPerVote = Number(results[13].result);
+      }
+      costToVote = Number(results[12].result);
+    }
+
+    if (compareVersions(version, "4.29") >= 0) {
+      creatorSplitDestination = results[14].result as string;
+    }
+
+    setCharge({
+      percentageToCreator,
+      voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
+      splitFeeDestination: {
+        type: determineSplitFeeDestination(
+          creatorSplitDestination,
+          percentageToCreator,
+          contestAuthor,
+          rewardsModuleAddress,
+        ),
+        address: creatorSplitDestination,
+      },
+      type: {
+        costToPropose,
+        costToVote,
+      },
+    });
 
     setContestName(contestName);
     setContestAuthor(contestAuthor, contestAuthor);
@@ -217,59 +213,6 @@ export function useContest() {
     }
   }
 
-  async function fetchV1ContestInfo(contractConfig: ContractConfig, version: string) {
-    try {
-      const contracts = getV1Contracts(contractConfig);
-      const results = await readContracts(config, { contracts });
-
-      setIsV3(false);
-
-      const closingVoteDate = new Date(Number(results[6].result) * 1000 + 1000);
-      const submissionsOpenDate = new Date(Number(results[5].result) * 1000 + 1000);
-      const votesOpenDate = new Date(Number(results[7].result) * 1000 + 1000);
-      const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
-      const contestMaxProposalCount = Number(results[3].result);
-
-      setContestName(results[0].result as string);
-      setContestAuthor(results[1].result as string, results[1].result as string);
-      setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
-      setContestMaxProposalCount(contestMaxProposalCount);
-      setSubmissionsOpen(submissionsOpenDate);
-      setVotesClose(closingVoteDate);
-      setVotesOpen(votesOpenDate);
-
-      const promptFilter = contractConfig.abi?.filter((el: { name: string }) => el.name === "prompt");
-      const submissionGatingFilter = contractConfig.abi?.filter(
-        (el: { name: string }) => el.name === "submissionGatingByVotingToken",
-      );
-      const downvotingFilter = contractConfig.abi?.filter((el: { name: string }) => el.name === "downvotingAllowed");
-
-      if (promptFilter.length > 0) {
-        const indexToCheck = submissionGatingFilter.length > 0 ? 4 : downvotingFilter.length > 0 ? 2 : 1;
-        setContestPrompt(results[contracts.length - indexToCheck].result as string);
-      }
-
-      setError(null);
-      setIsSuccess(true);
-      setIsLoading(false);
-
-      // List of proposals for this contest
-      await fetchProposalsIdsList(contractConfig, version, {
-        submissionOpen: submissionsOpenDate,
-        votesOpen: votesOpenDate,
-      });
-
-      setIsListProposalsLoading(false);
-    } catch (e) {
-      handleError(e, "Something went wrong while fetching the contest data.");
-      setError(ErrorType.CONTRACT);
-      setIsSuccess(false);
-      setIsListProposalsSuccess(false);
-      setIsListProposalsLoading(false);
-      setIsLoading(false);
-    }
-  }
-
   /**
    * Fetch contest data from the contract, depending on the version of the contract
    */
@@ -298,11 +241,16 @@ export function useContest() {
 
       setContestData(addressFromUrl, chainFromUrl);
 
-      if (compareVersions(version, "3.0") == -1) {
-        await fetchV1ContestInfo(contractConfig, version);
-      } else {
-        await fetchV3ContestInfo(contractConfig, version, rewardsModuleAddress);
+      // Check if version is below v4.0
+      if (compareVersions(version, "4.0") < 0) {
+        setError(ErrorType.UNSUPPORTED_VERSION);
+        setIsLoading(false);
+        console.error(`Contest version ${version} is not supported. Only v4.0 and above are supported.`);
+        return;
       }
+
+      // Fetch contest info for v4 and above
+      await fetchV3ContestInfo(contractConfig, version, rewardsModuleAddress);
     } catch (error) {
       console.error("An error occurred while fetching data:", error);
     }

@@ -106,7 +106,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
     }
 
     if (!canVote) {
-      if (charge?.voteType === VoteType.PerVote) {
+      if (charge.voteType === VoteType.PerVote) {
         setPickProposal(proposal.id);
         setIsVotingModalOpen(true);
         return;

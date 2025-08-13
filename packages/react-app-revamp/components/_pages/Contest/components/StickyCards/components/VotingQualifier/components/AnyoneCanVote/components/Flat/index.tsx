@@ -7,7 +7,7 @@ import { VotingQualifierType } from "../../../../types";
 const VotingQualifierAnyoneCanVoteFlat = () => {
   const { costToVote, nativeCurrencySymbol } = useContestStore(
     useShallow(state => ({
-      costToVote: state.charge?.type.costToVote ?? 0,
+      costToVote: state.charge.type.costToVote,
       nativeCurrencySymbol: state.contestInfoData.contestChainNativeCurrencySymbol,
     })),
   );

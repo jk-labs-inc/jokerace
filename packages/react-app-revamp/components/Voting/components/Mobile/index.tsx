@@ -16,7 +16,7 @@ interface VotingWidgetMobileProps {
   amountOfVotes: number;
   isFocused: boolean;
   sliderValue: number;
-  charge: Charge | null;
+  charge: Charge;
   chainId: number;
   voteDisabled: boolean;
   insufficientBalance: boolean;
@@ -71,7 +71,7 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              {charge?.voteType === VoteType.PerVote ? (
+              {charge.voteType === VoteType.PerVote ? (
                 <>
                   <MyVotes
                     balanceData={balanceData}
@@ -79,7 +79,7 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
                     charge={charge}
                     onAddFunds={onAddFunds}
                   />
-                  {charge ? <ChargeInfo charge={charge} /> : null}
+                  <ChargeInfo charge={charge} />
                 </>
               ) : null}
             </div>
@@ -111,13 +111,13 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
             </div>
             <div className="flex flex-col gap-4">
               <StepSlider val={sliderValue} onChange={handleSliderChange} onKeyDown={handleKeyDownSlider} />
-              {charge?.voteType === VoteType.PerTransaction ? (
+              {charge.voteType === VoteType.PerTransaction ? (
                 <>
                   <MyVotes balanceData={balanceData} amountOfVotes={amountOfVotes} charge={charge} />
-                  {charge ? <ChargeInfo charge={charge} /> : null}
+                  <ChargeInfo charge={charge} />
                 </>
               ) : null}
-              {charge ? <TotalCharge charge={charge} amountOfVotes={amount} /> : null}
+              <TotalCharge charge={charge} amountOfVotes={amount} />
             </div>
           </div>
 

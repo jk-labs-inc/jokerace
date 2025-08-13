@@ -78,14 +78,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote
   const handleSliderChange = (value: any) => {
     const newAmount = Math.round((value / 100) * amountOfVotes);
 
-    // we are only doing this check because of the older contests, where the amount of votes was not rounded, we can remove this check in the future
-    if (newAmount > amountOfVotes) {
-      setAmount(parseFloat(amountOfVotes.toFixed(4)));
-      return;
-    } else {
-      setAmount(newAmount);
-    }
-
+    setAmount(newAmount);
     const sliderPercentage = Math.round((newAmount / amountOfVotes) * 100);
     setSliderValue(sliderPercentage);
   };

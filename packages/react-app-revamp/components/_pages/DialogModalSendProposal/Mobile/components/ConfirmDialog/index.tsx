@@ -10,7 +10,7 @@ interface DialogModalSendProposalMobileLayoutConfirmProps {
   chainName: string;
   contestId: string;
   isOpen?: boolean;
-  charge: Charge | null;
+  charge: Charge;
   accountData: GetBalanceReturnType | undefined;
   onConfirm?: () => void;
   onClose?: () => void;
@@ -30,8 +30,8 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
   const title = isLoading
     ? "approving transaction..."
     : isSuccess && proposalId
-      ? "your entry is live!"
-      : "submit entry";
+    ? "your entry is live!"
+    : "submit entry";
 
   if (!isOpen) return null;
 
