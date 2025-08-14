@@ -194,9 +194,9 @@ contract RewardsModule {
      * @dev Cancels the rewards module.
      */
     function cancel() public {
-        if ((msg.sender != creator) || (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
-        if ((msg.sender == creator) && (underlyingContest.state() != Governor.ContestState.Queued)) revert CreatorCanOnlyCancelWhenQueued();
+        if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
 
+        if ((msg.sender == creator) && (underlyingContest.state() != Governor.ContestState.Queued)) revert CreatorCanOnlyCancelWhenQueued();
         if (msg.sender == JK_LABS_ADDRESS) {
             if (block.timestamp < underlyingContest.contestDeadline() + JK_LABS_CANCEL_DELAY) revert JkLabsCanOnlyCancelAfterDelay();
             canceledByJkLabs = true;
@@ -259,7 +259,7 @@ contract RewardsModule {
     }
 
     function withdrawRewards() public {
-        if ((msg.sender != creator) || (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanWithdraw();
+        if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanWithdraw();
         if (canceled != true) revert MustBeCanceledToWithdraw();
 
         if ((msg.sender == creator) && (canceledByJkLabs)) revert CreatorCannotWithdrawIfJkLabsCanceled(); // if jk labs is having to cancel a module in an emergency situation to rescue funds, jk labs is who is going to be the ones resolving it
@@ -269,7 +269,7 @@ contract RewardsModule {
     }
 
     function withdrawRewards(IERC20 token) public {
-        if ((msg.sender != creator) || (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanWithdraw();
+        if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanWithdraw();
         if (canceled != true) revert MustBeCanceledToWithdraw();
 
         if ((msg.sender == creator) && (canceledByJkLabs)) revert CreatorCannotWithdrawIfJkLabsCanceled(); // if jk labs is having to cancel a module in an emergency situation to rescue funds, jk labs is who is going to be the ones resolving it
