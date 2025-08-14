@@ -10,8 +10,16 @@ export const ink: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: ["https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.ink-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}"] },
-    default: { http: ["https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.ink-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}"] },
+    public: {
+      http: [
+        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.ink-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+      ],
+    },
+    default: {
+      http: [
+        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.ink-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+      ],
+    },
   },
   blockExplorers: {
     etherscan: { name: "Ink Mainnet Scan", url: "https://explorer.inkonchain.com/" },
