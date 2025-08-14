@@ -40,6 +40,8 @@ contract RewardsModule {
     mapping(uint256 => uint256) public released; // Getter for the amount of Ether already released to a ranking.
     uint256[] public payees;
     string public constant MODULE_TYPE = "AUTHOR_REWARDS";
+    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
+    uint256 JK_LABS_CANCEL_DELAY = 604800; // One week
     string private constant VERSION = "5.10"; // Private as to not clutter the ABI
 
     mapping(IERC20 => uint256) public erc20TotalReleased;
@@ -49,6 +51,7 @@ contract RewardsModule {
     address public creator;
     bool public paysOutTarget; // If true, pay out target address; if false, pay out proposal author.
     bool public canceled; // A rewards module must be canceled in order to withdraw funds, and once canceled it can no longer release funds, only withdraw
+    bool public canceledByJkLabs; // Set to true if jk labs is who cancels the rewards module
 
     error PayeesSharesLengthMismatch();
     error MustHaveAtLeastOnePayee();
@@ -67,6 +70,9 @@ contract RewardsModule {
     error AccountAlreadyHasShares();
     error CannotReleaseCanceledModule();
     error MustBeCanceledToWithdraw();
+    error CreatorCanOnlyCancelWhenQueued();
+    error JkLabsCanOnlyCancelAfterDelay();
+    error CreatorCannotWithdrawIfJkLabsCanceled();
 
     /**
      * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
@@ -188,7 +194,14 @@ contract RewardsModule {
      * @dev Cancels the rewards module.
      */
     function cancel() public {
-        if (msg.sender != creator) revert OnlyCreatorCanCancel();
+        if ((msg.sender != creator) || (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
+        if ((msg.sender == creator) && (underlyingContest.state() != ContestState.Queued)) revert CreatorCanOnlyCancelWhenQueued();
+
+        if (msg.sender == JK_LABS_ADDRESS) {
+            if (block.timestamp < underlyingContest.contestDeadline() + JK_LABS_CANCEL_DELAY) revert JkLabsCanOnlyCancelAfterDelay();
+            canceledByJkLabs = true;
+        }
+
         canceled = true;
     }
 
@@ -246,16 +259,20 @@ contract RewardsModule {
     }
 
     function withdrawRewards() public {
-        if (msg.sender != creator) revert OnlyCreatorCanWithdraw();
+        if ((msg.sender != creator) || (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanWithdraw();
         if (canceled != true) revert MustBeCanceledToWithdraw();
+
+        if ((msg.sender == creator) && (canceledByJkLabs)) revert CreatorCannotWithdrawIfJkLabsCanceled(); // if jk labs is having to cancel a module in an emergency situation to rescue funds, jk labs is who is going to be the ones resolving it
 
         emit RewardWithdrawn(creator, address(this).balance);
         Address.sendValue(payable(creator), address(this).balance);
     }
 
     function withdrawRewards(IERC20 token) public {
-        if (msg.sender != creator) revert OnlyCreatorCanWithdraw();
+        if ((msg.sender != creator) || (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanWithdraw();
         if (canceled != true) revert MustBeCanceledToWithdraw();
+
+        if ((msg.sender == creator) && (canceledByJkLabs)) revert CreatorCannotWithdrawIfJkLabsCanceled(); // if jk labs is having to cancel a module in an emergency situation to rescue funds, jk labs is who is going to be the ones resolving it
 
         emit ERC20RewardWithdrawn(token, creator, token.balanceOf(address(this)));
         SafeERC20.safeTransfer(token, payable(creator), token.balanceOf(address(this)));
