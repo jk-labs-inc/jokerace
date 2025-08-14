@@ -547,6 +547,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      */
     function cancel() public {
         if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
+        if (canceled) revert ContestAlreadyCanceled();
 
         if (isTotalVotesCastZero()) {
             revert CanOnlyCancelBeforeFirstVote();

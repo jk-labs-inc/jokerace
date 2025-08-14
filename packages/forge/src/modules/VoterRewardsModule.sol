@@ -67,6 +67,7 @@ contract VoterRewardsModule {
     error CannotPayOutToZeroAddress();
     error AccountNotDueERC20Payment();
     error OnlyCreatorOrJkLabsCanCancel();
+    error ModuleAlreadyCanceled();
     error OnlyCreatorOrJkLabsCanWithdraw();
     error RankingCannotBeZero();
     error SharesCannotBeZero();
@@ -202,6 +203,7 @@ contract VoterRewardsModule {
      */
     function cancel() public {
         if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
+        if (canceled) revert ModuleAlreadyCanceled();
 
         if ((msg.sender == creator) && (underlyingContest.totalVotesCast() != 0)) revert CreatorCanOnlyCancelBeforeFirstVote();
         if (msg.sender == JK_LABS_ADDRESS) {
