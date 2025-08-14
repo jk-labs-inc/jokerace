@@ -614,28 +614,6 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         return addressTotalVotes[account];
     }
 
-    /**
-     * ONLY FOR USE IN EMERGENCIES, if you change this users will not be able to play in your contest on the JokeRace frontend.
-     */
-    function setSubmissionMerkleRoot(bytes32 newSubmissionMerkleRoot) public {
-        if (msg.sender != creator) revert OnlyCreatorCanAmend();
-        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
-            revert CannotUpdateWhenCompletedOrCanceled();
-        }
-        submissionMerkleRoot = newSubmissionMerkleRoot;
-    }
-
-    /**
-     * ONLY FOR USE IN EMERGENCIES, if you change this users will not be able to play in your contest on the JokeRace frontend.
-     */
-    function setVotingMerkleRoot(bytes32 newVotingMerkleRoot) public {
-        if (msg.sender != creator) revert OnlyCreatorCanAmend();
-        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
-            revert CannotUpdateWhenCompletedOrCanceled();
-        }
-        votingMerkleRoot = newVotingMerkleRoot;
-    }
-
     function setCreatorSplitDestination(address newCreatorSplitDestination) public {
         if (msg.sender != creator) revert OnlyCreatorCanAmend();
         if (state() == ContestState.Completed || state() == ContestState.Canceled) {
