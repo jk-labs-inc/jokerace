@@ -5,6 +5,7 @@ import { useCountdownTimer } from "@hooks/useTimer";
 import { useShallow } from "zustand/shallow";
 import ContestCountdown from "./components/Countdown";
 import VotingContestQualifier from "./components/VotingQualifier";
+import PriceCurveWrapper from "../PriceCurveChart/PriceCurveWrapper";
 
 const ContestStickyCards = () => {
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
@@ -27,6 +28,7 @@ const ContestStickyCards = () => {
         <ContestCountdown votingTimeLeft={votingTimeLeft} />
         <VotingContestQualifier votingTimeLeft={votingTimeLeft} />
       </div>
+      <PriceCurveWrapper contestAddress="0x123" chainId={1} />
       <hr className="border-primary-2 border" />
     </div>
   );
