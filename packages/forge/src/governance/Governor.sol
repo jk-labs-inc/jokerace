@@ -171,11 +171,11 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error OnlyCreatorOrEntrantCanDelete();
     error OnlyCreatorCanSetName();
     error OnlyCreatorCanSetPrompt();
-    error CanOnlyDeleteInEntryPeriod();
+    error CanOnlyDeleteWhenQueued();
     error CannotSetWhenCompletedOrCanceled();
 
     error OnlyCreatorOrJkLabsCanCancel();
-    error CannotCancelWhenCompletedOrCanceled();
+    error CanOnlyCancelWhenQueued();
     error ContestAlreadyCanceled();
 
     error CannotUpdateWhenCompletedOrCanceled();
@@ -509,7 +509,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      */
     function deleteProposals(uint256[] calldata proposalIdsToDelete) public {
         if (state() != ContestState.Queued) {
-            revert CanOnlyDeleteInEntryPeriod();
+            revert CanOnlyDeleteWhenQueued();
         }
 
         for (uint256 index = 0; index < proposalIdsToDelete.length; index++) {
@@ -543,8 +543,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     function cancel() public {
         if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
 
-        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
-            revert CannotCancelWhenCompletedOrCanceled();
+        if (state() != ContestState.Queued) {
+            revert CanOnlyCancelWhenQueued();
         }
 
         canceled = true;
