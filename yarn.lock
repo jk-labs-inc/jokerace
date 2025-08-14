@@ -8088,10 +8088,10 @@
   resolved "https://registry.yarnpkg.com/@vanilla-extract/sprinkles/-/sprinkles-1.6.4.tgz#adf34734bd480bbcc835eec94f90869a81f35af5"
   integrity sha512-lW3MuIcdIeHKX81DzhTnw68YJdL1ial05exiuvTLJMdHXQLKcVB93AncLPajMM6mUhaVVx5ALZzNHMTrq/U9Hg==
 
-"@vercel/build-utils@11.0.0":
-  version "11.0.0"
-  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-11.0.0.tgz#2db5978074e98d0a2af1ad9957cd5fab00266629"
-  integrity sha512-jeBQHHOVqTgIMynVLtGUhf+Qf2Q0K1C/luZP7wuUM9veTeTMUSjju6HtpuJE5yuxre0rIogKRbKjvRXrAsbOIg==
+"@vercel/build-utils@11.0.1":
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-11.0.1.tgz#aaa5df8158de77093c99deb4bcbb8185e57d585c"
+  integrity sha512-eEzx3RVyqOTbf+XLmX8fsW7UGlVhN4W1MSBcqvkbtK2mtM1sHdXLv/xDjc5akhISJqZ9uW6UmyKVP+XpdWgfCA==
 
 "@vercel/error-utils@2.0.3":
   version "2.0.3"
@@ -8116,16 +8116,16 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@5.3.11":
-  version "5.3.11"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.3.11.tgz#5e01c78dcec1a0d1f190bdc602cc9fd526bbbb62"
-  integrity sha512-mXywAl778oXpuQZgdqf8SSO/AH+fwQ2x89ucbbm72Xa+pXhvMKorkxZ10Modo2wQAIta9xRoL9l5tkbC8ESi0g==
+"@vercel/node@5.3.12":
+  version "5.3.12"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.3.12.tgz#72e7907b839977376aa387e8fc0df42cd16d6413"
+  integrity sha512-IcnV+IMeccnnm6YhbMvorYlUz853EI443Ynof1NoN7YsiAcpaqTDsTyxDi064wc9BYBusGvqaPSVurOlcXehZg==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
     "@edge-runtime/vm" "3.2.0"
     "@types/node" "16.18.11"
-    "@vercel/build-utils" "11.0.0"
+    "@vercel/build-utils" "11.0.1"
     "@vercel/error-utils" "2.0.3"
     "@vercel/nft" "0.29.2"
     "@vercel/static-config" "3.1.1"
@@ -10703,7 +10703,15 @@ enhanced-resolve@^5.12.0:
     graceful-fs "^4.2.4"
     tapable "^2.2.0"
 
-enhanced-resolve@^5.17.2, enhanced-resolve@^5.18.1:
+enhanced-resolve@^5.17.3:
+  version "5.18.3"
+  resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.18.3.tgz#9b5f4c5c076b8787c78fe540392ce76a88855b44"
+  integrity sha512-d4lC8xfavMeBjzGr2vECC3fsGXziXZQyJxD868h2M/mBI3PwAuODxAkLkq5HYuvrPYcUtiLzsTo8U3PgX3Ocww==
+  dependencies:
+    graceful-fs "^4.2.4"
+    tapable "^2.2.0"
+
+enhanced-resolve@^5.18.1:
   version "5.18.2"
   resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.18.2.tgz#7903c5b32ffd4b2143eeb4b92472bd68effd5464"
   integrity sha512-6Jw4sE1maoRJo3q8MsSIn2onJFbLTOjY9hlx4DZXmOKvLRd1Ok2kXmAGXaafL2+ijsJZ1ClYbl/pmqr9+k4iUQ==
@@ -18263,10 +18271,10 @@ webpack-sources@^3.3.3:
   resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-3.3.3.tgz#d4bf7f9909675d7a070ff14d0ef2a4f3c982c723"
   integrity sha512-yd1RBzSGanHkitROoPFd6qsrxt+oFhg/129YzheDGqeustzX0vTZJZsSsQjVQC4yzBQ56K55XU8gaNCtIzOnTg==
 
-webpack@5.101.0:
-  version "5.101.0"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.101.0.tgz#4b81407ffad9857f81ff03f872e3369b9198cc9d"
-  integrity sha512-B4t+nJqytPeuZlHuIKTbalhljIFXeNRqrUGAQgTGlfOl2lXXKXw+yZu6bicycP+PUlM44CxBjCFD6aciKFT3LQ==
+webpack@5.101.1:
+  version "5.101.1"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.101.1.tgz#bda907efcb233161fe17690ef906a2b244bbfede"
+  integrity sha512-rHY3vHXRbkSfhG6fH8zYQdth/BtDgXXuR2pHF++1f/EBkI8zkgM5XWfsC3BvOoW9pr1CvZ1qQCxhCEsbNgT50g==
   dependencies:
     "@types/eslint-scope" "^3.7.7"
     "@types/estree" "^1.0.8"
@@ -18278,7 +18286,7 @@ webpack@5.101.0:
     acorn-import-phases "^1.0.3"
     browserslist "^4.24.0"
     chrome-trace-event "^1.0.2"
-    enhanced-resolve "^5.17.2"
+    enhanced-resolve "^5.17.3"
     es-module-lexer "^1.2.1"
     eslint-scope "5.1.1"
     events "^3.2.0"

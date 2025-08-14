@@ -43,7 +43,7 @@
     "@types/underscore": "1.13.0",
     "@types/uuid": "10.0.0",
     "@typescript-eslint/parser": "8.39.1",
-    "@vercel/node": "5.3.11",
+    "@vercel/node": "5.3.12",
     "@wagmi/connectors": "5.9.3",
     "@wagmi/core": "2.19.0",
     "autoprefixer": "10.4.21",
@@ -104,7 +104,7 @@
     "uuid": "11.1.0",
     "viem": "2.33.3",
     "wagmi": "2.16.3",
-    "webpack": "5.101.0",
+    "webpack": "5.101.1",
     "zod": "4.0.17",
     "zustand": "5.0.7"
   }
