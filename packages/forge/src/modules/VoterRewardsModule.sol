@@ -66,8 +66,8 @@ contract VoterRewardsModule {
     error AccountNotDueNativePayment();
     error CannotPayOutToZeroAddress();
     error AccountNotDueERC20Payment();
-    error OnlyCreatorCanCancel();
-    error OnlyCreatorCanWithdraw();
+    error OnlyCreatorOrJkLabsCanCancel();
+    error OnlyCreatorOrJkLabsCanWithdraw();
     error RankingCannotBeZero();
     error SharesCannotBeZero();
     error AccountAlreadyHasShares();
@@ -202,7 +202,7 @@ contract VoterRewardsModule {
      */
     function cancel() public {
         if ((msg.sender != creator) || (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
-        if ((msg.sender == creator) && (underlyingContest.state() != ContestState.Queued)) revert CreatorCanOnlyCancelWhenQueued();
+        if ((msg.sender == creator) && (underlyingContest.state() != Governor.ContestState.Queued)) revert CreatorCanOnlyCancelWhenQueued();
 
         if (msg.sender == JK_LABS_ADDRESS) {
             if (block.timestamp < underlyingContest.contestDeadline() + JK_LABS_CANCEL_DELAY) revert JkLabsCanOnlyCancelAfterDelay();
