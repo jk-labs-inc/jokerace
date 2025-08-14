@@ -290,8 +290,8 @@ contract VoterRewardsModule {
 
         if ((msg.sender == creator) && (canceledByJkLabs)) revert CreatorCannotWithdrawIfJkLabsCanceled(); // if jk labs is having to cancel a module in an emergency situation to rescue funds, jk labs is who is going to be the ones resolving it
 
-        emit RewardWithdrawn(creator, address(this).balance);
-        Address.sendValue(payable(creator), address(this).balance);
+        emit RewardWithdrawn(msg.sender, address(this).balance);
+        Address.sendValue(payable(msg.sender), address(this).balance);
     }
 
     function withdrawRewards(IERC20 token) public {
@@ -300,8 +300,8 @@ contract VoterRewardsModule {
 
         if ((msg.sender == creator) && (canceledByJkLabs)) revert CreatorCannotWithdrawIfJkLabsCanceled(); // if jk labs is having to cancel a module in an emergency situation to rescue funds, jk labs is who is going to be the ones resolving it
 
-        emit ERC20RewardWithdrawn(token, creator, token.balanceOf(address(this)));
-        SafeERC20.safeTransfer(token, payable(creator), token.balanceOf(address(this)));
+        emit ERC20RewardWithdrawn(token, msg.sender, token.balanceOf(address(this)));
+        SafeERC20.safeTransfer(token, payable(msg.sender), token.balanceOf(address(this)));
     }
 
     /**
