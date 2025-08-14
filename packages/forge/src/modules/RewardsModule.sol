@@ -70,7 +70,7 @@ contract RewardsModule {
     error AccountAlreadyHasShares();
     error CannotReleaseCanceledModule();
     error MustBeCanceledToWithdraw();
-    error CreatorCanOnlyCancelWhenQueued();
+    error CreatorCanOnlyCancelBeforeFirstVote();
     error JkLabsCanOnlyCancelAfterDelay();
     error CreatorCannotWithdrawIfJkLabsCanceled();
 
@@ -196,7 +196,7 @@ contract RewardsModule {
     function cancel() public {
         if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
 
-        if ((msg.sender == creator) && (underlyingContest.state() != Governor.ContestState.Queued)) revert CreatorCanOnlyCancelWhenQueued();
+        if ((msg.sender == creator) && (underlyingContest.totalVotesCast() != 0)) revert CreatorCanOnlyCancelBeforeFirstVote();
         if (msg.sender == JK_LABS_ADDRESS) {
             if (block.timestamp < underlyingContest.contestDeadline() + JK_LABS_CANCEL_DELAY) revert JkLabsCanOnlyCancelAfterDelay();
             canceledByJkLabs = true;

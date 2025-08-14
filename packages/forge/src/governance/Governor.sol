@@ -175,7 +175,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error CannotSetWhenCompletedOrCanceled();
 
     error OnlyCreatorOrJkLabsCanCancel();
-    error CanOnlyCancelWhenQueued();
+    error CanOnlyCancelBeforeFirstVote();
     error ContestAlreadyCanceled();
 
     error CannotUpdateWhenCompletedOrCanceled();
@@ -328,6 +328,11 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         prompt = newPrompt;
         return newPrompt;
     }
+
+    /**
+     * @dev Returns true if totalVotesCast is zero.
+     */
+    function isTotalVotesCastZero() public virtual returns (bool totalVotesCastZero);
 
     /**
      * @dev Remove deleted proposalIds from forVotesToProposalIds and decrement copy counts of the forVotes of proposalIds.
@@ -543,8 +548,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     function cancel() public {
         if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
 
-        if (state() != ContestState.Queued) {
-            revert CanOnlyCancelWhenQueued();
+        if (isTotalVotesCastZero()) {
+            revert CanOnlyCancelBeforeFirstVote();
         }
 
         canceled = true;
