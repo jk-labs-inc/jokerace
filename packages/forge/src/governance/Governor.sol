@@ -332,7 +332,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     /**
      * @dev Returns true if totalVotesCast is zero.
      */
-    function isTotalVotesCastZero() public virtual returns (bool totalVotesCastZero);
+    function totalVotesCastIsZero() public virtual returns (bool totalVotesCastZero);
 
     /**
      * @dev Remove deleted proposalIds from forVotesToProposalIds and decrement copy counts of the forVotes of proposalIds.
@@ -549,7 +549,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
         if (canceled) revert ContestAlreadyCanceled();
 
-        if (isTotalVotesCastZero() != true) {
+        if (totalVotesCastIsZero() != true) {
             revert CanOnlyCancelBeforeFirstVote();
         }
 
