@@ -267,7 +267,7 @@ contract VoterRewardsModuleTest is Test {
 
     // WITHDRAWALS
 
-    // Only the creator can withdraw, and they can do so at any time
+    // The creator can only withdraw from a contest that they canceled (as opposed to jk labs) and a contest can only be canceled by the creator in the entry period
     function testCreatorWithdrawNative() public {
         vm.warp(1681650001);
         vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to be withdrawn
@@ -279,7 +279,7 @@ contract VoterRewardsModuleTest is Test {
         assertEq(CREATOR_ADDRESS_1.balance, 100);
     }
 
-    // Only the creator can withdraw, and they can do so at any time
+    // The creator can only withdraw from a contest that they canceled (as opposed to jk labs) and a contest can only be canceled by the creator in the entry period
     function testCreatorWithdrawERC20() public {
         vm.warp(1681650001);
         vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to be withdrawn
@@ -289,6 +289,17 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         assertEq(CREATOR_ADDRESS_1.balance, 100);
+    }
+
+    function testCreatorWithdrawAfterJkLabsCancel() public {
+        vm.warp(voterRewardsModule.underlyingContest().contestDeadline() + 604800);
+
+        vm.prank(JK_LABS_ADDRESS);
+        voterRewardsModule.cancel();
+
+        vm.startPrank(CREATOR_ADDRESS_1);
+        vm.expectRevert(abi.encodeWithSelector(VoterRewardsModule.CreatorCannotWithdrawIfJkLabsCanceled.selector));
+        voterRewardsModule.withdrawRewards();
     }
 
     /////////////////////////////

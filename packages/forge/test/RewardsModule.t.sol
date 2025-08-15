@@ -296,6 +296,17 @@ contract RewardsModuleTest is Test {
         assertEq(CREATOR_ADDRESS_1.balance, 100);
     }
 
+    function testCreatorWithdrawAfterJkLabsCancel() public {
+        vm.warp(rewardsModulePaysAuthor.underlyingContest().contestDeadline() + 604800);
+
+        vm.prank(JK_LABS_ADDRESS);
+        rewardsModulePaysAuthor.cancel();
+
+        vm.startPrank(CREATOR_ADDRESS_1);
+        vm.expectRevert(abi.encodeWithSelector(RewardsModule.CreatorCannotWithdrawIfJkLabsCanceled.selector));
+        rewardsModulePaysAuthor.withdrawRewards();
+    }
+
     /////////////////////////////
 
     // REGULAR RELEASES
