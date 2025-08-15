@@ -73,6 +73,7 @@ import VotingPriceCurvesContract from "@contracts/bytecodeAndAbi/Contest.5.7.vot
 import AddModuleTrackingContract from "@contracts/bytecodeAndAbi/Contest.5.8.addModuleTracking.sol/Contest.json";
 import CalcCorrectMinuteContract from "@contracts/bytecodeAndAbi/Contest.5.9.calcCorrectMinute.sol/Contest.json";
 import OnlyDeleteInEntryContract from "@contracts/bytecodeAndAbi/Contest.5.10.onlyDeleteInEntry.sol/Contest.json";
+import AntiRugContract from "@contracts/bytecodeAndAbi/Contest.5.11.antiRug.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, id } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -88,7 +89,9 @@ export async function getContestContractVersion(address: string, chainId: number
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
     const defaultReturn = { abi: null, version: "unknown" };
-    if (version === "5.10") {
+    if (version === "5.11") {
+      return { abi: AntiRugContract.abi, version };
+    } else if (version === "5.10") {
       return { abi: OnlyDeleteInEntryContract.abi, version };
     } else if (version === "5.9") {
       return { abi: CalcCorrectMinuteContract.abi, version };

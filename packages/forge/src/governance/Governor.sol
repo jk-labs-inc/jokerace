@@ -108,7 +108,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "5.10"; // Private as to not clutter the ABI.
+    string private constant VERSION = "5.11"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -171,11 +171,11 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error OnlyCreatorOrEntrantCanDelete();
     error OnlyCreatorCanSetName();
     error OnlyCreatorCanSetPrompt();
-    error CanOnlyDeleteInEntryPeriod();
+    error CanOnlyDeleteWhenQueued();
     error CannotSetWhenCompletedOrCanceled();
 
     error OnlyCreatorOrJkLabsCanCancel();
-    error CannotCancelWhenCompletedOrCanceled();
+    error CanOnlyCancelBeforeFirstVote();
     error ContestAlreadyCanceled();
 
     error CannotUpdateWhenCompletedOrCanceled();
@@ -328,6 +328,11 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         prompt = newPrompt;
         return newPrompt;
     }
+
+    /**
+     * @dev Returns true if totalVotesCast is zero.
+     */
+    function totalVotesCastIsZero() public virtual returns (bool totalVotesCastZero);
 
     /**
      * @dev Remove deleted proposalIds from forVotesToProposalIds and decrement copy counts of the forVotes of proposalIds.
@@ -509,7 +514,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      */
     function deleteProposals(uint256[] calldata proposalIdsToDelete) public {
         if (state() != ContestState.Queued) {
-            revert CanOnlyDeleteInEntryPeriod();
+            revert CanOnlyDeleteWhenQueued();
         }
 
         for (uint256 index = 0; index < proposalIdsToDelete.length; index++) {
@@ -542,9 +547,10 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      */
     function cancel() public {
         if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
+        if (canceled) revert ContestAlreadyCanceled();
 
-        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
-            revert CannotCancelWhenCompletedOrCanceled();
+        if (totalVotesCastIsZero() != true) {
+            revert CanOnlyCancelBeforeFirstVote();
         }
 
         canceled = true;
@@ -612,28 +618,6 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         emit VoteCast(account, proposalId, numVotes);
 
         return addressTotalVotes[account];
-    }
-
-    /**
-     * ONLY FOR USE IN EMERGENCIES, if you change this users will not be able to play in your contest on the JokeRace frontend.
-     */
-    function setSubmissionMerkleRoot(bytes32 newSubmissionMerkleRoot) public {
-        if (msg.sender != creator) revert OnlyCreatorCanAmend();
-        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
-            revert CannotUpdateWhenCompletedOrCanceled();
-        }
-        submissionMerkleRoot = newSubmissionMerkleRoot;
-    }
-
-    /**
-     * ONLY FOR USE IN EMERGENCIES, if you change this users will not be able to play in your contest on the JokeRace frontend.
-     */
-    function setVotingMerkleRoot(bytes32 newVotingMerkleRoot) public {
-        if (msg.sender != creator) revert OnlyCreatorCanAmend();
-        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
-            revert CannotUpdateWhenCompletedOrCanceled();
-        }
-        votingMerkleRoot = newVotingMerkleRoot;
     }
 
     function setCreatorSplitDestination(address newCreatorSplitDestination) public {
