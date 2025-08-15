@@ -48,8 +48,8 @@ contract VoterRewardsModule {
     uint256[] public payees;
     string public constant MODULE_TYPE = "VOTER_REWARDS";
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
-    uint256 JK_LABS_CANCEL_DELAY = 604800; // One week
-    string private constant VERSION = "5.11"; // Private as to not clutter the ABI
+    uint256 public constant JK_LABS_CANCEL_DELAY = 604800; // One week
+    string private constant VERSION = "5.12"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;
