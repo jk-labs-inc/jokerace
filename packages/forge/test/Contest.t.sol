@@ -377,6 +377,8 @@ contract ContestTest is Test {
         uint256 totalVotes = contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
 
         vm.stopPrank();
+        vm.prank(CREATOR_ADDRESS_1);
+        contest.cancel();
 
         assertEq(totalVotes, 10 ether);
     }
