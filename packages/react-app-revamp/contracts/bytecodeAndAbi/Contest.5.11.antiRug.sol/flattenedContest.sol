@@ -5115,7 +5115,7 @@ using {
 /// @dev The result is rounded toward zero.
 /// @param x The UD60x18 number to convert.
 /// @return result The same number in basic integer form.
-function convert_1(UD60x18 x) pure returns (uint256 result) {
+function convert_0(UD60x18 x) pure returns (uint256 result) {
     result = UD60x18.unwrap(x) / uUNIT_3;
 }
 
@@ -5126,7 +5126,7 @@ function convert_1(UD60x18 x) pure returns (uint256 result) {
 ///
 /// @param x The basic integer to convert.
 /// @param result The same number converted to UD60x18.
-function convert_0(uint256 x) pure returns (UD60x18 result) {
+function convert_1(uint256 x) pure returns (UD60x18 result) {
     if (x > uMAX_UD60x18 / uUNIT_3) {
         revert PRBMath_UD60x18_Convert_Overflow(x);
     }
@@ -6011,23 +6011,138 @@ abstract contract GovernorCountingSimple is Governor {
     }
 }
 
-// src/modules/VoterRewardsModule.sol
+// src/governance/extensions/GovernorEngagement.sol
+
+/**
+ * @dev Extension of {Governor} for engagement features.
+ */
+abstract contract GovernorEngagement is Governor {
+    struct CommentCore {
+        address author;
+        uint256 timestamp;
+        uint256 proposalId;
+        string commentContent;
+    }
+
+    event CommentCreated(uint256 commentId);
+    event CommentsDeleted(uint256[] commentIds);
+
+    uint256[] public commentIds;
+    uint256[] public deletedCommentIds;
+    mapping(uint256 => CommentCore) public comments;
+    mapping(uint256 => uint256[]) public proposalComments;
+    mapping(uint256 => bool) public commentIsDeleted;
+
+    error OnlyCreatorOrAuthorCanDeleteComments(uint256 failedToDeleteCommentId);
+    error CannotCommentWhenCompletedOrCanceled();
+    error CannotDeleteWhenCompletedOrCanceled();
+
+    /**
+     * @dev Hashing function used to build the comment id from the comment details.
+     */
+    function hashComment(CommentCore memory commentObj) public pure returns (uint256) {
+        return uint256(keccak256(abi.encode(commentObj)));
+    }
+
+    /**
+     * @dev Return all commentIds.
+     */
+    function getAllCommentIds() public view returns (uint256[] memory) {
+        return commentIds;
+    }
+
+    /**
+     * @dev Return all deleted commentIds.
+     */
+    function getAllDeletedCommentIds() public view returns (uint256[] memory) {
+        return deletedCommentIds;
+    }
+
+    /**
+     * @dev Return a comment object.
+     */
+    function getComment(uint256 commentId) public view returns (CommentCore memory) {
+        return comments[commentId];
+    }
+
+    /**
+     * @dev Return the array of commentIds on a given proposalId.
+     */
+    function getProposalComments(uint256 proposalId) public view returns (uint256[] memory) {
+        return proposalComments[proposalId];
+    }
+
+    /**
+     * @dev Comment on a proposal.
+     *
+     * Emits a {CommentCreated} event.
+     */
+    function comment(uint256 proposalId, string memory commentContent) public returns (uint256) {
+        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
+            revert CannotCommentWhenCompletedOrCanceled();
+        }
+
+        CommentCore memory commentObject = CommentCore({
+            author: msg.sender,
+            timestamp: block.timestamp,
+            proposalId: proposalId,
+            commentContent: commentContent
+        });
+        uint256 commentId = hashComment(commentObject);
+
+        commentIds.push(commentId);
+        comments[commentId] = commentObject;
+        proposalComments[proposalId].push(commentId);
+
+        emit CommentCreated(commentId);
+
+        return commentId;
+    }
+
+    /**
+     * @dev Delete comments.
+     *
+     * Emits a {CommentsDeleted} event.
+     */
+    function deleteComments(uint256[] memory commentIdsParam) public {
+        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
+            revert CannotDeleteWhenCompletedOrCanceled();
+        }
+
+        uint256 commentIdsParamMemVar = commentIdsParam.length;
+
+        for (uint256 index = 0; index < commentIdsParamMemVar; index++) {
+            uint256 currentCommentId = commentIdsParam[index];
+
+            if ((msg.sender != creator) && (msg.sender != comments[currentCommentId].author)) {
+                revert OnlyCreatorOrAuthorCanDeleteComments(currentCommentId);
+            }
+
+            if (!commentIsDeleted[currentCommentId]) {
+                commentIsDeleted[currentCommentId] = true;
+                deletedCommentIds.push(currentCommentId);
+            }
+        }
+
+        emit CommentsDeleted(commentIdsParam);
+    }
+}
+
+// src/modules/RewardsModule.sol
 
 // Forked from OpenZeppelin Contracts (v4.7.0) (finance/PaymentSplitter.sol)
 
 /**
- * @title VoterRewardsModule
+ * @title RewardsModule
  * @dev This contract allows to split Ether payments among a group of accounts. The sender does not need to be aware
  * that the Ether will be split in this way, since it is handled transparently by the contract.
- *
- * In this contract, rewards are sent to voters for a given ranking based on their proportionate vote on that ranking.
  *
  * The split can be in equal parts or in any other arbitrary proportion. The way this is specified is by assigning each
  * account to a number of shares. Of all the Ether that this contract receives, each account will then be able to claim
  * an amount proportional to the percentage of total shares they were assigned. The distribution of shares is set at the
  * time of contract deployment and can't be updated thereafter.
  *
- * `VoterRewardsModule` follows a _pull payment_ model. This means that payments are not automatically forwarded to the
+ * `RewardsModule` follows a _pull payment_ model. This means that payments are not automatically forwarded to the
  * accounts but kept in this contract, and the actual transfer is triggered as a separate step by calling the {release}
  * function.
  *
@@ -6035,33 +6150,32 @@ abstract contract GovernorCountingSimple is Governor {
  * tokens that apply fees during transfers, are likely to not be supported as expected. If in doubt, we encourage you
  * to run tests before sending real value to this contract.
  */
-contract VoterRewardsModule {
+contract RewardsModule {
     event PayeeAdded(uint256 ranking, uint256 shares);
     event PaymentReleased(address to, uint256 amount);
     event ERC20PaymentReleased(IERC20 indexed token, address to, uint256 amount);
     event PaymentReceived(address from, uint256 amount);
     event RewardWithdrawn(address by, uint256 amount);
     event ERC20RewardWithdrawn(IERC20 indexed token, address by, uint256 amount);
-    event JokeraceVoterRewardsModuleCreated(string version, address underlyingContest);
+    event JokeraceRewardsModuleCreated(string version, address underlyingContest);
 
     uint256 public totalShares;
     uint256 public totalReleased;
 
     mapping(uint256 => uint256) public shares; // Getter for the amount of shares held by a ranking.
     mapping(uint256 => uint256) public released; // Getter for the amount of Ether already released to a ranking.
-    mapping(IERC20 => uint256) public erc20TotalReleased; // Getter for the total amount of ERC20 already released.
-    mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released; // Getter for the amount of ERC20 already released to a ranking.
-    mapping(address => mapping(uint256 => uint256)) public releasedToVoter; // Getter for the amount of Ether already released to a ranking.
-    mapping(IERC20 => mapping(address => mapping(uint256 => uint256))) public erc20ReleasedToVoter; // Getter for the amount of ERC20 already released to a ranking.
-
     uint256[] public payees;
-    string public constant MODULE_TYPE = "VOTER_REWARDS";
+    string public constant MODULE_TYPE = "AUTHOR_REWARDS";
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 JK_LABS_CANCEL_DELAY = 604800; // One week
     string private constant VERSION = "5.11"; // Private as to not clutter the ABI
 
+    mapping(IERC20 => uint256) public erc20TotalReleased;
+    mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released;
+
     GovernorCountingSimple public underlyingContest;
     address public creator;
+    bool public paysOutTarget; // If true, pay out target address; if false, pay out proposal author.
     bool public canceled; // A rewards module must be canceled in order to withdraw funds, and once canceled it can no longer release funds, only withdraw
     bool public canceledByJkLabs; // Set to true if jk labs is who cancels the rewards module
 
@@ -6088,15 +6202,18 @@ contract VoterRewardsModule {
     error CreatorCannotWithdrawIfJkLabsCanceled();
 
     /**
-     * @dev Creates an instance of `VoterRewardsModule` where each ranking in `payees` is assigned the number of shares at
+     * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
      * the matching position in the `shares` array.
      *
      * All rankings in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
      * duplicates in `payees`.
      */
-    constructor(uint256[] memory payees_, uint256[] memory shares_, GovernorCountingSimple underlyingContest_)
-        payable
-    {
+    constructor(
+        uint256[] memory payees_,
+        uint256[] memory shares_,
+        GovernorCountingSimple underlyingContest_,
+        bool paysOutTarget_
+    ) payable {
         if (payees_.length != shares_.length) revert PayeesSharesLengthMismatch();
         if (payees_.length == 0) revert MustHaveAtLeastOnePayee();
 
@@ -6106,9 +6223,10 @@ contract VoterRewardsModule {
 
         if (totalShares == 0) revert TotalSharesCannotBeZero();
 
+        paysOutTarget = paysOutTarget_;
         underlyingContest = underlyingContest_;
         creator = msg.sender;
-        emit JokeraceVoterRewardsModuleCreated(VERSION, address(underlyingContest)); // emit upon creation to be able to easily find jokeraces on a chain
+        emit JokeraceRewardsModuleCreated(VERSION, address(underlyingContest)); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
     /**
@@ -6159,25 +6277,6 @@ contract VoterRewardsModule {
     }
 
     /**
-     * @dev Getter for the amount of a voter's releasable Ether for a given payee.
-     */
-    function releasableToVoter(address voter, uint256 ranking) public view returns (uint256) {
-        uint256 totalReceived = address(this).balance + totalReleased;
-        uint256 totalReceivedForRanking = (totalReceived * shares[ranking]) / totalShares;
-        return _pendingVoterPayment(voter, ranking, totalReceivedForRanking, releasedToVoter[voter][ranking]);
-    }
-
-    /**
-     * @dev Getter for the amount of a voter's releasable `token` tokens for a given payee. `token` should be the address     * of an IERC20 contract.
-     */
-    function releasableToVoter(IERC20 token, address voter, uint256 ranking) public view returns (uint256) {
-        uint256 totalReceived = token.balanceOf(address(this)) + erc20TotalReleased[token];
-        uint256 totalReceivedForRanking = (totalReceived * shares[ranking]) / totalShares;
-        return
-            _pendingVoterPayment(voter, ranking, totalReceivedForRanking, erc20ReleasedToVoter[token][voter][ranking]);
-    }
-
-    /**
      * @dev Run release checks.
      */
     function runReleaseChecks(uint256 ranking) public view {
@@ -6186,6 +6285,17 @@ contract VoterRewardsModule {
         if (ranking == 0) revert PayoutRankCannotBeZero();
         if (shares[ranking] == 0) revert RankingHasNoShares();
         if (canceled == true) revert CannotReleaseCanceledModule();
+    }
+
+    /**
+     * @dev Return address to pay out for a given ranking.
+     */
+    function getAddressToPayOut(uint256 ranking) public view returns (address) {
+        uint256 proposalIdOfRanking = getProposalIdOfRanking(ranking);
+        if (proposalIdOfRanking == 0) return creator;
+
+        Governor.ProposalCore memory proposalAtRanking = underlyingContest.getProposal(proposalIdOfRanking);
+        return paysOutTarget ? proposalAtRanking.targetMetadata.targetAddress : proposalAtRanking.author;
     }
 
     /**
@@ -6231,11 +6341,10 @@ contract VoterRewardsModule {
      * @dev Triggers a transfer to `ranking` of the amount of Ether they are owed, according to their percentage of the
      * total shares and their previous withdrawals.
      */
-    function release(address voter, uint256 ranking) public {
+    function release(uint256 ranking) public {
         runReleaseChecks(ranking);
 
-        uint256 proposalIdOfRanking = getProposalIdOfRanking(ranking); // 0 if tied
-        uint256 payment = proposalIdOfRanking == 0 ? releasable(ranking) : releasableToVoter(voter, ranking); // if this rank is tied, pay out all of the rank's rewards to the creator
+        uint256 payment = releasable(ranking);
 
         if (payment == 0) revert AccountNotDueNativePayment();
 
@@ -6246,15 +6355,7 @@ contract VoterRewardsModule {
             released[ranking] += payment;
         }
 
-        address payable addressToPayOut;
-
-        if (proposalIdOfRanking != 0) {
-            // if the ranking is not tied, account for that we're paying out for a specific voter
-            releasedToVoter[voter][ranking] += payment;
-            addressToPayOut = payable(voter);
-        } else {
-            addressToPayOut = payable(creator);
-        }
+        address payable addressToPayOut = payable(getAddressToPayOut(ranking));
 
         if (addressToPayOut == address(0)) revert CannotPayOutToZeroAddress();
 
@@ -6267,12 +6368,10 @@ contract VoterRewardsModule {
      * percentage of the total shares and their previous withdrawals. `token` must be the address of an IERC20
      * contract.
      */
-    function release(IERC20 token, address voter, uint256 ranking) public {
+    function release(IERC20 token, uint256 ranking) public {
         runReleaseChecks(ranking);
 
-        uint256 proposalIdOfRanking = getProposalIdOfRanking(ranking); // 0 if tied
-        uint256 payment =
-            proposalIdOfRanking == 0 ? releasable(token, ranking) : releasableToVoter(token, voter, ranking); // if this rank is tied, pay out all of the rank's rewards to the creator
+        uint256 payment = releasable(token, ranking);
 
         if (payment == 0) revert AccountNotDueERC20Payment();
 
@@ -6283,15 +6382,7 @@ contract VoterRewardsModule {
             erc20Released[token][ranking] += payment;
         }
 
-        address payable addressToPayOut;
-
-        if (proposalIdOfRanking != 0) {
-            // if the ranking is not tied, account for that we're voter
-            erc20ReleasedToVoter[token][voter][ranking] += payment;
-            addressToPayOut = payable(voter);
-        } else {
-            addressToPayOut = payable(creator);
-        }
+        address payable addressToPayOut = payable(getAddressToPayOut(ranking));
 
         if (addressToPayOut == address(0)) revert CannotPayOutToZeroAddress();
 
@@ -6332,21 +6423,6 @@ contract VoterRewardsModule {
     }
 
     /**
-     * @dev internal logic for computing the pending payment of a voter for a given `ranking` given the token historical
-     * balances and already released amounts.
-     */
-    function _pendingVoterPayment(
-        address voter,
-        uint256 ranking,
-        uint256 totalReceivedForRanking,
-        uint256 alreadyReleasedForRanking
-    ) private view returns (uint256) {
-        uint256 proposalIdForRanking = getProposalIdOfRanking(ranking);
-        return (totalReceivedForRanking * underlyingContest.proposalAddressVotes(proposalIdForRanking, voter))
-            / underlyingContest.proposalVotes(proposalIdForRanking) - alreadyReleasedForRanking;
-    }
-
-    /**
      * @dev Add a new payee to the contract.
      * @param ranking The ranking of the payee to add.
      * @param shares_ The number of shares owned by the payee.
@@ -6360,6 +6436,65 @@ contract VoterRewardsModule {
         shares[ranking] = shares_;
         totalShares = totalShares + shares_;
         emit PayeeAdded(ranking, shares_);
+    }
+}
+
+// src/governance/extensions/GovernorModuleRegistry.sol
+
+/**
+ * @dev Extension of {Governor} for module management.
+ */
+abstract contract GovernorModuleRegistry is Governor {
+    event OfficialRewardsModuleSet(address oldOfficialRewardsModule, address newOfficialRewardsModule);
+
+    address public officialRewardsModule;
+
+    error OnlyCreatorCanSetRewardsModule();
+    error OfficialRewardsModuleMustPointToThisContest();
+
+    /**
+     * @dev Get the official rewards module contract for this contest (effectively reverse record).
+     */
+    function setOfficialRewardsModule(address officialRewardsModule_) public {
+        if (msg.sender != creator) revert OnlyCreatorCanSetRewardsModule();
+        if (address(RewardsModule(payable(officialRewardsModule_)).underlyingContest()) != address(this)) {
+            revert OfficialRewardsModuleMustPointToThisContest();
+        }
+        address oldOfficialRewardsModule = officialRewardsModule;
+        officialRewardsModule = officialRewardsModule_;
+        emit OfficialRewardsModuleSet(oldOfficialRewardsModule, officialRewardsModule_);
+    }
+}
+
+// src/Contest.sol
+
+contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEngagement {
+    uint256 public constant SECONDS_IN_WEEK = 604800;
+
+    error PayPerVoteMustBeEnabledForAnyoneCanVote();
+    error PeriodsCannotBeMoreThanAWeek();
+
+    constructor(
+        string memory _name,
+        string memory _prompt,
+        bytes32 _submissionMerkleRoot,
+        bytes32 _votingMerkleRoot,
+        ConstructorArgs memory _constructorArgs
+    )
+        Governor(_name, _prompt, _constructorArgs)
+        GovernorSorting(_constructorArgs.intConstructorArgs.sortingEnabled, _constructorArgs.intConstructorArgs.rankLimit)
+        GovernorMerkleVotes(_submissionMerkleRoot, _votingMerkleRoot)
+    {
+        if (_votingMerkleRoot == 0 && _constructorArgs.intConstructorArgs.payPerVote == 0) {
+            revert PayPerVoteMustBeEnabledForAnyoneCanVote();
+        }
+
+        if (
+            (_constructorArgs.intConstructorArgs.votingDelay > SECONDS_IN_WEEK)
+                || (_constructorArgs.intConstructorArgs.votingPeriod > SECONDS_IN_WEEK)
+        ) {
+            revert PeriodsCannotBeMoreThanAWeek();
+        }
     }
 }
 

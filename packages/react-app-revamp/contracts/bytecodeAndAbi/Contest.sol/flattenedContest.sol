@@ -5115,7 +5115,7 @@ using {
 /// @dev The result is rounded toward zero.
 /// @param x The UD60x18 number to convert.
 /// @return result The same number in basic integer form.
-function convert_0(UD60x18 x) pure returns (uint256 result) {
+function convert_1(UD60x18 x) pure returns (uint256 result) {
     result = UD60x18.unwrap(x) / uUNIT_3;
 }
 
@@ -5126,7 +5126,7 @@ function convert_0(UD60x18 x) pure returns (uint256 result) {
 ///
 /// @param x The basic integer to convert.
 /// @param result The same number converted to UD60x18.
-function convert_1(uint256 x) pure returns (UD60x18 result) {
+function convert_0(uint256 x) pure returns (UD60x18 result) {
     if (x > uMAX_UD60x18 / uUNIT_3) {
         revert PRBMath_UD60x18_Convert_Overflow(x);
     }
@@ -5259,7 +5259,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "5.10"; // Private as to not clutter the ABI.
+    string private constant VERSION = "5.11"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -5322,11 +5322,11 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error OnlyCreatorOrEntrantCanDelete();
     error OnlyCreatorCanSetName();
     error OnlyCreatorCanSetPrompt();
-    error CanOnlyDeleteInEntryPeriod();
+    error CanOnlyDeleteWhenQueued();
     error CannotSetWhenCompletedOrCanceled();
 
     error OnlyCreatorOrJkLabsCanCancel();
-    error CannotCancelWhenCompletedOrCanceled();
+    error CanOnlyCancelBeforeFirstVote();
     error ContestAlreadyCanceled();
 
     error CannotUpdateWhenCompletedOrCanceled();
@@ -5479,6 +5479,11 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         prompt = newPrompt;
         return newPrompt;
     }
+
+    /**
+     * @dev Returns true if totalVotesCast is zero.
+     */
+    function totalVotesCastIsZero() public virtual returns (bool totalVotesCastZero);
 
     /**
      * @dev Remove deleted proposalIds from forVotesToProposalIds and decrement copy counts of the forVotes of proposalIds.
@@ -5660,7 +5665,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      */
     function deleteProposals(uint256[] calldata proposalIdsToDelete) public {
         if (state() != ContestState.Queued) {
-            revert CanOnlyDeleteInEntryPeriod();
+            revert CanOnlyDeleteWhenQueued();
         }
 
         for (uint256 index = 0; index < proposalIdsToDelete.length; index++) {
@@ -5693,9 +5698,10 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      */
     function cancel() public {
         if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
+        if (canceled) revert ContestAlreadyCanceled();
 
-        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
-            revert CannotCancelWhenCompletedOrCanceled();
+        if (totalVotesCastIsZero() != true) {
+            revert CanOnlyCancelBeforeFirstVote();
         }
 
         canceled = true;
@@ -5763,28 +5769,6 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         emit VoteCast(account, proposalId, numVotes);
 
         return addressTotalVotes[account];
-    }
-
-    /**
-     * ONLY FOR USE IN EMERGENCIES, if you change this users will not be able to play in your contest on the JokeRace frontend.
-     */
-    function setSubmissionMerkleRoot(bytes32 newSubmissionMerkleRoot) public {
-        if (msg.sender != creator) revert OnlyCreatorCanAmend();
-        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
-            revert CannotUpdateWhenCompletedOrCanceled();
-        }
-        submissionMerkleRoot = newSubmissionMerkleRoot;
-    }
-
-    /**
-     * ONLY FOR USE IN EMERGENCIES, if you change this users will not be able to play in your contest on the JokeRace frontend.
-     */
-    function setVotingMerkleRoot(bytes32 newVotingMerkleRoot) public {
-        if (msg.sender != creator) revert OnlyCreatorCanAmend();
-        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
-            revert CannotUpdateWhenCompletedOrCanceled();
-        }
-        votingMerkleRoot = newVotingMerkleRoot;
     }
 
     function setCreatorSplitDestination(address newCreatorSplitDestination) public {
@@ -5858,6 +5842,13 @@ abstract contract GovernorCountingSimple is Governor {
      */
     function contestAddressTotalVotesCast(address userAddress) public view returns (uint256 userTotalVotesCast) {
         return addressTotalCastVoteCount[userAddress];
+    }
+
+    /**
+     * @dev Returns true if totalVotesCast is zero.
+     */
+    function totalVotesCastIsZero() public view override returns (bool totalVotesCastZero) {
+        return totalVotesCast == 0;
     }
 
     /**
@@ -6175,7 +6166,9 @@ contract RewardsModule {
     mapping(uint256 => uint256) public released; // Getter for the amount of Ether already released to a ranking.
     uint256[] public payees;
     string public constant MODULE_TYPE = "AUTHOR_REWARDS";
-    string private constant VERSION = "5.10"; // Private as to not clutter the ABI
+    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
+    uint256 JK_LABS_CANCEL_DELAY = 604800; // One week
+    string private constant VERSION = "5.11"; // Private as to not clutter the ABI
 
     mapping(IERC20 => uint256) public erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released;
@@ -6184,6 +6177,7 @@ contract RewardsModule {
     address public creator;
     bool public paysOutTarget; // If true, pay out target address; if false, pay out proposal author.
     bool public canceled; // A rewards module must be canceled in order to withdraw funds, and once canceled it can no longer release funds, only withdraw
+    bool public canceledByJkLabs; // Set to true if jk labs is who cancels the rewards module
 
     error PayeesSharesLengthMismatch();
     error MustHaveAtLeastOnePayee();
@@ -6195,13 +6189,17 @@ contract RewardsModule {
     error AccountNotDueNativePayment();
     error CannotPayOutToZeroAddress();
     error AccountNotDueERC20Payment();
-    error OnlyCreatorCanCancel();
-    error OnlyCreatorCanWithdraw();
+    error OnlyCreatorOrJkLabsCanCancel();
+    error ModuleAlreadyCanceled();
+    error OnlyCreatorOrJkLabsCanWithdraw();
     error RankingCannotBeZero();
     error SharesCannotBeZero();
     error AccountAlreadyHasShares();
     error CannotReleaseCanceledModule();
     error MustBeCanceledToWithdraw();
+    error CreatorCanOnlyCancelBeforeFirstVote();
+    error JkLabsCanOnlyCancelAfterDelay();
+    error CreatorCannotWithdrawIfJkLabsCanceled();
 
     /**
      * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
@@ -6323,7 +6321,19 @@ contract RewardsModule {
      * @dev Cancels the rewards module.
      */
     function cancel() public {
-        if (msg.sender != creator) revert OnlyCreatorCanCancel();
+        if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
+        if (canceled) revert ModuleAlreadyCanceled();
+
+        if ((msg.sender == creator) && (underlyingContest.totalVotesCast() != 0)) {
+            revert CreatorCanOnlyCancelBeforeFirstVote();
+        }
+        if (msg.sender == JK_LABS_ADDRESS) {
+            if (block.timestamp < underlyingContest.contestDeadline() + JK_LABS_CANCEL_DELAY) {
+                revert JkLabsCanOnlyCancelAfterDelay();
+            }
+            canceledByJkLabs = true;
+        }
+
         canceled = true;
     }
 
@@ -6381,19 +6391,23 @@ contract RewardsModule {
     }
 
     function withdrawRewards() public {
-        if (msg.sender != creator) revert OnlyCreatorCanWithdraw();
+        if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanWithdraw();
         if (canceled != true) revert MustBeCanceledToWithdraw();
 
-        emit RewardWithdrawn(creator, address(this).balance);
-        Address.sendValue(payable(creator), address(this).balance);
+        if ((msg.sender == creator) && (canceledByJkLabs)) revert CreatorCannotWithdrawIfJkLabsCanceled(); // if jk labs is having to cancel a module in an emergency situation to rescue funds, jk labs is who is going to be the ones resolving it
+
+        emit RewardWithdrawn(msg.sender, address(this).balance);
+        Address.sendValue(payable(msg.sender), address(this).balance);
     }
 
     function withdrawRewards(IERC20 token) public {
-        if (msg.sender != creator) revert OnlyCreatorCanWithdraw();
+        if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanWithdraw();
         if (canceled != true) revert MustBeCanceledToWithdraw();
 
-        emit ERC20RewardWithdrawn(token, creator, token.balanceOf(address(this)));
-        SafeERC20.safeTransfer(token, payable(creator), token.balanceOf(address(this)));
+        if ((msg.sender == creator) && (canceledByJkLabs)) revert CreatorCannotWithdrawIfJkLabsCanceled(); // if jk labs is having to cancel a module in an emergency situation to rescue funds, jk labs is who is going to be the ones resolving it
+
+        emit ERC20RewardWithdrawn(token, msg.sender, token.balanceOf(address(this)));
+        SafeERC20.safeTransfer(token, payable(msg.sender), token.balanceOf(address(this)));
     }
 
     /**
