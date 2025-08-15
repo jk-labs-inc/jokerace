@@ -10,8 +10,8 @@ export const zksyncEra: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: ["https://mainnet.era.zksync.io"] },
-    default: { http: ["https://mainnet.era.zksync.io"] },
+    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.zksync-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
+    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.zksync-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
   },
   blockExplorers: {
     etherscan: { name: "ZkSync Mainnet Scan", url: "https://explorer.zksync.io/" },
