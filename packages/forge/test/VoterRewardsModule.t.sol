@@ -262,7 +262,6 @@ contract VoterRewardsModuleTest is Test {
         assertEq(voterRewardsModule.canceled(), true);
     }
 
-
     /////////////////////////////
 
     // WITHDRAWALS

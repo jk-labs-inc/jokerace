@@ -260,7 +260,10 @@ contract RewardsModuleTest is Test {
     }
 
     function testJkLabsCancelAfterDelay() public {
-        vm.warp(rewardsModulePaysAuthor.underlyingContest().contestDeadline() + rewardsModulePaysAuthor.JK_LABS_CANCEL_DELAY());
+        vm.warp(
+            rewardsModulePaysAuthor.underlyingContest().contestDeadline()
+                + rewardsModulePaysAuthor.JK_LABS_CANCEL_DELAY()
+        );
 
         vm.prank(JK_LABS_ADDRESS);
         rewardsModulePaysAuthor.cancel();
@@ -297,7 +300,10 @@ contract RewardsModuleTest is Test {
     }
 
     function testCreatorWithdrawAfterJkLabsCancel() public {
-        vm.warp(rewardsModulePaysAuthor.underlyingContest().contestDeadline() + rewardsModulePaysAuthor.JK_LABS_CANCEL_DELAY());
+        vm.warp(
+            rewardsModulePaysAuthor.underlyingContest().contestDeadline()
+                + rewardsModulePaysAuthor.JK_LABS_CANCEL_DELAY()
+        );
 
         vm.prank(JK_LABS_ADDRESS);
         rewardsModulePaysAuthor.cancel();
