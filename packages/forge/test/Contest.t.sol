@@ -418,30 +418,10 @@ contract ContestTest is Test {
         assertEq(payPerVoteExpCurveContest.currentPricePerVote(), 975000000000000); // 99.6% of way through
     }
 
-    function testCreatorCancelAfterFirstVote() public {
-        vm.startPrank(PERMISSIONED_ADDRESS_1);
-
-        vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
-        vm.warp(1681660001);
-        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
-
-        vm.stopPrank();
-
-        vm.startPrank(CREATOR_ADDRESS_1);
-
-        vm.expectRevert(abi.encodeWithSelector(Governor.CanOnlyCancelBeforeFirstVote.selector));
-        contest.cancel();
-
-        vm.stopPrank();
-    }
-
     function testCreatorCancelBeforeFirstVote() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
-
         vm.warp(1681650001);
         contest.propose(firstProposalPA1, submissionProof1);
-
         vm.stopPrank();
 
         vm.prank(CREATOR_ADDRESS_1);
@@ -450,36 +430,44 @@ contract ContestTest is Test {
         assertEq(contest.canceled(), true);
     }
 
-    function testJkLabsCancelAfterFirstVote() public {
+    function testCreatorCancelAfterFirstVote() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
-
         vm.warp(1681650001);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
         vm.warp(1681660001);
         contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
-
         vm.stopPrank();
 
-        vm.startPrank(JK_LABS_ADDRESS);
-
+        vm.startPrank(CREATOR_ADDRESS_1);
         vm.expectRevert(abi.encodeWithSelector(Governor.CanOnlyCancelBeforeFirstVote.selector));
         contest.cancel();
-
         vm.stopPrank();
     }
 
     function testJkLabsCancelBeforeFirstVote() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
-
         vm.warp(1681650001);
         contest.propose(firstProposalPA1, submissionProof1);
-
         vm.stopPrank();
 
         vm.prank(JK_LABS_ADDRESS);
         contest.cancel();
 
         assertEq(contest.canceled(), true);
+    }
+
+    function testJkLabsCancelAfterFirstVote() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
+        vm.stopPrank();
+
+        vm.startPrank(JK_LABS_ADDRESS);
+        vm.expectRevert(abi.encodeWithSelector(Governor.CanOnlyCancelBeforeFirstVote.selector));
+        contest.cancel();
+        vm.stopPrank();
     }
 
     /////////////////////////////
