@@ -8136,10 +8136,10 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@5.3.12":
-  version "5.3.12"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.3.12.tgz#72e7907b839977376aa387e8fc0df42cd16d6413"
-  integrity sha512-IcnV+IMeccnnm6YhbMvorYlUz853EI443Ynof1NoN7YsiAcpaqTDsTyxDi064wc9BYBusGvqaPSVurOlcXehZg==
+"@vercel/node@5.3.13":
+  version "5.3.13"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.3.13.tgz#17ce8b90041458236b80e0651b4586c8b100d4d0"
+  integrity sha512-SPz/Om2ohJsEX1I9AqYXd0BkmhKU70Jo7d6togRczyiUax1LSYMHsPs9rlzcxfwm4vLalL+Bx+D8KSfCjNaq5w==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
