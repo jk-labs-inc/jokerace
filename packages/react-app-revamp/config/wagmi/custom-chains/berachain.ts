@@ -10,12 +10,8 @@ export const berachain: Chain = {
     symbol: "BERA",
   },
   rpcUrls: {
-    public: {
-      http: [ "https://rpc.berachain.com/" ],
-    },
-    default: {
-      http: [ "https://rpc.berachain.com/" ],
-    },
+    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.bera-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
+    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.bera-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
   },
   blockExplorers: {
     etherscan: { name: "Berachain Mainnet Scan", url: "https://berascan.com/" },

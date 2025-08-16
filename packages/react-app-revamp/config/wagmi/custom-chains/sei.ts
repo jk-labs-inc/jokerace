@@ -10,12 +10,8 @@ export const sei: Chain = {
     symbol: "SEI",
   },
   rpcUrls: {
-    public: {
-      http: ["https://evm-rpc.sei-apis.com"],
-    },
-    default: {
-      http: ["https://evm-rpc.sei-apis.com"],
-    },
+    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.sei-pacific.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
+    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.sei-pacific.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
   },
   blockExplorers: {
     etherscan: { name: "Sei Block Explorer", url: "https://seitrace.com/" },

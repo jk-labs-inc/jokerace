@@ -10,8 +10,8 @@ export const hyperliquid: Chain = {
     symbol: "HYPE",
   },
   rpcUrls: {
-    public: { http: ["https://rpc.hyperliquid.xyz/evm"] },
-    default: { http: ["https://rpc.hyperliquid.xyz/evm"] },
+    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.hype-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}/evm`] },
+    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.hype-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}/evm`] },
   },
   blockExplorers: {
     etherscan: { name: "Hyperliquid Mainnet Scan", url: "https://hyperevmscan.io/" },

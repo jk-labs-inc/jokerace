@@ -10,12 +10,8 @@ export const scroll: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: {
-      http: ["https://mainnet-rpc.scroll.io"],
-    },
-    default: {
-      http: ["https://mainnet-rpc.scroll.io"],
-    },
+    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.scroll-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
+    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.scroll-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
   },
   blockExplorers: {
     etherscan: { name: "Scroll Block Explorer", url: "https://scrollscan.com/" },
