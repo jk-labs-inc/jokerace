@@ -10,8 +10,8 @@ export const unichain: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: [ "https://mainnet.unichain.org/" ] },
-    default: { http: [ "https://mainnet.unichain.org/" ] },
+    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.unichain-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
+    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.unichain-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
   },
   blockExplorers: {
     etherscan: { name: "Unichain Mainnet Scan", url: "https://uniscan.xyz/" },
