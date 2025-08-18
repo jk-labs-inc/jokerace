@@ -44,7 +44,7 @@
     "@types/uuid": "10.0.0",
     "@typescript-eslint/parser": "8.39.1",
     "@vercel/node": "5.3.13",
-    "@wagmi/connectors": "5.9.3",
+    "@wagmi/connectors": "5.9.4",
     "@wagmi/core": "2.19.0",
     "autoprefixer": "10.4.21",
     "cheerio": "1.1.2",
