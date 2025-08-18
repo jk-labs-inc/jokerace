@@ -119,8 +119,7 @@ export function useDeleteProposal() {
     const canEntrantDelete = isEntrantCanDeleteVersion();
 
     return (
-      (contestStatus === ContestStatus.SubmissionOpen || contestStatus === ContestStatus.VotingOpen) &&
-      (isContestAuthor || (canEntrantDelete && isProposalAuthor))
+      contestStatus === ContestStatus.SubmissionOpen && (isContestAuthor || (canEntrantDelete && isProposalAuthor))
     );
   }
 
