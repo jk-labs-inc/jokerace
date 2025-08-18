@@ -31,7 +31,7 @@ jobs:
         run: |
           docker build \
             -t ghcr.io/jk-labs-inc/jokerace:do-container-registry registry.digitalocean.com/jokerace:do-container-registry \
-            --build-args \
+            --build-arg \
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.PROD_NEXT_PUBLIC_SUPABASE_URL }} \
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.PROD_NEXT_PUBLIC_SUPABASE_ANON_KEY }} \
             NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=${{ secrets.PROD_NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }} \
