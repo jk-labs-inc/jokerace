@@ -8,6 +8,7 @@ import { Abi } from "viem";
 import RewardsDisplay from "./components/RewardsDisplay";
 import RewardsLoader from "./components/RewardsLoader";
 import RewardsMarquee from "./components/RewardsMarquee";
+import RewardsSelfFundedMarquee from "./components/RewardsSelfFundedMarquee";
 
 interface ContestRewardsInfoProps {
   version: string;
@@ -41,7 +42,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
   if (!rewards) return null;
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2 md:gap-4">
       <RewardsMarquee moduleType={rewards.moduleType} />
       <RewardsDisplay
         rewardsModuleAddress={rewards.contractAddress as `0x${string}`}
@@ -51,6 +52,8 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
         isRewardsModuleLoading={isLoading}
         isRewardsModuleError={isError}
       />
+      {/* TODO: add conditional rendering for rewards self funded marquee */}
+      <RewardsSelfFundedMarquee />
     </div>
   );
 };
