@@ -34,7 +34,7 @@ jobs:
           push: false
           load: true
           tags: |
-            ghcr.io/jk-labs-inc/jokerace:main
+            ghcr.io/jk-labs-inc/jokerace:do-container-registry
             registry.digitalocean.com/jokerace:do-container-registry
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.PROD_NEXT_PUBLIC_SUPABASE_URL }}
