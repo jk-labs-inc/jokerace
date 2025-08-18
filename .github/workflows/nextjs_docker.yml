@@ -36,7 +36,7 @@ jobs:
           context: .
           tags: |
             ghcr.io/jk-labs-inc/jokerace:do-container-registry
-            registry.digitalocean.com/jokerace/do-container-registry
+            registry.digitalocean.com/jk-labs-inc/jokerace:do-container-registry
           outputs: type=docker,dest=/tmp/nextjs_docker_image.tar
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.PROD_NEXT_PUBLIC_SUPABASE_URL }}
@@ -111,4 +111,4 @@ jobs:
           docker image ls -a
 
       - name: Push image to DigitalOcean Container Registry
-        run: docker push registry.digitalocean.com/jokerace/do-container-registry
+        run: docker push registry.digitalocean.com/jk-labs-inc/jokerace:do-container-registry
