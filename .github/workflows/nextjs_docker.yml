@@ -29,7 +29,7 @@ jobs:
 
       - name: Build container image
         run: >
-          docker build
+          docker build .
           -t ghcr.io/jk-labs-inc/jokerace:do-container-registry registry.digitalocean.com/jokerace:do-container-registry
           --build-arg
           NEXT_PUBLIC_SUPABASE_URL=${{ secrets.PROD_NEXT_PUBLIC_SUPABASE_URL }}
@@ -49,7 +49,6 @@ jobs:
           NEXT_PUBLIC_BREVO_API_KEY=${{ secrets.PROD_NEXT_PUBLIC_BREVO_API_KEY }}
           NEXT_PUBLIC_CDP_PROJECT_ID=${{ secrets.PROD_NEXT_PUBLIC_CDP_PROJECT_ID }}
           NEXT_PUBLIC_ENVIRONMENT=${{ secrets.PROD_NEXT_PUBLIC_ENVIRONMENT }}
-          .
 
   github-push:
     needs: build-image
