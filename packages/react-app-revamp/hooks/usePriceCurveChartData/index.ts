@@ -28,13 +28,11 @@ const usePriceCurveChartData = ({
     // Find current price index based on current time
     const currentIndex = findCurrentPriceIndex(pricePoints, currentTime);
 
-    // Create sliding window of price points
+    // Create sliding window of price points (for now we will use all price points)
     const windowPricePoints = pricePoints;
 
-    // Convert to ChartDataPoint format
     const chartDataPoints = convertToChartData(windowPricePoints);
 
-    // Get current price as number
     const currentPriceValue = getCurrentPriceValue(pricePoints, currentIndex);
 
     return {

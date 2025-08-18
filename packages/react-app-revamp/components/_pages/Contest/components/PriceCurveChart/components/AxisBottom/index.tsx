@@ -19,11 +19,9 @@ const formatDateWithBoldMonthDay = (dateString: string) => {
 };
 
 const AxisBottom: React.FC<AxisBottomProps> = ({ xScale, chartHeight, data, activeDate, hoveredIndex }) => {
-  // Get first, last, and active dates
   const firstDate = data[0]?.date;
   const lastDate = data[data.length - 1]?.date;
 
-  // Determine which dates to show
   const tickValues = [data[0]?.id, data[data.length - 1]?.id].filter(Boolean);
 
   return (
