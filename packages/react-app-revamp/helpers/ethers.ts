@@ -6,7 +6,7 @@ import { type Config } from "wagmi";
 const isProduction = process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "production";
 const headers = isProduction ? { Referer: "https://jokerace.io/" } : { Referer: "" };
 
-const createJsonRpcProvider = (url: string, chainId: number, name: string, ensAddress?: string) => {
+const createJsonRpcProvider = async (url: string, chainId: number, name: string, ensAddress?: string) => {
   const request = new FetchRequest(url);
   request.setHeader("Referer", headers.Referer);
 
@@ -16,10 +16,21 @@ const createJsonRpcProvider = (url: string, chainId: number, name: string, ensAd
     ensAddress,
   };
 
-  return new JsonRpcProvider(request, network);
+  let provider;
+  try {
+    provider = new JsonRpcProvider(request, network);
+    await provider.send('eth_chainId', []);
+  } catch (e) {
+    console.log("made it");
+    if (provider) {
+      provider.destroy();
+    }
+    throw e;
+  }
+  return provider;
 };
 
-export function clientToProvider(client: Client<Transport, Chain>) {
+export async function clientToProvider(client: Client<Transport, Chain>) {
   const { chain, transport } = client;
 
   if (transport.type === "fallback") {
