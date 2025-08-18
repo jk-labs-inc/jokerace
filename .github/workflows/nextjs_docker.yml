@@ -64,7 +64,7 @@ jobs:
           path: /tmp/nextjs_docker_image.tar
 
   github-push:
-    needs: build-image
+    needs: build-and-upload-image
     runs-on: ubuntu-latest
     steps:
       - name: Log in to the Github Container Registry
@@ -89,7 +89,7 @@ jobs:
         run: docker push ghcr.io/jk-labs-inc/jokerace:do-container-registry
 
   do-push:
-    needs: build-image
+    needs: build-and-upload-image
     runs-on: ubuntu-latest
     steps:
       - name: Log in to the Digital Ocean Container Registry
