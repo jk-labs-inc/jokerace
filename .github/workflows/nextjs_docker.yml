@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-image:
+  build-and-upload-image:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -27,15 +27,17 @@ jobs:
           calculatedSha=$(git rev-parse --short ${{ github.sha }})
           echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
 
-      - name: Build Docker image and load into Docker daemon
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
-          push: false
-          load: true
           tags: |
             ghcr.io/jk-labs-inc/jokerace:do-container-registry
             registry.digitalocean.com/jokerace:do-container-registry
+          outputs: type=docker,dest=/tmp/nextjs_docker_image.tar
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.PROD_NEXT_PUBLIC_SUPABASE_URL }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.PROD_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
@@ -55,6 +57,12 @@ jobs:
             NEXT_PUBLIC_CDP_PROJECT_ID=${{ secrets.PROD_NEXT_PUBLIC_CDP_PROJECT_ID }}
             NEXT_PUBLIC_ENVIRONMENT=${{ secrets.PROD_NEXT_PUBLIC_ENVIRONMENT }}
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: nextjs_docker_image
+          path: /tmp/nextjs_docker_image.tar
+
   github-push:
     needs: build-image
     runs-on: ubuntu-latest
@@ -65,6 +73,17 @@ jobs:
           registry: https://ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: nextjs_docker_image
+          path: /tmp
+
+      - name: Load Docker image
+        run: |
+          docker load --input /tmp/nextjs_docker_image.tar
+          docker image ls -a
 
       - name: Push image to Github Container Registry
         run: docker push ghcr.io/jk-labs-inc/jokerace:do-container-registry
@@ -79,6 +98,17 @@ jobs:
           registry: registry.digitalocean.com
           username: ${{ secrets.DO_REGISTRY_EMAIL }}
           password: ${{ secrets.DO_REGISTRY_API_TOKEN }}
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: nextjs_docker_image
+          path: /tmp
+
+      - name: Load Docker image
+        run: |
+          docker load --input /tmp/nextjs_docker_image.tar
+          docker image ls -a
 
       - name: Push image to DigitalOcean Container Registry
         run: docker push registry.digitalocean.com/jokerace:do-container-registry
