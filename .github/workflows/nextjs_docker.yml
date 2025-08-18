@@ -58,7 +58,7 @@ jobs:
             NEXT_PUBLIC_ENVIRONMENT=${{ secrets.PROD_NEXT_PUBLIC_ENVIRONMENT }}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: nextjs_docker_image
           path: /tmp/nextjs_docker_image.tar
@@ -75,7 +75,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: nextjs_docker_image
           path: /tmp
@@ -100,7 +100,7 @@ jobs:
           password: ${{ secrets.DO_REGISTRY_API_TOKEN }}
 
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: nextjs_docker_image
           path: /tmp
