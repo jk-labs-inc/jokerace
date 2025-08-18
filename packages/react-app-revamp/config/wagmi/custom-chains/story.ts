@@ -10,12 +10,8 @@ export const story: Chain = {
     symbol: "IP",
   },
   rpcUrls: {
-    public: {
-      http: ["https://mainnet.storyrpc.io"],
-    },
-    default: {
-      http: ["https://mainnet.storyrpc.io"],
-    },
+    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.story-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
+    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.story-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
   },
   blockExplorers: {
     etherscan: { name: "Story Mainnet Scan", url: "https://storyscan.io/" },

@@ -10,12 +10,8 @@ export const linea: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: {
-      http: ["https://linea-mainnet.infura.io/v3"],
-    },
-    default: {
-      http: ["https://linea-mainnet.infura.io/v3"],
-    },
+    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.linea-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
+    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.linea-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
   },
   blockExplorers: {
     etherscan: { name: "Lineascan", url: "https://lineascan.build/" },
