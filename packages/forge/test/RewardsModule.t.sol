@@ -27,7 +27,8 @@ contract RewardsModuleTest is Test {
     uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
     uint256 public constant ZERO_EXPONENT_MULTIPLE = 0;
     address public constant CREATOR_SPLIT_DESTINATION = CREATOR_ADDRESS_1;
-    address public constant JK_LABS_SPLIT_DESTINATION = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
+    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
+    address public constant JK_LABS_SPLIT_DESTINATION = JK_LABS_ADDRESS;
 
     // SORTING INT PARAMS
     uint256 public constant SORTING_ENABLED = 1;
@@ -224,6 +225,51 @@ contract RewardsModuleTest is Test {
 
     /////////////////////////////
 
+    // CANCELLATIONS
+
+    function testCreatorCancelBeforeFirstVote() public {
+        vm.warp(1681650001);
+
+        vm.prank(CREATOR_ADDRESS_1);
+        rewardsModulePaysAuthor.cancel();
+
+        assertEq(rewardsModulePaysAuthor.canceled(), true);
+    }
+
+    function testCreatorCancelAfterFirstVote() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
+        vm.stopPrank();
+
+        vm.startPrank(CREATOR_ADDRESS_1);
+        vm.expectRevert(abi.encodeWithSelector(RewardsModule.CreatorCanOnlyCancelBeforeFirstVote.selector));
+        rewardsModulePaysAuthor.cancel();
+        vm.stopPrank();
+    }
+
+    function testJkLabsCancelBeforeDelay() public {
+        vm.warp(1681650001);
+
+        vm.startPrank(JK_LABS_ADDRESS);
+        vm.expectRevert(abi.encodeWithSelector(RewardsModule.JkLabsCanOnlyCancelAfterDelay.selector));
+        rewardsModulePaysAuthor.cancel();
+        vm.stopPrank();
+    }
+
+    function testJkLabsCancelAfterDelay() public {
+        vm.warp(rewardsModulePaysAuthor.underlyingContest().contestDeadline() + 604800);
+
+        vm.prank(JK_LABS_ADDRESS);
+        rewardsModulePaysAuthor.cancel();
+
+        assertEq(rewardsModulePaysAuthor.canceled(), true);
+    }
+
+    /////////////////////////////
+
     // WITHDRAWALS
 
     // The creator can only withdraw from a contest that they canceled (as opposed to jk labs) and a contest can only be canceled by the creator in the entry period
@@ -248,6 +294,17 @@ contract RewardsModuleTest is Test {
         vm.stopPrank();
 
         assertEq(CREATOR_ADDRESS_1.balance, 100);
+    }
+
+    function testCreatorWithdrawAfterJkLabsCancel() public {
+        vm.warp(rewardsModulePaysAuthor.underlyingContest().contestDeadline() + 604800);
+
+        vm.prank(JK_LABS_ADDRESS);
+        rewardsModulePaysAuthor.cancel();
+
+        vm.startPrank(CREATOR_ADDRESS_1);
+        vm.expectRevert(abi.encodeWithSelector(RewardsModule.CreatorCannotWithdrawIfJkLabsCanceled.selector));
+        rewardsModulePaysAuthor.withdrawRewards();
     }
 
     /////////////////////////////
