@@ -35,6 +35,12 @@ NEXT_PUBLIC_PARA_ENVIRONMENT=
 NEXT_PUBLIC_BREVO_API_KEY=
 ```
 
+Optional and only for Github Action docker deploy to Digital Ocean
+```
+DO_REGISTRY_EMAIL=
+DO_REGISTRY_API_TOKEN=
+```
+
 ## Getting Started
 
 First, navigate to the top directory of this repo and run the development server with
