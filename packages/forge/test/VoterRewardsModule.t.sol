@@ -254,14 +254,13 @@ contract VoterRewardsModuleTest is Test {
     }
 
     function testJkLabsCancelAfterDelay() public {
-        vm.warp(voterRewardsModule.underlyingContest().contestDeadline() + 604800);
+        vm.warp(voterRewardsModule.underlyingContest().contestDeadline() + voterRewardsModule.JK_LABS_CANCEL_DELAY());
 
         vm.prank(JK_LABS_ADDRESS);
         voterRewardsModule.cancel();
 
         assertEq(voterRewardsModule.canceled(), true);
     }
-
 
     /////////////////////////////
 
@@ -292,7 +291,7 @@ contract VoterRewardsModuleTest is Test {
     }
 
     function testCreatorWithdrawAfterJkLabsCancel() public {
-        vm.warp(voterRewardsModule.underlyingContest().contestDeadline() + 604800);
+        vm.warp(voterRewardsModule.underlyingContest().contestDeadline() + voterRewardsModule.JK_LABS_CANCEL_DELAY());
 
         vm.prank(JK_LABS_ADDRESS);
         voterRewardsModule.cancel();
