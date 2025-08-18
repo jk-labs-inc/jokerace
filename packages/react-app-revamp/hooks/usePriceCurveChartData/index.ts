@@ -10,15 +10,11 @@ export interface PriceCurveChartData {
 interface UsePriceCurveChartDataParams {
   pricePoints: PricePoint[];
   currentTime?: Date;
-  prevCount?: number;
-  nextCount?: number;
 }
 
 const usePriceCurveChartData = ({
   pricePoints,
   currentTime = new Date(),
-  prevCount = 2,
-  nextCount = 4,
 }: UsePriceCurveChartDataParams): PriceCurveChartData => {
   const chartData = useMemo(() => {
     // Handle empty or invalid data
@@ -33,7 +29,7 @@ const usePriceCurveChartData = ({
     const currentIndex = findCurrentPriceIndex(pricePoints, currentTime);
 
     // Create sliding window of price points
-    const windowPricePoints = createPriceWindow(pricePoints, currentIndex, prevCount, nextCount);
+    const windowPricePoints = pricePoints;
 
     // Convert to ChartDataPoint format
     const chartDataPoints = convertToChartData(windowPricePoints);
@@ -45,13 +41,11 @@ const usePriceCurveChartData = ({
       chartData: chartDataPoints,
       currentPrice: currentPriceValue,
     };
-  }, [pricePoints, currentTime, prevCount, nextCount]);
+  }, [pricePoints, currentTime]);
 
-  console.log({ chartData });
   return chartData;
 };
 
-// Helper functions
 const findCurrentPriceIndex = (pricePoints: PricePoint[], currentTime: Date): number => {
   const currentTimestamp = currentTime.getTime();
 
@@ -70,24 +64,6 @@ const findCurrentPriceIndex = (pricePoints: PricePoint[], currentTime: Date): nu
 
   // If current time is before all price points, return -1 (not started)
   return -1;
-};
-
-const createPriceWindow = (
-  pricePoints: PricePoint[],
-  currentIndex: number,
-  prevCount: number,
-  nextCount: number,
-): PricePoint[] => {
-  // Calculate window bounds
-  const startIndex = Math.max(0, currentIndex - prevCount);
-  const endIndex = Math.min(pricePoints.length, currentIndex + nextCount + 1);
-
-  // If voting hasn't started, show first few points
-  if (currentIndex < 0) {
-    return pricePoints.slice(0, Math.min(nextCount + 1, pricePoints.length));
-  }
-
-  return pricePoints.slice(startIndex, endIndex);
 };
 
 const convertToChartData = (pricePoints: PricePoint[]): ChartDataPoint[] => {

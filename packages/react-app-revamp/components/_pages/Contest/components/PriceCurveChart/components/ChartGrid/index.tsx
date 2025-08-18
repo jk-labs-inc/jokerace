@@ -11,20 +11,27 @@ interface ChartGridProps {
 }
 
 const ChartGrid: React.FC<ChartGridProps> = ({ innerWidth, innerHeight, yAxisTicks, yScale }) => {
-  // Create horizontal grid lines (filter out top line)
-  const horizontalGridLines = yAxisTicks
-    .filter(tick => yScale(tick) > 0)
-    .map(tick => (
-      <Line
-        key={`h-grid-${tick}`}
-        from={{ x: 0, y: yScale(tick) }}
-        to={{ x: innerWidth, y: yScale(tick) }}
-        stroke={CHART_CONFIG.colors.grid}
-        strokeWidth={1}
-      />
-    ));
+  const [minY, maxY] = yScale.domain();
+  const horizontalGridCount = 6;
+  const horizontalGridTicks = Array.from(
+    { length: horizontalGridCount + 1 },
+    (_, i) => minY + (maxY - minY) * (i / horizontalGridCount),
+  );
 
-  // Create vertical grid lines
+  const openHorizontalGridTicks = horizontalGridTicks.slice(0, -1);
+
+  const horizontalGridLines = openHorizontalGridTicks.map((tick, i) => (
+    <Line
+      key={`h-grid-${i}`}
+      from={{ x: 0, y: yScale(tick) }}
+      to={{ x: innerWidth, y: yScale(tick) }}
+      stroke={CHART_CONFIG.colors.grid}
+      strokeWidth={1}
+      width={95}
+      height={95}
+    />
+  ));
+
   const verticalGridSpacing = innerWidth / CHART_CONFIG.verticalGridSections;
   const verticalGridLines = Array.from({ length: CHART_CONFIG.verticalGridSections + 1 }, (_, i) => (
     <Line
@@ -32,7 +39,9 @@ const ChartGrid: React.FC<ChartGridProps> = ({ innerWidth, innerHeight, yAxisTic
       from={{ x: i * verticalGridSpacing, y: 0 }}
       to={{ x: i * verticalGridSpacing, y: innerHeight }}
       stroke={CHART_CONFIG.colors.grid}
-      strokeWidth={1}
+      strokeWidth={0.5}
+      width={95}
+      height={95}
     />
   ));
 

@@ -17,13 +17,12 @@ const ReferenceLines: React.FC<ReferenceLinesProps> = ({ x, y, innerWidth, inner
       {showHorizontalLine && (
         <line
           x1={0}
-          x2={innerWidth}
+          x2={innerWidth + 5}
           y1={y}
           y2={y}
           stroke={CHART_CONFIG.colors.hoverLine}
           strokeWidth={1}
-          strokeDasharray="5,5"
-          strokeOpacity={0.8}
+          strokeDasharray="8,8"
         />
       )}
 
@@ -32,11 +31,10 @@ const ReferenceLines: React.FC<ReferenceLinesProps> = ({ x, y, innerWidth, inner
         x1={x}
         x2={x}
         y1={0}
-        y2={innerHeight}
+        y2={innerHeight + 15}
         stroke={CHART_CONFIG.colors.hoverLine}
         strokeWidth={1}
-        strokeDasharray="5,5"
-        strokeOpacity={0.8}
+        strokeDasharray="8,8"
       />
     </Group>
   );

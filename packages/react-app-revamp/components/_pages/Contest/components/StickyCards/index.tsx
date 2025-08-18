@@ -28,7 +28,7 @@ const ContestStickyCards = () => {
         <ContestCountdown votingTimeLeft={votingTimeLeft} />
         <VotingContestQualifier votingTimeLeft={votingTimeLeft} />
       </div>
-      <PriceCurveWrapper contestAddress="0x123" chainId={1} />
+      <PriceCurveWrapper />
       <hr className="border-primary-2 border" />
     </div>
   );

@@ -1,19 +1,14 @@
 import { useContestStore } from "@hooks/useContest/store";
-import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import usePriceCurveChartData from "@hooks/usePriceCurveChartData";
+import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
+import { useParentSize } from "@visx/responsive";
 import { generatePricePoints } from "lib/priceCurve";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { useShallow } from "zustand/shallow";
 import PriceCurveChart from "./index";
-import { PriceCurveWrapperProps } from "./types";
 
-const PriceCurveWrapper: React.FC<PriceCurveWrapperProps> = ({
-  contestAddress,
-  chainId,
-  startDate,
-  endDate,
-  currentPriceETH,
-}) => {
+const PriceCurveWrapper = () => {
+  const { parentRef, width, height } = useParentSize({ debounceTime: 150 });
   const { contestInfo, abi, startPrice, startTime, endTime } = useContestStore(
     useShallow(state => ({
       contestInfo: state.contestInfoData,
@@ -30,7 +25,6 @@ const PriceCurveWrapper: React.FC<PriceCurveWrapperProps> = ({
     chainId: contestInfo.contestChainId,
   });
 
-  // Generate all price points
   const allPricePoints = useMemo(() => {
     return generatePricePoints({
       startPrice: startPrice,
@@ -41,17 +35,19 @@ const PriceCurveWrapper: React.FC<PriceCurveWrapperProps> = ({
     });
   }, [startPrice, priceCurveMultiple, startTime, endTime]);
 
-  // Get sliding window chart data
   const { chartData, currentPrice } = usePriceCurveChartData({
     pricePoints: allPricePoints,
     currentTime: new Date(),
-    prevCount: 1,
-    nextCount: 4,
   });
 
   return (
-    <div className="w-full">
-      <PriceCurveChart data={chartData} currentPrice={currentPrice} />
+    <div className="w-full h-full" ref={parentRef}>
+      <PriceCurveChart
+        data={chartData}
+        currentPrice={currentPrice}
+        width={width}
+        height={height === 0 ? 500 : height}
+      />
     </div>
   );
 };

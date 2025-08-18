@@ -7,6 +7,7 @@ interface InternalXAxisProps {
   lastDate: string;
   innerWidth: number;
   yPosition: number;
+  activeDateXPosition: number;
 }
 
 const formatDateWithBoldMonthDay = (dateString: string) => {
@@ -17,33 +18,69 @@ const formatDateWithBoldMonthDay = (dateString: string) => {
   return { monthDay, time };
 };
 
-const InternalXAxis: React.FC<InternalXAxisProps> = ({ firstDate, activeDate, lastDate, innerWidth, yPosition }) => {
+const InternalXAxis: React.FC<InternalXAxisProps> = ({
+  firstDate,
+  activeDate,
+  lastDate,
+  innerWidth,
+  yPosition,
+  activeDateXPosition,
+}) => {
   const firstDateFormatted = formatDateWithBoldMonthDay(firstDate);
   const activeDateFormatted = formatDateWithBoldMonthDay(activeDate);
   const lastDateFormatted = formatDateWithBoldMonthDay(lastDate);
 
+  // Calculate boundaries for smart hiding
+  const rectWidth = 130;
+  const threshold = 150; // Distance threshold for hiding static dates
+
+  // Determine which static dates to show based on active date position
+  const isNearLeft = activeDateXPosition < threshold;
+  const isNearRight = activeDateXPosition > innerWidth - threshold;
+
+  const shouldShowLeft = !isNearLeft;
+  const shouldShowRight = !isNearRight;
+
   return (
     <g>
-      {/* Left date - white text, same as original */}
-      <text x={10} y={yPosition} fill="#ffffff" fontSize="12" textAnchor="start">
-        <tspan fontWeight="bold">{firstDateFormatted.monthDay}</tspan>
-        <tspan fontWeight="normal">, {firstDateFormatted.time}</tspan>
-      </text>
-      {/* Center date with background - matching bg-neutral-0 style */}
+      {/* Left date - hide when center card is too close */}
+      {shouldShowLeft && (
+        <text y={yPosition} fill="#ffffff" fontSize="12" textAnchor="start">
+          <tspan fontWeight="bold">{firstDateFormatted.monthDay}</tspan>
+          <tspan fontWeight="normal">, {firstDateFormatted.time}</tspan>
+        </text>
+      )}
+
       <g>
-        {/* Background rectangle matching the original rounded style */}
-        <rect x={innerWidth / 2 - 65} y={yPosition - 12} width={130} height={18} rx={6} fill="#ffffff" opacity={0.1} />
-        <text x={innerWidth / 2} y={yPosition + 1} fill="#ffffff" fontSize="12" textAnchor="middle">
+        <rect
+          x={activeDateXPosition - rectWidth / 2}
+          y={yPosition - 15}
+          width={rectWidth}
+          height={24}
+          rx={8}
+          fill="#ffffff"
+          opacity={0.1}
+        />
+        <text
+          x={activeDateXPosition}
+          y={yPosition}
+          fill="#ffffff"
+          fontSize="12"
+          textAnchor="middle"
+          dominantBaseline="baseline"
+        >
           <tspan fontWeight="bold">{activeDateFormatted.monthDay}</tspan>
           <tspan fontWeight="normal">, {activeDateFormatted.time}</tspan>
         </text>
       </g>
 
-      {/* Right date - matching text-neutral-11 color */}
-      <text x={innerWidth - 10} y={yPosition} fill="#6b7280" fontSize="12" textAnchor="end">
-        <tspan fontWeight="bold">{lastDateFormatted.monthDay}</tspan>
-        <tspan fontWeight="normal">, {lastDateFormatted.time}</tspan>
-      </text>
+      {/* Right date - hide when center card is too close */}
+      {shouldShowRight && (
+        <text x={innerWidth} y={yPosition} fill="#ffffff" fontSize="12" textAnchor="end">
+          <tspan fontWeight="bold">{lastDateFormatted.monthDay}</tspan>
+          <tspan fontWeight="normal">, {lastDateFormatted.time}</tspan>
+        </text>
+      )}
     </g>
   );
 };

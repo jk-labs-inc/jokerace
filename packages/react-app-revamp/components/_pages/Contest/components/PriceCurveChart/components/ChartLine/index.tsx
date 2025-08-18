@@ -1,4 +1,4 @@
-import { curveCardinal } from "@visx/curve";
+import { curveMonotoneX } from "@visx/curve"; // Better for exponential data
 import { Line, LinePath } from "@visx/shape";
 import { ScaleLinear } from "d3-scale";
 import React from "react";
@@ -23,7 +23,7 @@ const ChartLine: React.FC<ChartLineProps> = ({ data, getX, getY, currentPrice, y
         y={getY}
         stroke={CHART_CONFIG.colors.mainLine}
         strokeWidth={3}
-        curve={curveCardinal}
+        curve={curveMonotoneX}
         fill="none"
       />
 
@@ -31,9 +31,9 @@ const ChartLine: React.FC<ChartLineProps> = ({ data, getX, getY, currentPrice, y
         from={{ x: 0, y: yScale(currentPrice) }}
         to={{ x: innerWidth, y: yScale(currentPrice) }}
         stroke={CHART_CONFIG.colors.mainLine}
-        strokeWidth={2}
-        strokeDasharray="10,10"
-      />
+        strokeWidth={0.5}
+        strokeDasharray="8,8"
+      />  
     </>
   );
 };

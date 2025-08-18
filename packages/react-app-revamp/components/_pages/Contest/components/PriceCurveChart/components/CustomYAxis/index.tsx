@@ -18,11 +18,12 @@ const PriceCurveChartCustomYAxis: FC<DivBasedYAxisProps> = ({
   isHoveredPrice,
 }) => {
   const config = useMemo(() => {
-    if (isCurrentPrice) {
-      return { bgColor: "bg-cyan-400", textColor: "text-white", fontWeight: "font-bold" };
-    }
+    // Hovered price takes priority over current price
     if (isHoveredPrice) {
-      return { bgColor: "bg-gray-500", textColor: "text-white", fontWeight: "font-bold" };
+      return { bgColor: "bg-neutral-0", textColor: "text-white", fontWeight: "font-normal" };
+    }
+    if (isCurrentPrice) {
+      return { bgColor: "bg-secondary-11", textColor: "text-black", fontWeight: "font-normal" };
     }
     return { bgColor: "", textColor: "text-neutral-7", fontWeight: "font-normal" };
   }, [isCurrentPrice, isHoveredPrice]);
@@ -36,22 +37,20 @@ const PriceCurveChartCustomYAxis: FC<DivBasedYAxisProps> = ({
     return formatBalance(formattedEther);
   }, [price]);
 
-  // Calculate position as percentage from top
-  const topPercentage = (yPosition / totalHeight) * 100;
-
   return (
     <div
       className="absolute flex items-center justify-start"
       style={{
-        top: `${topPercentage}%`,
+        top: `${yPosition}px`, // Use exact pixel position instead of percentage
         transform: "translateY(-50%)",
         width: "100%",
+        zIndex: isHoveredPrice ? 20 : 10, // Higher z-index for hovered price
       }}
     >
       <div
         className={`
-          px-3 py-1 text-xs whitespace-nowrap
-          ${showBackground ? `${config.bgColor} rounded-lg` : ""}
+          px-3 py-2 text-[12px] w-[120px] whitespace-nowrap rounded-lg
+          ${showBackground ? `${config.bgColor}` : ""}
           ${config.textColor} ${config.fontWeight}
         `}
       >
