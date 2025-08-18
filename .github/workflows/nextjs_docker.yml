@@ -111,4 +111,4 @@ jobs:
           docker image ls -a
 
       - name: Push image to DigitalOcean Container Registry
-        run: docker push registry.digitalocean.com/jokerace:do-container-registry
+        run: docker push registry.digitalocean.com/jokerace/do-container-registry
