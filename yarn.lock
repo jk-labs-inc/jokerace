@@ -3477,14 +3477,6 @@
   dependencies:
     tslib "^2.4.0"
 
-"@gemini-wallet/core@0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@gemini-wallet/core/-/core-0.1.1.tgz#b191fec04c8c45d89eebec909b9ff58f520fba8a"
-  integrity sha512-97Ktv+vZszADHdu6hS/B5tRfOqebwGNyD2Pfvmo1kK8d54UsNZtC22D8LJEueXqgVbq5PeSn0jv88uav3t1fHg==
-  dependencies:
-    "@metamask/rpc-errors" "7.0.2"
-    eventemitter3 "5.0.1"
-
 "@gemini-wallet/core@0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@gemini-wallet/core/-/core-0.2.0.tgz#6d7c82614d811f7f23b4018808684a39e0dd111f"
@@ -8224,20 +8216,6 @@
     estree-walker "^3.0.3"
     loupe "^2.3.7"
     pretty-format "^29.7.0"
-
-"@wagmi/connectors@5.9.3":
-  version "5.9.3"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.9.3.tgz#f59ec2b043f9d6a7590758cbd704509743937640"
-  integrity sha512-HmSRFB3SFE1jAPs1E28I6/VOyA82i4KzC0OyG1JLEkOkyLlGsakPxtwXVdw/7kv9L4ppADWWktvwOjvhvpRmdQ==
-  dependencies:
-    "@base-org/account" "1.1.1"
-    "@coinbase/wallet-sdk" "4.3.6"
-    "@gemini-wallet/core" "0.1.1"
-    "@metamask/sdk" "0.32.0"
-    "@safe-global/safe-apps-provider" "0.18.6"
-    "@safe-global/safe-apps-sdk" "9.1.0"
-    "@walletconnect/ethereum-provider" "2.21.1"
-    cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
 
 "@wagmi/connectors@5.9.4":
   version "5.9.4"
@@ -18216,12 +18194,12 @@ w3c-keyname@^2.2.0:
   resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.8.tgz#7b17c8c6883d4e8b86ac8aba79d39e880f8869c5"
   integrity sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==
 
-wagmi@2.16.3:
-  version "2.16.3"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.16.3.tgz#14a43d95c96c428f99c5bd5e2362da0b84356a0d"
-  integrity sha512-CJkt6e+PKM7sNQOVcExY2SWHoDNNMdS1L5q5gLujiu8Ngi6T2V4YlHj0Sm40nVC+NsW4MZOfscsx12FbVJ0iug==
+wagmi@2.16.4:
+  version "2.16.4"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.16.4.tgz#b1573d35f2a48382e9d3e37daa1195cbec118353"
+  integrity sha512-HthfF/6g7qPnCttl9tLkKoJdWKqMH3Isx4DJ+mkn//Ubom0eKnXH2hr2SMVGTqNQUpsi1knYLUWDGJYkT4hoog==
   dependencies:
-    "@wagmi/connectors" "5.9.3"
+    "@wagmi/connectors" "5.9.4"
     "@wagmi/core" "2.19.0"
     use-sync-external-store "1.4.0"
 
