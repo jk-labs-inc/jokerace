@@ -71,7 +71,7 @@ const UserProfileDisplay = ({
         target="_blank"
         href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
       >
-        {profileName}
+        by {profileName}
       </CustomLink>
     );
   }
@@ -97,9 +97,9 @@ const UserProfileDisplay = ({
 
   return (
     <div
-      className={`flex ${
-        size === "large" ? "gap-6" : size === "medium" ? "gap-4" : "gap-2"
-      } items-center ${textColor || "text-neutral-11"} font-bold`}
+      className={`flex ${size === "large" ? "gap-6" : size === "medium" ? "gap-4" : "gap-2"} items-center ${
+        textColor || "text-neutral-11"
+      } font-bold`}
     >
       <div className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}>
         <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={profileAvatar} alt="avatar" />

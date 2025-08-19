@@ -90,7 +90,7 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
           />
         </AnimatePresence>
         <p className="text-[16px] text-neutral-11">
-          to <b>{rewards?.moduleType === ModuleType.VOTER_REWARDS ? "voters" : "contestants"}</b>
+          to <b>{rewards?.moduleType === ModuleType.VOTER_REWARDS ? "voters" : "entrants"}</b>
         </p>
       </div>
     </>
