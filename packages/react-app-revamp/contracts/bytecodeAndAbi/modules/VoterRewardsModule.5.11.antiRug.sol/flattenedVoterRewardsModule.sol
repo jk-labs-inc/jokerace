@@ -5115,7 +5115,7 @@ using {
 /// @dev The result is rounded toward zero.
 /// @param x The UD60x18 number to convert.
 /// @return result The same number in basic integer form.
-function convert_0(UD60x18 x) pure returns (uint256 result) {
+function convert_1(UD60x18 x) pure returns (uint256 result) {
     result = UD60x18.unwrap(x) / uUNIT_3;
 }
 
@@ -5126,7 +5126,7 @@ function convert_0(UD60x18 x) pure returns (uint256 result) {
 ///
 /// @param x The basic integer to convert.
 /// @param result The same number converted to UD60x18.
-function convert_1(uint256 x) pure returns (UD60x18 result) {
+function convert_0(uint256 x) pure returns (UD60x18 result) {
     if (x > uMAX_UD60x18 / uUNIT_3) {
         revert PRBMath_UD60x18_Convert_Overflow(x);
     }
@@ -5259,7 +5259,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "5.12"; // Private as to not clutter the ABI.
+    string private constant VERSION = "5.11"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -6011,21 +6011,23 @@ abstract contract GovernorCountingSimple is Governor {
     }
 }
 
-// src/modules/RewardsModule.sol
+// src/modules/VoterRewardsModule.sol
 
 // Forked from OpenZeppelin Contracts (v4.7.0) (finance/PaymentSplitter.sol)
 
 /**
- * @title RewardsModule
+ * @title VoterRewardsModule
  * @dev This contract allows to split Ether payments among a group of accounts. The sender does not need to be aware
  * that the Ether will be split in this way, since it is handled transparently by the contract.
+ *
+ * In this contract, rewards are sent to voters for a given ranking based on their proportionate vote on that ranking.
  *
  * The split can be in equal parts or in any other arbitrary proportion. The way this is specified is by assigning each
  * account to a number of shares. Of all the Ether that this contract receives, each account will then be able to claim
  * an amount proportional to the percentage of total shares they were assigned. The distribution of shares is set at the
  * time of contract deployment and can't be updated thereafter.
  *
- * `RewardsModule` follows a _pull payment_ model. This means that payments are not automatically forwarded to the
+ * `VoterRewardsModule` follows a _pull payment_ model. This means that payments are not automatically forwarded to the
  * accounts but kept in this contract, and the actual transfer is triggered as a separate step by calling the {release}
  * function.
  *
@@ -6033,32 +6035,33 @@ abstract contract GovernorCountingSimple is Governor {
  * tokens that apply fees during transfers, are likely to not be supported as expected. If in doubt, we encourage you
  * to run tests before sending real value to this contract.
  */
-contract RewardsModule {
+contract VoterRewardsModule {
     event PayeeAdded(uint256 ranking, uint256 shares);
     event PaymentReleased(address to, uint256 amount);
     event ERC20PaymentReleased(IERC20 indexed token, address to, uint256 amount);
     event PaymentReceived(address from, uint256 amount);
     event RewardWithdrawn(address by, uint256 amount);
     event ERC20RewardWithdrawn(IERC20 indexed token, address by, uint256 amount);
-    event JokeraceRewardsModuleCreated(string version, address underlyingContest);
+    event JokeraceVoterRewardsModuleCreated(string version, address underlyingContest);
 
     uint256 public totalShares;
     uint256 public totalReleased;
 
     mapping(uint256 => uint256) public shares; // Getter for the amount of shares held by a ranking.
     mapping(uint256 => uint256) public released; // Getter for the amount of Ether already released to a ranking.
-    uint256[] public payees;
-    string public constant MODULE_TYPE = "AUTHOR_REWARDS";
-    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
-    uint256 public constant JK_LABS_CANCEL_DELAY = 604800; // One week
-    string private constant VERSION = "5.12"; // Private as to not clutter the ABI
+    mapping(IERC20 => uint256) public erc20TotalReleased; // Getter for the total amount of ERC20 already released.
+    mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released; // Getter for the amount of ERC20 already released to a ranking.
+    mapping(address => mapping(uint256 => uint256)) public releasedToVoter; // Getter for the amount of Ether already released to a ranking.
+    mapping(IERC20 => mapping(address => mapping(uint256 => uint256))) public erc20ReleasedToVoter; // Getter for the amount of ERC20 already released to a ranking.
 
-    mapping(IERC20 => uint256) public erc20TotalReleased;
-    mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released;
+    uint256[] public payees;
+    string public constant MODULE_TYPE = "VOTER_REWARDS";
+    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
+    uint256 JK_LABS_CANCEL_DELAY = 604800; // One week
+    string private constant VERSION = "5.11"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;
-    bool public paysOutTarget; // If true, pay out target address; if false, pay out proposal author.
     bool public canceled; // A rewards module must be canceled in order to withdraw funds, and once canceled it can no longer release funds, only withdraw
     bool public canceledByJkLabs; // Set to true if jk labs is who cancels the rewards module
 
@@ -6085,18 +6088,15 @@ contract RewardsModule {
     error CreatorCannotWithdrawIfJkLabsCanceled();
 
     /**
-     * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
+     * @dev Creates an instance of `VoterRewardsModule` where each ranking in `payees` is assigned the number of shares at
      * the matching position in the `shares` array.
      *
      * All rankings in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
      * duplicates in `payees`.
      */
-    constructor(
-        uint256[] memory payees_,
-        uint256[] memory shares_,
-        GovernorCountingSimple underlyingContest_,
-        bool paysOutTarget_
-    ) payable {
+    constructor(uint256[] memory payees_, uint256[] memory shares_, GovernorCountingSimple underlyingContest_)
+        payable
+    {
         if (payees_.length != shares_.length) revert PayeesSharesLengthMismatch();
         if (payees_.length == 0) revert MustHaveAtLeastOnePayee();
 
@@ -6106,10 +6106,9 @@ contract RewardsModule {
 
         if (totalShares == 0) revert TotalSharesCannotBeZero();
 
-        paysOutTarget = paysOutTarget_;
         underlyingContest = underlyingContest_;
         creator = msg.sender;
-        emit JokeraceRewardsModuleCreated(VERSION, address(underlyingContest)); // emit upon creation to be able to easily find jokeraces on a chain
+        emit JokeraceVoterRewardsModuleCreated(VERSION, address(underlyingContest)); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
     /**
@@ -6160,6 +6159,25 @@ contract RewardsModule {
     }
 
     /**
+     * @dev Getter for the amount of a voter's releasable Ether for a given payee.
+     */
+    function releasableToVoter(address voter, uint256 ranking) public view returns (uint256) {
+        uint256 totalReceived = address(this).balance + totalReleased;
+        uint256 totalReceivedForRanking = (totalReceived * shares[ranking]) / totalShares;
+        return _pendingVoterPayment(voter, ranking, totalReceivedForRanking, releasedToVoter[voter][ranking]);
+    }
+
+    /**
+     * @dev Getter for the amount of a voter's releasable `token` tokens for a given payee. `token` should be the address     * of an IERC20 contract.
+     */
+    function releasableToVoter(IERC20 token, address voter, uint256 ranking) public view returns (uint256) {
+        uint256 totalReceived = token.balanceOf(address(this)) + erc20TotalReleased[token];
+        uint256 totalReceivedForRanking = (totalReceived * shares[ranking]) / totalShares;
+        return
+            _pendingVoterPayment(voter, ranking, totalReceivedForRanking, erc20ReleasedToVoter[token][voter][ranking]);
+    }
+
+    /**
      * @dev Run release checks.
      */
     function runReleaseChecks(uint256 ranking) public view {
@@ -6168,17 +6186,6 @@ contract RewardsModule {
         if (ranking == 0) revert PayoutRankCannotBeZero();
         if (shares[ranking] == 0) revert RankingHasNoShares();
         if (canceled == true) revert CannotReleaseCanceledModule();
-    }
-
-    /**
-     * @dev Return address to pay out for a given ranking.
-     */
-    function getAddressToPayOut(uint256 ranking) public view returns (address) {
-        uint256 proposalIdOfRanking = getProposalIdOfRanking(ranking);
-        if (proposalIdOfRanking == 0) return creator;
-
-        Governor.ProposalCore memory proposalAtRanking = underlyingContest.getProposal(proposalIdOfRanking);
-        return paysOutTarget ? proposalAtRanking.targetMetadata.targetAddress : proposalAtRanking.author;
     }
 
     /**
@@ -6224,10 +6231,11 @@ contract RewardsModule {
      * @dev Triggers a transfer to `ranking` of the amount of Ether they are owed, according to their percentage of the
      * total shares and their previous withdrawals.
      */
-    function release(uint256 ranking) public {
+    function release(address voter, uint256 ranking) public {
         runReleaseChecks(ranking);
 
-        uint256 payment = releasable(ranking);
+        uint256 proposalIdOfRanking = getProposalIdOfRanking(ranking); // 0 if tied
+        uint256 payment = proposalIdOfRanking == 0 ? releasable(ranking) : releasableToVoter(voter, ranking); // if this rank is tied, pay out all of the rank's rewards to the creator
 
         if (payment == 0) revert AccountNotDueNativePayment();
 
@@ -6238,7 +6246,15 @@ contract RewardsModule {
             released[ranking] += payment;
         }
 
-        address payable addressToPayOut = payable(getAddressToPayOut(ranking));
+        address payable addressToPayOut;
+
+        if (proposalIdOfRanking != 0) {
+            // if the ranking is not tied, account for that we're paying out for a specific voter
+            releasedToVoter[voter][ranking] += payment;
+            addressToPayOut = payable(voter);
+        } else {
+            addressToPayOut = payable(creator);
+        }
 
         if (addressToPayOut == address(0)) revert CannotPayOutToZeroAddress();
 
@@ -6251,10 +6267,12 @@ contract RewardsModule {
      * percentage of the total shares and their previous withdrawals. `token` must be the address of an IERC20
      * contract.
      */
-    function release(IERC20 token, uint256 ranking) public {
+    function release(IERC20 token, address voter, uint256 ranking) public {
         runReleaseChecks(ranking);
 
-        uint256 payment = releasable(token, ranking);
+        uint256 proposalIdOfRanking = getProposalIdOfRanking(ranking); // 0 if tied
+        uint256 payment =
+            proposalIdOfRanking == 0 ? releasable(token, ranking) : releasableToVoter(token, voter, ranking); // if this rank is tied, pay out all of the rank's rewards to the creator
 
         if (payment == 0) revert AccountNotDueERC20Payment();
 
@@ -6265,7 +6283,15 @@ contract RewardsModule {
             erc20Released[token][ranking] += payment;
         }
 
-        address payable addressToPayOut = payable(getAddressToPayOut(ranking));
+        address payable addressToPayOut;
+
+        if (proposalIdOfRanking != 0) {
+            // if the ranking is not tied, account for that we're voter
+            erc20ReleasedToVoter[token][voter][ranking] += payment;
+            addressToPayOut = payable(voter);
+        } else {
+            addressToPayOut = payable(creator);
+        }
 
         if (addressToPayOut == address(0)) revert CannotPayOutToZeroAddress();
 
@@ -6303,6 +6329,21 @@ contract RewardsModule {
         returns (uint256)
     {
         return (totalReceived * shares[ranking]) / totalShares - alreadyReleased;
+    }
+
+    /**
+     * @dev internal logic for computing the pending payment of a voter for a given `ranking` given the token historical
+     * balances and already released amounts.
+     */
+    function _pendingVoterPayment(
+        address voter,
+        uint256 ranking,
+        uint256 totalReceivedForRanking,
+        uint256 alreadyReleasedForRanking
+    ) private view returns (uint256) {
+        uint256 proposalIdForRanking = getProposalIdOfRanking(ranking);
+        return (totalReceivedForRanking * underlyingContest.proposalAddressVotes(proposalIdForRanking, voter))
+            / underlyingContest.proposalVotes(proposalIdForRanking) - alreadyReleasedForRanking;
     }
 
     /**

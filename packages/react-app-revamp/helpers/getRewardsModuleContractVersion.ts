@@ -1,26 +1,4 @@
 import { config } from "@config/wagmi";
-import LegacyDeployedRewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.1.first.sol/RewardsModule.json";
-import NumberedVersioningRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.3.numberedVersioning.sol/RewardsModule.json";
-import GateSubmissionsOpenRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.4.gateSubmissionsOpen.sol/RewardsModule.json";
-import BetterRewardsNotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.5.betterRewardsNotes.sol/RewardsModule.json";
-import MerkleVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.1.merkleVotes.sol/RewardsModule.json";
-import CantVoteOnDeletedPropsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.10.cantVoteOnDeletedProps.sol/RewardsModule.json";
-import AuditMinorFixesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.11.auditMinorFixes.sol/RewardsModule.json";
-import AuditInfoAndOptimizationsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.12.auditInfoAndOptimizations.sol/RewardsModule.json";
-import CleanUpContractDocsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.13.cleanUpContractDocs.sol/RewardsModule.json";
-import TrackProposalAuthorsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.14.trackProposalAuthors.sol/RewardsModule.json";
-import TrackVotersRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.15.trackVoters.sol/RewardsModule.json";
-import MakeVarsPublicRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.16.makeVarsPublic.sol/RewardsModule.json";
-import LetJkLabsCancelRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.17.letJkLabsCancel.sol/RewardsModule.json";
-import AddJokeraceCreatedEventRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.18.addJokeraceCreatedEvent.sol/RewardsModule.json";
-import TotalVotesCastRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.2.totalVotesCast.sol/RewardsModule.json";
-import SetCompilerRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.3.setCompilerTo8Dot19.sol/RewardsModule.json";
-import AddIsDeletedRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.4.addIsDeleted.sol/RewardsModule.json";
-import DeletedDontHitLimitRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.5.deletedDontHitLimit.sol/RewardsModule.json";
-import BringBackDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.6.bringBackDeletedIds.sol/RewardsModule.json";
-import ArrayOfDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.7.makeArrayOfDeletedIds.sol/RewardsModule.json";
-import DeletedIdAccessorRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.8.makeDeletedIdAccessor.sol/RewardsModule.json";
-import PrivateDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.9.privateDeletedIds.sol/RewardsModule.json";
 import AddEntryChargeRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.1.addEntryCharge.sol/RewardsModule.json";
 import RmImmutableKeywordRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.10.rmImmutableKeyword.sol/RewardsModule.json";
 import GasOptimizeGettersRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.11.gasOptimizeGetters.sol/RewardsModule.json";
@@ -68,6 +46,8 @@ import VotingPriceCurvesRewards from "@contracts/bytecodeAndAbi/modules/RewardsM
 import AddModuleTrackingRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.8.addModuleTracking.sol/RewardsModule.json";
 import CalcCorrectMinuteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.9.calcCorrectMinute.sol/RewardsModule.json";
 import OnlyDeleteInEntryRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.10.onlyDeleteInEntry.sol/RewardsModule.json";
+import AntiRugRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.11.antiRug.sol/RewardsModule.json";
+import CorrectDelayVarRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.12.correctDelayVar.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -75,12 +55,16 @@ import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
 
 export async function getRewardsModuleContractVersion(address: string, chainId: number) {
   const provider = getEthersProvider(config, { chainId });
-  const contract = new ethers.Contract(address, NumberedVersioningRewards.abi, provider);
+  const contract = new ethers.Contract(address, AddEntryChargeRewards.abi, provider);
 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "5.10") {
+    if (version === "5.12") {
+      return { abi: CorrectDelayVarRewards.abi, version };
+    } else if (version === "5.11") {
+      return { abi: AntiRugRewards.abi, version };
+    } else if (version === "5.10") {
       return { abi: OnlyDeleteInEntryRewards.abi, version };
     } else if (version === "5.9") {
       return { abi: CalcCorrectMinuteRewards.abi, version };
@@ -174,56 +158,12 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
       return { abi: UpdateSortingAlgoRewards.abi, version };
     } else if (version === "4.1") {
       return { abi: AddEntryChargeRewards.abi, version };
-    } else if (version === "3.18") {
-      return { abi: AddJokeraceCreatedEventRewards.abi, version };
-    } else if (version === "3.17") {
-      return { abi: LetJkLabsCancelRewards.abi, version };
-    } else if (version === "3.16") {
-      return { abi: MakeVarsPublicRewards.abi, version };
-    } else if (version === "3.15") {
-      return { abi: TrackVotersRewards.abi, version };
-    } else if (version === "3.14") {
-      return { abi: TrackProposalAuthorsRewards.abi, version };
-    } else if (version === "3.13") {
-      return { abi: CleanUpContractDocsRewards.abi, version };
-    } else if (version === "3.12") {
-      return { abi: AuditInfoAndOptimizationsRewards.abi, version };
-    } else if (version === "3.11") {
-      return { abi: AuditMinorFixesRewards.abi, version };
-    } else if (version === "3.10") {
-      return { abi: CantVoteOnDeletedPropsRewards.abi, version };
-    } else if (version === "3.9") {
-      return { abi: PrivateDeletedIdsRewards.abi, version };
-    } else if (version === "3.8") {
-      return { abi: DeletedIdAccessorRewards.abi, version };
-    } else if (version === "3.7") {
-      return { abi: ArrayOfDeletedIdsRewards.abi, version };
-    } else if (version === "3.6") {
-      return { abi: BringBackDeletedIdsRewards.abi, version };
-    } else if (version === "3.5") {
-      return { abi: DeletedDontHitLimitRewards.abi, version };
-    } else if (version === "3.4") {
-      return { abi: AddIsDeletedRewards.abi, version };
-    } else if (version === "3.3") {
-      return { abi: SetCompilerRewards.abi, version };
-    } else if (version === "3.2") {
-      return { abi: TotalVotesCastRewards.abi, version };
-    } else if (version === "3.1") {
-      return { abi: MerkleVotesRewards.abi, version };
-    } else if (version === "2.5") {
-      return { abi: BetterRewardsNotesRewards.abi, version };
-    } else if (version === "2.4") {
-      return { abi: GateSubmissionsOpenRewards.abi, version };
-    } else if (version === "2.3") {
-      return { abi: NumberedVersioningRewards.abi, version };
-    } else if (version === "1") {
-      return { abi: LegacyDeployedRewardsModuleContract.abi, version };
     } else {
       return { abi: DeployedRewardsContract.abi, version };
     }
   } catch (error) {
-    // If the version method does not exist, use the legacy ABI
-    return { abi: LegacyDeployedRewardsModuleContract.abi, version: "1" };
+    // If the version method does not exist, use the oldest ABI
+    return { abi: AddEntryChargeRewards.abi, version: "1" };
   }
 }
 

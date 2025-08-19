@@ -47,11 +47,14 @@ contract VoterRewardsModule {
 
     uint256[] public payees;
     string public constant MODULE_TYPE = "VOTER_REWARDS";
-    string private constant VERSION = "5.10"; // Private as to not clutter the ABI
+    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
+    uint256 public constant JK_LABS_CANCEL_DELAY = 604800; // One week
+    string private constant VERSION = "5.12"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;
     bool public canceled; // A rewards module must be canceled in order to withdraw funds, and once canceled it can no longer release funds, only withdraw
+    bool public canceledByJkLabs; // Set to true if jk labs is who cancels the rewards module
 
     error PayeesSharesLengthMismatch();
     error MustHaveAtLeastOnePayee();
@@ -63,13 +66,17 @@ contract VoterRewardsModule {
     error AccountNotDueNativePayment();
     error CannotPayOutToZeroAddress();
     error AccountNotDueERC20Payment();
-    error OnlyCreatorCanCancel();
-    error OnlyCreatorCanWithdraw();
+    error OnlyCreatorOrJkLabsCanCancel();
+    error ModuleAlreadyCanceled();
+    error OnlyCreatorOrJkLabsCanWithdraw();
     error RankingCannotBeZero();
     error SharesCannotBeZero();
     error AccountAlreadyHasShares();
     error CannotReleaseCanceledModule();
     error MustBeCanceledToWithdraw();
+    error CreatorCanOnlyCancelBeforeFirstVote();
+    error JkLabsCanOnlyCancelAfterDelay();
+    error CreatorCannotWithdrawIfJkLabsCanceled();
 
     /**
      * @dev Creates an instance of `VoterRewardsModule` where each ranking in `payees` is assigned the number of shares at
@@ -195,7 +202,19 @@ contract VoterRewardsModule {
      * @dev Cancels the rewards module.
      */
     function cancel() public {
-        if (msg.sender != creator) revert OnlyCreatorCanCancel();
+        if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanCancel();
+        if (canceled) revert ModuleAlreadyCanceled();
+
+        if ((msg.sender == creator) && (underlyingContest.totalVotesCast() != 0)) {
+            revert CreatorCanOnlyCancelBeforeFirstVote();
+        }
+        if (msg.sender == JK_LABS_ADDRESS) {
+            if (block.timestamp < underlyingContest.contestDeadline() + JK_LABS_CANCEL_DELAY) {
+                revert JkLabsCanOnlyCancelAfterDelay();
+            }
+            canceledByJkLabs = true;
+        }
+
         canceled = true;
     }
 
@@ -272,19 +291,23 @@ contract VoterRewardsModule {
     }
 
     function withdrawRewards() public {
-        if (msg.sender != creator) revert OnlyCreatorCanWithdraw();
+        if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanWithdraw();
         if (canceled != true) revert MustBeCanceledToWithdraw();
 
-        emit RewardWithdrawn(creator, address(this).balance);
-        Address.sendValue(payable(creator), address(this).balance);
+        if ((msg.sender == creator) && (canceledByJkLabs)) revert CreatorCannotWithdrawIfJkLabsCanceled(); // if jk labs is having to cancel a module in an emergency situation to rescue funds, jk labs is who is going to be the ones resolving it
+
+        emit RewardWithdrawn(msg.sender, address(this).balance);
+        Address.sendValue(payable(msg.sender), address(this).balance);
     }
 
     function withdrawRewards(IERC20 token) public {
-        if (msg.sender != creator) revert OnlyCreatorCanWithdraw();
+        if ((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS)) revert OnlyCreatorOrJkLabsCanWithdraw();
         if (canceled != true) revert MustBeCanceledToWithdraw();
 
-        emit ERC20RewardWithdrawn(token, creator, token.balanceOf(address(this)));
-        SafeERC20.safeTransfer(token, payable(creator), token.balanceOf(address(this)));
+        if ((msg.sender == creator) && (canceledByJkLabs)) revert CreatorCannotWithdrawIfJkLabsCanceled(); // if jk labs is having to cancel a module in an emergency situation to rescue funds, jk labs is who is going to be the ones resolving it
+
+        emit ERC20RewardWithdrawn(token, msg.sender, token.balanceOf(address(this)));
+        SafeERC20.safeTransfer(token, payable(msg.sender), token.balanceOf(address(this)));
     }
 
     /**

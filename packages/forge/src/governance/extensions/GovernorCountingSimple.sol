@@ -57,6 +57,13 @@ abstract contract GovernorCountingSimple is Governor {
     }
 
     /**
+     * @dev Returns true if totalVotesCast is zero.
+     */
+    function totalVotesCastIsZero() public view override returns (bool totalVotesCastZero) {
+        return totalVotesCast == 0;
+    }
+
+    /**
      * @dev Accessor to the internal vote counts for a given proposal.
      */
     function allProposalTotalVotes()
