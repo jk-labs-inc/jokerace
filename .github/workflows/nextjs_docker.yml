@@ -35,8 +35,8 @@ jobs:
         with:
           context: .
           tags: |
-            ghcr.io/jk-labs-inc/jokerace:chore/fix-for-slim-pt2
-            registry.digitalocean.com/jk-labs-inc/jokerace:chore/fix-for-slim-pt2
+            ghcr.io/jk-labs-inc/jokerace:fix-for-slim-pt2
+            registry.digitalocean.com/jk-labs-inc/jokerace:fix-for-slim-pt2
           outputs: type=docker,dest=/tmp/nextjs_docker_image.tar
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.PROD_NEXT_PUBLIC_SUPABASE_URL }}
