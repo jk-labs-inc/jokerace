@@ -1,7 +1,5 @@
-import { formatBalance } from "@helpers/formatBalance";
 import { motion } from "motion/react";
 import { FC } from "react";
-import { formatUnits } from "viem";
 
 interface RewardCounterProps {
   valueFormatted: string;
@@ -10,6 +8,8 @@ interface RewardCounterProps {
 }
 
 const RewardCounter: FC<RewardCounterProps> = ({ valueFormatted, symbol, index }) => {
+  const truncatedSymbol = symbol.length > 6 ? symbol.slice(0, 6) : symbol;
+
   return (
     <motion.div
       key={`amount-${index}`}
@@ -26,7 +26,7 @@ const RewardCounter: FC<RewardCounterProps> = ({ valueFormatted, symbol, index }
       style={{ willChange: "transform, opacity" }}
     >
       <p className="text-neutral-11 text-[16px] md:text-[24px]">
-        {valueFormatted} <span className="uppercase text-[16px]">${symbol}</span>
+        {valueFormatted} <span className="uppercase text-[16px]">${truncatedSymbol}</span>
       </p>
     </motion.div>
   );
