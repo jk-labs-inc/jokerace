@@ -3,7 +3,7 @@ name: nextjs-docker
 on: 
   push:
     branches:
-      - main
+      - chore/try-node22-full
 
 permissions:
   packages: write
@@ -35,8 +35,8 @@ jobs:
         with:
           context: .
           tags: |
-            ghcr.io/jk-labs-inc/jokerace:main
-            registry.digitalocean.com/jk-labs-inc/jokerace:main
+            ghcr.io/jk-labs-inc/jokerace:chore-try-node22-full
+            registry.digitalocean.com/jk-labs-inc/jokerace:chore-try-node22-full
           outputs: type=docker,dest=/tmp/nextjs_docker_image.tar
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.PROD_NEXT_PUBLIC_SUPABASE_URL }}
@@ -86,7 +86,7 @@ jobs:
           docker image ls -a
 
       - name: Push image to Github Container Registry
-        run: docker push ghcr.io/jk-labs-inc/jokerace:main
+        run: docker push ghcr.io/jk-labs-inc/jokerace:chore-try-node22-full
 
   do-push:
     needs: build-and-upload-image
@@ -111,4 +111,4 @@ jobs:
           docker image ls -a
 
       - name: Push image to DigitalOcean Container Registry
-        run: docker push registry.digitalocean.com/jk-labs-inc/jokerace:main
+        run: docker push registry.digitalocean.com/jk-labs-inc/jokerace:chore-try-node22-full
