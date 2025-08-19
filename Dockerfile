@@ -58,7 +58,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 # Set the correct permission for prerender cache
 RUN addgroup nodejs
-RUN adduser -SDH nextjs
+RUN adduser nextjs
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
