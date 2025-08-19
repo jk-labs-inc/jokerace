@@ -78,7 +78,13 @@ export function useProposalVotes(
         args: [proposalId, address],
       }));
 
-      const results = await readContracts(config, { contracts });
+      let results;
+      try {
+        results = await readContracts(config, { contracts });
+      } catch (error) {
+        console.error("Error fetching proposal votes:", error);
+        return { votes: [], totalAddresses: 0, hasMore: false, pageIndex: 0 };
+      }
 
       const votes: VoteEntry[] = addressesPage.map((address, index) => {
         const result = results[index];

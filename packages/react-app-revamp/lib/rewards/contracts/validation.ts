@@ -19,16 +19,17 @@ export const validateRankings = async (
 
   // check if this is an older version (before VOTER_REWARDS_VERSION)
   if (compareVersions(version, VOTER_REWARDS_VERSION) < 0) {
-    // for older versions, use getAddressToPayOut
-    const addressResults = await readContracts(config, {
-      contracts: rankings.map(ranking => ({
-        address: contractAddress,
-        chainId,
-        abi,
-        functionName: "getAddressToPayOut",
-        args: [BigInt(ranking)],
-      })),
-    });
+    try {
+      // for older versions, use getAddressToPayOut
+      const addressResults = await readContracts(config, {
+        contracts: rankings.map(ranking => ({
+          address: contractAddress,
+          chainId,
+          abi,
+          functionName: "getAddressToPayOut",
+          args: [BigInt(ranking)],
+        })),
+      });
 
     const validRankings: number[] = [];
     const tiedRankings: number[] = [];
@@ -44,18 +45,23 @@ export const validateRankings = async (
       }
     }
 
-    return { validRankings, tiedRankings };
+      return { validRankings, tiedRankings };
+    } catch (error) {
+      console.error("Error validating rankings (older version):", error);
+      return { validRankings: [], tiedRankings: [] };
+    }
   }
 
-  const proposalIdResults = await readContracts(config, {
-    contracts: rankings.map(ranking => ({
-      address: contractAddress,
-      chainId,
-      abi,
-      functionName: "getProposalIdOfRanking",
-      args: [BigInt(ranking)],
-    })),
-  });
+  try {
+    const proposalIdResults = await readContracts(config, {
+      contracts: rankings.map(ranking => ({
+        address: contractAddress,
+        chainId,
+        abi,
+        functionName: "getProposalIdOfRanking",
+        args: [BigInt(ranking)],
+      })),
+    });
 
   const validRankings: number[] = [];
   const tiedRankings: number[] = [];
@@ -71,5 +77,9 @@ export const validateRankings = async (
     }
   }
 
-  return { validRankings, tiedRankings };
+    return { validRankings, tiedRankings };
+  } catch (error) {
+    console.error("Error validating rankings (newer version):", error);
+    return { validRankings: [], tiedRankings: [] };
+  }
 };

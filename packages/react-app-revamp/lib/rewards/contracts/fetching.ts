@@ -48,9 +48,14 @@ export async function fetchReleasableRewards(
 
   if (queries.length === 0) return [];
 
-  return await readContracts(config, {
-    contracts: queries,
-  });
+  try {
+    return await readContracts(config, {
+      contracts: queries,
+    });
+  } catch (error) {
+    console.error("Error fetching releasable rewards:", error);
+    return [];
+  }
 }
 
 /**

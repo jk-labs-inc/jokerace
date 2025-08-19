@@ -117,83 +117,91 @@ export function useContest() {
     version: string,
     rewardsModuleAddress?: string,
   ) {
-    const contracts = getContracts(contractConfig, version);
-    const results = await readContracts(config, { contracts });
+    try {
+      const contracts = getContracts(contractConfig, version);
+      const results = await readContracts(config, { contracts });
 
-    setIsV3(true);
+      setIsV3(true);
 
-    const contestName = results[0].result as string;
-    const contestAuthor = results[1].result as string;
-    const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
-    const contestMaxProposalCount = Number(results[3].result);
-    const submissionsOpenDate = new Date(Number(results[4].result) * 1000 + 1000);
-    const closingVoteDate = new Date(Number(results[5].result) * 1000 + 1000);
-    const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
-    const contestPrompt = results[7].result as string;
-    const contestState = results[8].result as ContestStateEnum;
+      const contestName = results[0].result as string;
+      const contestAuthor = results[1].result as string;
+      const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
+      const contestMaxProposalCount = Number(results[3].result);
+      const submissionsOpenDate = new Date(Number(results[4].result) * 1000 + 1000);
+      const closingVoteDate = new Date(Number(results[5].result) * 1000 + 1000);
+      const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
+      const contestPrompt = results[7].result as string;
+      const contestState = results[8].result as ContestStateEnum;
 
-    const costToPropose = Number(results[10].result);
+      const costToPropose = Number(results[10].result);
 
-    if (compareVersions(version, "4.2") >= 0) {
-      const sortingEnabled = Number(results[11].result) === 1;
-      setSortingEnabled(sortingEnabled);
-    }
-
-    if (compareVersions(version, "4.27") >= 0) {
-      setCanEditTitleAndDescription(true);
-    }
-
-    const percentageToCreator = Number(results[9].result);
-    let costToVote = 0;
-    let payPerVote = 0;
-    let creatorSplitDestination = "";
-
-    if (compareVersions(version, "4.23") >= 0) {
-      if (compareVersions(version, "4.25") >= 0) {
-        payPerVote = Number(results[13].result);
+      if (compareVersions(version, "4.2") >= 0) {
+        const sortingEnabled = Number(results[11].result) === 1;
+        setSortingEnabled(sortingEnabled);
       }
-      costToVote = Number(results[12].result);
+
+      if (compareVersions(version, "4.27") >= 0) {
+        setCanEditTitleAndDescription(true);
+      }
+
+      const percentageToCreator = Number(results[9].result);
+      let costToVote = 0;
+      let payPerVote = 0;
+      let creatorSplitDestination = "";
+
+      if (compareVersions(version, "4.23") >= 0) {
+        if (compareVersions(version, "4.25") >= 0) {
+          payPerVote = Number(results[13].result);
+        }
+        costToVote = Number(results[12].result);
+      }
+
+      if (compareVersions(version, "4.29") >= 0) {
+        creatorSplitDestination = results[14].result as string;
+      }
+
+      setCharge({
+        percentageToCreator,
+        voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
+        splitFeeDestination: {
+          type: determineSplitFeeDestination(
+            creatorSplitDestination,
+            percentageToCreator,
+            contestAuthor,
+            rewardsModuleAddress,
+          ),
+          address: creatorSplitDestination,
+        },
+        type: {
+          costToPropose,
+          costToVote,
+        },
+      });
+
+      setContestName(contestName);
+      setContestAuthor(contestAuthor, contestAuthor);
+      setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
+      setContestMaxProposalCount(contestMaxProposalCount);
+      setSubmissionsOpen(submissionsOpenDate);
+      setVotesClose(closingVoteDate);
+      setVotesOpen(votesOpenDate);
+      setContestPrompt(contestPrompt);
+      setContestState(contestState);
+      setError(null);
+      setIsSuccess(true);
+      setIsLoading(false);
+
+      await fetchProposalsIdsList(contractConfig, version, {
+        submissionOpen: submissionsOpenDate,
+        votesOpen: votesOpenDate,
+      });
+    } catch (error) {
+      console.error("Error in fetchContestContractData:", error);
+      setError(ErrorType.CONTRACT);
+      setIsLoading(false);
+      setIsSuccess(false);
+      throw error;
     }
-
-    if (compareVersions(version, "4.29") >= 0) {
-      creatorSplitDestination = results[14].result as string;
-    }
-
-    setCharge({
-      percentageToCreator,
-      voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
-      splitFeeDestination: {
-        type: determineSplitFeeDestination(
-          creatorSplitDestination,
-          percentageToCreator,
-          contestAuthor,
-          rewardsModuleAddress,
-        ),
-        address: creatorSplitDestination,
-      },
-      type: {
-        costToPropose,
-        costToVote,
-      },
-    });
-
-    setContestName(contestName);
-    setContestAuthor(contestAuthor, contestAuthor);
-    setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
-    setContestMaxProposalCount(contestMaxProposalCount);
-    setSubmissionsOpen(submissionsOpenDate);
-    setVotesClose(closingVoteDate);
-    setVotesOpen(votesOpenDate);
-    setContestPrompt(contestPrompt);
-    setContestState(contestState);
-    setError(null);
-    setIsSuccess(true);
-    setIsLoading(false);
-
-    await fetchProposalsIdsList(contractConfig, version, {
-      submissionOpen: submissionsOpenDate,
-      votesOpen: votesOpenDate,
-    });
   }
 
   async function fetchV3ContestInfo(contractConfig: ContractConfig, version: string, rewardsModuleAddress?: string) {

@@ -6,7 +6,7 @@ import { ModuleType } from "../types";
 /**
  * Creates a contract read batch for native token data
  */
-export const createNativeTokenReadBatch = (
+export const createNativeTokenReadBatch = async (
   moduleType: ModuleType,
   contractAddress: `0x${string}`,
   chainId: number,
@@ -15,21 +15,26 @@ export const createNativeTokenReadBatch = (
   userAddress: `0x${string}`,
   functionName: string,
 ) => {
-  return readContracts(config, {
-    contracts: validRankings.map(ranking => ({
-      address: contractAddress,
-      chainId,
-      abi,
-      functionName,
-      args: moduleType === ModuleType.VOTER_REWARDS ? [userAddress, BigInt(ranking)] : [BigInt(ranking)],
-    })),
-  });
+  try {
+    return await readContracts(config, {
+      contracts: validRankings.map(ranking => ({
+        address: contractAddress,
+        chainId,
+        abi,
+        functionName,
+        args: moduleType === ModuleType.VOTER_REWARDS ? [userAddress, BigInt(ranking)] : [BigInt(ranking)],
+      })),
+    });
+  } catch (error) {
+    console.error("Error in createNativeTokenReadBatch:", error);
+    return [];
+  }
 };
 
 /**
  * Creates a contract read for ERC20 token data
  */
-export const createERC20TokenRead = (
+export const createERC20TokenRead = async (
   moduleType: ModuleType,
   contractAddress: `0x${string}`,
   chainId: number,
@@ -39,18 +44,23 @@ export const createERC20TokenRead = (
   userAddress: `0x${string}`,
   functionName: string,
 ) => {
-  return readContracts(config, {
-    contracts: [
-      {
-        address: contractAddress,
-        chainId,
-        abi,
-        functionName,
-        args:
-          moduleType === ModuleType.VOTER_REWARDS
-            ? [tokenAddress, userAddress, BigInt(ranking)]
-            : [tokenAddress, BigInt(ranking)],
-      },
-    ],
-  });
+  try {
+    return await readContracts(config, {
+      contracts: [
+        {
+          address: contractAddress,
+          chainId,
+          abi,
+          functionName,
+          args:
+            moduleType === ModuleType.VOTER_REWARDS
+              ? [tokenAddress, userAddress, BigInt(ranking)]
+              : [tokenAddress, BigInt(ranking)],
+        },
+      ],
+    });
+  } catch (error) {
+    console.error("Error in createERC20TokenRead:", error);
+    return [];
+  }
 };

@@ -57,17 +57,22 @@ export async function getRewardsModuleVersionInfo(address: string, chainId: numb
  * @returns rewards module address
  */
 export async function getRewardsModuleAddress(contractConfig: ContractConfig): Promise<string | null> {
-  const hasRewardsModule = contractConfig.abi?.some((el: { name: string }) => el.name === "officialRewardsModule");
+  try {
+    const hasRewardsModule = contractConfig.abi?.some((el: { name: string }) => el.name === "officialRewardsModule");
 
-  if (!hasRewardsModule) return null;
+    if (!hasRewardsModule) return null;
 
-  const address = (await readContract(config, {
-    ...contractConfig,
-    functionName: "officialRewardsModule",
-    args: [],
-  })) as string;
+    const address = (await readContract(config, {
+      ...contractConfig,
+      functionName: "officialRewardsModule",
+      args: [],
+    })) as string;
 
-  return address === "0x0000000000000000000000000000000000000000" ? null : address;
+    return address === "0x0000000000000000000000000000000000000000" ? null : address;
+  } catch (error) {
+    console.error("Error getting rewards module address:", error);
+    return null;
+  }
 }
 
 /**
@@ -78,11 +83,16 @@ export async function getRewardsModuleAddress(contractConfig: ContractConfig): P
  * @returns module type
  */
 export async function getModuleType(address: string, abi: Abi, chainId: number): Promise<string> {
-  return (await readContract(config, {
-    address: address as `0x${string}`,
-    abi,
-    functionName: "MODULE_TYPE",
-    chainId,
-    args: [],
-  })) as string;
+  try {
+    return (await readContract(config, {
+      address: address as `0x${string}`,
+      abi,
+      functionName: "MODULE_TYPE",
+      chainId,
+      args: [],
+    })) as string;
+  } catch (error) {
+    console.error("Error getting module type:", error);
+    return "UNKNOWN";
+  }
 }
