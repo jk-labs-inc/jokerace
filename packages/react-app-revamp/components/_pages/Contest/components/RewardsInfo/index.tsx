@@ -9,6 +9,8 @@ import RewardsDisplay from "./components/RewardsDisplay";
 import RewardsLoader from "./components/RewardsLoader";
 import RewardsMarquee from "./components/RewardsMarquee";
 import RewardsSelfFundedMarquee from "./components/RewardsSelfFundedMarquee";
+import { useContestStore } from "@hooks/useContest/store";
+import { useShallow } from "zustand/shallow";
 
 interface ContestRewardsInfoProps {
   version: string;
@@ -20,7 +22,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
-
+  const splitFeeDestinationAddress = useContestStore(useShallow(state => state.charge.splitFeeDestination.address));
   const { data: rewards, isLoading, isSuccess, isError } = useRewardsModule();
   const {
     isCanceled,
@@ -32,6 +34,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
     chainId,
     version,
   });
+  const isSelfFunded = splitFeeDestinationAddress === rewards?.contractAddress;
 
   if (isLoading || isCancelLoading) {
     return <RewardsLoader />;
@@ -52,8 +55,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
         isRewardsModuleLoading={isLoading}
         isRewardsModuleError={isError}
       />
-      {/* TODO: add conditional rendering for rewards self funded marquee */}
-      <RewardsSelfFundedMarquee />
+      {isSelfFunded && <RewardsSelfFundedMarquee />}
     </div>
   );
 };

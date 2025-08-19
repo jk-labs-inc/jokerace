@@ -3,7 +3,7 @@ import { FC } from "react";
 
 const RewardsSelfFundedMarquee: FC = () => {
   return (
-    <div className="flex items-center gap-2 md:gap-4">
+    <div className="flex items-center gap-2 md:gap-4 mt-0 md:mt-1">
       <div className="h-4 w-[2px] bg-primary-2"></div>
       <GradientText
         gradientClassName="bg-gradient-purple"
