@@ -40,7 +40,6 @@ import { mainnet } from "./custom-chains/mainnet";
 import { manta } from "./custom-chains/manta";
 import { metis } from "./custom-chains/metis";
 import { mode } from "./custom-chains/mode";
-import { optimism } from "./custom-chains/optimism";
 import { polygon } from "./custom-chains/polygon";
 import { scroll } from "./custom-chains/scroll";
 import { sei } from "./custom-chains/sei";
@@ -49,7 +48,6 @@ import { soneium } from "./custom-chains/soneium";
 import { sonic } from "./custom-chains/sonic";
 import { story } from "./custom-chains/story";
 import { swell } from "./custom-chains/swell";
-import { unichain } from "./custom-chains/unichain";
 import { world } from "./custom-chains/world";
 import { zksyncEra } from "./custom-chains/zksyncEra";
 import { isParaWalletConfigured, paraWallet } from "./para";
@@ -64,7 +62,6 @@ type ChainImages = {
 export const chains: readonly [Chain, ...Chain[]] = [
   polygon,
   arbitrumOne,
-  optimism,
   base,
   avalanche,
   linea,
@@ -81,7 +78,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   story,
   ink,
   berachain,
-  unichain,
   swell,
   manta,
   zksyncEra,
