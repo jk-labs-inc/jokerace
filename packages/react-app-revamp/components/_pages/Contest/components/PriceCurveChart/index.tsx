@@ -29,7 +29,6 @@ const PriceCurveChart: React.FC<PriceCurveChartComponentProps> = ({
 
   const chartWidth = width - MARGIN.left - MARGIN.right;
   const chartHeight = height - MARGIN.top - MARGIN.bottom;
-  const xAxisY = chartHeight + 20;
 
   if (chartWidth <= 0 || chartHeight <= 0 || data.length === 0) {
     return null;

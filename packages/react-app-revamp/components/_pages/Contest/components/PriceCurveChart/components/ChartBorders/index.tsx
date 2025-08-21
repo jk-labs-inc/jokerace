@@ -20,7 +20,7 @@ const ChartBorders: React.FC<ChartBordersProps> = ({ innerWidth, innerHeight }) 
       {/* // TODO: check how can we assign negative x value on from */}
       <Line
         from={{ x: 0, y: innerHeight }}
-        to={{ x: innerWidth, y: innerHeight }}
+        to={{ x: innerWidth + 20, y: innerHeight }}
         stroke={CHART_CONFIG.colors.border}
         strokeWidth={1}
       />

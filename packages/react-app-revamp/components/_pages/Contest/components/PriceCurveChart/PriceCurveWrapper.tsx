@@ -3,7 +3,7 @@ import usePriceCurveChartData from "@hooks/usePriceCurveChartData";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import { useParentSize } from "@visx/responsive";
 import { generatePricePoints } from "lib/priceCurve";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import PriceCurveChart from "./index";
 
@@ -18,6 +18,15 @@ const PriceCurveWrapper = () => {
       endTime: state.votesClose,
     })),
   );
+  const [currentTime, setCurrentTime] = useState(() => new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const { priceCurveMultiple } = usePriceCurveMultiple({
     address: contestInfo.contestAddress,
@@ -37,8 +46,9 @@ const PriceCurveWrapper = () => {
 
   const { chartData, currentPrice } = usePriceCurveChartData({
     pricePoints: allPricePoints,
-    currentTime: new Date(),
+    currentTime: currentTime,
   });
+
 
   return (
     <div className="w-full h-full" ref={parentRef}>

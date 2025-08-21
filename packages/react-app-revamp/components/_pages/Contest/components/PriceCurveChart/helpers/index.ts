@@ -15,9 +15,15 @@ export const createXScale = (data: ChartDataPoint[], innerWidth: number): ScaleP
 };
 
 export const createYScale = (data: ChartDataPoint[], chartHeight: number): ScaleLinear<number, number> => {
+  const minValue = Math.min(...data.map(d => d.pv));
+  const maxValue = Math.max(...data.map(d => d.pv));
+
+  const range = maxValue - minValue;
+  const padding = range * 0.02;
+
   return scaleLinear({
     range: [chartHeight, 0],
-    domain: [Math.min(...data.map(d => d.pv)), Math.max(...data.map(d => d.pv))],
+    domain: [minValue - padding, maxValue + padding],
   });
 };
 

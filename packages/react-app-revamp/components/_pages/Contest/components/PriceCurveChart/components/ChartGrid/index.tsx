@@ -33,17 +33,22 @@ const ChartGrid: React.FC<ChartGridProps> = ({ innerWidth, innerHeight, yAxisTic
   ));
 
   const verticalGridSpacing = innerWidth / CHART_CONFIG.verticalGridSections;
-  const verticalGridLines = Array.from({ length: CHART_CONFIG.verticalGridSections + 1 }, (_, i) => (
-    <Line
-      key={`v-grid-${i}`}
-      from={{ x: i * verticalGridSpacing, y: 0 }}
-      to={{ x: i * verticalGridSpacing, y: innerHeight }}
-      stroke={CHART_CONFIG.colors.grid}
-      strokeWidth={0.5}
-      width={95}
-      height={95}
-    />
-  ));
+  const verticalGridLines = Array.from({ length: CHART_CONFIG.verticalGridSections + 1 }, (_, i) => {
+    const isLastLine = i === CHART_CONFIG.verticalGridSections;
+    const lineHeight = isLastLine ? innerHeight + 15 : innerHeight;
+
+    return (
+      <Line
+        key={`v-grid-${i}`}
+        from={{ x: i * verticalGridSpacing, y: 0 }}
+        to={{ x: i * verticalGridSpacing, y: lineHeight }}
+        stroke={CHART_CONFIG.colors.grid}
+        strokeWidth={0.5}
+        width={95}
+        height={95}
+      />
+    );
+  });
 
   return (
     <>

@@ -1,4 +1,4 @@
-export const MARGIN = { top: 20, right: 90, left: 0, bottom: 40 }; // Increased bottom margin for X-axis
+export const MARGIN = { top: 20, right: 160, left: 0, bottom: 60 };
 
 export const CHART_CONFIG = {
   verticalGridSections: 6,

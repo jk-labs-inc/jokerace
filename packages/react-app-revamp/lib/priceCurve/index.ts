@@ -130,8 +130,8 @@ export const generatePricePoints = (params: GeneratePricePointsParams): PricePoi
     const priceFloat = startPrice * Math.pow(2, multiple * percentThrough);
     const priceBigInt = BigInt(Math.round(priceFloat));
 
-    // Add ALL points regardless of price difference
-    const pointDate = new Date(startTime.getTime() + (seconds - updateIntervalSeconds) * 1000);
+    // Add ALL points regardless of price difference (we need this in order to create exponential curve)
+    const pointDate = new Date(startTime.getTime() + seconds * 1000);
 
     pricePoints.push({
       date: pointDate,
@@ -153,6 +153,8 @@ export const generatePricePoints = (params: GeneratePricePointsParams): PricePoi
     date: point.date.toISOString(),
     price: formatEther(point.priceBigInt),
   }));
+
+  ({ formattedPricePoints });
 
   return formattedPricePoints;
 };

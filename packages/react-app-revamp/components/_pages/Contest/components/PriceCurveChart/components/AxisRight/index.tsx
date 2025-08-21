@@ -24,10 +24,7 @@ const AxisRight: React.FC<AxisRightProps> = ({ yScale, chartWidth, visibleTicks,
           const formattedEther = formatEther(priceInWei);
           return `${formatBalance(formattedEther)} eth`;
         }}
-        tickLabelProps={value => {
-          const isCurrentPrice = value === currentPrice;
-          const isHoveredPrice = hoveredPrice !== null && value === hoveredPrice;
-
+        tickLabelProps={() => {
           return {
             fill: "#ffffff",
             fontSize: 12,
@@ -41,11 +38,10 @@ const AxisRight: React.FC<AxisRightProps> = ({ yScale, chartWidth, visibleTicks,
       />
 
       {/* Custom styled backgrounds for current and hovered prices */}
+      {/* First render current price background */}
       {visibleTicks.map(tick => {
         const isCurrentPrice = tick === currentPrice;
-        const isHoveredPrice = hoveredPrice !== null && tick === hoveredPrice;
-
-        if (!isCurrentPrice && !isHoveredPrice) return null;
+        if (!isCurrentPrice) return null;
 
         const yPos = yScale(tick);
         const priceInWei = parseEther(tick.toString());
@@ -53,21 +49,13 @@ const AxisRight: React.FC<AxisRightProps> = ({ yScale, chartWidth, visibleTicks,
         const formattedPrice = `${formatBalance(formattedEther)} eth`;
 
         return (
-          <g key={`styled-tick-${tick}`}>
-            {/* Background rectangle */}
-            <rect
-              x={chartWidth + 8}
-              y={yPos - 12}
-              width={120}
-              height={24}
-              rx={8}
-              fill={isHoveredPrice ? "#404040" : isCurrentPrice ? "#22d3ee" : "transparent"}
-            />
-            {/* Text overlay */}
+          <g key={`current-tick-${tick}`}>
+            {/* Current price background (always rendered) */}
+            <rect x={chartWidth + 8} y={yPos - 12} width={120} height={24} rx={8} fill="#BB65FF" />
             <text
               x={chartWidth + 16}
               y={yPos}
-              fill={isHoveredPrice ? "#ffffff" : isCurrentPrice ? "#000000" : "#6b7280"}
+              fill="#000000"
               fontSize={12}
               textAnchor="start"
               dominantBaseline="middle"
@@ -77,6 +65,36 @@ const AxisRight: React.FC<AxisRightProps> = ({ yScale, chartWidth, visibleTicks,
           </g>
         );
       })}
+
+      {/* Then render hovered price on top (if different from current) */}
+      {hoveredPrice !== null &&
+        hoveredPrice !== currentPrice &&
+        visibleTicks.map(tick => {
+          const isHoveredPrice = tick === hoveredPrice;
+          if (!isHoveredPrice) return null;
+
+          const yPos = yScale(tick);
+          const priceInWei = parseEther(tick.toString());
+          const formattedEther = formatEther(priceInWei);
+          const formattedPrice = `${formatBalance(formattedEther)} eth`;
+
+          return (
+            <g key={`hovered-tick-${tick}`}>
+              {/* Hovered price background (renders on top) */}
+              <rect x={chartWidth + 8} y={yPos - 12} width={120} height={24} rx={8} fill="#212121" />
+              <text
+                x={chartWidth + 16}
+                y={yPos}
+                fill="#ffffff"
+                fontSize={12}
+                textAnchor="start"
+                dominantBaseline="middle"
+              >
+                {formattedPrice}
+              </text>
+            </g>
+          );
+        })}
     </g>
   );
 };

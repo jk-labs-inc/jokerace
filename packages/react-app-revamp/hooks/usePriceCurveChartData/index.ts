@@ -47,21 +47,22 @@ const usePriceCurveChartData = ({
 const findCurrentPriceIndex = (pricePoints: PricePoint[], currentTime: Date): number => {
   const currentTimestamp = currentTime.getTime();
 
-  // Find the price that should be active right now
+  // Find the most recent price point that has already started
+  let activeIndex = -1;
+
   for (let i = 0; i < pricePoints.length; i++) {
     const pointTimestamp = new Date(pricePoints[i].date).getTime();
 
-    // If this is the last point, or current time is before the next point
-    if (i === pricePoints.length - 1 || currentTimestamp < new Date(pricePoints[i + 1].date).getTime()) {
-      // If current time is at or after this point's time, this is the active price
-      if (currentTimestamp >= pointTimestamp) {
-        return i;
-      }
+    // If this price point's time has passed, it could be the active one
+    if (currentTimestamp >= pointTimestamp) {
+      activeIndex = i;
+    } else {
+      // Once we hit a future price point, stop looking
+      break;
     }
   }
 
-  // If current time is before all price points, return -1 (not started)
-  return -1;
+  return activeIndex;
 };
 
 const convertToChartData = (pricePoints: PricePoint[]): ChartDataPoint[] => {
