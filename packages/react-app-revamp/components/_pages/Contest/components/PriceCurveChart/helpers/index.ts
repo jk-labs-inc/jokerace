@@ -19,7 +19,7 @@ export const createYScale = (data: ChartDataPoint[], chartHeight: number): Scale
   const maxValue = Math.max(...data.map(d => d.pv));
 
   const range = maxValue - minValue;
-  const padding = range * 0.02;
+  const padding = range * 0.03;
 
   return scaleLinear({
     range: [chartHeight, 0],

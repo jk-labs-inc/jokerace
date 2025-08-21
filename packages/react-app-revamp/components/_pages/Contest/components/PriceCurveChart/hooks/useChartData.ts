@@ -27,7 +27,13 @@ interface UseChartDataProps {
 
 export const useChartData = ({ data, currentPrice, hoveredIndex }: UseChartDataProps): ProcessedChartData => {
   return useMemo(() => {
-    const currentPointIndex = data.findIndex(item => Math.abs(item.pv - currentPrice) < 0.000001);
+    // Find the closest data point to the current price instead of exact match
+    const currentPointIndex = data.reduce((closestIndex, point, index) => {
+      const currentDistance = Math.abs(point.pv - currentPrice);
+      const closestDistance = Math.abs(data[closestIndex].pv - currentPrice);
+      return currentDistance < closestDistance ? index : closestIndex;
+    }, 0);
+
     const currentPoint = data[currentPointIndex] || data[0];
 
     const hoveredData =

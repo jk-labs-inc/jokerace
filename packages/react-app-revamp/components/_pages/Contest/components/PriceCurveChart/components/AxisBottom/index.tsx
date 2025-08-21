@@ -62,7 +62,6 @@ const AxisBottom: React.FC<AxisBottomProps> = ({ xScale, chartHeight, data, acti
     const dataPoint = data.find(d => d.id === value);
     if (!dataPoint) return "";
 
-    // Always format the date the same way
     return formatDateWithBoldMonthDay(dataPoint.date);
   };
 
@@ -80,7 +79,6 @@ const AxisBottom: React.FC<AxisBottomProps> = ({ xScale, chartHeight, data, acti
       // End date should be center-aligned to align with the grid line
       textAnchor = "middle";
     }
-    // Middle/hovered dates stay center-aligned
 
     return {
       fill: "#ffffff",
@@ -96,14 +94,13 @@ const AxisBottom: React.FC<AxisBottomProps> = ({ xScale, chartHeight, data, acti
       {hoveredIndex !== null && hoveredIndex >= 0 && hoveredIndex < data.length && (
         <g>
           <rect
-            rx={8} // 8px radius as specified
+            rx={8} // 8px radius
             ry={8}
-            fill="#212121" // Dark gray background as specified
+            fill="#212121" 
             opacity={0.9}
           />
         </g>
       )}
-      x
       <VisxAxisBottom
         scale={xScale}
         top={chartHeight + 10}

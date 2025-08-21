@@ -1,4 +1,4 @@
-export const MARGIN = { top: 20, right: 160, left: 0, bottom: 60 };
+export const MARGIN = { top: 20, right: 160, left: 60, bottom: 60 };
 
 export const CHART_CONFIG = {
   verticalGridSections: 6,
