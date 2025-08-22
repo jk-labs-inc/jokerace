@@ -1,6 +1,5 @@
-import React from "react";
 import { motion } from "motion/react";
-import { CHART_CONFIG } from "../../constants";
+import React from "react";
 
 interface AnimatedDotProps {
   x: number;

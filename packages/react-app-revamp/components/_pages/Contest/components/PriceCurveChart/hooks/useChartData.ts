@@ -22,19 +22,18 @@ export interface ProcessedChartData {
 interface UseChartDataProps {
   data: ChartDataPoint[];
   currentPrice: number;
+  currentIndex: number;
   hoveredIndex: number | null;
 }
 
-export const useChartData = ({ data, currentPrice, hoveredIndex }: UseChartDataProps): ProcessedChartData => {
+export const useChartData = ({
+  data,
+  currentPrice,
+  currentIndex,
+  hoveredIndex,
+}: UseChartDataProps): ProcessedChartData => {
   return useMemo(() => {
-    // Find the closest data point to the current price instead of exact match
-    const currentPointIndex = data.reduce((closestIndex, point, index) => {
-      const currentDistance = Math.abs(point.pv - currentPrice);
-      const closestDistance = Math.abs(data[closestIndex].pv - currentPrice);
-      return currentDistance < closestDistance ? index : closestIndex;
-    }, 0);
-
-    const currentPoint = data[currentPointIndex] || data[0];
+    const currentPoint = data[currentIndex] || data[0];
 
     const hoveredData =
       hoveredIndex !== null

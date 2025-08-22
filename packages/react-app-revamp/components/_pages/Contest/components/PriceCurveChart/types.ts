@@ -9,6 +9,7 @@ export interface ChartDataPoint {
 export interface PriceCurveChartProps {
   data: ChartDataPoint[];
   currentPrice: number;
+  currentIndex: number;
 }
 
 export interface TooltipProps {

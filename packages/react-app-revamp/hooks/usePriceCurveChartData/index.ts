@@ -1,27 +1,35 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PricePoint } from "lib/priceCurve/types";
 import { ChartDataPoint } from "components/_pages/Contest/components/PriceCurveChart/types";
 
 export interface PriceCurveChartData {
   chartData: ChartDataPoint[];
   currentPrice: number;
+  currentIndex: number; // Add this
 }
 
 interface UsePriceCurveChartDataParams {
   pricePoints: PricePoint[];
-  currentTime?: Date;
 }
 
-const usePriceCurveChartData = ({
-  pricePoints,
-  currentTime = new Date(),
-}: UsePriceCurveChartDataParams): PriceCurveChartData => {
+const usePriceCurveChartData = ({ pricePoints }: UsePriceCurveChartDataParams): PriceCurveChartData => {
+  const [currentTime, setCurrentTime] = useState(() => new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const chartData = useMemo(() => {
     // Handle empty or invalid data
     if (!pricePoints || pricePoints.length === 0) {
       return {
         chartData: [],
         currentPrice: 0,
+        currentIndex: -1,
       };
     }
 
@@ -38,6 +46,7 @@ const usePriceCurveChartData = ({
     return {
       chartData: chartDataPoints,
       currentPrice: currentPriceValue,
+      currentIndex: currentIndex,
     };
   }, [pricePoints, currentTime]);
 

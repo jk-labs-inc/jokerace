@@ -9,9 +9,10 @@ import ReferenceLines from "./components/ReferenceLines";
 import AxisRight from "./components/AxisRight";
 import AxisBottom from "./components/AxisBottom";
 import { useChartData } from "./hooks/useChartData";
-import { MARGIN } from "./constants";
+import { MARGIN, MARGIN_MOBILE } from "./constants";
 import { PriceCurveChartProps } from "./types";
 import { createScalesAndAccessors } from "./helpers";
+import { useMediaQuery } from "react-responsive";
 
 export type PriceCurveChartComponentProps = PriceCurveChartProps & {
   width: number;
@@ -21,14 +22,18 @@ export type PriceCurveChartComponentProps = PriceCurveChartProps & {
 const PriceCurveChart: React.FC<PriceCurveChartComponentProps> = ({
   data = [],
   currentPrice = 0,
+  currentIndex,
   width,
   height = 500,
 }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const chartData = useChartData({ data, currentPrice, hoveredIndex });
+  const chartData = useChartData({ data, currentPrice, currentIndex, hoveredIndex });
 
-  const chartWidth = width - MARGIN.left - MARGIN.right;
-  const chartHeight = height - MARGIN.top - MARGIN.bottom;
+  const chartWidth =
+    width - (isMobile ? MARGIN_MOBILE.left : MARGIN.left) - (isMobile ? MARGIN_MOBILE.right : MARGIN.right);
+  const chartHeight =
+    height - (isMobile ? MARGIN_MOBILE.top : MARGIN.top) - (isMobile ? MARGIN_MOBILE.bottom : MARGIN.bottom);
 
   if (chartWidth <= 0 || chartHeight <= 0 || data.length === 0) {
     return null;

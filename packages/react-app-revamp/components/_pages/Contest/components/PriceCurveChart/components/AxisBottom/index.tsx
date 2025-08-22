@@ -2,6 +2,7 @@ import React from "react";
 import { AxisBottom as VisxAxisBottom } from "@visx/axis";
 import { ScalePoint } from "d3-scale";
 import moment from "moment";
+import { getTickValues } from "./utils";
 
 interface AxisBottomProps {
   xScale: ScalePoint<string>;
@@ -21,42 +22,7 @@ const formatDateWithBoldMonthDay = (dateString: string) => {
 const AxisBottom: React.FC<AxisBottomProps> = ({ xScale, chartHeight, data, activeDate, hoveredIndex }) => {
   const firstId = data[0]?.id;
   const lastId = data[data.length - 1]?.id;
-
-  // Calculate which dates to show based on hover state
-  const getTickValues = () => {
-    if (hoveredIndex === null || hoveredIndex < 0 || hoveredIndex >= data.length) {
-      // No hover - show start and end dates
-      return [firstId, lastId].filter(Boolean);
-    }
-
-    const hoveredDataPoint = data[hoveredIndex];
-    if (!hoveredDataPoint) {
-      return [firstId, lastId].filter(Boolean);
-    }
-
-    const totalDataPoints = data.length;
-    const proximityThreshold = Math.max(1, Math.floor(totalDataPoints * 0.15)); // 15% of data points as threshold
-
-    // Check if hovered point is close to start or end
-    const isNearStart = hoveredIndex <= proximityThreshold;
-    const isNearEnd = hoveredIndex >= totalDataPoints - proximityThreshold - 1;
-
-    if (isNearStart && isNearEnd) {
-      // Very small dataset - just show the hovered point
-      return [hoveredDataPoint.id];
-    } else if (isNearStart) {
-      // Near start - show hovered point and end date
-      return [hoveredDataPoint.id, lastId].filter(Boolean);
-    } else if (isNearEnd) {
-      // Near end - show start date and hovered point
-      return [firstId, hoveredDataPoint.id].filter(Boolean);
-    } else {
-      // In middle - show start, hovered, and end dates
-      return [firstId, hoveredDataPoint.id, lastId].filter(Boolean);
-    }
-  };
-
-  const tickValues = getTickValues();
+  const tickValues = getTickValues(hoveredIndex, data, firstId, lastId);
 
   const getTickFormat = (value: string) => {
     const dataPoint = data.find(d => d.id === value);

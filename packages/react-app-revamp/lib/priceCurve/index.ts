@@ -81,7 +81,7 @@ export const calculateStaticMinuteToMinutePercentage = (
 };
 
 /**
- * Generates all price points for a contest based on the exponential curve
+ * Generates all price points for a contest based on the exponential curve.
  * This is a generic function that can be used for charts, calculations, or any other purpose
  * @param params - Configuration for price point generation
  * @returns Array of price points with dates and formatted prices, includes all points regardless of price difference
@@ -153,8 +153,6 @@ export const generatePricePoints = (params: GeneratePricePointsParams): PricePoi
     date: point.date.toISOString(),
     price: formatEther(point.priceBigInt),
   }));
-
-  ({ formattedPricePoints });
 
   return formattedPricePoints;
 };
