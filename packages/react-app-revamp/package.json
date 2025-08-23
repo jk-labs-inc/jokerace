@@ -35,7 +35,7 @@
     "@types/lodash": "4.17.20",
     "@types/node": "22.17.2",
     "@types/papaparse": "5.3.16",
-    "@types/react": "19.1.10",
+    "@types/react": "19.1.11",
     "@types/react-csv": "1.1.10",
     "@types/react-dom": "19.1.7",
     "@types/react-virtualized": "9.22.2",
