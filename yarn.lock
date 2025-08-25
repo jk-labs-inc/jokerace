@@ -8253,15 +8253,6 @@
     "@walletconnect/ethereum-provider" "2.21.1"
     cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
 
-"@wagmi/core@2.19.0":
-  version "2.19.0"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.19.0.tgz#3c498a0cbe764642b378b2b1efb34797c54bb989"
-  integrity sha512-lI57q6refAtNU6xnk/oyOpbEtEiwQ6g4rR+C9FEx8Gn2hZlfoyyksndrl6hIKlMBK+UkkKso3VwR5DI65j/5XQ==
-  dependencies:
-    eventemitter3 "5.0.1"
-    mipd "0.0.7"
-    zustand "5.0.0"
-
 "@wagmi/core@2.20.0":
   version "2.20.0"
   resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.20.0.tgz#5f5cc7c98e32b83129a28d0df7096d3aadb8145c"
