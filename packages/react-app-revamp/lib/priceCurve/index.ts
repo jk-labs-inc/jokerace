@@ -1,7 +1,6 @@
-import { PERCENTAGE_INCREASE_THRESHOLD, PRICE_PRECISION } from "./constants";
-import { ExponentialPricingInput, GeneratePricePointsParams, PricePoint, PricePointInternal } from "./types";
 import { formatEther } from "viem";
-import { formatBalance } from "@helpers/formatBalance";
+import { COST_ROUNDING_VALUE, PERCENTAGE_INCREASE_THRESHOLD } from "./constants";
+import { ExponentialPricingInput, GeneratePricePointsParams, PricePoint, PricePointInternal } from "./types";
 
 /**
  * Calculates the 'c' value for y = 2^(cx) formula
@@ -128,7 +127,10 @@ export const generatePricePoints = (params: GeneratePricePointsParams): PricePoi
 
     // Calculate price using exponential formula: y = startPrice * 2^(multiple * percentThrough)
     const priceFloat = startPrice * Math.pow(2, multiple * percentThrough);
-    const priceBigInt = BigInt(Math.round(priceFloat));
+
+    // Apply smart contract rounding: (result / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE
+    const roundedPrice = Math.floor(priceFloat / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE;
+    const priceBigInt = BigInt(Math.round(roundedPrice));
 
     // Add ALL points regardless of price difference (we need this in order to create exponential curve)
     const pointDate = new Date(startTime.getTime() + seconds * 1000);
@@ -141,7 +143,8 @@ export const generatePricePoints = (params: GeneratePricePointsParams): PricePoi
 
   // Always include the end point
   const endPriceFloat = startPrice * Math.pow(2, multiple * 100);
-  const endPriceBigInt = BigInt(Math.round(endPriceFloat));
+  const roundedEndPrice = Math.floor(endPriceFloat / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE;
+  const endPriceBigInt = BigInt(Math.round(roundedEndPrice));
 
   pricePoints.push({
     date: endTime,
@@ -153,6 +156,8 @@ export const generatePricePoints = (params: GeneratePricePointsParams): PricePoi
     date: point.date.toISOString(),
     price: formatEther(point.priceBigInt),
   }));
+
+  console.log({ formattedPricePoints });
 
   return formattedPricePoints;
 };

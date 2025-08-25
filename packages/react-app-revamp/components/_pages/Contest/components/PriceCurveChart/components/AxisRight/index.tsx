@@ -1,7 +1,7 @@
-import React from "react";
+import { formatBalance } from "@helpers/formatBalance";
 import { AxisRight as VisxAxisRight } from "@visx/axis";
 import { ScaleLinear } from "d3-scale";
-import { formatBalance } from "@helpers/formatBalance";
+import React from "react";
 import { formatEther, parseEther } from "viem";
 
 interface AxisRightProps {
@@ -10,7 +10,7 @@ interface AxisRightProps {
   visibleTicks: number[];
   currentPrice: number;
   hoveredPrice: number | null;
-  currency  : string;
+  currency: string;
 }
 
 const AxisRight: React.FC<AxisRightProps> = ({
@@ -52,8 +52,7 @@ const AxisRight: React.FC<AxisRightProps> = ({
 
         const yPos = yScale(tick);
         const priceInWei = parseEther(tick.toString());
-        const formattedEther = formatEther(priceInWei);
-        const formattedPrice = `${formatBalance(formattedEther)} ${currency}`;
+        const formattedPrice = `${formatEther(priceInWei)} ${currency}`;
 
         return (
           <g key={`current-tick-${tick}`}>
@@ -81,8 +80,7 @@ const AxisRight: React.FC<AxisRightProps> = ({
 
           const yPos = yScale(tick);
           const priceInWei = parseEther(tick.toString());
-          const formattedEther = formatEther(priceInWei);
-          const formattedPrice = `${formatBalance(formattedEther)} eth`;
+          const formattedPrice = `${formatEther(priceInWei)} ${currency}`;
 
           return (
             <g key={`hovered-tick-${tick}`}>
