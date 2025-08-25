@@ -6,4 +6,7 @@ solc-version = "0.8.19"  # most rollups don't support past this - https://twitte
 optimizer = true
 optimizer_runs = 200
 
+[lint]
+lint_on_build = false
+
 # See more config options at https://book.getfoundry.sh/config/?highlight=foundry.toml#configuring-with-foundrytoml
