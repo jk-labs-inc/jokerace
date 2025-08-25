@@ -31,7 +31,10 @@ abstract contract GovernorSorting {
     // RULE: array length can never end lower than it started a transaction, otherwise erroneous ranking can happen
     uint256[] public sortedRanks; // value is votes counts, has the constraint of no duplicate values.
 
+    error RankLimitCannotBeZero();
+
     constructor(uint256 sortingEnabled_, uint256 rankLimit_) {
+        if (rankLimit_ == 0) revert RankLimitCannotBeZero();
         sortingEnabled = sortingEnabled_;
         rankLimit = rankLimit_;
     }
