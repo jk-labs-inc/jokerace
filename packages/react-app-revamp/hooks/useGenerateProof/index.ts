@@ -80,26 +80,36 @@ export function useGenerateProof() {
 
     switch (proofType) {
       case "submission":
-        const submissionMerkleRoot = (await readContract(config, {
-          ...contractConfig,
-          functionName: "submissionMerkleRoot",
-        })) as string;
+        try {
+          const submissionMerkleRoot = (await readContract(config, {
+            ...contractConfig,
+            functionName: "submissionMerkleRoot",
+          })) as string;
 
-        if (submissionMerkleRoot === EMPTY_ROOT) {
-          return [];
-        } else {
+          if (submissionMerkleRoot === EMPTY_ROOT) {
+            return [];
+          }
+
           return await generateProofs(address, numVotes, submissionMerkleRoot);
+        } catch (error) {
+          console.error(`Error in getProofsBasedOnType`, error);
+          return Promise.reject(error);
         }
       case "vote":
-        const votingMerkleRoot = (await readContract(config, {
-          ...contractConfig,
-          functionName: "votingMerkleRoot",
-        })) as string;
+        try {
+          const votingMerkleRoot = (await readContract(config, {
+            ...contractConfig,
+            functionName: "votingMerkleRoot",
+          })) as string;
 
-        if (votingMerkleRoot === EMPTY_ROOT && anyoneCanVote) {
-          return [];
-        } else {
-          return await generateProofs(address, numVotes, votingMerkleRoot);
+          if (votingMerkleRoot === EMPTY_ROOT && anyoneCanVote) {
+            return [];
+          } else {
+            return await generateProofs(address, numVotes, votingMerkleRoot);
+          }
+        } catch (error) {
+          console.error(`Error in getProofsBasedOnType`, error);
+          return Promise.reject(error);
         }
     }
   }
@@ -111,19 +121,29 @@ export function useGenerateProof() {
 
     switch (proofType) {
       case "submission":
-        verified = (await readContract(config, {
-          ...contractConfig,
-          functionName: "addressSubmitterVerified",
-          args: [address as `0x${string}`],
-        })) as boolean;
-        break;
+        try {
+          verified = (await readContract(config, {
+            ...contractConfig,
+            functionName: "addressSubmitterVerified",
+            args: [address as `0x${string}`],
+          })) as boolean;
+          break;
+        } catch (error) {
+          console.error(`Error in checkIfUserIsVerified`, error);
+          return false;
+        }
       case "vote":
-        verified = (await readContract(config, {
-          ...contractConfig,
-          functionName: "addressTotalVotesVerified",
-          args: [address as `0x${string}`],
-        })) as boolean;
-        break;
+        try {
+          verified = (await readContract(config, {
+            ...contractConfig,
+            functionName: "addressTotalVotesVerified",
+            args: [address as `0x${string}`],
+          })) as boolean;
+          break;
+        } catch (error) {
+          console.error(`Error in checkIfUserIsVerified`, error);
+          return false;
+        }
       default:
         break;
     }

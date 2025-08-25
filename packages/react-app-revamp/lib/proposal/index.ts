@@ -58,104 +58,120 @@ const assignRankAndCheckTies = (mappedProposals: MappedProposalIds[], targetId: 
 };
 
 const fetchProposalInfo = async (abi: any, version: string, address: string, chainId: number, submission: string) => {
-  let contracts = [
-    {
-      address: address as `0x${string}`,
-      abi,
-      chainId,
-      functionName: "getProposal",
-      args: [submission],
-    },
-    {
-      address: address as `0x${string}`,
-      abi,
-      chainId,
-      functionName: "proposalVotes",
-      args: [submission],
-    },
-    {
-      address: address as `0x${string}`,
-      abi,
-      chainId,
-      functionName: "proposalIsDeleted",
-      args: [submission],
-    },
-  ];
-
-  const results = (await readContracts(config, { contracts })) as any;
-  const data = results[0].result;
-  const isDeleted = results[2].result;
-  const content = isDeleted ? ProposalState.Deleted : data.description;
-  const { fieldsMetadata } = data;
-  const metadataFields: RawMetadataFields = fieldsMetadata
-    ? {
-        addressArray: fieldsMetadata.addressArray ?? defaultMetadataFields.addressArray,
-        stringArray: fieldsMetadata.stringArray ?? defaultMetadataFields.stringArray,
-        uintArray: fieldsMetadata.uintArray ?? defaultMetadataFields.uintArray,
-      }
-    : defaultMetadataFields;
-
-  // calculate votes based on version
-  const hasDownvotes = compareVersions(version, "5.1") < 0;
-  let votes: number;
-
-  if (hasDownvotes) {
-    // older version with for/against votes
-    const forVotesBigInt = results[1].result[0] as bigint;
-    const againstVotesBigInt = results[1].result[1] as bigint;
-    votes = extractVotes(forVotesBigInt, againstVotesBigInt);
-  } else {
-    // newer version with single vote count
-    const votesBigInt = results[1].result as bigint;
-    votes = Number(formatEther(votesBigInt));
-  }
-
-  let rankInfo = { rank: 0, isTied: false };
-
-  if (votes !== 0) {
-    const proposalsIdsRawData = await getProposalIdsRaw(
+  try {
+    let contracts = [
       {
         address: address as `0x${string}`,
-        abi: abi,
-        chainId: chainId,
+        abi,
+        chainId,
+        functionName: "getProposal",
+        args: [submission],
       },
-      false,
-      version,
-    );
+      {
+        address: address as `0x${string}`,
+        abi,
+        chainId,
+        functionName: "proposalVotes",
+        args: [submission],
+      },
+      {
+        address: address as `0x${string}`,
+        abi,
+        chainId,
+        functionName: "proposalIsDeleted",
+        args: [submission],
+      },
+    ];
 
-    // handle different vote data structure based on version
-    const mappedProposals = proposalsIdsRawData[0].map((idData: any, index: number) => {
-      let proposalVotes: number;
+    const results = (await readContracts(config, { contracts })) as any;
+    const data = results[0].result;
+    const isDeleted = results[2].result;
+    const content = isDeleted ? ProposalState.Deleted : data.description;
+    const { fieldsMetadata } = data;
+    const metadataFields: RawMetadataFields = fieldsMetadata
+      ? {
+          addressArray: fieldsMetadata.addressArray ?? defaultMetadataFields.addressArray,
+          stringArray: fieldsMetadata.stringArray ?? defaultMetadataFields.stringArray,
+          uintArray: fieldsMetadata.uintArray ?? defaultMetadataFields.uintArray,
+        }
+      : defaultMetadataFields;
 
-      if (hasDownvotes) {
-        proposalVotes = extractVotes(
-          proposalsIdsRawData[1][index].forVotes,
-          proposalsIdsRawData[1][index].againstVotes,
-        );
-      } else {
-        proposalVotes = Number(formatEther(proposalsIdsRawData[1][index]));
-      }
+    // calculate votes based on version
+    const hasDownvotes = compareVersions(version, "5.1") < 0;
+    let votes: number;
 
-      return {
-        votes: proposalVotes,
-        id: idData.toString(),
-      };
-    }) as MappedProposalIds[];
+    if (hasDownvotes) {
+      // older version with for/against votes
+      const forVotesBigInt = results[1].result[0] as bigint;
+      const againstVotesBigInt = results[1].result[1] as bigint;
+      votes = extractVotes(forVotesBigInt, againstVotesBigInt);
+    } else {
+      // newer version with single vote count
+      const votesBigInt = results[1].result as bigint;
+      votes = Number(formatEther(votesBigInt));
+    }
 
-    rankInfo = assignRankAndCheckTies(mappedProposals, submission);
+    let rankInfo = { rank: 0, isTied: false };
+
+    if (votes !== 0) {
+      const proposalsIdsRawData = await getProposalIdsRaw(
+        {
+          address: address as `0x${string}`,
+          abi: abi,
+          chainId: chainId,
+        },
+        false,
+        version,
+      );
+
+      // handle different vote data structure based on version
+      const mappedProposals = proposalsIdsRawData[0].map((idData: any, index: number) => {
+        let proposalVotes: number;
+
+        if (hasDownvotes) {
+          proposalVotes = extractVotes(
+            proposalsIdsRawData[1][index].forVotes,
+            proposalsIdsRawData[1][index].againstVotes,
+          );
+        } else {
+          proposalVotes = Number(formatEther(proposalsIdsRawData[1][index]));
+        }
+
+        return {
+          votes: proposalVotes,
+          id: idData.toString(),
+        };
+      }) as MappedProposalIds[];
+
+      rankInfo = assignRankAndCheckTies(mappedProposals, submission);
+    }
+
+    return {
+      id: submission,
+      authorEthereumAddress: data.author,
+      content: content,
+      isContentImage: isUrlToImage(data.description),
+      tweet: isContentTweet(data.description),
+      metadataFields,
+      exists: data.exists,
+      votes,
+      ...rankInfo,
+    };
+  } catch (error) {
+    console.error("Error fetching entry info:", error);
+    return {
+      id: submission,
+      authorEthereumAddress: "",
+      content: "Failed to load entry",
+      isContentImage: false,
+      tweet: { id: "", url: "", isTweet: false },
+      metadataFields: defaultMetadataFields,
+      exists: false,
+      votes: 0,
+      rank: 0,
+      isTied: false,
+    };
   }
-
-  return {
-    id: submission,
-    authorEthereumAddress: data.author,
-    content: content,
-    isContentImage: isUrlToImage(data.description),
-    tweet: isContentTweet(data.description),
-    metadataFields,
-    exists: data.exists,
-    votes,
-    ...rankInfo,
-  };
 };
 
 const fetchNumberOfComments = async (

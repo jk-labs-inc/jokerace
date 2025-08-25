@@ -172,28 +172,30 @@ export function useCastVotes() {
         hash: receipt.transactionHash,
       });
 
-      // Update proposal votes
-      const voteCount = (await readContract(config, {
-        address: contestAddress as `0x${string}`,
-        abi: DeployedContestContract.abi,
-        functionName: "proposalVotes",
-        args: [pickedProposal],
-      })) as bigint;
+      try {
+        const voteCount = (await readContract(config, {
+          address: contestAddress as `0x${string}`,
+          abi: DeployedContestContract.abi,
+          functionName: "proposalVotes",
+          args: [pickedProposal],
+        })) as bigint;
 
-      const votes = Number(formatEther(voteCount));
-      const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
+        const votes = Number(formatEther(voteCount));
+        const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
 
-      if (existingProposal) {
-        updateProposal(
-          {
-            ...existingProposal,
-            netVotes: votes,
-          },
-          listProposalsData,
-        );
+        if (existingProposal) {
+          updateProposal(
+            {
+              ...existingProposal,
+              netVotes: votes,
+            },
+            listProposalsData,
+          );
+        }
+      } catch (voteUpdateError) {
+        console.error("Error updating proposal votes after casting:", voteUpdateError);
       }
 
-      // Refresh data and complete
       await updateCurrentUserVotes(abi, version, anyoneCanVote);
       refetchTotalVotesCastOnContest();
       refetchCurrentUserVotesOnProposal();
