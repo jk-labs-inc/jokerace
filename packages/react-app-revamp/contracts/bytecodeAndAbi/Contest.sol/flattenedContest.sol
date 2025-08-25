@@ -5115,7 +5115,7 @@ using {
 /// @dev The result is rounded toward zero.
 /// @param x The UD60x18 number to convert.
 /// @return result The same number in basic integer form.
-function convert_1(UD60x18 x) pure returns (uint256 result) {
+function convert_0(UD60x18 x) pure returns (uint256 result) {
     result = UD60x18.unwrap(x) / uUNIT_3;
 }
 
@@ -5126,7 +5126,7 @@ function convert_1(UD60x18 x) pure returns (uint256 result) {
 ///
 /// @param x The basic integer to convert.
 /// @param result The same number converted to UD60x18.
-function convert_0(uint256 x) pure returns (UD60x18 result) {
+function convert_1(uint256 x) pure returns (UD60x18 result) {
     if (x > uMAX_UD60x18 / uUNIT_3) {
         revert PRBMath_UD60x18_Convert_Overflow(x);
     }
@@ -5259,7 +5259,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "5.12"; // Private as to not clutter the ABI.
+    string private constant VERSION = "5.13"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -6168,7 +6168,7 @@ contract RewardsModule {
     string public constant MODULE_TYPE = "AUTHOR_REWARDS";
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant JK_LABS_CANCEL_DELAY = 604800; // One week
-    string private constant VERSION = "5.12"; // Private as to not clutter the ABI
+    string private constant VERSION = "5.13"; // Private as to not clutter the ABI
 
     mapping(IERC20 => uint256) public erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released;
@@ -6473,6 +6473,7 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
 
     error PayPerVoteMustBeEnabledForAnyoneCanVote();
     error PeriodsCannotBeMoreThanAWeek();
+    error RankLimitCannotBeZero();
 
     constructor(
         string memory _name,
@@ -6495,6 +6496,8 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
         ) {
             revert PeriodsCannotBeMoreThanAWeek();
         }
+
+        if (_constructorArgs.intConstructorArgs.rankLimit == 0) revert RankLimitCannotBeZero();
     }
 }
 
