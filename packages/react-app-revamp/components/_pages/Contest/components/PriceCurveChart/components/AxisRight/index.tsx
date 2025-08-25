@@ -10,9 +10,17 @@ interface AxisRightProps {
   visibleTicks: number[];
   currentPrice: number;
   hoveredPrice: number | null;
+  currency  : string;
 }
 
-const AxisRight: React.FC<AxisRightProps> = ({ yScale, chartWidth, visibleTicks, currentPrice, hoveredPrice }) => {
+const AxisRight: React.FC<AxisRightProps> = ({
+  yScale,
+  chartWidth,
+  visibleTicks,
+  currentPrice,
+  hoveredPrice,
+  currency,
+}) => {
   return (
     <g>
       <VisxAxisRight
@@ -45,12 +53,12 @@ const AxisRight: React.FC<AxisRightProps> = ({ yScale, chartWidth, visibleTicks,
         const yPos = yScale(tick);
         const priceInWei = parseEther(tick.toString());
         const formattedEther = formatEther(priceInWei);
-        const formattedPrice = `${formatBalance(formattedEther)} eth`;
+        const formattedPrice = `${formatBalance(formattedEther)} ${currency}`;
 
         return (
           <g key={`current-tick-${tick}`}>
             {/* Current price background (always rendered) */}
-            <rect x={chartWidth + 8} y={yPos - 12} width={90} height={24} rx={8} fill="#BB65FF" />
+            <rect x={chartWidth + 8} y={yPos - 14} width={90} height={24} rx={8} fill="#BB65FF" />
             <text
               x={chartWidth + 16}
               y={yPos}
@@ -79,7 +87,7 @@ const AxisRight: React.FC<AxisRightProps> = ({ yScale, chartWidth, visibleTicks,
           return (
             <g key={`hovered-tick-${tick}`}>
               {/* Hovered price background (renders on top) */}
-              <rect x={chartWidth + 8} y={yPos - 12} width={90} height={24} rx={8} fill="#212121" />
+              <rect x={chartWidth + 8} y={yPos - 14} width={90} height={24} rx={8} fill="#212121" />
               <text
                 x={chartWidth + 16}
                 y={yPos}

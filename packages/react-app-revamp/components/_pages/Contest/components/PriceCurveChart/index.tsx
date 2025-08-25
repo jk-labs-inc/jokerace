@@ -102,6 +102,7 @@ const PriceCurveChart: React.FC<PriceCurveChartComponentProps> = ({
         {chartData.active.point && <AnimatedDot x={dotX} y={dotY} isHovered={!!chartData.hovered.point} />}
 
         <AxisRight
+          currency={chartData.currency}
           yScale={yScale}
           chartWidth={chartWidth}
           visibleTicks={visibleTicks}

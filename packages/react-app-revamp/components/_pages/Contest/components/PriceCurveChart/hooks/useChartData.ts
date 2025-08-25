@@ -1,8 +1,11 @@
 import { useMemo } from "react";
 import { ChartDataPoint } from "../types";
+import { useContestStore } from "@hooks/useContest/store";
+import { useShallow } from "zustand/react/shallow";
 
 export interface ProcessedChartData {
   current: ChartDataPoint | null;
+  currency: string;
   hovered: {
     point: ChartDataPoint | null;
     price: number | null;
@@ -32,6 +35,8 @@ export const useChartData = ({
   currentIndex,
   hoveredIndex,
 }: UseChartDataProps): ProcessedChartData => {
+  const contestInfoData = useContestStore(useShallow(state => state.contestInfoData));
+
   return useMemo(() => {
     const currentPoint = data[currentIndex] || data[0];
 
@@ -45,6 +50,7 @@ export const useChartData = ({
 
     return {
       current: currentPoint,
+      currency: contestInfoData.contestChainNativeCurrencySymbol,
       hovered: hoveredData,
       active: { point: activePoint, price: activePrice },
       dates: {
