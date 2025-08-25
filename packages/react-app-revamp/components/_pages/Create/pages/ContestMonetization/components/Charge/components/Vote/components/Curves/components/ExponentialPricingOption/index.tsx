@@ -1,11 +1,11 @@
 import { FC, useEffect, useState } from "react";
 import CreateFlowMonetizationInput from "@components/_pages/Create/components/MonetizationInput";
-import { calculateExponentialMultiple } from "@helpers/exponentialMultiplier";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useShallow } from "zustand/react/shallow";
 import { validateCostToVote, validateStartAndEndPrice } from "../../../../../../validation";
 import { useMediaQuery } from "react-responsive";
 import { PriceCurveType } from "@hooks/useDeployContest/types";
+import { calculateExponentialMultiple } from "lib/priceCurve";
 
 interface ExponentialPricingOptionProps {
   chainUnitLabel: string;

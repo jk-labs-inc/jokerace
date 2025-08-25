@@ -1,6 +1,6 @@
-import { calculateStaticMinuteToMinutePercentage } from "@helpers/exponentialMultiplier";
 import { useContestStore } from "@hooks/useContest/store";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
+import { calculateStaticMinuteToMinutePercentage } from "lib/priceCurve";
 import { useMemo } from "react";
 import { Abi, formatEther } from "viem";
 import { useShallow } from "zustand/react/shallow";

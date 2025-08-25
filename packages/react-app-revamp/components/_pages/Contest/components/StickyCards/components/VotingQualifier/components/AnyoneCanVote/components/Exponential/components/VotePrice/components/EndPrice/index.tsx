@@ -1,9 +1,9 @@
 import VotingQualifierError from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Error";
 import VotingQualifierSkeleton from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Skeleton";
-import { calculateEndPrice } from "@helpers/exponentialMultiplier";
 import { formatBalance } from "@helpers/formatBalance";
 import { useContestStore } from "@hooks/useContest/store";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
+import { calculateEndPrice } from "lib/priceCurve";
 import { FC } from "react";
 import { formatEther } from "viem";
 import { useShallow } from "zustand/react/shallow";

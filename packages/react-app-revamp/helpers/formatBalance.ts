@@ -13,16 +13,12 @@ export function formatBalance(balance: string): string {
 
   // handle small numbers (less than 0.001)
   if (num.abs().isLessThan(0.001)) {
-    // find the first non-zero digit
-    const firstNonZeroIndex = balance.replace(/^-?0\.?0*/, "").search(/[1-9]/);
-    if (firstNonZeroIndex !== -1) {
-      // return the number with up to 5 significant digits
-      return num.precision(firstNonZeroIndex + 5).toString();
-    }
+    // For small numbers, use 6 decimal places and truncate (round down)
+    return num.decimalPlaces(6, BigNumber.ROUND_DOWN).toString();
   }
 
   // handle numbers >= 0.001
-  const truncated = num.decimalPlaces(5, BigNumber.ROUND_HALF_UP);
+  const truncated = num.decimalPlaces(5, BigNumber.ROUND_DOWN);
 
   // use abbreviated format for numbers >= 1000
   if (truncated.abs().isGreaterThanOrEqualTo(MIN_VALUE_FOR_ABBREVIATION)) {
