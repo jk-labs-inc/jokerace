@@ -26,7 +26,7 @@ const ChartGrid: React.FC<ChartGridProps> = ({ innerWidth, innerHeight, yAxisTic
       from={{ x: 0, y: yScale(tick) }}
       to={{ x: innerWidth, y: yScale(tick) }}
       stroke={CHART_CONFIG.colors.grid}
-      strokeWidth={1}
+      strokeWidth={0.5}
       width={95}
       height={95}
     />

@@ -29,7 +29,7 @@ const ChartLine: React.FC<ChartLineProps> = ({ data, getX, getY, currentPrice, y
 
       <Line
         from={{ x: 0, y: yScale(currentPrice) }}
-        to={{ x: innerWidth, y: yScale(currentPrice) }}
+        to={{ x: innerWidth + 30, y: yScale(currentPrice) }}
         stroke={CHART_CONFIG.colors.mainLine}
         strokeWidth={0.5}
         strokeDasharray="8,8"

@@ -38,7 +38,6 @@ const AxisRight: React.FC<AxisRightProps> = ({ yScale, chartWidth, visibleTicks,
       />
 
       {/* Custom styled backgrounds for current and hovered prices */}
-      {/* First render current price background */}
       {visibleTicks.map(tick => {
         const isCurrentPrice = tick === currentPrice;
         if (!isCurrentPrice) return null;
@@ -51,7 +50,7 @@ const AxisRight: React.FC<AxisRightProps> = ({ yScale, chartWidth, visibleTicks,
         return (
           <g key={`current-tick-${tick}`}>
             {/* Current price background (always rendered) */}
-            <rect x={chartWidth + 8} y={yPos - 12} width={120} height={24} rx={8} fill="#BB65FF" />
+            <rect x={chartWidth + 8} y={yPos - 12} width={90} height={24} rx={8} fill="#BB65FF" />
             <text
               x={chartWidth + 16}
               y={yPos}
@@ -66,7 +65,6 @@ const AxisRight: React.FC<AxisRightProps> = ({ yScale, chartWidth, visibleTicks,
         );
       })}
 
-      {/* Then render hovered price on top (if different from current) */}
       {hoveredPrice !== null &&
         hoveredPrice !== currentPrice &&
         visibleTicks.map(tick => {
@@ -81,7 +79,7 @@ const AxisRight: React.FC<AxisRightProps> = ({ yScale, chartWidth, visibleTicks,
           return (
             <g key={`hovered-tick-${tick}`}>
               {/* Hovered price background (renders on top) */}
-              <rect x={chartWidth + 8} y={yPos - 12} width={120} height={24} rx={8} fill="#212121" />
+              <rect x={chartWidth + 8} y={yPos - 12} width={90} height={24} rx={8} fill="#212121" />
               <text
                 x={chartWidth + 16}
                 y={yPos}

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { generatePricePoints } from "lib/priceCurve";
 import { PricePoint } from "lib/priceCurve/types";
 
@@ -24,37 +25,40 @@ const usePriceCurvePoints = ({
   updateIntervalSeconds = 60,
   enabled = true,
 }: UsePriceCurvePointsParams): PriceCurvePointsResult => {
-  // Early return if disabled or invalid data
-  if (!enabled || !startPrice || !multiple || !startTime || !endTime) {
-    return {
-      pricePoints: [],
-      isLoading: false,
-      isError: false,
-    };
-  }
+  const pricePointsData = useMemo(() => {
+    if (!enabled || !startPrice || !multiple || !startTime || !endTime) {
+      return {
+        pricePoints: [],
+        isLoading: false,
+        isError: false,
+      };
+    }
 
-  try {
-    const pricePoints = generatePricePoints({
-      startPrice,
-      multiple,
-      startTime,
-      endTime,
-      updateIntervalSeconds,
-    });
+    try {
+      const pricePoints = generatePricePoints({
+        startPrice,
+        multiple,
+        startTime,
+        endTime,
+        updateIntervalSeconds,
+      });
 
-    return {
-      pricePoints: pricePoints || [],
-      isLoading: false,
-      isError: false,
-    };
-  } catch (error) {
-    console.error("Error generating price points:", error);
-    return {
-      pricePoints: [],
-      isLoading: false,
-      isError: true,
-    };
-  }
+      return {
+        pricePoints: pricePoints || [],
+        isLoading: false,
+        isError: false,
+      };
+    } catch (error) {
+      console.error("Error generating price points:", error);
+      return {
+        pricePoints: [],
+        isLoading: false,
+        isError: true,
+      };
+    }
+  }, [enabled, startPrice, multiple, startTime, endTime, updateIntervalSeconds]);
+
+  return pricePointsData;
 };
 
 export default usePriceCurvePoints;

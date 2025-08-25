@@ -69,66 +69,64 @@ const PriceCurveChart: React.FC<PriceCurveChartComponentProps> = ({
   const handleMouseLeave = () => setHoveredIndex(null);
 
   return (
-    <>
-      <svg width={width} height={height}>
-        <Group left={MARGIN.left} top={MARGIN.top}>
-          <ChartGrid
+    <svg width={width} height={height}>
+      <Group left={MARGIN.left} top={MARGIN.top}>
+        <ChartGrid
+          innerWidth={chartWidth}
+          innerHeight={chartHeight}
+          yAxisTicks={chartData.yAxisTicks}
+          yScale={yScale}
+        />
+
+        <ChartBorders innerWidth={chartWidth} innerHeight={chartHeight} />
+
+        <ChartLine
+          data={data}
+          getX={getX}
+          getY={getY}
+          currentPrice={currentPrice}
+          yScale={yScale}
+          innerWidth={chartWidth}
+        />
+
+        {chartData.hovered.point && (
+          <ReferenceLines
+            x={refLineX}
+            y={refLineY}
             innerWidth={chartWidth}
             innerHeight={chartHeight}
-            yAxisTicks={chartData.yAxisTicks}
-            yScale={yScale}
+            showHorizontalLine={chartData.hovered.price !== currentPrice}
           />
+        )}
 
-          <ChartBorders innerWidth={chartWidth} innerHeight={chartHeight} />
+        {chartData.active.point && <AnimatedDot x={dotX} y={dotY} isHovered={!!chartData.hovered.point} />}
 
-          <ChartLine
-            data={data}
-            getX={getX}
-            getY={getY}
-            currentPrice={currentPrice}
-            yScale={yScale}
-            innerWidth={chartWidth}
-          />
+        <AxisRight
+          yScale={yScale}
+          chartWidth={chartWidth}
+          visibleTicks={visibleTicks}
+          currentPrice={currentPrice}
+          hoveredPrice={chartData.hovered.price}
+        />
 
-          {chartData.hovered.point && (
-            <ReferenceLines
-              x={refLineX}
-              y={refLineY}
-              innerWidth={chartWidth}
-              innerHeight={chartHeight}
-              showHorizontalLine={chartData.hovered.price !== currentPrice}
-            />
-          )}
+        <AxisBottom
+          xScale={xScale}
+          chartHeight={chartHeight}
+          data={data}
+          activeDate={chartData.dates.active}
+          hoveredIndex={hoveredIndex}
+        />
 
-          {chartData.active.point && <AnimatedDot x={dotX} y={dotY} isHovered={!!chartData.hovered.point} />}
-
-          <AxisRight
-            yScale={yScale}
-            chartWidth={chartWidth}
-            visibleTicks={visibleTicks}
-            currentPrice={currentPrice}
-            hoveredPrice={chartData.hovered.price}
-          />
-
-          <AxisBottom
-            xScale={xScale}
-            chartHeight={chartHeight}
-            data={data}
-            activeDate={chartData.dates.active}
-            hoveredIndex={hoveredIndex}
-          />
-
-          <rect
-            width={chartWidth}
-            height={chartHeight}
-            fill="transparent"
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            style={{ cursor: "crosshair" }}
-          />
-        </Group>
-      </svg>
-    </>
+        <rect
+          width={chartWidth}
+          height={chartHeight}
+          fill="transparent"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          style={{ cursor: "crosshair" }}
+        />
+      </Group>
+    </svg>
   );
 };
 

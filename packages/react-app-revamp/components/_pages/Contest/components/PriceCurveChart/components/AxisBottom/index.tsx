@@ -60,10 +60,13 @@ const AxisBottom: React.FC<AxisBottomProps> = ({ xScale, chartHeight, data, acti
       {hoveredIndex !== null && hoveredIndex >= 0 && hoveredIndex < data.length && (
         <g>
           <rect
-            rx={8} // 8px radius
+            x={(xScale(data[hoveredIndex].id) ?? 0) - 60}
+            y={chartHeight + 18}
+            width={120}
+            height={24}
+            rx={8}
             ry={8}
-            fill="#212121" 
-            opacity={0.9}
+            fill="#212121"
           />
         </g>
       )}

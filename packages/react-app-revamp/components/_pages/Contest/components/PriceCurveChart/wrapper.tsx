@@ -30,6 +30,7 @@ const PriceCurveWrapper = () => {
     abi: abi,
     chainId: contestInfo.contestChainId,
   });
+
   const {
     priceCurveUpdateInterval,
     isLoading: isPriceCurveUpdateIntervalLoading,
@@ -61,7 +62,7 @@ const PriceCurveWrapper = () => {
   });
 
   return (
-    <div className="w-full h-full animate-appear" ref={parentRef}>
+    <div className="animate-appear" ref={parentRef}>
       <PriceCurveChart
         data={chartData}
         currentPrice={currentPrice}

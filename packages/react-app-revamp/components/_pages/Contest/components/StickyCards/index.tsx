@@ -25,10 +25,12 @@ const ContestStickyCards = () => {
   }
 
   return (
-    <div className="flex flex-col bg-true-black sticky -top-px z-10 mt-8">
-      <div className="flex gap-4 py-4">
-        <ContestCountdown votingTimeLeft={votingTimeLeft} />
-        <VotingContestQualifier votingTimeLeft={votingTimeLeft} />
+    <div className="flex flex-col">
+      <div className="flex flex-col bg-true-black sticky -top-px z-10 mt-8">
+        <div className="flex gap-4 py-4">
+          <ContestCountdown votingTimeLeft={votingTimeLeft} />
+          <VotingContestQualifier votingTimeLeft={votingTimeLeft} />
+        </div>
       </div>
       {isExpanded && <PriceCurveWrapper />}
       <hr className="border-primary-2 border" />

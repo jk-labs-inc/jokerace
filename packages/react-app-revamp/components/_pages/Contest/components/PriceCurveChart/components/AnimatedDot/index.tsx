@@ -21,7 +21,7 @@ const AnimatedDot: React.FC<AnimatedDotProps> = ({ x, y, isHovered }) => {
               stopColor: ["#BB65FF", "#BB65FF", "#BB65FF", "#BB65FF", "#BB65FF"],
             }}
             transition={{
-              duration: 2.998,
+              duration: 2.999,
               delay: 0.001,
               repeat: Infinity,
               ease: "easeInOut",
@@ -35,7 +35,7 @@ const AnimatedDot: React.FC<AnimatedDotProps> = ({ x, y, isHovered }) => {
               stopColor: ["#78FFC6", "#78FFC6", "#E5E5E5", "#E5E5E5", "#78FFC6"],
             }}
             transition={{
-              duration: 2.998,
+              duration: 2.999,
               delay: 0.001,
               repeat: Infinity,
               ease: "easeInOut",
@@ -58,7 +58,7 @@ const AnimatedDot: React.FC<AnimatedDotProps> = ({ x, y, isHovered }) => {
           scale: [1, 1.2, 1],
         }}
         transition={{
-          duration: 2.998,
+          duration: 2.999,
           delay: 0.001,
           repeat: Infinity,
           ease: "easeInOut",
