@@ -4,4 +4,4 @@
  */
 export const PERCENTAGE_INCREASE_THRESHOLD = 0.1;
 
-export const COST_ROUNDING_VALUE = 1e12; // Matches smart contract COST_ROUNDING_VALUE
+export const COST_ROUNDING_VALUE = 1e9;

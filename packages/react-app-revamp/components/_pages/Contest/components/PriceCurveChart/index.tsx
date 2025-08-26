@@ -1,46 +1,35 @@
-import React, { useState } from "react";
-import { Group } from "@visx/group";
 import { localPoint } from "@visx/event";
-import ChartGrid from "./components/ChartGrid";
-import ChartBorders from "./components/ChartBorders";
-import ChartLine from "./components/ChartLine";
+import { Group } from "@visx/group";
+import React, { FC, useState } from "react";
 import AnimatedDot from "./components/AnimatedDot";
-import ReferenceLines from "./components/ReferenceLines";
-import AxisRight from "./components/AxisRight";
 import AxisBottom from "./components/AxisBottom";
-import { useChartData } from "./hooks/useChartData";
-import { MARGIN, MARGIN_MOBILE } from "./constants";
-import { PriceCurveChartProps } from "./types";
+import AxisRight from "./components/AxisRight";
+import ChartBorders from "./components/ChartBorders";
+import ChartGrid from "./components/ChartGrid";
+import ChartLine from "./components/ChartLine";
+import ReferenceLines from "./components/ReferenceLines";
+import { MARGIN } from "./constants";
 import { createScalesAndAccessors } from "./helpers";
-import { useMediaQuery } from "react-responsive";
+import { useChartData } from "./hooks/useChartData";
+import { PriceCurveChartProps } from "./types";
 
 export type PriceCurveChartComponentProps = PriceCurveChartProps & {
   width: number;
   height: number;
 };
 
-const PriceCurveChart: React.FC<PriceCurveChartComponentProps> = ({
+const PriceCurveChart: FC<PriceCurveChartComponentProps> = ({
   data = [],
   currentPrice = 0,
   currentIndex,
   width,
   height = 500,
 }) => {
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const chartData = useChartData({ data, currentPrice, currentIndex, hoveredIndex });
-
-  const chartWidth =
-    width - (isMobile ? MARGIN_MOBILE.left : MARGIN.left) - (isMobile ? MARGIN_MOBILE.right : MARGIN.right);
-  const chartHeight =
-    height - (isMobile ? MARGIN_MOBILE.top : MARGIN.top) - (isMobile ? MARGIN_MOBILE.bottom : MARGIN.bottom);
-
-  if (chartWidth <= 0 || chartHeight <= 0 || data.length === 0) {
-    return null;
-  }
-
+  const chartWidth = width - MARGIN.left - MARGIN.right;
+  const chartHeight = height - MARGIN.top - MARGIN.bottom;
   const { xScale, yScale, getX, getY } = createScalesAndAccessors(data, chartWidth, chartHeight);
-
   const dotX = chartData.active.point ? getX(chartData.active.point) : 0;
   const dotY = yScale(chartData.active.price);
   const refLineX = chartData.active.point ? getX(chartData.active.point) : 0;
@@ -68,8 +57,12 @@ const PriceCurveChart: React.FC<PriceCurveChartComponentProps> = ({
 
   const handleMouseLeave = () => setHoveredIndex(null);
 
+  if (width <= 0 || height <= 0 || data.length === 0) {
+    return null;
+  }
+
   return (
-    <svg width={width} height={height}>
+    <svg width={width} height={height} overflow="visible">
       <Group left={MARGIN.left} top={MARGIN.top}>
         <ChartGrid
           innerWidth={chartWidth}
@@ -101,15 +94,6 @@ const PriceCurveChart: React.FC<PriceCurveChartComponentProps> = ({
 
         {chartData.active.point && <AnimatedDot x={dotX} y={dotY} isHovered={!!chartData.hovered.point} />}
 
-        <AxisRight
-          currency={chartData.currency}
-          yScale={yScale}
-          chartWidth={chartWidth}
-          visibleTicks={visibleTicks}
-          currentPrice={currentPrice}
-          hoveredPrice={chartData.hovered.price}
-        />
-
         <AxisBottom
           xScale={xScale}
           chartHeight={chartHeight}
@@ -125,6 +109,15 @@ const PriceCurveChart: React.FC<PriceCurveChartComponentProps> = ({
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           style={{ cursor: "crosshair" }}
+        />
+
+        <AxisRight
+          currency={chartData.currency}
+          yScale={yScale}
+          chartWidth={chartWidth}
+          visibleTicks={visibleTicks}
+          currentPrice={currentPrice}
+          hoveredPrice={chartData.hovered.price}
         />
       </Group>
     </svg>

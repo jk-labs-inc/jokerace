@@ -35,6 +35,7 @@ const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteEx
     version: contestVersion,
   });
   const { isExpanded, setIsExpanded } = usePriceCurveChartStore();
+  const isPriceCurveChartToggleDisabled = isMobile;
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
@@ -63,24 +64,26 @@ const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteEx
         </div>
         <VotingQualifierAnyoneCanVoteExponentialVotePrice />
       </div>
-      <button
-        onClick={handleToggle}
-        className="flex items-center justify-center w-6 h-6"
-        tabIndex={0}
-        aria-label={isExpanded ? "Collapse" : "Expand"}
-      >
-        <motion.div
-          animate={{ rotate: isExpanded ? 180 : 0 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          style={{ willChange: "transform" }}
+      {!isPriceCurveChartToggleDisabled && (
+        <button
+          onClick={handleToggle}
+          className="flex items-center justify-center w-6 h-6"
+          tabIndex={0}
+          aria-label={isExpanded ? "Collapse" : "Expand"}
         >
-          {isExpanded ? (
-            <ChevronUpIcon className="w-6 h-6 text-positive-11" />
-          ) : (
-            <ChevronDownIcon className="w-6 h-6 text-positive-11" />
-          )}
-        </motion.div>
-      </button>
+          <motion.div
+            animate={{ rotate: isExpanded ? 180 : 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            style={{ willChange: "transform" }}
+          >
+            {isExpanded ? (
+              <ChevronUpIcon className="w-6 h-6 text-positive-11" />
+            ) : (
+              <ChevronDownIcon className="w-6 h-6 text-positive-11" />
+            )}
+          </motion.div>
+        </button>
+      )}
     </div>
   );
 };

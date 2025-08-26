@@ -52,7 +52,7 @@ const AxisRight: React.FC<AxisRightProps> = ({
 
         const yPos = yScale(tick);
         const priceInWei = parseEther(tick.toString());
-        const formattedPrice = `${formatEther(priceInWei)} ${currency}`;
+        const formattedPrice = `${formatBalance(formatEther(priceInWei))} ${currency}`;
 
         return (
           <g key={`current-tick-${tick}`}>
@@ -80,7 +80,7 @@ const AxisRight: React.FC<AxisRightProps> = ({
 
           const yPos = yScale(tick);
           const priceInWei = parseEther(tick.toString());
-          const formattedPrice = `${formatEther(priceInWei)} ${currency}`;
+          const formattedPrice = `${formatBalance(formatEther(priceInWei))} ${currency}`;
 
           return (
             <g key={`hovered-tick-${tick}`}>

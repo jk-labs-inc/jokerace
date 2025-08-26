@@ -37,10 +37,12 @@ const AxisBottom: React.FC<AxisBottomProps> = ({ xScale, chartHeight, data, acti
     const isHoveredPoint = hoveredIndex !== null && data[hoveredIndex]?.id === value;
 
     let textAnchor: "start" | "middle" | "end" = "middle";
+    let dx = 0; // Default horizontal offset
 
     if (isFirstDate && !isHoveredPoint) {
-      // Start date should be center-aligned to align with the grid line
+      // Start date should be positioned slightly to the right (per figma)
       textAnchor = "middle";
+      dx = 14;
     } else if (isLastDate && !isHoveredPoint) {
       // End date should be center-aligned to align with the grid line
       textAnchor = "middle";
@@ -51,6 +53,7 @@ const AxisBottom: React.FC<AxisBottomProps> = ({ xScale, chartHeight, data, acti
       fontSize: 12,
       textAnchor,
       dy: "0.33em",
+      dx,
     };
   };
 

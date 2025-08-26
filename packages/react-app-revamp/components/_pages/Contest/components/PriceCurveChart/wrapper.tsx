@@ -61,6 +61,9 @@ const PriceCurveWrapper = () => {
     pricePoints,
   });
 
+
+
+  // TODO: add a loading state
   return (
     <div className="animate-reveal" ref={parentRef}>
       <PriceCurveChart

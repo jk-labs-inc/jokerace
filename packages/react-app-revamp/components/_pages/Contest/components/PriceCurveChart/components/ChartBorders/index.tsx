@@ -18,7 +18,7 @@ const ChartBorders: React.FC<ChartBordersProps> = ({ innerWidth, innerHeight }) 
       />
 
       <Line
-        from={{ x: -50, y: innerHeight }}
+        from={{ x: -35, y: innerHeight }}
         to={{ x: innerWidth + 50, y: innerHeight }}
         stroke={CHART_CONFIG.colors.border}
         strokeWidth={1}

@@ -14,7 +14,7 @@ const ChargeInfoExponential = () => {
     })),
   );
 
-  const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged, isPreloading, refetch } =
+  const { currentPricePerVoteFormatted, isLoading, isRefetching, isError, hasPriceChanged, isPreloading, refetch } =
     useCurrentPricePerVoteWithRefetch({
       address: contestInfo.contestAddress,
       abi: contestAbi,
@@ -34,7 +34,7 @@ const ChargeInfoExponential = () => {
   return (
     <p>
       {/* TODO: figure out how we wanna style the timer for the price per vote */}
-      {currentPricePerVote} {contestInfo.contestChainNativeCurrencySymbol}
+      {currentPricePerVoteFormatted} {contestInfo.contestChainNativeCurrencySymbol}
     </p>
   );
 };

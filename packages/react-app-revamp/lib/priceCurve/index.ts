@@ -130,7 +130,7 @@ export const generatePricePoints = (params: GeneratePricePointsParams): PricePoi
 
     // Apply smart contract rounding: (result / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE
     const roundedPrice = Math.floor(priceFloat / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE;
-    const priceBigInt = BigInt(Math.round(roundedPrice));
+    const priceBigInt = BigInt(roundedPrice);
 
     // Add ALL points regardless of price difference (we need this in order to create exponential curve)
     const pointDate = new Date(startTime.getTime() + seconds * 1000);
@@ -144,7 +144,7 @@ export const generatePricePoints = (params: GeneratePricePointsParams): PricePoi
   // Always include the end point
   const endPriceFloat = startPrice * Math.pow(2, multiple * 100);
   const roundedEndPrice = Math.floor(endPriceFloat / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE;
-  const endPriceBigInt = BigInt(Math.round(roundedEndPrice));
+  const endPriceBigInt = BigInt(roundedEndPrice);
 
   pricePoints.push({
     date: endTime,
@@ -156,8 +156,6 @@ export const generatePricePoints = (params: GeneratePricePointsParams): PricePoi
     date: point.date.toISOString(),
     price: formatEther(point.priceBigInt),
   }));
-
-  console.log({ formattedPricePoints });
 
   return formattedPricePoints;
 };
