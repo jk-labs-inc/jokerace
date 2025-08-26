@@ -40,8 +40,6 @@ import { manta } from "./custom-chains/manta";
 import { metis } from "./custom-chains/metis";
 import { mode } from "./custom-chains/mode";
 import { polygon } from "./custom-chains/polygon";
-import { scroll } from "./custom-chains/scroll";
-import { sei } from "./custom-chains/sei";
 import { sepolia } from "./custom-chains/sepolia";
 import { soneium } from "./custom-chains/soneium";
 import { sonic } from "./custom-chains/sonic";
@@ -65,9 +63,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   avalanche,
   linea,
   celo,
-  scroll,
   mode,
-  sei,
   cyber,
   metis,
   forma,
