@@ -13,12 +13,12 @@ export function formatBalance(balance: string): string {
 
   // handle small numbers (less than 0.001)
   if (num.abs().isLessThan(0.001)) {
-    // For small numbers, use 6 decimal places and truncate (round down)
-    return num.decimalPlaces(6, BigNumber.ROUND_DOWN).toString();
+    // For small numbers, use 6 decimal places
+    return num.decimalPlaces(6, BigNumber.ROUND_HALF_UP).toString();
   }
 
   // handle numbers >= 0.001
-  const truncated = num.decimalPlaces(5, BigNumber.ROUND_DOWN);
+  const truncated = num.decimalPlaces(5, BigNumber.ROUND_HALF_UP);
 
   // use abbreviated format for numbers >= 1000
   if (truncated.abs().isGreaterThanOrEqualTo(MIN_VALUE_FOR_ABBREVIATION)) {
