@@ -13,12 +13,8 @@ export function formatBalance(balance: string): string {
 
   // handle small numbers (less than 0.001)
   if (num.abs().isLessThan(0.001)) {
-    // find the first non-zero digit
-    const firstNonZeroIndex = balance.replace(/^-?0\.?0*/, "").search(/[1-9]/);
-    if (firstNonZeroIndex !== -1) {
-      // return the number with up to 5 significant digits
-      return num.precision(firstNonZeroIndex + 5).toString();
-    }
+    // For small numbers, use 6 decimal places
+    return num.decimalPlaces(6, BigNumber.ROUND_HALF_UP).toString();
   }
 
   // handle numbers >= 0.001

@@ -5,6 +5,7 @@ import Skeleton from "react-loading-skeleton";
 import { useShallow } from "zustand/react/shallow";
 import { motion } from "motion/react";
 import { useMediaQuery } from "react-responsive";
+import { formatBalance } from "@helpers/formatBalance";
 
 const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
@@ -17,7 +18,7 @@ const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC = () => {
     })),
   );
 
-  const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged, isPreloading } =
+  const { currentPricePerVoteFormatted, isLoading, isRefetching, isError, hasPriceChanged, isPreloading } =
     useCurrentPricePerVoteWithRefetch({
       address: contestInfoData.contestAddress,
       abi: contestAbi,
@@ -45,7 +46,7 @@ const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC = () => {
         ease: "easeInOut",
       }}
     >
-      {currentPricePerVote}
+      {currentPricePerVoteFormatted}
       <span className="text-[16px] md:text-[24px] text-neutral-9 uppercase">
         {contestInfoData.contestChainNativeCurrencySymbol}
       </span>{" "}

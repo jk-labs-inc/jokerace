@@ -23,8 +23,8 @@ const MotionSpinner: FC<MotionSpinnerProps> = ({ size = 24, borderWidth = 2, the
   const borderColor = customColor
     ? `rgba(${customColor}, 0.2)`
     : theme === "auto"
-      ? "rgba(229, 229, 229, 0.2)"
-      : themeColors[theme].border;
+    ? "rgba(229, 229, 229, 0.2)"
+    : themeColors[theme].border;
 
   const spinnerColor = customColor || (theme === "auto" ? "var(--text-color, #E5E5E5)" : themeColors[theme].spinner);
 
