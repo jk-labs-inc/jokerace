@@ -13,11 +13,24 @@ const AnimatedDot: React.FC<AnimatedDotProps> = ({ x, y, isHovered }) => {
       {/* Define animated gradient */}
       <defs>
         <radialGradient id={`animated-gradient-${x}-${y}`} cx="50%" cy="50%" r="50%">
-          <motion.stop offset="0%" stopColor="#BB65FF" />
           <motion.stop
-            offset="50%"
+            offset="0%"
             stopColor="#BB65FF"
             animate={{
+              offset: ["0%", "0%", "0%", "0%", "0%"],
+            }}
+            transition={{
+              duration: 2.999,
+              delay: 0.001,
+              repeat: Infinity,
+              ease: "easeInOut",
+              times: [0, 0.6, 0.65, 0.75, 1],
+            }}
+          />
+          <motion.stop
+            stopColor="#BB65FF"
+            animate={{
+              offset: ["35%", "20%", "35%", "35%", "35%"],
               stopColor: ["#BB65FF", "#BB65FF", "#BB65FF", "#BB65FF", "#BB65FF"],
             }}
             transition={{
