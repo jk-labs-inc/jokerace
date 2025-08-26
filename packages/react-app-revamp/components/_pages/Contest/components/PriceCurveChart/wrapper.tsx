@@ -6,8 +6,9 @@ import { useParentSize } from "@visx/responsive";
 import { useShallow } from "zustand/shallow";
 import PriceCurveChart from "./index";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
+import PriceCurveChartLoading from "./components/ChartLoading";
+import PriceCurveChartError from "./components/ChartError";
 
-//TODO: refactor this so all data is called in a better way
 const PriceCurveWrapper = () => {
   const { parentRef, width, height } = useParentSize({ debounceTime: 150 });
   const { contestInfo, abi, startPrice, startTime, endTime, version } = useContestStore(
@@ -42,7 +43,11 @@ const PriceCurveWrapper = () => {
     version: version,
   });
 
-  const { pricePoints } = usePriceCurvePoints({
+  const {
+    pricePoints,
+    isLoading: isPriceCurvePointsLoading,
+    isError: isPriceCurvePointsError,
+  } = usePriceCurvePoints({
     startPrice: startPrice,
     multiple: Number(priceCurveMultiple),
     startTime: startTime,
@@ -61,9 +66,14 @@ const PriceCurveWrapper = () => {
     pricePoints,
   });
 
+  if (isPriceCurveMultipleLoading || isPriceCurveUpdateIntervalLoading || isPriceCurvePointsLoading) {
+    return <PriceCurveChartLoading />;
+  }
 
+  if (isPriceCurveMultipleError || isPriceCurveUpdateIntervalError || isPriceCurvePointsError) {
+    return <PriceCurveChartError />;
+  }
 
-  // TODO: add a loading state
   return (
     <div className="animate-reveal" ref={parentRef}>
       <PriceCurveChart

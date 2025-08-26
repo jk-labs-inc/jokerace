@@ -1,6 +1,7 @@
 import { ChartDataPoint } from "../types";
 import { scaleLinear, scalePoint } from "@visx/scale";
 import { ScaleLinear, ScalePoint } from "d3-scale";
+import moment from "moment";
 
 export const findDataPointByPrice = (data: ChartDataPoint[], targetPrice: number) => {
   const index = data.findIndex(item => Math.abs(item.pv - targetPrice) < 0.0001);
@@ -45,4 +46,18 @@ export const createScalesAndAccessors = (data: ChartDataPoint[], innerWidth: num
     getX,
     getY,
   };
+};
+
+export const formatDateParts = (dateString: string) => {
+  const momentDate = moment(dateString);
+  const monthDay = momentDate.format("MMMM D").toLowerCase();
+  const time = momentDate.format("h:mm a").toLowerCase();
+  return { monthDay, time };
+};
+
+export const formatDateWithBoldMonthDay = (dateString: string) => {
+  const momentDate = moment(dateString);
+  const monthDay = momentDate.format("MMMM D").toLowerCase();
+  const time = momentDate.format("h:mm a").toLowerCase();
+  return `${monthDay}, ${time}`;
 };

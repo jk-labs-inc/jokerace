@@ -1,7 +1,7 @@
-import React from "react";
 import { AxisBottom as VisxAxisBottom } from "@visx/axis";
 import { ScalePoint } from "d3-scale";
-import moment from "moment";
+import React from "react";
+import { formatDateParts, formatDateWithBoldMonthDay } from "../../helpers";
 import { getTickValues } from "./utils";
 
 interface AxisBottomProps {
@@ -11,13 +11,6 @@ interface AxisBottomProps {
   activeDate: string;
   hoveredIndex: number | null;
 }
-
-const formatDateWithBoldMonthDay = (dateString: string) => {
-  const momentDate = moment(dateString);
-  const monthDay = momentDate.format("MMMM D").toLowerCase();
-  const time = momentDate.format("h:mm a").toLowerCase();
-  return `${monthDay}, ${time}`;
-};
 
 const AxisBottom: React.FC<AxisBottomProps> = ({ xScale, chartHeight, data, activeDate, hoveredIndex }) => {
   const firstId = data[0]?.id;
@@ -37,14 +30,12 @@ const AxisBottom: React.FC<AxisBottomProps> = ({ xScale, chartHeight, data, acti
     const isHoveredPoint = hoveredIndex !== null && data[hoveredIndex]?.id === value;
 
     let textAnchor: "start" | "middle" | "end" = "middle";
-    let dx = 0; // Default horizontal offset
+    let dx = 0;
 
     if (isFirstDate && !isHoveredPoint) {
-      // Start date should be positioned slightly to the right (per figma)
       textAnchor = "middle";
       dx = 14;
     } else if (isLastDate && !isHoveredPoint) {
-      // End date should be center-aligned to align with the grid line
       textAnchor = "middle";
     }
 
@@ -55,6 +46,26 @@ const AxisBottom: React.FC<AxisBottomProps> = ({ xScale, chartHeight, data, acti
       dy: "0.33em",
       dx,
     };
+  };
+
+  const CustomTickComponent = ({ formattedValue, ...textProps }: any) => {
+    const dataPoint = data.find(d => {
+      const x = xScale(d.id);
+      return Math.abs((x ?? 0) - textProps.x) < 1;
+    });
+
+    if (!dataPoint) {
+      return <text {...textProps}>{formattedValue}</text>;
+    }
+
+    const { monthDay, time } = formatDateParts(dataPoint.date);
+
+    return (
+      <text {...textProps}>
+        <tspan fontWeight="bold">{monthDay}</tspan>
+        <tspan fontWeight="normal">, {time}</tspan>
+      </text>
+    );
   };
 
   return (
@@ -79,6 +90,7 @@ const AxisBottom: React.FC<AxisBottomProps> = ({ xScale, chartHeight, data, acti
         tickValues={tickValues}
         tickFormat={getTickFormat}
         tickLabelProps={getTickLabelProps}
+        tickComponent={CustomTickComponent}
         tickStroke="transparent"
         stroke="transparent"
       />

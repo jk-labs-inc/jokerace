@@ -5,7 +5,7 @@ import { ChartDataPoint } from "components/_pages/Contest/components/PriceCurveC
 export interface PriceCurveChartData {
   chartData: ChartDataPoint[];
   currentPrice: number;
-  currentIndex: number; // Add this
+  currentIndex: number;
 }
 
 interface UsePriceCurveChartDataParams {

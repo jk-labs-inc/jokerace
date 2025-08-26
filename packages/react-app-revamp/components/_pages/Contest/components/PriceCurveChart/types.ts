@@ -1,5 +1,3 @@
-import { SVGProps } from "react";
-
 export interface ChartDataPoint {
   id: string;
   date: string;
