@@ -19,6 +19,7 @@ const AxisBottom: React.FC<AxisBottomProps> = ({ xScale, chartHeight, data, acti
 
   const getTickFormat = (value: string) => {
     const dataPoint = data.find(d => d.id === value);
+
     if (!dataPoint) return "";
 
     return formatDateWithBoldMonthDay(dataPoint.date);
@@ -49,10 +50,8 @@ const AxisBottom: React.FC<AxisBottomProps> = ({ xScale, chartHeight, data, acti
   };
 
   const CustomTickComponent = ({ formattedValue, ...textProps }: any) => {
-    const dataPoint = data.find(d => {
-      const x = xScale(d.id);
-      return Math.abs((x ?? 0) - textProps.x) < 1;
-    });
+    const tickValue = textProps.value || textProps.tick?.value;
+    const dataPoint = tickValue ? data.find(d => d.id === tickValue) : null;
 
     if (!dataPoint) {
       return <text {...textProps}>{formattedValue}</text>;
