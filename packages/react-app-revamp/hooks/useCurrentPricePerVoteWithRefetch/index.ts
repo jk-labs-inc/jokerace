@@ -1,3 +1,4 @@
+import { formatBalance } from "@helpers/formatBalance";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
@@ -15,6 +16,7 @@ interface CurrentPricePerVoteWithRefetchParams {
 
 interface CurrentPricePerVoteWithRefetchResponse {
   currentPricePerVote: string;
+  currentPricePerVoteFormatted: string;
   isLoading: boolean;
   isError: boolean;
   isRefetching: boolean;
@@ -118,6 +120,7 @@ const useCurrentPricePerVoteWithRefetch = ({
 
   return {
     currentPricePerVote,
+    currentPricePerVoteFormatted: formatBalance(currentPricePerVote),
     isLoading,
     isError,
     isRefetching,

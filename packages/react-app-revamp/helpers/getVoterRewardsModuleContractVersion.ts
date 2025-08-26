@@ -7,6 +7,7 @@ import CalcCorrectMinuteVoterRewards from "@contracts/bytecodeAndAbi/modules/Vot
 import OnlyDeleteInEntryVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.10.onlyDeleteInEntry.sol/VoterRewardsModule.json";
 import AntiRugVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.11.antiRug.sol/VoterRewardsModule.json";
 import CorrectDelayVarVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.12.correctDelayVar.sol/VoterRewardsModule.json";
+import RankLimitCheckVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.13.rankLimitCheck.sol/VoterRewardsModule.json";
 import DeployedVoterRewardsContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -18,7 +19,9 @@ export async function getVoterRewardsModuleContractVersion(address: string, chai
 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
-    if (version === "5.12") {
+    if (version === "5.13") {
+      return RankLimitCheckVoterRewards.abi;
+    } else if (version === "5.12") {
       return CorrectDelayVarVoterRewards.abi;
     } else if (version === "5.11") {
       return AntiRugVoterRewards.abi;

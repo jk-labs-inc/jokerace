@@ -3,13 +3,13 @@ import { useContestStore } from "@hooks/useContest/store";
 import { formatEther } from "viem";
 import { compareVersions } from "compare-versions";
 import { VOTING_PRICE_CURVES_VERSION } from "constants/versions";
-import { calculateEndPrice } from "@helpers/exponentialMultiplier";
 import { useShallow } from "zustand/shallow";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import VotingQualifierSkeleton from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Skeleton";
 import VotingQualifierError from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Error";
 import usePriceCurveType from "@hooks/usePriceCurveType";
 import { PriceCurveType, VoteType } from "@hooks/useDeployContest/types";
+import { calculateEndPrice } from "lib/priceCurve";
 
 const ContestParametersVotingPrice = () => {
   const { version, charge, contestInfoData, contestAbi } = useContestStore(

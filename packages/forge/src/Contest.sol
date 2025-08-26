@@ -10,6 +10,7 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
 
     error PayPerVoteMustBeEnabledForAnyoneCanVote();
     error PeriodsCannotBeMoreThanAWeek();
+    error RankLimitCannotBeZero();
 
     constructor(
         string memory _name,
@@ -32,5 +33,7 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
         ) {
             revert PeriodsCannotBeMoreThanAWeek();
         }
+
+        if (_constructorArgs.intConstructorArgs.rankLimit == 0) revert RankLimitCannotBeZero();
     }
 }

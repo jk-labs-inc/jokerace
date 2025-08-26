@@ -48,6 +48,7 @@ import CalcCorrectMinuteRewards from "@contracts/bytecodeAndAbi/modules/RewardsM
 import OnlyDeleteInEntryRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.10.onlyDeleteInEntry.sol/RewardsModule.json";
 import AntiRugRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.11.antiRug.sol/RewardsModule.json";
 import CorrectDelayVarRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.12.correctDelayVar.sol/RewardsModule.json";
+import RankLimitCheckRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.13.rankLimitCheck.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -60,7 +61,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "5.12") {
+    if (version === "5.13") {
+      return { abi: RankLimitCheckRewards.abi, version };
+    } else if (version === "5.12") {
       return { abi: CorrectDelayVarRewards.abi, version };
     } else if (version === "5.11") {
       return { abi: AntiRugRewards.abi, version };

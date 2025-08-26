@@ -1,3 +1,4 @@
+import { formatBalance } from "@helpers/formatBalance";
 import { useContestStore } from "@hooks/useContest/store";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { compareVersions } from "compare-versions";
