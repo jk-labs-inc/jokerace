@@ -11,7 +11,6 @@ import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { cyber } from "./custom-chains/cyber";
 import { forma } from "./custom-chains/forma";
-import { gnosis } from "./custom-chains/gnosis";
 import { hyperliquid } from "./custom-chains/hyperliquid";
 import { ink } from "./custom-chains/ink";
 import { linea } from "./custom-chains/linea";
@@ -38,7 +37,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   avalanche,
   linea,
   celo,
-  gnosis,
   scroll,
   mode,
   sei,
