@@ -1,5 +1,5 @@
 import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
-import Onramp from "@components/Onramp";
+import AddFunds from "@components/AddFunds";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import EmailSubscription from "@components/UI/EmailSubscription";
 import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
@@ -16,7 +16,7 @@ interface SendProposalMobileLayoutConfirmInitialContentProps {
   accountData: GetBalanceReturnType | undefined;
   chainName: string;
   onConfirm?: () => void;
-  onShowOnramp?: (value: boolean) => void;
+  onShowAddFunds?: (value: boolean) => void;
 }
 
 enum ButtonText {
@@ -29,7 +29,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   accountData,
   chainName,
   onConfirm,
-  onShowOnramp,
+  onShowAddFunds,
 }) => {
   const { emailForSubscription, setWantsSubscription, setEmailForSubscription, emailAlreadyExists } =
     useSubmitProposalStore(state => state);
@@ -37,7 +37,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   const insufficientBalance = (accountData?.value ?? 0) < charge.type.costToPropose;
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
-  const [showOnramp, setShowOnramp] = useState(false);
+  const [showAddFunds, setShowAddFunds] = useState(false);
   const [buttonText, setButtonText] = useState(ButtonText.SUBMIT);
 
   useEffect(() => {
@@ -65,15 +65,15 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
     onConfirm?.();
   };
 
-  const handleOnRampClose = () => {
-    setShowOnramp(false);
-    onShowOnramp?.(false);
+  const handleAddFundsClose = () => {
+    setShowAddFunds(false);
+    onShowAddFunds?.(false);
   };
 
   return (
     <>
-      {showOnramp ? (
-        <Onramp chain={chainName} asset={chainCurrencySymbol || ""} onGoBack={handleOnRampClose} />
+      {showAddFunds ? (
+        <AddFunds chain={chainName} asset={chainCurrencySymbol || ""} onGoBack={handleAddFundsClose} />
       ) : (
         <>
           <div className="flex flex-col gap-4">
@@ -96,7 +96,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
             <ButtonV3
               colorClass="bg-gradient-vote rounded-[40px]"
               size={ButtonSize.FULL}
-              onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowOnramp(true)}
+              onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowAddFunds(true)}
             >
               {buttonText}
             </ButtonV3>

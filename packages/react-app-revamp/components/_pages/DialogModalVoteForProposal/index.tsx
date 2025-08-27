@@ -1,4 +1,4 @@
-import Onramp from "@components/Onramp";
+import AddFunds from "@components/AddFunds";
 import { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV4 from "@components/UI/DialogModalV4";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
@@ -58,7 +58,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
   const [totalCharge, setTotalCharge] = useState("");
   const nativeToken = getNativeTokenSymbol(contestInfoData.contestChainName);
-  const [showOnramp, setShowOnramp] = useState(false);
+  const [showAddFunds, setShowAddFunds] = useState(false);
   const {
     currentPricePerVote,
     isLoading: isCurrentPricePerVoteLoading,
@@ -113,12 +113,12 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   };
 
   const onAddFunds = () => {
-    setShowOnramp(true);
+    setShowAddFunds(true);
   };
 
   const handleModalClose = () => {
     setIsOpen(false);
-    setShowOnramp(false);
+    setShowAddFunds(false);
   };
 
   const toggleReadFullEntry = () => setReadFullEntry(!readFullEntry);
@@ -130,13 +130,13 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   return (
     <DialogModalV4 isOpen={isOpen} onClose={handleModalClose}>
       <div className="flex flex-col gap-4 pt-6 pb-4 md:py-16 px-6 md:pl-32 md:pr-16">
-        {showOnramp && nativeToken && contestInfoData.contestChainName ? (
+        {showAddFunds && nativeToken && contestInfoData.contestChainName ? (
           <div className="animate-swing-in-left">
-            <Onramp
+            <AddFunds
               className="md:w-[400px]"
               chain={contestInfoData.contestChainName}
               asset={nativeToken ?? ""}
-              onGoBack={() => setShowOnramp(false)}
+              onGoBack={() => setShowAddFunds(false)}
             />
           </div>
         ) : (

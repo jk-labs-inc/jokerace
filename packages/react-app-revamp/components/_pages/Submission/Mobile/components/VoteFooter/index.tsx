@@ -1,6 +1,5 @@
-import OnrampModal from "@components/Onramp/components/Modal";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { FC, useState } from "react";
+import { FC } from "react";
 
 interface StickyVoteFooterProps {
   isConnected: boolean;

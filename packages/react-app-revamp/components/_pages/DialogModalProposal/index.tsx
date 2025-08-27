@@ -1,5 +1,5 @@
 import Comments from "@components/Comments";
-import Onramp from "@components/Onramp";
+import AddFunds from "@components/AddFunds";
 import { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import Tabs from "@components/UI/Tabs";
@@ -112,7 +112,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
   const [totalCharge, setTotalCharge] = useState("");
   const nativeToken = getNativeTokenSymbol(chainName);
-  const [showOnrampModal, setShowOnrampModal] = useState(false);
+  const [showAddFundsModal, setShowAddFundsModal] = useState(false);
   const allowDelete = canDeleteProposal(
     userAddress,
     contestAuthorEthereumAddress,
@@ -264,12 +264,12 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
             <div className="flex flex-col h-full">
               {contestStatus === ContestStatus.VotingOpen ? (
                 <div className="border-b border-neutral-2 py-4 pl-4">
-                  {showOnrampModal ? (
+                  {showAddFundsModal ? (
                     <div className="pr-1">
-                      <Onramp
+                      <AddFunds
                         chain={chainName ?? ""}
                         asset={chainCurrencySymbol ?? ""}
-                        onGoBack={() => setShowOnrampModal(false)}
+                        onGoBack={() => setShowAddFundsModal(false)}
                       />
                     </div>
                   ) : showMaxVoteConfirmation ? (
@@ -296,7 +296,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                       amountOfVotes={currentUserAvailableVotesAmount}
                       onVote={onSubmitCastVotes}
                       onAddFunds={() => {
-                        setShowOnrampModal(true);
+                        setShowAddFundsModal(true);
                       }}
                     />
                   )}

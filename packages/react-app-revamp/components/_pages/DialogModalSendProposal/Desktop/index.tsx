@@ -1,5 +1,5 @@
 import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
-import Onramp from "@components/Onramp";
+import AddFunds from "@components/AddFunds";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EmailSubscription from "@components/UI/EmailSubscription";
@@ -85,7 +85,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const [error, setError] = useState<ReactNode | null>(null);
   const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
   const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);
-  const [showOnrampModal, setShowOnrampModal] = useState(false);
+  const [showAddFundsModal, setShowAddFundsModal] = useState(false);
   const [buttonText, setButtonText] = useState(ButtonText.SUBMIT);
 
   useEffect(() => {
@@ -139,7 +139,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
 
   const onCloseModal = () => {
     setIsOpen(false);
-    setShowOnrampModal(false);
+    setShowAddFundsModal(false);
   };
 
   return (
@@ -151,12 +151,12 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
       disableClose={!!(isSuccess && proposalId)}
     >
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
-        {showOnrampModal ? (
-          <Onramp
+        {showAddFundsModal ? (
+          <AddFunds
             className="md:w-[400px]"
             chain={chainName}
             asset={chainCurrencySymbol ?? ""}
-            onGoBack={() => setShowOnrampModal(false)}
+            onGoBack={() => setShowAddFundsModal(false)}
           />
         ) : isSuccess && proposalId ? (
           <div className="flex flex-col gap-8">
@@ -219,7 +219,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                   <ButtonV3
                     colorClass="bg-gradient-purple rounded-[40px]"
                     size={ButtonSize.EXTRA_LARGE_LONG}
-                    onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowOnrampModal(true)}
+                    onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowAddFundsModal(true)}
                     isDisabled={isLoading}
                   >
                     {buttonText}

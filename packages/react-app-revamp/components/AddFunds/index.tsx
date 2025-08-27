@@ -1,12 +1,9 @@
-import { LINK_BRIDGE_DOCS } from "@config/links";
 import { getChainLogo } from "@helpers/getChainLogo";
 import Image from "next/image";
 import { FC } from "react";
-import FundFromAnotherChainButton from "./components/Buttons/FundFromAnotherChain";
-import OnrampProviders from "./providers";
-import { handleFundFromAnotherChain } from "./helpers/bridge";
+import AddFundsProviders, { AddFundsProviderType } from "./providers";
 
-interface OnrampProps {
+interface AddFundsProps {
   chain: string;
   asset: string;
   showBackButton?: boolean;
@@ -14,31 +11,24 @@ interface OnrampProps {
   onGoBack?: () => void;
 }
 
-const Onramp: FC<OnrampProps> = ({ chain, asset, onGoBack, showBackButton = true, className }) => {
+const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = true, className }) => {
   const chainLogo = getChainLogo(chain);
 
   return (
     <div className={`flex flex-col gap-4 md:gap-6 w-full ${className}`}>
       <div className="flex items-start md:items-center justify-between w-full">
-        <div className="flex flex-col items-start gap-1 md:gap-2">
-          <div className="flex items-center gap-3">
-            <p className="text-[24px] font-bold text-neutral-11">
-              add funds <span className="text-[12px]">on </span>
-            </p>
-            <div className="flex items-center gap-3">
-              <Image src={chainLogo} alt={chain} width={32} height={32} />
-              <p className="text-[24px] font-normal">{chain}</p>
-            </div>
-          </div>
-
-          <p className="text-neutral-11 text-[16px] font-bold">
-            add $5 of tokens <span className="text-neutral-9">(or edit to get more or less)</span>
+        <div className="flex items-center gap-3">
+          <p className="text-[24px] font-bold text-neutral-11">
+            add funds <span className="text-[12px]">on </span>
           </p>
+          <div className="flex items-center gap-3">
+            <Image src={chainLogo} alt={chain} width={32} height={32} />
+            <p className="text-[24px] font-normal">{chain}</p>
+          </div>
         </div>
       </div>
-      <OnrampProviders chain={chain} asset={asset} />
+      <AddFundsProviders chain={chain} asset={asset} type={AddFundsProviderType.BRIDGE} />
       <div className="flex items-start flex-col gap-4 md:gap-2">
-        <FundFromAnotherChainButton handleFundFromAnotherChain={handleFundFromAnotherChain} />
         {showBackButton && (
           <div className="relative w-full pt-3 md:pt-0">
             <div
@@ -58,4 +48,4 @@ const Onramp: FC<OnrampProps> = ({ chain, asset, onGoBack, showBackButton = true
   );
 };
 
-export default Onramp;
+export default AddFunds;

@@ -1,15 +1,15 @@
-import Onramp from "@components/Onramp";
+import AddFunds from "@components/AddFunds";
 import DialogModalV4 from "@components/UI/DialogModalV4";
-import { FC, useState } from "react";
+import { FC } from "react";
 
-interface OnrampModalProps {
+interface AddFundsModalProps {
   chain: string;
   asset: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const OnrampModal: FC<OnrampModalProps> = ({ chain, asset, isOpen, onClose }) => {
+const AddFundsModal: FC<AddFundsModalProps> = ({ chain, asset, isOpen, onClose }) => {
   return (
     <DialogModalV4 isOpen={isOpen} onClose={onClose}>
       <div className="flex flex-col bg-true-black z-40 gap-4 py-6 md:py-16 px-6 md:pl-32 md:pr-16">
@@ -23,10 +23,10 @@ const OnrampModal: FC<OnrampModalProps> = ({ chain, asset, isOpen, onClose }) =>
             onClick={onClose}
           />
         </div>
-        <Onramp className="md:w-[400px]" chain={chain} asset={asset} showBackButton={false} />
+        <AddFunds className="md:w-[400px]" chain={chain} asset={asset} showBackButton={false} />
       </div>
     </DialogModalV4>
   );
 };
 
-export default OnrampModal;
+export default AddFundsModal;

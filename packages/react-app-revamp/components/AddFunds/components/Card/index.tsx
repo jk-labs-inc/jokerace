@@ -1,7 +1,7 @@
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { FC } from "react";
 
-interface OnrampCardProps {
+interface AddFundsCardProps {
   name: string;
   description: string;
   logo: string;
@@ -12,7 +12,7 @@ interface OnrampCardProps {
   disabledMessage?: string;
 }
 
-const OnrampCard: FC<OnrampCardProps> = ({
+const AddFundsCard: FC<AddFundsCardProps> = ({
   name,
   description,
   logo,
@@ -43,11 +43,7 @@ const OnrampCard: FC<OnrampCardProps> = ({
             />
             <div className="flex flex-col items-start">
               <p className="text-neutral-11 font-bold text-[24px]">{name}</p>
-              <p
-                className={`text-neutral-9 font-bold normal-case ${
-                  descriptionClassName || "text-[12px] md:text-[16px]"
-                }`}
-              >
+              <p className={`text-neutral-9 font-bold normal-case ${descriptionClassName || "text-[12px]"}`}>
                 {description}
               </p>
             </div>
@@ -77,4 +73,4 @@ const OnrampCard: FC<OnrampCardProps> = ({
   );
 };
 
-export default OnrampCard;
+export default AddFundsCard;
