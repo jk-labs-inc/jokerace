@@ -1,5 +1,5 @@
 import { FC } from "react";
-import AddFundsJumperProvider from "./bridges/jumper";
+import useAddFundsProviders from "./hooks/useAddFundsProviders";
 
 export enum AddFundsProviderType {
   BRIDGE = "bridge",
@@ -13,21 +13,10 @@ interface AddFundsProvidersProps {
 }
 
 const AddFundsProviders: FC<AddFundsProvidersProps> = ({ type, chain, asset }) => {
-  const getProviders = () => {
-    switch (type) {
-      case AddFundsProviderType.ONRAMP:
-        return [];
-      case AddFundsProviderType.BRIDGE:
-        return [<AddFundsJumperProvider key="jumper" chain={chain} asset={asset} />];
-      default:
-        return [];
-    }
-  };
-
-  const providers = getProviders();
+  const providers = useAddFundsProviders({ type, chain, asset });
 
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className="flex flex-col gap-4 w-full">
       <p className="text-neutral-11 text-[16px]">
         fund from another chain into {asset} on {chain}.
       </p>

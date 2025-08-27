@@ -4,6 +4,8 @@ import useJumperBridgeChains from "./hooks/useJumperBridgeChains";
 import { getChainId } from "@helpers/getChainId";
 import AddFundsCard from "@components/AddFunds/components/Card";
 import Loading from "app/contest/new/loading";
+import Loader from "@components/UI/Loader";
+import MotionSpinner from "@components/UI/MotionSpinner";
 
 interface AddFundsJumperProviderProps {
   chain: string;
@@ -19,16 +21,21 @@ const JUMPER_PARAMS = {
 
 const AddFundsJumperProvider: FC<AddFundsJumperProviderProps> = ({ chain, asset }) => {
   const chainId = getChainId(chain);
-  const { data: isSupported, isLoading, error, retry } = useJumperBridgeChains(chainId);
+  const { data: isSupported, isLoading, isError, retry } = useJumperBridgeChains(chainId);
 
-  //TODO: add loading state
   if (isLoading) {
-    return <Loading />;
+    return <MotionSpinner className="flex items-start" />;
   }
 
-  //TODO: add error state
-  if (error) {
-    return <div>Error</div>;
+  if (isError) {
+    return (
+      <p className="text-negative-11 text-[16px] font-bold">
+        ruh roh! we couldn't load providers,{" "}
+        <button className="underline cursor-pointer" onClick={() => retry()}>
+          try again!
+        </button>
+      </p>
+    );
   }
 
   if (!isSupported) {
