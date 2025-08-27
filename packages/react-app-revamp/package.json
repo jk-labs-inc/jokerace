@@ -50,7 +50,7 @@
     "@visx/scale": "3.12.0",
     "@visx/shape": "3.12.0",
     "@typescript-eslint/parser": "8.40.0",
-    "@vercel/node": "5.3.13",
+    "@vercel/node": "5.3.15",
     "@wagmi/connectors": "5.9.6",
     "@wagmi/core": "2.20.1",
     "autoprefixer": "10.4.21",
