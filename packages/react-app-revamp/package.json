@@ -55,7 +55,7 @@
     "@visx/responsive": "3.12.0",
     "@visx/scale": "3.12.0",
     "@visx/shape": "3.12.0",
-    "@wagmi/connectors": "5.9.6",
+    "@wagmi/connectors": "5.9.8",
     "@wagmi/core": "2.20.1",
     "autoprefixer": "10.4.21",
     "cheerio": "1.1.2",

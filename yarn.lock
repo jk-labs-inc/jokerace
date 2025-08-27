@@ -9128,10 +9128,10 @@
     "@walletconnect/ethereum-provider" "2.21.1"
     cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
 
-"@wagmi/connectors@5.9.6":
-  version "5.9.6"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.9.6.tgz#00e9a00b3508c788781113090b7da5f84091d907"
-  integrity sha512-rnztC3UnNvVEvUHZAfbUi/vUeRQug7DZlhKbK0nG34w/22mpd9whYVPVuGLrWek/z0wBBOH96cJic+hcsz9+pA==
+"@wagmi/connectors@5.9.8":
+  version "5.9.8"
+  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.9.8.tgz#4efcb4ecc99671ef6a883683c1992bed25d1b203"
+  integrity sha512-FA/xmfWDT36Sm24GcZzm51D6oRf2XpBgEQhQajKDFcZpkSKIcwKDqqWyNXdSENdgbDcLKC49fFwoVKZT+K88hw==
   dependencies:
     "@base-org/account" "1.1.1"
     "@coinbase/wallet-sdk" "4.3.6"
