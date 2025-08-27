@@ -1,34 +1,16 @@
-import { LiFiWidget, WidgetConfig } from "@lifi/widget";
+import { LiFiWidget } from "@lifi/widget";
 import { FC } from "react";
+import { createJumperWidgetConfig } from "./config";
 
 interface AddFundsJumperWidgetProps {
-  integrator?: string;
-  border?: string;
-  borderRadius?: string;
-  className?: string;
+  chainId: number;
+  asset: string;
 }
 
-const AddFundsJumperWidget: FC<AddFundsJumperWidgetProps> = ({
-  integrator = "JokeRace",
-  border = "1px solid rgb(234, 234, 234)",
-  borderRadius = "16px",
-  className = "",
-}) => {
-  const widgetConfig: WidgetConfig = {
-    integrator,
-    theme: {
-      container: {
-        border,
-        borderRadius,
-      },
-    },
-  };
+const AddFundsJumperWidget: FC<AddFundsJumperWidgetProps> = ({ chainId, asset }) => {
+  const widgetConfig = createJumperWidgetConfig(chainId, asset);
 
-  return (
-    <div className={className}>
-      <LiFiWidget integrator={integrator} config={widgetConfig} />
-    </div>
-  );
+  return <LiFiWidget integrator="JokeRace" config={widgetConfig} />;
 };
 
 export default AddFundsJumperWidget;

@@ -1,7 +1,9 @@
-import AddFundsCard from "@components/AddFunds/components/Card";
+import { FC } from "react";
 import AddFundsJumperWidget from "./components/Widget";
-import { usePathname } from "next/navigation";
-import { FC, useState } from "react";
+import useJumperBridgeChains from "./hooks/useJumperBridgeChains";
+import { getChainId } from "@helpers/getChainId";
+import AddFundsCard from "@components/AddFunds/components/Card";
+import Loading from "app/contest/new/loading";
 
 interface AddFundsJumperProviderProps {
   chain: string;
@@ -16,28 +18,26 @@ const JUMPER_PARAMS = {
 };
 
 const AddFundsJumperProvider: FC<AddFundsJumperProviderProps> = ({ chain, asset }) => {
-  const isEntryPage = usePathname().includes("submission");
-  const [showWidget, setShowWidget] = useState(false);
+  const chainId = getChainId(chain);
+  const { data: isSupported, isLoading, error, retry } = useJumperBridgeChains(chainId);
 
-  const handleCardClick = () => {
-    setShowWidget(true);
-  };
+  //TODO: add loading state
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  //TODO: add error state
+  if (error) {
+    return <div>Error</div>;
+  }
+
+  if (!isSupported) {
+    return <AddFundsCard {...JUMPER_PARAMS} disabled disabledMessage={`not available on ${chain}`} />;
+  }
 
   return (
     <div className="flex flex-col gap-4">
-      <AddFundsCard
-        {...JUMPER_PARAMS}
-        descriptionClassName={isEntryPage ? "text-[14px]" : ""}
-        onClick={handleCardClick}
-      />
-      {showWidget && (
-        <AddFundsJumperWidget
-          integrator="JokeRace"
-          border="1px solid rgb(234, 234, 234)"
-          borderRadius="16px"
-          className="w-full"
-        />
-      )}
+      <AddFundsJumperWidget chainId={chainId} asset={asset} />
     </div>
   );
 };
