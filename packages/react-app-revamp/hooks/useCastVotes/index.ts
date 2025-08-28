@@ -73,7 +73,7 @@ export function useCastVotes() {
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
-  const { retry: refetchTotalVotesCastOnContest } = useTotalVotesCastOnContest(contestAddress, chainId);
+  const { refetch: refetchTotalVotesCastOnContest } = useTotalVotesCastOnContest(contestAddress, chainId);
   const { refetch: refetchCurrentUserVotesOnProposal } = useFetchUserVotesOnProposal(
     contestAddress,
     pickedProposal ?? "",

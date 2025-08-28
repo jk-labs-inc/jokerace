@@ -1,5 +1,6 @@
 import { TokenInfo, useReleasableRewards } from "@hooks/useReleasableRewards";
 import { FC, useMemo, useState } from "react";
+import { Tooltip } from "react-tooltip";
 import { Abi } from "viem";
 import WithdrawRewardsModal from "./components/Modal";
 
@@ -8,13 +9,17 @@ interface ContestWithdrawRewardsProps {
   rewardsAbi: Abi;
   chainId: number;
   rankings: number[];
+  isCanceledByJkLabs: boolean;
 }
+
+const tooltipId = "withdraw-rewards-canceled-tooltip";
 
 const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({
   rewardsModuleAddress,
   rewardsAbi,
   chainId,
   rankings,
+  isCanceledByJkLabs,
 }) => {
   const [isWithdrawRewardsModalOpen, setIsWithdrawRewardsModalOpen] = useState(false);
   const { data: releasableRewards, isLoading: isReleasableRewardsLoading } = useReleasableRewards({
@@ -44,9 +49,29 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({
   return (
     <>
       {aggregatedRewards.length > 0 ? (
-        <button className="text-positive-11 text-[16px] font-bold" onClick={() => setIsWithdrawRewardsModalOpen(true)}>
-          📤 withdraw funds
-        </button>
+        <div className="inline-block">
+          <button
+            className={`text-[16px] font-bold ${
+              isCanceledByJkLabs ? "text-positive-11 cursor-not-allowed opacity-50" : "text-positive-11 cursor-pointer"
+            }`}
+            onClick={isCanceledByJkLabs ? undefined : () => setIsWithdrawRewardsModalOpen(true)}
+            disabled={isCanceledByJkLabs}
+            data-tooltip-id={isCanceledByJkLabs ? tooltipId : undefined}
+            data-tooltip-place="top"
+          >
+            📤 withdraw funds
+          </button>
+          {isCanceledByJkLabs && (
+            <Tooltip
+              id={tooltipId}
+              className="max-w-64 p-2 opacity-100! z-50! border border-transparent rounded-lg focus:outline-none"
+            >
+              <div className="text-[12px] text-white">
+                rewards have been canceled by jk labs and cannot be withdrawn
+              </div>
+            </Tooltip>
+          )}
+        </div>
       ) : (
         <p className="text-neutral-11 text-[16px] font-bold">you have withdrawn funds</p>
       )}
