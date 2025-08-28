@@ -1,6 +1,5 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
-import { useCreateContestStartStore } from "@components/_pages/Create/pages/ContestStart";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, MouseEventHandler, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -14,7 +13,6 @@ interface CreateNextButtonProps {
 
 const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled }) => {
   const { errors } = useDeployContestStore(state => state);
-  const { setStartContest, setStartContestWithTemplate } = useCreateContestStartStore(state => state);
   const [shake, setShake] = useState(false);
   const onPreviousStep = usePreviousStep();
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
@@ -40,12 +38,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
   };
 
   const onBackHandler = (step: number) => {
-    if (step === 1) {
-      setStartContest(false);
-      setStartContestWithTemplate(false);
-    } else {
-      onPreviousStep();
-    }
+    onPreviousStep();
   };
 
   if (isMobileOrTablet)
@@ -79,15 +72,17 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
         >
           next
         </ButtonV3>
-        <div
-          className="hidden lg:flex items-center gap-[5px] -ml-[15px] cursor-pointer group"
-          onClick={() => onBackHandler(step)}
-        >
-          <div className="transition-transform duration-200 group-hover:-translate-x-1">
-            <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-px" />
-          </div>
-          <p className="text-[16px]">back</p>
-        </div>
+        {step !== 0 && (
+          <button
+            className="hidden lg:flex items-center gap-[5px] -ml-[15px] cursor-pointer group"
+            onClick={() => onBackHandler(step)}
+          >
+            <div className="transition-transform duration-200 group-hover:-translate-x-1">
+              <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-px" />
+            </div>
+            <p className="text-[16px]">back</p>
+          </button>
+        )}
       </div>
     </div>
   );
