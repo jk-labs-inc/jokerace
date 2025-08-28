@@ -41,9 +41,11 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
         <button
           onClick={handleClick}
           disabled={disabled}
-          className={`flex w-full p-4 ${isExpanded ? "rounded-t-2xl" : "rounded-2xl"} border border-transparent ${
-            disabled ? "cursor-not-allowed" : "cursor-pointer"
-          } ${!isExpanded || !children ? "shadow-entry-card" : ""}`}
+          className={`group flex w-full p-4 ${isExpanded ? "rounded-t-2xl" : "rounded-2xl"} border border-transparent ${
+            !isExpanded && !disabled ? "hover:border-neutral-9" : ""
+          } transition-colors duration-300 ease-in-out ${disabled ? "cursor-not-allowed" : "cursor-pointer"} ${
+            !isExpanded || !children ? "shadow-entry-card" : ""
+          }`}
         >
           <div className="flex gap-4 items-center w-full">
             <img
@@ -61,9 +63,13 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
             <div className="ml-auto">
               {!disabled &&
                 (isExpanded ? (
-                  <ChevronUpIcon className="w-6 h-6 text-neutral-9 hover:text-neutral-11 transition-colors duration-300 ease-in-out" />
+                  <ChevronUpIcon className="w-6 h-6 text-neutral-9 transition-colors duration-300 ease-in-out" />
                 ) : (
-                  <ChevronDownIcon className="w-6 h-6 text-neutral-9 hover:text-neutral-11 transition-colors duration-300 ease-in-out" />
+                  <ChevronDownIcon
+                    className={`w-6 h-6 text-neutral-9 transition-colors duration-300 ease-in-out ${
+                      !disabled ? "group-hover:text-neutral-11" : ""
+                    }`}
+                  />
                 ))}
             </div>
           </div>
