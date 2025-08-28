@@ -1,5 +1,5 @@
 import MobileBottomButton from "@components/_pages/Create/components/Buttons/Mobile";
-import OnrampModal from "@components/Onramp/components/Modal";
+import AddFundsModal from "@components/AddFunds/components/Modal";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -13,7 +13,7 @@ interface CreateRewardsSubmitButtonProps {
 
 enum CreateButtonText {
   CREATE = "create pool",
-  ONRAMP = "add funds",
+  ADD_FUNDS = "add funds",
 }
 
 const CreateRewardsSubmitButton: FC<CreateRewardsSubmitButtonProps> = ({ step, onSubmit }) => {
@@ -27,13 +27,13 @@ const CreateRewardsSubmitButton: FC<CreateRewardsSubmitButtonProps> = ({ step, o
   const insufficientBalance = balance && (balance.value === BigInt(0) || balance.value < DUST_THRESHOLD);
   const { setStep } = useCreateRewardsStore(state => state);
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
-  const [showOnramp, setShowOnramp] = useState(false);
+  const [showAddFunds, setShowAddFunds] = useState(false);
   const [createButtonText, setCreateButtonText] = useState(CreateButtonText.CREATE);
   const chainNativeCurrency = chain?.nativeCurrency.symbol;
 
   useEffect(() => {
     if (insufficientBalance && isConnected) {
-      setCreateButtonText(CreateButtonText.ONRAMP);
+      setCreateButtonText(CreateButtonText.ADD_FUNDS);
     } else if (isConnected) {
       setCreateButtonText(CreateButtonText.CREATE);
     }
@@ -44,8 +44,8 @@ const CreateRewardsSubmitButton: FC<CreateRewardsSubmitButtonProps> = ({ step, o
   };
 
   const handleClick = () => {
-    if (createButtonText === CreateButtonText.ONRAMP) {
-      setShowOnramp(true);
+    if (createButtonText === CreateButtonText.ADD_FUNDS) {
+      setShowAddFunds(true);
     } else {
       onSubmit?.();
     }
@@ -90,11 +90,11 @@ const CreateRewardsSubmitButton: FC<CreateRewardsSubmitButtonProps> = ({ step, o
           <p className="text-[16px]">back</p>
         </div>
       </div>
-      <OnrampModal
+      <AddFundsModal
         chain={chain?.name.toLowerCase() ?? ""}
         asset={chainNativeCurrency ?? ""}
-        isOpen={showOnramp}
-        onClose={() => setShowOnramp(false)}
+        isOpen={showAddFunds}
+        onClose={() => setShowAddFunds(false)}
       />
     </div>
   );

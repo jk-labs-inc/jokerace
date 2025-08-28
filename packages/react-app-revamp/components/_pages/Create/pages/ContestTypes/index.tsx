@@ -1,8 +1,7 @@
-import { toastInfo } from "@components/UI/Toast";
+import { FOOTER_LINKS } from "@config/links";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useAccount } from "wagmi";
 import CreateNextButton from "../../components/Buttons/Next";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
@@ -16,7 +15,6 @@ import CreateContestTypesEntryBased from "./components/Types/EntryBased";
 import entryBasedConfig from "./components/Types/EntryBased/config";
 import CreateContestTypesVotingBased from "./components/Types/VotingBased";
 import votingBasedConfig from "./components/Types/VotingBased/config";
-import { FOOTER_LINKS } from "@config/links";
 
 const contestTypeConfigs = {
   [ContestType.AnyoneCanPlay]: anyoneCanPlayConfig,
@@ -73,7 +71,7 @@ const CreateContestTypes = () => {
             faqLink={faqLink}
           />
           <div className="mt-4">
-            <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
+            <CreateNextButton step={step} onClick={() => onNextStep()} />
           </div>
         </div>
       </div>

@@ -5,7 +5,7 @@ import { FC, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
-import OnrampModal from "@components/Onramp/components/Modal";
+import AddFundsModal from "@components/AddFunds/components/Modal";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 
 const BalanceOrSkeleton = ({
@@ -46,7 +46,7 @@ const VotingQualifierAnyoneCanVoteBalance: FC<VotingQualifierAnyoneCanVoteBalanc
   );
   const { data, isLoading, error } = useUserNativeBalance({ address: userAddress, chainId: contestChainId });
   const currentUserAvailableVotesAmount = useUserStore(useShallow(state => state.currentUserAvailableVotesAmount));
-  const [isOnrampOpen, setIsOnrampOpen] = useState(false);
+  const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
 
   // add error handling for native balance
   if (error) return <p className="text-[16px] md:text-[24px] text-secondary-11 font-bold">error</p>;
@@ -54,17 +54,17 @@ const VotingQualifierAnyoneCanVoteBalance: FC<VotingQualifierAnyoneCanVoteBalanc
   if (currentUserAvailableVotesAmount === 0) {
     return (
       <>
-        <OnrampModal
+        <AddFundsModal
           chain={contestChainName}
           asset={contestChainNativeCurrencySymbol}
-          isOpen={isOnrampOpen}
-          onClose={() => setIsOnrampOpen(false)}
+          isOpen={isAddFundsOpen}
+          onClose={() => setIsAddFundsOpen(false)}
         />
         <ButtonV3
           size={ButtonSize.DEFAULT_LONG}
           colorClass="bg-true-black border border-neutral-11 rounded-[40px] hover:bg-neutral-11 hover:text-true-black transition-all duration-300"
           textColorClass="text-neutral-11"
-          onClick={() => setIsOnrampOpen(true)}
+          onClick={() => setIsAddFundsOpen(true)}
         >
           add funds
         </ButtonV3>

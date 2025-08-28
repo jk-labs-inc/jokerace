@@ -6,9 +6,16 @@ interface MotionSpinnerProps {
   borderWidth?: number;
   theme?: "light" | "dark" | "auto";
   customColor?: string;
+  className?: string;
 }
 
-const MotionSpinner: FC<MotionSpinnerProps> = ({ size = 24, borderWidth = 2, theme = "auto", customColor }) => {
+const MotionSpinner: FC<MotionSpinnerProps> = ({
+  size = 24,
+  borderWidth = 2,
+  theme = "auto",
+  customColor,
+  className = "flex items-center justify-center",
+}) => {
   const themeColors = {
     light: {
       border: "rgba(229, 229, 229, 0.2)",
@@ -29,7 +36,7 @@ const MotionSpinner: FC<MotionSpinnerProps> = ({ size = 24, borderWidth = 2, the
   const spinnerColor = customColor || (theme === "auto" ? "var(--text-color, #E5E5E5)" : themeColors[theme].spinner);
 
   return (
-    <div className="flex items-center justify-center">
+    <div className={className}>
       <motion.div
         style={{
           width: `${size}px`,
