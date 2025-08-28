@@ -28,11 +28,9 @@ import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
 import { berachain } from "./custom-chains/berachain";
-import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { cyber } from "./custom-chains/cyber";
 import { forma } from "./custom-chains/forma";
-import { gnosis } from "./custom-chains/gnosis";
 import { hyperliquid } from "./custom-chains/hyperliquid";
 import { ink } from "./custom-chains/ink";
 import { linea } from "./custom-chains/linea";
@@ -41,8 +39,6 @@ import { manta } from "./custom-chains/manta";
 import { metis } from "./custom-chains/metis";
 import { mode } from "./custom-chains/mode";
 import { polygon } from "./custom-chains/polygon";
-import { scroll } from "./custom-chains/scroll";
-import { sei } from "./custom-chains/sei";
 import { sepolia } from "./custom-chains/sepolia";
 import { soneium } from "./custom-chains/soneium";
 import { sonic } from "./custom-chains/sonic";
@@ -66,14 +62,10 @@ export const chains: readonly [Chain, ...Chain[]] = [
   avalanche,
   linea,
   celo,
-  gnosis,
-  scroll,
   mode,
-  sei,
   cyber,
   metis,
   forma,
-  bnb,
   soneium,
   story,
   ink,
