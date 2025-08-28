@@ -1,11 +1,9 @@
+import AddFundsCard from "@components/AddFunds/components/Card";
+import MotionSpinner from "@components/UI/MotionSpinner";
+import { getChainId } from "@helpers/getChainId";
 import { FC } from "react";
 import AddFundsJumperWidget from "./components/Widget";
 import useJumperBridgeChains from "./hooks/useJumperBridgeChains";
-import { getChainId } from "@helpers/getChainId";
-import AddFundsCard from "@components/AddFunds/components/Card";
-import Loading from "app/contest/new/loading";
-import Loader from "@components/UI/Loader";
-import MotionSpinner from "@components/UI/MotionSpinner";
 
 interface AddFundsJumperProviderProps {
   chain: string;
@@ -43,9 +41,9 @@ const AddFundsJumperProvider: FC<AddFundsJumperProviderProps> = ({ chain, asset 
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <AddFundsCard {...JUMPER_PARAMS}>
       <AddFundsJumperWidget chainId={chainId} asset={asset} />
-    </div>
+    </AddFundsCard>
   );
 };
 

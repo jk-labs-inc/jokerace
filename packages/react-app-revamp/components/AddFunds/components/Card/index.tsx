@@ -1,5 +1,6 @@
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
-import { FC } from "react";
+import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { FC, ReactNode, useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 
 interface AddFundsCardProps {
   name: string;
@@ -7,9 +8,9 @@ interface AddFundsCardProps {
   logo: string;
   logoBorderColor?: string;
   descriptionClassName?: string;
-  onClick?: () => void;
   disabled?: boolean;
   disabledMessage?: string;
+  children?: ReactNode;
 }
 
 const AddFundsCard: FC<AddFundsCardProps> = ({
@@ -17,22 +18,32 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
   description,
   logo,
   logoBorderColor,
-  onClick,
   descriptionClassName = "",
   disabled = false,
   disabledMessage = "",
+  children,
 }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const handleClick = () => {
+    if (disabled) return;
+
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <div className="relative">
-      <div className={`${disabled ? "filter blur-[1px] opacity-50" : ""}`}>
+      <div
+        className={`${disabled ? "filter blur-[1px] opacity-50" : ""} ${
+          isExpanded && children ? "shadow-entry-card rounded-2xl" : ""
+        } ${isExpanded && children ? "border border-transparent" : ""}`}
+      >
         <button
-          onClick={disabled ? undefined : onClick}
+          onClick={handleClick}
           disabled={disabled}
-          className={`group flex w-full p-4 rounded-2xl border border-transparent ${
-            disabled
-              ? "cursor-not-allowed"
-              : "cursor-pointer md:hover:border-neutral-11 transition-colors duration-300 ease-in-out"
-          } shadow-entry-card`}
+          className={`flex w-full p-4 ${isExpanded ? "rounded-t-2xl" : "rounded-2xl"} border border-transparent ${
+            disabled ? "cursor-not-allowed" : "cursor-pointer"
+          } ${!isExpanded || !children ? "shadow-entry-card" : ""}`}
         >
           <div className="flex gap-4 items-center w-full">
             <img
@@ -48,12 +59,29 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
               </p>
             </div>
             <div className="ml-auto">
-              {!disabled && (
-                <ChevronRightIcon className="w-6 h-6 text-neutral-9 md:group-hover:text-neutral-11 transition-colors duration-300 ease-in-out" />
-              )}
+              {!disabled &&
+                (isExpanded ? (
+                  <ChevronUpIcon className="w-6 h-6 text-neutral-9 hover:text-neutral-11 transition-colors duration-300 ease-in-out" />
+                ) : (
+                  <ChevronDownIcon className="w-6 h-6 text-neutral-9 hover:text-neutral-11 transition-colors duration-300 ease-in-out" />
+                ))}
             </div>
           </div>
         </button>
+
+        <AnimatePresence>
+          {isExpanded && children && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="overflow-hidden border-l border-r border-b border-transparent rounded-b-2xl"
+            >
+              {children}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {disabled && disabledMessage && (

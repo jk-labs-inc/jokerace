@@ -61,10 +61,6 @@ export const createJumperWidgetConfig = (chainId: number, asset: string): Widget
     },
     ...filters,
     theme: {
-      container: {
-        borderRadius: "16px",
-        boxShadow: "0 0 8px 2px #3c3c3c",
-      },
       colorSchemes: {
         dark: {
           palette: {
