@@ -10,6 +10,7 @@ interface AddFundsCardProps {
   descriptionClassName?: string;
   disabled?: boolean;
   disabledMessage?: string;
+  expanded?: boolean;
   children?: ReactNode;
 }
 
@@ -21,9 +22,10 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
   descriptionClassName = "",
   disabled = false,
   disabledMessage = "",
+  expanded = false,
   children,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(expanded);
 
   const handleClick = () => {
     if (disabled) return;

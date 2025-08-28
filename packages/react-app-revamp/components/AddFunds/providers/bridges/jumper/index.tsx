@@ -22,17 +22,23 @@ const AddFundsJumperProvider: FC<AddFundsJumperProviderProps> = ({ chain, asset 
   const { data: isSupported, isLoading, isError, retry } = useJumperBridgeChains(chainId);
 
   if (isLoading) {
-    return <MotionSpinner className="flex items-start" />;
+    return (
+      <AddFundsCard {...JUMPER_PARAMS} expanded>
+        <MotionSpinner className="my-4 flex items-center justify-center" />
+      </AddFundsCard>
+    );
   }
 
   if (isError) {
     return (
-      <p className="text-negative-11 text-[16px] font-bold">
-        ruh roh! we couldn't load providers,{" "}
-        <button className="underline cursor-pointer" onClick={() => retry()}>
-          try again!
-        </button>
-      </p>
+      <AddFundsCard {...JUMPER_PARAMS} expanded>
+        <p className="text-negative-11 text-[16px] m-4 font-bold">
+          ruh roh! we couldn't load jumper,{" "}
+          <button className="underline cursor-pointer" onClick={() => retry()}>
+            try again!
+          </button>
+        </p>
+      </AddFundsCard>
     );
   }
 
