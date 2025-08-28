@@ -73,7 +73,7 @@ const CreateContestTypes = () => {
             faqLink={faqLink}
           />
           <div className="mt-4">
-            <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
+            <CreateNextButton step={step} onClick={() => onNextStep()} />
           </div>
         </div>
       </div>
