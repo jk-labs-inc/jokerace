@@ -23,7 +23,7 @@ import { useAccount } from "wagmi";
 import SubmissionDeleteButton from "../components/Buttons/Delete";
 import SubmissionDeleteModal from "../components/Modals/Delete";
 import SubmissionPageMobileComments from "./components/Comments";
-import SubmissionPageMobileOnramp from "./components/Onramp";
+  import SubmissionPageMobileAddFunds from "./components/AddFunds";
 import StickyVoteFooter from "./components/VoteFooter";
 import SubmissionPageMobileVotersList from "./components/VotersList";
 import SubmissionPageMobileVoting from "./components/Voting";
@@ -75,7 +75,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
   const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
   const [showVotingModal, setShowVotingModal] = useState(false);
-  const [showOnrampModal, setShowOnrampModal] = useState(false);
+  const [showAddFunds, setShowAddFunds] = useState(false);
   const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const {
@@ -250,12 +250,12 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
         />
       )}
 
-      {showOnrampModal && (
-        <SubmissionPageMobileOnramp
+      {showAddFunds && (
+        <SubmissionPageMobileAddFunds
           chain={contestInfo.chain}
           asset={chainCurrencySymbol ?? ""}
-          isOpen={showOnrampModal}
-          onClose={() => setShowOnrampModal(false)}
+          isOpen={showAddFunds}
+          onClose={() => setShowAddFunds(false)}
         />
       )}
 
@@ -271,7 +271,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           onConnectWallet={onConnectWallet ?? (() => {})}
           setShowVotingModal={setShowVotingModal}
           onAddFunds={() => {
-            setShowOnrampModal(true);
+            setShowAddFunds(true);
           }}
         />
       )}

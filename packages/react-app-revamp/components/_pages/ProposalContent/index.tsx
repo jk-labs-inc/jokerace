@@ -85,7 +85,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
     isLoading: isUserProfileLoading,
     isError: isUserProfileError,
   } = useProfileData(proposal.authorEthereumAddress, true);
-  const [isOnrampOpen, setIsOnrampOpen] = useState(false);
+  const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
 
   const handleVotingModalOpen = () => {
     if (isContestCanceled) {

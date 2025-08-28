@@ -595,6 +595,11 @@ li {
   color: #9d9d9d;
 }
 
+/* LI.FI widget styles */
+.MuiButton-containedPrimary {
+  text-transform: lowercase !important;
+}
+
 @layer base {
   *:not(.normal-case, .uppercase, input, textarea) {
     text-transform: lowercase;

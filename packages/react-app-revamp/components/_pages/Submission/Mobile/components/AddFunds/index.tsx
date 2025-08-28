@@ -1,15 +1,15 @@
-import Onramp from "@components/Onramp";
+import AddFunds from "@components/AddFunds";
 import { FC, useRef } from "react";
 import ReactDOM from "react-dom";
 
-interface SubmissionPageMobileOnrampProps {
+interface SubmissionPageMobileAddFundsProps {
   isOpen: boolean;
   onClose: () => void;
   chain: string;
   asset: string;
 }
 
-const SubmissionPageMobileOnramp: FC<SubmissionPageMobileOnrampProps> = ({ isOpen, onClose, chain, asset }) => {
+const SubmissionPageMobileAddFunds: FC<SubmissionPageMobileAddFundsProps> = ({ isOpen, onClose, chain, asset }) => {
   const backdropRef = useRef<HTMLDivElement>(null);
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -29,11 +29,11 @@ const SubmissionPageMobileOnramp: FC<SubmissionPageMobileOnrampProps> = ({ isOpe
               border-t border-neutral-9 rounded-t-[40px] p-6 pb-4
               ${isOpen ? "translate-y-0" : "translate-y-full"} transition-transform duration-300`}
       >
-        <Onramp chain={chain} asset={asset} showBackButton={false} />
+        <AddFunds chain={chain} asset={asset} showBackButton={false} />
       </div>
     </div>,
     document.body,
   );
 };
 
-export default SubmissionPageMobileOnramp;
+export default SubmissionPageMobileAddFunds;

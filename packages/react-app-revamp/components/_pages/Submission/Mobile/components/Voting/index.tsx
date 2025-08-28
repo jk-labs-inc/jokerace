@@ -1,5 +1,4 @@
 import DialogMaxVotesAlert from "@components/_pages/DialogMaxVotesAlert";
-import Onramp from "@components/Onramp";
 import { ButtonSize } from "@components/UI/ButtonV3";
 import VotingWidget from "@components/Voting";
 import { getNativeTokenSymbol } from "@helpers/nativeToken";
@@ -10,6 +9,7 @@ import { Charge } from "@hooks/useDeployContest/types";
 import { FC, useCallback, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { useShallow } from "zustand/shallow";
+import SubmissionPageMobileAddFunds from "../AddFunds";
 
 interface SubmissionPageMobileVotingProps {
   isOpen: boolean;
@@ -49,7 +49,7 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
   const [totalCharge, setTotalCharge] = useState("");
   const nativeToken = getNativeTokenSymbol(contestInfo.chain);
   const backdropRef = useRef<HTMLDivElement>(null);
-  const [showOnrampModal, setShowOnrampModal] = useState(false);
+  const [showAddFunds, setShowAddFunds] = useState(false);
   const {
     currentPricePerVote,
     isLoading: isCurrentPricePerVoteLoading,
@@ -121,8 +121,13 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
                 border-t border-neutral-9 rounded-t-[40px] p-6 pb-4
                 ${isOpen ? "translate-y-0" : "translate-y-full"} transition-transform duration-300`}
       >
-        {showOnrampModal ? (
-          <Onramp chain={contestInfo.chain} asset={nativeToken ?? ""} onGoBack={() => setShowOnrampModal(false)} />
+        {showAddFunds ? (
+          <SubmissionPageMobileAddFunds
+            chain={contestInfo.chain}
+            asset={nativeToken ?? ""}
+            isOpen={showAddFunds}
+            onClose={() => setShowAddFunds(false)}
+          />
         ) : showMaxVoteConfirmation ? (
           <DialogMaxVotesAlert
             token={nativeToken ?? ""}
@@ -137,7 +142,7 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
             amountOfVotes={amountOfVotes}
             onVote={onSubmitCastVotes}
             onAddFunds={() => {
-              setShowOnrampModal(true);
+              setShowAddFunds(true);
             }}
           />
         )}
