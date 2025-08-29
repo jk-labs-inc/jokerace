@@ -12,12 +12,8 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
     error PeriodsCannotBeMoreThanAWeek();
     error RankLimitCannotBeZero();
 
-    constructor(
-        string memory _name,
-        string memory _prompt,
-        ConstructorArgs memory _constructorArgs
-    )
-        Governor(_name, _prompt, _constructorArgs)
+    constructor(ConstructorArgs memory _constructorArgs)
+        Governor(_constructorArgs)
         GovernorSorting(_constructorArgs.intConstructorArgs.sortingEnabled, _constructorArgs.intConstructorArgs.rankLimit)
     {
         if (

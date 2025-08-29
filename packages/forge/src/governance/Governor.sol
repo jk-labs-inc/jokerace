@@ -180,9 +180,10 @@ abstract contract Governor is GovernorSorting {
     error OnlyJkLabsCanAmend();
     error OnlyCreatorCanAmend();
 
-    constructor(string memory name_, string memory prompt_, ConstructorArgs memory constructorArgs_) {
-        name = name_;
-        prompt = prompt_;
+    constructor(ConstructorArgs memory constructorArgs_) {
+        name = constructorArgs_.name;
+        prompt = constructorArgs_.prompt;
+        anyoneCanSubmit = constructorArgs_.anyoneCanSubmit;
         creator = msg.sender;
         contestStart = constructorArgs_.intConstructorArgs.contestStart;
         votingDelay = constructorArgs_.intConstructorArgs.votingDelay;
@@ -197,13 +198,12 @@ abstract contract Governor is GovernorSorting {
         creatorSplitDestination = constructorArgs_.creatorSplitDestination;
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
         metadataFieldsSchema = constructorArgs_.metadataFieldsSchema;
-        anyoneCanSubmit = constructorArgs_.anyoneCanSubmit;
 
         emit JokeraceCreated(
             VERSION,
-            name_,
-            prompt_,
-            msg.sender,
+            constructorArgs_.name,
+            constructorArgs_.prompt,
+            creator,
             constructorArgs_.intConstructorArgs.contestStart,
             constructorArgs_.intConstructorArgs.votingDelay,
             constructorArgs_.intConstructorArgs.votingPeriod
@@ -526,11 +526,7 @@ abstract contract Governor is GovernorSorting {
     /**
      * @dev Cast a vote.
      */
-    function castVote(uint256 proposalId, uint256 numVotes)
-        public
-        payable
-        returns (uint256)
-    {
+    function castVote(uint256 proposalId, uint256 numVotes) public payable returns (uint256) {
         uint256 actionCost = _determineCorrectAmountSent(Actions.Vote, numVotes);
 
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();

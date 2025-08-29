@@ -110,8 +110,7 @@ contract ContestTest is Test {
     function setUp() public {
         vm.startPrank(CREATOR_ADDRESS);
 
-        contest =
-            new Contest("test", "hello world", payPerVoteExpCurveNumParams);
+        contest = new Contest("test", "hello world", payPerVoteExpCurveNumParams);
 
         vm.stopPrank();
     }
