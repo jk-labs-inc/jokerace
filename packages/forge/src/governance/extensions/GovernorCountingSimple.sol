@@ -188,12 +188,8 @@ abstract contract GovernorCountingSimple is Governor {
     /**
      * @dev See {Governor-_countVote}.
      */
-    function _countVote(uint256 proposalId, address account, uint256 numVotes, uint256 totalVotes) internal override {
+    function _countVote(uint256 proposalId, address account, uint256 numVotes) internal override {
         ProposalVote storage proposalVote = proposalVoteStructs[proposalId];
-
-        if ((votingMerkleRoot != 0) && (numVotes > (totalVotes - addressTotalCastVoteCount[account]))) {
-            revert NotEnoughVotesLeft();
-        }
 
         bool firstTimeVoting = (proposalVote.addressVoteCount[account] == 0);
 
@@ -206,7 +202,7 @@ abstract contract GovernorCountingSimple is Governor {
         addressTotalCastVoteCount[account] += numVotes;
         totalVotesCast += numVotes;
 
-        // sorting and consequently rewards module compatibility is only available if downvoting is disabled and sorting enabled
+        // sorting and consequently rewards module compatibility is only available if sorting enabled
         if (sortingEnabled == 1) {
             uint256 newVotes = proposalVote.proposalVoteCount; // only check state var once to save on gas
             uint256 oldVotes = newVotes - numVotes;

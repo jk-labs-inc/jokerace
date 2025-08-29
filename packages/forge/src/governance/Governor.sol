@@ -5,13 +5,12 @@ pragma solidity ^0.8.19;
 import "@openzeppelin/utils/math/SafeCast.sol";
 import "@openzeppelin/utils/Address.sol";
 import {UD60x18, ud} from "@prb/math/src/UD60x18.sol";
-import "./utils/GovernorMerkleVotes.sol";
 import "./utils/GovernorSorting.sol";
 
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
  */
-abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
+abstract contract Governor is GovernorSorting {
     using SafeCast for uint256;
 
     enum ContestState {
@@ -49,7 +48,6 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 percentageToCreator;
         uint256 costToPropose;
         uint256 costToVote;
-        uint256 payPerVote;
         uint256 priceCurveType;
         uint256 multiple;
     }
@@ -59,6 +57,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         address creatorSplitDestination;
         address jkLabsSplitDestination;
         string metadataFieldsSchema;
+        bool anyoneCanSubmit;
     }
 
     struct TargetMetadata {
@@ -120,13 +119,13 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public maxProposalCount; // Max number of proposals allowed in this contest.
     uint256 public percentageToCreator;
     uint256 public costToPropose;
-    uint256 public costToVote; // Per txn if payPerVote is 0, per vote if 1 and flat price curve, starting/minimum price if 1 and exp curve
-    uint256 public payPerVote; // If this contest is pay per vote (as opposed to pay per vote transaction).
+    uint256 public costToVote; // Cost per vote if flat price curve, starting/minimum price if exp curve
     uint256 public priceCurveType; // Enum value of PriceCurveTypes.
     uint256 public multiple; // Exponent multiple for an exponential price curve if applicable.
     address public creatorSplitDestination; // Where the creator split of revenue goes.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
-    string public metadataFieldsSchema; // JSON Schema of what the metadata fields are
+    string public metadataFieldsSchema; // JSON Schema of what the metadata fields are.
+    bool public anyoneCanSubmit; // If true, anyone can submit; if false, only creator can submit.
 
     uint256[] public proposalIds;
     uint256[] public deletedProposalIds;
@@ -139,7 +138,6 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
     mapping(address => uint256) public addressTotalVotes;
     mapping(address => bool) public addressTotalVotesVerified;
-    mapping(address => bool) public addressSubmitterVerified;
 
     error AuthorIsNotSender(address author, address sender);
     error ZeroSignersInSafeMetadata();
@@ -152,7 +150,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
     error IncorrectCostSent(uint256 msgValue, uint256 costToVote);
 
-    error AddressNotPermissionedToSubmit();
+    error OnlyCreatorCanSubmit();
     error ContestMustBeQueuedToPropose(ContestState currentState);
     error ContestMustBeActiveToVote(ContestState currentState);
     error ContestMustBeActiveToGetCurrentVotePrice(ContestState currentState);
@@ -162,7 +160,6 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
     error CannotVoteOnDeletedProposal();
     error NeedAtLeastOneVoteToVote();
-    error NotAPayPerVoteContest();
     error CannotVoteLessThanOneVoteInPayPerVote();
 
     error NeedToSubmitWithProofFirst();
@@ -195,12 +192,12 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         percentageToCreator = constructorArgs_.intConstructorArgs.percentageToCreator;
         costToPropose = constructorArgs_.intConstructorArgs.costToPropose;
         costToVote = constructorArgs_.intConstructorArgs.costToVote;
-        payPerVote = constructorArgs_.intConstructorArgs.payPerVote;
         priceCurveType = constructorArgs_.intConstructorArgs.priceCurveType;
         multiple = constructorArgs_.intConstructorArgs.multiple;
         creatorSplitDestination = constructorArgs_.creatorSplitDestination;
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
         metadataFieldsSchema = constructorArgs_.metadataFieldsSchema;
+        anyoneCanSubmit = constructorArgs_.anyoneCanSubmit;
 
         emit JokeraceCreated(
             VERSION,
@@ -341,23 +338,14 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
     /**
      * @dev Register a vote with a given support and voting weight.
-     *
-     * Note: Support is generic and can represent various things depending on the voting system used.
      */
-    function _countVote(uint256 proposalId, address account, uint256 numVotes, uint256 totalVotes) internal virtual;
+    function _countVote(uint256 proposalId, address account, uint256 numVotes) internal virtual;
 
     /**
-     * @dev Verifies that `account` is permissioned to propose via merkle proof.
+     * @dev Verifies that `account` is permissioned to propose.
      */
-    function verifyProposer(address account, bytes32[] calldata proof) public {
-        if (!addressSubmitterVerified[account]) {
-            if (submissionMerkleRoot == 0) {
-                // if the submission root is 0, then anyone can submit
-                return;
-            }
-            checkProof(account, AMOUNT_FOR_SUMBITTER_PROOF, proof, false); // will revert with NotInMerkle if not valid
-            addressSubmitterVerified[account] = true;
-        }
+    function verifyProposer(address account) public {
+        if (!anyoneCanSubmit && account != creator) revert OnlyCreatorCanSubmit();
     }
 
     /**
@@ -390,10 +378,9 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     /**
-     * @dev Returns the current cost per vote if the contest is payPerVote.
+     * @dev Returns the current cost per vote.
      */
     function currentPricePerVote() public view returns (uint256) {
-        if (payPerVote != 1) revert NotAPayPerVoteContest();
         if (state() != ContestState.Active) revert ContestMustBeActiveToGetCurrentVotePrice(state());
 
         if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Exponential) {
@@ -418,12 +405,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         if (currentAction == Actions.Submit) {
             actionCost = costToPropose;
         } else if (currentAction == Actions.Vote) {
-            if (payPerVote == 1) {
-                if (numVotes < 1 ether) revert CannotVoteLessThanOneVoteInPayPerVote();
-                actionCost = currentPricePerVote() * (numVotes / 1 ether); // we don't allow <1 vote to be cast in a pay per vote txn bc this would underflow
-            } else {
-                actionCost = costToVote;
-            }
+            if (numVotes < 1 ether) revert CannotVoteLessThanOneVoteInPayPerVote();
+            actionCost = currentPricePerVote() * (numVotes / 1 ether); // we don't allow <1 vote to be cast bc this would underflow
         } else {
             actionCost = 0;
         }
@@ -458,25 +441,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     function propose(ProposalCore calldata proposal, bytes32[] calldata proof) public payable returns (uint256) {
         uint256 actionCost = _determineCorrectAmountSent(Actions.Submit, 0);
 
-        verifyProposer(msg.sender, proof);
-        validateProposalData(proposal);
-        uint256 proposalId = _castProposal(proposal);
-
-        _distributeCost(actionCost);
-
-        return proposalId;
-    }
-
-    /**
-     * @dev Create a new proposal without a proof if you have already proposed with a proof.
-     */
-    function proposeWithoutProof(ProposalCore calldata proposal) public payable returns (uint256) {
-        uint256 actionCost = _determineCorrectAmountSent(Actions.Submit, 0);
-
-        if (submissionMerkleRoot != 0) {
-            // if the submission root is 0, then anyone can submit; otherwise, this address needs to have been verified
-            if (!addressSubmitterVerified[msg.sender]) revert NeedToSubmitWithProofFirst();
-        }
+        verifyProposer(msg.sender);
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
 
@@ -559,20 +524,9 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     /**
-     * @dev Verifies that `account` is permissioned to vote with `totalVotes` via merkle proof.
+     * @dev Cast a vote.
      */
-    function verifyVoter(address account, uint256 totalVotes, bytes32[] calldata proof) public {
-        if (votingMerkleRoot != 0 && !addressTotalVotesVerified[account]) {
-            checkProof(account, totalVotes, proof, true); // will revert with NotInMerkle if not valid
-            addressTotalVotes[account] = totalVotes;
-            addressTotalVotesVerified[account] = true;
-        }
-    }
-
-    /**
-     * @dev Cast a vote with a merkle proof.
-     */
-    function castVote(uint256 proposalId, uint256 totalVotes, uint256 numVotes, bytes32[] calldata proof)
+    function castVote(uint256 proposalId, uint256 numVotes)
         public
         payable
         returns (uint256)
@@ -580,7 +534,6 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 actionCost = _determineCorrectAmountSent(Actions.Vote, numVotes);
 
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
-        verifyVoter(msg.sender, totalVotes, proof);
 
         _distributeCost(actionCost);
 
@@ -588,22 +541,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     /**
-     * @dev Cast a vote without a proof if you have already voted with a proof.
-     */
-    function castVoteWithoutProof(uint256 proposalId, uint256 numVotes) public payable returns (uint256) {
-        uint256 actionCost = _determineCorrectAmountSent(Actions.Vote, numVotes);
-
-        if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
-        if (votingMerkleRoot != 0 && !addressTotalVotesVerified[msg.sender]) revert NeedToVoteWithProofFirst();
-
-        _distributeCost(actionCost);
-
-        return _castVote(proposalId, msg.sender, numVotes);
-    }
-
-    /**
-     * @dev Internal vote casting mechanism: Check that the vote is pending, that it has not been cast yet, retrieve
-     * voting weight using addressTotalVotes() and call the {_countVote} internal function.
+     * @dev Internal vote casting mechanism: Check that the vote is pending, that it has not been cast yet,
+     * and call the {_countVote} internal function.
      *
      * Emits a {IGovernor-VoteCast} event.
      */
@@ -611,13 +550,13 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         if (state() != ContestState.Active) revert ContestMustBeActiveToVote(state());
         if (numVotes == 0) revert NeedAtLeastOneVoteToVote();
 
-        _countVote(proposalId, account, numVotes, addressTotalVotes[account]);
+        _countVote(proposalId, account, numVotes);
 
         addressesThatHaveVoted.push(msg.sender);
 
         emit VoteCast(account, proposalId, numVotes);
 
-        return addressTotalVotes[account];
+        return numVotes;
     }
 
     function setCreatorSplitDestination(address newCreatorSplitDestination) public {
