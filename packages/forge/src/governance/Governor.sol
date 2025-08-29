@@ -38,6 +38,7 @@ abstract contract Governor is GovernorSorting {
     }
 
     struct IntConstructorArgs {
+        uint256 anyoneCanSubmit;
         uint256 contestStart;
         uint256 votingDelay;
         uint256 votingPeriod;
@@ -50,10 +51,11 @@ abstract contract Governor is GovernorSorting {
         uint256 costToVote;
         uint256 priceCurveType;
         uint256 multiple;
-        uint256 anyoneCanSubmit;
     }
 
     struct ConstructorArgs {
+        string name;
+        string prompt;
         IntConstructorArgs intConstructorArgs;
         address creatorSplitDestination;
         address jkLabsSplitDestination;
@@ -112,6 +114,7 @@ abstract contract Governor is GovernorSorting {
     string public name; // The title of the contest
     string public prompt;
     address public creator;
+    uint256 public anyoneCanSubmit; // If 1, anyone can submit; if 0, only creator can submit.
     uint256 public contestStart; // The Unix timestamp that the contest starts at.
     uint256 public votingDelay; // Number of seconds that submissions are open.
     uint256 public votingPeriod; // Number of seconds that voting is open.
@@ -125,7 +128,6 @@ abstract contract Governor is GovernorSorting {
     address public creatorSplitDestination; // Where the creator split of revenue goes.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
     string public metadataFieldsSchema; // JSON Schema of what the metadata fields are.
-    uint256 public anyoneCanSubmit; // If 1, anyone can submit; if 0, only creator can submit.
 
     uint256[] public proposalIds;
     uint256[] public deletedProposalIds;
@@ -183,7 +185,7 @@ abstract contract Governor is GovernorSorting {
     constructor(ConstructorArgs memory constructorArgs_) {
         name = constructorArgs_.name;
         prompt = constructorArgs_.prompt;
-        anyoneCanSubmit = constructorArgs_.anyoneCanSubmit;
+        anyoneCanSubmit = constructorArgs_.intConstructorArgs.anyoneCanSubmit;
         creator = msg.sender;
         contestStart = constructorArgs_.intConstructorArgs.contestStart;
         votingDelay = constructorArgs_.intConstructorArgs.votingDelay;
