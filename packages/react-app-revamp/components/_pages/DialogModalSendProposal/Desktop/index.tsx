@@ -160,7 +160,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
           />
         ) : isSuccess && proposalId ? (
           <div className="flex flex-col gap-8">
-            <p className="text-[24px] font-bold text-neutral-11">your submission is live!</p>
+            <p className="text-[24px] font-bold text-neutral-11">your entry is live!</p>
             <DialogModalSendProposalSuccessLayout proposalId={proposalId} chainName={chainName} contestId={contestId} />
           </div>
         ) : (
