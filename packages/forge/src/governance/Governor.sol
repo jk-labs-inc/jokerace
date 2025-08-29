@@ -50,6 +50,7 @@ abstract contract Governor is GovernorSorting {
         uint256 costToVote;
         uint256 priceCurveType;
         uint256 multiple;
+        uint256 anyoneCanSubmit;
     }
 
     struct ConstructorArgs {
@@ -57,7 +58,6 @@ abstract contract Governor is GovernorSorting {
         address creatorSplitDestination;
         address jkLabsSplitDestination;
         string metadataFieldsSchema;
-        bool anyoneCanSubmit;
     }
 
     struct TargetMetadata {
@@ -125,7 +125,7 @@ abstract contract Governor is GovernorSorting {
     address public creatorSplitDestination; // Where the creator split of revenue goes.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
     string public metadataFieldsSchema; // JSON Schema of what the metadata fields are.
-    bool public anyoneCanSubmit; // If true, anyone can submit; if false, only creator can submit.
+    uint256 public anyoneCanSubmit; // If 1, anyone can submit; if 0, only creator can submit.
 
     uint256[] public proposalIds;
     uint256[] public deletedProposalIds;
