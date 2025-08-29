@@ -1,6 +1,9 @@
 import { FC } from "react";
 import ContestWithdrawRewards from "../../../components/WithdrawRewards";
 import { Abi } from "viem";
+import { useCancelRewards } from "@hooks/useCancelRewards";
+import MotionSpinner from "@components/UI/MotionSpinner";
+import RewardsCanceledDescription from "./components/Description";
 
 interface RewardsCanceledProps {
   isCreatorView: boolean;
@@ -8,6 +11,7 @@ interface RewardsCanceledProps {
   rewardsAbi: Abi;
   rankings: number[];
   chainId: number;
+  version: string;
 }
 
 const RewardsCanceled: FC<RewardsCanceledProps> = ({
@@ -16,36 +20,42 @@ const RewardsCanceled: FC<RewardsCanceledProps> = ({
   rewardsAbi,
   rankings,
   chainId,
+  version,
 }) => {
-  const canceledDescription = () => {
-    switch (isCreatorView) {
-      case true:
-        return (
-          <div className="flex flex-col gap-4">
-            <p className="text-[16px] text-neutral-11">
-              <b>you have canceled rewards for this contest.</b> <br />
-              only you have access to funds.
-            </p>
-            <p className="text-[16px] text-neutral-11">
-              please be in touch with players in case you <br />
-              need to distribute funds to them manually.
-            </p>
-          </div>
-        );
-      case false:
-        return (
-          <div className="flex flex-col gap-4">
-            <p className="text-[16px] text-neutral-11 font-bold">
-              the contest creator canceled rewards for this contest.
-            </p>
-            <p className="text-[16px] text-neutral-11">
-              only the contest creator can distribute any funds <br /> from this contest. please reach out to them{" "}
-              <br /> directly for any support.
-            </p>
-          </div>
-        );
-    }
-  };
+  const { isCanceledByJkLabs, isCanceledByJkLabsLoading, isCanceledByJkLabsError, refetchCanceledByJkLabs } =
+    useCancelRewards({
+      rewardsAddress: rewardsModuleAddress as `0x${string}`,
+      abi: rewardsAbi,
+      chainId,
+      version,
+    });
+
+  if (isCanceledByJkLabsLoading) {
+    return (
+      <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-2 items-start">
+          <p className="text-[24px] text-negative-11">rewards have been canceled</p>
+          <p className="loadingDots font-sabo text-[14px] text-neutral-14 mt-4">loading cancellation details</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isCanceledByJkLabsError) {
+    return (
+      <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-2 items-start">
+          <p className="text-[24px] text-negative-11">rewards have been canceled</p>
+          <p className="text-[16px] text-neutral-9 font-bold">
+            ruh-roh! there was an error loading the cancellation details,
+            <button className="underline" onClick={() => refetchCanceledByJkLabs()}>
+              try again!
+            </button>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-10">
@@ -57,11 +67,13 @@ const RewardsCanceled: FC<RewardsCanceledProps> = ({
             rewardsAbi={rewardsAbi}
             rankings={rankings}
             chainId={chainId}
+            isCanceledByJkLabs={isCanceledByJkLabs}
           />
         )}
       </div>
-      {canceledDescription()}
+      <RewardsCanceledDescription isCanceledByJkLabs={isCanceledByJkLabs} isCreatorView={isCreatorView} />
     </div>
   );
 };
+
 export default RewardsCanceled;

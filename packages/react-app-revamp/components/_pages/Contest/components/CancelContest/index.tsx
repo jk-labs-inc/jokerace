@@ -1,37 +1,47 @@
-import { chains, config } from "@config/wagmi";
+import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { getChainId } from "@helpers/getChainId";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { useContestState } from "@hooks/useContestState";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
+import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useAccount } from "wagmi";
-import CancelContestModal from "./components/Modal";
 import { useShallow } from "zustand/shallow";
+import CancelContestModal from "./components/Modal";
+
 const CancelContest = () => {
   const pathname = usePathname();
-  const { chainName } = extractPathSegments(pathname);
-  const contestChainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
+  const { address: contestAddress, chainName } = extractPathSegments(pathname);
+  const contestChainId = getChainId(chainName);
   const { address, chainId } = useAccount();
-  const isUserOnCorrectChain = contestChainId === chainId;
   const contestAuthorEthereumAddress = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
   const { cancelContest, isLoading, isConfirmed } = useContestState();
   const { contestState } = useContestStateStore(state => state);
+  const {
+    totalVotesCast,
+    isLoading: isLoadingTotalVotesCast,
+    isError: isErrorTotalVotesCast,
+  } = useTotalVotesCastOnContest(contestAddress, contestChainId);
   const [isCloseContestModalOpen, setIsCloseContestModalOpen] = useState(false);
-  const isAuthor = address === contestAuthorEthereumAddress;
-  const isNotCanceled = contestState !== ContestStateEnum.Canceled;
-  const shouldRender = isAuthor && isNotCanceled && (!isConfirmed || isLoading);
 
-  if (!shouldRender) return null;
+  if (address !== contestAuthorEthereumAddress) return null;
+  if (contestState === ContestStateEnum.Canceled) return null;
+  if (isConfirmed && !isLoading) return null;
+
+  if (totalVotesCast && Number(totalVotesCast) > 0 && !isLoadingTotalVotesCast && !isErrorTotalVotesCast) {
+    return null;
+  }
 
   const handleOpenModal = () => setIsCloseContestModalOpen(true);
 
   const handleCancelContest = async () => {
     if (!contestChainId) return;
 
-    if (!isUserOnCorrectChain) {
+    if (contestChainId !== chainId) {
       await switchChain(config, { chainId: contestChainId });
     }
 

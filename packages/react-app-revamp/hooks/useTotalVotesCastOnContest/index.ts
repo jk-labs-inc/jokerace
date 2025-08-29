@@ -2,10 +2,10 @@ import { useContestStore } from "@hooks/useContest/store";
 import { formatEther } from "viem";
 import { useReadContract } from "wagmi";
 
-const useTotalVotesCastOnContest = (address: string, chainId: number) => {
+const useTotalVotesCastOnContest = (address: string, chainId?: number) => {
   const { contestAbi: abi } = useContestStore(state => state);
 
-  const totalVotesCast = useReadContract({
+  const { data, refetch, isLoading, isError } = useReadContract({
     address: address as `0x${string}`,
     abi: abi,
     chainId: chainId,
@@ -20,7 +20,7 @@ const useTotalVotesCastOnContest = (address: string, chainId: number) => {
     },
   });
 
-  return { totalVotesCast, retry: totalVotesCast.refetch };
+  return { totalVotesCast: data, refetch, isLoading, isError };
 };
 
 export default useTotalVotesCastOnContest;

@@ -13,9 +13,11 @@ interface UseCancelRewardsParams {
 }
 
 export const REWARDS_CANCELED_VERSION = "4.33";
+export const REWARDS_CANCELED_BY_JKLABS_VERSION = "5.11";
 
 export function useCancelRewards({ rewardsAddress, abi, chainId, version }: UseCancelRewardsParams) {
   const hasCanceledFunction = compareVersions(version, REWARDS_CANCELED_VERSION) >= 0;
+  const hasCanceledByJkLabsFunction = compareVersions(version, REWARDS_CANCELED_BY_JKLABS_VERSION) >= 0;
   const { handleError } = useError();
 
   const {
@@ -31,6 +33,21 @@ export function useCancelRewards({ rewardsAddress, abi, chainId, version }: UseC
     chainId,
     query: {
       enabled: hasCanceledFunction,
+    },
+  });
+
+  const {
+    data: isCanceledByJkLabs,
+    isLoading: isCanceledByJkLabsLoading,
+    isError: isCanceledByJkLabsError,
+    refetch: refetchCanceledByJkLabs,
+  } = useReadContract({
+    address: rewardsAddress,
+    abi,
+    functionName: "canceledByJkLabs",
+    chainId,
+    query: {
+      enabled: hasCanceledByJkLabsFunction,
     },
   });
 
@@ -72,6 +89,10 @@ export function useCancelRewards({ rewardsAddress, abi, chainId, version }: UseC
     isLoading: hasCanceledFunction ? isReadLoading : false,
     isSuccess: hasCanceledFunction ? isReadSuccess : true,
     isError: hasCanceledFunction ? isReadError : false,
+    isCanceledByJkLabs: hasCanceledByJkLabsFunction ? !!isCanceledByJkLabs : false,
+    isCanceledByJkLabsLoading: hasCanceledByJkLabsFunction ? isCanceledByJkLabsLoading : false,
+    isCanceledByJkLabsError: hasCanceledByJkLabsFunction ? isCanceledByJkLabsError : false,
+    refetchCanceledByJkLabs,
     refetch,
     cancelRewards,
     isWritePending,

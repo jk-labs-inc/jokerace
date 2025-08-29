@@ -8,22 +8,26 @@ interface ProposalStatisticsTotalVotesCastProps {
 }
 
 const ProposalStatisticsTotalVotesCast: React.FC<ProposalStatisticsTotalVotesCastProps> = ({ address, chainId }) => {
-  const { totalVotesCast, retry: retryTotalVotesCast } = useTotalVotesCastOnContest(address, chainId);
+  const {
+    totalVotesCast,
+    refetch: refetchTotalVotesCast,
+    isLoading,
+    isError,
+  } = useTotalVotesCastOnContest(address, chainId);
 
   if (!totalVotesCast) return null;
 
-  if (totalVotesCast.isLoading)
-    return <Skeleton width={50} height={16} baseColor="#706f78" highlightColor="#78FFC6" duration={1} />;
+  if (isLoading) return <Skeleton width={50} height={16} baseColor="#706f78" highlightColor="#78FFC6" duration={1} />;
 
-  if (totalVotesCast.isError) {
+  if (isError) {
     return (
-      <span className="text-negative-11 font-bold underline cursor-pointer" onClick={() => retryTotalVotesCast()}>
+      <span className="text-negative-11 font-bold underline cursor-pointer" onClick={() => refetchTotalVotesCast()}>
         ruh-roh, try again!
       </span>
     );
   }
 
-  return <span>{formatNumberWithCommas(Number(totalVotesCast.data))}</span>;
+  return <span>{formatNumberWithCommas(Number(totalVotesCast))}</span>;
 };
 
 export default ProposalStatisticsTotalVotesCast;
