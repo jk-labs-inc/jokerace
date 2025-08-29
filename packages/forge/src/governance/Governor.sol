@@ -203,12 +203,12 @@ abstract contract Governor is GovernorSorting {
 
         emit JokeraceCreated(
             VERSION,
-            constructorArgs_.name,
-            constructorArgs_.prompt,
+            name,
+            prompt,
             creator,
-            constructorArgs_.intConstructorArgs.contestStart,
-            constructorArgs_.intConstructorArgs.votingDelay,
-            constructorArgs_.intConstructorArgs.votingPeriod
+            contestStart,
+            votingDelay,
+            votingPeriod
         ); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
