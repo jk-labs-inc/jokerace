@@ -3,10 +3,11 @@ import { ContestType } from "@components/_pages/Create/types";
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { isSupabaseConfigured } from "@helpers/database";
+import { setupDeploymentClients } from "@helpers/viem";
 import useEmailSignup from "@hooks/useEmailSignup";
 import { useError } from "@hooks/useError";
 import { differenceInSeconds, getUnixTime } from "date-fns";
-import { createWalletClient, createPublicClient, custom, parseEther, WalletClient, PublicClient } from "viem";
+import { parseEther, PublicClient, WalletClient } from "viem";
 import { useAccount } from "wagmi";
 import { saveFilesToBucket } from "./buckets";
 import { isSortingEnabled } from "./contracts";
@@ -14,9 +15,6 @@ import { checkForSpoofing, getJkLabsSplitDestinationAddress, indexContest } from
 import { createMetadataFieldsSchema } from "./helpers";
 import { useDeployContestStore } from "./store";
 import { PriceCurveType, SplitFeeDestinationType, VoteType } from "./types";
-import { getPublicClient } from "@wagmi/core";
-import { config } from "@config/wagmi";
-import { setupDeploymentClients } from "@helpers/viem";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000;
 export const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c6118e8a52fa738";
@@ -66,6 +64,7 @@ export function useDeployContest() {
       const { walletClient, publicClient: pubClient, account } = await setupDeploymentClients(chain?.id ?? 1);
 
       if (!walletClient || !pubClient || !account) {
+        handleError(new Error("Failed to setup deployment clients"), "Failed to setup deployment clients");
         throw new Error("Failed to setup deployment clients");
       }
 

@@ -9,24 +9,16 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Conte
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import VotingModuleContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { extractPathSegments } from "@helpers/extractPath";
-import { getChainFromId } from "@helpers/getChainFromId";
 import { setupDeploymentClients } from "@helpers/viem";
 import { useCreatorSplitDestination } from "@hooks/useCreatorSplitDestination";
 import { SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  estimateGas,
-  getPublicClient,
-  sendTransaction,
-  simulateContract,
-  waitForTransactionReceipt,
-  writeContract,
-} from "@wagmi/core";
+import { estimateGas, sendTransaction, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { insertContestWithOfficialModule } from "lib/rewards/database";
 import { usePathname } from "next/navigation";
 import { didUserReject } from "utils/error";
-import { createWalletClient, custom, erc20Abi, parseUnits } from "viem";
+import { erc20Abi, parseUnits } from "viem";
 import { useShallow } from "zustand/shallow";
 
 export function useDeployRewardsPool() {
@@ -63,6 +55,8 @@ export function useDeployRewardsPool() {
         throw new Error("Failed to deploy rewards module");
       }
 
+      console.log("contractRewardsModuleAddress", contractRewardsModuleAddress);
+
       await attachRewardsModule(contractRewardsModuleAddress);
       await fundPoolTokens(contractRewardsModuleAddress);
 
@@ -97,7 +91,7 @@ export function useDeployRewardsPool() {
 
     try {
       const { walletClient, publicClient, chain } = await setupDeploymentClients(chainId ?? 1);
-      const baseParams = [rewardPoolData.rankings, rewardPoolData.shareAllocations, contestAddress];
+      const baseParams = [rewardPoolData.rankings, rewardPoolData.shareAllocations, contestAddress as `0x${string}`];
       const contract = rewardPoolType === RewardPoolType.Winners ? RewardsModuleContract : VotingModuleContract;
       const [address] = await walletClient.getAddresses();
 
@@ -146,10 +140,10 @@ export function useDeployRewardsPool() {
       const { request } = await simulateContract(config, {
         ...contractConfig,
         functionName: "setOfficialRewardsModule",
-        args: [contractRewardsModuleAddress],
+        args: [contractRewardsModuleAddress as `0x${string}`],
       });
 
-      const hash = await writeContract(config, { ...request });
+      const hash = await writeContract(config, request);
 
       await waitForTransactionReceipt(config, { hash });
 
