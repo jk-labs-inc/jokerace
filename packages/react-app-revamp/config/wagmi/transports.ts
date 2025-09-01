@@ -4,10 +4,7 @@ type Transports = Record<Chain["id"], Transport>;
 
 const isProduction = process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "production";
 
-const getHeaders = () =>
-  isProduction
-    ? { Referer: "https://jokerace.io/" }
-    : { Referer: "https://jokerace-git-chore-deprecate-ethers-jokerace.vercel.app/" };
+const getHeaders = () => (isProduction ? { Referer: "https://jokerace.io/" } : { Referer: "" });
 
 export const createTransport = (chain: Chain): Transport => {
   const headers = getHeaders();
