@@ -9140,20 +9140,6 @@
     loupe "^2.3.7"
     pretty-format "^29.7.0"
 
-"@wagmi/connectors@5.9.8":
-  version "5.9.8"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.9.8.tgz#4efcb4ecc99671ef6a883683c1992bed25d1b203"
-  integrity sha512-FA/xmfWDT36Sm24GcZzm51D6oRf2XpBgEQhQajKDFcZpkSKIcwKDqqWyNXdSENdgbDcLKC49fFwoVKZT+K88hw==
-  dependencies:
-    "@base-org/account" "1.1.1"
-    "@coinbase/wallet-sdk" "4.3.6"
-    "@gemini-wallet/core" "0.2.0"
-    "@metamask/sdk" "0.32.0"
-    "@safe-global/safe-apps-provider" "0.18.6"
-    "@safe-global/safe-apps-sdk" "9.1.0"
-    "@walletconnect/ethereum-provider" "2.21.1"
-    cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
-
 "@wagmi/connectors@5.9.9":
   version "5.9.9"
   resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.9.9.tgz#e7a2c41a90dadad450f8145a29a69332b9376c14"
@@ -9177,10 +9163,10 @@
     mipd "0.0.7"
     zustand "5.0.0"
 
-"@wagmi/core@2.20.2":
-  version "2.20.2"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.20.2.tgz#bd03d4225c607b226f20d444570711fc4bcca801"
-  integrity sha512-bnFDoOTd3ZWQb5cGNSM+Q6ZqWCPxaA+09je9oSuUM6hIWg7rDKWrRtNE9DCmqiEK/fMsKtdfisyrKukKbji5ZQ==
+"@wagmi/core@2.20.3":
+  version "2.20.3"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.20.3.tgz#39faba39cb3b1710232574557f357a2bdd31a217"
+  integrity sha512-gsbuHnWxf0AYZISvR8LvF/vUCIq6/ZwT5f5/FKd6wLA7Wq05NihCvmQpIgrcVbpSJPL67wb6S8fXm3eJGJA1vQ==
   dependencies:
     eventemitter3 "5.0.1"
     mipd "0.0.7"
@@ -18799,13 +18785,13 @@ w3c-keyname@^2.2.0:
   resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.8.tgz#7b17c8c6883d4e8b86ac8aba79d39e880f8869c5"
   integrity sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==
 
-wagmi@2.16.8:
-  version "2.16.8"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.16.8.tgz#977e357808f97037bda5866b212b173ca296c5fb"
-  integrity sha512-442yAXQJ2bEHPN7Z/AwDUo0bVsWAgGtux7jQmA49oE1ur6Q0IusJZdCmzP/PxxeB3fXEJt1TwXLpRkR6yjuRVA==
+wagmi@2.16.9:
+  version "2.16.9"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.16.9.tgz#a80f316fe1e1009c65ba1e2cb5438d95e6a0abfb"
+  integrity sha512-5NbjvuNNhT0t0lQsDD5otQqZ5RZBM1UhInHoBq/Lpnr6xLLa8AWxYqHg5oZtGCdiUNltys11iBOS6z4mLepIqw==
   dependencies:
-    "@wagmi/connectors" "5.9.8"
-    "@wagmi/core" "2.20.2"
+    "@wagmi/connectors" "5.9.9"
+    "@wagmi/core" "2.20.3"
     use-sync-external-store "1.4.0"
 
 watchpack@2.4.0:
