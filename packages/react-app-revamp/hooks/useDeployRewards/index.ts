@@ -19,9 +19,11 @@ import { insertContestWithOfficialModule } from "lib/rewards/database";
 import { usePathname } from "next/navigation";
 import { didUserReject } from "utils/error";
 import { erc20Abi, parseUnits } from "viem";
+import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 export function useDeployRewardsPool() {
+  const { address: userAddress } = useAccount();
   const asPath = usePathname();
   const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
@@ -90,16 +92,19 @@ export function useDeployRewardsPool() {
     }));
 
     try {
-      const { walletClient, publicClient, chain } = await setupDeploymentClients(chainId ?? 1);
+      if (!chainId || !userAddress) {
+        throw new Error("Failed to deploy rewards module");
+      }
+
+      const { walletClient, publicClient, chain } = await setupDeploymentClients(userAddress, chainId);
       const baseParams = [rewardPoolData.rankings, rewardPoolData.shareAllocations, contestAddress as `0x${string}`];
       const contract = rewardPoolType === RewardPoolType.Winners ? RewardsModuleContract : VotingModuleContract;
-      const [address] = await walletClient.getAddresses();
 
       const contractRewardsModuleHash = await walletClient.deployContract({
         abi: contract.abi,
         bytecode: contract.bytecode.object as `0x${string}`,
         args: [...baseParams, ...(rewardPoolType === RewardPoolType.Winners ? [false] : [])],
-        account: address,
+        account: userAddress as `0x${string}`,
         chain: chain,
       });
 

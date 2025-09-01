@@ -47,6 +47,11 @@ export function useDeployContest() {
   const { processCreatorAllowlist } = useSubmissionMerkle();
 
   async function prepareForDeployment() {
+    if (!address || !chain) {
+      handleError(new Error("Failed to prepare for deployment"), "Failed to prepare for deployment");
+      throw new Error("Failed to prepare for deployment");
+    }
+
     if (contestType === ContestType.VotingContest) {
       try {
         await processCreatorAllowlist(address);
@@ -57,19 +62,17 @@ export function useDeployContest() {
     }
 
     let client: WalletClient;
-    let userAddress: `0x${string}`;
     let publicClient: PublicClient;
 
     try {
-      const { walletClient, publicClient: pubClient, account } = await setupDeploymentClients(chain?.id ?? 1);
+      const { walletClient, publicClient: pubClient } = await setupDeploymentClients(address, chain.id);
 
-      if (!walletClient || !pubClient || !account) {
+      if (!walletClient || !pubClient) {
         handleError(new Error("Failed to setup deployment clients"), "Failed to setup deployment clients");
         throw new Error("Failed to setup deployment clients");
       }
 
       client = walletClient;
-      userAddress = account;
       publicClient = pubClient;
     } catch (error: any) {
       handleError(error, "Please try reconnecting your wallet.");
@@ -80,11 +83,7 @@ export function useDeployContest() {
     const currentVotingMerkleData = currentState.votingMerkle;
     const currentSubmissionMerkleData = currentState.submissionMerkle;
 
-    const isSpoofingDetected = await checkForSpoofing(
-      userAddress,
-      currentVotingMerkleData,
-      currentSubmissionMerkleData,
-    );
+    const isSpoofingDetected = await checkForSpoofing(address, currentVotingMerkleData, currentSubmissionMerkleData);
 
     if (isSpoofingDetected) {
       toastError({
@@ -123,8 +122,6 @@ export function useDeployContest() {
     } = preparationResult;
 
     try {
-      const [address] = await client.getAddresses();
-
       const combinedPrompt = new URLSearchParams({
         type: contestType,
         summarize: prompt.summarize,
@@ -194,7 +191,7 @@ export function useDeployContest() {
         abi: DeployedContestContract.abi,
         bytecode: DeployedContestContract.bytecode.object as `0x${string}`,
         args: [title, combinedPrompt, submissionMerkleRoot, votingMerkleRoot, constructorArgs],
-        account: address,
+        account: address as `0x${string}`,
         chain: chain,
       });
 
