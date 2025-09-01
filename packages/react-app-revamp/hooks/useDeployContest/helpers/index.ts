@@ -1,8 +1,11 @@
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { EntryPreviewConfig, MetadataField } from "../slices/contestMetadataSlice";
-import { formatUnits } from "ethers";
+import { formatUnits } from "viem";
 
-export function createMetadataFieldsSchema(metadataFields: MetadataField[], entryPreviewConfig: EntryPreviewConfig): string {
+export function createMetadataFieldsSchema(
+  metadataFields: MetadataField[],
+  entryPreviewConfig: EntryPreviewConfig,
+): string {
   // start with an object that has a 'string' property initialized with the entry preview prompt
   const initialSchema: Record<string, string | string[]> = {
     string: getEntryPreviewPrompt(entryPreviewConfig),
@@ -44,6 +47,7 @@ export function getEntryPreviewPrompt(config: EntryPreviewConfig): string {
 export function formatRecipients(recipients: Recipient[]): Recipient[] {
   return recipients.map(recipient => ({
     ...recipient,
-    numVotes: formatUnits(recipient.numVotes, 18),
+    // TODO: TEST THIS
+    numVotes: formatUnits(BigInt(recipient.numVotes), 18),
   }));
 }

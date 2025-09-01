@@ -3,9 +3,9 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useReadContract } from "wagmi";
 import { readContracts } from "@wagmi/core";
 import { config } from "@config/wagmi";
-import { formatEther } from "ethers";
 import { compareVersions } from "compare-versions";
 import { useMemo } from "react";
+import { formatEther } from "viem";
 
 export const VOTES_PER_PAGE = 4;
 
@@ -109,7 +109,7 @@ export function useProposalVotes(
         return {
           address,
           votes: voteData,
-          formattedVotes: Number(formatEther(netVotes.toString())),
+          formattedVotes: Number(formatEther(netVotes)),
         };
       });
 

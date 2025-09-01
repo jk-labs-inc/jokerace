@@ -1,13 +1,12 @@
+import { useSubmissionMerkle } from "@components/_pages/Create/hooks/useSubmissionMerkle";
+import { ContestType } from "@components/_pages/Create/types";
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import { config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { isSupabaseConfigured } from "@helpers/database";
-import { getEthersSigner } from "@helpers/ethers";
 import useEmailSignup from "@hooks/useEmailSignup";
 import { useError } from "@hooks/useError";
 import { differenceInSeconds, getUnixTime } from "date-fns";
-import { ContractFactory, JsonRpcSigner } from "ethers";
-import { parseEther } from "viem";
+import { createWalletClient, createPublicClient, custom, parseEther, WalletClient, PublicClient } from "viem";
 import { useAccount } from "wagmi";
 import { saveFilesToBucket } from "./buckets";
 import { isSortingEnabled } from "./contracts";
@@ -15,8 +14,9 @@ import { checkForSpoofing, getJkLabsSplitDestinationAddress, indexContest } from
 import { createMetadataFieldsSchema } from "./helpers";
 import { useDeployContestStore } from "./store";
 import { PriceCurveType, SplitFeeDestinationType, VoteType } from "./types";
-import { useSubmissionMerkle } from "@components/_pages/Create/hooks/useSubmissionMerkle";
-import { ContestType } from "@components/_pages/Create/types";
+import { getPublicClient } from "@wagmi/core";
+import { config } from "@config/wagmi";
+import { setupDeploymentClients } from "@helpers/viem";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000;
 export const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c6118e8a52fa738";
@@ -58,9 +58,20 @@ export function useDeployContest() {
       }
     }
 
-    let signer: JsonRpcSigner;
+    let client: WalletClient;
+    let userAddress: `0x${string}`;
+    let publicClient: PublicClient;
+
     try {
-      signer = await getEthersSigner(config, { chainId: chain?.id });
+      const { walletClient, publicClient: pubClient, account } = await setupDeploymentClients(chain?.id ?? 1);
+
+      if (!walletClient || !pubClient || !account) {
+        throw new Error("Failed to setup deployment clients");
+      }
+
+      client = walletClient;
+      userAddress = account;
+      publicClient = pubClient;
     } catch (error: any) {
       handleError(error, "Please try reconnecting your wallet.");
       throw error;
@@ -71,7 +82,7 @@ export function useDeployContest() {
     const currentSubmissionMerkleData = currentState.submissionMerkle;
 
     const isSpoofingDetected = await checkForSpoofing(
-      signer?.address,
+      userAddress,
       currentVotingMerkleData,
       currentSubmissionMerkleData,
     );
@@ -84,7 +95,8 @@ export function useDeployContest() {
     }
 
     return {
-      signer,
+      client,
+      publicClient,
       votingMerkleData: currentVotingMerkleData,
       submissionMerkleData: currentSubmissionMerkleData,
     };
@@ -105,17 +117,14 @@ export function useDeployContest() {
     }
 
     const {
-      signer,
+      client,
+      publicClient,
       votingMerkleData: currentVotingMerkleData,
       submissionMerkleData: currentSubmissionMerkleData,
     } = preparationResult;
 
     try {
-      const factoryCreateContest = new ContractFactory(
-        DeployedContestContract.abi,
-        DeployedContestContract.bytecode,
-        signer,
-      );
+      const [address] = await client.getAddresses();
 
       const combinedPrompt = new URLSearchParams({
         type: contestType,
@@ -174,7 +183,7 @@ export function useDeployContest() {
         intConstructorArgs,
         creatorSplitDestination:
           charge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet
-            ? signer.address
+            ? client.account?.address
             : charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit
             ? jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT
             : charge.splitFeeDestination.address,
@@ -182,18 +191,23 @@ export function useDeployContest() {
         metadataFieldsSchema: createMetadataFieldsSchema(metadataFields, entryPreviewConfig),
       };
 
-      const contractContest = await factoryCreateContest.deploy(
-        title,
-        combinedPrompt,
-        submissionMerkleRoot,
-        votingMerkleRoot,
-        constructorArgs,
-      );
+      const contractDeploymentHash = await client.deployContract({
+        abi: DeployedContestContract.abi,
+        bytecode: DeployedContestContract.bytecode.object as `0x${string}`,
+        args: [title, combinedPrompt, submissionMerkleRoot, votingMerkleRoot, constructorArgs],
+        account: address,
+        chain: chain,
+      });
 
-      await contractContest.waitForDeployment();
+      const receipt = await publicClient?.waitForTransactionReceipt({
+        hash: contractDeploymentHash,
+      });
 
-      const contractAddress = await contractContest.getAddress();
-      const contractDeploymentHash = contractContest.deploymentTransaction()?.hash as `0x${string}`;
+      const contractAddress = receipt?.contractAddress;
+
+      if (!contractAddress) {
+        throw new Error("Contract deployment failed - no contract address returned");
+      }
 
       const sortingEnabled = await isSortingEnabled(contractAddress, chain?.id ?? 0);
 
@@ -262,6 +276,7 @@ export function useDeployContest() {
       setIsSuccess(true);
       setIsLoading(false);
     } catch (e) {
+      console.error("Failed to deploy contest:", e);
       handleError(e, "Something went wrong and the contest couldn't be deployed.");
       setIsLoading(false);
     }

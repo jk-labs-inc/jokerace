@@ -8,18 +8,25 @@ import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import VotingModuleContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
-import { getEthersSigner } from "@helpers/ethers";
 import { extractPathSegments } from "@helpers/extractPath";
+import { getChainFromId } from "@helpers/getChainFromId";
+import { setupDeploymentClients } from "@helpers/viem";
 import { useCreatorSplitDestination } from "@hooks/useCreatorSplitDestination";
 import { SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { useQueryClient } from "@tanstack/react-query";
-import { estimateGas, sendTransaction, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
-import { ContractFactory } from "ethers";
+import {
+  estimateGas,
+  getPublicClient,
+  sendTransaction,
+  simulateContract,
+  waitForTransactionReceipt,
+  writeContract,
+} from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { insertContestWithOfficialModule } from "lib/rewards/database";
 import { usePathname } from "next/navigation";
 import { didUserReject } from "utils/error";
-import { erc20Abi, parseUnits } from "viem";
+import { createWalletClient, custom, erc20Abi, parseUnits } from "viem";
 import { useShallow } from "zustand/shallow";
 
 export function useDeployRewardsPool() {
@@ -47,10 +54,15 @@ export function useDeployRewardsPool() {
   const queryClient = useQueryClient();
 
   async function deployRewardsPool() {
-    let contractRewardsModuleAddress: string;
+    let contractRewardsModuleAddress: `0x${string}` | null | undefined;
 
     try {
       contractRewardsModuleAddress = await deployRewardsModule();
+
+      if (!contractRewardsModuleAddress) {
+        throw new Error("Failed to deploy rewards module");
+      }
+
       await attachRewardsModule(contractRewardsModuleAddress);
       await fundPoolTokens(contractRewardsModuleAddress);
 
@@ -84,18 +96,24 @@ export function useDeployRewardsPool() {
     }));
 
     try {
-      const contractFactory = await createContractFactoryInstance();
-
+      const { walletClient, publicClient, chain } = await setupDeploymentClients(chainId ?? 1);
       const baseParams = [rewardPoolData.rankings, rewardPoolData.shareAllocations, contestAddress];
+      const contract = rewardPoolType === RewardPoolType.Winners ? RewardsModuleContract : VotingModuleContract;
+      const [address] = await walletClient.getAddresses();
 
-      const contractRewardsModule = await contractFactory.deploy(
-        ...baseParams,
-        ...(rewardPoolType === RewardPoolType.Winners ? [false] : []),
-      );
+      const contractRewardsModuleHash = await walletClient.deployContract({
+        abi: contract.abi,
+        bytecode: contract.bytecode.object as `0x${string}`,
+        args: [...baseParams, ...(rewardPoolType === RewardPoolType.Winners ? [false] : [])],
+        account: address,
+        chain: chain,
+      });
 
-      await contractRewardsModule.waitForDeployment();
+      const receipt = await publicClient?.waitForTransactionReceipt({
+        hash: contractRewardsModuleHash,
+      });
 
-      const contractRewardsModuleAddress = await contractRewardsModule.getAddress();
+      const contractRewardsModuleAddress = receipt?.contractAddress;
 
       setRewardPoolData(prevData => ({
         ...prevData,
@@ -104,6 +122,7 @@ export function useDeployRewardsPool() {
 
       return contractRewardsModuleAddress;
     } catch (e) {
+      console.error("Failed to deploy rewards module:", e);
       setRewardPoolData(prevData => ({
         ...prevData,
         deploy: { ...prevData.deploy, loading: false, success: false, error: true },
@@ -139,6 +158,7 @@ export function useDeployRewardsPool() {
         attach: { ...prevData.attach, success: true, loading: false, error: false },
       }));
     } catch (e) {
+      console.error("Failed to attach rewards module:", e);
       setRewardPoolData(prevData => ({
         ...prevData,
         attach: { ...prevData.attach, loading: false, success: false, error: true },
@@ -257,14 +277,6 @@ export function useDeployRewardsPool() {
       }));
       throw e;
     }
-  }
-
-  async function createContractFactoryInstance() {
-    const signer = await getEthersSigner(config, { chainId });
-    const factory = rewardPoolType === RewardPoolType.Voters ? VotingModuleContract : RewardsModuleContract;
-    const contractFactory = new ContractFactory(factory.abi, factory.bytecode, signer);
-
-    return contractFactory;
   }
 
   return { deployRewardsPool, deployRewardsModule, attachRewardsModule, fundPoolTokens };
