@@ -50,8 +50,8 @@ import CorrectDelayVarContract from "@contracts/bytecodeAndAbi/Contest.5.12.corr
 import RankLimitCheckContract from "@contracts/bytecodeAndAbi/Contest.5.13.rankLimitCheck.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
-import { createPublicClient, getContract } from "viem";
-import { http } from "wagmi";
+import { createTransport } from "@config/wagmi/transports";
+import { Chain, createPublicClient, getContract } from "viem";
 import { getChainFromId } from "./getChainFromId";
 
 export async function getContestContractVersion(address: string, chainId: number) {
@@ -59,7 +59,7 @@ export async function getContestContractVersion(address: string, chainId: number
     const chain = getChainFromId(chainId);
     const client = createPublicClient({
       chain: chain,
-      transport: http(chain?.rpcUrls.default.http[0] ?? ""),
+      transport: createTransport(chain as Chain),
     });
 
     // Get earliest ABI just so we can call VERSION() to start, since we know all ABIs will have that function
