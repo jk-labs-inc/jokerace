@@ -116,7 +116,6 @@ export function useCastVotes() {
     try {
       const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
       const costToVote = getChargeAmount(amountOfVotes);
-      // TODO: TEST THIS
       const totalVoteAmount = anyoneCanVote ? 0 : parseUnits(currentUserTotalVotesAmount.toString(), 18);
 
       let hash: `0x${string}`;

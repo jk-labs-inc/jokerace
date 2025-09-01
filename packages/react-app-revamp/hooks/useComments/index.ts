@@ -290,7 +290,6 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
         author: accountAddress ?? "",
         commentContent: content,
         proposalId: proposalId,
-        //TODO: TEST THIS
         timestamp: Number(blockInfo.timestamp),
       });
 

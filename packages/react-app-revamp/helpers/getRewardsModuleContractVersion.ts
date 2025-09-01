@@ -67,8 +67,7 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   });
 
   try {
-    //TODO: TEST THIS
-    const version: any = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version());
+    const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
     if (version === "5.13") {
       return { abi: RankLimitCheckRewards.abi, version };

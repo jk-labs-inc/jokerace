@@ -47,7 +47,6 @@ export function getEntryPreviewPrompt(config: EntryPreviewConfig): string {
 export function formatRecipients(recipients: Recipient[]): Recipient[] {
   return recipients.map(recipient => ({
     ...recipient,
-    // TODO: TEST THIS
     numVotes: formatUnits(BigInt(recipient.numVotes), 18),
   }));
 }

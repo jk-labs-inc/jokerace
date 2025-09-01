@@ -46,7 +46,6 @@ const setupVoteRecipients = (decimals: number, votesData: Record<string, number>
 const generateLeaf = (address: string, numVotes: string): Buffer => {
   const checksumAddress = getAddress(address);
 
-  // TODO: TEST THIS
   return Buffer.from(
     keccak256(encodePacked(["address", "uint256"], [checksumAddress, BigInt(numVotes)])).slice(2),
     "hex",

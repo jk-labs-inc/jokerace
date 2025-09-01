@@ -25,7 +25,6 @@ export const indexContestParticipantsV3 = async (
       if (isVoter) {
         const voter = votersMap.get(participant);
         if (voter) {
-          // TODO: TEST THIS
           num_votes = parseFloat(formatUnits(BigInt(voter.numVotes), 18));
         }
       }

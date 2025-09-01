@@ -70,7 +70,7 @@ export async function getContestContractVersion(address: string, chainId: number
     });
 
     // Here we check if all RPC calls are successful, otherwise we throw an error and return empty ABI
-    const version: any = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version());
+    const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
     if (version === "5.13") {
       return { abi: RankLimitCheckContract.abi, version };
