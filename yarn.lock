@@ -9168,19 +9168,19 @@
     "@walletconnect/ethereum-provider" "2.21.1"
     cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
 
-"@wagmi/core@2.20.1":
-  version "2.20.1"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.20.1.tgz#a7c271fb3902b404c134c488087d24b660606d57"
-  integrity sha512-uuwc+rlqwyxrpDiw17pdL1YXv0Cx3y1R2SoBF/SuxrYZqTGMNDx00sVcvB51p+orXCcEWsDwZsCwUpaPkOHqqw==
+"@wagmi/core@2.20.2":
+  version "2.20.2"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.20.2.tgz#bd03d4225c607b226f20d444570711fc4bcca801"
+  integrity sha512-bnFDoOTd3ZWQb5cGNSM+Q6ZqWCPxaA+09je9oSuUM6hIWg7rDKWrRtNE9DCmqiEK/fMsKtdfisyrKukKbji5ZQ==
   dependencies:
     eventemitter3 "5.0.1"
     mipd "0.0.7"
     zustand "5.0.0"
 
-"@wagmi/core@2.20.2":
-  version "2.20.2"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.20.2.tgz#bd03d4225c607b226f20d444570711fc4bcca801"
-  integrity sha512-bnFDoOTd3ZWQb5cGNSM+Q6ZqWCPxaA+09je9oSuUM6hIWg7rDKWrRtNE9DCmqiEK/fMsKtdfisyrKukKbji5ZQ==
+"@wagmi/core@2.20.3":
+  version "2.20.3"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.20.3.tgz#39faba39cb3b1710232574557f357a2bdd31a217"
+  integrity sha512-gsbuHnWxf0AYZISvR8LvF/vUCIq6/ZwT5f5/FKd6wLA7Wq05NihCvmQpIgrcVbpSJPL67wb6S8fXm3eJGJA1vQ==
   dependencies:
     eventemitter3 "5.0.1"
     mipd "0.0.7"
