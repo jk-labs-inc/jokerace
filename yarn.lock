@@ -8944,10 +8944,10 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@5.3.16":
-  version "5.3.16"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.3.16.tgz#b2f59aefdae1fa401b044b70fa42124d7ad2253a"
-  integrity sha512-S9lsnlWbYKGfPi66zNqs1HtEmvae92Jliie3U/6ckR9nBAVAAV9+miWjR7Sv/MsXBtdxV+l+8Z3HGw7WuGE9bw==
+"@vercel/node@5.3.17":
+  version "5.3.17"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.3.17.tgz#ff1c31156339c8e9340fc96148dfd8c5c778ac31"
+  integrity sha512-quNnXO1XuMMid9MXJKPDtpwiNZUFrJgTvdcUu+AXRZg99rOw9N5pk+M0rM4+0FwVXVCIlXzjfKelEOXC8SxGQw==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
