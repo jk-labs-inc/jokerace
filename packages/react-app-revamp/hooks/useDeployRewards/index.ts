@@ -57,8 +57,6 @@ export function useDeployRewardsPool() {
         throw new Error("Failed to deploy rewards module");
       }
 
-      console.log("contractRewardsModuleAddress", contractRewardsModuleAddress);
-
       await attachRewardsModule(contractRewardsModuleAddress);
       await fundPoolTokens(contractRewardsModuleAddress);
 
