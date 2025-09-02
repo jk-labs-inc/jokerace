@@ -24,7 +24,6 @@ contract VoterRewardsModuleTest is Test {
     // COST PARAMS
     uint256 public constant NINETY_PERCENT_TO_CREATOR = 90;
     uint256 public constant ZERO_COST_TO_PROPOSE = 0;
-    uint256 public constant TEN_VOTES = 10 ether;
     uint256 public constant STANDARD_COST_TO_VOTE = 100000000000000;
     uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
     uint256 public constant ZERO_EXPONENT_MULTIPLE = 0;
@@ -149,8 +148,8 @@ contract VoterRewardsModuleTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal);
         vm.warp(1681660001);
-        vm.deal(address(TEST_ADDRESS_1), TEN_VOTES * payPerVoteFlatCurveContest.currentPricePerVote());
-        payPerVoteFlatCurveContest.castVote{ value: TEN_VOTES * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId, TEN_VOTES * 1 ether);
+        vm.deal(address(TEST_ADDRESS_1), 10 ether * payPerVoteFlatCurveContest.currentPricePerVote());
+        payPerVoteFlatCurveContest.castVote{ value: 10 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId, 10 ether * 1 ether);
         vm.stopPrank();
 
         vm.startPrank(CREATOR_ADDRESS);

@@ -23,7 +23,6 @@ contract ContestTest is Test {
     uint256 public constant NINETY_PERCENT_TO_CREATOR = 90;
     uint256 public constant ZERO_COST_TO_PROPOSE = 0;
     uint256 public constant ZERO_COST_TO_VOTE = 0;
-    uint256 public constant TEN_VOTES = 10 ether;
     uint256 public constant STANDARD_COST_TO_VOTE = 100000000000000;
     uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
     uint256 public constant EXPONENTIAL_PRICE_CURVE_TYPE = 1;
@@ -178,8 +177,8 @@ contract ContestTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = payPerVoteExpCurveContest.propose(testAddress1AuthorProposal);
         vm.warp(1681660001);
-        vm.deal(address(TEST_ADDRESS_1), TEN_VOTES * payPerVoteExpCurveContest.currentPricePerVote());
-        payPerVoteExpCurveContest.castVote{ value: TEN_VOTES * payPerVoteExpCurveContest.currentPricePerVote() }(proposalId, TEN_VOTES * 1 ether);
+        vm.deal(address(TEST_ADDRESS_1), 10 ether * payPerVoteExpCurveContest.currentPricePerVote());
+        payPerVoteExpCurveContest.castVote{ value: 10 ether * payPerVoteExpCurveContest.currentPricePerVote() }(proposalId, 10 ether * 1 ether);
 
         vm.stopPrank();
     }
@@ -211,8 +210,8 @@ contract ContestTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = payPerVoteExpCurveContest.propose(testAddress1AuthorProposal);
         vm.warp(1681660001);
-        vm.deal(address(TEST_ADDRESS_1), TEN_VOTES * payPerVoteExpCurveContest.currentPricePerVote());
-        payPerVoteExpCurveContest.castVote{ value: TEN_VOTES * payPerVoteExpCurveContest.currentPricePerVote() }(proposalId, TEN_VOTES * 1 ether);
+        vm.deal(address(TEST_ADDRESS_1), 10 ether * payPerVoteExpCurveContest.currentPricePerVote());
+        payPerVoteExpCurveContest.castVote{ value: 10 ether * payPerVoteExpCurveContest.currentPricePerVote() }(proposalId, 10 ether * 1 ether);
         vm.stopPrank();
 
         vm.startPrank(CREATOR_ADDRESS);
@@ -238,8 +237,8 @@ contract ContestTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = payPerVoteExpCurveContest.propose(testAddress1AuthorProposal);
         vm.warp(1681660001);
-        vm.deal(address(TEST_ADDRESS_1), TEN_VOTES * payPerVoteExpCurveContest.currentPricePerVote());
-        payPerVoteExpCurveContest.castVote{ value: TEN_VOTES * payPerVoteExpCurveContest.currentPricePerVote() }(proposalId, TEN_VOTES * 1 ether);
+        vm.deal(address(TEST_ADDRESS_1), 10 ether * payPerVoteExpCurveContest.currentPricePerVote());
+        payPerVoteExpCurveContest.castVote{ value: 10 ether * payPerVoteExpCurveContest.currentPricePerVote() }(proposalId, 10 ether * 1 ether);
         vm.stopPrank();
 
         vm.startPrank(JK_LABS_ADDRESS);
