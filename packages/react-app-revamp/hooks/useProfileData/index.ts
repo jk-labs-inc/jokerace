@@ -51,7 +51,7 @@ const fetchProfileData = async (
   const clusters = new Clusters();
 
   try {
-    const ensName = await getEnsName(config, { chainId: 1, address: ethereumAddress as `0x${string}` });
+    const ensName = await getEnsName(config, { address: ethereumAddress as `0x${string}` });
 
     if (ensName) {
       const timeout = new Promise<string>((resolve, reject) => {
