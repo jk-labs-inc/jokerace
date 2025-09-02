@@ -8,6 +8,7 @@ import VotingPriceCurvesVoterRewards from "@contracts/bytecodeAndAbi/modules/Vot
 import AddModuleTrackingVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.8.addModuleTracking.sol/VoterRewardsModule.json";
 import CalcCorrectMinuteVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.9.calcCorrectMinute.sol/VoterRewardsModule.json";
 import DeployedVoterRewardsContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
+import RmEntryRewardsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.14.rmEntryRewards.sol/VoterRewardsModule.json";
 import { createPublicClient, getContract, http } from "viem";
 import { getChainFromId } from "./getChainFromId";
 import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
@@ -28,7 +29,9 @@ export async function getVoterRewardsModuleContractVersion(address: string, chai
   try {
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
-    if (version === "5.13") {
+    if (version === "5.14") {
+      return RmEntryRewardsVoterRewards.abi;
+    } else if (version === "5.13") {
       return RankLimitCheckVoterRewards.abi;
     } else if (version === "5.12") {
       return CorrectDelayVarVoterRewards.abi;

@@ -1,4 +1,3 @@
-import { RewardPoolType } from "@components/_pages/Contest/Rewards/components/Create/store";
 import { isSupabaseConfigured } from "@helpers/database";
 
 /**
@@ -45,11 +44,7 @@ export const getTokenAddresses = async (rewardsModuleAddress: string, networkNam
  * @param moduleType module type (AUTHOR_REWARDS or VOTING_REWARDS)
  * @returns true if the contest was inserted successfully, false otherwise
  */
-export const insertContestWithOfficialModule = async (
-  contestAddress: string,
-  chainName: string,
-  rewardPoolType: RewardPoolType,
-): Promise<boolean> => {
+export const insertContestWithOfficialModule = async (contestAddress: string, chainName: string): Promise<boolean> => {
   if (isSupabaseConfigured) {
     try {
       const config = await import("@config/supabase");
@@ -57,7 +52,7 @@ export const insertContestWithOfficialModule = async (
 
       const { error } = await supabase
         .from("contests_with_official_modules")
-        .insert({ network_name: chainName.toLowerCase(), address: contestAddress, type: rewardPoolType });
+        .insert({ network_name: chainName.toLowerCase(), address: contestAddress, type: "voters" });
 
       if (error) {
         console.error("Error inserting contest with official module:", error.message);
