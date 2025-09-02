@@ -28,7 +28,7 @@ contract VoterRewardsModuleTest is Test {
     uint256 public constant STANDARD_COST_TO_VOTE = 100000000000000;
     uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
     uint256 public constant ZERO_EXPONENT_MULTIPLE = 0;
-    address public constant CREATOR_SPLIT_DESTINATION = CREATOR_ADDRESS;
+    address public constant CREATOR_SPLIT_DESTINATION = 0x703BC62AA1CCf613ac90E53894a980d418797754; // Not the actual creator address itself so that charges don't go there and only proceeds from ties do so we can test ties easily with pay per vote
     address public constant JK_LABS_SPLIT_DESTINATION = JK_LABS_ADDRESS;
 
     // SORTING INT PARAMS
@@ -486,7 +486,7 @@ contract VoterRewardsModuleTest is Test {
 
     //// 2 PROPOSALS WITH DIFFERENT AUTHORS
 
-    // 2 proposals with different authors, both at 1 vote; send back to creator
+    // 2 proposals, both at 1 vote; send back to creator
     function testFirstPlaceTieWithNative() public {
         vm.warp(1681650001);
         vm.prank(TEST_ADDRESS_1);
