@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useBalance } from "wagmi";
 import { chains, chainsImages } from "@config/wagmi";
 import React from "react";
-import { formatUnits } from "ethers";
+import { formatUnits } from "viem";
 
 const ZERO_BALANCE = "0x0000000000000000000000000000000000000000000000000000000000000000";
 const NEAR_ZERO_BALANCE = "0x0000000000000000000000000000000000000000000000000000000000000001"; // etherscan and rabby show these values as 0, so to not confuse the user, we will exclude them.

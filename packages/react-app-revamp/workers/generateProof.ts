@@ -1,5 +1,5 @@
-import { parseUnits } from "ethers";
 import { createMerkleTree, generateProof, Recipient } from "lib/merkletree/generateMerkleTree";
+import { parseUnits } from "viem";
 
 interface MerkleTreeProofPayload {
   data: Recipient[];

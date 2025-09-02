@@ -70,6 +70,7 @@ const ContestRewards = () => {
         rewardsAbi={rewards.abi as Abi}
         rankings={rewards.payees}
         chainId={chainId}
+        version={version}
       />
     );
   }
