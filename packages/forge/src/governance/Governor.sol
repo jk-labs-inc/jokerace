@@ -138,8 +138,6 @@ abstract contract Governor is GovernorSorting {
     address[] public proposalAuthors;
     address[] public addressesThatHaveVoted;
 
-    mapping(address => uint256) public addressTotalVotes;
-
     error AuthorIsNotSender(address author, address sender);
     error ZeroSignersInSafeMetadata();
     error ZeroThresholdInSafeMetadata();
