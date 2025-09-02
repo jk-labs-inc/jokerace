@@ -84,7 +84,7 @@ contract VoterRewardsModuleTest is Test {
     Governor.ConstructorArgs public payPerVoteFlatCurveRankLimitOneParams = Governor.ConstructorArgs(
         CONTEST_NAME,
         CONTEST_PROMPT,
-        payPerVoteFlatCurveIntConstructorArgs,
+        payPerVoteFlatCurveRankLimitOneIntConstructorArgs,
         CREATOR_SPLIT_DESTINATION,
         JK_LABS_SPLIT_DESTINATION,
         METADATA_FIELDS_SCHEMA
