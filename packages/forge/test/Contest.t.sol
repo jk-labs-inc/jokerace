@@ -6,9 +6,6 @@ import "../src/Contest.sol";
 import "../src/governance/Governor.sol";
 
 contract ContestTest is Test {
-    Contest public contest;
-    Contest public anyoneCanSubmitContest;
-    Contest public anyoneCanSubmitCostsAnEthContest;
     Contest public payPerVoteExpCurveContest;
 
     // BASIC INT PARAMS
@@ -20,7 +17,7 @@ contract ContestTest is Test {
     uint64 public constant ANYONE_CAN_SUBMIT = 1;
 
     // COST PARAMS
-    uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
+    uint256 public constant NINETY_PERCENT_TO_CREATOR = 90;
     uint256 public constant ZERO_COST_TO_PROPOSE = 0;
     uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
     uint256 public constant ZERO_COST_TO_VOTE = 0;
@@ -48,7 +45,7 @@ contract ContestTest is Test {
         MAX_PROPOSAL_COUNT,
         SORTING_ENABLED,
         RANK_LIMIT_250,
-        FIFTY_PERCENT_TO_CREATOR,
+        NINETY_PERCENT_TO_CREATOR,
         ZERO_COST_TO_PROPOSE,
         STANDARD_COST_TO_VOTE,
         EXPONENTIAL_PRICE_CURVE_TYPE,
@@ -110,7 +107,7 @@ contract ContestTest is Test {
     function setUp() public {
         vm.startPrank(CREATOR_ADDRESS);
 
-        contest = new Contest("test", "hello world", payPerVoteExpCurveNumParams);
+        payPerVoteExpCurveContest = new Contest("test", "hello world", payPerVoteExpCurveNumParams);
 
         vm.stopPrank();
     }
@@ -120,27 +117,27 @@ contract ContestTest is Test {
     // GOVERNOR SETTINGS
 
     function testContestStart() public view {
-        assertEq(contest.contestStart(), CONTEST_START);
+        assertEq(payPerVoteExpCurveContest.contestStart(), CONTEST_START);
     }
 
     function testVotingDelay() public view {
-        assertEq(contest.votingDelay(), VOTING_DELAY);
+        assertEq(payPerVoteExpCurveContest.votingDelay(), VOTING_DELAY);
     }
 
     function testVotingPeriod() public view {
-        assertEq(contest.votingPeriod(), VOTING_PERIOD);
+        assertEq(payPerVoteExpCurveContest.votingPeriod(), VOTING_PERIOD);
     }
 
     function testNumAllowedProposalSubmissions() public view {
-        assertEq(contest.numAllowedProposalSubmissions(), NUM_ALLOWED_PROPOSAL_SUBMISSIONS);
+        assertEq(payPerVoteExpCurveContest.numAllowedProposalSubmissions(), NUM_ALLOWED_PROPOSAL_SUBMISSIONS);
     }
 
     function testMaxProposalCount() public view {
-        assertEq(contest.maxProposalCount(), MAX_PROPOSAL_COUNT);
+        assertEq(payPerVoteExpCurveContest.maxProposalCount(), MAX_PROPOSAL_COUNT);
     }
 
     function testCreator() public view {
-        assertEq(contest.creator(), CREATOR_ADDRESS);
+        assertEq(payPerVoteExpCurveContest.creator(), CREATOR_ADDRESS);
     }
 
     /////////////////////////////
@@ -149,60 +146,48 @@ contract ContestTest is Test {
 
     function testValidate() public {
         vm.prank(TEST_ADDRESS_1);
-        contest.validateProposalData(firstProposal);
+        payPerVoteExpCurveContest.validateProposalData(firstProposal);
     }
 
     function testPropose() public {
         vm.warp(1681650001);
         vm.prank(TEST_ADDRESS_1);
-        uint256 proposalId = contest.propose(firstProposal);
+        uint256 proposalId = payPerVoteExpCurveContest.propose(firstProposal);
     }
 
     function testProposeDuplicateProposal() public {
         vm.warp(1681650001);
         vm.startPrank(TEST_ADDRESS_1);
-        uint256 proposalId = contest.propose(firstProposal);
+        uint256 proposalId = payPerVoteExpCurveContest.propose(firstProposal);
         vm.expectRevert(abi.encodeWithSelector(Governor.DuplicateSubmission.selector, proposalId));
-        contest.propose(firstProposal);
+        payPerVoteExpCurveContest.propose(firstProposal);
         vm.stopPrank();
     }
 
     function testDeleteProposal() public {
         vm.warp(1681650001);
         vm.prank(TEST_ADDRESS_1);
-        uint256 proposalId = contest.propose(firstProposal);
+        uint256 proposalId = payPerVoteExpCurveContest.propose(firstProposal);
 
         proposalsToDelete.push(proposalId);
         vm.prank(CREATOR_ADDRESS);
-        contest.deleteProposals(proposalsToDelete);
-        assertEq(contest.proposalIsDeleted(proposalId), true);
-    }
-
-    function testProposeAnyoneCanCostIsOneEther() public {
-        vm.warp(1681650001);
-        vm.deal(address(UNTEST_ADDRESS_1), 1 ether); // give the proposer wei to pay the cost to propose
-        vm.prank(UNTEST_ADDRESS_1);
-        uint256 proposalId =
-            anyoneCanSubmitCostsAnEthContest.propose{value: 1 ether}(unpermissionedAuthorProposal1, proof0);
-
-        assertEq(proposalId, 115165251560031427429607767944389537131137037929814060832786039738764740468274);
-        assertEq(CREATOR_ADDRESS.balance, 0.5 ether);
-        assertEq(JK_LABS_ADDRESS.balance, 0.5 ether);
+        payPerVoteExpCurveContest.deleteProposals(proposalsToDelete);
+        assertEq(payPerVoteExpCurveContest.proposalIsDeleted(proposalId), true);
     }
 
     function testProposeAnyoneCanCostIsOneEtherNoMsgValue() public {
         vm.warp(1681650001);
-        vm.prank(UNTEST_ADDRESS_1);
+        vm.prank(TEST_ADDRESS_1);
         vm.expectRevert(abi.encodeWithSelector(Governor.IncorrectCostSent.selector, 0, 1 ether));
-        anyoneCanSubmitCostsAnEthContest.propose(unpermissionedAuthorProposal1, proof0);
+        payPerVoteExpCurveContest.propose(firstProposal);
     }
 
     function testProposeAnyoneCanCostIsOneEtherTooMuchMsgValue() public {
         vm.warp(1681650001);
-        vm.deal(address(UNTEST_ADDRESS_1), 2 ether); // give the proposer wei to pay the cost to propose
-        vm.prank(UNTEST_ADDRESS_1);
+        vm.deal(address(TEST_ADDRESS_1), 2 ether); // give the proposer wei to pay the cost to propose
+        vm.prank(TEST_ADDRESS_1);
         vm.expectRevert(abi.encodeWithSelector(Governor.IncorrectCostSent.selector, 2 ether, 1 ether));
-        anyoneCanSubmitCostsAnEthContest.propose{value: 2 ether}(unpermissionedAuthorProposal1, proof0);
+        payPerVoteExpCurveContest.propose{value: 2 ether}(firstProposal);
     }
 
     /////////////////////////////
@@ -213,9 +198,9 @@ contract ContestTest is Test {
         vm.startPrank(TEST_ADDRESS_1);
 
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposal);
+        uint256 proposalId = payPerVoteExpCurveContest.propose(firstProposal);
         vm.warp(1681660001);
-        uint256 numVotes = contest.castVote(proposalId, 10 ether);
+        uint256 numVotes = payPerVoteExpCurveContest.castVote(proposalId, 10 ether);
 
         vm.stopPrank();
 
@@ -225,26 +210,12 @@ contract ContestTest is Test {
     function testVote2() public {
         vm.warp(1681650001);
         vm.prank(TEST_ADDRESS_1);
-        uint256 proposalId = contest.propose(firstProposal, submissionProof1);
+        uint256 proposalId = payPerVoteExpCurveContest.propose(firstProposal);
         vm.warp(1681660001);
         vm.prank(TEST_ADDRESS_2);
-        uint256 numVotes = contest.castVote(proposalId, 100 ether);
+        uint256 numVotes = payPerVoteExpCurveContest.castVote(proposalId, 100 ether);
 
-        assertEq(totalVotes, 100 ether);
-    }
-
-    function testVoteWithoutProof() public {
-        vm.startPrank(TEST_ADDRESS_1);
-
-        vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposal, submissionProof1);
-        vm.warp(1681660001);
-        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
-        uint256 totalVotesWithoutProof = contest.castVoteWithoutProof(proposalId, 1 ether);
-
-        vm.stopPrank();
-
-        assertEq(totalVotesWithoutProof, 10 ether);
+        assertEq(numVotes, 100 ether);
     }
 
     function testVoteExpCurve1() public {
@@ -260,52 +231,52 @@ contract ContestTest is Test {
     function testCreatorCancelBeforeFirstVote() public {
         vm.startPrank(TEST_ADDRESS_1);
         vm.warp(1681650001);
-        contest.propose(firstProposal, submissionProof1);
+        payPerVoteExpCurveContest.propose(firstProposal);
         vm.stopPrank();
 
         vm.prank(CREATOR_ADDRESS);
-        contest.cancel();
+        payPerVoteExpCurveContest.cancel();
 
-        assertEq(contest.canceled(), true);
+        assertEq(payPerVoteExpCurveContest.canceled(), true);
     }
 
     function testCreatorCancelAfterFirstVote() public {
         vm.startPrank(TEST_ADDRESS_1);
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposal, submissionProof1);
+        uint256 proposalId = payPerVoteExpCurveContest.propose(firstProposal);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 10 ether, 1 ether, votingProof1);
+        payPerVoteExpCurveContest.castVote(proposalId, 10 ether, 1 ether);
         vm.stopPrank();
 
         vm.startPrank(CREATOR_ADDRESS);
         vm.expectRevert(abi.encodeWithSelector(Governor.CanOnlyCancelBeforeFirstVote.selector));
-        contest.cancel();
+        payPerVoteExpCurveContest.cancel();
         vm.stopPrank();
     }
 
     function testJkLabsCancelBeforeFirstVote() public {
         vm.startPrank(TEST_ADDRESS_1);
         vm.warp(1681650001);
-        contest.propose(firstProposal, submissionProof1);
+        payPerVoteExpCurveContest.propose(firstProposal);
         vm.stopPrank();
 
         vm.prank(JK_LABS_ADDRESS);
-        contest.cancel();
+        payPerVoteExpCurveContest.cancel();
 
-        assertEq(contest.canceled(), true);
+        assertEq(payPerVoteExpCurveContest.canceled(), true);
     }
 
     function testJkLabsCancelAfterFirstVote() public {
         vm.startPrank(TEST_ADDRESS_1);
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposal);
+        uint256 proposalId = payPerVoteExpCurveContest.propose(firstProposal);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 10 ether);
+        payPerVoteExpCurveContest.castVote(proposalId, 10 ether);
         vm.stopPrank();
 
         vm.startPrank(JK_LABS_ADDRESS);
         vm.expectRevert(abi.encodeWithSelector(Governor.CanOnlyCancelBeforeFirstVote.selector));
-        contest.cancel();
+        payPerVoteExpCurveContest.cancel();
         vm.stopPrank();
     }
 

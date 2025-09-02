@@ -346,8 +346,8 @@ abstract contract Governor is GovernorSorting {
     /**
      * @dev Verifies that `account` is permissioned to propose.
      */
-    function verifyProposer(address account) public {
-        if ((anyoneCanSubmit != 1) && (account != creator)) revert OnlyCreatorCanSubmit();
+    function verifyProposer() public {
+        if ((anyoneCanSubmit != 1) && (msg.sender != creator)) revert OnlyCreatorCanSubmit();
     }
 
     /**
@@ -440,10 +440,10 @@ abstract contract Governor is GovernorSorting {
     /**
      * @dev Create a new proposal.
      */
-    function propose(ProposalCore calldata proposal, bytes32[] calldata proof) public payable returns (uint256) {
+    function propose(ProposalCore calldata proposal) public payable returns (uint256) {
         uint256 actionCost = _determineCorrectAmountSent(Actions.Submit, 0);
 
-        verifyProposer(msg.sender);
+        verifyProposer();
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
 
