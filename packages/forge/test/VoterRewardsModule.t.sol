@@ -891,9 +891,14 @@ contract VoterRewardsModuleTest is Test {
 
         vm.warp(1681660001);
 
-        vm.deal(address(TEST_ADDRESS_1), 6 * payPerVoteFlatCurveContest.currentPricePerVote());
+        vm.deal(address(TEST_ADDRESS_1), 1 * payPerVoteFlatCurveContest.currentPricePerVote());
+        vm.deal(address(TEST_ADDRESS_2), 5 * payPerVoteFlatCurveContest.currentPricePerVote());
+
         vm.startPrank(TEST_ADDRESS_1);
         payPerVoteFlatCurveRankLimitOneContest.castVote{ value: 1 * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId1, 1 ether);
+        vm.stopPrank();
+
+        vm.startPrank(TEST_ADDRESS_2);
         payPerVoteFlatCurveRankLimitOneContest.castVote{ value: 5 * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 5 ether);
         vm.stopPrank();
 
