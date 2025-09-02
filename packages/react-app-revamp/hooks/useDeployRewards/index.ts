@@ -89,7 +89,7 @@ export function useDeployRewardsPool() {
       }
 
       const { walletClient, publicClient, chain } = await setupDeploymentClients(userAddress, chainId);
-      const baseParams = [rewardPoolData.rankings, rewardPoolData.shareAllocations, contestAddress, []];
+      const baseParams = [rewardPoolData.rankings, rewardPoolData.shareAllocations, contestAddress];
 
       const contractRewardsModuleHash = await walletClient.deployContract({
         abi: VotingModuleContract.abi,
