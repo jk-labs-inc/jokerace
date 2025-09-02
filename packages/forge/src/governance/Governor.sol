@@ -139,7 +139,6 @@ abstract contract Governor is GovernorSorting {
     address[] public addressesThatHaveVoted;
 
     mapping(address => uint256) public addressTotalVotes;
-    mapping(address => bool) public addressTotalVotesVerified;
 
     error AuthorIsNotSender(address author, address sender);
     error ZeroSignersInSafeMetadata();
@@ -351,7 +350,7 @@ abstract contract Governor is GovernorSorting {
     }
 
     /**
-     * @dev Verifies that all of the metadata in the proposal is valid.
+     * @dev Confirms that all of the metadata in the proposal is valid.
      */
     function validateProposalData(ProposalCore memory proposal) public view {
         if (proposal.author != msg.sender) revert AuthorIsNotSender(proposal.author, msg.sender);
