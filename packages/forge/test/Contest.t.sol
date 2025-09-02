@@ -6,6 +6,7 @@ import "../src/Contest.sol";
 import "../src/governance/Governor.sol";
 
 contract ContestTest is Test {
+    // CONTEST VARS
     Contest public payPerVoteExpCurveContest;
 
     // BASIC PARAMS
@@ -76,7 +77,7 @@ contract ContestTest is Test {
     string[] public METADATA_FIELDS_STRING_ARRAY = [METADATA_FIELDS_SCHEMA]; // placeholder value
     uint256[] public METADATA_FIELDS_UINT_ARRAY = [SAFE_THRESHOLD]; // placeholder value
 
-    // PROPOSALS PARAMS
+    // PROPOSAL PARAMS
     uint256[] public proposalsToDelete;
 
     Governor.ProposalCore public testAddress1AuthorProposal = Governor.ProposalCore({
