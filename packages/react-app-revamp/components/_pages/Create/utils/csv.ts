@@ -1,4 +1,4 @@
-import { getAddress } from "ethers";
+import { getAddress } from "viem";
 
 const MAX_VOTES = 1e9; // 1 billion
 

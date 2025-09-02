@@ -1,6 +1,5 @@
-import { solidityPackedKeccak256 } from "ethers";
 import MerkleTree from "merkletreejs";
-import { getAddress, keccak256, parseUnits } from "viem";
+import { encodePacked, getAddress, keccak256, parseUnits } from "viem";
 
 export interface Recipient {
   address: string;
@@ -47,7 +46,10 @@ const setupVoteRecipients = (decimals: number, votesData: Record<string, number>
 const generateLeaf = (address: string, numVotes: string): Buffer => {
   const checksumAddress = getAddress(address);
 
-  return Buffer.from(solidityPackedKeccak256(["address", "uint256"], [checksumAddress, numVotes]).slice(2), "hex");
+  return Buffer.from(
+    keccak256(encodePacked(["address", "uint256"], [checksumAddress, BigInt(numVotes)])).slice(2),
+    "hex",
+  );
 };
 
 /**
