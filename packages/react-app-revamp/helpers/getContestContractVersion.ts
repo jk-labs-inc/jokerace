@@ -1,4 +1,3 @@
-import { serverConfig } from "@config/wagmi/server";
 import AddEntryChargeContract from "@contracts/bytecodeAndAbi/Contest.4.1.addEntryCharge.sol/Contest.json";
 import RmImmutableKeywordContract from "@contracts/bytecodeAndAbi/Contest.4.10.rmImmutableKeyword.sol/Contest.json";
 import GasOptimizeGettersContract from "@contracts/bytecodeAndAbi/Contest.4.11.gasOptimizeGetters.sol/Contest.json";
@@ -50,21 +49,29 @@ import AntiRugContract from "@contracts/bytecodeAndAbi/Contest.5.11.antiRug.sol/
 import CorrectDelayVarContract from "@contracts/bytecodeAndAbi/Contest.5.12.correctDelayVar.sol/Contest.json";
 import RankLimitCheckContract from "@contracts/bytecodeAndAbi/Contest.5.13.rankLimitCheck.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { ethers, id } from "ethers";
-import { getEthersProvider } from "./ethers";
 import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
+import { createTransport } from "@config/wagmi/transports";
+import { Chain, createPublicClient, getContract } from "viem";
+import { getChainFromId } from "./getChainFromId";
 
 export async function getContestContractVersion(address: string, chainId: number) {
   try {
-    const provider = getEthersProvider(serverConfig, { chainId });
+    const chain = getChainFromId(chainId);
+    const client = createPublicClient({
+      chain: chain,
+      transport: createTransport(chain as Chain),
+    });
 
     // Get earliest ABI just so we can call VERSION() to start, since we know all ABIs will have that function
-    const contract = new ethers.Contract(address, AddEntryChargeContract.abi, provider);
+    const contract = getContract({
+      address: address as `0x${string}`,
+      client,
+      abi: AddEntryChargeContract.abi,
+    });
 
     // Here we check if all RPC calls are successful, otherwise we throw an error and return empty ABI
-    const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
+    const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
-    const defaultReturn = { abi: null, version: "unknown" };
     if (version === "5.13") {
       return { abi: RankLimitCheckContract.abi, version };
     } else if (version === "5.12") {

@@ -17,11 +17,10 @@ import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
-import { parseUnits } from "ethers";
 import moment from "moment";
 import { usePathname } from "next/navigation";
 import { useCallback } from "react";
-import { formatEther } from "viem";
+import { formatEther, parseUnits } from "viem";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import { useCastVotesStore } from "./store";
@@ -117,13 +116,13 @@ export function useCastVotes() {
     try {
       const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
       const costToVote = getChargeAmount(amountOfVotes);
-      const totalVoteAmount = anyoneCanVote ? 0 : parseUnits(currentUserTotalVotesAmount.toString());
+      const totalVoteAmount = anyoneCanVote ? 0 : parseUnits(currentUserTotalVotesAmount.toString(), 18);
 
       let hash: `0x${string}`;
       let request;
 
       if (!isVerified) {
-        const castVoteArgs = [pickedProposal, totalVoteAmount, parseUnits(amountOfVotes.toString()), proofs];
+        const castVoteArgs = [pickedProposal, totalVoteAmount, parseUnits(amountOfVotes.toString(), 18), proofs];
         const { request: simulatedRequest } = await simulateContract(config, {
           address: contestAddress as `0x${string}`,
           abi: abi ? abi : DeployedContestContract.abi,
@@ -135,7 +134,7 @@ export function useCastVotes() {
         });
         request = simulatedRequest;
       } else {
-        const castVoteWithoutProofArgs = [pickedProposal, parseUnits(`${amountOfVotes}`)];
+        const castVoteWithoutProofArgs = [pickedProposal, parseUnits(`${amountOfVotes}`, 18)];
         const { request: simulatedRequest } = await simulateContract(config, {
           address: contestAddress as `0x${string}`,
           abi: abi ? abi : DeployedContestContract.abi,

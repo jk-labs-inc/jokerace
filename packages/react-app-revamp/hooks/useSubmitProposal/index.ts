@@ -13,8 +13,8 @@ import { useGenerateProof } from "@hooks/useGenerateProof";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { useReleasableRewards } from "@hooks/useReleasableRewards";
 import useRewardsModule from "@hooks/useRewards";
+import { useTotalRewards } from "@hooks/useTotalRewards";
 import { useUserStore } from "@hooks/useUser/store";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
@@ -26,7 +26,6 @@ import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useSubmitProposalStore } from "./store";
-import { useTotalRewards } from "@hooks/useTotalRewards";
 
 const targetMetadata = {
   targetAddress: "0x0000000000000000000000000000000000000000",

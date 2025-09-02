@@ -4,23 +4,44 @@ type Transports = Record<Chain["id"], Transport>;
 
 const isProduction = process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "production";
 
-const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
-  const headers = isProduction ? { Referer: "https://jokerace.io/" } : { Referer: "" };
+const getHeaders = () => (isProduction ? { Referer: "https://jokerace.io/" } : { Referer: "" });
 
+export const createTransport = (chain: Chain): Transport => {
+  const headers = getHeaders();
+
+  if (chain.rpcUrls?.default?.http?.[0] && chain.rpcUrls?.public?.http?.[0]) {
+    return fallback([
+      http(chain.rpcUrls.default.http[0], {
+        fetchOptions: {
+          headers,
+        },
+      }),
+      http(chain.rpcUrls.public.http[0], {
+        fetchOptions: {
+          headers,
+        },
+      }),
+    ]);
+  }
+
+  // Fallback to just the default RPC if public is not available
+  if (chain.rpcUrls?.default?.http?.[0]) {
+    return http(chain.rpcUrls.default.http[0], {
+      fetchOptions: {
+        headers,
+      },
+    });
+  }
+
+  throw new Error(`No valid RPC URLs found for chain ${chain.name}`);
+};
+
+const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
   return chains.reduce<Transports>((acc, chain) => {
-    if (chain.rpcUrls?.default?.http?.[0] && chain.rpcUrls?.public?.http?.[0]) {
-      acc[chain.id] = fallback([
-        http(chain.rpcUrls.default.http[0], {
-          fetchOptions: {
-            headers,
-          },
-        }),
-        http(chain.rpcUrls.public.http[0], {
-          fetchOptions: {
-            headers,
-          },
-        }),
-      ]);
+    try {
+      acc[chain.id] = createTransport(chain);
+    } catch (error) {
+      console.warn(`Failed to create transport for chain ${chain.name}:`, error);
     }
     return acc;
   }, {});

@@ -1,13 +1,13 @@
+import { useSubmissionMerkle } from "@components/_pages/Create/hooks/useSubmissionMerkle";
+import { ContestType } from "@components/_pages/Create/types";
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import { config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { isSupabaseConfigured } from "@helpers/database";
-import { getEthersSigner } from "@helpers/ethers";
+import { setupDeploymentClients } from "@helpers/viem";
 import useEmailSignup from "@hooks/useEmailSignup";
 import { useError } from "@hooks/useError";
 import { differenceInSeconds, getUnixTime } from "date-fns";
-import { ContractFactory, JsonRpcSigner } from "ethers";
-import { parseEther } from "viem";
+import { parseEther, PublicClient, WalletClient } from "viem";
 import { useAccount } from "wagmi";
 import { saveFilesToBucket } from "./buckets";
 import { isSortingEnabled } from "./contracts";
@@ -15,8 +15,6 @@ import { checkForSpoofing, getJkLabsSplitDestinationAddress, indexContest } from
 import { createMetadataFieldsSchema } from "./helpers";
 import { useDeployContestStore } from "./store";
 import { PriceCurveType, SplitFeeDestinationType, VoteType } from "./types";
-import { useSubmissionMerkle } from "@components/_pages/Create/hooks/useSubmissionMerkle";
-import { ContestType } from "@components/_pages/Create/types";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000;
 export const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c6118e8a52fa738";
@@ -49,6 +47,11 @@ export function useDeployContest() {
   const { processCreatorAllowlist } = useSubmissionMerkle();
 
   async function prepareForDeployment() {
+    if (!address || !chain) {
+      handleError(new Error("Failed to prepare for deployment"), "Failed to prepare for deployment");
+      throw new Error("Failed to prepare for deployment");
+    }
+
     if (contestType === ContestType.VotingContest) {
       try {
         await processCreatorAllowlist(address);
@@ -58,9 +61,19 @@ export function useDeployContest() {
       }
     }
 
-    let signer: JsonRpcSigner;
+    let client: WalletClient;
+    let publicClient: PublicClient;
+
     try {
-      signer = await getEthersSigner(config, { chainId: chain?.id });
+      const { walletClient, publicClient: pubClient } = await setupDeploymentClients(address, chain.id);
+
+      if (!walletClient || !pubClient) {
+        handleError(new Error("Failed to setup deployment clients"), "Failed to setup deployment clients");
+        throw new Error("Failed to setup deployment clients");
+      }
+
+      client = walletClient;
+      publicClient = pubClient;
     } catch (error: any) {
       handleError(error, "Please try reconnecting your wallet.");
       throw error;
@@ -70,11 +83,7 @@ export function useDeployContest() {
     const currentVotingMerkleData = currentState.votingMerkle;
     const currentSubmissionMerkleData = currentState.submissionMerkle;
 
-    const isSpoofingDetected = await checkForSpoofing(
-      signer?.address,
-      currentVotingMerkleData,
-      currentSubmissionMerkleData,
-    );
+    const isSpoofingDetected = await checkForSpoofing(address, currentVotingMerkleData, currentSubmissionMerkleData);
 
     if (isSpoofingDetected) {
       toastError({
@@ -84,7 +93,8 @@ export function useDeployContest() {
     }
 
     return {
-      signer,
+      client,
+      publicClient,
       votingMerkleData: currentVotingMerkleData,
       submissionMerkleData: currentSubmissionMerkleData,
     };
@@ -105,18 +115,13 @@ export function useDeployContest() {
     }
 
     const {
-      signer,
+      client,
+      publicClient,
       votingMerkleData: currentVotingMerkleData,
       submissionMerkleData: currentSubmissionMerkleData,
     } = preparationResult;
 
     try {
-      const factoryCreateContest = new ContractFactory(
-        DeployedContestContract.abi,
-        DeployedContestContract.bytecode,
-        signer,
-      );
-
       const combinedPrompt = new URLSearchParams({
         type: contestType,
         summarize: prompt.summarize,
@@ -174,7 +179,7 @@ export function useDeployContest() {
         intConstructorArgs,
         creatorSplitDestination:
           charge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet
-            ? signer.address
+            ? client.account?.address
             : charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit
             ? jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT
             : charge.splitFeeDestination.address,
@@ -182,18 +187,23 @@ export function useDeployContest() {
         metadataFieldsSchema: createMetadataFieldsSchema(metadataFields, entryPreviewConfig),
       };
 
-      const contractContest = await factoryCreateContest.deploy(
-        title,
-        combinedPrompt,
-        submissionMerkleRoot,
-        votingMerkleRoot,
-        constructorArgs,
-      );
+      const contractDeploymentHash = await client.deployContract({
+        abi: DeployedContestContract.abi,
+        bytecode: DeployedContestContract.bytecode.object as `0x${string}`,
+        args: [title, combinedPrompt, submissionMerkleRoot, votingMerkleRoot, constructorArgs],
+        account: address as `0x${string}`,
+        chain: chain,
+      });
 
-      await contractContest.waitForDeployment();
+      const receipt = await publicClient?.waitForTransactionReceipt({
+        hash: contractDeploymentHash,
+      });
 
-      const contractAddress = await contractContest.getAddress();
-      const contractDeploymentHash = contractContest.deploymentTransaction()?.hash as `0x${string}`;
+      const contractAddress = receipt?.contractAddress;
+
+      if (!contractAddress) {
+        throw new Error("Contract deployment failed - no contract address returned");
+      }
 
       const sortingEnabled = await isSortingEnabled(contractAddress, chain?.id ?? 0);
 
@@ -262,6 +272,7 @@ export function useDeployContest() {
       setIsSuccess(true);
       setIsLoading(false);
     } catch (e) {
+      console.error("Failed to deploy contest:", e);
       handleError(e, "Something went wrong and the contest couldn't be deployed.");
       setIsLoading(false);
     }

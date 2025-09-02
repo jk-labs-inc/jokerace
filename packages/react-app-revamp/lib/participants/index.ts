@@ -1,5 +1,5 @@
-import { formatUnits } from "ethers";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
+import { formatUnits } from "viem";
 
 export const indexContestParticipantsV3 = async (
   address: string,
@@ -25,7 +25,7 @@ export const indexContestParticipantsV3 = async (
       if (isVoter) {
         const voter = votersMap.get(participant);
         if (voter) {
-          num_votes = parseFloat(formatUnits(voter.numVotes, 18));
+          num_votes = parseFloat(formatUnits(BigInt(voter.numVotes), 18));
         }
       }
 

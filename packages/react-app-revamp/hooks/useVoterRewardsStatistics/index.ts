@@ -4,7 +4,7 @@ import useRewardsModule from "@hooks/useRewards";
 import { useQuery } from "@tanstack/react-query";
 import { readContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
-import { formatEther } from "ethers";
+import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/react/shallow";
 
