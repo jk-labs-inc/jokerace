@@ -49,6 +49,7 @@ import OnlyDeleteInEntryContract from "@contracts/bytecodeAndAbi/Contest.5.10.on
 import AntiRugContract from "@contracts/bytecodeAndAbi/Contest.5.11.antiRug.sol/Contest.json";
 import CorrectDelayVarContract from "@contracts/bytecodeAndAbi/Contest.5.12.correctDelayVar.sol/Contest.json";
 import RankLimitCheckContract from "@contracts/bytecodeAndAbi/Contest.5.13.rankLimitCheck.sol/Contest.json";
+import RmEntryRewardsContract from "@contracts/bytecodeAndAbi/Contest.5.14.rmEntryRewards.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, id } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -65,7 +66,9 @@ export async function getContestContractVersion(address: string, chainId: number
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
     const defaultReturn = { abi: null, version: "unknown" };
-    if (version === "5.13") {
+    if (version === "5.14") {
+      return { abi: RmEntryRewardsContract.abi, version };
+    } else if (version === "5.13") {
       return { abi: RankLimitCheckContract.abi, version };
     } else if (version === "5.12") {
       return { abi: CorrectDelayVarContract.abi, version };

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "../Governor.sol";
-import "../../modules/RewardsModule.sol";
+import "../../modules/VoterRewardsModule.sol";
 
 /**
  * @dev Extension of {Governor} for module management.
@@ -20,7 +20,7 @@ abstract contract GovernorModuleRegistry is Governor {
      */
     function setOfficialRewardsModule(address officialRewardsModule_) public {
         if (msg.sender != creator) revert OnlyCreatorCanSetRewardsModule();
-        if (address(RewardsModule(payable(officialRewardsModule_)).underlyingContest()) != address(this)) {
+        if (address(VoterRewardsModule(payable(officialRewardsModule_)).underlyingContest()) != address(this)) {
             revert OfficialRewardsModuleMustPointToThisContest();
         }
         address oldOfficialRewardsModule = officialRewardsModule;
