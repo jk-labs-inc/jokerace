@@ -79,19 +79,6 @@ contract ContestTest is Test {
     // PROPOSALS PARAMS
     uint256[] public proposalsToDelete;
 
-    Governor.ProposalCore public creatorAuthorProposal = Governor.ProposalCore({
-        author: CREATOR_ADDRESS,
-        description: "creatorAuthorProposal",
-        exists: true,
-        targetMetadata: Governor.TargetMetadata({targetAddress: CREATOR_ADDRESS}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
-        fieldsMetadata: Governor.FieldsMetadata({
-            addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
-            stringArray: METADATA_FIELDS_STRING_ARRAY,
-            uintArray: METADATA_FIELDS_UINT_ARRAY
-        })
-    });
-
     Governor.ProposalCore public testAddress1AuthorProposal = Governor.ProposalCore({
         author: TEST_ADDRESS_1,
         description: "testAddress1AuthorProposal",
