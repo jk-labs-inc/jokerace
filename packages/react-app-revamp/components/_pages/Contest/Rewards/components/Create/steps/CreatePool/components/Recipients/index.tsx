@@ -2,7 +2,7 @@ import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import ButtonV3 from "@components/UI/ButtonV3";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
-import { Recipient, RewardPoolType, ValidationError, useCreateRewardsStore } from "../../../../store";
+import { Recipient, ValidationError, useCreateRewardsStore } from "../../../../store";
 import CreateRewardsPoolRecipientsDropdown from "../Dropdown";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -20,7 +20,7 @@ const generateRankOptions = (limit: number): Option[] => {
 
 const CreateRewardsPoolRecipients: React.FC = () => {
   const [recipientsExceedLimit, setRecipientsExceedLimit] = useState("");
-  const { setRewardPoolData, rewardPoolData, rewardPoolType } = useCreateRewardsStore(state => state);
+  const { setRewardPoolData, rewardPoolData } = useCreateRewardsStore(state => state);
   const [nextId, setNextId] = useState(rewardPoolData.recipients.length + 1);
   const rankOptions = generateRankOptions(RANK_LIMIT);
 
