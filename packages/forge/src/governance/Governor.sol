@@ -346,7 +346,7 @@ abstract contract Governor is GovernorSorting {
     /**
      * @dev Verifies that `account` is permissioned to propose.
      */
-    function verifyProposer() public {
+    function verifyProposer() public view {
         if ((anyoneCanSubmit != 1) && (msg.sender != creator)) revert OnlyCreatorCanSubmit();
     }
 
