@@ -147,7 +147,7 @@ contract VoterRewardsModuleTest is Test {
 
     Governor.ProposalCore public testAddress1AuthorProposal4 = Governor.ProposalCore({
         author: TEST_ADDRESS_1,
-        description: "testAddress1AuthorProposal2",
+        description: "testAddress1AuthorProposal4",
         exists: true,
         targetMetadata: Governor.TargetMetadata({targetAddress: TEST_ADDRESS_1}),
         safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
