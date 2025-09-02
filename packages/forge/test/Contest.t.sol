@@ -16,7 +16,7 @@ contract ContestTest is Test {
     uint64 public constant CONTEST_START = 1681650000;
     uint64 public constant VOTING_DELAY = 10000;
     uint64 public constant VOTING_PERIOD = 10000;
-    uint64 public constant NUM_ALLOWED_PROPOSAL_SUBMISSIONS = 3;
+    uint64 public constant NUM_ALLOWED_PROPOSAL_SUBMISSIONS = 4;
     uint64 public constant MAX_PROPOSAL_COUNT = 100;
 
     // COST PARAMS
