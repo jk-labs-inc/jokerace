@@ -1,4 +1,3 @@
-import { config } from "@config/wagmi";
 import AddEntryChargeRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.1.addEntryCharge.sol/RewardsModule.json";
 import RmImmutableKeywordRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.10.rmImmutableKeyword.sol/RewardsModule.json";
 import GasOptimizeGettersRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.11.gasOptimizeGetters.sol/RewardsModule.json";
@@ -14,13 +13,6 @@ import UpdateSortingAlgoRewards from "@contracts/bytecodeAndAbi/modules/RewardsM
 import AddGetDeletedAuthorsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.20.addGetDeletedAuthors.sol/RewardsModule.json";
 import AddContentToEventsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.21.addContentToEvents.sol/RewardsModule.json";
 import RefactorDistributionFuncRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.22.refactorDistributionFunc.sol/RewardsModule.json";
-import NewValueAlreadyInArrayRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.3.newValueAlreadyInArray.sol/RewardsModule.json";
-import UseCustomErrorsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.4.useCustomErrors.sol/RewardsModule.json";
-import CleanUpSortingRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.5.cleanUpSorting.sol/RewardsModule.json";
-import RestructureExtensionsAndUtilsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.6.restructureExtensionsAndUtils.sol/RewardsModule.json";
-import RmUnnecessaryVirtualsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.7.rmUnnecessaryVirtuals.sol/RewardsModule.json";
-import DeleteInMapAfterForLoopRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.8.deleteInMapAfterForLoop.sol/RewardsModule.json";
-import AddGetPropIdsWithForVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.9.addGetPropIdsWithForVotes.sol/RewardsModule.json";
 import AddCostToVoteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.23.addCostToVote.sol/RewardsModule.json";
 import RefactorCostDistroRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.24.refactorCostDistro.sol/RewardsModule.json";
 import PayPerVoteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.25.payPerVote.sol/RewardsModule.json";
@@ -28,6 +20,7 @@ import CleanUpConstructorsRewards from "@contracts/bytecodeAndAbi/modules/Reward
 import AnyoneCanVoteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.27.anyoneCanVote.sol/RewardsModule.json";
 import UpdateForgeLibsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.28.updateForgeLibs.sol/RewardsModule.json";
 import SetSplitDestinationRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.29.setSplitDestination.sol/RewardsModule.json";
+import NewValueAlreadyInArrayRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.3.newValueAlreadyInArray.sol/RewardsModule.json";
 import MakeJkLabsSplitConfigurableRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.30.makeJkLabsSplitConfigurable.sol/RewardsModule.json";
 import AddMetadataFieldsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.31.addMetadataFields.sol/RewardsModule.json";
 import CheckCanceledRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.32.checkCanceled.sol/RewardsModule.json";
@@ -36,7 +29,17 @@ import AllowJkLabsDestUpdateRewards from "@contracts/bytecodeAndAbi/modules/Rewa
 import OnlyCreatorChangeMerkleRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.35.onlyCreatorChangeMerkle.sol/RewardsModule.json";
 import NoCommentAfterCloseRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.36.noCommentAfterClose.sol/RewardsModule.json";
 import EditTitleDescRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.37.editTitleDesc.sol/RewardsModule.json";
+import UseCustomErrorsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.4.useCustomErrors.sol/RewardsModule.json";
+import CleanUpSortingRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.5.cleanUpSorting.sol/RewardsModule.json";
+import RestructureExtensionsAndUtilsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.6.restructureExtensionsAndUtils.sol/RewardsModule.json";
+import RmUnnecessaryVirtualsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.7.rmUnnecessaryVirtuals.sol/RewardsModule.json";
+import DeleteInMapAfterForLoopRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.8.deleteInMapAfterForLoop.sol/RewardsModule.json";
+import AddGetPropIdsWithForVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.9.addGetPropIdsWithForVotes.sol/RewardsModule.json";
 import RmDownvotingRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.1.rmDownvoting.sol/RewardsModule.json";
+import OnlyDeleteInEntryRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.10.onlyDeleteInEntry.sol/RewardsModule.json";
+import AntiRugRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.11.antiRug.sol/RewardsModule.json";
+import CorrectDelayVarRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.12.correctDelayVar.sol/RewardsModule.json";
+import RankLimitCheckRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.13.rankLimitCheck.sol/RewardsModule.json";
 import AddErc20CancelledCheckRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.2.addErc20CancelledCheck.sol/RewardsModule.json";
 import EntrantsCanDeleteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.3.entrantsCanDelete.sol/RewardsModule.json";
 import OfficialModulePointsToContestRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.4.officialModulePointsToContest.sol/RewardsModule.json";
@@ -45,21 +48,26 @@ import SetPeriodLimitsRewards from "@contracts/bytecodeAndAbi/modules/RewardsMod
 import VotingPriceCurvesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.7.votingPriceCurves.sol/RewardsModule.json";
 import AddModuleTrackingRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.8.addModuleTracking.sol/RewardsModule.json";
 import CalcCorrectMinuteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.9.calcCorrectMinute.sol/RewardsModule.json";
-import OnlyDeleteInEntryRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.10.onlyDeleteInEntry.sol/RewardsModule.json";
-import AntiRugRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.11.antiRug.sol/RewardsModule.json";
-import CorrectDelayVarRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.12.correctDelayVar.sol/RewardsModule.json";
-import RankLimitCheckRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.5.13.rankLimitCheck.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
-import { ethers } from "ethers";
-import { getEthersProvider } from "./ethers";
 import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
+import { createPublicClient, getContract, http } from "viem";
+import { getChainFromId } from "./getChainFromId";
 
 export async function getRewardsModuleContractVersion(address: string, chainId: number) {
-  const provider = getEthersProvider(config, { chainId });
-  const contract = new ethers.Contract(address, AddEntryChargeRewards.abi, provider);
+  const chain = getChainFromId(chainId);
+  const client = createPublicClient({
+    chain: chain,
+    transport: http(chain?.rpcUrls.default.http[0] ?? ""),
+  });
+
+  const contract = getContract({
+    address: address as `0x${string}`,
+    client,
+    abi: AddEntryChargeRewards.abi,
+  });
 
   try {
-    const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
+    const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
     if (version === "5.13") {
       return { abi: RankLimitCheckRewards.abi, version };
