@@ -1,6 +1,11 @@
 import { config } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
+import { getChainId } from "@helpers/getChainId";
 import { useCancelRewards } from "@hooks/useCancelRewards";
+import { useContestStatusStore } from "@hooks/useContestStatus/store";
+import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { switchChain } from "@wagmi/core";
+import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
@@ -14,10 +19,21 @@ interface CancelRewardsProps {
 }
 
 const CancelRewards: FC<CancelRewardsProps> = ({ rewardsAddress, abi, chainId, version }) => {
+  const pathname = usePathname();
+  const { address: contestAddress, chainName } = extractPathSegments(pathname);
+  const contestChainId = getChainId(chainName);
   const { cancelRewards, isLoading } = useCancelRewards({ rewardsAddress, abi, chainId, version });
+  const { contestStatus } = useContestStatusStore(state => state);
+  const {
+    totalVotesCast,
+    isLoading: isLoadingTotalVotesCast,
+    isError: isErrorTotalVotesCast,
+  } = useTotalVotesCastOnContest(contestAddress, contestChainId);
   const [isCancelRewardsModalOpen, setIsCancelRewardsModalOpen] = useState(false);
   const { chainId: accountChainId } = useAccount();
   const isUserOnCorrectChain = accountChainId === chainId;
+  const cannotCancelRewards = Number(totalVotesCast) > 0 && !isLoadingTotalVotesCast && !isErrorTotalVotesCast;
+
   const handleOpenModal = () => setIsCancelRewardsModalOpen(true);
 
   const handleCancelRewards = async () => {
@@ -28,6 +44,8 @@ const CancelRewards: FC<CancelRewardsProps> = ({ rewardsAddress, abi, chainId, v
     cancelRewards();
     setIsCancelRewardsModalOpen(false);
   };
+
+  if (cannotCancelRewards) return null;
 
   return (
     <>
