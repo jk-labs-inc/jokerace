@@ -109,7 +109,7 @@ abstract contract Governor is GovernorSorting {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "5.14"; // Private as to not clutter the ABI.
+    string private constant VERSION = "5.15"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -198,15 +198,7 @@ abstract contract Governor is GovernorSorting {
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
         metadataFieldsSchema = constructorArgs_.metadataFieldsSchema;
 
-        emit JokeraceCreated(
-            VERSION,
-            name,
-            prompt,
-            creator,
-            contestStart,
-            votingDelay,
-            votingPeriod
-        ); // emit upon creation to be able to easily find jokeraces on a chain
+        emit JokeraceCreated(VERSION, name, prompt, creator, contestStart, votingDelay, votingPeriod); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
     function version() public pure returns (string memory) {
