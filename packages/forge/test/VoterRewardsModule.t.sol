@@ -147,7 +147,7 @@ contract VoterRewardsModuleTest is Test {
 
     Governor.ProposalCore public testAddress1AuthorProposal4 = Governor.ProposalCore({
         author: TEST_ADDRESS_1,
-        description: "testAddress2AuthorProposal2",
+        description: "testAddress1AuthorProposal2",
         exists: true,
         targetMetadata: Governor.TargetMetadata({targetAddress: TEST_ADDRESS_1}),
         safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
@@ -489,7 +489,7 @@ contract VoterRewardsModuleTest is Test {
     // 2 proposals, both at 1 vote; send back to creator
     function testFirstPlaceTieWithNative() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
         uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
         vm.stopPrank();
@@ -515,7 +515,7 @@ contract VoterRewardsModuleTest is Test {
     function testFirstPlaceTieWithERC20() public {
         vm.warp(1681650001);
 
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
         uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
         vm.stopPrank();
@@ -570,7 +570,7 @@ contract VoterRewardsModuleTest is Test {
     // 2 proposals, both at 0 votes; release 2nd place; reverted
     function testSecondPlaceTieWithZeroVotesWithNative() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
         payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
         vm.stopPrank();
