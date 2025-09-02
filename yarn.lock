@@ -19460,10 +19460,10 @@ zod@3.22.4:
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.4.tgz#f31c3a9386f61b1f228af56faa9255e845cf3fff"
   integrity sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==
 
-zod@4.1.3:
-  version "4.1.3"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-4.1.3.tgz#0057bf53f570fbb49bf2a216c7a1d43fc282c4b3"
-  integrity sha512-1neef4bMce1hNTrxvHVKxWjKfGDn0oAli3Wy1Uwb7TRO1+wEwoZUZNP1NXIEESybOBiFnBOhI6a4m6tCLE8dog==
+zod@4.1.5:
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-4.1.5.tgz#7a21fc3178928ede50a28f7d0db4414c4cdb0161"
+  integrity sha512-rcUUZqlLJgBC33IT3PNMgsCq6TzLQEG/Ei/KTCU0PedSWRMAXoOUN+4t/0H+Q8bdnLPdqUYnvboJT0bn/229qg==
 
 zod@^3.20.6:
   version "3.23.8"
