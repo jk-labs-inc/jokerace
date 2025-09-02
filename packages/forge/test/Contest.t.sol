@@ -55,7 +55,7 @@ contract ContestTest is Test {
         STANDARD_EXPONENT_MULTIPLE
     );
 
-    Governor.ConstructorArgs public payPerVoteExpCurveNumParams = Governor.ConstructorArgs(
+    Governor.ConstructorArgs public payPerVoteExpCurveParams = Governor.ConstructorArgs(
         CONTEST_NAME,
         CONTEST_PROMPT,
         payPerVoteExpCurveIntConstructorArgs,
@@ -99,7 +99,7 @@ contract ContestTest is Test {
     function setUp() public {
         vm.startPrank(CREATOR_ADDRESS);
 
-        payPerVoteExpCurveContest = new Contest(payPerVoteExpCurveNumParams);
+        payPerVoteExpCurveContest = new Contest(payPerVoteExpCurveParams);
 
         vm.stopPrank();
     }

@@ -9,7 +9,8 @@ import "../src/modules/VoterRewardsModule.sol";
 contract VoterRewardsModuleTest is Test {
     // CONTEST VARS
     Contest public payPerVoteFlatCurveContest;
-    Contest public payPerVoteFlatCurveContestAlt;
+    Contest public payPerVoteFlatCurveAltContest;
+    Contest public payPerVoteFlatCurveRankLimitOneContest;
 
     // BASIC PARAMS
     string public constant CONTEST_NAME = "test";
@@ -32,6 +33,7 @@ contract VoterRewardsModuleTest is Test {
 
     // SORTING INT PARAMS
     uint256 public constant SORTING_ENABLED = 1;
+    uint256 public constant RANK_LIMIT_1 = 1;
     uint256 public constant RANK_LIMIT_250 = 250;
 
     // METADATA CONSTRUCTOR PARAMS
@@ -54,14 +56,40 @@ contract VoterRewardsModuleTest is Test {
         ZERO_EXPONENT_MULTIPLE
     );
 
-    Governor.ConstructorArgs public payPerVoteFlatCurveNumParams = Governor.ConstructorArgs(
+    Governor.ConstructorArgs public payPerVoteFlatCurveParams = Governor.ConstructorArgs(
         CONTEST_NAME,
         CONTEST_PROMPT,
-        payPerVoteExpCurveIntConstructorArgs,
+        payPerVoteFlatCurveIntConstructorArgs,
         CREATOR_SPLIT_DESTINATION,
         JK_LABS_SPLIT_DESTINATION,
         METADATA_FIELDS_SCHEMA
     );
+
+    Governor.IntConstructorArgs public payPerVoteFlatCurveRankLimitOneIntConstructorArgs = Governor.IntConstructorArgs(
+        ANYONE_CAN_SUBMIT,
+        CONTEST_START,
+        VOTING_DELAY,
+        VOTING_PERIOD,
+        NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
+        MAX_PROPOSAL_COUNT,
+        SORTING_ENABLED,
+        RANK_LIMIT_1,
+        NINETY_PERCENT_TO_CREATOR,
+        ZERO_COST_TO_PROPOSE,
+        STANDARD_COST_TO_VOTE,
+        FLAT_PRICE_CURVE_TYPE,
+        ZERO_EXPONENT_MULTIPLE
+    );
+
+    Governor.ConstructorArgs public payPerVoteFlatCurveRankLimitOneParams = Governor.ConstructorArgs(
+        CONTEST_NAME,
+        CONTEST_PROMPT,
+        payPerVoteFlatCurveIntConstructorArgs,
+        CREATOR_SPLIT_DESTINATION,
+        JK_LABS_SPLIT_DESTINATION,
+        METADATA_FIELDS_SCHEMA
+    );
+
 
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
     address public constant CREATOR_ADDRESS = 0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94;
@@ -132,6 +160,7 @@ contract VoterRewardsModuleTest is Test {
 
     // REWARDS MODULE VARS
     VoterRewardsModule public voterRewardsModule;
+    VoterRewardsModule public voterRewardsModuleToRankLimitOneContest;
     uint256[] public payees = [1, 2, 3];
     uint256[] public shares = [3, 2, 1];
 
@@ -147,9 +176,13 @@ contract VoterRewardsModuleTest is Test {
         vm.startPrank(CREATOR_ADDRESS);
 
         // Only using flat curves bc only testing rewards module logic in this file, which is the same regardless of curve of underlying contest
-        payPerVoteFlatCurveContest = new Contest(payPerVoteFlatCurveNumParams); 
-        payPerVoteFlatCurveContestAlt = new Contest(payPerVoteFlatCurveNumParams);
+        payPerVoteFlatCurveContest = new Contest(payPerVoteFlatCurveParams); 
+        payPerVoteFlatCurveAltContest = new Contest(payPerVoteFlatCurveParams);
+        payPerVoteFlatCurveRankLimitOneContest = new Contest(payPerVoteFlatCurveRankLimitOneParams);
+
         voterRewardsModule = new VoterRewardsModule(payees, shares, Contest(payPerVoteFlatCurveContest));
+        voterRewardsModuleToRankLimitOneContest = new VoterRewardsModule(payees, shares, Contest(payPerVoteFlatCurveRankLimitOneContest));
+
         testERC20 = new ERC20PresetFixedSupply("test", "TEST", INITIAL_TEST_ERC20_SUPPLY, CREATOR_ADDRESS);
 
         vm.stopPrank();
@@ -165,7 +198,7 @@ contract VoterRewardsModuleTest is Test {
         vm.expectRevert(
             abi.encodeWithSelector(GovernorModuleRegistry.OfficialRewardsModuleMustPointToThisContest.selector)
         );
-        payPerVoteFlatCurveContestAlt.setOfficialRewardsModule(address(voterRewardsModule));
+        payPerVoteFlatCurveAltContest.setOfficialRewardsModule(address(voterRewardsModule));
         vm.stopPrank();
     }
 
@@ -275,11 +308,11 @@ contract VoterRewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
-        voterRewardsModule.release(testAddress1AuthorProposal1, 1);
+        voterRewardsModule.release(TEST_ADDRESS_1, 1);
 
         vm.stopPrank();
 
-        assertEq(testAddress1AuthorProposal1.balance, 50);
+        assertEq(TEST_ADDRESS_1.balance, 50);
     }
 
     // 1 proposal at 1 vote; release to voter of rank 1
@@ -598,7 +631,7 @@ contract VoterRewardsModuleTest is Test {
         vm.prank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
         vm.prank(TEST_ADDRESS_1);
-        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(secondProposalPA1);
+        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
         vm.prank(TEST_ADDRESS_2);
         uint256 proposalId3 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
 
@@ -718,11 +751,11 @@ contract VoterRewardsModuleTest is Test {
         payPerVoteFlatCurveContest.castVote{ value: 1 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId1, 1 ether * 1 ether);
         payPerVoteFlatCurveContest.castVote{ value: 2 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 2 ether * 1 ether);
         payPerVoteFlatCurveContest.castVote{ value: 5 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 5 ether * 1 ether);
-        vm.stopPrank()
+        vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(TEST_ADDRESS_2, 1);
 
         assertEq(TEST_ADDRESS_2.balance, 50);
     }
@@ -741,8 +774,8 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(TEST_ADDRESS_2, 1);
 
         assertEq(TEST_ADDRESS_1.balance, 50);
     }
@@ -763,8 +796,8 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(TEST_ADDRESS_2, 1);
 
         assertEq(TEST_ADDRESS_2.balance, 50);
     }
@@ -782,11 +815,11 @@ contract VoterRewardsModuleTest is Test {
         payPerVoteFlatCurveContest.castVote{ value: 1 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId1, 1 ether * 1 ether);
         payPerVoteFlatCurveContest.castVote{ value: 1 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 1 ether * 1 ether);
         payPerVoteFlatCurveContest.castVote{ value: 5 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 5 ether * 1 ether);
-        vm.stopPrank():
+        vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(TEST_ADDRESS_2, 1);
 
         assertEq(TEST_ADDRESS_2.balance, 50);
     }
@@ -810,8 +843,8 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthor.release(1);
+        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
+        voterRewardsModule.release(TEST_ADDRESS_2, 1);
 
         assertEq(TEST_ADDRESS_1.balance, 50);
     }
@@ -824,19 +857,19 @@ contract VoterRewardsModuleTest is Test {
     function testReleaseToAuthorFirstPlaceRankLimit1() public {
         vm.warp(1681650001);
         vm.prank(TEST_ADDRESS_1);
-        uint256 proposalId1 = rankLimitOneContest.propose(testAddress1AuthorProposal1);
+        uint256 proposalId1 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress1AuthorProposal1);
         vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId2 = rankLimitOneContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId2 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress2AuthorProposal1);
 
         vm.warp(1681660001);
         vm.prank(TEST_ADDRESS_1);
-        rankLimitOneContest.castVote{ value: 1 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId1, 1 ether * 1 ether);
-        rankLimitOneContest.castVote{ value: 5 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 5 ether * 1 ether);
+        payPerVoteFlatCurveRankLimitOneContest.castVote{ value: 1 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId1, 1 ether * 1 ether);
+        payPerVoteFlatCurveRankLimitOneContest.castVote{ value: 5 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 5 ether * 1 ether);
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthorToRankOneContest.release(1);
+        vm.deal(address(voterRewardsModuleToRankLimitOneContest), 100); // give the rewards module wei to pay out
+        voterRewardsModuleToRankLimitOneContest.release(TEST_ADDRESS_2, 1);
 
         assertEq(TEST_ADDRESS_2.balance, 50);
     }
@@ -845,40 +878,40 @@ contract VoterRewardsModuleTest is Test {
     function testReleaseToAuthorSecondPlaceRankLimit1() public {
         vm.warp(1681650001);
         vm.prank(TEST_ADDRESS_1);
-        uint256 proposalId1 = rankLimitOneContest.propose(testAddress1AuthorProposal1);
+        uint256 proposalId1 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress1AuthorProposal1);
         vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId2 = rankLimitOneContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId2 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress2AuthorProposal1);
 
         vm.warp(1681660001);
         vm.startPrank(TEST_ADDRESS_1);
-        rankLimitOneContest.castVote{ value: 1 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId1, 1 ether * 1 ether);
-        rankLimitOneContest.castVote{ value: 5 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 5 ether * 1 ether);
+        payPerVoteFlatCurveRankLimitOneContest.castVote{ value: 1 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId1, 1 ether * 1 ether);
+        payPerVoteFlatCurveRankLimitOneContest.castVote{ value: 5 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 5 ether * 1 ether);
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out
+        vm.deal(address(voterRewardsModuleToRankLimitOneContest), 100); // give the rewards module wei to pay out
         vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
-        rewardsModulePaysAuthorToRankOneContest.release(2);
+        voterRewardsModuleToRankLimitOneContest.release(TEST_ADDRESS_2, 2);
     }
 
     // Old value is after inserting index and in array and at limit
     function testReleaseToAuthorFirstPlaceOldValueInArrayAfterInsertingAtLimit() public {
         vm.warp(1681650001);
         vm.prank(TEST_ADDRESS_1);
-        uint256 proposalId1 = rankLimitOneContest.propose(testAddress1AuthorProposal1);
+        uint256 proposalId1 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress1AuthorProposal1);
         vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId2 = rankLimitOneContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId2 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress2AuthorProposal1);
 
         vm.warp(1681660001);
         vm.startPrank(TEST_ADDRESS_1);
-        rankLimitOneContest.castVote{ value: 1 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId1, 1 ether * 1 ether);
-        rankLimitOneContest.castVote{ value: 2 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 2 ether * 1 ether);
-        rankLimitOneContest.castVote{ value: 5 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId1, 5 ether * 1 ether);
+        payPerVoteFlatCurveRankLimitOneContest.castVote{ value: 1 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId1, 1 ether * 1 ether);
+        payPerVoteFlatCurveRankLimitOneContest.castVote{ value: 2 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 2 ether * 1 ether);
+        payPerVoteFlatCurveRankLimitOneContest.castVote{ value: 5 ether * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId1, 5 ether * 1 ether);
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out
-        rewardsModulePaysAuthorToRankOneContest.release(1);
+        vm.deal(address(voterRewardsModuleToRankLimitOneContest), 100); // give the rewards module wei to pay out
+        voterRewardsModuleToRankLimitOneContest.release(TEST_ADDRESS_1, 1);
 
         assertEq(TEST_ADDRESS_1.balance, 50);
     }
