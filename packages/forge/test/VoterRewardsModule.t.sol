@@ -742,9 +742,14 @@ contract VoterRewardsModuleTest is Test {
 
         vm.warp(1681660001);
 
-        vm.deal(address(TEST_ADDRESS_1), 8 * payPerVoteFlatCurveContest.currentPricePerVote());
+        vm.deal(address(TEST_ADDRESS_1), 1 * payPerVoteFlatCurveContest.currentPricePerVote());
+        vm.deal(address(TEST_ADDRESS_2), 7 * payPerVoteFlatCurveContest.currentPricePerVote());
+
         vm.startPrank(TEST_ADDRESS_1);
         payPerVoteFlatCurveContest.castVote{ value: 1 * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId1, 1 ether);
+        vm.stopPrank();
+
+        vm.startPrank(TEST_ADDRESS_2);
         payPerVoteFlatCurveContest.castVote{ value: 2 * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 2 ether);
         payPerVoteFlatCurveContest.castVote{ value: 5 * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 5 ether);
         vm.stopPrank();
@@ -773,7 +778,7 @@ contract VoterRewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
-        voterRewardsModule.release(TEST_ADDRESS_2, 1);
+        voterRewardsModule.release(TEST_ADDRESS_1, 1);
 
         assertEq(TEST_ADDRESS_1.balance, 50);
     }
@@ -816,9 +821,14 @@ contract VoterRewardsModuleTest is Test {
 
         vm.warp(1681660001);
 
-        vm.deal(address(TEST_ADDRESS_1), 7 * payPerVoteFlatCurveContest.currentPricePerVote());
+        vm.deal(address(TEST_ADDRESS_1), 1 * payPerVoteFlatCurveContest.currentPricePerVote());
+        vm.deal(address(TEST_ADDRESS_2), 6 * payPerVoteFlatCurveContest.currentPricePerVote());
+
         vm.startPrank(TEST_ADDRESS_1);
         payPerVoteFlatCurveContest.castVote{ value: 1 * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId1, 1 ether);
+        vm.stopPrank();
+
+        vm.startPrank(TEST_ADDRESS_2);
         payPerVoteFlatCurveContest.castVote{ value: 1 * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 1 ether);
         payPerVoteFlatCurveContest.castVote{ value: 5 * payPerVoteFlatCurveContest.currentPricePerVote() }(proposalId2, 5 ether);
         vm.stopPrank();
