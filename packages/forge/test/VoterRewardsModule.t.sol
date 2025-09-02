@@ -132,11 +132,11 @@ contract VoterRewardsModuleTest is Test {
         })
     });
 
-    Governor.ProposalCore public testAddress2AuthorProposal1 = Governor.ProposalCore({
-        author: TEST_ADDRESS_2,
-        description: "testAddress2AuthorProposal1",
+    Governor.ProposalCore public testAddress1AuthorProposal3 = Governor.ProposalCore({
+        author: TEST_ADDRESS_1,
+        description: "testAddress1AuthorProposal3",
         exists: true,
-        targetMetadata: Governor.TargetMetadata({targetAddress: TEST_ADDRESS_2}),
+        targetMetadata: Governor.TargetMetadata({targetAddress: TEST_ADDRESS_1}),
         safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
         fieldsMetadata: Governor.FieldsMetadata({
             addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
@@ -145,11 +145,11 @@ contract VoterRewardsModuleTest is Test {
         })
     });
 
-    Governor.ProposalCore public testAddress2AuthorProposal2 = Governor.ProposalCore({
-        author: TEST_ADDRESS_2,
+    Governor.ProposalCore public testAddress1AuthorProposal4 = Governor.ProposalCore({
+        author: TEST_ADDRESS_1,
         description: "testAddress2AuthorProposal2",
         exists: true,
-        targetMetadata: Governor.TargetMetadata({targetAddress: TEST_ADDRESS_2}),
+        targetMetadata: Governor.TargetMetadata({targetAddress: TEST_ADDRESS_1}),
         safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
         fieldsMetadata: Governor.FieldsMetadata({
             addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
@@ -427,15 +427,15 @@ contract VoterRewardsModuleTest is Test {
         assertEq(testERC20.balanceOf(TEST_ADDRESS_2), 25);
     }
 
-    //// 2 PROPOSALS WITH DIFFERENT VOTERS
+    //// 2 PROPOSALS
 
-    // 2 proposals with different voters, at 1 and 5 votes; release to voter of rank 1
+    // 2 proposals, at 1 and 5 votes; release to voter of rank 1
     function testReleaseToVoterFirstPlace2WithNative() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -454,13 +454,13 @@ contract VoterRewardsModuleTest is Test {
         assertEq(TEST_ADDRESS_2.balance, 50);
     }
 
-    // 2 proposals with different authors, at 1 and 5 votes; release to voter of rank 1
+    // 2 proposals, at 1 and 5 votes; release to voter of rank 1
     function testReleaseToVoterFirstPlace2WithERC20() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -484,15 +484,15 @@ contract VoterRewardsModuleTest is Test {
 
     // TIES
 
-    //// 2 PROPOSALS WITH DIFFERENT AUTHORS
+    //// 2 PROPOSALS
 
     // 2 proposals, both at 1 vote; send back to creator
     function testFirstPlaceTieWithNative() public {
         vm.warp(1681650001);
         vm.prank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -511,14 +511,14 @@ contract VoterRewardsModuleTest is Test {
         assertEq(CREATOR_ADDRESS.balance, 50);
     }
 
-    // 2 proposals with different authors, both at 1 vote; send back to creator
+    // 2 proposals, both at 1 vote; send back to creator
     function testFirstPlaceTieWithERC20() public {
         vm.warp(1681650001);
 
         vm.prank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -538,13 +538,13 @@ contract VoterRewardsModuleTest is Test {
         assertEq(testERC20.balanceOf(CREATOR_ADDRESS), 50);
     }
 
-    // 2 proposals with different authors, both at 0 votes; reverted
+    // 2 proposals, both at 0 votes; reverted
     function testFirstPlaceTieWithZeroVotesWithNative() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_2);
-        payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
+        payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
+        vm.stopPrank();
 
         vm.warp(1681670001);
         vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
@@ -552,13 +552,13 @@ contract VoterRewardsModuleTest is Test {
         voterRewardsModule.release(TEST_ADDRESS_1, 1);
     }
 
-    // 2 proposals with different authors, both at 0 votes; reverted
+    // 2 proposals, both at 0 votes; reverted
     function testFirstPlaceTieWithZeroVotesWithERC20() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_2);
-        payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
+        payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
+        vm.stopPrank();
 
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS);
@@ -567,13 +567,13 @@ contract VoterRewardsModuleTest is Test {
         voterRewardsModule.release(testERC20, TEST_ADDRESS_1, 1);
     }
 
-    // 2 proposals with different authors, both at 0 votes; release 2nd place; reverted
+    // 2 proposals, both at 0 votes; release 2nd place; reverted
     function testSecondPlaceTieWithZeroVotesWithNative() public {
         vm.warp(1681650001);
         vm.prank(TEST_ADDRESS_1);
         payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_2);
-        payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
+        payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
+        vm.stopPrank();
 
         vm.warp(1681670001);
         vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
@@ -581,13 +581,13 @@ contract VoterRewardsModuleTest is Test {
         voterRewardsModule.release(TEST_ADDRESS_1, 2);
     }
 
-    // 2 proposals with different authors, both at 0 votes; release 2nd place; reverted
+    // 2 proposals, both at 0 votes; release 2nd place; reverted
     function testSecondPlaceTieWithZeroVotesWithERC20() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_2);
-        payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
+        payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
+        vm.stopPrank();
 
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS);
@@ -602,12 +602,11 @@ contract VoterRewardsModuleTest is Test {
     function testSecondPlaceTieWithNative() public {
         vm.warp(1681650001);
 
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_1);
         uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId3 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId3 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal3);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -625,15 +624,14 @@ contract VoterRewardsModuleTest is Test {
         assertEq(CREATOR_ADDRESS.balance, 33);
     }
 
-    // 3 proposals from 2 different authors, 1 at 3 votes and 2 at 1 vote; send back to creator
+    // 3 proposals, 1 at 3 votes and 2 at 1 vote; send back to creator
     function testSecondPlaceTieWithERC20() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_1);
         uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId3 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId3 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal3);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -657,14 +655,12 @@ contract VoterRewardsModuleTest is Test {
     // 4 proposals, 1 at 3 votes and 2 at 2 votes, and 1 at 1 vote; send back to creator
     function testSecondPlaceTiePayOutThirdPlaceWithNative() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_1);
         uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId3 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
-        vm.prank(TEST_ADDRESS_1);
-        uint256 proposalId4 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal2);
+        uint256 proposalId3 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal3);
+        uint256 proposalId4 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal4);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -686,14 +682,12 @@ contract VoterRewardsModuleTest is Test {
     // 4 proposals from 2 different authors, 1 at 3 votes and 2 at 2 votes, and 1 at 1 vote; send back to creator
     function testSecondPlaceTiePayOutThirdPlaceWithERC20() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_1);
         uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId3 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
-        vm.prank(TEST_ADDRESS_1);
-        uint256 proposalId4 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal2);
+        uint256 proposalId3 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal3);
+        uint256 proposalId4 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal4);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -741,10 +735,10 @@ contract VoterRewardsModuleTest is Test {
     // Old value is at inserting index
     function testReleaseToAuthorFirstPlaceOldValueAtInsertingIndex() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -765,9 +759,9 @@ contract VoterRewardsModuleTest is Test {
     // Old value is at inserting index and is only value in array
     function testReleaseToAuthorFirstPlaceOldValueAtInsertingIndexOnlyValue() public {
         vm.warp(1681650001);
-
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -787,10 +781,10 @@ contract VoterRewardsModuleTest is Test {
     // Old value is after inserting index and in array
     function testReleaseToAuthorFirstPlaceOldValueAfterInserting() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -815,10 +809,10 @@ contract VoterRewardsModuleTest is Test {
     // Old value is at inserting index and tied
     function testReleaseToAuthorFirstPlaceOldValueAtInsertingIndexAndTied() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -839,12 +833,11 @@ contract VoterRewardsModuleTest is Test {
     // Old value is after inserting index, in array, and tied
     function testReleaseToAuthorFirstPlaceOldValueAfterInsertingAndTied() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_1);
         uint256 proposalId2 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal2);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId3 = payPerVoteFlatCurveContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId3 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal3);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -881,10 +874,10 @@ contract VoterRewardsModuleTest is Test {
     // 2 proposals, different authors, at 1 and 5 votes, on contest with rank limit of 1 - array already at limit, release to author of rank 1
     function testReleaseToAuthorFirstPlaceRankLimit1() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId2 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId2 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress1AuthorProposal2);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -904,10 +897,10 @@ contract VoterRewardsModuleTest is Test {
     // 2 proposals, different authors, at 1 and 5 votes, on contest with rank limit of 1 - array already at limit, release to author of rank 2 - should error
     function testReleaseToAuthorSecondPlaceRankLimit1() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId2 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId2 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress1AuthorProposal2);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
@@ -926,10 +919,10 @@ contract VoterRewardsModuleTest is Test {
     // Old value is after inserting index and in array and at limit
     function testReleaseToAuthorFirstPlaceOldValueInArrayAfterInsertingAtLimit() public {
         vm.warp(1681650001);
-        vm.prank(TEST_ADDRESS_1);
+        vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress1AuthorProposal1);
-        vm.prank(TEST_ADDRESS_2);
-        uint256 proposalId2 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress2AuthorProposal1);
+        uint256 proposalId2 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress1AuthorProposal2);
+        vm.stopPrank();
 
         vm.warp(1681660001);
 
