@@ -2529,15 +2529,6 @@
     viem "^2.31.7"
     zustand "5.0.3"
 
-"@bigmi/client@^0.4.4":
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.4.4.tgz#ebd61c924f14d156e71bff9c3768035cbaa7a736"
-  integrity sha512-ZyL3tsxXqycb8iHPmkD4ioyDVL0v7giRRm4nbaPLrXVUkoLDDazhA93KzrGaJ62D0v7nWYhWHHDO7J4C8QV9NQ==
-  dependencies:
-    "@bigmi/core" "^0.4.4"
-    eventemitter3 "^5.0.1"
-    zustand "^5.0.7"
-
 "@bigmi/client@^0.5.2":
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.5.2.tgz#3666786e653e46dbaa61f81322826e6f47678dee"
@@ -2546,18 +2537,6 @@
     "@bigmi/core" "^0.5.2"
     eventemitter3 "^5.0.1"
     zustand "^5.0.8"
-
-"@bigmi/core@^0.4.4":
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/@bigmi/core/-/core-0.4.4.tgz#097322507b74a168a6e2a1018a6fdbf47d3f0052"
-  integrity sha512-FTRmvsCf/UU3y2rXRXD6aSmFGa2hqsCKb//ZCTUz9uUKAVqogBPLLeJziWfaT5pbhyvSZOU/+2Pcge8lVbQXjw==
-  dependencies:
-    "@noble/hashes" "^1.8.0"
-    bech32 "^2.0.0"
-    bitcoinjs-lib "^7.0.0-rc.0"
-    bs58 "^6.0.0"
-    eventemitter3 "^5.0.1"
-    zustand "^5.0.7"
 
 "@bigmi/core@^0.5.2":
   version "0.5.2"
@@ -2571,13 +2550,13 @@
     eventemitter3 "^5.0.1"
     zustand "^5.0.8"
 
-"@bigmi/react@0.4.4":
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.4.4.tgz#ba83d990e92ec5b12cfdc5c2a2eb40323de45924"
-  integrity sha512-mqAncuFvW6g3BnisftFfViJjQdbMVrX77o0Y5tCsUJltUKvxDTqSQ95kgF+frgA69v2QeNh4We8AYtbSTg9qlA==
+"@bigmi/react@0.5.2":
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.5.2.tgz#d63a979e2598e82af697c479a0df1991f7ad0fe3"
+  integrity sha512-oF95TEuTOuAPRaPGZkl9D//t1H/Cv00LN8tcgUgorsuMi7ZIjLaWZMF1P24YcbXiq2jV4QFmnEAMsvwTiRszWQ==
   dependencies:
-    "@bigmi/client" "^0.4.4"
-    "@bigmi/core" "^0.4.4"
+    "@bigmi/client" "^0.5.2"
+    "@bigmi/core" "^0.5.2"
 
 "@bitcoinerlab/secp256k1@^1.2.0":
   version "1.2.0"
@@ -19506,7 +19485,7 @@ zustand@5.0.3:
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-5.0.3.tgz#b323435b73d06b2512e93c77239634374b0e407f"
   integrity sha512-14fwWQtU3pH4dE0dOpdMiWjddcH+QzKIgk1cl8epwSE7yag43k/AD/m4L6+K7DytAOr9gGBe3/EXj9g7cdostg==
 
-zustand@5.0.8, zustand@^5.0.7, zustand@^5.0.8:
+zustand@5.0.8, zustand@^5.0.8:
   version "5.0.8"
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-5.0.8.tgz#b998a0c088c7027a20f2709141a91cb07ac57f8a"
   integrity sha512-gyPKpIaxY9XcO2vSMrLbiER7QMAMGOQZVRdJ6Zi782jkbzZygq5GI9nG8g+sMgitRtndwaBSl7uiqC49o1SSiw==
