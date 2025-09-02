@@ -6155,7 +6155,6 @@ abstract contract GovernorModuleRegistry is Governor {
 contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEngagement {
     uint256 public constant SECONDS_IN_WEEK = 604800;
 
-    error PayPerVoteMustBeEnabledForAnyoneCanVote();
     error PeriodsCannotBeMoreThanAWeek();
     error RankLimitCannotBeZero();
 
