@@ -8,6 +8,7 @@ import "../src/modules/VoterRewardsModule.sol";
 
 contract VoterRewardsModuleTest is Test {
     // CONTEST VARS
+    Contest public payPerVoteFlatCurveContest;
     Contest public payPerVoteExpCurveContest;
 
     // BASIC PARAMS
@@ -23,7 +24,6 @@ contract VoterRewardsModuleTest is Test {
     // COST PARAMS
     uint256 public constant NINETY_PERCENT_TO_CREATOR = 90;
     uint256 public constant ZERO_COST_TO_PROPOSE = 0;
-    uint256 public constant ZERO_COST_TO_VOTE = 0;
     uint256 public constant TEN_VOTES = 10 ether;
     uint256 public constant STANDARD_COST_TO_VOTE = 100000000000000;
     uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
@@ -40,6 +40,32 @@ contract VoterRewardsModuleTest is Test {
     // METADATA CONSTRUCTOR PARAMS
     string public constant METADATA_FIELDS_SCHEMA =
         "{\'Test Address Field\': \'address\', \'Test String Field\': \'string\', \'Test Uint Field\': \'uint256\'}";
+
+    Governor.IntConstructorArgs public payPerVoteFlatCurveIntConstructorArgs = Governor.IntConstructorArgs(
+        ANYONE_CAN_SUBMIT,
+        CONTEST_START,
+        VOTING_DELAY,
+        VOTING_PERIOD,
+        NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
+        MAX_PROPOSAL_COUNT,
+        SORTING_ENABLED,
+        RANK_LIMIT_250,
+        NINETY_PERCENT_TO_CREATOR,
+        ZERO_COST_TO_PROPOSE,
+        STANDARD_COST_TO_VOTE,
+        FLAT_PRICE_CURVE_TYPE,
+        ZERO_EXPONENT_MULTIPLE
+    );
+
+    Governor.ConstructorArgs public payPerVoteFlatCurveNumParams = Governor.ConstructorArgs(
+        CONTEST_NAME,
+        CONTEST_PROMPT,
+        payPerVoteExpCurveIntConstructorArgs,
+        CREATOR_SPLIT_DESTINATION,
+        JK_LABS_SPLIT_DESTINATION,
+        METADATA_FIELDS_SCHEMA
+    );
+
 
     Governor.IntConstructorArgs public payPerVoteExpCurveIntConstructorArgs = Governor.IntConstructorArgs(
         ANYONE_CAN_SUBMIT,
@@ -110,6 +136,7 @@ contract VoterRewardsModuleTest is Test {
     function setUp() public {
         vm.startPrank(CREATOR_ADDRESS);
 
+        payPerVoteFlatCurveContest = new Contest(payPerVoteFlatCurveNumParams);
         payPerVoteExpCurveContest = new Contest(payPerVoteExpCurveNumParams);
         payPerVoteExpCurveContest2 = new Contest(payPerVoteExpCurveNumParams);
         voterRewardsModule = new VoterRewardsModule(payees, shares, Contest(payPerVoteExpCurveContest));
