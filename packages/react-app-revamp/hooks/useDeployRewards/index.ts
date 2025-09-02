@@ -1,12 +1,7 @@
 import { useFundPoolStore } from "@components/_pages/Contest/Rewards/components/Create/steps/FundPool/store";
-import {
-  CreationStep,
-  RewardPoolType,
-  useCreateRewardsStore,
-} from "@components/_pages/Contest/Rewards/components/Create/store";
+import { CreationStep, useCreateRewardsStore } from "@components/_pages/Contest/Rewards/components/Create/store";
 import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import VotingModuleContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { extractPathSegments } from "@helpers/extractPath";
 import { setupDeploymentClients } from "@helpers/viem";
@@ -27,14 +22,13 @@ export function useDeployRewardsPool() {
   const asPath = usePathname();
   const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
-  const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards, rewardPoolType, resetCreateRewardsStore } =
+  const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards, resetCreateRewardsStore } =
     useCreateRewardsStore(
       useShallow(state => ({
         rewardPoolData: state.rewardPoolData,
         setRewardPoolData: state.setRewardPoolData,
         setStep: state.setStep,
         addEarningsToRewards: state.addEarningsToRewards,
-        rewardPoolType: state.rewardPoolType,
         resetCreateRewardsStore: state.reset,
       })),
     );
@@ -65,7 +59,7 @@ export function useDeployRewardsPool() {
       }
 
       try {
-        await insertContestWithOfficialModule(contestAddress, chainName, rewardPoolType);
+        await insertContestWithOfficialModule(contestAddress, chainName);
       } catch (error) {
         console.error("Failed to insert contest with official module:", error);
       }
@@ -95,13 +89,12 @@ export function useDeployRewardsPool() {
       }
 
       const { walletClient, publicClient, chain } = await setupDeploymentClients(userAddress, chainId);
-      const baseParams = [rewardPoolData.rankings, rewardPoolData.shareAllocations, contestAddress as `0x${string}`];
-      const contract = rewardPoolType === RewardPoolType.Winners ? RewardsModuleContract : VotingModuleContract;
+      const baseParams = [rewardPoolData.rankings, rewardPoolData.shareAllocations, contestAddress];
 
       const contractRewardsModuleHash = await walletClient.deployContract({
-        abi: contract.abi,
-        bytecode: contract.bytecode.object as `0x${string}`,
-        args: [...baseParams, ...(rewardPoolType === RewardPoolType.Winners ? [false] : [])],
+        abi: VotingModuleContract.abi,
+        bytecode: VotingModuleContract.bytecode.object as `0x${string}`,
+        args: [...baseParams],
         account: userAddress as `0x${string}`,
         chain: chain,
       });

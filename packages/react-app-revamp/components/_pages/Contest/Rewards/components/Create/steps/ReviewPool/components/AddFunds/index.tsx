@@ -4,6 +4,7 @@ import { useMediaQuery } from "react-responsive";
 import { useCreateRewardsStore } from "../../../../store";
 import { useFundPoolStore } from "../../../FundPool/store";
 import { useShallow } from "zustand/shallow";
+
 const CreateRewardsAddFundsToggle = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const anyoneCanVote = useContestStore(useShallow(state => state.anyoneCanVote));
