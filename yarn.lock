@@ -4725,15 +4725,15 @@
     "@mysten/utils" "0.1.1"
     "@scure/base" "^1.2.6"
 
-"@mysten/dapp-kit@0.17.6":
-  version "0.17.6"
-  resolved "https://registry.yarnpkg.com/@mysten/dapp-kit/-/dapp-kit-0.17.6.tgz#f61da1da9c4ea0bad10f7f034fe894e2a87b693b"
-  integrity sha512-iHguiCflE3MxTI0Oknv/Onzbu/9H3oKS/3szw72zDe7wh9skfM+OC21sUPR/KHrzESCdVtC1sPmGXbUhscqFKw==
+"@mysten/dapp-kit@0.17.7":
+  version "0.17.7"
+  resolved "https://registry.yarnpkg.com/@mysten/dapp-kit/-/dapp-kit-0.17.7.tgz#34e005a08b79501cf1b4fc0d8e82f6633cb2ecb0"
+  integrity sha512-meLhrdxk3de7pzPnIyCMCRuiTfjvZpbUJ3/WBY1qmuvvY49wsnBrCFqjOUapa0eZP5GlMLKPOAVj+cQa7xyg7A==
   dependencies:
-    "@mysten/slush-wallet" "0.1.23"
-    "@mysten/sui" "1.37.5"
+    "@mysten/slush-wallet" "0.1.24"
+    "@mysten/sui" "1.37.6"
     "@mysten/utils" "0.1.1"
-    "@mysten/wallet-standard" "0.16.13"
+    "@mysten/wallet-standard" "0.16.14"
     "@radix-ui/react-dialog" "^1.1.14"
     "@radix-ui/react-dropdown-menu" "^2.1.15"
     "@radix-ui/react-slot" "^1.2.3"
@@ -4743,14 +4743,14 @@
     clsx "^2.1.1"
     zustand "^4.5.4"
 
-"@mysten/slush-wallet@0.1.23":
-  version "0.1.23"
-  resolved "https://registry.yarnpkg.com/@mysten/slush-wallet/-/slush-wallet-0.1.23.tgz#a049f9330b94d76c5173bec43b89cff597a3add2"
-  integrity sha512-zE1HsrNJZktmpAobFifYeg75e7rb/oMJpBt/5azcqdfRcB8ujAhQ+NQgCWvJDENa+NO/uqhw2Rf6o2Lk/U8w/Q==
+"@mysten/slush-wallet@0.1.24":
+  version "0.1.24"
+  resolved "https://registry.yarnpkg.com/@mysten/slush-wallet/-/slush-wallet-0.1.24.tgz#c301e5ca4a88a16c09d8e31a396ef9d9c0855553"
+  integrity sha512-3hNYK8odHuajJAuR+t3Hm2LJ6YeDEP7To2msaFHUEOn4FCRJEograCf5h5gDYouBxEcrjEEwNVjP03hk01Gy8w==
   dependencies:
-    "@mysten/sui" "1.37.5"
+    "@mysten/sui" "1.37.6"
     "@mysten/utils" "0.1.1"
-    "@mysten/wallet-standard" "0.16.13"
+    "@mysten/wallet-standard" "0.16.14"
     "@mysten/window-wallet-core" "0.0.6"
     mitt "^3.0.1"
     valibot "^0.36.0"
@@ -4773,6 +4773,24 @@
     poseidon-lite "^0.2.0"
     valibot "^0.36.0"
 
+"@mysten/sui@1.37.6":
+  version "1.37.6"
+  resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.37.6.tgz#1bb1797e64657a44ebdcbbee66778a173b65de56"
+  integrity sha512-7ut5tWuXx9OIE+DQ2D5hd22UB8j8K4/F2Lx3R8Ej/JMwkm6cpgbF5FKNu0vYqehxiFEktMnq2YzzajxmlFHNPw==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.2.0"
+    "@mysten/bcs" "1.7.0"
+    "@mysten/utils" "0.1.1"
+    "@noble/curves" "^1.9.4"
+    "@noble/hashes" "^1.8.0"
+    "@scure/base" "^1.2.6"
+    "@scure/bip32" "^1.7.0"
+    "@scure/bip39" "^1.6.0"
+    gql.tada "^1.8.12"
+    graphql "^16.11.0"
+    poseidon-lite "0.2.1"
+    valibot "^0.36.0"
+
 "@mysten/utils@0.1.1":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@mysten/utils/-/utils-0.1.1.tgz#4f2e24234bcf8b6977e47fd5469f46af57de5575"
@@ -4780,7 +4798,15 @@
   dependencies:
     "@scure/base" "^1.2.6"
 
-"@mysten/wallet-standard@0.16.13", "@mysten/wallet-standard@^0.16.12", "@mysten/wallet-standard@^0.16.13":
+"@mysten/wallet-standard@0.16.14":
+  version "0.16.14"
+  resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.16.14.tgz#f933b63155275fa6cb5ed738e80539560160b2f7"
+  integrity sha512-LJoDQUD+217RdRbkQLiKYYjkNtN6GhGpIN/X3wboUf3w5pdvBc4k/vS1Yi6GFv5xbgl/ge7wzC4Ac+h3orY2oQ==
+  dependencies:
+    "@mysten/sui" "1.37.6"
+    "@wallet-standard/core" "1.1.1"
+
+"@mysten/wallet-standard@^0.16.12", "@mysten/wallet-standard@^0.16.13":
   version "0.16.13"
   resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.16.13.tgz#d25eda014cff5276a2b460e975935fd32fb15e82"
   integrity sha512-hoWcqD2CEtzwdGm2V40n3j1rfkJboiFiaiMdrnxjGqbZvsHYb/T31pPNmXlFq+8fi292E3NASSFjmnjiOCd5vw==
@@ -15765,7 +15791,7 @@ pony-cause@^2.1.10:
   resolved "https://registry.yarnpkg.com/pony-cause/-/pony-cause-2.1.10.tgz#828457ad6f13be401a075dbf14107a9057945174"
   integrity sha512-3IKLNXclQgkU++2fSi93sQ6BznFuxSLB11HdvZQ6JW/spahf/P1pAHBQEahr20rs0htZW0UDkM1HmA+nZkXKsw==
 
-poseidon-lite@^0.2.0:
+poseidon-lite@0.2.1, poseidon-lite@^0.2.0:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/poseidon-lite/-/poseidon-lite-0.2.1.tgz#7ad98e3a3aa5b91a1fd3a61a87460e9e46fd76d6"
   integrity sha512-xIr+G6HeYfOhCuswdqcFpSX47SPhm0EpisWJ6h7fHlWwaVIvH3dLnejpatrtw6Xc6HaLrpq05y7VRfvDmDGIog==
