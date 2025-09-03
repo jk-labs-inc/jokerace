@@ -44,9 +44,4 @@ export function getEntryPreviewPrompt(config: EntryPreviewConfig): string {
   return `${preview}${descriptionSuffix}`;
 }
 
-export function formatRecipients(recipients: Recipient[]): Recipient[] {
-  return recipients.map(recipient => ({
-    ...recipient,
-    numVotes: formatUnits(BigInt(recipient.numVotes), 18),
-  }));
-}
+

@@ -13,7 +13,11 @@ const VotingContestQualifier: FC<VotingContestQualifierProps> = ({ votingTimeLef
 
   return (
     <div className="w-full flex flex-col gap-2 md:gap-4 md:pl-4">
-      {anyoneCanVote ? <VotingQualifierAnyoneCanVote votingTimeLeft={votingTimeLeft} /> : <VotingQualifierAllowlisted />}
+      {anyoneCanVote ? (
+        <VotingQualifierAnyoneCanVote votingTimeLeft={votingTimeLeft} />
+      ) : (
+        <VotingQualifierAllowlisted />
+      )}
     </div>
   );
 };

@@ -1,7 +1,13 @@
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
+enum AnyoneCanSubmit {
+  ONLY_CREATOR = "ONLY_CREATOR",
+  ANYONE_CAN_SUBMIT = "ANYONE_CAN_SUBMIT",
+}
+
 interface UserState {
+  anyoneCanSubmit: AnyoneCanSubmit;
   currentUserQualifiedToSubmit: boolean;
   currentUserQualifiedToVote: boolean;
   currentUserTotalVotesAmount: number;
@@ -29,10 +35,12 @@ interface UserState {
   setIsCurrentUserVoteQualificationLoading: (value: boolean) => void;
   setIsCurrentUserVoteQualificationSuccess: (value: boolean) => void;
   setIsCurrentUserVoteQualificationError: (value: boolean) => void;
+  setAnyoneCanSubmit: (value: AnyoneCanSubmit) => void;
 }
 
 export const createUserStore = () =>
   createStore<UserState>(set => ({
+    anyoneCanSubmit: AnyoneCanSubmit.ANYONE_CAN_SUBMIT,
     currentUserQualifiedToSubmit: false,
     currentUserQualifiedToVote: false,
     currentUserAvailableVotesAmount: 0,
@@ -49,7 +57,7 @@ export const createUserStore = () =>
     isCurrentUserVoteQualificationLoading: false,
     isCurrentUserVoteQualificationSuccess: false,
     isCurrentUserVoteQualificationError: false,
-
+    setAnyoneCanSubmit: value => set({ anyoneCanSubmit: value }),
     setCurrentUserQualifiedToSubmit: value => set({ currentUserQualifiedToSubmit: value }),
     setCurrentUserQualifiedToVote: value => set({ currentUserQualifiedToVote: value }),
     setCurrentuserTotalVotesCast: amount => set({ currentUserTotalVotesCast: amount }),

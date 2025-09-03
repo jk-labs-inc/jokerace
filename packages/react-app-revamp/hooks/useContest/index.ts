@@ -17,8 +17,7 @@ import { getRewardsModuleAddress } from "lib/rewards/contracts";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
-import { ContestInfoData, ErrorType, useContestStore } from "./store";
-import { getV1Contracts } from "./v1/contracts";
+import { ErrorType, useContestStore } from "./store";
 import { getContracts } from "./v3v4/contracts";
 
 interface ContractConfigResult {
@@ -132,7 +131,6 @@ export function useContest() {
       const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
       const contestPrompt = results[7].result as string;
       const contestState = results[8].result as ContestStateEnum;
-
       const costToPropose = Number(results[10].result);
 
       if (compareVersions(version, "4.2") >= 0) {
@@ -162,6 +160,7 @@ export function useContest() {
 
       setCharge({
         percentageToCreator,
+        //TODO: no more payPerVote, we need to migrate this to the new charge system
         voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
         splitFeeDestination: {
           type: determineSplitFeeDestination(

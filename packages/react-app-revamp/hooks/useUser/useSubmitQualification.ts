@@ -2,7 +2,6 @@ import { config } from "@config/wagmi";
 import { ContractConfig } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { readContract, readContracts } from "@wagmi/core";
-import { compareVersions } from "compare-versions";
 import { useUserStore } from "./store";
 import { EMPTY_ROOT } from "./utils";
 
@@ -22,11 +21,6 @@ export const useSubmitQualification = (
 
   const checkIfCurrentUserQualifyToSubmit = async (contractConfig: ContractConfig, version: string) => {
     setIsCurrentUserSubmitQualificationLoading(true);
-
-    if (compareVersions(version, "3.0") == -1) {
-      setIsCurrentUserSubmitQualificationLoading(false);
-      return;
-    }
 
     if (!contractConfig.abi) {
       setIsCurrentUserSubmitQualificationError(true);

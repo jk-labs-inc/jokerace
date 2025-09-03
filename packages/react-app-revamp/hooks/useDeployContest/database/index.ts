@@ -1,9 +1,7 @@
 import { chains, config } from "@config/wagmi";
-import { MAX_ROWS } from "@helpers/csvConstants";
 import { isSupabaseConfigured } from "@helpers/database";
-import { canUploadLargeAllowlist } from "lib/vip";
-import { ContestValues, SubmissionMerkle, VotingMerkle } from "../types";
 import { getAccount } from "@wagmi/core";
+import { ContestValues } from "../types";
 
 export async function getJkLabsSplitDestinationAddress(
   chainId: number,
@@ -41,114 +39,39 @@ export async function getJkLabsSplitDestinationAddress(
   return data.jk_labs_split_destination;
 }
 
-export async function checkForSpoofing(
-  address: string,
-  votingMerkle: { prefilled: VotingMerkle | null; csv: VotingMerkle | null },
-  submissionMerkle: SubmissionMerkle | null,
-) {
-  const votingMerkleData = votingMerkle.prefilled || votingMerkle.csv;
-
-  const exceedsVotingMaxRows = votingMerkleData && votingMerkleData.voters.length > MAX_ROWS;
-  const exceedsSubmissionMaxRows = submissionMerkle && submissionMerkle.submitters.length > MAX_ROWS;
-
-  let isVotingAllowListed = false;
-  let isSubmissionAllowListed = false;
-
-  if (exceedsVotingMaxRows) {
-    isVotingAllowListed = await canUploadLargeAllowlist(address, votingMerkleData.voters.length);
-    if (!isVotingAllowListed) {
-      return true;
-    }
+export async function indexContest(contestData: ContestValues) {
+  if (!isSupabaseConfigured) {
+    throw new Error("Supabase is not configured");
   }
 
-  if (exceedsSubmissionMaxRows) {
-    isSubmissionAllowListed = await canUploadLargeAllowlist(address, submissionMerkle.submitters.length);
-    if (!isSubmissionAllowListed) {
-      return true;
-    }
-  }
+  const { address } = getAccount(config);
+  const supabaseConfig = await import("@config/supabase");
+  const supabase = supabaseConfig.supabase;
 
-  return false;
-}
+  const { error } = await supabase.from("contests_v3").insert([
+    {
+      created_at: new Date().toISOString(),
+      start_at: contestData.datetimeOpeningSubmissions.toISOString(),
+      vote_start_at: contestData.datetimeOpeningVoting.toISOString(),
+      end_at: contestData.datetimeClosingVoting.toISOString(),
+      title: contestData.title,
+      type: contestData.type,
+      prompt: contestData.prompt,
+      address: contestData.contractAddress,
+      anyoneCanSubmit: contestData.anyoneCanSubmit,
+      votingMerkleRoot: null,
+      submissionMerkleRoot: null,
+      author_address: contestData?.authorAddress ?? address,
+      network_name: contestData.networkName,
+      featured: contestData.featured ?? false,
+      voting_requirements: contestData.voting_requirements,
+      cost_to_propose: contestData.cost_to_propose,
+      cost_to_vote: contestData.cost_to_vote,
+      percentage_to_creator: contestData.percentage_to_creator,
+    },
+  ]);
 
-export async function indexContest(
-  contestData: ContestValues,
-  votingMerkle: VotingMerkle | null,
-  submissionMerkle: SubmissionMerkle | null,
-) {
-  const participantsWorker = new Worker(new URL("/workers/indexContestParticipants", import.meta.url));
-
-  try {
-    if (!isSupabaseConfigured) {
-      throw new Error("Supabase is not configured");
-    }
-
-    const tasks = [];
-
-    tasks.push(saveContestToDatabase(contestData));
-
-    const workerData = {
-      contestData,
-      votingMerkle,
-      submissionMerkle,
-    };
-
-    const workerTask = new Promise<void>((resolve, reject) => {
-      participantsWorker.onmessage = event => {
-        if (event.data.success) {
-          resolve();
-        } else {
-          reject(new Error(event.data.error));
-        }
-      };
-
-      participantsWorker.onerror = error => {
-        reject(error);
-      };
-
-      participantsWorker.postMessage(workerData);
-    });
-
-    tasks.push(workerTask);
-
-    await Promise.all(tasks);
-  } catch (e: any) {
-    throw e;
-  } finally {
-    participantsWorker.terminate();
-  }
-}
-
-async function saveContestToDatabase(values: ContestValues) {
-  try {
-    const { address } = getAccount(config);
-    const supabaseConfig = await import("@config/supabase");
-    const supabase = supabaseConfig.supabase;
-    const { error } = await supabase.from("contests_v3").insert([
-      {
-        created_at: new Date().toISOString(),
-        start_at: values.datetimeOpeningSubmissions.toISOString(),
-        vote_start_at: values.datetimeOpeningVoting.toISOString(),
-        end_at: values.datetimeClosingVoting.toISOString(),
-        title: values.title,
-        type: values.type,
-        prompt: values.prompt,
-        address: values.contractAddress,
-        votingMerkleRoot: values.votingMerkleRoot,
-        submissionMerkleRoot: values.submissionMerkleRoot,
-        author_address: values?.authorAddress ?? address,
-        network_name: values.networkName,
-        featured: values.featured ?? false,
-        voting_requirements: values.voting_requirements,
-        cost_to_propose: values.cost_to_propose,
-        cost_to_vote: values.cost_to_vote,
-        percentage_to_creator: values.percentage_to_creator,
-      },
-    ]);
-    if (error) {
-      throw new Error(error.message);
-    }
-  } catch (e) {
-    throw e;
+  if (error) {
+    throw new Error(error.message);
   }
 }

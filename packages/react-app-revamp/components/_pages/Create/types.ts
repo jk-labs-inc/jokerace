@@ -13,7 +13,6 @@ export enum StepTitle {
 
 export enum ContestType {
   AnyoneCanPlay = "anyone can play",
-  EntryContest = "entry contest",
   VotingContest = "voting contest",
 }
 
