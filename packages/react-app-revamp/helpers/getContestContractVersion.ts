@@ -48,6 +48,7 @@ import OnlyDeleteInEntryContract from "@contracts/bytecodeAndAbi/Contest.5.10.on
 import AntiRugContract from "@contracts/bytecodeAndAbi/Contest.5.11.antiRug.sol/Contest.json";
 import CorrectDelayVarContract from "@contracts/bytecodeAndAbi/Contest.5.12.correctDelayVar.sol/Contest.json";
 import RankLimitCheckContract from "@contracts/bytecodeAndAbi/Contest.5.13.rankLimitCheck.sol/Contest.json";
+import RmEntryRewardsContract from "@contracts/bytecodeAndAbi/Contest.5.14.rmEntryRewards.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
 import { createTransport } from "@config/wagmi/transports";
@@ -72,7 +73,10 @@ export async function getContestContractVersion(address: string, chainId: number
     // Here we check if all RPC calls are successful, otherwise we throw an error and return empty ABI
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
-    if (version === "5.13") {
+    const defaultReturn = { abi: null, version: "unknown" };
+    if (version === "5.14") {
+      return { abi: RmEntryRewardsContract.abi, version };
+    } else if (version === "5.13") {
       return { abi: RankLimitCheckContract.abi, version };
     } else if (version === "5.12") {
       return { abi: CorrectDelayVarContract.abi, version };

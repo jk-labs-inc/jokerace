@@ -2,8 +2,6 @@ import { formatBalance } from "@helpers/formatBalance";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
 import { FC } from "react";
 import { FundPoolToken } from "../../../FundPool/store";
-import { RewardPoolType, useCreateRewardsStore } from "../../../../store";
-import { useShallow } from "zustand/shallow";
 interface CreateRewardsReviewTableProps {
   rankings: number[];
   shareAllocations: number[];
@@ -11,7 +9,6 @@ interface CreateRewardsReviewTableProps {
 }
 
 const CreateRewardsReviewTable: FC<CreateRewardsReviewTableProps> = ({ rankings, shareAllocations, tokens }) => {
-  const rewardPoolType = useCreateRewardsStore(useShallow(state => state.rewardPoolType));
   const handleAmountPerShareAllocation = (amount: number, shareAllocation: number): string => {
     const amountPerShare = (amount / 100) * shareAllocation;
     return formatBalance(amountPerShare.toString());
@@ -19,9 +16,7 @@ const CreateRewardsReviewTable: FC<CreateRewardsReviewTableProps> = ({ rankings,
 
   return (
     <div className="flex flex-col gap-6">
-      <p className="text-[20px] text-neutral-11 font-bold">
-        Rewards Pool for {rewardPoolType === RewardPoolType.Voters ? "Voters" : "Contestants"}
-      </p>
+      <p className="text-[20px] text-neutral-11 font-bold">rewards Pool for voters</p>
       <div className="grid gap-4">
         {rankings.map((ranking, rankingIndex) => (
           <div
