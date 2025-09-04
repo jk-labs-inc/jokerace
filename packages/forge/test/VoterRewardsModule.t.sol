@@ -209,7 +209,6 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
     }
 
-
     /////////////////////////////
 
     // CANCELLATIONS
