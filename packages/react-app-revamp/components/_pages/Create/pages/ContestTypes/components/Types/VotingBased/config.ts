@@ -16,14 +16,6 @@ const votingBasedConfig: ContestTypeConfig = {
       value: TimingPeriod.OneWeek,
       label: "one week",
     },
-    votingAllowlist: {
-      csv: {},
-      prefilled: {},
-    },
-    votingMerkle: {
-      csv: null,
-      prefilled: null,
-    },
     priceCurve: {
       type: PriceCurveType.Exponential,
       multiple: 1,

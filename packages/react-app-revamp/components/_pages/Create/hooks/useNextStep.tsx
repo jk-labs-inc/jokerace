@@ -1,7 +1,7 @@
 import { DeployContestStore, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useCallback } from "react";
-import { StepTitle } from "../types";
 import { useAccount } from "wagmi";
+import { StepTitle } from "../types";
 
 const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected: boolean) => boolean> = {
   [StepTitle.Type]: state => {
@@ -14,10 +14,6 @@ const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected
   [StepTitle.Timing]: state => {
     return true;
   },
-  [StepTitle.Voting]: state => {
-    return !!state.votingMerkle.csv || !!state.votingMerkle.prefilled;
-  },
-
   [StepTitle.Monetization]: (state, isConnected) => {
     return isConnected && !!state.charge.type.costToVote && state.charge.type.costToVote > 0;
   },

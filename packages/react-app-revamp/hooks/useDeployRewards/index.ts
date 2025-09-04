@@ -4,6 +4,7 @@ import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import VotingModuleContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { extractPathSegments } from "@helpers/extractPath";
+import { getChainId } from "@helpers/getChainId";
 import { setupDeploymentClients } from "@helpers/viem";
 import { useCreatorSplitDestination } from "@hooks/useCreatorSplitDestination";
 import { SplitFeeDestinationType } from "@hooks/useDeployContest/types";
@@ -21,7 +22,7 @@ export function useDeployRewardsPool() {
   const { address: userAddress } = useAccount();
   const asPath = usePathname();
   const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
-  const chainId = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id;
+  const chainId = getChainId(chainName);
   const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards, resetCreateRewardsStore } =
     useCreateRewardsStore(
       useShallow(state => ({
@@ -130,6 +131,7 @@ export function useDeployRewardsPool() {
     try {
       const contractConfig = {
         address: contestAddress as `0x${string}`,
+        chainId: chainId,
         abi: DeployedContestContract.abi,
       };
 

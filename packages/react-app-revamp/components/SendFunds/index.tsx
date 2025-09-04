@@ -1,7 +1,7 @@
-import { erc20ChainDropdownOptions } from "@components/_pages/Create/components/RequirementsSettings/config";
 import TokenSearchModalERC20MultiStep from "@components/TokenSearchModal/MultiStep";
 import { toastError } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
+import { erc20ChainDropdownOptions } from "@helpers/tokens";
 import { useSendToken } from "@hooks/useSendToken";
 import { FilteredToken } from "@hooks/useTokenList";
 import { switchChain } from "@wagmi/core";
