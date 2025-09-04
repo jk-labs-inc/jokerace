@@ -1,12 +1,13 @@
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
-enum AnyoneCanSubmit {
+export enum AnyoneCanSubmit {
   ONLY_CREATOR = "ONLY_CREATOR",
   ANYONE_CAN_SUBMIT = "ANYONE_CAN_SUBMIT",
 }
 
 interface UserState {
+  // TODO: we can prolly move anyoneCanVote here in the future once we deprecate merkle roots
   anyoneCanSubmit: AnyoneCanSubmit;
   currentUserQualifiedToSubmit: boolean;
   currentUserQualifiedToVote: boolean;

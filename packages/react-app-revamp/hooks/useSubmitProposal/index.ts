@@ -16,7 +16,9 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import { useUserStore } from "@hooks/useUser/store";
+import { VOTE_AND_EARN_VERSION } from "@hooks/useUser/utils";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { compareVersions } from "compare-versions";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { EmailType } from "lib/email/types";
@@ -114,6 +116,8 @@ export function useSubmitProposal() {
     setError("");
     setTransactionData(null);
 
+    const isVoteAndEarnVersion = compareVersions(version, VOTE_AND_EARN_VERSION) >= 0;
+
     // generate the entry preview HTML
     const entryPreviewHTML = generateEntryPreviewHTML(metadataFields);
 
@@ -127,7 +131,15 @@ export function useSubmitProposal() {
       const costToPropose = calculateChargeAmount();
 
       try {
-        const { proofs, isVerified } = await getProofs(userAddress ?? "", "submission", "10");
+        let proofs, isVerified;
+
+        // Only generate proofs if it's NOT the vote-and-earn version
+        if (!isVoteAndEarnVersion) {
+          const proofsResult = await getProofs(userAddress ?? "", "submission", "10");
+          proofs = proofsResult.proofs;
+          isVerified = proofsResult.isVerified;
+        }
+
         const contractConfig = {
           address: address as `0x${string}`,
           abi: abi,
@@ -146,25 +158,33 @@ export function useSubmitProposal() {
 
         let hash: `0x${string}`;
 
-        // simulate the transaction first
         try {
-          if (!isVerified) {
+          if (isVoteAndEarnVersion) {
+            // For vote-and-earn version, always use propose
+            const { request } = await simulateContract(config, {
+              ...contractConfig,
+              functionName: "propose",
+              args: [proposalCore],
+              value: costToPropose,
+            });
+            hash = await writeContract(config, request);
+          } else if (!isVerified) {
+            // For older versions with unverified users, use propose with proofs to verify them
             const { request } = await simulateContract(config, {
               ...contractConfig,
               functionName: "propose",
               args: [proposalCore, proofs],
               value: costToPropose,
             });
-            // if simulation succeeds, proceed with the actual transaction
             hash = await writeContract(config, request);
           } else {
+            // For older versions with verified users, use proposeWithoutProof
             const { request } = await simulateContract(config, {
               ...contractConfig,
               functionName: "proposeWithoutProof",
               args: [proposalCore],
               value: costToPropose,
             });
-            // if simulation succeeds, proceed with the actual transaction
             hash = await writeContract(config, request);
           }
         } catch (simulationError: any) {
