@@ -161,9 +161,6 @@ abstract contract Governor is GovernorSorting {
     error NeedAtLeastOneVoteToVote();
     error CannotVoteLessThanOneVoteInPayPerVote();
 
-    error NeedToSubmitWithProofFirst();
-    error NeedToVoteWithProofFirst();
-
     error OnlyCreatorOrEntrantCanDelete();
     error OnlyCreatorCanSetName();
     error OnlyCreatorCanSetPrompt();
