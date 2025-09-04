@@ -20,6 +20,7 @@ create table
     percentage_to_creator numeric null,
     cost_to_vote numeric null,
     has_been_featured boolean null default false,
+    anyone_can_submit int2, null default null,
     constraint contests_v3_pkey primary key (uuid)
   ) tablespace pg_default;
 

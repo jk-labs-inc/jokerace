@@ -58,7 +58,7 @@ export async function indexContest(contestData: ContestValues) {
       type: contestData.type,
       prompt: contestData.prompt,
       address: contestData.contractAddress,
-      anyoneCanSubmit: contestData.anyoneCanSubmit,
+      anyone_can_submit: contestData.anyoneCanSubmit,
       votingMerkleRoot: null,
       submissionMerkleRoot: null,
       author_address: contestData?.authorAddress ?? address,
