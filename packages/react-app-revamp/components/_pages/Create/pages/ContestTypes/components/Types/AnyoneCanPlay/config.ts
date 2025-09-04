@@ -17,14 +17,6 @@ export const anyoneCanPlayConfig: ContestTypeConfig = {
       label: "three days",
     },
 
-    votingAllowlist: {
-      csv: {},
-      prefilled: {},
-    },
-    votingMerkle: {
-      csv: null,
-      prefilled: null,
-    },
     priceCurve: {
       type: PriceCurveType.Exponential,
       multiple: 1,

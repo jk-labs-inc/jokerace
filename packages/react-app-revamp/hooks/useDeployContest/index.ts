@@ -1,25 +1,18 @@
-import { useSubmissionMerkle } from "@components/_pages/Create/hooks/useSubmissionMerkle";
-import { ContestType } from "@components/_pages/Create/types";
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { isSupabaseConfigured } from "@helpers/database";
-import { setupDeploymentClients } from "@helpers/viem";
 import useEmailSignup from "@hooks/useEmailSignup";
 import { useError } from "@hooks/useError";
-import { differenceInSeconds, getUnixTime } from "date-fns";
-import { parseEther, PublicClient, WalletClient } from "viem";
 import { useAccount } from "wagmi";
-import { saveFilesToBucket } from "./buckets";
 import { isSortingEnabled } from "./contracts";
-import { checkForSpoofing, getJkLabsSplitDestinationAddress, indexContest } from "./database";
-import { createMetadataFieldsSchema } from "./helpers";
+import { getJkLabsSplitDestinationAddress, indexContest } from "./database";
+import { prepareConstructorArgs } from "./helpers/constructorArgs";
+import { prepareContestData } from "./helpers/contestData";
+import { prepareForDeployment } from "./helpers/deploymentPreparation";
 import { useDeployContestStore } from "./store";
-import { PriceCurveType, SplitFeeDestinationType, VoteType } from "./types";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000;
 export const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c6118e8a52fa738";
-
-const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 export function useDeployContest() {
   const { subscribeUser, checkIfEmailExists } = useEmailSignup();
@@ -33,7 +26,6 @@ export function useDeployContest() {
     customization,
     advancedOptions,
     setDeployContestData,
-    votingRequirements,
     metadataFields,
     entryPreviewConfig,
     emailSubscriptionAddress,
@@ -44,61 +36,6 @@ export function useDeployContest() {
   } = useDeployContestStore(state => state);
   const { handleError } = useError();
   const { address, chain } = useAccount();
-  const { processCreatorAllowlist } = useSubmissionMerkle();
-
-  async function prepareForDeployment() {
-    if (!address || !chain) {
-      handleError(new Error("Failed to prepare for deployment"), "Failed to prepare for deployment");
-      throw new Error("Failed to prepare for deployment");
-    }
-
-    if (contestType === ContestType.VotingContest) {
-      try {
-        await processCreatorAllowlist(address);
-      } catch (error) {
-        handleError(error, "Something went wrong while processing creator allowlist.");
-        throw error;
-      }
-    }
-
-    let client: WalletClient;
-    let publicClient: PublicClient;
-
-    try {
-      const { walletClient, publicClient: pubClient } = await setupDeploymentClients(address, chain.id);
-
-      if (!walletClient || !pubClient) {
-        handleError(new Error("Failed to setup deployment clients"), "Failed to setup deployment clients");
-        throw new Error("Failed to setup deployment clients");
-      }
-
-      client = walletClient;
-      publicClient = pubClient;
-    } catch (error: any) {
-      handleError(error, "Please try reconnecting your wallet.");
-      throw error;
-    }
-
-    const currentState = useDeployContestStore.getState();
-    const currentVotingMerkleData = currentState.votingMerkle;
-    const currentSubmissionMerkleData = currentState.submissionMerkle;
-
-    const isSpoofingDetected = await checkForSpoofing(address, currentVotingMerkleData, currentSubmissionMerkleData);
-
-    if (isSpoofingDetected) {
-      toastError({
-        message: "Spoofing detected! None shall pass.",
-      });
-      throw new Error("Spoofing detected");
-    }
-
-    return {
-      client,
-      publicClient,
-      votingMerkleData: currentVotingMerkleData,
-      submissionMerkleData: currentSubmissionMerkleData,
-    };
-  }
 
   async function deployContest() {
     setIsLoading(true);
@@ -106,20 +43,25 @@ export function useDeployContest() {
       message: "contest is deploying...",
     });
 
-    let preparationResult;
-    try {
-      preparationResult = await prepareForDeployment();
-    } catch (error) {
+    if (!address || !chain) {
+      handleError(new Error("Failed to prepare for deployment"), "Failed to prepare for deployment");
       setIsLoading(false);
       return;
     }
 
-    const {
-      client,
-      publicClient,
-      votingMerkleData: currentVotingMerkleData,
-      submissionMerkleData: currentSubmissionMerkleData,
-    } = preparationResult;
+    let preparationResult;
+    try {
+      preparationResult = await prepareForDeployment({
+        address: address as `0x${string}`,
+        chainId: chain.id,
+      });
+    } catch (error: any) {
+      handleError(error, error.userMessage || "Failed to prepare for deployment");
+      setIsLoading(false);
+      return;
+    }
+
+    const { client, publicClient } = preparationResult;
 
     try {
       const combinedPrompt = new URLSearchParams({
@@ -130,21 +72,8 @@ export function useDeployContest() {
         imageUrl: prompt.imageUrl ?? "",
       }).toString();
 
-      const votingMerkle = currentVotingMerkleData.prefilled || currentVotingMerkleData.csv;
-      const submissionMerkle = currentSubmissionMerkleData;
-      const { type: chargeType, percentageToCreator } = charge;
-      const { merkleRoot: submissionMerkleRoot = EMPTY_ROOT } = submissionMerkle || {};
-
-      const { merkleRoot: votingMerkleRoot = EMPTY_ROOT } = votingMerkle || {};
-      const { allowedSubmissionsPerUser, maxSubmissions } = customization;
+      const { type: chargeType } = charge;
       let jkLabsSplitDestination = "";
-
-      // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
-      const finalAllowedSubmissionsPerUser =
-        !isNaN(allowedSubmissionsPerUser) && allowedSubmissionsPerUser > 0
-          ? allowedSubmissionsPerUser
-          : MAX_SUBMISSIONS_LIMIT;
-      const finalMaxSubmissions = !isNaN(maxSubmissions) && maxSubmissions > 0 ? maxSubmissions : MAX_SUBMISSIONS_LIMIT;
 
       try {
         jkLabsSplitDestination = await getJkLabsSplitDestinationAddress(chain?.id ?? 0, {
@@ -159,38 +88,27 @@ export function useDeployContest() {
         return;
       }
 
-      const intConstructorArgs = {
-        contestStart: getUnixTime(submissionOpen),
-        votingDelay: differenceInSeconds(votingOpen, submissionOpen),
-        votingPeriod: differenceInSeconds(votingClose, votingOpen),
-        numAllowedProposalSubmissions: finalAllowedSubmissionsPerUser,
-        maxProposalCount: finalMaxSubmissions,
-        sortingEnabled: 1,
-        rankLimit: advancedOptions.rankLimit,
-        percentageToCreator: percentageToCreator,
-        costToPropose: parseEther(chargeType.costToPropose.toString()),
-        costToVote: parseEther(chargeType.costToVote.toString()),
-        payPerVote: charge.voteType === VoteType.PerVote ? 1 : 0,
-        priceCurveType: priceCurve.type === PriceCurveType.Flat ? 0 : 1,
-        multiple: priceCurve.type === PriceCurveType.Flat ? 1 : parseEther(priceCurve.multiple.toString()),
-      };
-
-      const constructorArgs = {
-        intConstructorArgs,
-        creatorSplitDestination:
-          charge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet
-            ? client.account?.address
-            : charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit
-            ? jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT
-            : charge.splitFeeDestination.address,
-        jkLabsSplitDestination: jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT,
-        metadataFieldsSchema: createMetadataFieldsSchema(metadataFields, entryPreviewConfig),
-      };
+      const constructorArgs = prepareConstructorArgs({
+        title,
+        combinedPrompt,
+        contestType,
+        submissionOpen,
+        votingOpen,
+        votingClose,
+        customization,
+        advancedOptions,
+        charge,
+        priceCurve,
+        metadataFields,
+        entryPreviewConfig,
+        clientAccountAddress: client.account?.address,
+        jkLabsSplitDestination,
+      });
 
       const contractDeploymentHash = await client.deployContract({
         abi: DeployedContestContract.abi,
         bytecode: DeployedContestContract.bytecode.object as `0x${string}`,
-        args: [title, combinedPrompt, submissionMerkleRoot, votingMerkleRoot, constructorArgs],
+        args: [constructorArgs],
         account: address as `0x${string}`,
         chain: chain,
       });
@@ -215,49 +133,25 @@ export function useDeployContest() {
         sortingEnabled,
       );
 
-      let votingReqDatabaseEntry = null;
-
-      if (currentVotingMerkleData.prefilled) {
-        votingReqDatabaseEntry = {
-          type: votingRequirements.type,
-          tokenAddress: votingRequirements.tokenAddress,
-          chain: votingRequirements.chain,
-          description: `${votingRequirements.powerValue} per ${votingRequirements.powerType}`,
-          minTokensRequired: votingRequirements.minTokensRequired,
-          timestamp: votingRequirements.timestamp,
-        };
-      }
-
-      const contestData = {
-        title: title,
-        type: contestType,
-        prompt: combinedPrompt,
-        datetimeOpeningSubmissions: submissionOpen,
-        datetimeOpeningVoting: votingOpen,
-        datetimeClosingVoting: votingClose,
-        contractAddress: contractAddress.toLowerCase(),
-        votingMerkleRoot: votingMerkle?.merkleRoot ?? EMPTY_ROOT,
-        submissionMerkleRoot: submissionMerkle?.merkleRoot ?? EMPTY_ROOT,
-        authorAddress: address,
-        networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
-        voting_requirements: votingReqDatabaseEntry,
-        cost_to_propose: chargeType.costToPropose,
-        cost_to_vote: chargeType.costToVote,
-        percentage_to_creator: percentageToCreator,
-      };
+      const contestData = prepareContestData({
+        constructorArgs,
+        title,
+        contestType,
+        combinedPrompt,
+        submissionOpen,
+        votingOpen,
+        votingClose,
+        contractAddress,
+        address,
+        chainName: chain?.name,
+        chargeType,
+        charge,
+      });
 
       await subscribeToEmail(emailSubscriptionAddress);
 
       try {
-        await saveFilesToBucket(votingMerkle, submissionMerkle);
-      } catch (e) {
-        handleError(e, "Something went wrong while saving files to bucket.");
-        setIsLoading(false);
-        throw e;
-      }
-
-      try {
-        await indexContest(contestData, votingMerkle, submissionMerkle);
+        await indexContest(contestData);
       } catch (e) {
         setIsLoading(false);
         toastError({
@@ -298,6 +192,5 @@ export function useDeployContest() {
 
   return {
     deployContest,
-    prepareForDeployment,
   };
 }

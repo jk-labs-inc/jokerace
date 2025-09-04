@@ -1,6 +1,4 @@
-import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { EntryPreviewConfig, MetadataField } from "../slices/contestMetadataSlice";
-import { formatUnits } from "viem";
 
 export function createMetadataFieldsSchema(
   metadataFields: MetadataField[],
@@ -42,11 +40,4 @@ export function getEntryPreviewPrompt(config: EntryPreviewConfig): string {
   const { preview, isAdditionalDescriptionEnabled } = config;
   const descriptionSuffix = isAdditionalDescriptionEnabled ? "_DESCRIPTION_ENABLED" : "_DESCRIPTION_NOT_ENABLED";
   return `${preview}${descriptionSuffix}`;
-}
-
-export function formatRecipients(recipients: Recipient[]): Recipient[] {
-  return recipients.map(recipient => ({
-    ...recipient,
-    numVotes: formatUnits(BigInt(recipient.numVotes), 18),
-  }));
 }

@@ -1,14 +1,15 @@
-import OnlyDeleteInEntryVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.10.onlyDeleteInEntry.sol/VoterRewardsModule.json";
-import AntiRugVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.11.antiRug.sol/VoterRewardsModule.json";
-import CorrectDelayVarVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.12.correctDelayVar.sol/VoterRewardsModule.json";
-import RankLimitCheckVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.13.rankLimitCheck.sol/VoterRewardsModule.json";
 import InitialVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.5.voterRewards.sol/VoterRewardsModule.json";
 import SetPeriodLimitsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.6.setPeriodLimits.sol/VoterRewardsModule.json";
 import VotingPriceCurvesVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.7.votingPriceCurves.sol/VoterRewardsModule.json";
 import AddModuleTrackingVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.8.addModuleTracking.sol/VoterRewardsModule.json";
 import CalcCorrectMinuteVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.9.calcCorrectMinute.sol/VoterRewardsModule.json";
-import DeployedVoterRewardsContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
+import OnlyDeleteInEntryVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.10.onlyDeleteInEntry.sol/VoterRewardsModule.json";
+import AntiRugVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.11.antiRug.sol/VoterRewardsModule.json";
+import CorrectDelayVarVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.12.correctDelayVar.sol/VoterRewardsModule.json";
+import RankLimitCheckVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.13.rankLimitCheck.sol/VoterRewardsModule.json";
 import RmEntryRewardsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.14.rmEntryRewards.sol/VoterRewardsModule.json";
+import VoteAndEarnOnlyVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.1.voteAndEarnOnly.sol/VoterRewardsModule.json";
+import DeployedVoterRewardsContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { createPublicClient, getContract, http } from "viem";
 import { getChainFromId } from "./getChainFromId";
 import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
@@ -29,7 +30,9 @@ export async function getVoterRewardsModuleContractVersion(address: string, chai
   try {
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
-    if (version === "5.14") {
+    if (version === "6.1") {
+      return VoteAndEarnOnlyVoterRewards.abi;
+    } else if (version === "5.14") {
       return RmEntryRewardsVoterRewards.abi;
     } else if (version === "5.13") {
       return RankLimitCheckVoterRewards.abi;

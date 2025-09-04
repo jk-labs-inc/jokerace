@@ -5,7 +5,6 @@ export enum StepTitle {
   Type = "Type",
   Entries = "Entries",
   Timing = "Timing",
-  Voting = "Voting",
   Monetization = "Monetization",
   Rules = "Rules",
   Confirm = "Confirm!",
@@ -13,7 +12,6 @@ export enum StepTitle {
 
 export enum ContestType {
   AnyoneCanPlay = "anyone can play",
-  EntryContest = "entry contest",
   VotingContest = "voting contest",
 }
 
@@ -23,14 +21,6 @@ export interface ContestDataForType {
   votingClose: Date;
   votingOpenPeriod: Option;
   votingClosePeriod: Option;
-  votingAllowlist: {
-    csv: Record<string, number>;
-    prefilled: Record<string, number>;
-  };
-  votingMerkle: {
-    csv: VotingMerkle | null;
-    prefilled: VotingMerkle | null;
-  };
   priceCurve: PriceCurve;
 }
 

@@ -11,7 +11,6 @@ import { useAccount } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import MobileStepper from "../../components/MobileStepper";
 import { useContestSteps } from "../../hooks/useContestSteps";
-import { ContestType } from "../../types";
 import CreateContestConfirmCustomization from "./components/Customization";
 import CreateContestConfirmDescription from "./components/Description";
 import CreateContestConfirmEmailSubscription from "./components/EmailSubscription";
@@ -24,7 +23,7 @@ import { displayCoinbaseWalletWarning, isEthereumMainnet, isWalletForbidden } fr
 
 const CreateContestConfirm = () => {
   const { chainId, chain, connector } = useAccount();
-  const { steps, stepReferences, allSteps } = useContestSteps();
+  const { steps, stepReferences } = useContestSteps();
   const { setEmailSubscriptionAddress, ...state } = useDeployContestStore(state => state);
   const { deployContest } = useDeployContest();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
@@ -62,7 +61,7 @@ const CreateContestConfirm = () => {
   };
 
   const onNavigateToStep = (stepIndex: number) => {
-    const stepTitle = allSteps[stepIndex].title;
+    const stepTitle = steps[stepIndex].title;
     const actualStepIndex = steps.findIndex(step => step.title === stepTitle);
     state.setStep(actualStepIndex !== -1 ? actualStepIndex : stepIndex);
   };
@@ -87,12 +86,8 @@ const CreateContestConfirm = () => {
             onClick={step => onNavigateToStep(step)}
           />
           <CreateContestConfirmType
-            step={
-              state.contestType === ContestType.EntryContest ? stepReferences.ContestVoting : stepReferences.ContestType
-            }
+            step={stepReferences.ContestType}
             type={state.contestType}
-            votingAllowlist={state.votingAllowlist}
-            votingRequirements={state.votingRequirements}
             onClick={step => onNavigateToStep(step)}
           />
           <CreateContestConfirmPreview

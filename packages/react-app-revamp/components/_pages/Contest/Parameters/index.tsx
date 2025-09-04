@@ -2,7 +2,7 @@ import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { EMPTY_ROOT } from "@hooks/useUser";
-import { useUserStore } from "@hooks/useUser/store";
+import { AnyoneCanSubmit, useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import moment from "moment";
 import { usePathname } from "next/navigation";
@@ -41,12 +41,15 @@ const ContestParameters = () => {
     currentUserQualifiedToSubmit,
     currentUserAvailableVotesAmount,
     currentUserTotalVotesAmount,
+    anyoneCanSubmit: anyoneCanSubmitFromUserStore,
   } = useUserStore(state => state);
   const formattedSubmissionsOpen = moment(submissionsOpen).format("MMMM Do, h:mm a");
   const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
   const formattedVotesClosing = moment(votesClose).format("MMMM Do, h:mm a");
   const maxProposalsPerUserCapped = contestMaxNumberSubmissionsPerUser == UNLIMITED_PROPOSALS_PER_USER;
-  const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
+  // we keep both submissionMerkleRoot and anyoneCanSubmitFromUserStore to avoid breaking changes from v5 to v6
+  const anyoneCanSubmit =
+    submissionMerkleRoot === EMPTY_ROOT || anyoneCanSubmitFromUserStore === AnyoneCanSubmit.ANYONE_CAN_SUBMIT;
 
   return (
     <div className="flex flex-col gap-12 animate-reveal">

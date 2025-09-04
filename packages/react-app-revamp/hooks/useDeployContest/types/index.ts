@@ -100,6 +100,7 @@ export type SubmissionRequirementsSchema = {
 };
 
 export interface ContestValues {
+  anyoneCanSubmit: number;
   datetimeOpeningSubmissions: Date;
   datetimeOpeningVoting: Date;
   datetimeClosingVoting: Date;
@@ -108,8 +109,6 @@ export interface ContestValues {
   prompt: string;
   contractAddress: string;
   networkName: string;
-  votingMerkleRoot: string;
-  submissionMerkleRoot: string;
   voting_requirements: VotingRequirementsSchema | null;
   cost_to_propose: number;
   cost_to_vote: number;

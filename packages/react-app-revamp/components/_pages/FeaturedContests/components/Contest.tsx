@@ -165,8 +165,6 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
     switch (type) {
       case ContestType.AnyoneCanPlay:
         return "anyone can enter & vote";
-      case ContestType.EntryContest:
-        return "anyone can enter";
       case ContestType.VotingContest:
         return "anyone can vote";
       default:

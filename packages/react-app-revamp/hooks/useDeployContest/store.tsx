@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { createContestInfoSlice, ContestInfoSlice } from "./slices/contestInfoSlice";
 import { createContestTimingSlice, ContestTimingSlice } from "./slices/contestTimingSlice";
-import { createVotingSlice, VotingSlice } from "./slices/contestVotingSlice";
 import { createSubmissionSlice, SubmissionSlice } from "./slices/contestSubmissionsSlice";
 import { createMonetizationSlice, MonetizationSlice } from "./slices/contestMonetizationSlice";
 import { createMetadataSlice, MetadataSlice } from "./slices/contestMetadataSlice";
@@ -10,7 +9,6 @@ import { createDeploymentSlice, DeploymentSlice } from "./slices/contestDeployme
 
 export type DeployContestStore = ContestInfoSlice &
   ContestTimingSlice &
-  VotingSlice &
   SubmissionSlice &
   MonetizationSlice &
   MetadataSlice &
@@ -23,7 +21,6 @@ export const useDeployContestStore = create<DeployContestStore>((set, get) => {
   const getInitialState = () => ({
     ...createContestInfoSlice(set),
     ...createContestTimingSlice(set),
-    ...createVotingSlice(set),
     ...createSubmissionSlice(set),
     ...createMonetizationSlice(set),
     ...createMetadataSlice(set),
@@ -38,6 +35,6 @@ export const useDeployContestStore = create<DeployContestStore>((set, get) => {
     resetStore: () => {
       const freshState = getInitialState();
       set(freshState);
-    },  
+    },
   };
 });

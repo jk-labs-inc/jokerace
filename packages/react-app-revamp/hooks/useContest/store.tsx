@@ -93,7 +93,7 @@ export const createContestStore = () =>
     error: null,
     charge: {
       percentageToCreator: 0,
-      voteType: VoteType.PerTransaction,
+      voteType: VoteType.PerVote,
       splitFeeDestination: {
         type: SplitFeeDestinationType.CreatorWallet,
         address: "",
