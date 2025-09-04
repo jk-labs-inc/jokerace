@@ -30,7 +30,7 @@ export async function getVoterRewardsModuleContractVersion(address: string, chai
   try {
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
-    if (version === "5.15") {
+    if (version === "6.1") {
       return VoteAndEarnOnlyVoterRewards.abi;
     } else if (version === "5.14") {
       return RmEntryRewardsVoterRewards.abi;

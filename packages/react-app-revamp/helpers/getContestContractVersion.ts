@@ -75,7 +75,7 @@ export async function getContestContractVersion(address: string, chainId: number
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
     const defaultReturn = { abi: null, version: "unknown" };
-    if (version === "5.15") {
+    if (version === "6.1") {
       return { abi: VoteAndEarnOnlyContract.abi, version };
     } else if (version === "5.14") {
       return { abi: RmEntryRewardsContract.abi, version };

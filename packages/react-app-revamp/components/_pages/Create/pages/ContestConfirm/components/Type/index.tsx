@@ -1,32 +1,17 @@
 import { ContestType } from "@components/_pages/Create/types";
-import { VotingRequirements } from "@hooks/useDeployContest/types";
 import { FC, useMemo } from "react";
 import CreateContestConfirmLayout from "../Layout";
-import CreateContestConfirmEntryContestVoting from "./components/EntryContestVoting";
 
 interface CreateContestConfirmTypeProps {
   type: ContestType;
   step: number;
-  votingAllowlist: {
-    csv: Record<string, number>;
-    prefilled: Record<string, number>;
-  };
-  votingRequirements: VotingRequirements;
   onClick?: (stepIndex: number) => void;
 }
 
-const CreateContestConfirmType: FC<CreateContestConfirmTypeProps> = ({
-  step,
-  type,
-  onClick,
-  votingAllowlist,
-  votingRequirements,
-}) => {
+const CreateContestConfirmType: FC<CreateContestConfirmTypeProps> = ({ step, type, onClick }) => {
   const enteringText = useMemo(() => {
     switch (type) {
       case ContestType.AnyoneCanPlay:
-      case ContestType.EntryContest:
-        return "anyone can enter";
       case ContestType.VotingContest:
         return "you submit the entries";
     }
@@ -37,13 +22,6 @@ const CreateContestConfirmType: FC<CreateContestConfirmTypeProps> = ({
       case ContestType.AnyoneCanPlay:
       case ContestType.VotingContest:
         return "anyone can vote";
-      case ContestType.EntryContest:
-        return (
-          <CreateContestConfirmEntryContestVoting
-            votingAllowlist={votingAllowlist}
-            votingRequirements={votingRequirements}
-          />
-        );
     }
   }, [type]);
 

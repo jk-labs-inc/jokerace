@@ -6,7 +6,7 @@ import { readContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { Abi } from "viem";
 import { useUserStore } from "./store";
-import { ANYONE_CAN_VOTE_VERSION, EMPTY_ROOT, createUserVoteQualificationSetter } from "./utils";
+import { ANYONE_CAN_VOTE_VERSION, EMPTY_ROOT, VOTE_AND_EARN_VERSION, createUserVoteQualificationSetter } from "./utils";
 
 export const useVoteQualification = (
   userAddress: `0x${string}` | undefined,
@@ -42,15 +42,22 @@ export const useVoteQualification = (
     checkAnyoneCanVoteUserQualification: (abi: any, version: string) => Promise<void>,
   ) => {
     setIsCurrentUserVoteQualificationLoading(true);
-    if (compareVersions(version, "3.0") == -1) {
-      setIsCurrentUserVoteQualificationLoading(false);
-      return;
-    }
 
     if (!contractConfig.abi) {
       setIsCurrentUserVoteQualificationError(true);
       setIsCurrentUserVoteQualificationSuccess(false);
       setIsCurrentUserVoteQualificationLoading(false);
+      return;
+    }
+
+    // For version 5.15+, votingMerkleRoot is deprecated
+    // Go straight to anyone-can-vote qualification check
+    if (compareVersions(version, VOTE_AND_EARN_VERSION) >= 0) {
+      if (!userAddress) return;
+
+      setAnyoneCanVote(true);
+
+      await checkAnyoneCanVoteUserQualification(contractConfig.abi, version);
       return;
     }
 
