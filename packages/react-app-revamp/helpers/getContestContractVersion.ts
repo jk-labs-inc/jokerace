@@ -51,6 +51,7 @@ import RankLimitCheckContract from "@contracts/bytecodeAndAbi/Contest.5.13.rankL
 import RmEntryRewardsContract from "@contracts/bytecodeAndAbi/Contest.5.14.rmEntryRewards.sol/Contest.json";
 import VoteAndEarnOnlyContract from "@contracts/bytecodeAndAbi/Contest.6.1.voteAndEarnOnly.sol/Contest.json";
 import RmDeleteVotesUpdateContract from "@contracts/bytecodeAndAbi/Contest.6.2.rmDeleteVotesUpdate.sol/Contest.json";
+import DocsDeleteOnlyInEntryContract from "@contracts/bytecodeAndAbi/Contest.6.3.docsDeleteOnlyInEntry.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
 import { createTransport } from "@config/wagmi/transports";
@@ -76,7 +77,9 @@ export async function getContestContractVersion(address: string, chainId: number
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
     const defaultReturn = { abi: null, version: "unknown" };
-    if (version === "6.2") {
+    if (version === "6.3") {
+      return { abi: DocsDeleteOnlyInEntryContract.abi, version };
+    } else if (version === "6.2") {
       return { abi: RmDeleteVotesUpdateContract.abi, version };
     } else if (version === "6.1") {
       return { abi: VoteAndEarnOnlyContract.abi, version };
