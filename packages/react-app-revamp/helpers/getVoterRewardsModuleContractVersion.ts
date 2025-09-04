@@ -9,6 +9,7 @@ import CorrectDelayVarVoterRewards from "@contracts/bytecodeAndAbi/modules/Voter
 import RankLimitCheckVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.13.rankLimitCheck.sol/VoterRewardsModule.json";
 import RmEntryRewardsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.14.rmEntryRewards.sol/VoterRewardsModule.json";
 import VoteAndEarnOnlyVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.1.voteAndEarnOnly.sol/VoterRewardsModule.json";
+import RmDeleteVotesUpdateVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.2.rmDeleteVotesUpdate.sol/VoterRewardsModule.json";
 import DeployedVoterRewardsContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { createPublicClient, getContract, http } from "viem";
 import { getChainFromId } from "./getChainFromId";
