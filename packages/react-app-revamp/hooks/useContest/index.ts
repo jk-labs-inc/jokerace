@@ -19,6 +19,7 @@ import { useState } from "react";
 import { Abi } from "viem";
 import { ErrorType, useContestStore } from "./store";
 import { getContracts } from "./v3v4/contracts";
+import { createResultGetter } from "./helpers";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -122,19 +123,20 @@ export function useContest() {
 
       setIsV3(true);
 
-      const contestName = results[0].result as string;
-      const contestAuthor = results[1].result as string;
-      const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
-      const contestMaxProposalCount = Number(results[3].result);
-      const submissionsOpenDate = new Date(Number(results[4].result) * 1000 + 1000);
-      const closingVoteDate = new Date(Number(results[5].result) * 1000 + 1000);
-      const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
-      const contestPrompt = results[7].result as string;
-      const contestState = results[8].result as ContestStateEnum;
-      const costToPropose = Number(results[10].result);
+      const getResultByName = createResultGetter(contracts, results);
+
+      const contestName = getResultByName("name") as string;
+      const contestAuthor = getResultByName("creator") as string;
+      const contestMaxNumberSubmissionsPerUser = Number(getResultByName("numAllowedProposalSubmissions"));
+      const contestMaxProposalCount = Number(getResultByName("maxProposalCount"));
+      const submissionsOpenDate = new Date(Number(getResultByName("contestStart")) * 1000 + 1000);
+      const closingVoteDate = new Date(Number(getResultByName("contestDeadline")) * 1000 + 1000);
+      const votesOpenDate = new Date(Number(getResultByName("voteStart")) * 1000 + 1000);
+      const contestPrompt = getResultByName("prompt") as string;
+      const contestState = getResultByName("state") as ContestStateEnum;
 
       if (compareVersions(version, "4.2") >= 0) {
-        const sortingEnabled = Number(results[11].result) === 1;
+        const sortingEnabled = Number(getResultByName("sortingEnabled")) === 1;
         setSortingEnabled(sortingEnabled);
       }
 
@@ -142,25 +144,26 @@ export function useContest() {
         setCanEditTitleAndDescription(true);
       }
 
-      const percentageToCreator = Number(results[9].result);
+      const percentageToCreator = Number(getResultByName("percentageToCreator")) || 0;
+      const costToPropose = Number(getResultByName("costToPropose")) || 0;
       let costToVote = 0;
-      let payPerVote = 0;
+      let payPerVote = 1;
       let creatorSplitDestination = "";
 
       if (compareVersions(version, "4.23") >= 0) {
-        if (compareVersions(version, "4.25") >= 0) {
-          payPerVote = Number(results[13].result);
-        }
-        costToVote = Number(results[12].result);
+        costToVote = Number(getResultByName("costToVote")) || 0;
+      }
+
+      if (compareVersions(version, "4.25") >= 0 && compareVersions(version, "6.1") < 0) {
+        payPerVote = Number(getResultByName("payPerVote"));
       }
 
       if (compareVersions(version, "4.29") >= 0) {
-        creatorSplitDestination = results[14].result as string;
+        creatorSplitDestination = (getResultByName("creatorSplitDestination") as string) || "";
       }
 
       setCharge({
         percentageToCreator,
-        //TODO: no more payPerVote, we need to migrate this to the new charge system
         voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
         splitFeeDestination: {
           type: determineSplitFeeDestination(
@@ -248,7 +251,6 @@ export function useContest() {
 
       setContestData(addressFromUrl, chainFromUrl);
 
-      // Check if version is below v4.0
       if (compareVersions(version, "4.0") < 0) {
         setError(ErrorType.UNSUPPORTED_VERSION);
         setIsLoading(false);
