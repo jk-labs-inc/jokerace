@@ -1,6 +1,4 @@
-import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { EntryPreviewConfig, MetadataField } from "../slices/contestMetadataSlice";
-import { formatUnits } from "viem";
 
 export function createMetadataFieldsSchema(
   metadataFields: MetadataField[],
@@ -43,5 +41,3 @@ export function getEntryPreviewPrompt(config: EntryPreviewConfig): string {
   const descriptionSuffix = isAdditionalDescriptionEnabled ? "_DESCRIPTION_ENABLED" : "_DESCRIPTION_NOT_ENABLED";
   return `${preview}${descriptionSuffix}`;
 }
-
-
