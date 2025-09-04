@@ -66,24 +66,6 @@ export const createMerkleTree = (recipients: Recipient[]): MerkleTree => {
 };
 
 /**
- * Main processing function
- * @param {number} decimals of votes
- * @param {Record<string, number>} data address to claim mapping
- * @returns {Promise<void>}
- */
-export const generateMerkleTree = (decimals: number, data: Record<string, number>): MerkleTreeData => {
-  const recipients = setupVoteRecipients(decimals, data);
-  const merkleTree = createMerkleTree(recipients);
-  const merkleRoot: string = merkleTree.getHexRoot();
-
-  return {
-    merkleTree,
-    merkleRoot,
-    recipients,
-  };
-};
-
-/**
  * Generate Merkle proof for a given address and number of votes
  * @param {MerkleTree} merkleTree The merkle tree instance
  * @param {string} address of recipient

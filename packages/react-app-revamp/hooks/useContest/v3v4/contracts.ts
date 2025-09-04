@@ -6,6 +6,7 @@ enum VERSIONS {
   V4_23 = "4.23",
   V4_25 = "4.25",
   V4_29 = "4.29",
+  V6_1 = "6.1",
 }
 
 export function getContracts(contractConfig: any, version: string) {
@@ -24,7 +25,6 @@ export function getContracts(contractConfig: any, version: string) {
   const v4FunctionNames = ["percentageToCreator", "costToPropose"];
 
   const v4_2FunctionNames = ["sortingEnabled"];
-
 
   let contractFunctionNames = [...commonFunctionNames];
 

@@ -28,7 +28,6 @@ Optional
 NEXT_PUBLIC_QUICKNODE_SLUG=
 NEXT_PUBLIC_QUICKNODE_KEY=
 NEXT_PUBLIC_ALCHEMY_KEY=
-NEXT_PUBLIC_ETHERSCAN_KEY=
 NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET=
 NEXT_PUBLIC_PARA_API_KEY=
 NEXT_PUBLIC_PARA_ENVIRONMENT=
@@ -49,7 +48,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see the r
 
 ### Updating bytecode
 
-Whenever you make a change to smart contracts or really whenever the bytecode files change (could be that [the compiler version got changed and so no bytecode changed, but remappings were reformatted](https://github.com/jk-labs-inc/jokerace/pull/509)), increment the version in `Governor.sol`, `RewardsModule.sol`, and `VoterRewardsModule.sol` by `x.1`. Then generate the bytecode and version it as described below.
+Whenever you make a change to smart contracts or really whenever the bytecode files change (could be that [the compiler version got changed and so no bytecode changed, but remappings were reformatted](https://github.com/jk-labs-inc/jokerace/pull/509)), increment the version in `Governor.sol` and `VoterRewardsModule.sol` by `x.1`. Then generate the bytecode and version it as described below.
 
 The purpose of this is so that we have a way to tell exactly what bytecode a contract that we read from a chain has and exactly how it was deployed given its version number.
 

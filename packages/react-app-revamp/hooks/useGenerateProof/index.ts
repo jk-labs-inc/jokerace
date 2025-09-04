@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 
 type ProofType = "submission" | "vote";
 
-type ProofResult = {
+export type ProofResult = {
   isVerified: boolean;
   proofs: any[];
 };

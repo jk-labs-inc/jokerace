@@ -29,6 +29,8 @@ import { calculateChargeAmount } from "./utils/helpers";
 import { createVotingEmailSender } from "./utils/email";
 import { checkAndMarkPriceChangeError } from "utils/error";
 import { usePriceTracking } from "./utils/priceTracking";
+import { VOTE_AND_EARN_VERSION } from "@hooks/useUser/utils";
+import { compareVersions } from "compare-versions";
 
 export function useCastVotes() {
   const {
@@ -113,15 +115,39 @@ export function useCastVotes() {
     // Capture the price when voting starts
     startNewVotingSession();
 
+    const isVoteAndEarnVersion = compareVersions(version, VOTE_AND_EARN_VERSION) >= 0;
+
     try {
-      const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
+      let proofs, isVerified;
+
+      // Only generate proofs if it's NOT the vote-and-earn version
+      if (!isVoteAndEarnVersion) {
+        const proofsResult = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
+        proofs = proofsResult.proofs;
+        isVerified = proofsResult.isVerified;
+      }
+
       const costToVote = getChargeAmount(amountOfVotes);
       const totalVoteAmount = anyoneCanVote ? 0 : parseUnits(currentUserTotalVotesAmount.toString(), 18);
 
       let hash: `0x${string}`;
       let request;
 
-      if (!isVerified) {
+      if (isVoteAndEarnVersion) {
+        // For vote-and-earn version, use castVote without totalVoteAmount and proofs
+        const castVoteArgs = [pickedProposal, parseUnits(amountOfVotes.toString(), 18)];
+        const { request: simulatedRequest } = await simulateContract(config, {
+          address: contestAddress as `0x${string}`,
+          abi: abi ? abi : DeployedContestContract.abi,
+          chainId,
+          functionName: "castVote",
+          args: castVoteArgs,
+          //@ts-ignore
+          value: costToVote,
+        });
+        request = simulatedRequest;
+      } else if (!isVerified) {
+        // For older versions with proofs, use castVote with proofs
         const castVoteArgs = [pickedProposal, totalVoteAmount, parseUnits(amountOfVotes.toString(), 18), proofs];
         const { request: simulatedRequest } = await simulateContract(config, {
           address: contestAddress as `0x${string}`,
@@ -134,6 +160,7 @@ export function useCastVotes() {
         });
         request = simulatedRequest;
       } else {
+        // For older versions with verified users, use castVoteWithoutProof
         const castVoteWithoutProofArgs = [pickedProposal, parseUnits(`${amountOfVotes}`, 18)];
         const { request: simulatedRequest } = await simulateContract(config, {
           address: contestAddress as `0x${string}`,

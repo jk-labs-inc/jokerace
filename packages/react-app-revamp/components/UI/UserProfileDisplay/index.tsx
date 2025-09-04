@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-import { erc20ChainDropdownOptions } from "@components/_pages/Create/components/RequirementsSettings/config";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import useProfileData from "@hooks/useProfileData";
@@ -8,6 +7,7 @@ import { useAccount } from "wagmi";
 import { Avatar } from "../Avatar";
 import CustomLink from "../Link";
 import SendFundsButton from "./componentts/SendFundsButton";
+import { erc20ChainDropdownOptions } from "@helpers/tokens";
 
 interface UserProfileDisplayProps {
   ethereumAddress: string;

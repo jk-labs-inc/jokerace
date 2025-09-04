@@ -11,14 +11,11 @@ import useSetContestTypeConfig from "../../hooks/useSetContestTypeConfig";
 import { ContestType } from "../../types";
 import CreateContestTypesAnyoneCanPlay from "./components/Types/AnyoneCanPlay";
 import { anyoneCanPlayConfig } from "./components/Types/AnyoneCanPlay/config";
-import CreateContestTypesEntryBased from "./components/Types/EntryBased";
-import entryBasedConfig from "./components/Types/EntryBased/config";
 import CreateContestTypesVotingBased from "./components/Types/VotingBased";
 import votingBasedConfig from "./components/Types/VotingBased/config";
 
 const contestTypeConfigs = {
   [ContestType.AnyoneCanPlay]: anyoneCanPlayConfig,
-  [ContestType.EntryContest]: entryBasedConfig,
   [ContestType.VotingContest]: votingBasedConfig,
 } as const;
 
@@ -56,11 +53,6 @@ const CreateContestTypes = () => {
         <div className="grid gap-6 col-start-1 md:col-start-2 col-span-3 md:col-span-2 md:ml-10 mt-8 md:mt-6">
           <CreateContestTypesAnyoneCanPlay
             isSelected={contestType === ContestType.AnyoneCanPlay}
-            onClick={type => handleTypeSelection(type)}
-            faqLink={faqLink}
-          />
-          <CreateContestTypesEntryBased
-            isSelected={contestType === ContestType.EntryContest}
             onClick={type => handleTypeSelection(type)}
             faqLink={faqLink}
           />

@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import TokenSearchModal, { TokenSearchModalType } from "@components/TokenSearchModal";
+import TokenSearchModal from "@components/TokenSearchModal";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
@@ -230,7 +230,6 @@ const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index }) => {
         </div>
       </div>
       <TokenSearchModal
-        type={TokenSearchModalType.ERC20}
         chains={[{ label: chainName, value: chainName }]}
         isOpen={isTokenSearchModalOpen}
         onClose={() => setIsTokenSearchModalOpen(false)}
