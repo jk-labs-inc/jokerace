@@ -1,30 +1,30 @@
+import { useQuery } from "@tanstack/react-query";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { PERCENTAGE_TO_CREATOR_DEFAULT } from "constants/monetization";
 import { fetchChargeDetails } from "lib/monetization";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const useChargeDetails = (chainName: string) => {
   const { setCharge, setPrevChainRefInCharge, prevChainRefInCharge, setMinCharge } = useDeployContestStore();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isError, setIsError] = useState<boolean>(false);
+  const {
+    data: chargeDetails,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["chargeDetails", chainName],
+    queryFn: () => fetchChargeDetails(chainName),
+    enabled: !!chainName,
+    retry: 2,
+  });
 
-  const fetchDetails = useCallback(async () => {
-    setIsLoading(true);
-    setIsError(false);
+  useEffect(() => {
+    if (!chargeDetails || !chainName) return;
 
-    if (!chainName) {
-      setIsLoading(false);
-      setIsError(false);
-      return;
-    }
+    if (prevChainRefInCharge === chainName) return;
 
-    const details = await fetchChargeDetails(chainName);
-
-    setIsLoading(false);
-    setIsError(details.isError);
-
-    if (details.isError) {
+    if (chargeDetails.isError) {
       setCharge({
         percentageToCreator: PERCENTAGE_TO_CREATOR_DEFAULT,
         splitFeeDestination: { type: SplitFeeDestinationType.CreatorWallet, address: "" },
@@ -36,19 +36,11 @@ const useChargeDetails = (chainName: string) => {
         },
         error: true,
       });
-      setPrevChainRefInCharge(chainName);
-    }
-
-    if (!details.isError) {
-      if (prevChainRefInCharge === chainName) {
-        setIsLoading(false);
-        setIsError(false);
-        return;
-      }
+    } else {
       setMinCharge({
-        minCostToPropose: details.minCostToPropose,
-        minCostToVote: details.minCostToVote,
-        minCostToVoteEndPrice: details.minCostToVote * 10,
+        minCostToPropose: chargeDetails.minCostToPropose,
+        minCostToVote: chargeDetails.minCostToVote,
+        minCostToVoteEndPrice: chargeDetails.minCostToVote * 10,
       });
 
       setCharge({
@@ -56,22 +48,23 @@ const useChargeDetails = (chainName: string) => {
         splitFeeDestination: { type: SplitFeeDestinationType.CreatorWallet, address: "" },
         voteType: VoteType.PerVote,
         type: {
-          costToPropose: details.defaultCostToPropose,
-          costToVote: details.defaultCostToVote,
-          costToVoteEndPrice: details.defaultCostToVote * 1000,
+          costToPropose: chargeDetails.defaultCostToPropose,
+          costToVote: chargeDetails.defaultCostToVote,
+          costToVoteEndPrice: chargeDetails.defaultCostToVote * 1000,
         },
         error: false,
       });
-
-      setPrevChainRefInCharge(chainName);
     }
-  }, [chainName, prevChainRefInCharge, setCharge, setMinCharge, setPrevChainRefInCharge]);
 
-  useEffect(() => {
-    fetchDetails();
-  }, [fetchDetails]);
+    setPrevChainRefInCharge(chainName);
+  }, [chargeDetails, chainName, prevChainRefInCharge, setCharge, setMinCharge, setPrevChainRefInCharge]);
 
-  return { isLoading, isError, refetch: fetchDetails };
+  return {
+    isLoading,
+    isError,
+    refetch,
+    data: chargeDetails,
+  };
 };
 
 export default useChargeDetails;
