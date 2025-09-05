@@ -18579,10 +18579,10 @@ viem@2.23.2:
     ox "0.6.7"
     ws "8.18.0"
 
-viem@2.37.2, viem@^2.37.1:
-  version "2.37.2"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.2.tgz#4eae5693862f8de65eff15f34faaea542b271ab8"
-  integrity sha512-soXSUhPEnHzXVo1sSFg2KiUUwOTCtqGNnR/NOHr+4vZcbM6sTyS62asg9EfDpaJQFNduRQituxTcflaK6OIaPA==
+viem@2.37.3:
+  version "2.37.3"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.3.tgz#3c4ddaa4808f097f67c1464dfbc6058e30fdeaaf"
+  integrity sha512-hwoZqkFSy13GCFzIftgfIH8hNENvdlcHIvtLt73w91tL6rKmZjQisXWTahi1Vn5of8/JQ1FBKfwUus3YkDXwbw==
   dependencies:
     "@noble/curves" "1.9.1"
     "@noble/hashes" "1.8.0"
@@ -18662,6 +18662,20 @@ viem@^2.33.2:
     abitype "1.0.8"
     isows "1.0.7"
     ox "0.9.1"
+    ws "8.18.3"
+
+viem@^2.37.1:
+  version "2.37.2"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.2.tgz#4eae5693862f8de65eff15f34faaea542b271ab8"
+  integrity sha512-soXSUhPEnHzXVo1sSFg2KiUUwOTCtqGNnR/NOHr+4vZcbM6sTyS62asg9EfDpaJQFNduRQituxTcflaK6OIaPA==
+  dependencies:
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "1.8.0"
+    "@scure/bip32" "1.7.0"
+    "@scure/bip39" "1.6.0"
+    abitype "1.1.0"
+    isows "1.0.7"
+    ox "0.9.3"
     ws "8.18.3"
 
 vite-node@1.5.0:
