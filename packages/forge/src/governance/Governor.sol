@@ -109,7 +109,7 @@ abstract contract Governor is GovernorSorting {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.1"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.3"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -323,11 +323,6 @@ abstract contract Governor is GovernorSorting {
     function totalVotesCastIsZero() public virtual returns (bool totalVotesCastZero);
 
     /**
-     * @dev Remove deleted proposalIds from forVotesToProposalIds and decrement copy counts of the forVotes of proposalIds.
-     */
-    function _multiRmProposalIdFromVotesMap(uint256[] calldata proposalIds) internal virtual;
-
-    /**
      * @dev Register a vote with a given support and voting weight.
      */
     function _countVote(uint256 proposalId, address account, uint256 numVotes) internal virtual;
@@ -485,12 +480,6 @@ abstract contract Governor is GovernorSorting {
                 // it will still count towards the total number of proposals that the user is allowed to submit though
                 deletedProposalIds.push(currentProposalId);
             }
-        }
-
-        // we only do sorting if downvoting is disabled and if sorting is enabled
-        if (sortingEnabled == 1) {
-            // remove proposalIds from votesToProposalIds (could contain proposalIds that have been deleted before, that's ok though)
-            _multiRmProposalIdFromVotesMap(proposalIdsToDelete);
         }
 
         emit ProposalsDeleted(proposalIds);

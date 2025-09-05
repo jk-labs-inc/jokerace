@@ -927,16 +927,20 @@ abstract contract GovernorSorting {
 
     // Because of the array rule below, the actual number of rankings that this contract will be able to track is determined by three things:
     //      - RANK_LIMIT
-    //      - To Tied (TTs), or to a previous TT
-    //          The number of times a proposal's newValue goes into an index to tie it; an index that is already tied;
-    //          or an index that wasn't garbage collected because it went to either one of last two cases or an index that also wasn't garbage
+    //      - Woulda Beens (WBs)
+    //          The number of would-be ranked proposals (at the end of the contest if rankings were counted
+    //          without taking out deleted proposals) within the limit that are deleted and do not have other, non-deleted proposals
+    //          with the same amounts of votes/that are tied with them.
+    //      - To Tied or Deleted (TTDs), or to a previous TTD
+    //          The number of times a proposal's newValue goes into an index to tie it; an index that is already tied; an index that was last deleted;
+    //          or an index that wasn't garbage collected because it went to either one of last three cases or an index that also wasn't garbage
     //          collected because of the same recursive logic, from a ranking that was in the tracked rankings at the time that vote was cast.
     //
     // The equation to calcluate how many rankings this contract will actually be able to track is:
-    // # of rankings GovernorSorting can track for a given contest = RANK_LIMIT - TTs
+    // # of rankings GovernorSorting can track for a given contest = RANK_LIMIT - WBs - TTDs
     //
     // With this in mind, it is strongly reccomended to set RANK_LIMIT sufficiently high to create a buffer for
-    // TTs that may occur in your contest. The thing to consider with regard to making it too high is just
+    // WBs and TTDs that may occur in your contest. The thing to consider with regard to making it too high is just
     // that it is more gas for users on average the higher that RANK_LIMIT is set.
 
     uint256 public sortingEnabled; // Either 0 for false or 1 for true
@@ -975,7 +979,7 @@ abstract contract GovernorSorting {
         // find the index to insert newValue at
         uint256 insertingIndex;
         for (uint256 index = 0; index < sortedRanksLength; index++) {
-            // is this value already in the array? (is this a TT or to a previous TT?)
+            // is this value already in the array? (is this a TTD or to a previous TTD?)
             if (newValue == sortedRanksMemVar[index]) {
                 // if so, we don't need to insert anything and the oldValue of this doesn't get cleaned up
                 return;
@@ -4831,7 +4835,7 @@ using {
 /// @dev The result is rounded toward zero.
 /// @param x The UD60x18 number to convert.
 /// @return result The same number in basic integer form.
-function convert_0(UD60x18 x) pure returns (uint256 result) {
+function convert_1(UD60x18 x) pure returns (uint256 result) {
     result = UD60x18.unwrap(x) / uUNIT_3;
 }
 
@@ -4842,7 +4846,7 @@ function convert_0(UD60x18 x) pure returns (uint256 result) {
 ///
 /// @param x The basic integer to convert.
 /// @param result The same number converted to UD60x18.
-function convert_1(uint256 x) pure returns (UD60x18 result) {
+function convert_0(uint256 x) pure returns (UD60x18 result) {
     if (x > uMAX_UD60x18 / uUNIT_3) {
         revert PRBMath_UD60x18_Convert_Overflow(x);
     }
@@ -4977,7 +4981,7 @@ abstract contract Governor is GovernorSorting {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.3"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.2"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -5625,6 +5629,123 @@ abstract contract GovernorCountingSimple is Governor {
     }
 }
 
+// src/governance/extensions/GovernorEngagement.sol
+
+/**
+ * @dev Extension of {Governor} for engagement features.
+ */
+abstract contract GovernorEngagement is Governor {
+    struct CommentCore {
+        address author;
+        uint256 timestamp;
+        uint256 proposalId;
+        string commentContent;
+    }
+
+    event CommentCreated(uint256 commentId);
+    event CommentsDeleted(uint256[] commentIds);
+
+    uint256[] public commentIds;
+    uint256[] public deletedCommentIds;
+    mapping(uint256 => CommentCore) public comments;
+    mapping(uint256 => uint256[]) public proposalComments;
+    mapping(uint256 => bool) public commentIsDeleted;
+
+    error OnlyCreatorOrAuthorCanDeleteComments(uint256 failedToDeleteCommentId);
+    error CannotCommentWhenCompletedOrCanceled();
+    error CannotDeleteWhenCompletedOrCanceled();
+
+    /**
+     * @dev Hashing function used to build the comment id from the comment details.
+     */
+    function hashComment(CommentCore memory commentObj) public pure returns (uint256) {
+        return uint256(keccak256(abi.encode(commentObj)));
+    }
+
+    /**
+     * @dev Return all commentIds.
+     */
+    function getAllCommentIds() public view returns (uint256[] memory) {
+        return commentIds;
+    }
+
+    /**
+     * @dev Return all deleted commentIds.
+     */
+    function getAllDeletedCommentIds() public view returns (uint256[] memory) {
+        return deletedCommentIds;
+    }
+
+    /**
+     * @dev Return a comment object.
+     */
+    function getComment(uint256 commentId) public view returns (CommentCore memory) {
+        return comments[commentId];
+    }
+
+    /**
+     * @dev Return the array of commentIds on a given proposalId.
+     */
+    function getProposalComments(uint256 proposalId) public view returns (uint256[] memory) {
+        return proposalComments[proposalId];
+    }
+
+    /**
+     * @dev Comment on a proposal.
+     *
+     * Emits a {CommentCreated} event.
+     */
+    function comment(uint256 proposalId, string memory commentContent) public returns (uint256) {
+        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
+            revert CannotCommentWhenCompletedOrCanceled();
+        }
+
+        CommentCore memory commentObject = CommentCore({
+            author: msg.sender,
+            timestamp: block.timestamp,
+            proposalId: proposalId,
+            commentContent: commentContent
+        });
+        uint256 commentId = hashComment(commentObject);
+
+        commentIds.push(commentId);
+        comments[commentId] = commentObject;
+        proposalComments[proposalId].push(commentId);
+
+        emit CommentCreated(commentId);
+
+        return commentId;
+    }
+
+    /**
+     * @dev Delete comments.
+     *
+     * Emits a {CommentsDeleted} event.
+     */
+    function deleteComments(uint256[] memory commentIdsParam) public {
+        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
+            revert CannotDeleteWhenCompletedOrCanceled();
+        }
+
+        uint256 commentIdsParamMemVar = commentIdsParam.length;
+
+        for (uint256 index = 0; index < commentIdsParamMemVar; index++) {
+            uint256 currentCommentId = commentIdsParam[index];
+
+            if ((msg.sender != creator) && (msg.sender != comments[currentCommentId].author)) {
+                revert OnlyCreatorOrAuthorCanDeleteComments(currentCommentId);
+            }
+
+            if (!commentIsDeleted[currentCommentId]) {
+                commentIsDeleted[currentCommentId] = true;
+                deletedCommentIds.push(currentCommentId);
+            }
+        }
+
+        emit CommentsDeleted(commentIdsParam);
+    }
+}
+
 // src/modules/VoterRewardsModule.sol
 
 // Forked from OpenZeppelin Contracts (v4.7.0) (finance/PaymentSplitter.sol)
@@ -5672,7 +5793,7 @@ contract VoterRewardsModule {
     string public constant MODULE_TYPE = "VOTER_REWARDS";
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant JK_LABS_CANCEL_DELAY = 604800; // One week
-    string private constant VERSION = "6.3"; // Private as to not clutter the ABI
+    string private constant VERSION = "6.2"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;
@@ -5974,6 +6095,56 @@ contract VoterRewardsModule {
         shares[ranking] = shares_;
         totalShares = totalShares + shares_;
         emit PayeeAdded(ranking, shares_);
+    }
+}
+
+// src/governance/extensions/GovernorModuleRegistry.sol
+
+/**
+ * @dev Extension of {Governor} for module management.
+ */
+abstract contract GovernorModuleRegistry is Governor {
+    event OfficialRewardsModuleSet(address oldOfficialRewardsModule, address newOfficialRewardsModule);
+
+    address public officialRewardsModule;
+
+    error OnlyCreatorCanSetRewardsModule();
+    error OfficialRewardsModuleMustPointToThisContest();
+
+    /**
+     * @dev Get the official rewards module contract for this contest (effectively reverse record).
+     */
+    function setOfficialRewardsModule(address officialRewardsModule_) public {
+        if (msg.sender != creator) revert OnlyCreatorCanSetRewardsModule();
+        if (address(VoterRewardsModule(payable(officialRewardsModule_)).underlyingContest()) != address(this)) {
+            revert OfficialRewardsModuleMustPointToThisContest();
+        }
+        address oldOfficialRewardsModule = officialRewardsModule;
+        officialRewardsModule = officialRewardsModule_;
+        emit OfficialRewardsModuleSet(oldOfficialRewardsModule, officialRewardsModule_);
+    }
+}
+
+// src/Contest.sol
+
+contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEngagement {
+    uint256 public constant SECONDS_IN_WEEK = 604800;
+
+    error PeriodsCannotBeMoreThanAWeek();
+    error RankLimitCannotBeZero();
+
+    constructor(ConstructorArgs memory _constructorArgs)
+        Governor(_constructorArgs)
+        GovernorSorting(_constructorArgs.intConstructorArgs.sortingEnabled, _constructorArgs.intConstructorArgs.rankLimit)
+    {
+        if (
+            (_constructorArgs.intConstructorArgs.votingDelay > SECONDS_IN_WEEK)
+                || (_constructorArgs.intConstructorArgs.votingPeriod > SECONDS_IN_WEEK)
+        ) {
+            revert PeriodsCannotBeMoreThanAWeek();
+        }
+
+        if (_constructorArgs.intConstructorArgs.rankLimit == 0) revert RankLimitCannotBeZero();
     }
 }
 
