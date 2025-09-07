@@ -109,7 +109,7 @@
     "ts-node": "10.9.2",
     "typescript": "5.9.2",
     "underscore": "1.13.7",
-    "uuid": "11.1.0",
+    "uuid": "12.0.0",
     "viem": "2.37.4",
     "wagmi": "2.16.9",
     "webpack": "5.101.3",
