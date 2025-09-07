@@ -16727,10 +16727,10 @@ react-use@17.6.0:
     ts-easing "^0.2.0"
     tslib "^2.1.0"
 
-react-window@2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.0.2.tgz#33db244d767a1eb44783918e72c1a7daf2f6890d"
-  integrity sha512-KCDGR+5qB6hG/eDWCNZku5ERMV21vjMEDJeobqPXI0/foVDaqjf+Fsum4iJu0ftLUTxh9yvZ9t7T+SJ7woOLFw==
+react-window@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.1.0.tgz#66f175398bb864dc21d70af55d53ec677032158a"
+  integrity sha512-STMrsd6t3pN/XFa5cblpwTLpsEDtrtdeNY+71QsEaY0m7Fhbn9R4XXYzYAyKDpeYbjmBpAflqHBdDDKW928m3Q==
 
 react@19.1.1:
   version "19.1.1"
