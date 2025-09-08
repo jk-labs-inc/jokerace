@@ -15,11 +15,7 @@ export interface MonetizationSliceState {
 
 export interface MonetizationSliceActions {
   setCharge: (charge: ReactStyleStateSetter<Charge>) => void;
-  setMinCharge: (minCharge: {
-    minCostToPropose: number;
-    minCostToVote: number;
-    minCostToVoteEndPrice?: number;
-  }) => void;
+  setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => void;
   setPrevChainRefInCharge: (chain: string) => void;
   setPriceCurve: (priceCurve: ReactStyleStateSetter<PriceCurve>) => void;
 }

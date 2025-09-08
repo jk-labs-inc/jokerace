@@ -16,7 +16,6 @@ const useChargeDetails = (chainName: string) => {
     queryKey: ["chargeDetails", chainName],
     queryFn: () => fetchChargeDetails(chainName),
     enabled: !!chainName,
-    retry: 2,
   });
 
   useEffect(() => {
@@ -32,6 +31,7 @@ const useChargeDetails = (chainName: string) => {
         type: {
           costToPropose: 0,
           costToVote: 0,
+          costToVoteStartPrice: 0,
           costToVoteEndPrice: 0,
         },
         error: true,
@@ -40,7 +40,6 @@ const useChargeDetails = (chainName: string) => {
       setMinCharge({
         minCostToPropose: chargeDetails.minCostToPropose,
         minCostToVote: chargeDetails.minCostToVote,
-        minCostToVoteEndPrice: chargeDetails.minCostToVote * 10,
       });
 
       setCharge({
@@ -50,7 +49,8 @@ const useChargeDetails = (chainName: string) => {
         type: {
           costToPropose: chargeDetails.defaultCostToPropose,
           costToVote: chargeDetails.defaultCostToVote,
-          costToVoteEndPrice: chargeDetails.defaultCostToVote * 1000,
+          costToVoteStartPrice: chargeDetails.defaultCostToVoteStartPrice,
+          costToVoteEndPrice: chargeDetails.defaultCostToVoteEndPrice,
         },
         error: false,
       });

@@ -1,11 +1,11 @@
-import { FC, useEffect, useState } from "react";
 import CreateFlowMonetizationInput from "@components/_pages/Create/components/MonetizationInput";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useShallow } from "zustand/react/shallow";
-import { validateCostToVote, validateStartAndEndPrice } from "../../../../../../validation";
-import { useMediaQuery } from "react-responsive";
 import { PriceCurveType } from "@hooks/useDeployContest/types";
 import { calculateExponentialMultiple } from "lib/priceCurve";
+import { FC, useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/react/shallow";
+import { validateCostToVote, validateStartAndEndPrice } from "../../../../../../validation";
 
 interface ExponentialPricingOptionProps {
   chainUnitLabel: string;
@@ -14,12 +14,12 @@ interface ExponentialPricingOptionProps {
 
 const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnitLabel, onError }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const [costToVoteError, setCostToVoteError] = useState("");
+  const [costToVoteStartPriceError, setCostToVoteStartPriceError] = useState("");
   const [costToVoteEndPriceError, setCostToVoteEndPriceError] = useState("");
-  const { costToVote, costToVoteEndPrice, setCharge, setPriceCurve, minCostToVote, priceCurveType } =
+  const { costToVoteEndPrice, costToVoteStartPrice, setCharge, setPriceCurve, minCostToVote, priceCurveType } =
     useDeployContestStore(
       useShallow(state => ({
-        costToVote: state.charge.type.costToVote,
+        costToVoteStartPrice: state.charge.type.costToVoteStartPrice,
         costToVoteEndPrice: state.charge.type.costToVoteEndPrice,
         minCostToVote: state.minCharge.minCostToVote,
         priceCurveType: state.priceCurve.type,
@@ -29,9 +29,9 @@ const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnit
     );
 
   useEffect(() => {
-    if (!costToVoteEndPrice || priceCurveType === PriceCurveType.Flat) return;
+    if (!costToVoteEndPrice || !costToVoteStartPrice || priceCurveType === PriceCurveType.Flat) return;
 
-    const error = validateStartAndEndPrice(costToVote, costToVoteEndPrice);
+    const error = validateStartAndEndPrice(costToVoteStartPrice, costToVoteEndPrice);
     if (error) {
       setCostToVoteEndPriceError(error);
       onError?.(true);
@@ -41,10 +41,10 @@ const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnit
       onError?.(false);
     }
 
-    if (costToVote > 0 && costToVoteEndPrice > 0 && costToVoteEndPrice > costToVote) {
+    if (costToVoteStartPrice > 0 && costToVoteEndPrice > 0 && costToVoteEndPrice > costToVoteStartPrice) {
       try {
         const multiple = calculateExponentialMultiple({
-          startPrice: costToVote,
+          startPrice: costToVoteStartPrice,
           endPrice: costToVoteEndPrice,
         });
 
@@ -53,7 +53,7 @@ const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnit
         console.error("Error calculating exponential multiple:", error);
       }
     }
-  }, [costToVote, costToVoteEndPrice, priceCurveType]);
+  }, [costToVoteStartPrice, costToVoteEndPrice, priceCurveType]);
 
   const handleMultipleChange = (value: number) => {
     setPriceCurve(prev => ({
@@ -63,7 +63,9 @@ const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnit
   };
 
   const handleCostToVoteEndPriceChange = (value: number) => {
-    const error = validateStartAndEndPrice(costToVote, value);
+    if (!costToVoteStartPrice) return;
+
+    const error = validateStartAndEndPrice(costToVoteStartPrice, value);
 
     if (error) {
       setCostToVoteEndPriceError(error);
@@ -80,10 +82,10 @@ const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnit
     }));
   };
 
-  const handleCostToVoteChange = (value: number | null) => {
+  const handleCostToVoteStartPriceChange = (value: number | null) => {
     const error = validateCostToVote(value, minCostToVote);
     if (error) {
-      setCostToVoteError(error);
+      setCostToVoteStartPriceError(error);
       onError?.(true);
       setCharge(prev => ({
         ...prev,
@@ -91,7 +93,7 @@ const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnit
       }));
       return;
     } else {
-      setCostToVoteError("");
+      setCostToVoteStartPriceError("");
     }
 
     if (costToVoteEndPrice) {
@@ -111,7 +113,7 @@ const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnit
       ...prev,
       type: {
         ...prev.type,
-        costToVote: value ?? 0,
+        costToVoteStartPrice: value ?? 0,
       },
       error: false,
     }));
@@ -136,17 +138,16 @@ const ExponentialPricingOption: FC<ExponentialPricingOptionProps> = ({ chainUnit
           <p className="text-[12px] font-bold text-neutral-9">price at start</p>
           <div className="flex-1 flex items-end">
             <CreateFlowMonetizationInput
-              value={costToVote}
-              onChange={handleCostToVoteChange}
+              value={costToVoteStartPrice ?? 0}
+              onChange={handleCostToVoteStartPriceChange}
               label={chainUnitLabel}
-              errorMessage={costToVoteError}
+              errorMessage={costToVoteStartPriceError}
             />
           </div>
         </div>
-        {/* TODO: check centering style here, maybe use a grid layout*/}
         <div
           className={`hidden md:flex self-center justify-center items-center ${
-            costToVoteEndPriceError || costToVoteError ? "mt-0" : "mt-6"
+            costToVoteEndPriceError || costToVoteStartPriceError ? "mt-0" : "mt-6"
           }`}
         >
           <p className="text-[40px] font-bold text-neutral-10">to</p>
