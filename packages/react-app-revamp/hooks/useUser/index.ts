@@ -25,7 +25,13 @@ export function useUser() {
     lowerCaseChainName,
   );
 
-  const { checkIfCurrentUserQualifyToVote, setUserVoteQualification } = useVoteQualification(userAddress);
+  const { checkIfCurrentUserQualifyToVote, setUserVoteQualification } = useVoteQualification(
+    userAddress,
+    contestAddressLowerCase,
+    lowerCaseChainName,
+    address,
+    chainId,
+  );
   const { checkAnyoneCanVoteUserQualification } = useAnyoneCanVote(userAddress, address, chainId);
   const { updateCurrentUserVotes } = useVoteUpdates(userAddress, address);
 
