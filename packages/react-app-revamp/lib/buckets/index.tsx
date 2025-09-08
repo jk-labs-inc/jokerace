@@ -1,7 +1,7 @@
 import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { s3 } from "@config/s3";
-import { Recipient } from "lib/merkletree/generateMerkleTree";
+import { Recipient } from "@hooks/useDeployContest/types";
 
 const MERKLE_TREES_BUCKET = process.env.NEXT_PUBLIC_MERKLE_TREES_BUCKET as string;
 const IMAGE_UPLOAD_BUCKET = process.env.NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET as string;

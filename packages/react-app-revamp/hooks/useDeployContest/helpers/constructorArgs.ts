@@ -1,7 +1,7 @@
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { parseEther } from "viem";
 import { createMetadataFieldsSchema } from "./index";
-import { PriceCurveType, SplitFeeDestinationType } from "../types";
+import { Charge, PriceCurveType, SplitFeeDestinationType } from "../types";
 import { ContestType } from "@components/_pages/Create/types";
 import { MAX_SUBMISSIONS_LIMIT, JK_LABS_SPLIT_DESTINATION_DEFAULT } from "../index";
 
@@ -19,17 +19,7 @@ export interface ConstructorArgsParams {
   advancedOptions: {
     rankLimit: number;
   };
-  charge: {
-    type: {
-      costToPropose: number;
-      costToVote: number;
-    };
-    percentageToCreator: number;
-    splitFeeDestination: {
-      type: SplitFeeDestinationType;
-      address?: string;
-    };
-  };
+  charge: Charge;
   priceCurve: {
     type: PriceCurveType;
     multiple: number;
@@ -68,6 +58,8 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
       ? allowedSubmissionsPerUser
       : MAX_SUBMISSIONS_LIMIT;
   const finalMaxSubmissions = !isNaN(maxSubmissions) && maxSubmissions > 0 ? maxSubmissions : MAX_SUBMISSIONS_LIMIT;
+  const costToVote =
+    priceCurve.type === PriceCurveType.Flat ? chargeType.costToVote : chargeType.costToVoteStartPrice ?? 0;
 
   const intConstructorArgs = {
     anyoneCanSubmit: isAnyoneCanSubmit,
@@ -80,7 +72,7 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     rankLimit: advancedOptions.rankLimit,
     percentageToCreator: percentageToCreator,
     costToPropose: parseEther(chargeType.costToPropose.toString()),
-    costToVote: parseEther(chargeType.costToVote.toString()),
+    costToVote: parseEther(costToVote.toString()),
     priceCurveType: priceCurve.type === PriceCurveType.Flat ? 0 : 1,
     multiple: priceCurve.type === PriceCurveType.Flat ? 1 : parseEther(priceCurve.multiple.toString()),
   };

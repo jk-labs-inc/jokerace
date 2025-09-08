@@ -1,36 +1,33 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
-import { chains, config } from "@config/wagmi";
+import { config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { extractPathSegments } from "@helpers/extractPath";
+import { getChainId } from "@helpers/getChainId";
 import { useContestStore } from "@hooks/useContest/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import { useEmailSend } from "@hooks/useEmailSend";
 import { useError } from "@hooks/useError";
 import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
-import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
-import { useUserStore } from "@hooks/useUser/store";
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import moment from "moment";
 import { usePathname } from "next/navigation";
 import { useCallback } from "react";
+import { checkAndMarkPriceChangeError } from "utils/error";
 import { formatEther, parseUnits } from "viem";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import { useCastVotesStore } from "./store";
-import { performAnalytics, CombinedAnalyticsParams } from "./utils/analytics";
-import { calculateChargeAmount } from "./utils/helpers";
+import { CombinedAnalyticsParams, performAnalytics } from "./utils/analytics";
 import { createVotingEmailSender } from "./utils/email";
-import { checkAndMarkPriceChangeError } from "utils/error";
+import { calculateChargeAmount } from "./utils/helpers";
 import { usePriceTracking } from "./utils/priceTracking";
-import { VOTE_AND_EARN_VERSION } from "@hooks/useUser/utils";
-import { compareVersions } from "compare-versions";
 
 export function useCastVotes() {
   const {
@@ -67,13 +64,9 @@ export function useCastVotes() {
   const { address: userAddress } = useAccount();
   const asPath = usePathname();
   const { updateCurrentUserVotes } = useUser();
-  const { currentUserTotalVotesAmount } = useUserStore(state => state);
-  const { getProofs } = useGenerateProof();
   const { error: errorMessage, handleError } = useError();
   const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
-  )?.[0]?.id;
+  const chainId = getChainId(chainName);
   const { refetch: refetchTotalVotesCastOnContest } = useTotalVotesCastOnContest(contestAddress, chainId);
   const { refetch: refetchCurrentUserVotesOnProposal } = useFetchUserVotesOnProposal(
     contestAddress,
@@ -115,69 +108,23 @@ export function useCastVotes() {
     // Capture the price when voting starts
     startNewVotingSession();
 
-    const isVoteAndEarnVersion = compareVersions(version, VOTE_AND_EARN_VERSION) >= 0;
-
     try {
-      let proofs, isVerified;
-
-      // Only generate proofs if it's NOT the vote-and-earn version
-      if (!isVoteAndEarnVersion) {
-        const proofsResult = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
-        proofs = proofsResult.proofs;
-        isVerified = proofsResult.isVerified;
-      }
-
       const costToVote = getChargeAmount(amountOfVotes);
-      const totalVoteAmount = anyoneCanVote ? 0 : parseUnits(currentUserTotalVotesAmount.toString(), 18);
+      const castVoteArgs = [pickedProposal, parseUnits(amountOfVotes.toString(), 18)];
 
-      let hash: `0x${string}`;
-      let request;
+      const { request } = await simulateContract(config, {
+        address: contestAddress as `0x${string}`,
+        abi: abi ? abi : DeployedContestContract.abi,
+        chainId,
+        functionName: "castVote",
+        args: castVoteArgs,
+        //@ts-ignore (ignoring this becaues for some reason value type is set as undefined?)
+        value: costToVote,
+      });
 
-      if (isVoteAndEarnVersion) {
-        // For vote-and-earn version, use castVote without totalVoteAmount and proofs
-        const castVoteArgs = [pickedProposal, parseUnits(amountOfVotes.toString(), 18)];
-        const { request: simulatedRequest } = await simulateContract(config, {
-          address: contestAddress as `0x${string}`,
-          abi: abi ? abi : DeployedContestContract.abi,
-          chainId,
-          functionName: "castVote",
-          args: castVoteArgs,
-          //@ts-ignore
-          value: costToVote,
-        });
-        request = simulatedRequest;
-      } else if (!isVerified) {
-        // For older versions with proofs, use castVote with proofs
-        const castVoteArgs = [pickedProposal, totalVoteAmount, parseUnits(amountOfVotes.toString(), 18), proofs];
-        const { request: simulatedRequest } = await simulateContract(config, {
-          address: contestAddress as `0x${string}`,
-          abi: abi ? abi : DeployedContestContract.abi,
-          chainId,
-          functionName: "castVote",
-          args: castVoteArgs,
-          //@ts-ignore
-          value: costToVote,
-        });
-        request = simulatedRequest;
-      } else {
-        // For older versions with verified users, use castVoteWithoutProof
-        const castVoteWithoutProofArgs = [pickedProposal, parseUnits(`${amountOfVotes}`, 18)];
-        const { request: simulatedRequest } = await simulateContract(config, {
-          address: contestAddress as `0x${string}`,
-          abi: abi ? abi : DeployedContestContract.abi,
-          chainId,
-          functionName: "castVoteWithoutProof",
-          args: castVoteWithoutProofArgs,
-          //@ts-ignore
-          value: costToVote,
-        });
-        request = simulatedRequest;
-      }
-
-      hash = await writeContract(config, request);
+      const hash = await writeContract(config, request);
       const receipt = await waitForTransactionReceipt(config, { chainId, hash });
 
-      // Perform analytics
       const analyticsParams: CombinedAnalyticsParams = {
         contestAddress,
         userAddress,

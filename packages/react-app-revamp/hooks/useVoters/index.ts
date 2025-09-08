@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getVoters } from "lib/buckets/voters";
-import { Recipient } from "lib/merkletree/generateMerkleTree";
+import { Recipient } from "@hooks/useDeployContest/types";
 
 const useVoters = (votingMerkleRoot: string, isV3: boolean) => {
   const fetchVoters = async (): Promise<Recipient[]> => {
