@@ -34,7 +34,6 @@ export interface ContestState {
   contestMaxProposalCount: number;
   sortingEnabled: boolean;
   submissionMerkleRoot: string;
-  votingMerkleRoot: string;
   charge: Charge;
   votingRequirements: VotingRequirementsSchema | null;
   submissionRequirements: VotingRequirementsSchema | null;
@@ -52,7 +51,6 @@ export interface ContestState {
   setVotesOpen: (datetime: Date) => void;
   setVotesClose: (datetime: Date) => void;
   setSubmissionsMerkleRoot: (merkleRoot: string) => void;
-  setVotingMerkleRoot: (merkleRoot: string) => void;
   setVotingRequirements: (votingRequirements: VotingRequirementsSchema | null) => void;
   setSubmissionRequirements: (submissionRequirements: VotingRequirementsSchema | null) => void;
   setIsLoading: (value: boolean) => void;
@@ -88,7 +86,6 @@ export const createContestStore = () =>
     votesOpen: new Date(),
     votesClose: new Date(),
     submissionMerkleRoot: "",
-    votingMerkleRoot: "",
     isLoading: true,
     error: null,
     charge: {
@@ -125,7 +122,6 @@ export const createContestStore = () =>
     setVotesOpen: datetime => set({ votesOpen: datetime }),
     setVotesClose: datetime => set({ votesClose: datetime }),
     setSubmissionsMerkleRoot: merkleRoot => set({ submissionMerkleRoot: merkleRoot }),
-    setVotingMerkleRoot: merkleRoot => set({ votingMerkleRoot: merkleRoot }),
     setVotingRequirements: votingRequirements => set({ votingRequirements: votingRequirements }),
     setSubmissionRequirements: submissionRequirements => set({ submissionRequirements: submissionRequirements }),
     setIsLoading: value => set({ isLoading: value }),

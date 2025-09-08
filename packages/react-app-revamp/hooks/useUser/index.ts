@@ -7,7 +7,6 @@ import { useAnyoneCanVote } from "./useAnyoneCanVote";
 import { useSubmitQualification } from "./useSubmitQualification";
 import { useVoteQualification } from "./useVoteQualification";
 import { useVoteUpdates } from "./useVoteUpdates";
-
 export { EMPTY_ROOT } from "./utils";
 
 export function useUser() {
@@ -26,13 +25,7 @@ export function useUser() {
     lowerCaseChainName,
   );
 
-  const { checkIfCurrentUserQualifyToVote, setUserVoteQualification } = useVoteQualification(
-    userAddress,
-    contestAddressLowerCase,
-    lowerCaseChainName,
-    address,
-    chainId,
-  );
+  const { checkIfCurrentUserQualifyToVote, setUserVoteQualification } = useVoteQualification(userAddress);
   const { checkAnyoneCanVoteUserQualification } = useAnyoneCanVote(userAddress, address, chainId);
   const { updateCurrentUserVotes } = useVoteUpdates(userAddress, address);
 
