@@ -1,6 +1,6 @@
 export const MAX_SUBMISSIONS_PER_CONTEST = 1000;
-export const DEFAULT_ALLOWED_SUBMISSIONS_PER_USER = 3;
 export const MAX_ALLOWED_SUBMISSIONS_PER_USER = 1000;
+export const DEFAULT_ALLOWED_SUBMISSIONS_PER_USER = 8;
 
 export type Recipient = {
   address: string;
@@ -70,6 +70,7 @@ export type Charge = {
   type: {
     costToPropose: number;
     costToVote: number;
+    costToVoteStartPrice?: number;
     costToVoteEndPrice?: number;
   };
   error?: boolean;

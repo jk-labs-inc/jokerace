@@ -2,7 +2,7 @@ import { chains } from "@config/wagmi";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useShallow } from "zustand/react/shallow";
-import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
+import { SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
 import ContestParamsSplitFeeDestination from "./components/SplitFeeDestination";
 import ContestParamsChargeSubmission from "./components/Submission";
@@ -30,9 +30,9 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ chain, onError }) =
     return (
       <p className="text-[20px] text-negative-11 font-bold">
         ruh roh, we couldn't load charge details for this chain!{" "}
-        <span className="underline cursor-pointer" onClick={refetchChargeDetails}>
+        <button className="underline cursor-pointer" onClick={() => refetchChargeDetails()}>
           please try again
-        </span>
+        </button>
       </p>
     );
   }
