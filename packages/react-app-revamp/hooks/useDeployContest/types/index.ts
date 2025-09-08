@@ -1,8 +1,11 @@
-import { Recipient } from "lib/merkletree/generateMerkleTree";
-
 export const MAX_SUBMISSIONS_PER_CONTEST = 1000;
 export const DEFAULT_ALLOWED_SUBMISSIONS_PER_USER = 3;
 export const MAX_ALLOWED_SUBMISSIONS_PER_USER = 1000;
+
+export type Recipient = {
+  address: string;
+  numVotes: string;
+};
 
 export type VotingMerkle = {
   merkleRoot: string;
