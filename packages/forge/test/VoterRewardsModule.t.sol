@@ -815,7 +815,7 @@ contract VoterRewardsModuleTest is Test {
     // SORTING OLD VALUE TESTING (TESTING SORTING ALGORITHM)
 
     // Old value is at inserting index
-    function testReleaseToAuthorFirstPlaceOldValueAtInsertingIndex() public {
+    function testReleaseToVoterFirstPlaceOldValueAtInsertingIndex() public {
         vm.warp(1681650001);
         vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
@@ -850,7 +850,7 @@ contract VoterRewardsModuleTest is Test {
     }
 
     // Old value is at inserting index and is only value in array
-    function testReleaseToAuthorFirstPlaceOldValueAtInsertingIndexOnlyValue() public {
+    function testReleaseToVoterFirstPlaceOldValueAtInsertingIndexOnlyValue() public {
         vm.warp(1681650001);
         vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
@@ -876,7 +876,7 @@ contract VoterRewardsModuleTest is Test {
     }
 
     // Old value is after inserting index and in array
-    function testReleaseToAuthorFirstPlaceOldValueAfterInserting() public {
+    function testReleaseToVoterFirstPlaceOldValueAfterInserting() public {
         vm.warp(1681650001);
         vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
@@ -910,7 +910,7 @@ contract VoterRewardsModuleTest is Test {
     }
 
     // Old value is at inserting index and tied
-    function testReleaseToAuthorFirstPlaceOldValueAtInsertingIndexAndTied() public {
+    function testReleaseToVoterFirstPlaceOldValueAtInsertingIndexAndTied() public {
         vm.warp(1681650001);
         vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
@@ -945,7 +945,7 @@ contract VoterRewardsModuleTest is Test {
     }
 
     // Old value is after inserting index, in array, and tied
-    function testReleaseToAuthorFirstPlaceOldValueAfterInsertingAndTied() public {
+    function testReleaseToVoterFirstPlaceOldValueAfterInsertingAndTied() public {
         vm.warp(1681650001);
         vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveContest.propose(testAddress1AuthorProposal1);
@@ -994,7 +994,7 @@ contract VoterRewardsModuleTest is Test {
     // RELEASES WITH RANK LIMIT OF ONE (TESTING SORTING ALGORITHM)
 
     // 2 proposals, different authors, at 1 and 5 votes, on contest with rank limit of 1 - array already at limit, release to author of rank 1
-    function testReleaseToAuthorFirstPlaceRankLimit1() public {
+    function testReleaseToVoterFirstPlaceRankLimit1() public {
         vm.warp(1681650001);
         vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress1AuthorProposal1);
@@ -1026,7 +1026,7 @@ contract VoterRewardsModuleTest is Test {
     }
 
     // 2 proposals, different authors, at 1 and 5 votes, on contest with rank limit of 1 - array already at limit, release to author of rank 2 - should error
-    function testReleaseToAuthorSecondPlaceRankLimit1() public {
+    function testReleaseToVoterSecondPlaceRankLimit1() public {
         vm.warp(1681650001);
         vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress1AuthorProposal1);
@@ -1052,7 +1052,7 @@ contract VoterRewardsModuleTest is Test {
     }
 
     // Old value is after inserting index and in array and at limit
-    function testReleaseToAuthorFirstPlaceOldValueInArrayAfterInsertingAtLimit() public {
+    function testReleaseToVoterFirstPlaceOldValueInArrayAfterInsertingAtLimit() public {
         vm.warp(1681650001);
         vm.startPrank(TEST_ADDRESS_1);
         uint256 proposalId1 = payPerVoteFlatCurveRankLimitOneContest.propose(testAddress1AuthorProposal1);
