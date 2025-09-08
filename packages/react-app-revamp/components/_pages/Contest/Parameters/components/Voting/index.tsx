@@ -1,8 +1,8 @@
 import { formatNumber } from "@helpers/formatNumber";
+import { VoteType } from "@hooks/useDeployContest/types";
 import { FC, useMemo } from "react";
 import ContestParamatersCSVVoters from "../CSV/Voters";
 import ContestParametersVotingRequirements from "../Requirements/Voting";
-import { VoteType } from "@hooks/useDeployContest/types";
 import ContestParametersVotingPrice from "../VotingPrice";
 
 interface ContestParametersVotingProps {

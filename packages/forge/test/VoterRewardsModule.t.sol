@@ -192,6 +192,13 @@ contract VoterRewardsModuleTest is Test {
 
     // OFFICIAL REWARDS MODULE REGISTRATION
 
+    // A voter rewards module being set as the official rewards module of a contest.
+    function testVoterRewardsModuleRegistration() public {
+        vm.startPrank(CREATOR_ADDRESS);
+        payPerVoteFlatCurveContest.setOfficialRewardsModule(address(voterRewardsModule));
+        vm.stopPrank();
+    }
+
     // A voter rewards module being set as the official rewards module of a contest must have that contest as its underlyingContest.
     function testVoterRewardsModuleMustHaveContestAsUnderlying() public {
         vm.startPrank(CREATOR_ADDRESS);

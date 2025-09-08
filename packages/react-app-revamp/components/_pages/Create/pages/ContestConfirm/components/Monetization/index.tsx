@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import { useChainChange } from "@hooks/useChainChange";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { Charge, PriceCurve, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
@@ -53,9 +52,9 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
         <div className={`flex flex-col gap-4 ${isHovered || isMobileOrTablet ? "text-neutral-11" : "text-neutral-14"}`}>
           <p className="text-[16px] text-negative-11 font-bold">
             ruh roh, we couldn't load charge details for this chain!{" "}
-            <span className="underline cursor-pointer" onClick={refetchChargeDetails}>
+            <button className="underline cursor-pointer" onClick={() => refetchChargeDetails()}>
               please try again
-            </span>
+            </button>
           </p>
         </div>
       </CreateContestConfirmLayout>
@@ -77,6 +76,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
             <CostToEnterMessage costToPropose={type.costToPropose} nativeCurrencySymbol={nativeCurrencySymbol} />
             <CostToVoteMessage
               costToVote={type.costToVote}
+              costToVoteStartPrice={type.costToVoteStartPrice}
               costToVoteEndPrice={type.costToVoteEndPrice}
               priceCurve={priceCurve}
               nativeCurrencySymbol={nativeCurrencySymbol}

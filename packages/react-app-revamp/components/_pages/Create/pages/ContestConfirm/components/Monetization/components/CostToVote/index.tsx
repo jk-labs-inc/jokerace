@@ -4,14 +4,16 @@ import { FC } from "react";
 interface CostToVoteMessageProps {
   costToVote: number;
   priceCurve: PriceCurve;
+  voteType: VoteType;
+  costToVoteStartPrice?: number;
   costToVoteEndPrice?: number;
   nativeCurrencySymbol?: string;
-  voteType: VoteType;
 }
 
 const CostToVoteMessage: FC<CostToVoteMessageProps> = ({
   costToVote,
   priceCurve,
+  costToVoteStartPrice,
   costToVoteEndPrice,
   nativeCurrencySymbol,
   voteType,
@@ -19,8 +21,8 @@ const CostToVoteMessage: FC<CostToVoteMessageProps> = ({
   if (priceCurve.type === PriceCurveType.Exponential) {
     return (
       <li className="text-[16px]">
-        {costToVote} <span className="uppercase">${nativeCurrencySymbol}</span> (at start) to {costToVoteEndPrice} (at
-        finish)
+        {costToVoteStartPrice} <span className="uppercase">${nativeCurrencySymbol}</span> (at start) to{" "}
+        {costToVoteEndPrice} (at finish)
         <span className="uppercase"> ${nativeCurrencySymbol}</span> per vote
       </li>
     );

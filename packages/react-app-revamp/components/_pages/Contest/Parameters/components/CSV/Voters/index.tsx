@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import { useContestStore } from "@hooks/useContest/store";
 import useVoters from "@hooks/useVoters";
 import { FC } from "react";

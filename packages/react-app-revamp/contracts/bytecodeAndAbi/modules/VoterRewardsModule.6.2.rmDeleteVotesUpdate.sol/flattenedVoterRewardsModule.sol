@@ -927,16 +927,20 @@ abstract contract GovernorSorting {
 
     // Because of the array rule below, the actual number of rankings that this contract will be able to track is determined by three things:
     //      - RANK_LIMIT
-    //      - To Tied (TTs), or to a previous TT
-    //          The number of times a proposal's newValue goes into an index to tie it; an index that is already tied;
-    //          or an index that wasn't garbage collected because it went to either one of last two cases or an index that also wasn't garbage
+    //      - Woulda Beens (WBs)
+    //          The number of would-be ranked proposals (at the end of the contest if rankings were counted
+    //          without taking out deleted proposals) within the limit that are deleted and do not have other, non-deleted proposals
+    //          with the same amounts of votes/that are tied with them.
+    //      - To Tied or Deleted (TTDs), or to a previous TTD
+    //          The number of times a proposal's newValue goes into an index to tie it; an index that is already tied; an index that was last deleted;
+    //          or an index that wasn't garbage collected because it went to either one of last three cases or an index that also wasn't garbage
     //          collected because of the same recursive logic, from a ranking that was in the tracked rankings at the time that vote was cast.
     //
     // The equation to calcluate how many rankings this contract will actually be able to track is:
-    // # of rankings GovernorSorting can track for a given contest = RANK_LIMIT - TTs
+    // # of rankings GovernorSorting can track for a given contest = RANK_LIMIT - WBs - TTDs
     //
     // With this in mind, it is strongly reccomended to set RANK_LIMIT sufficiently high to create a buffer for
-    // TTs that may occur in your contest. The thing to consider with regard to making it too high is just
+    // WBs and TTDs that may occur in your contest. The thing to consider with regard to making it too high is just
     // that it is more gas for users on average the higher that RANK_LIMIT is set.
 
     uint256 public sortingEnabled; // Either 0 for false or 1 for true
@@ -975,7 +979,7 @@ abstract contract GovernorSorting {
         // find the index to insert newValue at
         uint256 insertingIndex;
         for (uint256 index = 0; index < sortedRanksLength; index++) {
-            // is this value already in the array? (is this a TT or to a previous TT?)
+            // is this value already in the array? (is this a TTD or to a previous TTD?)
             if (newValue == sortedRanksMemVar[index]) {
                 // if so, we don't need to insert anything and the oldValue of this doesn't get cleaned up
                 return;
@@ -4977,7 +4981,7 @@ abstract contract Governor is GovernorSorting {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.3"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.2"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -5672,7 +5676,7 @@ contract VoterRewardsModule {
     string public constant MODULE_TYPE = "VOTER_REWARDS";
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant JK_LABS_CANCEL_DELAY = 604800; // One week
-    string private constant VERSION = "6.3"; // Private as to not clutter the ABI
+    string private constant VERSION = "6.2"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;

@@ -1,4 +1,3 @@
-import { chains } from "@config/wagmi";
 import { isSupabaseConfigured } from "@helpers/database";
 
 type ChargeDetails = {
@@ -6,6 +5,8 @@ type ChargeDetails = {
   minCostToVote: number;
   defaultCostToPropose: number;
   defaultCostToVote: number;
+  defaultCostToVoteStartPrice: number;
+  defaultCostToVoteEndPrice: number;
   isError: boolean;
 };
 
@@ -14,6 +15,8 @@ const defaultChargeDetails: ChargeDetails = {
   minCostToVote: 0,
   defaultCostToPropose: 0,
   defaultCostToVote: 0,
+  defaultCostToVoteStartPrice: 0,
+  defaultCostToVoteEndPrice: 0,
   isError: false,
 };
 
@@ -28,7 +31,9 @@ export const fetchChargeDetails = async (chainName: string): Promise<ChargeDetai
   try {
     const { data, error } = await supabase
       .from("chain_params")
-      .select("min_cost_to_propose, min_cost_to_vote, default_cost_to_propose, default_cost_to_vote")
+      .select(
+        "min_cost_to_propose, min_cost_to_vote, default_cost_to_propose, default_cost_to_vote, default_cost_to_vote_start_price_curve, default_cost_to_vote_end_price_curve",
+      )
       .eq("network_name", chainName.toLowerCase())
       .limit(1)
       .maybeSingle();
@@ -43,6 +48,8 @@ export const fetchChargeDetails = async (chainName: string): Promise<ChargeDetai
       minCostToVote: data?.min_cost_to_vote ?? 0,
       defaultCostToPropose: data?.default_cost_to_propose ?? 0,
       defaultCostToVote: data?.default_cost_to_vote ?? 0,
+      defaultCostToVoteStartPrice: data?.default_cost_to_vote_start_price_curve ?? 0,
+      defaultCostToVoteEndPrice: data?.default_cost_to_vote_end_price_curve ?? 0,
       isError: false,
     };
   } catch (error: any) {
