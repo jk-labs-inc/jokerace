@@ -96,11 +96,9 @@ contract VoterRewardsModuleTest is Test {
     address public constant TEST_ADDRESS_2 = 0x016C8780e5ccB32E5CAA342a926794cE64d9C364;
 
     // METADATA PARAMS
-    address[] public safeSigners = [address(0)];
-    uint8 public constant SAFE_THRESHOLD = 1;
     address[] public METADATA_FIELDS_ADDRESS_ARRAY = [CREATOR_ADDRESS]; // placeholder value
-    string[] public METADATA_FIELDS_STRING_ARRAY = [METADATA_FIELDS_SCHEMA]; // placeholder value
-    uint256[] public METADATA_FIELDS_UINT_ARRAY = [SAFE_THRESHOLD]; // placeholder value
+    string[] public METADATA_FIELDS_STRING_ARRAY = ["placeholder string"]; // placeholder value
+    uint256[] public METADATA_FIELDS_UINT_ARRAY = [1]; // placeholder value
 
     // PROPOSAL PARAMS
     uint256[] public proposalsToDelete;
@@ -109,8 +107,6 @@ contract VoterRewardsModuleTest is Test {
         author: TEST_ADDRESS_1,
         description: "testAddress1AuthorProposal1",
         exists: true,
-        targetMetadata: Governor.TargetMetadata({targetAddress: TEST_ADDRESS_1}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
         fieldsMetadata: Governor.FieldsMetadata({
             addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
             stringArray: METADATA_FIELDS_STRING_ARRAY,
@@ -122,8 +118,6 @@ contract VoterRewardsModuleTest is Test {
         author: TEST_ADDRESS_1,
         description: "testAddress1AuthorProposal2",
         exists: true,
-        targetMetadata: Governor.TargetMetadata({targetAddress: TEST_ADDRESS_1}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
         fieldsMetadata: Governor.FieldsMetadata({
             addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
             stringArray: METADATA_FIELDS_STRING_ARRAY,
@@ -135,8 +129,6 @@ contract VoterRewardsModuleTest is Test {
         author: TEST_ADDRESS_1,
         description: "testAddress1AuthorProposal3",
         exists: true,
-        targetMetadata: Governor.TargetMetadata({targetAddress: TEST_ADDRESS_1}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
         fieldsMetadata: Governor.FieldsMetadata({
             addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
             stringArray: METADATA_FIELDS_STRING_ARRAY,
@@ -148,8 +140,6 @@ contract VoterRewardsModuleTest is Test {
         author: TEST_ADDRESS_1,
         description: "testAddress1AuthorProposal4",
         exists: true,
-        targetMetadata: Governor.TargetMetadata({targetAddress: TEST_ADDRESS_1}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
         fieldsMetadata: Governor.FieldsMetadata({
             addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
             stringArray: METADATA_FIELDS_STRING_ARRAY,

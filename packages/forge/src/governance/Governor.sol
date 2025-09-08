@@ -22,8 +22,6 @@ abstract contract Governor is GovernorSorting {
     }
 
     enum Metadatas {
-        Target,
-        Safe,
         Fields
     }
 
@@ -62,15 +60,6 @@ abstract contract Governor is GovernorSorting {
         string metadataFieldsSchema;
     }
 
-    struct TargetMetadata {
-        address targetAddress;
-    }
-
-    struct SafeMetadata {
-        address[] signers;
-        uint256 threshold;
-    }
-
     struct FieldsMetadata {
         // all of these have max length of MAX_FIELDS_METADATA_LENGTH as enforced in validateProposalData()
         address[] addressArray;
@@ -82,8 +71,6 @@ abstract contract Governor is GovernorSorting {
         address author;
         bool exists;
         string description;
-        TargetMetadata targetMetadata;
-        SafeMetadata safeMetadata;
         FieldsMetadata fieldsMetadata;
     }
 
@@ -341,12 +328,7 @@ abstract contract Governor is GovernorSorting {
         if (proposal.author != msg.sender) revert AuthorIsNotSender(proposal.author, msg.sender);
         for (uint256 index = 0; index < METADATAS_COUNT; index++) {
             Metadatas currentMetadata = Metadatas(index);
-            if (currentMetadata == Metadatas.Target) {
-                continue; // nothing to check here since strictly typed to address
-            } else if (currentMetadata == Metadatas.Safe) {
-                if (proposal.safeMetadata.signers.length == 0) revert ZeroSignersInSafeMetadata();
-                if (proposal.safeMetadata.threshold == 0) revert ZeroThresholdInSafeMetadata();
-            } else if (currentMetadata == Metadatas.Fields) {
+            if (currentMetadata == Metadatas.Fields) {
                 if (proposal.fieldsMetadata.addressArray.length > MAX_FIELDS_METADATA_LENGTH) {
                     revert AddressFieldMetadataArrayTooLong();
                 }
