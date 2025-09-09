@@ -27,7 +27,7 @@ export const mainnet: Chain = {
     },
     ensUniversalResolver: {
       address: "0xeeeeeeee14d718c2b47d9923deab1335e144eeee",
-      blockCreated: 16966585,
+      blockCreated: 23085558,
     },
     multicall3: {
       address: "0xca11bde05977b3631167028862be2a173976ca11",
