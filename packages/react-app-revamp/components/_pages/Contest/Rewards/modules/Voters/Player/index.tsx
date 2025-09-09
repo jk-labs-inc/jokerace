@@ -2,7 +2,7 @@ import { Loader } from "@components/UI/Loader";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useTotalVotesPerUser from "@hooks/useTotalVotesPerUser";
 import { useValidateRankings } from "@hooks/useValidateRankings";
-import { ModuleType, RewardModuleInfo } from "lib/rewards/types";
+import { RewardModuleInfo } from "lib/rewards/types";
 import { FC } from "react";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";

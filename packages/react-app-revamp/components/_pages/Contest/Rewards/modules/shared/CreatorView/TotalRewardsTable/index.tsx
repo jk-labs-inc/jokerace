@@ -1,7 +1,7 @@
 import RewardsNumberDisplay from "@components/_pages/Contest/Rewards/components/UI/Display/Number";
 import { formatBalance } from "@helpers/formatBalance";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
-import { ModuleType, RankShare, TotalRewardsData } from "lib/rewards/types";
+import { RankShare, TotalRewardsData } from "lib/rewards/types";
 import { formatUnits } from "viem";
 
 interface TotalRewardsTableProps {

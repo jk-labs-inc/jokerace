@@ -1,6 +1,6 @@
 import { Distribution, Reward } from "@components/_pages/Contest/Rewards/types";
 import { Abi } from "viem";
-import { ContractQuery, ModuleType } from "./types";
+import { ContractQuery } from "./types";
 
 /*
  * Process native token rewards
@@ -76,29 +76,29 @@ export function processERC20TokenRewards(
 
 /**
  * Create a native token query
- * @param moduleType - The module type
  * @param contractAddress - The contract address
  * @param chainId - The chain id
  * @param abi - The abi of the contract
  * @param ranking - The ranking
  * @param userAddress - The user address
+ * @param isCreator - The is creator (creator mode)
  * @returns The contract query
  */
 export function createNativeTokenQuery(
-  moduleType: ModuleType,
   contractAddress: `0x${string}`,
   chainId: number,
   abi: Abi,
   ranking: number,
   userAddress?: `0x${string}`,
+  isCreator?: boolean,
 ): ContractQuery {
-  if (moduleType === ModuleType.VOTER_REWARDS) {
+  if (isCreator) {
     return {
       address: contractAddress,
       chainId,
       abi,
-      functionName: "releasableToVoter",
-      args: [userAddress, BigInt(ranking)],
+      functionName: "releasable",
+      args: [BigInt(ranking)],
     };
   }
 
@@ -106,38 +106,39 @@ export function createNativeTokenQuery(
     address: contractAddress,
     chainId,
     abi,
-    functionName: "releasable",
-    args: [BigInt(ranking)],
+    functionName: "releasableToVoter",
+    args: [userAddress, BigInt(ranking)],
   };
 }
 
 /**
  * Create a ERC20 token query
- * @param moduleType - The module type
  * @param contractAddress - The contract address
  * @param chainId - The chain id
  * @param abi - The abi of the contract
  * @param ranking - The ranking
  * @param tokenAddress - The token address
  * @param userAddress - The user address
+ * @param isCreator - The is creator
+ * (creator mode)
  * @returns The contract query
  */
 export function createERC20TokenQuery(
-  moduleType: ModuleType,
   contractAddress: `0x${string}`,
   chainId: number,
   abi: Abi,
   ranking: number,
   tokenAddress: `0x${string}`,
   userAddress?: `0x${string}`,
+  isCreator?: boolean,
 ): ContractQuery {
-  if (moduleType === ModuleType.VOTER_REWARDS) {
+  if (isCreator) {
     return {
       address: contractAddress,
       chainId,
       abi,
-      functionName: "releasableToVoter",
-      args: [tokenAddress, userAddress, BigInt(ranking)],
+      functionName: "releasable",
+      args: [tokenAddress, BigInt(ranking)],
     };
   }
 
@@ -145,8 +146,8 @@ export function createERC20TokenQuery(
     address: contractAddress,
     chainId,
     abi,
-    functionName: "releasable",
-    args: [tokenAddress, BigInt(ranking)],
+    functionName: "releasableToVoter",
+    args: [tokenAddress, userAddress, BigInt(ranking)],
   };
 }
 
