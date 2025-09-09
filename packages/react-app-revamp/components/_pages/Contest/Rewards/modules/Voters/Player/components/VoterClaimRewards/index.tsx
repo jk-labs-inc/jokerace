@@ -41,7 +41,6 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
     contestAbi,
     userAddress: userAddress as `0x${string}`,
     version,
-    moduleType: ModuleType.VOTER_REWARDS,
     enabled: tiedRankings.length > 0 && !!userAddress && !isCreator,
   });
 
@@ -95,11 +94,11 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
   }
 
   if (contestStatus === ContestStatus.VotingOpen && !totalRewards.length) {
-    return <RewardsPlayerLosingStatus phase="active" rewardsType={ModuleType.VOTER_REWARDS} />;
+    return <RewardsPlayerLosingStatus phase="active"  />;
   }
 
   if (contestStatus === ContestStatus.VotingClosed && !totalRewards.length) {
-    return <RewardsPlayerLosingStatus phase="closed" rewardsType={ModuleType.VOTER_REWARDS} />;
+    return <RewardsPlayerLosingStatus phase="closed"  />;
   }
 
   return (

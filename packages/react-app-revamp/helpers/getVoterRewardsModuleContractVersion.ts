@@ -33,37 +33,37 @@ export async function getVoterRewardsModuleContractVersion(address: string, chai
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
     if (version === "6.3") {
-      return DocsDeleteOnlyInEntryVoterRewards.abi;
+      return {abi: DocsDeleteOnlyInEntryVoterRewards.abi, version};
     } else if (version === "6.2") {
-      return RmDeleteVotesUpdateVoterRewards.abi;
+      return {abi: RmDeleteVotesUpdateVoterRewards.abi, version};
     } else if (version === "6.1") {
-      return VoteAndEarnOnlyVoterRewards.abi;
+      return {abi: VoteAndEarnOnlyVoterRewards.abi, version};
     } else if (version === "5.14") {
-      return RmEntryRewardsVoterRewards.abi;
+      return {abi: RmEntryRewardsVoterRewards.abi, version};
     } else if (version === "5.13") {
-      return RankLimitCheckVoterRewards.abi;
+      return {abi: RankLimitCheckVoterRewards.abi, version};
     } else if (version === "5.12") {
-      return CorrectDelayVarVoterRewards.abi;
+      return {abi: CorrectDelayVarVoterRewards.abi, version};
     } else if (version === "5.11") {
-      return AntiRugVoterRewards.abi;
+      return {abi: AntiRugVoterRewards.abi, version};
     } else if (version === "5.10") {
-      return OnlyDeleteInEntryVoterRewards.abi;
+      return {abi: OnlyDeleteInEntryVoterRewards.abi, version};
     } else if (version === "5.9") {
-      return CalcCorrectMinuteVoterRewards.abi;
+      return {abi: CalcCorrectMinuteVoterRewards.abi, version};
     } else if (version === "5.8") {
-      return AddModuleTrackingVoterRewards.abi;
+      return {abi: AddModuleTrackingVoterRewards.abi, version};
     } else if (version === "5.7") {
-      return VotingPriceCurvesVoterRewards.abi;
+      return {abi: VotingPriceCurvesVoterRewards.abi, version};
     } else if (version === "5.6") {
-      return SetPeriodLimitsVoterRewards.abi;
+      return {abi: SetPeriodLimitsVoterRewards.abi, version}      ;
     } else if (version === "5.5") {
-      return InitialVoterRewards.abi;
+      return {abi: InitialVoterRewards.abi, version};
     } else {
-      return DeployedVoterRewardsContract.abi;
+      return {abi: DeployedVoterRewardsContract.abi, version};
     }
   } catch (error) {
     // If the version method does not exist or is failing, use the first version
-    return InitialVoterRewards.abi;
+    return {abi: InitialVoterRewards.abi, version: "unknown"};
   }
 }
 

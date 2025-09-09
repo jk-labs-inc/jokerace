@@ -1,5 +1,4 @@
-import { chains, config } from "@config/wagmi";
-import { getRewardsModuleContractVersion } from "@helpers/getRewardsModuleContractVersion";
+import { config } from "@config/wagmi";
 import getVoterRewardsModuleContractVersion from "@helpers/getVoterRewardsModuleContractVersion";
 import { ContractConfig } from "@hooks/useContest";
 import { readContract } from "@wagmi/core";
@@ -15,24 +14,18 @@ import { ModuleType, RewardsModuleInfo, VOTER_REWARDS_VERSION } from "../types";
  */
 export async function getRewardsModuleInfo(rewardsModuleAddress: string, chainId: number): Promise<RewardsModuleInfo> {
   try {
-    const { abi, version } = await getRewardsModuleVersionInfo(rewardsModuleAddress, chainId);
+    const { abi, version } = await getVoterRewardsModuleContractVersion(rewardsModuleAddress, chainId);
 
     if (!abi) return { abi: null, moduleType: null };
 
-    let finalAbi: Abi | null = abi as Abi;
-
     if (compareVersions(version, VOTER_REWARDS_VERSION) < 0) {
-      return { abi: finalAbi, moduleType: ModuleType.AUTHOR_REWARDS };
+      return { abi: abi as Abi, moduleType: ModuleType.AUTHOR_REWARDS };
     }
 
     const moduleType = await getModuleType(rewardsModuleAddress, abi as Abi, chainId);
 
-    if (moduleType === ModuleType.VOTER_REWARDS) {
-      finalAbi = (await getVoterRewardsModuleContractVersion(rewardsModuleAddress, chainId)) as Abi;
-    }
-
     return {
-      abi: finalAbi,
+      abi: abi as Abi,
       moduleType: moduleType as ModuleType,
     };
   } catch (error) {
@@ -48,7 +41,7 @@ export async function getRewardsModuleInfo(rewardsModuleAddress: string, chainId
  * @returns version information
  */
 export async function getRewardsModuleVersionInfo(address: string, chainId: number) {
-  return await getRewardsModuleContractVersion(address, chainId);
+  return await getVoterRewardsModuleContractVersion(address, chainId);
 }
 
 /**

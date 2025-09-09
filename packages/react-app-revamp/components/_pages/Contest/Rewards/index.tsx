@@ -13,7 +13,6 @@ import NoRewardsInfo from "./components/NoRewards";
 import RewardsError from "./modules/shared/Error";
 import RewardsCanceled from "./modules/shared/RewardsCanceled";
 import VotersRewardsPage from "./modules/Voters";
-import WinnersRewardsPage from "./modules/Winners";
 import CreateRewards from "./components/Create";
 
 const ContestRewards = () => {
@@ -23,7 +22,7 @@ const ContestRewards = () => {
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
 
-  const { contestAuthorEthereumAddress, contestAbi, version } = useContestStore(state => state);
+  const { contestAuthorEthereumAddress, version } = useContestStore(state => state);
   const { data: rewards, isLoading, isError, refetch, isRefetching } = useRewardsModule();
   const { address: accountAddress } = useAccount();
   const creator = contestAuthorEthereumAddress === accountAddress;
@@ -85,13 +84,10 @@ const ContestRewards = () => {
           version={version}
         />
       ) : rewards.moduleType === ModuleType.AUTHOR_REWARDS ? (
-        <WinnersRewardsPage
-          rewards={rewards}
-          contestAddress={contestAddress as `0x${string}`}
-          chainId={chainId}
-          contestAbi={contestAbi}
-          version={version}
-        />
+        //TODO: not supported anymore, we will display message
+        <div>
+          <p>Winners rewards are not supported anymore</p>
+        </div>
       ) : null}
     </div>
   );

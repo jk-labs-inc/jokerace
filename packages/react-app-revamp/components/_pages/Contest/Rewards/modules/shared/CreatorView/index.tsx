@@ -93,7 +93,7 @@ const RewardsCreatorView = ({ rewards, chainId, version }: RewardsCreatorViewPro
         {isTotalRewardsLoading || isRankSharesLoading ? (
           <TotalRewardsTableSkeleton payeesCount={rewards.payees.length} />
         ) : totalRewards && rankShares ? (
-          <TotalRewardsTable totalRewards={totalRewards} shares={rankShares} rewardsModuleType={rewards.moduleType} />
+          <TotalRewardsTable totalRewards={totalRewards} shares={rankShares} />
         ) : null}
         {isEarningsToRewards ? (
           <GradientText textSizeClassName="text-[16px] font-bold" isFontSabo={false}>

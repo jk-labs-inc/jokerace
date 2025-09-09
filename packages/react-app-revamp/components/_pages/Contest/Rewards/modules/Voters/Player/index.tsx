@@ -44,13 +44,12 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({ conte
     abi: rewards.abi,
   });
 
-
   if (!isConnected) {
     return <RewardsPlayerViewNotConnected />;
   }
 
   if (contestStatus === ContestStatus.ContestOpen || contestStatus === ContestStatus.SubmissionOpen) {
-    return <RewardsNotStarted rewardsType={ModuleType.VOTER_REWARDS} />;
+    return <RewardsNotStarted />;
   }
 
   if (isLoadingHasVoted || isLoadingValidateRankings) {
@@ -66,13 +65,29 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({ conte
 
   if (!hasVoted) {
     if (isCreator && tiedRankings.length > 0) {
-      return <VoterClaimRewards rewards={rewards} chainId={chainId} contestStatus={contestStatus} contestAddress={contestAddress} tiedRankings={tiedRankings} />;
+      return (
+        <VoterClaimRewards
+          rewards={rewards}
+          chainId={chainId}
+          contestStatus={contestStatus}
+          contestAddress={contestAddress}
+          tiedRankings={tiedRankings}
+        />
+      );
     }
 
-    return <RewardsPlayerNotQualified phase={phase} rewardsType={ModuleType.VOTER_REWARDS} />;
+    return <RewardsPlayerNotQualified phase={phase} />;
   }
 
-  return <VoterClaimRewards rewards={rewards} chainId={chainId} contestStatus={contestStatus} contestAddress={contestAddress} tiedRankings={tiedRankings} />;
+  return (
+    <VoterClaimRewards
+      rewards={rewards}
+      chainId={chainId}
+      contestStatus={contestStatus}
+      contestAddress={contestAddress}
+      tiedRankings={tiedRankings}
+    />
+  );
 };
 
 export default VoterRewardsPagePlayerView;
