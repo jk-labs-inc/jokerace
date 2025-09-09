@@ -1,13 +1,13 @@
 import { Clusters, getImageUrl, getProfileUrl } from "@clustersxyz/sdk";
 import { config } from "@config/wagmi";
-import { mainnet } from "@config/wagmi/custom-chains/mainnet";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useQuery } from "@tanstack/react-query";
 import { getEnsAvatar, getEnsName } from "@wagmi/core";
 import { normalize } from "viem/ens";
+import { mainnet } from "wagmi/chains";
 
 const DEFAULT_AVATAR_URL = "/contest/user.svg";
-const ETHERSCAN_BASE_URL = mainnet.blockExplorers?.etherscan?.url;
+const ETHERSCAN_BASE_URL = mainnet.blockExplorers?.default?.url;
 
 interface ProfileData {
   profileName: string;
@@ -51,7 +51,10 @@ const fetchProfileData = async (
   const clusters = new Clusters();
 
   try {
-    const ensName = await getEnsName(config, { address: ethereumAddress as `0x${string}` });
+    const ensName = await getEnsName(config, {
+      address: ethereumAddress as `0x${string}`,
+      chainId: mainnet.id,
+    });
 
     if (ensName) {
       const timeout = new Promise<string>((resolve, reject) => {
@@ -60,7 +63,7 @@ const fetchProfileData = async (
 
       const ensAvatarPromise = getEnsAvatar(config, {
         name: normalize(ensName),
-        chainId: 1,
+        chainId: mainnet.id,
       });
 
       try {
