@@ -4376,23 +4376,23 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lifi/sdk@^3.12.0":
-  version "3.12.0"
-  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.12.0.tgz#ee944e3edf6940d3aa4be74ad18116a168aaba8f"
-  integrity sha512-ABa9vFKFrHKZjBOCLPhomancyIv6HiVCvGNaJ/Yd5CTN2uJYrFX0SE2oFDpc56wPuSJZG+87TpH62fdF2jd+LA==
+"@lifi/sdk@^3.12.2":
+  version "3.12.2"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.12.2.tgz#77c502b2c7b07074979fc0fc7092e9c614623ae7"
+  integrity sha512-0cRW55ZP7u8rlYjoMnykV4sidzD5g0+yTlmjOAZJI5mei3QN/uPyWqii/Vbfqrfl9jyTdBidA96K4lBatQTJqw==
   dependencies:
     "@bigmi/core" "^0.5.2"
     "@bitcoinerlab/secp256k1" "^1.2.0"
     "@lifi/types" "^17.36.0"
-    "@mysten/sui" "^1.37.5"
-    "@mysten/wallet-standard" "^0.16.13"
+    "@mysten/sui" "^1.37.6"
+    "@mysten/wallet-standard" "^0.16.14"
     "@noble/curves" "^1.9.7"
     "@solana/wallet-adapter-base" "^0.9.27"
     "@solana/web3.js" "^1.98.4"
     bech32 "^2.0.0"
     bitcoinjs-lib "^7.0.0-rc.0"
     bs58 "^6.0.0"
-    viem "^2.37.1"
+    viem "^2.37.4"
 
 "@lifi/types@^17.36.0":
   version "17.36.0"
@@ -4401,56 +4401,56 @@
   dependencies:
     viem "^2.33.2"
 
-"@lifi/wallet-management@^3.16.0":
-  version "3.16.0"
-  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.16.0.tgz#8590b60df35d502a4161e161ed02624cfe1b99e6"
-  integrity sha512-AF83doukilNSeVOKexaB1HuGB+v/Qza9mXkU0R71h3nJwSIwY0uJPkxhA9ieCkV4UZ9etKv+//Ld1sUN+F611A==
+"@lifi/wallet-management@^3.16.1":
+  version "3.16.1"
+  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.16.1.tgz#06f5cae396b8814fe5b7149590c3b97021bc193a"
+  integrity sha512-u32qnlsG8+0bE6ipz/36Uja5Sf2DGVX5nt38vFgnck9OvaXRsrCis2wCXQEm4uHc+woijLElAyy1N7S48OGipA==
   dependencies:
     "@bigmi/client" "^0.5.2"
     "@bigmi/core" "^0.5.2"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.12.0"
+    "@lifi/sdk" "^3.12.2"
     "@mui/icons-material" "^7.3.2"
     "@mui/material" "^7.3.2"
     "@mui/system" "^7.3.2"
-    "@mysten/wallet-standard" "^0.16.12"
+    "@mysten/wallet-standard" "^0.16.14"
     "@solana/wallet-adapter-base" "^0.9.27"
     "@solana/web3.js" "^1.98.4"
-    i18next "^25.4.2"
+    i18next "^25.5.2"
     mitt "^3.0.1"
     react-i18next "^15.7.3"
     use-sync-external-store "^1.5.0"
-    viem "^2.37.1"
+    viem "^2.37.4"
     zustand "^5.0.8"
 
-"@lifi/widget@3.30.0":
-  version "3.30.0"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.30.0.tgz#f0f45146031f80b506433ad44f0854829da25e78"
-  integrity sha512-ZJEs+OzgrM4qaeNBC+tYEM/nkcW2ly8+XZ+ZYdTtMBQqb5hJLIhlBUkt6kBg9RtEUO2lJ1zfVXqQfiwhUn4q0Q==
+"@lifi/widget@3.30.1":
+  version "3.30.1"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.30.1.tgz#0edc7e65d6e0f5c7eef69b06b277ac538ce3a0f2"
+  integrity sha512-ggfHL+THCQDL7RdyG+hrDPZ1LBjsyE+QR8SJZeNA1BVpxgfseebJLpDQ3uNNqjA96UPxwNvfA/ODZj0L85S/7Q==
   dependencies:
     "@bigmi/client" "^0.5.2"
     "@bigmi/core" "^0.5.2"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.12.0"
-    "@lifi/wallet-management" "^3.16.0"
+    "@lifi/sdk" "^3.12.2"
+    "@lifi/wallet-management" "^3.16.1"
     "@mui/icons-material" "^7.3.2"
     "@mui/material" "^7.3.2"
     "@mui/system" "^7.3.2"
-    "@mysten/sui" "^1.37.4"
+    "@mysten/sui" "^1.37.6"
     "@solana/wallet-adapter-base" "^0.9.27"
     "@solana/wallet-adapter-coinbase" "^0.1.23"
     "@solana/web3.js" "^1.98.4"
     "@tanstack/react-virtual" "^3.13.12"
-    i18next "^25.4.2"
+    i18next "^25.5.2"
     microdiff "^1.5.0"
     mitt "^3.0.1"
     react-i18next "^15.7.3"
     react-intersection-observer "^9.16.0"
     react-router-dom "^6.30.0"
     react-transition-group "^4.4.5"
-    viem "^2.37.1"
+    viem "^2.37.4"
     zustand "^5.0.8"
 
 "@lit-labs/ssr-dom-shim@^1.2.0":
@@ -4795,25 +4795,7 @@
     mitt "^3.0.1"
     valibot "^0.36.0"
 
-"@mysten/sui@1.37.5", "@mysten/sui@^1.37.4", "@mysten/sui@^1.37.5":
-  version "1.37.5"
-  resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.37.5.tgz#5a6b401c689cc119db34cf36d7d247c767b0fff5"
-  integrity sha512-kAKizRUdhC/gwQ7UkubbmwTno5UoA1a7Ps8R6GlPVWpCfpVM2HytmwFDOKVMA+51Qji4BaNxyq25SRpJw76fPw==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.2.0"
-    "@mysten/bcs" "1.7.0"
-    "@mysten/utils" "0.1.1"
-    "@noble/curves" "^1.9.4"
-    "@noble/hashes" "^1.8.0"
-    "@scure/base" "^1.2.6"
-    "@scure/bip32" "^1.7.0"
-    "@scure/bip39" "^1.6.0"
-    gql.tada "^1.8.12"
-    graphql "^16.11.0"
-    poseidon-lite "^0.2.0"
-    valibot "^0.36.0"
-
-"@mysten/sui@1.37.6":
+"@mysten/sui@1.37.6", "@mysten/sui@^1.37.6":
   version "1.37.6"
   resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.37.6.tgz#1bb1797e64657a44ebdcbbee66778a173b65de56"
   integrity sha512-7ut5tWuXx9OIE+DQ2D5hd22UB8j8K4/F2Lx3R8Ej/JMwkm6cpgbF5FKNu0vYqehxiFEktMnq2YzzajxmlFHNPw==
@@ -4838,20 +4820,12 @@
   dependencies:
     "@scure/base" "^1.2.6"
 
-"@mysten/wallet-standard@0.16.14":
+"@mysten/wallet-standard@0.16.14", "@mysten/wallet-standard@^0.16.14":
   version "0.16.14"
   resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.16.14.tgz#f933b63155275fa6cb5ed738e80539560160b2f7"
   integrity sha512-LJoDQUD+217RdRbkQLiKYYjkNtN6GhGpIN/X3wboUf3w5pdvBc4k/vS1Yi6GFv5xbgl/ge7wzC4Ac+h3orY2oQ==
   dependencies:
     "@mysten/sui" "1.37.6"
-    "@wallet-standard/core" "1.1.1"
-
-"@mysten/wallet-standard@^0.16.12", "@mysten/wallet-standard@^0.16.13":
-  version "0.16.13"
-  resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.16.13.tgz#d25eda014cff5276a2b460e975935fd32fb15e82"
-  integrity sha512-hoWcqD2CEtzwdGm2V40n3j1rfkJboiFiaiMdrnxjGqbZvsHYb/T31pPNmXlFq+8fi292E3NASSFjmnjiOCd5vw==
-  dependencies:
-    "@mysten/sui" "1.37.5"
     "@wallet-standard/core" "1.1.1"
 
 "@mysten/window-wallet-core@0.0.6":
@@ -13581,10 +13555,10 @@ hyphenate-style-name@^1.0.0, hyphenate-style-name@^1.0.3:
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.0.4.tgz#691879af8e220aea5750e8827db4ef62a54e361d"
   integrity sha512-ygGZLjmXfPHj+ZWh6LwbC37l43MhfztxetbFCoYTM2VjkIUpeHgSNn7QIyVFj7YQ1Wl9Cbw5sholVJPzWvC2MQ==
 
-i18next@^25.4.2:
-  version "25.4.2"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-25.4.2.tgz#97a2c65d6c633b768b95055928c2f6086a672f08"
-  integrity sha512-gD4T25a6ovNXsfXY1TwHXXXLnD/K2t99jyYMCSimSCBnBRJVQr5j+VAaU83RJCPzrTGhVQ6dqIga66xO2rtd5g==
+i18next@^25.5.2:
+  version "25.5.2"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-25.5.2.tgz#16efa309e154d46dac7583e6a315ccb47e3e3a10"
+  integrity sha512-lW8Zeh37i/o0zVr+NoCHfNnfvVw+M6FQbRp36ZZ/NyHDJ3NJVpp2HhAUyU9WafL5AssymNoOjMRB48mmx2P6Hw==
   dependencies:
     "@babel/runtime" "^7.27.6"
 
@@ -15981,7 +15955,7 @@ pony-cause@^2.1.10:
   resolved "https://registry.yarnpkg.com/pony-cause/-/pony-cause-2.1.10.tgz#828457ad6f13be401a075dbf14107a9057945174"
   integrity sha512-3IKLNXclQgkU++2fSi93sQ6BznFuxSLB11HdvZQ6JW/spahf/P1pAHBQEahr20rs0htZW0UDkM1HmA+nZkXKsw==
 
-poseidon-lite@0.2.1, poseidon-lite@^0.2.0:
+poseidon-lite@0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/poseidon-lite/-/poseidon-lite-0.2.1.tgz#7ad98e3a3aa5b91a1fd3a61a87460e9e46fd76d6"
   integrity sha512-xIr+G6HeYfOhCuswdqcFpSX47SPhm0EpisWJ6h7fHlWwaVIvH3dLnejpatrtw6Xc6HaLrpq05y7VRfvDmDGIog==
@@ -18794,7 +18768,7 @@ viem@2.23.2:
     ox "0.6.7"
     ws "8.18.0"
 
-viem@2.37.4:
+viem@2.37.4, viem@^2.37.4:
   version "2.37.4"
   resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.4.tgz#94c9e837b4a7ef6f7b6c033487a12625534bd8bc"
   integrity sha512-1ig5O6l1wJmaw3yrSrUimjRLQEZon2ymTqSDjdntu6Bry1/tLC2GClXeS3SiCzrifpLxzfCLQWDITYVTBA10KA==
@@ -18877,20 +18851,6 @@ viem@^2.33.2:
     abitype "1.0.8"
     isows "1.0.7"
     ox "0.9.1"
-    ws "8.18.3"
-
-viem@^2.37.1:
-  version "2.37.2"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.2.tgz#4eae5693862f8de65eff15f34faaea542b271ab8"
-  integrity sha512-soXSUhPEnHzXVo1sSFg2KiUUwOTCtqGNnR/NOHr+4vZcbM6sTyS62asg9EfDpaJQFNduRQituxTcflaK6OIaPA==
-  dependencies:
-    "@noble/curves" "1.9.1"
-    "@noble/hashes" "1.8.0"
-    "@scure/bip32" "1.7.0"
-    "@scure/bip39" "1.6.0"
-    abitype "1.1.0"
-    isows "1.0.7"
-    ox "0.9.3"
     ws "8.18.3"
 
 vite-node@1.5.0:
