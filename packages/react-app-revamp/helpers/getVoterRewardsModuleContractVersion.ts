@@ -11,6 +11,8 @@ import RmEntryRewardsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterR
 import VoteAndEarnOnlyVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.1.voteAndEarnOnly.sol/VoterRewardsModule.json";
 import RmDeleteVotesUpdateVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.2.rmDeleteVotesUpdate.sol/VoterRewardsModule.json";
 import DocsDeleteOnlyInEntryVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.3.docsDeleteOnlyInEntry.sol/VoterRewardsModule.json";
+import RmUnusedErrorsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.4.rmUnusedErrors.sol/VoterRewardsModule.json";
+import OnlySetOfficialModuleOnceVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.5.onlySetOfficialModuleOnce.sol/VoterRewardsModule.json";
 import DeployedVoterRewardsContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { createPublicClient, getContract, http } from "viem";
 import { getChainFromId } from "./getChainFromId";
@@ -32,38 +34,42 @@ export async function getVoterRewardsModuleContractVersion(address: string, chai
   try {
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
-    if (version === "6.3") {
-      return {abi: DocsDeleteOnlyInEntryVoterRewards.abi, version};
+    if (version === "6.5") {
+      return { abi: OnlySetOfficialModuleOnceVoterRewards.abi, version };
+    } else if (version === "6.4") {
+      return { abi: RmUnusedErrorsVoterRewards.abi, version };
+    } else if (version === "6.3") {
+      return { abi: DocsDeleteOnlyInEntryVoterRewards.abi, version };
     } else if (version === "6.2") {
-      return {abi: RmDeleteVotesUpdateVoterRewards.abi, version};
+      return { abi: RmDeleteVotesUpdateVoterRewards.abi, version };
     } else if (version === "6.1") {
-      return {abi: VoteAndEarnOnlyVoterRewards.abi, version};
+      return { abi: VoteAndEarnOnlyVoterRewards.abi, version };
     } else if (version === "5.14") {
-      return {abi: RmEntryRewardsVoterRewards.abi, version};
+      return { abi: RmEntryRewardsVoterRewards.abi, version };
     } else if (version === "5.13") {
-      return {abi: RankLimitCheckVoterRewards.abi, version};
+      return { abi: RankLimitCheckVoterRewards.abi, version };
     } else if (version === "5.12") {
-      return {abi: CorrectDelayVarVoterRewards.abi, version};
+      return { abi: CorrectDelayVarVoterRewards.abi, version };
     } else if (version === "5.11") {
-      return {abi: AntiRugVoterRewards.abi, version};
+      return { abi: AntiRugVoterRewards.abi, version };
     } else if (version === "5.10") {
-      return {abi: OnlyDeleteInEntryVoterRewards.abi, version};
+      return { abi: OnlyDeleteInEntryVoterRewards.abi, version };
     } else if (version === "5.9") {
-      return {abi: CalcCorrectMinuteVoterRewards.abi, version};
+      return { abi: CalcCorrectMinuteVoterRewards.abi, version };
     } else if (version === "5.8") {
-      return {abi: AddModuleTrackingVoterRewards.abi, version};
+      return { abi: AddModuleTrackingVoterRewards.abi, version };
     } else if (version === "5.7") {
-      return {abi: VotingPriceCurvesVoterRewards.abi, version};
+      return { abi: VotingPriceCurvesVoterRewards.abi, version };
     } else if (version === "5.6") {
-      return {abi: SetPeriodLimitsVoterRewards.abi, version}      ;
+      return { abi: SetPeriodLimitsVoterRewards.abi, version };
     } else if (version === "5.5") {
-      return {abi: InitialVoterRewards.abi, version};
+      return { abi: InitialVoterRewards.abi, version };
     } else {
-      return {abi: DeployedVoterRewardsContract.abi, version};
+      return { abi: DeployedVoterRewardsContract.abi, version };
     }
   } catch (error) {
     // If the version method does not exist or is failing, use the first version
-    return {abi: InitialVoterRewards.abi, version: "unknown"};
+    return { abi: InitialVoterRewards.abi, version: "unknown" };
   }
 }
 

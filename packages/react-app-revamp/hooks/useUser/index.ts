@@ -7,7 +7,6 @@ import { useAnyoneCanVote } from "./useAnyoneCanVote";
 import { useSubmitQualification } from "./useSubmitQualification";
 import { useVoteQualification } from "./useVoteQualification";
 import { useVoteUpdates } from "./useVoteUpdates";
-
 export { EMPTY_ROOT } from "./utils";
 
 export function useUser() {

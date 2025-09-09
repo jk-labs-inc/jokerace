@@ -13,6 +13,7 @@ abstract contract GovernorModuleRegistry is Governor {
     address public officialRewardsModule;
 
     error OnlyCreatorCanSetRewardsModule();
+    error OfficialRewardsModuleCanOnlyBeSetOnce();
     error OfficialRewardsModuleMustPointToThisContest();
 
     /**
@@ -20,6 +21,7 @@ abstract contract GovernorModuleRegistry is Governor {
      */
     function setOfficialRewardsModule(address officialRewardsModule_) public {
         if (msg.sender != creator) revert OnlyCreatorCanSetRewardsModule();
+        if (officialRewardsModule != address(0)) revert OfficialRewardsModuleCanOnlyBeSetOnce();
         if (address(VoterRewardsModule(payable(officialRewardsModule_)).underlyingContest()) != address(this)) {
             revert OfficialRewardsModuleMustPointToThisContest();
         }

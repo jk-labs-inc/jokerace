@@ -9,16 +9,13 @@ import { useContestStore } from "@hooks/useContest/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useEmailSend } from "@hooks/useEmailSend";
 import { useError } from "@hooks/useError";
-import { useGenerateProof } from "@hooks/useGenerateProof";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import { useUserStore } from "@hooks/useUser/store";
-import { VOTE_AND_EARN_VERSION } from "@hooks/useUser/utils";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
-import { compareVersions } from "compare-versions";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { EmailType } from "lib/email/types";
@@ -79,7 +76,6 @@ export function useSubmitProposal() {
   const { fetchSingleProposal } = useProposal();
   const { setSubmissionsCount, submissionsCount } = useProposalStore(state => state);
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
-  const { getProofs } = useGenerateProof();
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
   const { fields: metadataFields, setFields: setMetadataFields } = useMetadataStore(state => state);
@@ -116,8 +112,6 @@ export function useSubmitProposal() {
     setError("");
     setTransactionData(null);
 
-    const isVoteAndEarnVersion = compareVersions(version, VOTE_AND_EARN_VERSION) >= 0;
-
     // generate the entry preview HTML
     const entryPreviewHTML = generateEntryPreviewHTML(metadataFields);
 
@@ -131,21 +125,7 @@ export function useSubmitProposal() {
       const costToPropose = calculateChargeAmount();
 
       try {
-        let proofs, isVerified;
-
-        // Only generate proofs if it's NOT the vote-and-earn version
-        if (!isVoteAndEarnVersion) {
-          const proofsResult = await getProofs(userAddress ?? "", "submission", "10");
-          proofs = proofsResult.proofs;
-          isVerified = proofsResult.isVerified;
-        }
-
-        const contractConfig = {
-          address: address as `0x${string}`,
-          abi: abi,
-          chainId,
-        };
-
+        const contractConfig = getContractConfig();
         const fieldsMetadata = processFieldInputs(metadataFields);
         const proposalCore = {
           author: userAddress,
@@ -158,38 +138,13 @@ export function useSubmitProposal() {
 
         let hash: `0x${string}`;
 
-        try {
-          if (isVoteAndEarnVersion) {
-            // For vote-and-earn version, always use propose
-            const { request } = await simulateContract(config, {
-              ...contractConfig,
-              functionName: "propose",
-              args: [proposalCore],
-              value: costToPropose,
-            });
-            hash = await writeContract(config, request);
-          } else if (!isVerified) {
-            // For older versions with unverified users, use propose with proofs to verify them
-            const { request } = await simulateContract(config, {
-              ...contractConfig,
-              functionName: "propose",
-              args: [proposalCore, proofs],
-              value: costToPropose,
-            });
-            hash = await writeContract(config, request);
-          } else {
-            // For older versions with verified users, use proposeWithoutProof
-            const { request } = await simulateContract(config, {
-              ...contractConfig,
-              functionName: "proposeWithoutProof",
-              args: [proposalCore],
-              value: costToPropose,
-            });
-            hash = await writeContract(config, request);
-          }
-        } catch (simulationError: any) {
-          throw new Error(`transaction simulation failed: ${simulationError.message}`);
-        }
+        const { request } = await simulateContract(config, {
+          ...contractConfig,
+          functionName: "propose",
+          args: [proposalCore],
+          value: costToPropose,
+        });
+        hash = await writeContract(config, request);
 
         const receipt = await waitForTransactionReceipt(config, {
           chainId: chainId,

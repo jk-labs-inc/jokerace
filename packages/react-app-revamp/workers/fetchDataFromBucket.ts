@@ -1,4 +1,4 @@
-import { Recipient } from "lib/merkletree/generateMerkleTree";
+import { Recipient } from "@hooks/useDeployContest/types";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "@config/s3";
 
