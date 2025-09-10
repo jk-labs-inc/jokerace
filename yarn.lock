@@ -4376,10 +4376,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lifi/sdk@^3.12.2":
-  version "3.12.2"
-  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.12.2.tgz#77c502b2c7b07074979fc0fc7092e9c614623ae7"
-  integrity sha512-0cRW55ZP7u8rlYjoMnykV4sidzD5g0+yTlmjOAZJI5mei3QN/uPyWqii/Vbfqrfl9jyTdBidA96K4lBatQTJqw==
+"@lifi/sdk@^3.12.4":
+  version "3.12.4"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.12.4.tgz#361721dd8cc5f4f079387a87ff0d1f14310bb1fa"
+  integrity sha512-o7NMNacj9BB6xfSa9S9OWacUIxL+iAK/5Q45tcXXk2Gt7w9kX5vTASbUL0u/S3uYOHfUEMlXMlCbvSU9+pW+EA==
   dependencies:
     "@bigmi/core" "^0.5.2"
     "@bitcoinerlab/secp256k1" "^1.2.0"
@@ -4392,7 +4392,7 @@
     bech32 "^2.0.0"
     bitcoinjs-lib "^7.0.0-rc.0"
     bs58 "^6.0.0"
-    viem "^2.37.4"
+    viem "^2.37.5"
 
 "@lifi/types@^17.36.0":
   version "17.36.0"
@@ -4401,16 +4401,16 @@
   dependencies:
     viem "^2.33.2"
 
-"@lifi/wallet-management@^3.16.1":
-  version "3.16.1"
-  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.16.1.tgz#06f5cae396b8814fe5b7149590c3b97021bc193a"
-  integrity sha512-u32qnlsG8+0bE6ipz/36Uja5Sf2DGVX5nt38vFgnck9OvaXRsrCis2wCXQEm4uHc+woijLElAyy1N7S48OGipA==
+"@lifi/wallet-management@^3.16.3":
+  version "3.16.3"
+  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.16.3.tgz#de57f598c4422a1ad212d0e395adcc0c0cf513b8"
+  integrity sha512-d/5BuXq5QE+8uE+ppfMlETpaEI1jYJzgU+Gvd9Pi5RZV3zislG3EsRR0BXjxuxoWi3OuMy0lNNpaJCkTOXR/Mg==
   dependencies:
     "@bigmi/client" "^0.5.2"
     "@bigmi/core" "^0.5.2"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.12.2"
+    "@lifi/sdk" "^3.12.4"
     "@mui/icons-material" "^7.3.2"
     "@mui/material" "^7.3.2"
     "@mui/system" "^7.3.2"
@@ -4421,20 +4421,20 @@
     mitt "^3.0.1"
     react-i18next "^15.7.3"
     use-sync-external-store "^1.5.0"
-    viem "^2.37.4"
+    viem "^2.37.5"
     zustand "^5.0.8"
 
-"@lifi/widget@3.30.1":
-  version "3.30.1"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.30.1.tgz#0edc7e65d6e0f5c7eef69b06b277ac538ce3a0f2"
-  integrity sha512-ggfHL+THCQDL7RdyG+hrDPZ1LBjsyE+QR8SJZeNA1BVpxgfseebJLpDQ3uNNqjA96UPxwNvfA/ODZj0L85S/7Q==
+"@lifi/widget@3.30.4":
+  version "3.30.4"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.30.4.tgz#f6d8cdb0ae9ab4627aa869238c879b216eabc02d"
+  integrity sha512-LtzxbvvHlBtabFEvLg4C5SBqr/fi+lgJgcPvwxF09Ui7dMNGwH86u6WzrAcQ1e4EcY3bnzIbq2DwoamS31ZCLg==
   dependencies:
     "@bigmi/client" "^0.5.2"
     "@bigmi/core" "^0.5.2"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.12.2"
-    "@lifi/wallet-management" "^3.16.1"
+    "@lifi/sdk" "^3.12.4"
+    "@lifi/wallet-management" "^3.16.3"
     "@mui/icons-material" "^7.3.2"
     "@mui/material" "^7.3.2"
     "@mui/system" "^7.3.2"
@@ -4450,7 +4450,7 @@
     react-intersection-observer "^9.16.0"
     react-router-dom "^6.30.0"
     react-transition-group "^4.4.5"
-    viem "^2.37.4"
+    viem "^2.37.5"
     zustand "^5.0.8"
 
 "@lit-labs/ssr-dom-shim@^1.2.0":
@@ -8070,10 +8070,10 @@
   dependencies:
     "@supabase/node-fetch" "^2.6.14"
 
-"@supabase/functions-js@2.4.5":
-  version "2.4.5"
-  resolved "https://registry.yarnpkg.com/@supabase/functions-js/-/functions-js-2.4.5.tgz#0a87d1a296bb32a1474c9322c932d9bbd4993d74"
-  integrity sha512-v5GSqb9zbosquTo6gBwIiq7W9eQ7rE5QazsK/ezNiQXdCbY+bH8D9qEaBIkhVvX4ZRW5rP03gEfw5yw9tiq4EQ==
+"@supabase/functions-js@2.4.6":
+  version "2.4.6"
+  resolved "https://registry.yarnpkg.com/@supabase/functions-js/-/functions-js-2.4.6.tgz#36e065df0c993fe9d2f01f442c54603da99c9608"
+  integrity sha512-bhjZ7rmxAibjgmzTmQBxJU6ZIBCCJTc3Uwgvdi4FewueUTAGO5hxZT1Sj6tiD+0dSXf9XI87BDdJrg12z8Uaew==
   dependencies:
     "@supabase/node-fetch" "^2.6.14"
 
@@ -8091,10 +8091,10 @@
   dependencies:
     whatwg-url "^5.0.0"
 
-"@supabase/postgrest-js@1.21.3":
-  version "1.21.3"
-  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-1.21.3.tgz#1ecad47a96f7ecb141ae6a1d565b8d6f124c2081"
-  integrity sha512-rg3DmmZQKEVCreXq6Am29hMVe1CzemXyIWVYyyua69y6XubfP+DzGfLxME/1uvdgwqdoaPbtjBDpEBhqxq1ZwA==
+"@supabase/postgrest-js@1.21.4":
+  version "1.21.4"
+  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-1.21.4.tgz#c9f5fc674c16705fa0562c8f571069a4df1b3015"
+  integrity sha512-TxZCIjxk6/dP9abAi89VQbWWMBbybpGWyvmIzTd79OeravM13OjR/YEYeyUOPcM1C3QyvXkvPZhUfItvmhY1IQ==
   dependencies:
     "@supabase/node-fetch" "^2.6.14"
 
@@ -8108,24 +8108,24 @@
     "@types/ws" "^8.18.1"
     ws "^8.18.2"
 
-"@supabase/storage-js@^2.10.4":
-  version "2.10.4"
-  resolved "https://registry.yarnpkg.com/@supabase/storage-js/-/storage-js-2.10.4.tgz#b7188adef265df8ce52fc54d289c36de85dac936"
-  integrity sha512-cvL02GarJVFcNoWe36VBybQqTVRq6wQSOCvTS64C+eyuxOruFIm1utZAY0xi2qKtHJO3EjKaj8iWJKySusDmAQ==
+"@supabase/storage-js@2.12.1":
+  version "2.12.1"
+  resolved "https://registry.yarnpkg.com/@supabase/storage-js/-/storage-js-2.12.1.tgz#95c0e541e063c71585fd64a334ebf98c1f578320"
+  integrity sha512-QWg3HV6Db2J81VQx0PqLq0JDBn4Q8B1FYn1kYcbla8+d5WDmTdwwMr+EJAxNOSs9W4mhKMv+EYCpCrTFlTj4VQ==
   dependencies:
     "@supabase/node-fetch" "^2.6.14"
 
-"@supabase/supabase-js@2.57.2":
-  version "2.57.2"
-  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.57.2.tgz#b99bfe639d1e922a5eaa94901f996b9da95a5679"
-  integrity sha512-MxaZqZKUPK1ExzOilgSZqCPCxVPjevUrh6bcWz1SrDZexFc9VJ2cJbVP1EG1hKQx/bfLdTUjIZMoIrYpYqAPYw==
+"@supabase/supabase-js@2.57.4":
+  version "2.57.4"
+  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.57.4.tgz#fccc541efaaabbf0b0fb5cb7dce5b686de7d3149"
+  integrity sha512-LcbTzFhHYdwfQ7TRPfol0z04rLEyHabpGYANME6wkQ/kLtKNmI+Vy+WEM8HxeOZAtByUFxoUTTLwhXmrh+CcVw==
   dependencies:
     "@supabase/auth-js" "2.71.1"
-    "@supabase/functions-js" "2.4.5"
+    "@supabase/functions-js" "2.4.6"
     "@supabase/node-fetch" "2.6.15"
-    "@supabase/postgrest-js" "1.21.3"
+    "@supabase/postgrest-js" "1.21.4"
     "@supabase/realtime-js" "2.15.5"
-    "@supabase/storage-js" "^2.10.4"
+    "@supabase/storage-js" "2.12.1"
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"
@@ -8942,15 +8942,15 @@
     natural-compare "^1.4.0"
     ts-api-utils "^1.3.0"
 
-"@typescript-eslint/parser@8.42.0":
-  version "8.42.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-8.42.0.tgz#20ea66f4867981fb5bb62cbe1454250fc4a440ab"
-  integrity sha512-r1XG74QgShUgXph1BYseJ+KZd17bKQib/yF3SR+demvytiRXrwd12Blnz5eYGm8tXaeRdd4x88MlfwldHoudGg==
+"@typescript-eslint/parser@8.43.0":
+  version "8.43.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-8.43.0.tgz#4024159925e7671f1782bdd3498bdcfbd48f9137"
+  integrity sha512-B7RIQiTsCBBmY+yW4+ILd6mF5h1FUwJsVvpqkrgpszYifetQ2Ke+Z4u6aZh0CblkUGIdR59iYVyXqqZGkZ3aBw==
   dependencies:
-    "@typescript-eslint/scope-manager" "8.42.0"
-    "@typescript-eslint/types" "8.42.0"
-    "@typescript-eslint/typescript-estree" "8.42.0"
-    "@typescript-eslint/visitor-keys" "8.42.0"
+    "@typescript-eslint/scope-manager" "8.43.0"
+    "@typescript-eslint/types" "8.43.0"
+    "@typescript-eslint/typescript-estree" "8.43.0"
+    "@typescript-eslint/visitor-keys" "8.43.0"
     debug "^4.3.4"
 
 "@typescript-eslint/parser@^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0":
@@ -8964,22 +8964,22 @@
     "@typescript-eslint/visitor-keys" "8.6.0"
     debug "^4.3.4"
 
-"@typescript-eslint/project-service@8.42.0":
-  version "8.42.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/project-service/-/project-service-8.42.0.tgz#636eb3418b6c42c98554dce884943708bf41a583"
-  integrity sha512-vfVpLHAhbPjilrabtOSNcUDmBboQNrJUiNAGoImkZKnMjs2TIcWG33s4Ds0wY3/50aZmTMqJa6PiwkwezaAklg==
+"@typescript-eslint/project-service@8.43.0":
+  version "8.43.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/project-service/-/project-service-8.43.0.tgz#958dbaa16fbd1e81d46ab86e139f6276757140f8"
+  integrity sha512-htB/+D/BIGoNTQYffZw4uM4NzzuolCoaA/BusuSIcC8YjmBYQioew5VUZAYdAETPjeed0hqCaW7EHg+Robq8uw==
   dependencies:
-    "@typescript-eslint/tsconfig-utils" "^8.42.0"
-    "@typescript-eslint/types" "^8.42.0"
+    "@typescript-eslint/tsconfig-utils" "^8.43.0"
+    "@typescript-eslint/types" "^8.43.0"
     debug "^4.3.4"
 
-"@typescript-eslint/scope-manager@8.42.0":
-  version "8.42.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/scope-manager/-/scope-manager-8.42.0.tgz#36016757bc85b46ea42bae47b61f9421eddedde3"
-  integrity sha512-51+x9o78NBAVgQzOPd17DkNTnIzJ8T/O2dmMBLoK9qbY0Gm52XJcdJcCl18ExBMiHo6jPMErUQWUv5RLE51zJw==
+"@typescript-eslint/scope-manager@8.43.0":
+  version "8.43.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/scope-manager/-/scope-manager-8.43.0.tgz#009ebc09cc6e7e0dd67898a0e9a70d295361c6b9"
+  integrity sha512-daSWlQ87ZhsjrbMLvpuuMAt3y4ba57AuvadcR7f3nl8eS3BjRc8L9VLxFLk92RL5xdXOg6IQ+qKjjqNEimGuAg==
   dependencies:
-    "@typescript-eslint/types" "8.42.0"
-    "@typescript-eslint/visitor-keys" "8.42.0"
+    "@typescript-eslint/types" "8.43.0"
+    "@typescript-eslint/visitor-keys" "8.43.0"
 
 "@typescript-eslint/scope-manager@8.6.0":
   version "8.6.0"
@@ -8989,10 +8989,10 @@
     "@typescript-eslint/types" "8.6.0"
     "@typescript-eslint/visitor-keys" "8.6.0"
 
-"@typescript-eslint/tsconfig-utils@8.42.0", "@typescript-eslint/tsconfig-utils@^8.42.0":
-  version "8.42.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/tsconfig-utils/-/tsconfig-utils-8.42.0.tgz#21a3e74396fd7443ff930bc41b27789ba7e9236e"
-  integrity sha512-kHeFUOdwAJfUmYKjR3CLgZSglGHjbNTi1H8sTYRYV2xX6eNz4RyJ2LIgsDLKf8Yi0/GL1WZAC/DgZBeBft8QAQ==
+"@typescript-eslint/tsconfig-utils@8.43.0", "@typescript-eslint/tsconfig-utils@^8.43.0":
+  version "8.43.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/tsconfig-utils/-/tsconfig-utils-8.43.0.tgz#e6721dba183d61769a90ffdad202aebc383b18c8"
+  integrity sha512-ALC2prjZcj2YqqL5X/bwWQmHA2em6/94GcbB/KKu5SX3EBDOsqztmmX1kMkvAJHzxk7TazKzJfFiEIagNV3qEA==
 
 "@typescript-eslint/type-utils@8.6.0":
   version "8.6.0"
@@ -9004,25 +9004,25 @@
     debug "^4.3.4"
     ts-api-utils "^1.3.0"
 
-"@typescript-eslint/types@8.42.0", "@typescript-eslint/types@^8.42.0":
-  version "8.42.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/types/-/types-8.42.0.tgz#ae15c09cebda20473772902033328e87372db008"
-  integrity sha512-LdtAWMiFmbRLNP7JNeY0SqEtJvGMYSzfiWBSmx+VSZ1CH+1zyl8Mmw1TT39OrtsRvIYShjJWzTDMPWZJCpwBlw==
+"@typescript-eslint/types@8.43.0", "@typescript-eslint/types@^8.43.0":
+  version "8.43.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/types/-/types-8.43.0.tgz#00d34a5099504eb1b263e022cc17c4243ff2302e"
+  integrity sha512-vQ2FZaxJpydjSZJKiSW/LJsabFFvV7KgLC5DiLhkBcykhQj8iK9BOaDmQt74nnKdLvceM5xmhaTF+pLekrxEkw==
 
 "@typescript-eslint/types@8.6.0":
   version "8.6.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/types/-/types-8.6.0.tgz#cdc3a16f83f2f0663d6723e9fd032331cdd9f51c"
   integrity sha512-rojqFZGd4MQxw33SrOy09qIDS8WEldM8JWtKQLAjf/X5mGSeEFh5ixQlxssMNyPslVIk9yzWqXCsV2eFhYrYUw==
 
-"@typescript-eslint/typescript-estree@8.42.0":
-  version "8.42.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/typescript-estree/-/typescript-estree-8.42.0.tgz#593c3af87d4462252c0d7239d1720b84a1b56864"
-  integrity sha512-ku/uYtT4QXY8sl9EDJETD27o3Ewdi72hcXg1ah/kkUgBvAYHLwj2ofswFFNXS+FL5G+AGkxBtvGt8pFBHKlHsQ==
+"@typescript-eslint/typescript-estree@8.43.0":
+  version "8.43.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/typescript-estree/-/typescript-estree-8.43.0.tgz#39e5d431239b4d90787072ae0c2290cbd3e0a562"
+  integrity sha512-7Vv6zlAhPb+cvEpP06WXXy/ZByph9iL6BQRBDj4kmBsW98AqEeQHlj/13X+sZOrKSo9/rNKH4Ul4f6EICREFdw==
   dependencies:
-    "@typescript-eslint/project-service" "8.42.0"
-    "@typescript-eslint/tsconfig-utils" "8.42.0"
-    "@typescript-eslint/types" "8.42.0"
-    "@typescript-eslint/visitor-keys" "8.42.0"
+    "@typescript-eslint/project-service" "8.43.0"
+    "@typescript-eslint/tsconfig-utils" "8.43.0"
+    "@typescript-eslint/types" "8.43.0"
+    "@typescript-eslint/visitor-keys" "8.43.0"
     debug "^4.3.4"
     fast-glob "^3.3.2"
     is-glob "^4.0.3"
@@ -9054,12 +9054,12 @@
     "@typescript-eslint/types" "8.6.0"
     "@typescript-eslint/typescript-estree" "8.6.0"
 
-"@typescript-eslint/visitor-keys@8.42.0":
-  version "8.42.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/visitor-keys/-/visitor-keys-8.42.0.tgz#87c6caaa1ac307bc73a87c1fc469f88f0162f27e"
-  integrity sha512-3WbiuzoEowaEn8RSnhJBrxSwX8ULYE9CXaPepS2C2W3NSA5NNIvBaslpBSBElPq0UGr0xVJlXFWOAKIkyylydQ==
+"@typescript-eslint/visitor-keys@8.43.0":
+  version "8.43.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/visitor-keys/-/visitor-keys-8.43.0.tgz#633d3414afec3cf0a0e4583e1575f4101ef51d30"
+  integrity sha512-T+S1KqRD4sg/bHfLwrpF/K3gQLBM1n7Rp7OjjikjTEssI2YJzQpi5WXoynOaQ93ERIuq3O8RBTOUYDKszUCEHw==
   dependencies:
-    "@typescript-eslint/types" "8.42.0"
+    "@typescript-eslint/types" "8.43.0"
     eslint-visitor-keys "^4.2.1"
 
 "@typescript-eslint/visitor-keys@8.6.0":
@@ -15220,10 +15220,10 @@ nextjs-current-url@1.0.3:
     next "^13.4.7"
     react "^18.2.0"
 
-nextjs-toploader@3.8.16:
-  version "3.8.16"
-  resolved "https://registry.yarnpkg.com/nextjs-toploader/-/nextjs-toploader-3.8.16.tgz#6405116ffdd652ecc049f3a3f672bf7e8f5feef8"
-  integrity sha512-xiejFF9OQD8ovvHfrFhnEmRytvZtwIOY/mMtI9punOAACXpYpgC0y1afJ4DSIEmUi4Syy9A5BsFpUORTJ9z8Ng==
+nextjs-toploader@3.9.16:
+  version "3.9.16"
+  resolved "https://registry.yarnpkg.com/nextjs-toploader/-/nextjs-toploader-3.9.16.tgz#0ba4b003a1af65d1f3068a7bf5a97fa04d9846d3"
+  integrity sha512-Nx1bH+3PAbHrLEd5rk+LPUa3SDL8wT1Uf/tT63FxJ95nXjsrhNB4TY8oPAEG9gQlAoHwBFgJeNsffuSiuMvnGQ==
   dependencies:
     nprogress "^0.2.0"
     prop-types "^15.8.1"
@@ -18703,10 +18703,10 @@ util@^0.12.4:
     is-typed-array "^1.1.3"
     which-typed-array "^1.1.2"
 
-uuid@12.0.0:
-  version "12.0.0"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-12.0.0.tgz#114e150a140571af7b188c5c2a8d8493755fb587"
-  integrity sha512-USe1zesMYh4fjCA8ZH5+X5WIVD0J4V1Jksm1bFTVBX2F/cwSXt0RO5w/3UXbdLKmZX65MiWV+hwhSS8p6oBTGA==
+uuid@13.0.0:
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-13.0.0.tgz#263dc341b19b4d755eb8fe36b78d95a6b65707e8"
+  integrity sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==
 
 uuid@^11.1.0:
   version "11.1.0"
@@ -18768,7 +18768,7 @@ viem@2.23.2:
     ox "0.6.7"
     ws "8.18.0"
 
-viem@2.37.4, viem@^2.37.4:
+viem@2.37.4:
   version "2.37.4"
   resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.4.tgz#94c9e837b4a7ef6f7b6c033487a12625534bd8bc"
   integrity sha512-1ig5O6l1wJmaw3yrSrUimjRLQEZon2ymTqSDjdntu6Bry1/tLC2GClXeS3SiCzrifpLxzfCLQWDITYVTBA10KA==
@@ -18851,6 +18851,20 @@ viem@^2.33.2:
     abitype "1.0.8"
     isows "1.0.7"
     ox "0.9.1"
+    ws "8.18.3"
+
+viem@^2.37.5:
+  version "2.37.5"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.5.tgz#3df9e75bc25eabcf09db6d4b4a423a1f53413a37"
+  integrity sha512-bLKvKgLcge6KWBMLk8iP9weu5tHNr0hkxPNwQd+YQrHEgek7ogTBBeE10T0V6blwBMYmeZFZHLnMhDmPjp63/A==
+  dependencies:
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "1.8.0"
+    "@scure/bip32" "1.7.0"
+    "@scure/bip39" "1.6.0"
+    abitype "1.1.0"
+    isows "1.0.7"
+    ox "0.9.3"
     ws "8.18.3"
 
 vite-node@1.5.0:
