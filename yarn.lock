@@ -15220,10 +15220,10 @@ nextjs-current-url@1.0.3:
     next "^13.4.7"
     react "^18.2.0"
 
-nextjs-toploader@3.9.16:
-  version "3.9.16"
-  resolved "https://registry.yarnpkg.com/nextjs-toploader/-/nextjs-toploader-3.9.16.tgz#0ba4b003a1af65d1f3068a7bf5a97fa04d9846d3"
-  integrity sha512-Nx1bH+3PAbHrLEd5rk+LPUa3SDL8wT1Uf/tT63FxJ95nXjsrhNB4TY8oPAEG9gQlAoHwBFgJeNsffuSiuMvnGQ==
+nextjs-toploader@3.9.17:
+  version "3.9.17"
+  resolved "https://registry.yarnpkg.com/nextjs-toploader/-/nextjs-toploader-3.9.17.tgz#3bb54918738c31ac1efbaf6a01518dbee27ebf99"
+  integrity sha512-9OF0KSSLtoSAuNg2LZ3aTl4hR9mBDj5L9s9DZiFCbMlXehyICGjkIz5dVGzuATU2bheJZoBdFgq9w07AKSuQQw==
   dependencies:
     nprogress "^0.2.0"
     prop-types "^15.8.1"
