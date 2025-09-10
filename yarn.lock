@@ -4376,10 +4376,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lifi/sdk@^3.12.2":
-  version "3.12.2"
-  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.12.2.tgz#77c502b2c7b07074979fc0fc7092e9c614623ae7"
-  integrity sha512-0cRW55ZP7u8rlYjoMnykV4sidzD5g0+yTlmjOAZJI5mei3QN/uPyWqii/Vbfqrfl9jyTdBidA96K4lBatQTJqw==
+"@lifi/sdk@^3.12.4":
+  version "3.12.4"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.12.4.tgz#361721dd8cc5f4f079387a87ff0d1f14310bb1fa"
+  integrity sha512-o7NMNacj9BB6xfSa9S9OWacUIxL+iAK/5Q45tcXXk2Gt7w9kX5vTASbUL0u/S3uYOHfUEMlXMlCbvSU9+pW+EA==
   dependencies:
     "@bigmi/core" "^0.5.2"
     "@bitcoinerlab/secp256k1" "^1.2.0"
@@ -4392,7 +4392,7 @@
     bech32 "^2.0.0"
     bitcoinjs-lib "^7.0.0-rc.0"
     bs58 "^6.0.0"
-    viem "^2.37.4"
+    viem "^2.37.5"
 
 "@lifi/types@^17.36.0":
   version "17.36.0"
@@ -4401,16 +4401,16 @@
   dependencies:
     viem "^2.33.2"
 
-"@lifi/wallet-management@^3.16.1":
-  version "3.16.1"
-  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.16.1.tgz#06f5cae396b8814fe5b7149590c3b97021bc193a"
-  integrity sha512-u32qnlsG8+0bE6ipz/36Uja5Sf2DGVX5nt38vFgnck9OvaXRsrCis2wCXQEm4uHc+woijLElAyy1N7S48OGipA==
+"@lifi/wallet-management@^3.16.3":
+  version "3.16.3"
+  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.16.3.tgz#de57f598c4422a1ad212d0e395adcc0c0cf513b8"
+  integrity sha512-d/5BuXq5QE+8uE+ppfMlETpaEI1jYJzgU+Gvd9Pi5RZV3zislG3EsRR0BXjxuxoWi3OuMy0lNNpaJCkTOXR/Mg==
   dependencies:
     "@bigmi/client" "^0.5.2"
     "@bigmi/core" "^0.5.2"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.12.2"
+    "@lifi/sdk" "^3.12.4"
     "@mui/icons-material" "^7.3.2"
     "@mui/material" "^7.3.2"
     "@mui/system" "^7.3.2"
@@ -4421,20 +4421,20 @@
     mitt "^3.0.1"
     react-i18next "^15.7.3"
     use-sync-external-store "^1.5.0"
-    viem "^2.37.4"
+    viem "^2.37.5"
     zustand "^5.0.8"
 
-"@lifi/widget@3.30.1":
-  version "3.30.1"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.30.1.tgz#0edc7e65d6e0f5c7eef69b06b277ac538ce3a0f2"
-  integrity sha512-ggfHL+THCQDL7RdyG+hrDPZ1LBjsyE+QR8SJZeNA1BVpxgfseebJLpDQ3uNNqjA96UPxwNvfA/ODZj0L85S/7Q==
+"@lifi/widget@3.30.4":
+  version "3.30.4"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.30.4.tgz#f6d8cdb0ae9ab4627aa869238c879b216eabc02d"
+  integrity sha512-LtzxbvvHlBtabFEvLg4C5SBqr/fi+lgJgcPvwxF09Ui7dMNGwH86u6WzrAcQ1e4EcY3bnzIbq2DwoamS31ZCLg==
   dependencies:
     "@bigmi/client" "^0.5.2"
     "@bigmi/core" "^0.5.2"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.12.2"
-    "@lifi/wallet-management" "^3.16.1"
+    "@lifi/sdk" "^3.12.4"
+    "@lifi/wallet-management" "^3.16.3"
     "@mui/icons-material" "^7.3.2"
     "@mui/material" "^7.3.2"
     "@mui/system" "^7.3.2"
@@ -4450,7 +4450,7 @@
     react-intersection-observer "^9.16.0"
     react-router-dom "^6.30.0"
     react-transition-group "^4.4.5"
-    viem "^2.37.4"
+    viem "^2.37.5"
     zustand "^5.0.8"
 
 "@lit-labs/ssr-dom-shim@^1.2.0":
@@ -18768,7 +18768,7 @@ viem@2.23.2:
     ox "0.6.7"
     ws "8.18.0"
 
-viem@2.37.4, viem@^2.37.4:
+viem@2.37.4:
   version "2.37.4"
   resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.4.tgz#94c9e837b4a7ef6f7b6c033487a12625534bd8bc"
   integrity sha512-1ig5O6l1wJmaw3yrSrUimjRLQEZon2ymTqSDjdntu6Bry1/tLC2GClXeS3SiCzrifpLxzfCLQWDITYVTBA10KA==
@@ -18851,6 +18851,20 @@ viem@^2.33.2:
     abitype "1.0.8"
     isows "1.0.7"
     ox "0.9.1"
+    ws "8.18.3"
+
+viem@^2.37.5:
+  version "2.37.5"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.5.tgz#3df9e75bc25eabcf09db6d4b4a423a1f53413a37"
+  integrity sha512-bLKvKgLcge6KWBMLk8iP9weu5tHNr0hkxPNwQd+YQrHEgek7ogTBBeE10T0V6blwBMYmeZFZHLnMhDmPjp63/A==
+  dependencies:
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "1.8.0"
+    "@scure/bip32" "1.7.0"
+    "@scure/bip39" "1.6.0"
+    abitype "1.1.0"
+    isows "1.0.7"
+    ox "0.9.3"
     ws "8.18.3"
 
 vite-node@1.5.0:
