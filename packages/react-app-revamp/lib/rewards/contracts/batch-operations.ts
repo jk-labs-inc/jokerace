@@ -1,19 +1,18 @@
 import { config } from "@config/wagmi";
 import { readContracts } from "@wagmi/core";
 import { Abi } from "viem";
-import { ModuleType } from "../types";
 
 /**
  * Creates a contract read batch for native token data
  */
 export const createNativeTokenReadBatch = async (
-  moduleType: ModuleType,
   contractAddress: `0x${string}`,
   chainId: number,
   abi: Abi,
   validRankings: number[],
   userAddress: `0x${string}`,
   functionName: string,
+  isCreator?: boolean,
 ) => {
   try {
     return await readContracts(config, {
@@ -22,7 +21,7 @@ export const createNativeTokenReadBatch = async (
         chainId,
         abi,
         functionName,
-        args: moduleType === ModuleType.VOTER_REWARDS ? [userAddress, BigInt(ranking)] : [BigInt(ranking)],
+        args: isCreator ? [BigInt(ranking)] : [userAddress, BigInt(ranking)],
       })),
     });
   } catch (error) {
@@ -35,7 +34,6 @@ export const createNativeTokenReadBatch = async (
  * Creates a contract read for ERC20 token data
  */
 export const createERC20TokenRead = async (
-  moduleType: ModuleType,
   contractAddress: `0x${string}`,
   chainId: number,
   abi: Abi,
@@ -43,6 +41,7 @@ export const createERC20TokenRead = async (
   ranking: number,
   userAddress: `0x${string}`,
   functionName: string,
+  isCreator?: boolean,
 ) => {
   try {
     return await readContracts(config, {
@@ -52,10 +51,7 @@ export const createERC20TokenRead = async (
           chainId,
           abi,
           functionName,
-          args:
-            moduleType === ModuleType.VOTER_REWARDS
-              ? [tokenAddress, userAddress, BigInt(ranking)]
-              : [tokenAddress, BigInt(ranking)],
+          args: isCreator ? [tokenAddress, BigInt(ranking)] : [tokenAddress, userAddress, BigInt(ranking)],
         },
       ],
     });
