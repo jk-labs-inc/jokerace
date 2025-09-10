@@ -4,35 +4,34 @@ import { RewardsParams } from "@hooks/useUserRewards";
 import { readContracts } from "@wagmi/core";
 import { Abi } from "viem";
 import { fetchTokenAddresses } from "../database";
-import { ModuleType } from "../types";
 import { createERC20TokenQuery, createNativeTokenQuery } from "../utils";
 import { validateRankings } from "./validation";
 
 /**
  * Fetches releasable rewards
- * @param moduleType type of the rewards module
  * @param validRankings valid rankings
  * @param tokenAddresses token addresses
  * @param contractAddress contract address
  * @param chainId chain ID
  * @param abi ABI of the contract
  * @param userAddress user address
+ * @param isCreator whether the user is the creator
  * @returns releasable rewards
  */
 export async function fetchReleasableRewards(
-  moduleType: ModuleType,
   validRankings: number[],
   tokenAddresses: `0x${string}`[],
   contractAddress: `0x${string}`,
   chainId: number,
   abi: Abi,
   userAddress?: `0x${string}`,
+  isCreator?: boolean,
 ): Promise<any[]> {
   const queries = [];
 
   // build all native token queries
   const nativeTokenQueries = validRankings.map(ranking =>
-    createNativeTokenQuery(moduleType, contractAddress, chainId, abi, ranking, userAddress),
+    createNativeTokenQuery(contractAddress, chainId, abi, ranking, userAddress, isCreator),
   );
   queries.push(...nativeTokenQueries);
 
@@ -40,7 +39,7 @@ export async function fetchReleasableRewards(
   if (tokenAddresses.length > 0) {
     for (const ranking of validRankings) {
       const erc20Queries = tokenAddresses.map(tokenAddress =>
-        createERC20TokenQuery(moduleType, contractAddress, chainId, abi, ranking, tokenAddress, userAddress),
+        createERC20TokenQuery(contractAddress, chainId, abi, ranking, tokenAddress, userAddress, isCreator),
       );
       queries.push(...erc20Queries);
     }

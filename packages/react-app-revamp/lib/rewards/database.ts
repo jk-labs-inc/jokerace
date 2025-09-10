@@ -41,7 +41,6 @@ export const getTokenAddresses = async (rewardsModuleAddress: string, networkNam
  * Inserts a contest with voting rewards into the database.
  * @param contestAddress contest address
  * @param chainName chain name
- * @param moduleType module type (AUTHOR_REWARDS or VOTING_REWARDS)
  * @returns true if the contest was inserted successfully, false otherwise
  */
 export const insertContestWithOfficialModule = async (contestAddress: string, chainName: string): Promise<boolean> => {

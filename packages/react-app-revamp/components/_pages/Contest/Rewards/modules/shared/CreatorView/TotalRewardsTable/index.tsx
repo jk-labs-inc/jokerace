@@ -1,17 +1,15 @@
 import RewardsNumberDisplay from "@components/_pages/Contest/Rewards/components/UI/Display/Number";
 import { formatBalance } from "@helpers/formatBalance";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
-import { ModuleType, RankShare, TotalRewardsData } from "lib/rewards/types";
+import { RankShare, TotalRewardsData } from "lib/rewards/types";
 import { formatUnits } from "viem";
 
 interface TotalRewardsTableProps {
   totalRewards: TotalRewardsData;
-  rewardsModuleType: ModuleType;
   shares: RankShare[];
 }
 
-const TotalRewardsTable = ({ totalRewards, shares, rewardsModuleType }: TotalRewardsTableProps) => {
-  const rewardType = rewardsModuleType === ModuleType.VOTER_REWARDS ? "voters" : "contestant";
+const TotalRewardsTable = ({ totalRewards, shares }: TotalRewardsTableProps) => {
   const totalSharesValue = shares.reduce((acc, { share }) => acc + share, 0n);
   const { value: totalValue, symbol, decimals } = totalRewards?.native || { value: 0n, symbol: "ETH", decimals: 18 };
 
@@ -77,7 +75,7 @@ const TotalRewardsTable = ({ totalRewards, shares, rewardsModuleType }: TotalRew
             <div className="flex justify-between items-center text-[16px] font-bold">
               <p>
                 {rank}
-                <sup>{returnOnlySuffix(rank)}</sup> place {rewardType} ({percentage}%)
+                <sup>{returnOnlySuffix(rank)}</sup> place voters ({percentage}%)
               </p>
               <p>
                 {rewardAmount} <span className="text-[12px] text-neutral-9 font-bold">{symbol}</span>

@@ -2,7 +2,7 @@ import { Loader } from "@components/UI/Loader";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useTotalVotesPerUser from "@hooks/useTotalVotesPerUser";
 import { useValidateRankings } from "@hooks/useValidateRankings";
-import { ModuleType, RewardModuleInfo } from "lib/rewards/types";
+import { RewardModuleInfo } from "lib/rewards/types";
 import { FC } from "react";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
@@ -44,13 +44,12 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({ conte
     abi: rewards.abi,
   });
 
-
   if (!isConnected) {
     return <RewardsPlayerViewNotConnected />;
   }
 
   if (contestStatus === ContestStatus.ContestOpen || contestStatus === ContestStatus.SubmissionOpen) {
-    return <RewardsNotStarted rewardsType={ModuleType.VOTER_REWARDS} />;
+    return <RewardsNotStarted />;
   }
 
   if (isLoadingHasVoted || isLoadingValidateRankings) {
@@ -66,13 +65,29 @@ const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({ conte
 
   if (!hasVoted) {
     if (isCreator && tiedRankings.length > 0) {
-      return <VoterClaimRewards rewards={rewards} chainId={chainId} contestStatus={contestStatus} contestAddress={contestAddress} tiedRankings={tiedRankings} />;
+      return (
+        <VoterClaimRewards
+          rewards={rewards}
+          chainId={chainId}
+          contestStatus={contestStatus}
+          contestAddress={contestAddress}
+          tiedRankings={tiedRankings}
+        />
+      );
     }
 
-    return <RewardsPlayerNotQualified phase={phase} rewardsType={ModuleType.VOTER_REWARDS} />;
+    return <RewardsPlayerNotQualified phase={phase} />;
   }
 
-  return <VoterClaimRewards rewards={rewards} chainId={chainId} contestStatus={contestStatus} contestAddress={contestAddress} tiedRankings={tiedRankings} />;
+  return (
+    <VoterClaimRewards
+      rewards={rewards}
+      chainId={chainId}
+      contestStatus={contestStatus}
+      contestAddress={contestAddress}
+      tiedRankings={tiedRankings}
+    />
+  );
 };
 
 export default VoterRewardsPagePlayerView;
