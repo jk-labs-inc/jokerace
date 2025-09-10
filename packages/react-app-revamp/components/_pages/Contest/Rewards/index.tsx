@@ -14,6 +14,7 @@ import RewardsError from "./modules/shared/Error";
 import RewardsCanceled from "./modules/shared/RewardsCanceled";
 import VotersRewardsPage from "./modules/Voters";
 import CreateRewards from "./components/Create";
+import { getChainExplorer } from "@helpers/getChainExplorer";
 
 const ContestRewards = () => {
   const asPath = usePathname();
@@ -21,7 +22,7 @@ const ContestRewards = () => {
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
-
+  const chainExplorer = getChainExplorer(chainId);
   const { contestAuthorEthereumAddress, version } = useContestStore(state => state);
   const { data: rewards, isLoading, isError, refetch, isRefetching } = useRewardsModule();
   const { address: accountAddress } = useAccount();
@@ -84,9 +85,19 @@ const ContestRewards = () => {
           version={version}
         />
       ) : rewards.moduleType === ModuleType.AUTHOR_REWARDS ? (
-        //TODO: not supported anymore, we will display message
-        <div>
-          <p>Winners rewards are not supported anymore</p>
+        <div className="flex flex-col gap-2">
+          <p className="text-[18px] text-neutral-11">winners rewards are not supported anymore</p>
+          <p className="text-[16px] text-neutral-11">
+            if you would still like to look at contract, you can see it{" "}
+            <a
+              href={`${chainExplorer}address/${rewards.contractAddress}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-positive-11 font-bold"
+            >
+              here
+            </a>
+          </p>
         </div>
       ) : null}
     </div>

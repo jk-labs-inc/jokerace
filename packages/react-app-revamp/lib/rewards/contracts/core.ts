@@ -35,16 +35,6 @@ export async function getRewardsModuleInfo(rewardsModuleAddress: string, chainId
 }
 
 /**
- * Gets rewards module version information
- * @param address address of the rewards module
- * @param chainId chain ID
- * @returns version information
- */
-export async function getRewardsModuleVersionInfo(address: string, chainId: number) {
-  return await getVoterRewardsModuleContractVersion(address, chainId);
-}
-
-/**
  * Gets the rewards module address for a contest
  * @param contractConfig contest contract config
  * @returns rewards module address
