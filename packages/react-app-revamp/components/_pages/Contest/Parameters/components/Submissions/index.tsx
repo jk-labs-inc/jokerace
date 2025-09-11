@@ -30,7 +30,7 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
   nativeCurrencySymbol,
   openConnectModal,
 }) => {
-  const qualifyToSubmitMessage = useMemo<string | JSX.Element>(() => {
+  const qualifyToSubmitMessage = useMemo<string | React.JSX.Element>(() => {
     if (anyoneCanSubmit) return `anyone can enter`;
 
     if (currentUserQualifiedToSubmit) {

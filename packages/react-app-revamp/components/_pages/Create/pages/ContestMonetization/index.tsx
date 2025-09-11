@@ -19,7 +19,7 @@ const CreateContestMonetization = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const monetizeTitle = isMobile ? `charges` : `let's monetize this puppy`;
 
-  const switchLayout = useMemo<JSX.Element>(() => {
+  const switchLayout = useMemo<React.JSX.Element>(() => {
     if (!isConnected) {
       setDisableNextStep(true);
       return <CreateConnectPrompt />;
