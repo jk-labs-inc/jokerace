@@ -1,13 +1,10 @@
 import { Switch } from "@headlessui/react";
-import { useContestStore } from "@hooks/useContest/store";
 import { useMediaQuery } from "react-responsive";
 import { useCreateRewardsStore } from "../../../../store";
 import { useFundPoolStore } from "../../../FundPool/store";
-import { useShallow } from "zustand/shallow";
 
 const CreateRewardsAddFundsToggle = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const anyoneCanVote = useContestStore(useShallow(state => state.anyoneCanVote));
   const { addFundsToRewards, setAddFundsToRewards } = useCreateRewardsStore(state => state);
   const { setTokenWidgets } = useFundPoolStore(state => state);
   const toggleLabel = isMobile ? "i want to fund the rewards pool" : "i want to personally fund the rewards pool";
@@ -34,7 +31,7 @@ const CreateRewardsAddFundsToggle = () => {
         </Switch>
         <p className="text-[16px] text-neutral-11">{toggleLabel}</p>
       </div>
-      {addFundsToRewards && anyoneCanVote && (
+      {addFundsToRewards && (
         <p className="text-[14px] text-neutral-10">
           note: since this contest lets anyone pay per vote, <br />
           people may buy votes to try to claim the rewards
