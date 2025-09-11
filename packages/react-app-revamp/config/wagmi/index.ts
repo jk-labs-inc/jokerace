@@ -27,7 +27,6 @@ import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
-import { berachain } from "./custom-chains/berachain";
 import { celo } from "./custom-chains/celo";
 import { cyber } from "./custom-chains/cyber";
 import { forma } from "./custom-chains/forma";
@@ -69,7 +68,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   soneium,
   story,
   ink,
-  berachain,
   swell,
   manta,
   zksyncEra,
