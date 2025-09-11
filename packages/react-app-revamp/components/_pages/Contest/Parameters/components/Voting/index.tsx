@@ -31,7 +31,7 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
   votingRequirementsDescription,
   openConnectModal,
 }) => {
-  const qualifyToVoteMessage = useMemo<string | JSX.Element>(() => {
+  const qualifyToVoteMessage = useMemo<string | React.JSX.Element>(() => {
     const canVote = currentUserAvailableVotesAmount > 0;
 
     if (canVote) {
