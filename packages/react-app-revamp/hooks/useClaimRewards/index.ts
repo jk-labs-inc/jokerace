@@ -6,7 +6,6 @@ import { transform } from "@helpers/transform";
 import { useError } from "@hooks/useError";
 import { switchChain, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
-import { ModuleType } from "lib/rewards/types";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
@@ -16,9 +15,7 @@ interface UseClaimRewardsProps {
   contractRewardsModuleAddress: `0x${string}`;
   abiRewardsModule: Abi;
   chainId: number;
-  tokenAddress: string;
   tokenDecimals: number;
-  moduleType: ModuleType;
   userAddress?: `0x${string}`;
 }
 
@@ -29,9 +26,7 @@ export const useClaimRewards = ({
   contractRewardsModuleAddress,
   abiRewardsModule,
   chainId,
-  tokenAddress,
   tokenDecimals,
-  moduleType,
   userAddress,
 }: UseClaimRewardsProps) => {
   const { chainId: userChainId } = useAccount();
@@ -70,14 +65,7 @@ export const useClaimRewards = ({
     }
 
     try {
-      const args =
-        moduleType === ModuleType.AUTHOR_REWARDS
-          ? tokenAddress === "native"
-            ? [payee]
-            : [tokenAddress, payee]
-          : tokenAddress === "native"
-          ? [voterAddress, payee]
-          : [tokenAddress, voterAddress, payee];
+      const args = tokenAddress === "native" ? [voterAddress, payee] : [tokenAddress, voterAddress, payee];
 
       const hash = await writeContract(config, {
         address: contractRewardsModuleAddress,

@@ -2,14 +2,14 @@ import Loader from "@components/UI/Loader";
 import { useClaimRewards } from "@hooks/useClaimRewards";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import { RewardModuleInfo, ModuleType } from "lib/rewards/types";
 import useUserRewards from "@hooks/useUserRewards";
+import { useUserTiedRankings } from "@hooks/useUserTiedRankings";
+import { RewardModuleInfo } from "lib/rewards/types";
 import { FC } from "react";
 import { useAccount } from "wagmi";
 import RewardsError from "../../../../shared/Error";
 import RewardsPlayerViewClaimRewards from "../../../../shared/PlayerView/ClaimRewards";
 import RewardsPlayerLosingStatus from "../../../../shared/PlayerView/LosingStatus";
-import { useUserTiedRankings } from "@hooks/useUserTiedRankings";
 import RewardsPlayerTiedStatus from "../../../../shared/PlayerView/TiedStatus";
 
 interface VoterClaimRewardsProps {
@@ -41,7 +41,6 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
     contestAbi,
     userAddress: userAddress as `0x${string}`,
     version,
-    moduleType: ModuleType.VOTER_REWARDS,
     enabled: tiedRankings.length > 0 && !!userAddress && !isCreator,
   });
 
@@ -53,7 +52,6 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
     refetch,
     isError: isUserRewardsError,
   } = useUserRewards({
-    moduleType: ModuleType.VOTER_REWARDS,
     contractAddress: rewards.contractAddress as `0x${string}`,
     chainId,
     abi: rewards.abi,
@@ -72,9 +70,7 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
     contractRewardsModuleAddress: rewards.contractAddress as `0x${string}`,
     abiRewardsModule: rewards.abi,
     chainId,
-    tokenAddress: "native",
     tokenDecimals: 18,
-    moduleType: ModuleType.VOTER_REWARDS,
     userAddress: userAddress as `0x${string}`,
   });
 
@@ -95,11 +91,11 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
   }
 
   if (contestStatus === ContestStatus.VotingOpen && !totalRewards.length) {
-    return <RewardsPlayerLosingStatus phase="active" rewardsType={ModuleType.VOTER_REWARDS} />;
+    return <RewardsPlayerLosingStatus phase="active" />;
   }
 
   if (contestStatus === ContestStatus.VotingClosed && !totalRewards.length) {
-    return <RewardsPlayerLosingStatus phase="closed" rewardsType={ModuleType.VOTER_REWARDS} />;
+    return <RewardsPlayerLosingStatus phase="closed" />;
   }
 
   return (

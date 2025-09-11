@@ -3,14 +3,12 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { getNativeTokenInfo } from "@helpers/getNativeTokenInfo";
 import { useQuery } from "@tanstack/react-query";
 import { fetchClaimableRewards, fetchClaimedRewards } from "lib/rewards";
-import { ModuleType } from "lib/rewards/types";
 import { calculateTotalRewards } from "lib/rewards/utils";
 import { usePathname } from "next/navigation";
 import { useCallback, useMemo } from "react";
 import { Abi } from "viem";
 
 export interface RewardsParams {
-  moduleType: ModuleType;
   contractAddress: `0x${string}`;
   chainId: number;
   abi: Abi;
@@ -38,7 +36,6 @@ export interface RewardsResult {
 
 /**
  * Main hook for fetching user rewards (claimable and claimed)
- * @param moduleType - The module type
  * @param contractAddress - The rewards module address
  * @param chainId - The chainId of the rewards module
  * @param abi - The abi of the rewards module
@@ -49,7 +46,6 @@ export interface RewardsResult {
  * @param claimedEnabled - Whether the claimed rewards are enabled
  */
 const useUserRewards = ({
-  moduleType,
   contractAddress,
   chainId,
   abi,
@@ -65,7 +61,6 @@ const useUserRewards = ({
   const nativeTokenInfo = getNativeTokenInfo(chainId);
 
   const commonQueryParams = {
-    moduleType,
     contractAddress,
     chainId,
     abi,

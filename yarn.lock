@@ -4424,10 +4424,10 @@
     viem "^2.37.5"
     zustand "^5.0.8"
 
-"@lifi/widget@3.30.4":
-  version "3.30.4"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.30.4.tgz#f6d8cdb0ae9ab4627aa869238c879b216eabc02d"
-  integrity sha512-LtzxbvvHlBtabFEvLg4C5SBqr/fi+lgJgcPvwxF09Ui7dMNGwH86u6WzrAcQ1e4EcY3bnzIbq2DwoamS31ZCLg==
+"@lifi/widget@3.30.5":
+  version "3.30.5"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.30.5.tgz#a0f1de3319349a376d2f275e1db7e554a99fe7a9"
+  integrity sha512-tW6FiobvpPzmakp2Ud07HZez4e/Q4ulpJBsfl9PFrdMkT8rGjOjPZk9pSuLdwOfb/mrJrdElpgATf5FuO6HTDQ==
   dependencies:
     "@bigmi/client" "^0.5.2"
     "@bigmi/core" "^0.5.2"
@@ -8292,17 +8292,17 @@
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.66.4.tgz#44b87bff289466adbfa0de8daa5756cbd2d61c61"
   integrity sha512-skM/gzNX4shPkqmdTCSoHtJAPMTtmIJNS0hE+xwTTUVYwezArCT34NMermABmBVUg5Ls5aiUXEDXfqwR1oVkcA==
 
-"@tanstack/query-core@5.87.1":
-  version "5.87.1"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.87.1.tgz#9b8b9331714749d505a7ceb0ae52b6ad6ae8a461"
-  integrity sha512-HOFHVvhOCprrWvtccSzc7+RNqpnLlZ5R6lTmngb8aq7b4rc2/jDT0w+vLdQ4lD9bNtQ+/A4GsFXy030Gk4ollA==
+"@tanstack/query-core@5.87.4":
+  version "5.87.4"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.87.4.tgz#1601d05ee5bf611328f2852cec763ed0c9a090cd"
+  integrity sha512-uNsg6zMxraEPDVO2Bn+F3/ctHi+Zsk+MMpcN8h6P7ozqD088F6mFY5TfGM7zuyIrL7HKpDyu6QHfLWiDxh3cuw==
 
-"@tanstack/react-query@5.87.1":
-  version "5.87.1"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.87.1.tgz#074bd2238173f49ef8804a9b6d94f63374828a78"
-  integrity sha512-YKauf8jfMowgAqcxj96AHs+Ux3m3bWT1oSVKamaRPXSnW2HqSznnTCEkAVqctF1e/W9R/mPcyzzINIgpOH94qg==
+"@tanstack/react-query@5.87.4":
+  version "5.87.4"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.87.4.tgz#f0b0af38ffab642e8999c156e986dfc384662fe6"
+  integrity sha512-T5GT/1ZaNsUXf5I3RhcYuT17I4CPlbZgyLxc/ZGv7ciS6esytlbjb3DgUFO6c8JWYMDpdjSWInyGZUErgzqhcA==
   dependencies:
-    "@tanstack/query-core" "5.87.1"
+    "@tanstack/query-core" "5.87.4"
 
 "@tanstack/react-query@^5.0.0":
   version "5.66.4"
@@ -9168,10 +9168,10 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@5.3.21":
-  version "5.3.21"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.3.21.tgz#09c0c80d3f0b435f29c747ae832c39a9f24d99cf"
-  integrity sha512-rtyylPomqpMFQu5DcAqXYf+J3gvboakpBewpjWUgSrkSwtu0mqgpYFjys6VaXb55qePhH9K6HYARaYLEuo9OLw==
+"@vercel/node@5.3.22":
+  version "5.3.22"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.3.22.tgz#2497c2047a309102e53140180c5849ce787a4615"
+  integrity sha512-z3v0IlS5fqIEwPKpH9Epyam5DE+wadyKCk+MOaDZYVsriDp3ffJWT0neofHnNfOmnkZztMS194gwbV73v4QTBA==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
@@ -15220,10 +15220,10 @@ nextjs-current-url@1.0.3:
     next "^13.4.7"
     react "^18.2.0"
 
-nextjs-toploader@3.9.16:
-  version "3.9.16"
-  resolved "https://registry.yarnpkg.com/nextjs-toploader/-/nextjs-toploader-3.9.16.tgz#0ba4b003a1af65d1f3068a7bf5a97fa04d9846d3"
-  integrity sha512-Nx1bH+3PAbHrLEd5rk+LPUa3SDL8wT1Uf/tT63FxJ95nXjsrhNB4TY8oPAEG9gQlAoHwBFgJeNsffuSiuMvnGQ==
+nextjs-toploader@3.9.17:
+  version "3.9.17"
+  resolved "https://registry.yarnpkg.com/nextjs-toploader/-/nextjs-toploader-3.9.17.tgz#3bb54918738c31ac1efbaf6a01518dbee27ebf99"
+  integrity sha512-9OF0KSSLtoSAuNg2LZ3aTl4hR9mBDj5L9s9DZiFCbMlXehyICGjkIz5dVGzuATU2bheJZoBdFgq9w07AKSuQQw==
   dependencies:
     nprogress "^0.2.0"
     prop-types "^15.8.1"
@@ -18768,10 +18768,10 @@ viem@2.23.2:
     ox "0.6.7"
     ws "8.18.0"
 
-viem@2.37.4:
-  version "2.37.4"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.4.tgz#94c9e837b4a7ef6f7b6c033487a12625534bd8bc"
-  integrity sha512-1ig5O6l1wJmaw3yrSrUimjRLQEZon2ymTqSDjdntu6Bry1/tLC2GClXeS3SiCzrifpLxzfCLQWDITYVTBA10KA==
+viem@2.37.5, viem@^2.37.5:
+  version "2.37.5"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.5.tgz#3df9e75bc25eabcf09db6d4b4a423a1f53413a37"
+  integrity sha512-bLKvKgLcge6KWBMLk8iP9weu5tHNr0hkxPNwQd+YQrHEgek7ogTBBeE10T0V6blwBMYmeZFZHLnMhDmPjp63/A==
   dependencies:
     "@noble/curves" "1.9.1"
     "@noble/hashes" "1.8.0"
@@ -18851,20 +18851,6 @@ viem@^2.33.2:
     abitype "1.0.8"
     isows "1.0.7"
     ox "0.9.1"
-    ws "8.18.3"
-
-viem@^2.37.5:
-  version "2.37.5"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.5.tgz#3df9e75bc25eabcf09db6d4b4a423a1f53413a37"
-  integrity sha512-bLKvKgLcge6KWBMLk8iP9weu5tHNr0hkxPNwQd+YQrHEgek7ogTBBeE10T0V6blwBMYmeZFZHLnMhDmPjp63/A==
-  dependencies:
-    "@noble/curves" "1.9.1"
-    "@noble/hashes" "1.8.0"
-    "@scure/bip32" "1.7.0"
-    "@scure/bip39" "1.6.0"
-    abitype "1.1.0"
-    isows "1.0.7"
-    ox "0.9.3"
     ws "8.18.3"
 
 vite-node@1.5.0:

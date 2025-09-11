@@ -10,10 +10,10 @@ import RewardsPlayerTiedRewards from "../TiedRewards";
 interface RewardsPlayerViewClaimRewardsProps {
   totalRewards: Reward[];
   claimableDistributions: Distribution[];
-  claimedDistributions?: Distribution[];
   contestStatus: ContestStatus;
   tiedRankings: number[];
   isCreator: boolean;
+  claimedDistributions?: Distribution[];
   isClaimLoading: (rank: number, tokenAddress: string) => boolean;
   isClaimSuccess: (rank: number, tokenAddress: string) => boolean;
   onClaim: (rank: number, value: bigint, tokenAddress: string) => void;
