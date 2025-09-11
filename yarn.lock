@@ -4424,10 +4424,10 @@
     viem "^2.37.5"
     zustand "^5.0.8"
 
-"@lifi/widget@3.30.4":
-  version "3.30.4"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.30.4.tgz#f6d8cdb0ae9ab4627aa869238c879b216eabc02d"
-  integrity sha512-LtzxbvvHlBtabFEvLg4C5SBqr/fi+lgJgcPvwxF09Ui7dMNGwH86u6WzrAcQ1e4EcY3bnzIbq2DwoamS31ZCLg==
+"@lifi/widget@3.30.5":
+  version "3.30.5"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.30.5.tgz#a0f1de3319349a376d2f275e1db7e554a99fe7a9"
+  integrity sha512-tW6FiobvpPzmakp2Ud07HZez4e/Q4ulpJBsfl9PFrdMkT8rGjOjPZk9pSuLdwOfb/mrJrdElpgATf5FuO6HTDQ==
   dependencies:
     "@bigmi/client" "^0.5.2"
     "@bigmi/core" "^0.5.2"
