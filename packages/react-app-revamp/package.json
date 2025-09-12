@@ -17,7 +17,7 @@
     "@clustersxyz/sdk": "1.0.2",
     "@getbrevo/brevo": "3.0.1",
     "@getpara/rainbowkit-wallet": "1.4.0",
-    "@headlessui/react": "2.2.7",
+    "@headlessui/react": "2.2.8",
     "@heroicons/react": "2.2.0",
     "@lifi/widget": "3.30.5",
     "@mysten/dapp-kit": "0.17.7",
