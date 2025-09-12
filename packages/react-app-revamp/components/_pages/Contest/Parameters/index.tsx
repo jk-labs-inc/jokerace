@@ -24,7 +24,7 @@ const ContestParameters = () => {
     votingRequirements,
     submissionMerkleRoot,
     votingMerkleRoot,
-    contestAuthor,
+    contestAuthorEthereumAddress,
     anyoneCanVote,
     charge,
     version,
@@ -83,7 +83,11 @@ const ContestParameters = () => {
           votingRequirementsDescription={votingRequirements?.description}
           openConnectModal={openConnectModal}
         />
-        <ContestParametersEarnings charge={charge} contestAuthor={contestAuthor} blockExplorerUrl={blockExplorerUrl} />
+        <ContestParametersEarnings
+          charge={charge}
+          contestAuthor={contestAuthorEthereumAddress}
+          blockExplorerUrl={blockExplorerUrl}
+        />
       </div>
     </div>
   );
