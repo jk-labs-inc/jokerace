@@ -15,7 +15,7 @@ const commonSettings = {
   },
 };
 
-const createToast = (type: any, content: JSX.Element, additionalSettings: any = {}) => {
+const createToast = (type: any, content: React.JSX.Element, additionalSettings: any = {}) => {
   const settings = { ...commonSettings, ...additionalSettings, type };
 
   if (toastId !== null) {
