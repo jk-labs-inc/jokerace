@@ -11,7 +11,7 @@ export const useSubmitQualification = (
   contestAddressLowerCase: string,
   lowerCaseChainName: string,
 ) => {
-  const { setSubmissionsMerkleRoot, contestAuthorEthereumAddress } = useContestStore(state => state);
+  const { setSubmissionsMerkleRoot } = useContestStore(state => state);
   const {
     setCurrentUserQualifiedToSubmit,
     setCurrentUserProposalCount,
@@ -114,16 +114,23 @@ export const useSubmitQualification = (
             functionName: "numAllowedProposalSubmissions",
             args: [],
           },
+          {
+            ...contractConfig,
+            functionName: "creator",
+            args: [],
+          },
         ],
       });
 
       const anyoneCanSubmitResult = Number(results[0].result);
       const contestMaxNumberSubmissionsPerUser = Number(results[1].result);
+      const contestAuthorEthereumAddress = results[2].result as string;
       const anyoneCanSubmit = anyoneCanSubmitResult === 1;
 
       setAnyoneCanSubmit(anyoneCanSubmit ? AnyoneCanSubmit.ANYONE_CAN_SUBMIT : AnyoneCanSubmit.ONLY_CREATOR);
 
       const canSubmit = anyoneCanSubmit || userAddress === contestAuthorEthereumAddress;
+
       await handleSubmissionCountCheck(contractConfig, contestMaxNumberSubmissionsPerUser, canSubmit);
     } else {
       // Handle older versions with merkle root
