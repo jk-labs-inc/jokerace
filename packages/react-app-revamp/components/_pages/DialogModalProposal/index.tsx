@@ -1,5 +1,5 @@
-import Comments from "@components/Comments";
 import AddFunds from "@components/AddFunds";
+import Comments from "@components/Comments";
 import { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import Tabs from "@components/UI/Tabs";
@@ -12,11 +12,13 @@ import { getTotalCharge } from "@helpers/totalCharge";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useProposalVotes } from "@hooks/useProposalVotes";
 import { useUserStore } from "@hooks/useUser/store";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { switchChain } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
@@ -24,13 +26,11 @@ import { usePathname } from "next/navigation";
 import { FC, useCallback, useEffect, useState } from "react";
 import SimpleBar from "simplebar-react";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 import DialogMaxVotesAlert from "../DialogMaxVotesAlert";
 import ListProposalVotes from "../ListProposalVotes";
 import DialogModalProposalHeader from "./components/Header";
 import DialogModalProposalVoteCountdown from "./components/VoteCountdown";
-import { useShallow } from "zustand/shallow";
-import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -90,14 +90,13 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
   const totalProposals = listProposalsIds.length;
-  const { charge, votesOpen, votesClose, contestAuthorEthereumAddress, contestAbi, anyoneCanVote } = useContestStore(
+  const { charge, votesOpen, votesClose, contestAuthorEthereumAddress, contestAbi } = useContestStore(
     useShallow(state => ({
       charge: state.charge,
       votesOpen: state.votesOpen,
       votesClose: state.votesClose,
       contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
       contestAbi: state.contestAbi,
-      anyoneCanVote: state.anyoneCanVote,
     })),
   );
   const isPayPerVote = charge?.voteType === VoteType.PerVote;
@@ -282,8 +281,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                     />
                   ) : !isConnected ? (
                     <button className="text-[16px] text-neutral-11" onClick={openConnectModal}>
-                      <span className="text-positive-11 font-bold">connect your wallet</span>{" "}
-                      {anyoneCanVote ? "to add votes" : "to see if you qualify"}
+                      <span className="text-positive-11 font-bold">connect your wallet</span> to add votes
                     </button>
                   ) : outOfVotes ? (
                     <p className="text-[16px] text-neutral-11">

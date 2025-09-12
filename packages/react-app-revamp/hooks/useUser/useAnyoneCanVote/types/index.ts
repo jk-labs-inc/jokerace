@@ -48,21 +48,3 @@ export interface CycleInfo {
   secondsInCycle: number;
 }
 
-/**
- * Return type for the useAnyoneCanVote hook
- */
-export interface UseAnyoneCanVoteReturn {
-  checkAnyoneCanVoteUserQualification: (
-    abi: any,
-    version: string,
-    setUserVoteQualification: UserVoteQualificationSetter,
-  ) => Promise<void>;
-  getPriceCurveType: (address: string, abi: Abi, chainId: number) => Promise<PriceCurveType | null>;
-  calculateUserVoteQualification: (
-    abi: Abi,
-    voteCostFunctionName: "costToVote" | "currentPricePerVote",
-    setUserVoteQualification: UserVoteQualificationSetter,
-  ) => Promise<void>;
-  exponentialCurveData: ExponentialCurveData;
-  cleanupExponentialUpdates: () => void;
-}

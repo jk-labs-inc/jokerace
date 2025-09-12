@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { toastInfo } from "@components/UI/Toast";
 import { extractPathSegments } from "@helpers/extractPath";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
@@ -8,22 +7,20 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
-import { VoteType } from "@hooks/useDeployContest/types";
 import useProfileData from "@hooks/useProfileData";
 import { RawMetadataFields } from "@hooks/useProposal/utils";
-import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import moment from "moment";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
 import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
 import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
 import ProposalLayoutTweet from "./components/ProposalLayout/Tweet";
-import { useShallow } from "zustand/shallow";
 
 export interface Proposal {
   id: string;
@@ -68,9 +65,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
-  const { currentUserAvailableVotesAmount } = useUserStore(state => state);
-  const { votesOpen, charge } = useContestStore(state => state);
-  const canVote = currentUserAvailableVotesAmount > 0;
+  const { votesOpen } = useContestStore(state => state);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const setPickProposal = useCastVotesStore(useShallow(state => state.setPickedProposal));
@@ -85,7 +80,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
     isLoading: isUserProfileLoading,
     isError: isUserProfileError,
   } = useProfileData(proposal.authorEthereumAddress, true);
-  const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
 
   const handleVotingModalOpen = () => {
     if (isContestCanceled) {
@@ -102,19 +96,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
     if (!isConnected) {
       openConnectModal?.();
-      return;
-    }
-
-    if (!canVote) {
-      if (charge.voteType === VoteType.PerVote) {
-        setPickProposal(proposal.id);
-        setIsVotingModalOpen(true);
-        return;
-      }
-
-      toastInfo({
-        message: "You need to be allowlisted to vote for this contest.",
-      });
       return;
     }
 

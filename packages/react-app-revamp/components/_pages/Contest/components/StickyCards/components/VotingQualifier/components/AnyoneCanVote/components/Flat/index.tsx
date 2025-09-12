@@ -2,7 +2,6 @@ import { useContestStore } from "@hooks/useContest/store";
 import { formatEther } from "viem";
 import { useShallow } from "zustand/shallow";
 import VotingQualifierBalance from "../../../../shared/Balance";
-import { VotingQualifierType } from "../../../../types";
 
 const VotingQualifierAnyoneCanVoteFlat = () => {
   const { costToVote, nativeCurrencySymbol } = useContestStore(
@@ -23,7 +22,7 @@ const VotingQualifierAnyoneCanVoteFlat = () => {
           1 vote = {costToVoteFormatted} {nativeCurrencySymbol}
         </p>
       </div>
-      <VotingQualifierBalance type={VotingQualifierType.ANYONE_CAN_VOTE} />
+      <VotingQualifierBalance />
     </div>
   );
 };

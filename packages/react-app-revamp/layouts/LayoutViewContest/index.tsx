@@ -24,6 +24,8 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useContestStatusTimer } from "@hooks/useContestStatusTimer";
 import useUser from "@hooks/useUser";
+import { VOTE_AND_EARN_VERSION } from "@hooks/useUser/utils";
+import { compareVersions } from "compare-versions";
 import { usePathname } from "next/navigation";
 import { useUrl } from "nextjs-current-url";
 import { ReactNode, useEffect, useMemo, useState } from "react";
@@ -78,8 +80,9 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     setContestStatus(contestStatus);
   }, [contestStatus, setContestStatus]);
 
+  //TODO: move this in userStore
   useEffect(() => {
-    if (isLoading || !isSuccess) return;
+    if (isLoading || !isSuccess || compareVersions(version, VOTE_AND_EARN_VERSION) <= 0) return;
 
     const fetchUserData = async () => {
       if (accountChanged) {
@@ -89,8 +92,8 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
           chainId: chainId,
         };
         await Promise.all([
-          checkIfCurrentUserQualifyToSubmit(contractConfig, version),
-          checkIfCurrentUserQualifyToVote(contractConfig, version),
+          checkIfCurrentUserQualifyToSubmit(contractConfig),
+          checkIfCurrentUserQualifyToVote(contractConfig),
         ]);
       }
     };

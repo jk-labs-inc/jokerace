@@ -7,7 +7,6 @@ export enum AnyoneCanSubmit {
 }
 
 interface UserState {
-  // TODO: we can prolly move anyoneCanVote here in the future once we deprecate merkle roots
   anyoneCanSubmit: AnyoneCanSubmit;
   currentUserQualifiedToSubmit: boolean;
   currentUserQualifiedToVote: boolean;
@@ -15,7 +14,6 @@ interface UserState {
   currentUserAvailableVotesAmount: number;
   contestMaxNumberSubmissionsPerUser: number;
   currentUserProposalCount: number;
-  currentUserTotalVotesCast: number;
   isCurrentUserSubmitQualificationLoading: boolean;
   isCurrentUserSubmitQualificationSuccess: boolean;
   isCurrentUserSubmitQualificationError: boolean;
@@ -24,7 +22,6 @@ interface UserState {
   isCurrentUserVoteQualificationError: boolean;
   setCurrentUserQualifiedToSubmit: (value: boolean) => void;
   setCurrentUserQualifiedToVote: (value: boolean) => void;
-  setCurrentuserTotalVotesCast: (amount: number) => void;
   setCurrentUserAvailableVotesAmount: (amount: number) => void;
   setCurrentUserTotalVotesAmount: (amount: number) => void;
   setContestMaxNumberSubmissionsPerUser: (amount: number) => void;
@@ -46,7 +43,6 @@ export const createUserStore = () =>
     currentUserQualifiedToVote: false,
     currentUserAvailableVotesAmount: 0,
     currentUserTotalVotesAmount: 0,
-    currentUserTotalVotesCast: 0,
     contestMaxNumberSubmissionsPerUser: 0,
     currentUserProposalCount: 0,
     isLoading: false,
@@ -61,7 +57,6 @@ export const createUserStore = () =>
     setAnyoneCanSubmit: value => set({ anyoneCanSubmit: value }),
     setCurrentUserQualifiedToSubmit: value => set({ currentUserQualifiedToSubmit: value }),
     setCurrentUserQualifiedToVote: value => set({ currentUserQualifiedToVote: value }),
-    setCurrentuserTotalVotesCast: amount => set({ currentUserTotalVotesCast: amount }),
     setCurrentUserAvailableVotesAmount: amount => set({ currentUserAvailableVotesAmount: amount }),
     setCurrentUserTotalVotesAmount: amount => set({ currentUserTotalVotesAmount: amount }),
     setContestMaxNumberSubmissionsPerUser: amount => set({ contestMaxNumberSubmissionsPerUser: amount }),

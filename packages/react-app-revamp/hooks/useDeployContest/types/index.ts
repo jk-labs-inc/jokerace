@@ -7,44 +7,6 @@ export type Recipient = {
   numVotes: string;
 };
 
-export type VotingMerkle = {
-  merkleRoot: string;
-  voters: Recipient[];
-};
-
-export type SubmissionMerkle = {
-  merkleRoot: string;
-  submitters: Recipient[];
-};
-
-export type VotingRequirements = {
-  type: string;
-  nftType: string;
-  chain: string;
-  tokenAddress: string;
-  minTokensRequired: number;
-  powerType: string;
-  powerValue: number;
-  timestamp: number;
-  name: string;
-  symbol: string;
-  logo: string;
-  nftTokenId?: string;
-};
-
-export type SubmissionRequirements = {
-  type: string;
-  nftType: string;
-  chain: string;
-  tokenAddress: string;
-  minTokensRequired: number;
-  timestamp: number;
-  name: string;
-  symbol: string;
-  logo: string;
-  nftTokenId?: string;
-};
-
 export enum VoteType {
   PerVote = "PerVote",
   PerTransaction = "PerTransaction",
@@ -86,23 +48,6 @@ export interface PriceCurve {
   multiple: number;
 }
 
-export type VotingRequirementsSchema = {
-  type: string;
-  tokenAddress: string;
-  chain: string;
-  description: string;
-  minTokensRequired: number;
-  timestamp: number;
-};
-
-export type SubmissionRequirementsSchema = {
-  type: string;
-  chain: string;
-  tokenAddress: string;
-  minTokensRequired: number;
-  timestamp: number;
-};
-
 export interface ContestValues {
   anyoneCanSubmit: number;
   datetimeOpeningSubmissions: Date;
@@ -113,7 +58,7 @@ export interface ContestValues {
   prompt: string;
   contractAddress: string;
   networkName: string;
-  voting_requirements: VotingRequirementsSchema | null;
+  voting_requirements: any;
   cost_to_propose: number;
   cost_to_vote: number;
   percentage_to_creator: number;

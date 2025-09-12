@@ -1,5 +1,4 @@
 import { chains, config } from "@config/wagmi";
-import { isSupabaseConfigured } from "@helpers/database";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
@@ -10,6 +9,7 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
+import { VOTE_AND_EARN_VERSION } from "@hooks/useUser/utils";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { checkIfContestExists } from "lib/contests";
@@ -17,9 +17,9 @@ import { getRewardsModuleAddress } from "lib/rewards/contracts";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
+import { createResultGetter } from "./helpers";
 import { ErrorType, useContestStore } from "./store";
 import { getContracts } from "./v3v4/contracts";
-import { createResultGetter } from "./helpers";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -60,9 +60,7 @@ export function useContest() {
     setVotesOpen,
     setSubmissionsOpen,
     setCharge,
-    setVotingRequirements,
     setContestAbi,
-    setSubmissionRequirements,
     setSortingEnabled,
     setVersion,
     setRewardsModuleAddress,
@@ -213,7 +211,6 @@ export function useContest() {
       await Promise.all([
         fetchContestContractData(contractConfig, version, rewardsModuleAddress),
         processUserQualifications(contractConfig, version),
-        processRequirementsData(),
       ]);
     } catch (e) {
       handleError(e, "Something went wrong while fetching the contest data.");
@@ -278,53 +275,15 @@ export function useContest() {
   }
 
   /**
-   * Fetch merkle tree data from DB and re-create the tree
+   * Fetch user qualifications
    */
   async function processUserQualifications(contractConfig: ContractConfig, version: string) {
+    if (compareVersions(version, VOTE_AND_EARN_VERSION) <= 0) return;
+
     await Promise.all([
-      checkIfCurrentUserQualifyToSubmit(contractConfig, version),
-      checkIfCurrentUserQualifyToVote(contractConfig, version),
+      checkIfCurrentUserQualifyToSubmit(contractConfig),
+      checkIfCurrentUserQualifyToVote(contractConfig),
     ]);
-  }
-
-  async function processRequirementsData() {
-    if (!isSupabaseConfigured) return;
-
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
-
-    try {
-      let result = await supabase
-        .from("contests_v3")
-        .select("voting_requirements, submission_requirements")
-        .eq("address", address.toLowerCase())
-        .eq("network_name", chainName);
-
-      if (result.data && result.data.length > 0) {
-        const { voting_requirements, submission_requirements } = result.data[0];
-        setVotingRequirements(voting_requirements || null);
-        setSubmissionRequirements(submission_requirements || null);
-        return;
-      }
-
-      result = await supabase
-        .from("contests_v3")
-        .select("voting_requirements, submission_requirements")
-        .eq("address", address)
-        .eq("network_name", chainName);
-
-      if (result.data && result.data.length > 0) {
-        const { voting_requirements, submission_requirements } = result.data[0];
-        setVotingRequirements(voting_requirements || null);
-        setSubmissionRequirements(submission_requirements || null);
-      } else {
-        setVotingRequirements(null);
-        setSubmissionRequirements(null);
-      }
-    } catch (error) {
-      setVotingRequirements(null);
-      setSubmissionRequirements(null);
-    }
   }
 
   function determineSplitFeeDestination(

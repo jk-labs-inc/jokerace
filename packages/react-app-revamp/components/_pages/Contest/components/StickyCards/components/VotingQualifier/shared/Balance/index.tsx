@@ -1,15 +1,8 @@
-import { FC } from "react";
-import { VotingQualifierType } from "../../types";
-import VotingQualifierAllowlistedBalance from "./components/AllowlistedBalance";
-import VotingQualifierAnyoneCanVoteBalance from "./components/AnyoneCanVoteBalance";
-import { useAccount } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
+import VotingQualifierAnyoneCanVoteBalance from "./components/AnyoneCanVoteBalance";
 
-interface VotingQualifierBalanceProps {
-  type: VotingQualifierType;
-}
-
-const VotingQualifierBalance: FC<VotingQualifierBalanceProps> = ({ type }) => {
+const VotingQualifierBalance = () => {
   const { address: userAddress } = useAccount();
   const { openConnectModal } = useConnectModal();
 
@@ -23,12 +16,7 @@ const VotingQualifierBalance: FC<VotingQualifierBalanceProps> = ({ type }) => {
       </button>
     );
 
-  switch (type) {
-    case VotingQualifierType.ANYONE_CAN_VOTE:
-      return <VotingQualifierAnyoneCanVoteBalance userAddress={userAddress} />;
-    case VotingQualifierType.ALLOWLISTED:
-      return <VotingQualifierAllowlistedBalance userAddress={userAddress} />;
-  }
+  return <VotingQualifierAnyoneCanVoteBalance userAddress={userAddress} />;
 };
 
 export default VotingQualifierBalance;
