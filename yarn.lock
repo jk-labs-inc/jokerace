@@ -3140,16 +3140,16 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lifi/sdk@^3.12.4":
-  version "3.12.4"
-  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.12.4.tgz#361721dd8cc5f4f079387a87ff0d1f14310bb1fa"
-  integrity sha512-o7NMNacj9BB6xfSa9S9OWacUIxL+iAK/5Q45tcXXk2Gt7w9kX5vTASbUL0u/S3uYOHfUEMlXMlCbvSU9+pW+EA==
+"@lifi/sdk@^3.12.5":
+  version "3.12.5"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.12.5.tgz#58200ae490db54ac8cde2567f8ed77eea2939566"
+  integrity sha512-hmRNBvxsmfdZm9p3+S2ZMXeHqd7QnrlqL9tJ6/4PpP1IyeUjiztDVVmCnoBrMiv5nuSfTWyDpUwZ17XhK4Kb9w==
   dependencies:
     "@bigmi/core" "^0.5.2"
     "@bitcoinerlab/secp256k1" "^1.2.0"
     "@lifi/types" "^17.36.0"
-    "@mysten/sui" "^1.37.6"
-    "@mysten/wallet-standard" "^0.16.14"
+    "@mysten/sui" "^1.38.0"
+    "@mysten/wallet-standard" "^0.17.0"
     "@noble/curves" "^1.9.7"
     "@solana/wallet-adapter-base" "^0.9.27"
     "@solana/web3.js" "^1.98.4"
@@ -3165,20 +3165,20 @@
   dependencies:
     viem "^2.33.2"
 
-"@lifi/wallet-management@^3.16.3":
-  version "3.16.3"
-  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.16.3.tgz#de57f598c4422a1ad212d0e395adcc0c0cf513b8"
-  integrity sha512-d/5BuXq5QE+8uE+ppfMlETpaEI1jYJzgU+Gvd9Pi5RZV3zislG3EsRR0BXjxuxoWi3OuMy0lNNpaJCkTOXR/Mg==
+"@lifi/wallet-management@^3.16.4":
+  version "3.16.4"
+  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.16.4.tgz#90e88d7daf742f5b041743f45ba540f653063b79"
+  integrity sha512-dO1KpPqXGnSqvfahpkM8jzg57O0zEcvw9K245VUZBvtsutWZCCMsPOGnJrxnMFHyEdbn9a89IB3o4+c0Spk7sQ==
   dependencies:
     "@bigmi/client" "^0.5.2"
     "@bigmi/core" "^0.5.2"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.12.4"
+    "@lifi/sdk" "^3.12.5"
     "@mui/icons-material" "^7.3.2"
     "@mui/material" "^7.3.2"
     "@mui/system" "^7.3.2"
-    "@mysten/wallet-standard" "^0.16.14"
+    "@mysten/wallet-standard" "^0.17.0"
     "@solana/wallet-adapter-base" "^0.9.27"
     "@solana/web3.js" "^1.98.4"
     i18next "^25.5.2"
@@ -3188,17 +3188,17 @@
     viem "^2.37.5"
     zustand "^5.0.8"
 
-"@lifi/widget@3.30.5":
-  version "3.30.5"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.30.5.tgz#a0f1de3319349a376d2f275e1db7e554a99fe7a9"
-  integrity sha512-tW6FiobvpPzmakp2Ud07HZez4e/Q4ulpJBsfl9PFrdMkT8rGjOjPZk9pSuLdwOfb/mrJrdElpgATf5FuO6HTDQ==
+"@lifi/widget@3.30.7":
+  version "3.30.7"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.30.7.tgz#6dfed9d127ff08870fec0dbebbef6f21d991e6bc"
+  integrity sha512-zfIRr2gi3+239hvRkVI/4dkWtTy2pyzyU4zJ0a2tMuSbXJFcYwf/8ORwrlM1DDAxRMhESKd7veb9IgQzAt5Q/g==
   dependencies:
     "@bigmi/client" "^0.5.2"
     "@bigmi/core" "^0.5.2"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.12.4"
-    "@lifi/wallet-management" "^3.16.3"
+    "@lifi/sdk" "^3.12.5"
+    "@lifi/wallet-management" "^3.16.4"
     "@mui/icons-material" "^7.3.2"
     "@mui/material" "^7.3.2"
     "@mui/system" "^7.3.2"
@@ -3597,7 +3597,7 @@
     poseidon-lite "0.2.1"
     valibot "^0.36.0"
 
-"@mysten/sui@^1.37.6":
+"@mysten/sui@1.38.0", "@mysten/sui@^1.37.6", "@mysten/sui@^1.38.0":
   version "1.38.0"
   resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.38.0.tgz#2ca46e0d45ac7624d653e3ace3a4c856864102b0"
   integrity sha512-tH6V4BJsYi5d97MOiLoOhyldrYxkm/cu8dYV52asqh1i88HrSVMbPAJ9sVoeWN2Ju+QsJ/Go4ldSjdCkaBCyJQ==
@@ -3629,12 +3629,20 @@
   dependencies:
     "@scure/base" "^1.2.6"
 
-"@mysten/wallet-standard@0.16.14", "@mysten/wallet-standard@^0.16.14":
+"@mysten/wallet-standard@0.16.14":
   version "0.16.14"
   resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.16.14.tgz#f933b63155275fa6cb5ed738e80539560160b2f7"
   integrity sha512-LJoDQUD+217RdRbkQLiKYYjkNtN6GhGpIN/X3wboUf3w5pdvBc4k/vS1Yi6GFv5xbgl/ge7wzC4Ac+h3orY2oQ==
   dependencies:
     "@mysten/sui" "1.37.6"
+    "@wallet-standard/core" "1.1.1"
+
+"@mysten/wallet-standard@^0.17.0":
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.17.0.tgz#4ca2b0bf3d0701b3cfe13525a4d8470e1a44609d"
+  integrity sha512-UQ6tvqQ/lDKZhQm2d3ajky/xl+NgpYpNXYIpWfYGOLvGe4GyK6GHysMNHsRpFa+xA2yVa6w3nWO2RQ8WIy7ivA==
+  dependencies:
+    "@mysten/sui" "1.38.0"
     "@wallet-standard/core" "1.1.1"
 
 "@mysten/window-wallet-core@0.0.6":
