@@ -13968,10 +13968,10 @@ rc-util@^5.36.0:
     "@babel/runtime" "^7.18.3"
     react-is "^18.2.0"
 
-react-aria@3.43.1:
-  version "3.43.1"
-  resolved "https://registry.yarnpkg.com/react-aria/-/react-aria-3.43.1.tgz#dbd7f9ab9e642b1c485e07520e0745a4a0d5a046"
-  integrity sha512-/PmZGiw+Ya/YtzXmiLW4ALD4SMuDnbwhMaVh33VCduTl8vVujIUzUTIi5g4C+YHLDs/Z4edsN3aQsPMqFfg1xA==
+react-aria@3.43.2:
+  version "3.43.2"
+  resolved "https://registry.yarnpkg.com/react-aria/-/react-aria-3.43.2.tgz#cbe883341378e37cfbb34a070e032e048d3ed7e2"
+  integrity sha512-CfaXi3S69SeOkpp6pGc1w5FH8OvGPFphiMrO2tNSlqpYIecgk3gKoXjkqaAr6N+O1gasLMfAAF9sxtvS141qWg==
   dependencies:
     "@internationalized/string" "^3.2.7"
     "@react-aria/breadcrumbs" "^3.5.28"
