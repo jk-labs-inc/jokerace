@@ -3,8 +3,6 @@ import { ContractConfig } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { readContract, readContracts } from "@wagmi/core";
 import { AnyoneCanSubmit, useUserStore } from "./store";
-import { VOTE_AND_EARN_VERSION } from "./utils";
-import { compareVersions } from "compare-versions";
 
 export const useSubmitQualification = (userAddress: `0x${string}` | undefined) => {
   const { contestAuthorEthereumAddress } = useContestStore(state => state);

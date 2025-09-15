@@ -52,6 +52,7 @@ export function useUser() {
   /**
    * Update the current user's vote amounts after casting votes
    */
+  //TODO: change this to Abi type
   const updateCurrentUserVotes = async (abi: any) => {
     setIsCurrentUserVoteQualificationLoading(true);
 

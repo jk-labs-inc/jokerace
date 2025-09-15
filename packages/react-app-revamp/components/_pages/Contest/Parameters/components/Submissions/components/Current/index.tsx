@@ -35,7 +35,7 @@ const ContestParametersSubmissionsCurrent = () => {
           {formatEther(BigInt(charge.type.costToPropose))} {contestChainNativeCurrencySymbol} to enter
         </li>
         <li className="list-disc">
-          {!anyoneCanSubmit && "qualified"} players can enter{" "}
+          {anyoneCanSubmit === AnyoneCanSubmit.ANYONE_CAN_SUBMIT ? "players" : "creator"} can enter{" "}
           <span>
             {maxProposalsPerUserCapped
               ? "as many times as desired"
