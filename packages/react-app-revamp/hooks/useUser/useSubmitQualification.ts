@@ -5,7 +5,6 @@ import { readContract, readContracts } from "@wagmi/core";
 import { AnyoneCanSubmit, useUserStore } from "./store";
 
 export const useSubmitQualification = (userAddress: `0x${string}` | undefined) => {
-  const { contestAuthorEthereumAddress } = useContestStore(state => state);
   const {
     setCurrentUserQualifiedToSubmit,
     setCurrentUserProposalCount,
@@ -80,11 +79,17 @@ export const useSubmitQualification = (userAddress: `0x${string}` | undefined) =
           functionName: "numAllowedProposalSubmissions",
           args: [],
         },
+        {
+          ...contractConfig,
+          functionName: "creator",
+          args: [],
+        },
       ],
     });
 
     const anyoneCanSubmitResult = Number(results[0].result);
     const contestMaxNumberSubmissionsPerUser = Number(results[1].result);
+    const contestAuthorEthereumAddress = results[2].result as `0x${string}`;
     const anyoneCanSubmit = anyoneCanSubmitResult === 1;
 
     setAnyoneCanSubmit(anyoneCanSubmit ? AnyoneCanSubmit.ANYONE_CAN_SUBMIT : AnyoneCanSubmit.ONLY_CREATOR);

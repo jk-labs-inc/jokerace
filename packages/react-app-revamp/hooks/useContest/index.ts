@@ -179,7 +179,7 @@ export function useContest() {
       });
 
       setContestName(contestName);
-      setContestAuthor(contestAuthor, contestAuthor);
+      setContestAuthor(contestAuthor);
       setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
       setContestMaxProposalCount(contestMaxProposalCount);
       setSubmissionsOpen(submissionsOpenDate);

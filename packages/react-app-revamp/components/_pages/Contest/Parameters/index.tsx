@@ -10,7 +10,9 @@ import ContestParametersTimeline from "./components/Timeline";
 import ContestParametersVoting from "./components/Voting";
 
 const ContestParameters = () => {
-  const { submissionsOpen, votesClose, votesOpen, contestAuthor, charge, version } = useContestStore(state => state);
+  const { submissionsOpen, votesClose, votesOpen, contestAuthorEthereumAddress, charge, version } = useContestStore(
+    state => state,
+  );
   const asPath = usePathname();
   const { chainName } = extractPathSegments(asPath ?? "");
   const blockExplorerUrl = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.blockExplorers
@@ -30,7 +32,11 @@ const ContestParameters = () => {
         {version && <ContestParametersRewards version={version} charge={charge} />}
         <ContestParametersSubmissions />
         <ContestParametersVoting />
-        <ContestParametersEarnings charge={charge} contestAuthor={contestAuthor} blockExplorerUrl={blockExplorerUrl} />
+        <ContestParametersEarnings
+          charge={charge}
+          contestAuthor={contestAuthorEthereumAddress}
+          blockExplorerUrl={blockExplorerUrl}
+        />
       </div>
     </div>
   );
