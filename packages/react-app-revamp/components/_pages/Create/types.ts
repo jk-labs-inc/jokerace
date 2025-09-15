@@ -1,4 +1,4 @@
-import { PriceCurve, VotingMerkle } from "@hooks/useDeployContest/types";
+import { PriceCurve } from "@hooks/useDeployContest/types";
 import { Option } from "./components/DefaultDropdown";
 
 export enum StepTitle {

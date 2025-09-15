@@ -1,4 +1,3 @@
-import { formatBalance } from "@helpers/formatBalance";
 import { useContestStore } from "@hooks/useContest/store";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { compareVersions } from "compare-versions";
@@ -39,10 +38,9 @@ const useCurrentPricePerVote = ({
   priceCurveUpdateInterval,
   votingClose,
 }: CurrentPricePerVoteParams): CurrentPricePerVoteResponse => {
-  const { costToVote, anyoneCanVote } = useContestStore(
+  const { costToVote } = useContestStore(
     useShallow(state => ({
       costToVote: state.charge.type.costToVote,
-      anyoneCanVote: state.anyoneCanVote,
     })),
   );
   const isFnSupported = compareVersions(version, VOTING_PRICE_CURVES_VERSION) >= 0;
@@ -54,7 +52,7 @@ const useCurrentPricePerVote = ({
     scopeKey: scopeKey,
     chainId,
     query: {
-      enabled: !!address && !!chainId && !!abi && enabled && isFnSupported && anyoneCanVote,
+      enabled: !!address && !!chainId && !!abi && enabled && isFnSupported,
       staleTime: query => {
         if (!priceCurveUpdateInterval || !votingClose) return 0;
 
@@ -74,7 +72,7 @@ const useCurrentPricePerVote = ({
   });
 
   return {
-    currentPricePerVote: isFnSupported && anyoneCanVote ? data ?? "0" : formatEther(BigInt(costToVote ?? 0)),
+    currentPricePerVote: isFnSupported ? data ?? "0" : formatEther(BigInt(costToVote ?? 0)),
     isLoading,
     isError,
     isRefetching,

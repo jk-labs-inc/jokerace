@@ -4,7 +4,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { FC, useState, useEffect } from "react";
 import { Pagination } from "react-headless-pagination";
 import Contest from "./Contest";
-import { ContestWithTotalRewards } from "lib/contests/types";
+import { ContestsResponse, ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
 
 interface ListContestsProps {
   status: "error" | "pending" | "success";
@@ -13,7 +13,7 @@ interface ListContestsProps {
   isContestDataFetching: boolean;
   isRewardsFetching: boolean;
   itemsPerPage: number;
-  contestData?: any;
+  contestData?: ContestsResponse;
   rewardsData?: ContestWithTotalRewards[];
   error?: any;
   className?: string;
@@ -97,7 +97,7 @@ export const ListContests: FC<ListContestsProps> = ({
           placeholders.map((_, index) => (
             <Contest
               key={`placeholder-contest-${index}`}
-              contest={{}}
+              contest={null}
               loading={true}
               rewards={null}
               rewardsLoading={isRewardsFetching}
@@ -113,13 +113,13 @@ export const ListContests: FC<ListContestsProps> = ({
               ? placeholders.map((_, index) => (
                   <Contest
                     key={`placeholder-contest-${index}`}
-                    contest={{}}
+                    contest={null}
                     loading={true}
                     rewards={null}
                     rewardsLoading={isRewardsFetching}
                   />
                 ))
-              : contestData?.data.map((contest: any, index: number) => {
+              : contestData?.data.map((contest: ProcessedContest, index: number) => {
                   const contestReward = rewardsData?.find(reward => reward.contestAddress === contest.address) || null;
 
                   return (

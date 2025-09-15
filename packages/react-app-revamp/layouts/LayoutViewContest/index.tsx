@@ -84,7 +84,6 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     if (isLoading || !isSuccess || !accountChanged || compareVersions(version, VOTE_AND_EARN_VERSION) <= 0) return;
 
     const fetchUserData = async () => {
-      console.log("fetching user data");
       const contractConfig: ContractConfig = {
         address: address as `0x${string}`,
         abi: contestAbi,

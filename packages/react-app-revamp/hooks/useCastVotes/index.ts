@@ -167,7 +167,7 @@ export function useCastVotes() {
         console.error("Error updating proposal votes after casting:", voteUpdateError);
       }
 
-      await updateCurrentUserVotes(abi, version);
+      await updateCurrentUserVotes(abi);
       refetchTotalVotesCastOnContest();
       refetchCurrentUserVotesOnProposal();
       setIsLoading(false);

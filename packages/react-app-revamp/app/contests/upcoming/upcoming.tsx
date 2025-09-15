@@ -3,22 +3,21 @@ import ListContests from "@components/_pages/ListContests";
 import { isSupabaseConfigured } from "@helpers/database";
 import useContestSortOptions from "@hooks/useSortOptions";
 import { useQuery } from "@tanstack/react-query";
-import { getUpcomingContests, ITEMS_PER_PAGE } from "lib/contests";
+import { getUpcomingContests } from "lib/contests";
+import { ITEMS_PER_PAGE } from "lib/contests/constants";
 import { fetchTotalRewardsForContests } from "lib/contests/contracts";
 import { useState } from "react";
-import { useAccount } from "wagmi";
 
 function useContests(sortBy?: string) {
   const [page, setPage] = useState(0);
-  const { address } = useAccount();
   const {
     status,
     data: contestData,
     error,
     isFetching: isContestDataFetching,
   } = useQuery({
-    queryKey: ["upcomingContests", page, address, sortBy],
-    queryFn: () => getUpcomingContests(page, ITEMS_PER_PAGE, address, sortBy),
+    queryKey: ["upcomingContests", page, sortBy],
+    queryFn: () => getUpcomingContests(page, ITEMS_PER_PAGE, sortBy),
   });
 
   const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({

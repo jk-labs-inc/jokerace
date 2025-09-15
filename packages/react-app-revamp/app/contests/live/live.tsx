@@ -3,15 +3,14 @@ import ListContests from "@components/_pages/ListContests";
 import { isSupabaseConfigured } from "@helpers/database";
 import useContestSortOptions from "@hooks/useSortOptions";
 import { useQuery } from "@tanstack/react-query";
-import { ITEMS_PER_PAGE, getLiveContests } from "lib/contests";
+import { getLiveContests } from "lib/contests";
+import { ITEMS_PER_PAGE } from "lib/contests/constants";
 import { fetchTotalRewardsForContests } from "lib/contests/contracts";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
 
 function useContests(sortBy?: string) {
   const [page, setPage] = useState(0);
-  const { address } = useAccount();
 
   const {
     status,
@@ -19,8 +18,8 @@ function useContests(sortBy?: string) {
     error,
     isFetching: isContestDataFetching,
   } = useQuery({
-    queryKey: ["liveContests", page, address, sortBy],
-    queryFn: () => getLiveContests(page, ITEMS_PER_PAGE, address, sortBy),
+    queryKey: ["liveContests", page, sortBy],
+    queryFn: () => getLiveContests(page, ITEMS_PER_PAGE, sortBy),
   });
 
   const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({
