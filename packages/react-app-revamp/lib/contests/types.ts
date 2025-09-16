@@ -22,6 +22,7 @@ export interface BaseContestData {
   vote_start_at: string;
   featured: boolean;
   type: string;
+  anyone_can_submit: number;
 }
 
 export interface ProcessedContest extends BaseContestData {

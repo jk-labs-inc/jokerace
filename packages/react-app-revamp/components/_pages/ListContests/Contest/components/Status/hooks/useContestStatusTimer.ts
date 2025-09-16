@@ -2,17 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { ProcessedContest } from "lib/contests/types";
 import { ContestState, getContestState } from "../helpers";
 
-export const useContestStatusTimer = (
-  contest: ProcessedContest,
-  isCreatorSubmitEntry: boolean = false,
-): ContestState => {
-  const [contestState, setContestState] = useState<ContestState>(() => getContestState(contest, isCreatorSubmitEntry));
+export const useContestStatusTimer = (contest: ProcessedContest, isAnyoneCanSubmit: boolean = false): ContestState => {
+  const [contestState, setContestState] = useState<ContestState>(() => getContestState(contest, isAnyoneCanSubmit));
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const updateStatus = () => {
-      setContestState(getContestState(contest, isCreatorSubmitEntry));
+      setContestState(getContestState(contest, isAnyoneCanSubmit));
     };
 
     updateStatus();
@@ -29,7 +26,7 @@ export const useContestStatusTimer = (
         intervalRef.current = null;
       }
     };
-  }, [contest.start_at, contest.vote_start_at, contest.end_at, contest.isCanceled, isCreatorSubmitEntry]);
+  }, [contest.start_at, contest.vote_start_at, contest.end_at, contest.isCanceled, isAnyoneCanSubmit]);
 
   return contestState;
 };

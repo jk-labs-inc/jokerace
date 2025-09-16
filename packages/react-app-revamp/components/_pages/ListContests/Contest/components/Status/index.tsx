@@ -5,11 +5,11 @@ import { useContestStatusTimer } from "./hooks/useContestStatusTimer";
 
 interface ContestStatusProps {
   contest: ProcessedContest;
-  isCreatorSubmitEntry?: boolean;
+  isAnyoneCanSubmit?: boolean;
 }
 
-const ContestStatus: FC<ContestStatusProps> = ({ contest, isCreatorSubmitEntry = false }) => {
-  const contestState = useContestStatusTimer(contest, isCreatorSubmitEntry);
+const ContestStatus: FC<ContestStatusProps> = ({ contest, isAnyoneCanSubmit = false }) => {
+  const contestState = useContestStatusTimer(contest, isAnyoneCanSubmit);
 
   return (
     <div className="flex flex-col">

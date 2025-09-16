@@ -1,18 +1,12 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { s3 } from "@config/s3";
-import { Recipient } from "@hooks/useDeployContest/types";
 
 const IMAGE_UPLOAD_BUCKET = process.env.NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET as string;
 
 const IMAGE_PUBLIC_URL = IMAGE_UPLOAD_BUCKET.includes("dev")
   ? "https://dev.images.jokerace.io"
   : "https://images.jokerace.io";
-
-interface SaveFileOptions {
-  fileId: string;
-  content: Recipient[];
-}
 
 interface SaveImageOptions {
   fileId: string;

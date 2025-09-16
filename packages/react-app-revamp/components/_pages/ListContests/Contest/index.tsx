@@ -39,7 +39,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
         >
           <ContestLogo chainName={contest.network_name} />
           <ContesTitleAndAuthor contestName={contest.title} contestAuthor={contest.author_address} />
-          <ContestStatus contest={contest} />
+          <ContestStatus contest={contest} isAnyoneCanSubmit={contest.anyone_can_submit === 1} />
           {rewards && rewards.hasRewards && rewards.rewardsData ? (
             <div className="md:justify-self-end">
               <ContestRewards rewards={rewards} loading={loading} rewardsLoading={rewardsLoading} />

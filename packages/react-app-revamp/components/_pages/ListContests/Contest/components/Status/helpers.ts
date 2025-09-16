@@ -17,18 +17,26 @@ export const formatDuration = (duration: moment.Duration): string => {
   const minutes = duration.minutes();
   const seconds = duration.seconds();
 
+  const parts: string[] = [];
+
   if (totalDays > 0) {
-    return `${totalDays}d ${hours}h ${minutes}m ${seconds}s`;
-  } else if (hours > 0) {
-    return `${hours}h ${minutes}m ${seconds}s`;
-  } else if (minutes > 0) {
-    return `${minutes}m ${seconds}s`;
-  } else {
-    return `${seconds}s`;
+    parts.push(`${totalDays}d`);
   }
+  if (hours > 0) {
+    parts.push(`${hours}h`);
+  }
+  if (minutes > 0) {
+    parts.push(`${minutes}m`);
+  }
+  if (seconds > 0) {
+    parts.push(`${seconds}s`);
+  }
+
+  // If all parts are zero, show "0s"
+  return parts.length > 0 ? parts.join(" ") : "0s";
 };
 
-export const getContestState = (contest: ProcessedContest, isCreatorSubmitEntry: boolean = false): ContestState => {
+export const getContestState = (contest: ProcessedContest, isAnyoneCanSubmit: boolean = false): ContestState => {
   if (contest.isCanceled) {
     return {
       type: "canceled",
@@ -66,7 +74,7 @@ export const getContestState = (contest: ProcessedContest, isCreatorSubmitEntry:
     const duration = moment.duration(voteStart.diff(now));
     return {
       type: "entry",
-      text: isCreatorSubmitEntry ? "creator submit entry" : "submit an entry",
+      text: isAnyoneCanSubmit ? "submit an entry" : "creator submit entries",
       color: "green",
       timeLeft: formatDuration(duration),
     };
@@ -76,8 +84,7 @@ export const getContestState = (contest: ProcessedContest, isCreatorSubmitEntry:
     const duration = moment.duration(end.diff(now));
     return {
       type: "voting",
-      //TODO: add logic to check if vote & earn or just vote
-      text: "vote & earn",
+      text: "vote on entries",
       color: "green",
       timeLeft: formatDuration(duration),
     };
