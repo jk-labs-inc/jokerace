@@ -2,7 +2,7 @@
 import UserComments from "@components/_pages/User/components/CommentsList";
 import { isSupabaseConfigured } from "@helpers/database";
 import { useQuery } from "@tanstack/react-query";
-import { ITEMS_PER_PAGE } from "lib/contests";
+import { ITEMS_PER_PAGE } from "lib/contests/constants";
 import { getUserComments } from "lib/user";
 import { CommentsResult } from "lib/user/types";
 import { useState } from "react";

@@ -4,7 +4,7 @@ import { ContestStateEnum } from "@hooks/useContestState/store";
 import { readContract, readContracts } from "@wagmi/core";
 import { getRewardsModuleInfo } from "lib/rewards/contracts";
 import { fetchTotalRewards } from "lib/rewards/contracts/rewards-module";
-import { Contest, ContestWithTotalRewards } from "./types";
+import { ContestWithTotalRewards, ProcessedContest } from "./types";
 
 export const EMPTY_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
 export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
@@ -81,7 +81,7 @@ export async function getContestTitleAndState(
  * @param contests Array of contests with address and network_name
  * @returns Array of contests with their total rewards data
  */
-export async function fetchTotalRewardsForContests(contests: Contest[]): Promise<ContestWithTotalRewards[]> {
+export async function fetchTotalRewardsForContests(contests: ProcessedContest[]): Promise<ContestWithTotalRewards[]> {
   const results = await Promise.allSettled(
     contests.map(async (contest): Promise<ContestWithTotalRewards> => {
       try {

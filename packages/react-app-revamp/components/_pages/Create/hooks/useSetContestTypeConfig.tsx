@@ -11,16 +11,8 @@ import {
 } from "@hooks/useDeployContest/types";
 
 const useSetContestTypeConfig = () => {
-  const {
-    contestType,
-    setSubmissionOpen,
-    setVotingOpen,
-    setVotingClose,
-    setPriceCurve,
-    setSubmissionMerkle,
-    setPrompt,
-    setCustomization,
-  } = useDeployContestStore(state => state);
+  const { contestType, setSubmissionOpen, setVotingOpen, setVotingClose, setPriceCurve, setPrompt, setCustomization } =
+    useDeployContestStore(state => state);
   const { setTimingOption: setSubmissionTimingOption } = useTimingOptionForSubmissionPeriod(state => state);
   const { setTimingOption: setVotingTimingOption } = useTimingOptionForVotingPeriod(state => state);
 
@@ -39,7 +31,6 @@ const useSetContestTypeConfig = () => {
         maxSubmissions: MAX_SUBMISSIONS_PER_CONTEST,
         allowedSubmissionsPerUser: DEFAULT_ALLOWED_SUBMISSIONS_PER_USER,
       });
-      setSubmissionMerkle(null);
     }
 
     setSubmissionOpen(config.data.submissionOpen);

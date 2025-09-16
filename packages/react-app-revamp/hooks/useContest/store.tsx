@@ -1,4 +1,4 @@
-import { Charge, VoteType, SplitFeeDestinationType, VotingRequirementsSchema } from "@hooks/useDeployContest/types";
+import { Charge, SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { createContext, useContext, useRef } from "react";
 import { Abi } from "viem";
 import { createStore, useStore } from "zustand";
@@ -32,13 +32,8 @@ export interface ContestState {
   isV3: boolean;
   contestMaxProposalCount: number;
   sortingEnabled: boolean;
-  submissionMerkleRoot: string;
-  votingMerkleRoot: string;
   charge: Charge;
-  votingRequirements: VotingRequirementsSchema | null;
-  submissionRequirements: VotingRequirementsSchema | null;
   isReadOnly: boolean;
-  anyoneCanVote: boolean;
   version: string;
   canEditTitleAndDescription: boolean;
   rewardsModuleAddress: string;
@@ -50,10 +45,6 @@ export interface ContestState {
   setSubmissionsOpen: (datetime: Date) => void;
   setVotesOpen: (datetime: Date) => void;
   setVotesClose: (datetime: Date) => void;
-  setSubmissionsMerkleRoot: (merkleRoot: string) => void;
-  setVotingMerkleRoot: (merkleRoot: string) => void;
-  setVotingRequirements: (votingRequirements: VotingRequirementsSchema | null) => void;
-  setSubmissionRequirements: (submissionRequirements: VotingRequirementsSchema | null) => void;
   setIsLoading: (value: boolean) => void;
   setError: (value: ErrorType | null) => void;
   setIsSuccess: (value: boolean) => void;
@@ -61,7 +52,6 @@ export interface ContestState {
   setCharge: (charge: Charge) => void;
   setIsReadOnly: (value: boolean) => void;
   setContestAbi: (abi: Abi) => void;
-  setAnyoneCanVote: (value: boolean) => void;
   setVersion: (version: string) => void;
   setCanEditTitleAndDescription: (value: boolean) => void;
   setRewardsModuleAddress: (address: string) => void;
@@ -85,8 +75,6 @@ export const createContestStore = () =>
     submissionsOpen: new Date(),
     votesOpen: new Date(),
     votesClose: new Date(),
-    submissionMerkleRoot: "",
-    votingMerkleRoot: "",
     isLoading: true,
     error: null,
     charge: {
@@ -104,11 +92,8 @@ export const createContestStore = () =>
     isSuccess: false,
     contestMaxProposalCount: 0,
     sortingEnabled: false,
-    votingRequirements: null,
-    submissionRequirements: null,
     isV3: false,
     isReadOnly: false,
-    anyoneCanVote: false,
     version: "",
     canEditTitleAndDescription: false,
     rewardsModuleAddress: "",
@@ -122,16 +107,11 @@ export const createContestStore = () =>
     setSubmissionsOpen: datetime => set({ submissionsOpen: datetime }),
     setVotesOpen: datetime => set({ votesOpen: datetime }),
     setVotesClose: datetime => set({ votesClose: datetime }),
-    setSubmissionsMerkleRoot: merkleRoot => set({ submissionMerkleRoot: merkleRoot }),
-    setVotingMerkleRoot: merkleRoot => set({ votingMerkleRoot: merkleRoot }),
-    setVotingRequirements: votingRequirements => set({ votingRequirements: votingRequirements }),
-    setSubmissionRequirements: submissionRequirements => set({ submissionRequirements: submissionRequirements }),
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),
     setCharge: charge => set({ charge: charge }),
     setContestAbi: abi => set({ contestAbi: abi }),
-    setAnyoneCanVote: value => set({ anyoneCanVote: value }),
     setVersion: version => set({ version: version }),
     setCanEditTitleAndDescription: value => set({ canEditTitleAndDescription: value }),
     setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),

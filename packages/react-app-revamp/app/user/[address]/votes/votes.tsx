@@ -2,7 +2,7 @@
 import UserVotes from "@components/_pages/User/components/VotingList";
 import { isSupabaseConfigured } from "@helpers/database";
 import { useQuery } from "@tanstack/react-query";
-import { ITEMS_PER_PAGE } from "lib/contests";
+import { ITEMS_PER_PAGE } from "lib/contests/constants";
 import { getUserVotes } from "lib/user";
 import { SubmissionsResult } from "lib/user/types";
 import { useState } from "react";

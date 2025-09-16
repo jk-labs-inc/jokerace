@@ -3,12 +3,12 @@ import ListContests from "@components/_pages/ListContests";
 import { isSupabaseConfigured } from "@helpers/database";
 import useContestSortOptions from "@hooks/useSortOptions";
 import { useQuery } from "@tanstack/react-query";
-import { getUserContests, ITEMS_PER_PAGE } from "lib/contests";
+import { getUserContests } from "lib/contests";
+import { ITEMS_PER_PAGE } from "lib/contests/constants";
 import { fetchTotalRewardsForContests } from "lib/contests/contracts";
 import { useState } from "react";
-import { useAccount } from "wagmi";
 
-function useContests(profileAddress: string, currentUserAddress: string, sortBy?: string) {
+function useContests(profileAddress: string, sortBy?: string) {
   const [page, setPage] = useState(0);
 
   const {
@@ -17,8 +17,8 @@ function useContests(profileAddress: string, currentUserAddress: string, sortBy?
     error,
     isFetching: isContestDataFetching,
   } = useQuery({
-    queryKey: ["userContests", profileAddress, page, currentUserAddress, sortBy],
-    queryFn: () => getUserContests(page, ITEMS_PER_PAGE, profileAddress, currentUserAddress, sortBy),
+    queryKey: ["userContests", profileAddress, page, sortBy],
+    queryFn: () => getUserContests(page, ITEMS_PER_PAGE, profileAddress, sortBy),
     enabled: !!profileAddress,
   });
 
@@ -46,11 +46,10 @@ function useContests(profileAddress: string, currentUserAddress: string, sortBy?
 }
 
 const UserContests = ({ address }: { address: string }) => {
-  const { address: currentUserAddress } = useAccount();
   const [sortBy, setSortBy] = useState<string>("");
   const sortOptions = useContestSortOptions("liveContests");
   const { page, setPage, status, contestData, rewardsData, isRewardsFetching, error, isContestDataFetching } =
-    useContests(address, currentUserAddress as string, sortBy);
+    useContests(address, sortBy);
 
   return (
     <>

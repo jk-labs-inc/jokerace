@@ -35,14 +35,12 @@ export function useCastVotes() {
     contestAbi: abi,
     version,
     votesClose,
-    anyoneCanVote,
   } = useContestStore(
     useShallow(state => ({
       charge: state.charge,
       contestAbi: state.contestAbi,
       version: state.version,
       votesClose: state.votesClose,
-      anyoneCanVote: state.anyoneCanVote,
     })),
   );
 
@@ -169,7 +167,7 @@ export function useCastVotes() {
         console.error("Error updating proposal votes after casting:", voteUpdateError);
       }
 
-      await updateCurrentUserVotes(abi, version, anyoneCanVote);
+      await updateCurrentUserVotes(abi);
       refetchTotalVotesCastOnContest();
       refetchCurrentUserVotesOnProposal();
       setIsLoading(false);

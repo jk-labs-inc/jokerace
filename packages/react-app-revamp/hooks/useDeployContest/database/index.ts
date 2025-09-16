@@ -64,7 +64,7 @@ export async function indexContest(contestData: ContestValues) {
       author_address: contestData?.authorAddress ?? address,
       network_name: contestData.networkName,
       featured: contestData.featured ?? false,
-      voting_requirements: contestData.voting_requirements,
+      voting_requirements: null,
       cost_to_propose: contestData.cost_to_propose,
       cost_to_vote: contestData.cost_to_vote,
       percentage_to_creator: contestData.percentage_to_creator,

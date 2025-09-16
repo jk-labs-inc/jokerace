@@ -1,10 +1,11 @@
 import Search from "@components/Search";
 import Sort, { SortOption } from "@components/Sort";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import { FC, useState, useEffect } from "react";
+import { ContestsResponse, ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
+import { FC, useEffect, useState } from "react";
 import { Pagination } from "react-headless-pagination";
 import Contest from "./Contest";
-import { ContestWithTotalRewards } from "lib/contests/types";
+import ContestSkeleton from "./Contest/components/Skeleton";
 
 interface ListContestsProps {
   status: "error" | "pending" | "success";
@@ -13,7 +14,7 @@ interface ListContestsProps {
   isContestDataFetching: boolean;
   isRewardsFetching: boolean;
   itemsPerPage: number;
-  contestData?: any;
+  contestData?: ContestsResponse;
   rewardsData?: ContestWithTotalRewards[];
   error?: any;
   className?: string;
@@ -93,16 +94,7 @@ export const ListContests: FC<ListContestsProps> = ({
           )}
         </div>
         {isInitialLoading ? (
-          // Display placeholders when loading
-          placeholders.map((_, index) => (
-            <Contest
-              key={`placeholder-contest-${index}`}
-              contest={{}}
-              loading={true}
-              rewards={null}
-              rewardsLoading={isRewardsFetching}
-            />
-          ))
+          placeholders.map((_, index) => <ContestSkeleton key={`skeleton-contest-${index}`} />)
         ) : totalCount === 0 ? (
           <div className="text-neutral-9 mt-20 font-sabo text-[24px] text-center italic mb-6 animate-appear">
             No contests found
@@ -110,16 +102,8 @@ export const ListContests: FC<ListContestsProps> = ({
         ) : (
           <div>
             {isPaginationLoading
-              ? placeholders.map((_, index) => (
-                  <Contest
-                    key={`placeholder-contest-${index}`}
-                    contest={{}}
-                    loading={true}
-                    rewards={null}
-                    rewardsLoading={isRewardsFetching}
-                  />
-                ))
-              : contestData?.data.map((contest: any, index: number) => {
+              ? placeholders.map((_, index) => <ContestSkeleton key={`skeleton-contest-${index}`} />)
+              : contestData?.data.map((contest: ProcessedContest, index: number) => {
                   const contestReward = rewardsData?.find(reward => reward.contestAddress === contest.address) || null;
 
                   return (

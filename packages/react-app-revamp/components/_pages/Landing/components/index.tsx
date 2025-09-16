@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { streamFeaturedContests } from "lib/contests";
 import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
 import { fetchTotalRewardsForContests } from "lib/contests/contracts";
-import { Contest } from "lib/contests/types";
+import { ProcessedContest } from "lib/contests/types";
 import moment from "moment";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -44,7 +44,7 @@ const wordConfig = {
 
 function useFeaturedContests() {
   const [page] = useState(0);
-  const [contests, setContests] = useState<Contest[]>([]);
+  const [contests, setContests] = useState<ProcessedContest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isStreamingComplete, setIsStreamingComplete] = useState(false);
   const [status, setStatus] = useState<"error" | "pending" | "success">("pending");
@@ -58,7 +58,7 @@ function useFeaturedContests() {
       setIsStreamingComplete(false);
 
       try {
-        const tempContests: Contest[] = [];
+        const tempContests: ProcessedContest[] = [];
 
         for await (const contest of streamFeaturedContests(page, CONTESTS_FEATURE_COUNT)) {
           if (contest) {

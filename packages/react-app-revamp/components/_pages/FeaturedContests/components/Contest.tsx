@@ -3,7 +3,7 @@ import { Avatar } from "@components/UI/Avatar";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import useProfileData from "@hooks/useProfileData";
-import { Contest, ContestWithTotalRewards } from "lib/contests/types";
+import { ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
 import moment from "moment";
 import { AnimatePresence, motion } from "motion/react";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
@@ -11,11 +11,11 @@ import Skeleton from "react-loading-skeleton";
 
 interface FeaturedContestCardProps {
   isRewardsFetching: boolean;
-  contestData: Contest;
+  contestData: ProcessedContest;
   rewardsData?: ContestWithTotalRewards | null;
 }
 
-function getContestStatus(contest: Contest): { status: string; timeLeft: string } {
+function getContestStatus(contest: ProcessedContest): { status: string; timeLeft: string } {
   const now = moment();
   const start = moment(contest.start_at);
   const voteStart = moment(contest.vote_start_at);

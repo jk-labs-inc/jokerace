@@ -31,11 +31,13 @@ import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import LayoutViewContestError from "./components/Error";
+import { compareVersions } from "compare-versions";
+import { VOTE_AND_EARN_VERSION } from "@hooks/useUser/utils";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const url = useUrl();
-  const { address: accountAddress } = useAccount();
+  const { address: accountAddress, connector: activeConnector } = useAccount();
   const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(pathname ?? "");
   const chainId = chains.filter(chain => chain.name.toLowerCase() === chainNameFromUrl.toLowerCase())[0]?.id;
   const { showRewards, setShowRewards } = useShowRewardsStore(useShallow(state => state));
@@ -52,7 +54,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     canEditTitleAndDescription,
     version,
   } = useContestStore(state => state);
-  const accountChanged = useAccountChange();
+  const { accountChanged, resetAccountChanged } = useAccountChange();
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { setContestStatus } = useContestStatusStore(state => state);
   const [tab, setTab] = useState<Tab>(Tab.Contest);
@@ -79,24 +81,24 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   }, [contestStatus, setContestStatus]);
 
   useEffect(() => {
-    if (isLoading || !isSuccess) return;
+    if (isLoading || !isSuccess || !accountChanged || compareVersions(version, VOTE_AND_EARN_VERSION) <= 0) return;
 
     const fetchUserData = async () => {
-      if (accountChanged) {
-        const contractConfig: ContractConfig = {
-          address: address as `0x${string}`,
-          abi: contestAbi,
-          chainId: chainId,
-        };
-        await Promise.all([
-          checkIfCurrentUserQualifyToSubmit(contractConfig, version),
-          checkIfCurrentUserQualifyToVote(contractConfig, version),
-        ]);
-      }
+      const contractConfig: ContractConfig = {
+        address: address as `0x${string}`,
+        abi: contestAbi,
+        chainId: chainId,
+      };
+      await Promise.all([
+        checkIfCurrentUserQualifyToSubmit(contractConfig),
+        checkIfCurrentUserQualifyToVote(contractConfig),
+      ]);
+
+      resetAccountChanged();
     };
 
     fetchUserData();
-  }, [accountChanged, isLoading, isSuccess]);
+  }, [accountChanged, isLoading, isSuccess, version]);
 
   useEffect(() => {
     fetchContestInfo();
