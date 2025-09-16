@@ -58,7 +58,6 @@ jobs:
           NEXT_PUBLIC_R2_ACCOUNT_ID: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_R2_ACCOUNT_ID || secrets.DEV_NEXT_PUBLIC_R2_ACCOUNT_ID }}
           NEXT_PUBLIC_R2_ACCESS_KEY_ID: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_R2_ACCESS_KEY_ID || secrets.DEV_NEXT_PUBLIC_R2_ACCESS_KEY_ID }}
           NEXT_PUBLIC_R2_SECRET_ACCESS_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_R2_SECRET_ACCESS_KEY || secrets.DEV_NEXT_PUBLIC_R2_SECRET_ACCESS_KEY }}
-          NEXT_PUBLIC_MERKLE_TREES_BUCKET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_MERKLE_TREES_BUCKET || secrets.DEV_NEXT_PUBLIC_MERKLE_TREES_BUCKET }}
           NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET || secrets.DEV_NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET }}
           NEXT_PUBLIC_QUICKNODE_SLUG: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_QUICKNODE_SLUG || secrets.DEV_NEXT_PUBLIC_QUICKNODE_SLUG }}
           NEXT_PUBLIC_QUICKNODE_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_QUICKNODE_KEY || secrets.DEV_NEXT_PUBLIC_QUICKNODE_KEY }}
@@ -66,5 +65,4 @@ jobs:
           NEXT_PUBLIC_PARA_API_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_PARA_API_KEY || secrets.DEV_NEXT_PUBLIC_PARA_API_KEY }}
           NEXT_PUBLIC_PARA_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_PARA_ENVIRONMENT || secrets.DEV_NEXT_PUBLIC_PARA_ENVIRONMENT }}
           NEXT_PUBLIC_BREVO_API_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_BREVO_API_KEY || secrets.DEV_NEXT_PUBLIC_BREVO_API_KEY }}
-          NEXT_PUBLIC_CDP_PROJECT_ID: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_CDP_PROJECT_ID || secrets.DEV_NEXT_PUBLIC_CDP_PROJECT_ID }}
           NEXT_PUBLIC_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_ENVIRONMENT || secrets.DEV_NEXT_PUBLIC_ENVIRONMENT }}
