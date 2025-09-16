@@ -6,11 +6,11 @@ import { isSupabaseConfigured } from "@helpers/database";
 import useContestSortOptions from "@hooks/useSortOptions";
 import { useQuery } from "@tanstack/react-query";
 import { getEnsAddress } from "@wagmi/core";
-import { ITEMS_PER_PAGE, searchContests } from "lib/contests";
+import { searchContests } from "lib/contests";
+import { ITEMS_PER_PAGE } from "lib/contests/constants";
 import { fetchTotalRewardsForContests } from "lib/contests/contracts";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
 
 type SearchCriteria = {
   searchString: string;
@@ -19,7 +19,6 @@ type SearchCriteria = {
 
 function useContests(searchCriteria: SearchCriteria, sortBy?: string) {
   const [page, setPage] = useState(0);
-  const { address } = useAccount();
 
   const {
     status,
@@ -37,7 +36,6 @@ function useContests(searchCriteria: SearchCriteria, sortBy?: string) {
             currentPage: page,
           },
         },
-        address,
         sortBy,
       );
     },

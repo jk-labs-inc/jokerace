@@ -1,56 +1,75 @@
-import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { getChainId } from "@helpers/getChainId";
 import { ContractConfig } from "@hooks/useContest";
 import { usePathname } from "next/navigation";
 import { useAccount } from "wagmi";
+import { useUserStore } from "./store";
 import { useAnyoneCanVote } from "./useAnyoneCanVote";
 import { useSubmitQualification } from "./useSubmitQualification";
-import { useVoteQualification } from "./useVoteQualification";
-import { useVoteUpdates } from "./useVoteUpdates";
+import { createUserVoteQualificationSetter } from "./utils";
 export { EMPTY_ROOT } from "./utils";
 
 export function useUser() {
   const asPath = usePathname();
-  const { chainName, address } = extractPathSegments(asPath ?? "");
-  const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
-  const contestAddressLowerCase = address.toLowerCase();
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === lowerCaseChainName,
-  )?.[0]?.id;
+  const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
+  const chainId = getChainId(chainName);
   const { address: userAddress } = useAccount();
+  const {
+    setCurrentUserAvailableVotesAmount,
+    setCurrentUserTotalVotesAmount,
+    setIsCurrentUserVoteQualificationLoading,
+    setIsCurrentUserVoteQualificationSuccess,
+    setIsCurrentUserVoteQualificationError,
+  } = useUserStore(state => state);
 
-  const { checkIfCurrentUserQualifyToSubmit } = useSubmitQualification(
-    userAddress,
-    contestAddressLowerCase,
-    lowerCaseChainName,
+  const { checkIfCurrentUserQualifyToSubmit } = useSubmitQualification(userAddress);
+  const { checkAnyoneCanVoteUserQualification } = useAnyoneCanVote(userAddress, contestAddress, chainId);
+
+  const setUserVoteQualification = createUserVoteQualificationSetter(
+    setCurrentUserTotalVotesAmount,
+    setCurrentUserAvailableVotesAmount,
+    setIsCurrentUserVoteQualificationSuccess,
+    setIsCurrentUserVoteQualificationLoading,
+    setIsCurrentUserVoteQualificationError,
   );
 
-  const { checkIfCurrentUserQualifyToVote, setUserVoteQualification } = useVoteQualification(
-    userAddress,
-    contestAddressLowerCase,
-    lowerCaseChainName,
-    address,
-    chainId,
-  );
-  const { checkAnyoneCanVoteUserQualification } = useAnyoneCanVote(userAddress, address, chainId);
-  const { updateCurrentUserVotes } = useVoteUpdates(userAddress, address);
+  /**
+   * Check if the current user qualifies to vote (everyone can vote, just check balance)
+   */
+  const checkIfCurrentUserQualifyToVote = async (contractConfig: ContractConfig) => {
+    setIsCurrentUserVoteQualificationLoading(true);
 
-  const wrappedCheckAnyoneCanVoteUserQualification = async (abi: any, version: string) => {
-    await checkAnyoneCanVoteUserQualification(abi, version, setUserVoteQualification);
+    if (!contractConfig.abi) {
+      setIsCurrentUserVoteQualificationError(true);
+      setIsCurrentUserVoteQualificationSuccess(false);
+      setIsCurrentUserVoteQualificationLoading(false);
+      return;
+    }
+
+    await checkAnyoneCanVoteUserQualification(contractConfig.abi, setUserVoteQualification);
   };
 
-  const wrappedCheckIfCurrentUserQualifyToVote = async (contractConfig: ContractConfig, version: string) => {
-    await checkIfCurrentUserQualifyToVote(contractConfig, version, wrappedCheckAnyoneCanVoteUserQualification);
-  };
+  /**
+   * Update the current user's vote amounts after casting votes
+   */
+  //TODO: change this to Abi type
+  const updateCurrentUserVotes = async (abi: any) => {
+    setIsCurrentUserVoteQualificationLoading(true);
 
-  const wrappedUpdateCurrentUserVotes = async (abi: any, version: string, anyoneCanVote?: boolean) => {
-    await updateCurrentUserVotes(abi, version, anyoneCanVote, wrappedCheckAnyoneCanVoteUserQualification);
+    if (!abi) {
+      setIsCurrentUserVoteQualificationError(true);
+      setIsCurrentUserVoteQualificationSuccess(false);
+      setIsCurrentUserVoteQualificationLoading(false);
+      return;
+    }
+
+    await checkAnyoneCanVoteUserQualification(abi, setUserVoteQualification);
   };
 
   return {
-    checkIfCurrentUserQualifyToVote: wrappedCheckIfCurrentUserQualifyToVote,
+    checkIfCurrentUserQualifyToVote,
     checkIfCurrentUserQualifyToSubmit,
-    updateCurrentUserVotes: wrappedUpdateCurrentUserVotes,
+    updateCurrentUserVotes,
   };
 }
 

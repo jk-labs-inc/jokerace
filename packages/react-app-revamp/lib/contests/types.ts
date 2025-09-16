@@ -12,26 +12,27 @@ export interface ContestReward {
   rewardsPaidOut: boolean;
 }
 
-export interface Contest {
+export interface BaseContestData {
   created_at: string;
-  start_at: string | null;
-  end_at: string | null;
-  address: string | null;
-  author_address: string | null;
-  network_name: string | null;
-  vote_start_at: string | null;
-  featured: boolean | null;
-  title: string | null;
-  type: string | null;
-  votingMerkleRoot: string | null;
-  submissionMerkleRoot: string | null;
-  hidden: boolean;
-  voting_requirements: Record<string, any> | null;
-  submission_requirements: Record<string, any> | null;
-  cost_to_propose: number | null;
-  percentage_to_propose: number | null;
-  cost_to_vote: number | null;
+  start_at: string;
+  end_at: string;
+  address: string;
+  author_address: string;
+  network_name: string;
+  vote_start_at: string;
+  featured: boolean;
+  type: string;
+  anyone_can_submit: number;
+}
+
+export interface ProcessedContest extends BaseContestData {
+  title: string;
   isCanceled: boolean;
+}
+
+export interface ContestsResponse {
+  data: ProcessedContest[];
+  count: number;
 }
 
 export interface ContestWithTotalRewards {

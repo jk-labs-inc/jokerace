@@ -2,14 +2,13 @@
 import ListContests from "@components/_pages/ListContests";
 import { isSupabaseConfigured } from "@helpers/database";
 import { useQuery } from "@tanstack/react-query";
-import { getPastContests, ITEMS_PER_PAGE } from "lib/contests";
+import { getPastContests } from "lib/contests";
+import { ITEMS_PER_PAGE } from "lib/contests/constants";
 import { fetchTotalRewardsForContests } from "lib/contests/contracts";
 import { useState } from "react";
-import { useAccount } from "wagmi";
 
 function useContests() {
   const [page, setPage] = useState(0);
-  const { address } = useAccount();
 
   const {
     status,
@@ -17,8 +16,8 @@ function useContests() {
     error,
     isFetching: isContestDataFetching,
   } = useQuery({
-    queryKey: ["pastContests", page, address],
-    queryFn: () => getPastContests(page, ITEMS_PER_PAGE, address),
+    queryKey: ["pastContests", page],
+    queryFn: () => getPastContests(page, ITEMS_PER_PAGE),
   });
 
   const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({

@@ -2,7 +2,7 @@
 import UserSubmissions from "@components/_pages/User/components/SubmissionsList";
 import { isSupabaseConfigured } from "@helpers/database";
 import { useQuery } from "@tanstack/react-query";
-import { ITEMS_PER_PAGE } from "lib/contests";
+import { ITEMS_PER_PAGE } from "lib/contests/constants";
 import { getUserSubmissions } from "lib/user";
 import { SubmissionsResult } from "lib/user/types";
 import { useState } from "react";
