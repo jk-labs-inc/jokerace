@@ -86,52 +86,60 @@ const projectId = WALLETCONECT_PROJECT_ID;
 
 coinbaseWallet.preference = "smartWalletOnly";
 
-const connectors = connectorsForWallets(
-  [
-    ...(isParaWalletConfigured
-      ? [
-          {
-            groupName: "Standard Login (Recommended For New Users)",
-            wallets: [paraWallet],
-          },
-        ]
-      : []),
+export const connectors = () => {
+  // Only create connectors on client-side to avoid SSR issues
+  // TODO: update when https://github.com/rainbow-me/rainbowkit/issues/2476 is resolved
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  return connectorsForWallets(
+    [
+      ...(isParaWalletConfigured
+        ? [
+            {
+              groupName: "Standard Login (Recommended For New Users)",
+              wallets: [paraWallet],
+            },
+          ]
+        : []),
+      {
+        groupName: "Other Wallets",
+        wallets: [
+          metaMaskWallet,
+          walletConnectWallet,
+          coinbaseWallet,
+          rainbowWallet,
+          okxWallet,
+          uniswapWallet,
+          safeWallet,
+          rabbyWallet,
+          tahoWallet,
+          argentWallet,
+          trustWallet,
+          imTokenWallet,
+          omniWallet,
+          phantomWallet,
+          bitgetWallet,
+          oneInchWallet,
+          braveWallet,
+          frameWallet,
+          zerionWallet,
+          ledgerWallet,
+        ],
+      },
+    ],
     {
-      groupName: "Other Wallets",
-      wallets: [
-        metaMaskWallet,
-        walletConnectWallet,
-        coinbaseWallet,
-        rainbowWallet,
-        okxWallet,
-        uniswapWallet,
-        safeWallet,
-        rabbyWallet,
-        tahoWallet,
-        argentWallet,
-        trustWallet,
-        imTokenWallet,
-        omniWallet,
-        phantomWallet,
-        bitgetWallet,
-        oneInchWallet,
-        braveWallet,
-        frameWallet,
-        zerionWallet,
-        ledgerWallet,
-      ],
+      projectId: projectId,
+      appName: appName,
     },
-  ],
-  {
-    projectId: projectId,
-    appName: appName,
-  },
-);
+  );
+};
 
 const transports = createTransports(chains);
 
 export const config = createConfig({
-  connectors,
+  connectors: connectors(),
   chains,
   transports,
   ssr: true,
