@@ -2,7 +2,6 @@
 export enum EmailType {
   SignUpConfirmation = 20,
   VotingEmail = 11,
-  EntryEmail = 18,
 }
 
 export interface VotingEmailParams {
@@ -10,15 +9,9 @@ export interface VotingEmailParams {
   contest_end_date: string;
 }
 
-export interface EntryEmailParams {
-  contest_entry_link: string;
-  contest_voting_open_date: string;
-  contest_end_date: string;
-}
-
 // create a subset of EmailType that requires parameters
-export type EmailTypeWithParams = EmailType.VotingEmail | EmailType.EntryEmail;
+export type EmailTypeWithParams = EmailType.VotingEmail;
 
 export type EmailTypeParams = {
-  [K in EmailTypeWithParams]: K extends EmailType.VotingEmail ? VotingEmailParams : EntryEmailParams;
+  [EmailType.VotingEmail]: VotingEmailParams;
 };
