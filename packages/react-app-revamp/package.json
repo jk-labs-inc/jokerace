@@ -45,7 +45,7 @@
     "@types/underscore": "1.13.0",
     "@types/uuid": "10.0.0",
     "@typescript-eslint/parser": "8.43.0",
-    "@vercel/node": "5.3.22",
+    "@vercel/node": "5.3.23",
     "@visx/axis": "3.12.0",
     "@visx/curve": "3.12.0",
     "@visx/event": "3.12.0",
