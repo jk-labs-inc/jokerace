@@ -44,7 +44,7 @@
     "@types/react-window": "1.8.8",
     "@types/underscore": "1.13.0",
     "@types/uuid": "10.0.0",
-    "@typescript-eslint/parser": "8.43.0",
+    "@typescript-eslint/parser": "8.44.0",
     "@vercel/node": "5.3.23",
     "@visx/axis": "3.12.0",
     "@visx/curve": "3.12.0",
