@@ -7187,12 +7187,12 @@
     "@types/prop-types" "*"
     "@types/react" "*"
 
-"@types/react-window@1.8.8":
-  version "1.8.8"
-  resolved "https://registry.yarnpkg.com/@types/react-window/-/react-window-1.8.8.tgz#c20645414d142364fbe735818e1c1e0a145696e3"
-  integrity sha512-8Ls660bHR1AUA2kuRvVG9D/4XpRC6wjAaPT9dil7Ckc76eP9TKWZwwmgfq8Q1LANX3QNDnoU4Zp48A3w+zK69Q==
+"@types/react-window@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/react-window/-/react-window-2.0.0.tgz#9fe45015d6f98ec98a069362518c855fcc1fa8d0"
+  integrity sha512-E8hMDtImEpMk1SjswSvqoSmYvk7GEtyVaTa/GJV++FdDNuMVVEzpAClyJ0nqeKYBrMkGiyH6M1+rPLM0Nu1exQ==
   dependencies:
-    "@types/react" "*"
+    react-window "*"
 
 "@types/react@*", "@types/react@19.1.13":
   version "19.1.13"
@@ -14215,10 +14215,10 @@ react-use@17.6.0:
     ts-easing "^0.2.0"
     tslib "^2.1.0"
 
-react-window@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.1.0.tgz#66f175398bb864dc21d70af55d53ec677032158a"
-  integrity sha512-STMrsd6t3pN/XFa5cblpwTLpsEDtrtdeNY+71QsEaY0m7Fhbn9R4XXYzYAyKDpeYbjmBpAflqHBdDDKW928m3Q==
+react-window@*, react-window@2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.1.1.tgz#e6ec773d62d0adf2a1939c2a8718da20a8c816f5"
+  integrity sha512-Wx5yHri8G1nFxImnJRkEEKtRTnG3cWaqknUJyYvgisQtl1mw/d8LQmLXfuKxpn2dY8IwDn5mCIuxm2NVyIvgVQ==
 
 react@19.1.1:
   version "19.1.1"
