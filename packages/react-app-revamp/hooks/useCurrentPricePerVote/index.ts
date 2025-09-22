@@ -1,7 +1,5 @@
 import { useContestStore } from "@hooks/useContest/store";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
-import { compareVersions } from "compare-versions";
-import { VOTING_PRICE_CURVES_VERSION } from "constants/versions";
 import { Abi, formatEther, ReadContractErrorType } from "viem";
 import { useReadContract } from "wagmi";
 import { useShallow } from "zustand/shallow";
@@ -10,7 +8,6 @@ interface CurrentPricePerVoteParams {
   address: string;
   abi: Abi;
   chainId: number;
-  version: string;
   enabled?: boolean;
   scopeKey?: string;
   priceCurveUpdateInterval?: number;
@@ -32,19 +29,11 @@ const useCurrentPricePerVote = ({
   address,
   abi,
   chainId,
-  version,
   enabled = true,
   scopeKey,
   priceCurveUpdateInterval,
   votingClose,
 }: CurrentPricePerVoteParams): CurrentPricePerVoteResponse => {
-  const { costToVote } = useContestStore(
-    useShallow(state => ({
-      costToVote: state.charge.type.costToVote,
-    })),
-  );
-  const isFnSupported = compareVersions(version, VOTING_PRICE_CURVES_VERSION) >= 0;
-
   const { data, refetch, isLoading, isError, isRefetching, isRefetchError } = useReadContract({
     address: address as `0x${string}`,
     abi,
@@ -52,7 +41,7 @@ const useCurrentPricePerVote = ({
     scopeKey: scopeKey,
     chainId,
     query: {
-      enabled: !!address && !!chainId && !!abi && enabled && isFnSupported,
+      enabled: !!address && !!chainId && !!abi && enabled,
       staleTime: query => {
         if (!priceCurveUpdateInterval || !votingClose) return 0;
 
@@ -72,7 +61,7 @@ const useCurrentPricePerVote = ({
   });
 
   return {
-    currentPricePerVote: isFnSupported ? data ?? "0" : formatEther(BigInt(costToVote ?? 0)),
+    currentPricePerVote: data ?? "0",
     isLoading,
     isError,
     isRefetching,

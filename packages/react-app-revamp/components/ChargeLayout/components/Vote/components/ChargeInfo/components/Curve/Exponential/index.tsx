@@ -1,15 +1,14 @@
-import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
+import VotingQualifierError from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Error";
 import { useContestStore } from "@hooks/useContest/store";
+import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import Skeleton from "react-loading-skeleton";
 import { useShallow } from "zustand/react/shallow";
-import VotingQualifierError from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Error";
 
 const ChargeInfoExponential = () => {
-  const { contestInfo, contestAbi, version, votingClose } = useContestStore(
+  const { contestInfo, contestAbi, votingClose } = useContestStore(
     useShallow(state => ({
       contestInfo: state.contestInfoData,
       contestAbi: state.contestAbi,
-      version: state.version,
       votingClose: state.votesClose,
     })),
   );
@@ -19,7 +18,6 @@ const ChargeInfoExponential = () => {
       address: contestInfo.contestAddress,
       abi: contestAbi,
       chainId: contestInfo.contestChainId,
-      version,
       votingClose,
     });
 

@@ -33,7 +33,6 @@ export function useCastVotes() {
   const {
     charge,
     contestAbi: abi,
-    version,
     votesClose,
   } = useContestStore(
     useShallow(state => ({
@@ -84,7 +83,6 @@ export function useCastVotes() {
     address: contestAddress,
     abi: abi,
     chainId: chainId,
-    version,
     votingClose: votesClose,
   });
   const { startNewVotingSession, getPrices } = usePriceTracking(currentPricePerVote);

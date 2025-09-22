@@ -1,19 +1,17 @@
 import { useContestStore } from "@hooks/useContest/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
+import { motion } from "motion/react";
 import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
-import { useShallow } from "zustand/react/shallow";
-import { motion } from "motion/react";
 import { useMediaQuery } from "react-responsive";
-import { formatBalance } from "@helpers/formatBalance";
+import { useShallow } from "zustand/react/shallow";
 
 const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const { contestInfoData, contestAbi, version, votingClose } = useContestStore(
+  const { contestInfoData, contestAbi, votingClose } = useContestStore(
     useShallow(state => ({
       contestInfoData: state.contestInfoData,
       contestAbi: state.contestAbi,
-      version: state.version,
       votingClose: state.votesClose,
     })),
   );
@@ -23,7 +21,6 @@ const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC = () => {
       address: contestInfoData.contestAddress,
       abi: contestAbi,
       chainId: contestInfoData.contestChainId,
-      version,
       votingClose,
     });
 

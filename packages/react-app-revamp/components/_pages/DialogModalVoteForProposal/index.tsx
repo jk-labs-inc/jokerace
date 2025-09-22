@@ -34,7 +34,6 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     charge: contestCharge,
     contestInfoData,
     contestAbi,
-    contestVersion,
     votingClose,
   } = useContestStore(
     useShallow(state => ({
@@ -70,7 +69,6 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     address: contestInfoData.contestAddress,
     abi: contestAbi,
     chainId: contestInfoData.contestChainId,
-    version: contestVersion,
     votingClose: votingClose,
   });
   const earlyReturn =

@@ -1,7 +1,7 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { ChevronUpIcon } from "@heroicons/react/24/outline";
-import { VOTES_PER_PAGE, useProposalVotes } from "@hooks/useProposalVotes";
+import { VOTES_PER_PAGE, useProposalVotes } from "@hooks/useProposalVoters";
 import { usePathname } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";

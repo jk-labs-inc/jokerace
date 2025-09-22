@@ -5,7 +5,7 @@ import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import ordinalize from "@helpers/ordinalize";
 import { ProposalData } from "lib/proposal";
 import { FC, useState } from "react";
-import EntryNavigation from "../EntryNavigation";
+import EntryNavigation from "../../../Submission/desktop/components/Header/components/EntryNavigation";
 
 interface DialogModalProposalHeaderProps {
   proposalData: ProposalData | null;

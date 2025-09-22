@@ -16,7 +16,7 @@ import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWith
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { useProposalVotes } from "@hooks/useProposalVotes";
+import { useProposalVoters } from "@hooks/useProposalVoters";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { switchChain } from "@wagmi/core";
@@ -58,6 +58,7 @@ enum DialogTab {
   Comments = "Comments",
 }
 
+//TODO: DELETE THIS ONCE WE HAVE A NEW SUBMISSION PAGE
 const DialogModalProposal: FC<DialogModalProposalProps> = ({
   contestInfo,
   isOpen,
@@ -106,7 +107,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
   const [activeTab, setActiveTab] = useState<DialogTab>(DialogTab.Voters);
   const dialogTabs = Object.values(DialogTab);
-  const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
+  const { addressesVoted } = useProposalVoters(contestInfo.address, proposalId, contestInfo.chainId);
   const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
   const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
   const [totalCharge, setTotalCharge] = useState("");
@@ -130,9 +131,9 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
     address: contestInfo.address,
     abi: contestAbi,
     chainId: contestInfo.chainId,
-    version: contestInfo.version,
     votingClose: votesClose,
   });
+
   const earlyReturn =
     isCurrentPricePerVoteLoading ||
     isCurrentPricePerVoteError ||

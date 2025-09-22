@@ -12,11 +12,10 @@ interface TotalChargeProps {
 
 const TotalCharge: React.FC<TotalChargeProps> = ({ charge: contestCharge, amountOfVotes }) => {
   const [totalCharge, setTotalCharge] = useState("0");
-  const { contestInfo, contestAbi, version, votingClose } = useContestStore(
+  const { contestInfo, contestAbi, votingClose } = useContestStore(
     useShallow(state => ({
       contestInfo: state.contestInfoData,
       contestAbi: state.contestAbi,
-      version: state.version,
       votingClose: state.votesClose,
     })),
   );
@@ -24,7 +23,6 @@ const TotalCharge: React.FC<TotalChargeProps> = ({ charge: contestCharge, amount
     address: contestInfo.contestAddress,
     abi: contestAbi,
     chainId: contestInfo.contestChainId,
-    version,
     votingClose,
   });
 

@@ -61,7 +61,6 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
     address: contestInfo.address,
     abi: contestAbi,
     chainId: contestInfo.chainId,
-    version: contestInfo.version,
     votingClose: votesClose,
   });
   const earlyReturn =

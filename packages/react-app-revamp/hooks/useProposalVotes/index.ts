@@ -1,165 +1,117 @@
-import { useContestStore } from "@hooks/useContest/store";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { useReadContract } from "wagmi";
-import { readContracts } from "@wagmi/core";
-import { config } from "@config/wagmi";
-import { compareVersions } from "compare-versions";
-import { useMemo } from "react";
-import { formatEther } from "viem";
+import { useReadContracts } from "wagmi";
+import { formatEther, Abi } from "viem";
+import { useContestAbiAndVersion } from "../useContestAbiAndVersion";
+import { UseProposalVotesAndRankParams, ProposalVotesAndRankResult, MappedProposal } from "./types";
+import { assignRankAndCheckTies } from "./helpers";
 
-export const VOTES_PER_PAGE = 4;
-
-interface VoteEntry {
-  address: string;
-  votes: bigint | [bigint, bigint];
-  formattedVotes?: number;
-}
-
-interface ProposalVotesData {
-  votes: VoteEntry[];
-  totalAddresses: number;
-  hasMore: boolean;
-  pageIndex: number;
-}
-
-export function useProposalVotes(
-  contractAddress: string,
-  proposalId: string,
-  chainId: number,
-  addressPerPage = VOTES_PER_PAGE,
-) {
-  const { contestAbi: abi, version } = useContestStore(state => state);
-  const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
-
+const useProposalVotes = ({
+  contestAddress,
+  proposalId,
+  chainId,
+  enabled = true,
+}: UseProposalVotesAndRankParams): ProposalVotesAndRankResult => {
+  //TODO: pass this instead of fetching it from the hook (pass contest address, chainId, abi and version?)
   const {
-    data: addressesVoted,
-    isLoading: isLoadingAddresses,
-    error: addressesError,
-    refetch: refetchAddresses,
-  } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: abi,
+    abi,
+    isLoading: isAbiLoading,
+    isError: isAbiError,
+  } = useContestAbiAndVersion({
+    address: contestAddress,
     chainId,
-    functionName: "proposalAddressesHaveVoted",
-    args: [proposalId],
-    query: {
-      enabled: !!contractAddress && !!proposalId && !!abi,
-    },
-  }) as {
-    data: string[] | undefined;
-    isLoading: boolean;
-    error: Error | null;
-    refetch: () => Promise<any>;
-  };
+    enabled,
+  });
 
   const {
     data,
-    isLoading: isLoadingVotes,
-    error: votesError,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey: ["proposalVotes", contractAddress, proposalId, chainId, hasDownvotes, addressesVoted],
-    queryFn: async ({ pageParam = 0 }): Promise<ProposalVotesData> => {
-      if (!addressesVoted || addressesVoted.length === 0) {
-        return { votes: [], totalAddresses: 0, hasMore: false, pageIndex: 0 };
-      }
-
-      const start = pageParam * addressPerPage;
-      const end = Math.min(start + addressPerPage, addressesVoted.length);
-      const addressesPage = addressesVoted.slice(start, end);
-
-      const contracts = addressesPage.map(address => ({
-        address: contractAddress as `0x${string}`,
-        abi: abi,
+    isLoading: isContractsLoading,
+    isError: isContractsError,
+    error,
+    refetch,
+  } = useReadContracts({
+    contracts: [
+      {
+        address: contestAddress as `0x${string}`,
+        abi: abi as Abi,
+        functionName: "proposalVotes",
+        args: [proposalId],
         chainId,
-        functionName: "proposalAddressVotes",
-        args: [proposalId, address],
-      }));
+      },
+      {
+        address: contestAddress as `0x${string}`,
+        abi: abi as Abi,
+        functionName: "allProposalTotalVotes",
+        args: [],
+        chainId,
+      },
+      {
+        address: contestAddress as `0x${string}`,
+        abi: abi as Abi,
+        functionName: "getAllDeletedProposalIds",
+        args: [],
+        chainId,
+      },
+    ],
+    query: {
+      enabled: enabled && !!abi && !!proposalId && !!contestAddress && !!chainId,
+      select: data => {
+        const [proposalVotesResult, allProposalsResult, deletedProposalsResult] = data;
 
-      let results;
-      try {
-        results = await readContracts(config, { contracts });
-      } catch (error) {
-        console.error("Error fetching proposal votes:", error);
-        return { votes: [], totalAddresses: 0, hasMore: false, pageIndex: 0 };
-      }
+        // Extract individual proposal votes
+        const proposalVotes = proposalVotesResult.result
+          ? Number(formatEther(proposalVotesResult.result as bigint))
+          : 0;
 
-      const votes: VoteEntry[] = addressesPage.map((address, index) => {
-        const result = results[index];
-        const voteData = result?.result as bigint | [bigint, bigint] | undefined;
-
-        if (!voteData) {
-          return {
-            address,
-            votes: hasDownvotes ? [BigInt(0), BigInt(0)] : BigInt(0),
-            formattedVotes: 0,
-          };
+        // If no votes, return early
+        if (proposalVotes === 0) {
+          return { votes: 0, rank: 0, isTied: false };
         }
 
-        // Calculate net votes
-        let netVotes: bigint;
-        if (hasDownvotes && Array.isArray(voteData)) {
-          netVotes = voteData[0] - voteData[1];
-        } else {
-          netVotes = voteData as bigint;
+        // Extract all proposals data for ranking
+        if (!allProposalsResult.result || !Array.isArray(allProposalsResult.result)) {
+          return { votes: proposalVotes, rank: 0, isTied: false };
         }
+
+        const allProposals = (allProposalsResult.result as any[])[0];
+        const allVotes = (allProposalsResult.result as any[])[1];
+        const deletedIds = deletedProposalsResult.result || [];
+
+        // Filter out deleted proposals
+        const deletedProposalSet = new Set(
+          Array.isArray(deletedIds) ? deletedIds.map((id: bigint) => id.toString()) : [deletedIds.toString()],
+        );
+
+        // Map valid proposals with their votes
+        const mappedProposals: MappedProposal[] = allProposals
+          .map((id: bigint, index: number) => ({
+            id: id.toString(),
+            votes: Number(formatEther(allVotes[index] as bigint)),
+          }))
+          .filter((proposal: MappedProposal) => !deletedProposalSet.has(proposal.id));
+
+        // Calculate rank and ties
+        const rankInfo = assignRankAndCheckTies(mappedProposals, proposalId);
 
         return {
-          address,
-          votes: voteData,
-          formattedVotes: Number(formatEther(netVotes)),
+          votes: proposalVotes,
+          ...rankInfo,
         };
-      });
-
-      return {
-        votes,
-        totalAddresses: addressesVoted.length,
-        hasMore: end < addressesVoted.length,
-        pageIndex: pageParam,
-      };
+      },
     },
-    getNextPageParam: lastPage => {
-      return lastPage.hasMore ? lastPage.pageIndex + 1 : undefined;
-    },
-    initialPageParam: 0,
-    enabled: !!addressesVoted && addressesVoted.length > 0,
   });
 
-  const accumulatedVotesData = useMemo(() => {
-    if (!data?.pages) return {};
-
-    return data.pages.reduce((acc, page) => {
-      page.votes.forEach(({ address, formattedVotes }) => {
-        if (formattedVotes !== undefined) {
-          acc[address] = formattedVotes;
-        }
-      });
-      return acc;
-    }, {} as Record<string, number>);
-  }, [data]);
-
-  const currentPage = useMemo(() => {
-    return data?.pages?.length ? data.pages.length - 1 : 0;
-  }, [data]);
-
-  const totalPages = useMemo(() => {
-    return addressesVoted ? Math.ceil(addressesVoted.length / addressPerPage) : 0;
-  }, [addressesVoted, addressPerPage]);
-
-  const isLoading = isLoadingAddresses || (isLoadingVotes && !data);
-  const error = addressesError || votesError;
+  // Combine loading and error states
+  const isLoading = isAbiLoading || isContractsLoading;
+  const isError = isAbiError || isContractsError;
 
   return {
+    votes: data?.votes ?? 0,
+    rank: data?.rank ?? 0,
+    isTied: data?.isTied ?? false,
     isLoading,
-    isFetchingNextPage,
-    error: error?.message || null,
-    accumulatedVotesData,
-    addressesVoted: addressesVoted || [],
-    currentPage,
-    totalPages,
-    hasNextPage: hasNextPage ?? false,
-    fetchNextPage,
+    isError,
+    error,
+    refetch,
   };
-}
+};
+
+export default useProposalVotes;

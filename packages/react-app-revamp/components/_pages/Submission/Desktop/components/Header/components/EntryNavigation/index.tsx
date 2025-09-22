@@ -1,31 +1,32 @@
-import { ButtonSize } from "@components/UI/ButtonV3";
-import ButtonV3 from "@components/UI/ButtonV3";
+import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { FC } from "react";
 
-interface EntryNavigationProps {
-  currentIndex: number;
-  totalProposals: number;
-  isProposalLoading: boolean;
-  onPreviousEntry?: () => void;
-  onNextEntry?: () => void;
+interface SubmissionPageDesktopEntryNavigationProps {
+  contestInfo: {
+    chain: string;
+    address: string;
+  };
+  proposalId: string;
 }
 
-const EntryNavigation: FC<EntryNavigationProps> = ({
-  currentIndex,
-  totalProposals,
-  isProposalLoading,
-  onPreviousEntry,
-  onNextEntry,
+const SubmissionPageDesktopEntryNavigation: FC<SubmissionPageDesktopEntryNavigationProps> = ({
+  contestInfo,
+  proposalId,
 }) => {
+  const { currentIndex, totalProposals, handlePreviousEntry, handleNextEntry } = useNavigateProposals({
+    contestInfo,
+    proposalId,
+  });
+
   return (
-    <>
+    <div className="flex items-center gap-2 ml-auto">
       {currentIndex !== 0 && (
         <ButtonV3
           colorClass="bg-primary-2"
           textColorClass="flex items-center justify-center gap-2 text-neutral-11 text-[12px] font-bold rounded-[40px] group transform transition-transform duration-200 active:scale-95"
-          size={ButtonSize.DEFAULT}
-          onClick={onPreviousEntry}
-          isDisabled={isProposalLoading}
+          size={ButtonSize.DEFAULT_LONG}
+          onClick={handlePreviousEntry}
         >
           <div className="transition-transform duration-200 group-hover:-translate-x-1">
             <img src="/contest/previous-entry.svg" alt="prev-entry" width={14} height={12} className="mt-1" />
@@ -37,9 +38,8 @@ const EntryNavigation: FC<EntryNavigationProps> = ({
         <ButtonV3
           colorClass="bg-primary-2"
           textColorClass="flex items-center justify-center gap-2 text-neutral-11 text-[12px] font-bold rounded-[40px] group transform transition-transform duration-200 active:scale-95"
-          size={ButtonSize.DEFAULT}
-          onClick={onNextEntry}
-          isDisabled={isProposalLoading}
+          size={ButtonSize.DEFAULT_LONG}
+          onClick={handleNextEntry}
         >
           next entry
           <div className="transition-transform duration-200 group-hover:translate-x-1">
@@ -47,8 +47,8 @@ const EntryNavigation: FC<EntryNavigationProps> = ({
           </div>
         </ButtonV3>
       )}
-    </>
+    </div>
   );
 };
 
-export default EntryNavigation;
+export default SubmissionPageDesktopEntryNavigation;

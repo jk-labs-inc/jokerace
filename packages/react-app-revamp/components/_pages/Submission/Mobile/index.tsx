@@ -12,7 +12,7 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { useProposalVotes } from "@hooks/useProposalVotes";
+import { useProposalVotes } from "@hooks/useProposalVoters";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { switchChain } from "@wagmi/core";
@@ -23,7 +23,7 @@ import { useAccount } from "wagmi";
 import SubmissionDeleteButton from "../components/Buttons/Delete";
 import SubmissionDeleteModal from "../components/Modals/Delete";
 import SubmissionPageMobileComments from "./components/Comments";
-  import SubmissionPageMobileAddFunds from "./components/AddFunds";
+import SubmissionPageMobileAddFunds from "./components/AddFunds";
 import StickyVoteFooter from "./components/VoteFooter";
 import SubmissionPageMobileVotersList from "./components/VotersList";
 import SubmissionPageMobileVoting from "./components/Voting";

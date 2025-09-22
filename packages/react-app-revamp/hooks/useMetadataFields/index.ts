@@ -1,14 +1,11 @@
-import { chains } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { MetadataField } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { compareVersions } from "compare-versions";
-import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { Abi } from "viem";
 import { useReadContract } from "wagmi";
-import { ParsedMetadataField, useMetadataStore } from "./store";
 import { useShallow } from "zustand/shallow";
+import { ParsedMetadataField, useMetadataStore } from "./store";
 
 const METADATA_FIELDS_VERSION = "4.31";
 
@@ -39,10 +36,13 @@ function parseMetadataFieldsSchema(schema: string): ParsedMetadataField[] {
 
 const useMetadataFields = () => {
   const setFields = useMetadataStore(useShallow(state => state.setFields));
-  const pathname = usePathname();
-  const { address: contestAddress, chainName: contestChainName } = extractPathSegments(pathname ?? "");
-  const contestChainId = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.id;
-  const { contestAbi, version } = useContestStore(state => state);
+  const { contestAbi, version, contestInfoData } = useContestStore(
+    useShallow(state => ({
+      contestAbi: state.contestAbi,
+      version: state.version,
+      contestInfoData: state.contestInfoData,
+    })),
+  );
 
   const {
     data: metadataSchema,
@@ -50,8 +50,8 @@ const useMetadataFields = () => {
     isLoading: isMetadataLoading,
   } = useReadContract({
     abi: contestAbi as Abi,
-    address: contestAddress as `0x${string}`,
-    chainId: contestChainId,
+    address: contestInfoData.contestAddress as `0x${string}`,
+    chainId: contestInfoData.contestChainId,
     functionName: "metadataFieldsSchema",
     query: {
       enabled: Boolean(compareVersions(version, METADATA_FIELDS_VERSION) >= 0),

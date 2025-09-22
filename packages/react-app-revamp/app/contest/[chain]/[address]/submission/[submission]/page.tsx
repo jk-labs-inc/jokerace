@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Abi } from "viem";
 import Submission from "./submission";
+import { getChainId } from "@helpers/getChainId";
 
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
@@ -82,16 +83,13 @@ const Page = async (props: { params: Promise<{ chain: string; address: string; s
   const { chain, address, submission } = params;
 
   try {
-    const chainId = chains.find(
-      (c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain.toLowerCase(),
-    )?.id;
-    const { abi, version } = await getContestContractVersion(address, chainId ?? 1);
+    const chainId = getChainId(chain);
 
-    if (!REGEX_ETHEREUM_ADDRESS.test(address) || !abi || version === "unknown") {
+    if (!REGEX_ETHEREUM_ADDRESS.test(address) || !chainId) {
       return notFound();
     }
 
-    return <Submission address={address} chain={chain} submission={submission} abi={abi as Abi} version={version} />;
+    return <Submission address={address} chain={chain} submission={submission} chainId={chainId} />;
   } catch (error) {
     console.error("failed to render submission page:", error);
     return notFound();

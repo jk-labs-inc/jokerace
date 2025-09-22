@@ -96,6 +96,8 @@
   --color-primary-10: #ffe25b;
   --color-primary-11: #f0c000;
   --color-primary-12: #fffad1;
+  /* //TODO: move this up */
+  --color-primary-13: #0f0f12;
 
   /* Secondary Colors */
   --color-secondary-1: #141414;
@@ -124,6 +126,9 @@
   --color-positive-10: #95f3d9;
   --color-positive-11: #78ffc6;
   --color-positive-12: #e7fcf7;
+  /* //TODO: move this up */
+  --color-positive-13: #36989f;
+  --color-positive-14: #58f4ff;
 
   /* Negative Colors */
   --color-negative-1: #1d1418;
@@ -156,6 +161,8 @@
   --color-neutral-13: #8e8e8e;
   --color-neutral-14: #a1a1a1;
   --color-neutral-15: #d0d0d0;
+  /* //TODO: move this up */
+  --color-neutral-16: #16101b;
 
   /* Additional Colors */
   --color-ffdd3e: #ffdd3e;

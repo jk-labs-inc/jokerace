@@ -1,55 +1,29 @@
-import DialogModalProposal from "@components/_pages/DialogModalProposal";
-import { ProposalData } from "lib/proposal";
-import { FC } from "react";
+import SubmissionPageDesktopBody from "./components/Body";
+import SubmissionPageDesktopHeader from "./components/Header";
 
 interface SubmissionPageDesktopLayoutProps {
   contestInfo: {
     address: string;
     chain: string;
     chainId: number;
-    version: string;
   };
   proposalId: string;
-  prompt: string;
-  proposalData: ProposalData | null;
-  isProposalLoading: boolean;
-  isProposalError: boolean;
-  onClose?: () => void;
-  onVote?: (amount: number) => void;
-  onPreviousEntry?: () => void;
-  onNextEntry?: () => void;
-  onConnectWallet?: () => void;
 }
 
-const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
-  contestInfo,
-  proposalId,
-  prompt,
-  proposalData,
-  isProposalLoading,
-  isProposalError,
-  onClose,
-  onVote,
-  onPreviousEntry,
-  onNextEntry,
-  onConnectWallet,
-}) => {
+const SubmissionPageDesktopLayout = ({ contestInfo, proposalId }: SubmissionPageDesktopLayoutProps) => {
   return (
-    <DialogModalProposal
-      contestInfo={contestInfo}
-      proposalId={proposalId}
-      prompt={prompt}
-      isOpen={true}
-      proposalData={proposalData}
-      isProposalLoading={isProposalLoading}
-      isProposalError={isProposalError}
-      onClose={onClose}
-      onVote={onVote}
-      onConnectWallet={onConnectWallet}
-      onNextEntry={onNextEntry}
-      onPreviousEntry={onPreviousEntry}
-      setIsOpen={onClose}
-    />
+    <div className="px-20 mt-8">
+      <div className="flex gap-4">
+        <div className="flex flex-col gap-8 w-[60%]">
+          <SubmissionPageDesktopHeader contestInfo={contestInfo} proposalId={proposalId} />
+          <SubmissionPageDesktopBody />
+        </div>
+        <div className="w-[40%]">
+          {/* Right content - 40% width */}
+          <p>Right side content (40%)</p>
+        </div>
+      </div>
+    </div>
   );
 };
 

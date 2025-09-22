@@ -1,30 +1,17 @@
 "use client";
 import SubmissionPage from "@components/_pages/Submission";
-import { chains } from "@config/wagmi";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { FC, useEffect } from "react";
-import { Abi } from "viem";
 import { useShallow } from "zustand/shallow";
 
 interface SubmissionProps {
-  abi: Abi;
-  version: string;
   address: string;
   chain: string;
   submission: string;
+  chainId: number;
 }
 
-const getChainId = (chain: string) => {
-  const chainId = chains.find((c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain)?.id;
-
-  if (chainId === undefined) {
-    throw new Error(`Chain ID not found for chain: ${chain}`);
-  }
-  return chainId;
-};
-
-const Submission: FC<SubmissionProps> = ({ address, chain, submission, abi, version }) => {
-  const chainId = getChainId(chain);
+const Submission: FC<SubmissionProps> = ({ address, chain, submission, chainId }) => {
   const setPickProposal = useCastVotesStore(useShallow(state => state.setPickedProposal));
 
   useEffect(() => {
@@ -37,8 +24,6 @@ const Submission: FC<SubmissionProps> = ({ address, chain, submission, abi, vers
         address,
         chain,
         chainId,
-        version,
-        abi,
       }}
       proposalId={submission}
     />
