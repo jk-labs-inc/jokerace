@@ -1,26 +1,15 @@
+import { Abi, formatEther } from "viem";
 import { useReadContracts } from "wagmi";
-import { formatEther, Abi } from "viem";
-import { useContestAbiAndVersion } from "../useContestAbiAndVersion";
-import { UseProposalVotesAndRankParams, ProposalVotesAndRankResult, MappedProposal } from "./types";
 import { assignRankAndCheckTies } from "./helpers";
+import { MappedProposal, ProposalVotesAndRankResult, UseProposalVotesAndRankParams } from "./types";
 
 const useProposalVotes = ({
   contestAddress,
   proposalId,
   chainId,
+  abi,
   enabled = true,
 }: UseProposalVotesAndRankParams): ProposalVotesAndRankResult => {
-  //TODO: pass this instead of fetching it from the hook (pass contest address, chainId, abi and version?)
-  const {
-    abi,
-    isLoading: isAbiLoading,
-    isError: isAbiError,
-  } = useContestAbiAndVersion({
-    address: contestAddress,
-    chainId,
-    enabled,
-  });
-
   const {
     data,
     isLoading: isContractsLoading,
@@ -99,16 +88,12 @@ const useProposalVotes = ({
     },
   });
 
-  // Combine loading and error states
-  const isLoading = isAbiLoading || isContractsLoading;
-  const isError = isAbiError || isContractsError;
-
   return {
     votes: data?.votes ?? 0,
     rank: data?.rank ?? 0,
     isTied: data?.isTied ?? false,
-    isLoading,
-    isError,
+    isLoading: isContractsLoading,
+    isError: isContractsError,
     error,
     refetch,
   };

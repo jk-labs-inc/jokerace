@@ -1,21 +1,17 @@
+import { useEntryContractConfigStore } from "@components/_pages/Submission/hooks/useEntryContractConfig/store";
 import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { FC } from "react";
+import { getChainFromId } from "@helpers/getChainFromId";
 
-interface SubmissionPageDesktopEntryNavigationProps {
-  contestInfo: {
-    chain: string;
-    address: string;
-  };
-  proposalId: string;
-}
-
-const SubmissionPageDesktopEntryNavigation: FC<SubmissionPageDesktopEntryNavigationProps> = ({
-  contestInfo,
-  proposalId,
-}) => {
+const SubmissionPageDesktopEntryNavigation = () => {
+  const { contestAddress, contestChainId, contestAbi, contestVersion, proposalId } = useEntryContractConfigStore(
+    state => state,
+  );
   const { currentIndex, totalProposals, handlePreviousEntry, handleNextEntry } = useNavigateProposals({
-    contestInfo,
+    contestInfo: {
+      chain: getChainFromId(contestChainId)?.name ?? "",
+      address: contestAddress,
+    },
     proposalId,
   });
 

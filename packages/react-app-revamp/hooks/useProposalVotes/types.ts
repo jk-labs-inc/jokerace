@@ -1,7 +1,10 @@
+import { Abi } from "viem";
+
 export interface UseProposalVotesAndRankParams {
   contestAddress: string;
   proposalId: string;
   chainId: number;
+  abi: Abi;
   enabled?: boolean;
 }
 

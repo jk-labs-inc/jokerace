@@ -1,60 +1,35 @@
-import { useContestStore } from "@hooks/useContest/store";
-import { MetadataField } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { compareVersions } from "compare-versions";
 import { useEffect } from "react";
 import { Abi } from "viem";
 import { useReadContract } from "wagmi";
 import { useShallow } from "zustand/shallow";
-import { ParsedMetadataField, useMetadataStore } from "./store";
+import { parseMetadataFieldsSchema } from "./helpers";
+import { useMetadataStore } from "./store";
 
 const METADATA_FIELDS_VERSION = "4.31";
 
-function parseMetadataFieldsSchema(schema: string): ParsedMetadataField[] {
-  try {
-    const parsedSchema = JSON.parse(schema) as Record<string, string | string[]>;
-
-    return Object.entries(parsedSchema).flatMap(([metadataType, prompt]) => {
-      if (Array.isArray(prompt)) {
-        return prompt.map(p => ({
-          metadataType: metadataType as MetadataField["metadataType"],
-          prompt: p,
-        }));
-      } else {
-        return [
-          {
-            metadataType: metadataType as MetadataField["metadataType"],
-            prompt: prompt,
-          },
-        ];
-      }
-    });
-  } catch (error) {
-    console.error("Error parsing metadataFieldsSchema:", error);
-    return [];
-  }
+interface UseMetadataFieldsParams {
+  address: `0x${string}`;
+  chainId: number;
+  abi: Abi;
+  version: string;
+  enabled?: boolean;
 }
 
-const useMetadataFields = () => {
+const useMetadataFields = ({ address, chainId, abi, version, enabled = true }: UseMetadataFieldsParams) => {
   const setFields = useMetadataStore(useShallow(state => state.setFields));
-  const { contestAbi, version, contestInfoData } = useContestStore(
-    useShallow(state => ({
-      contestAbi: state.contestAbi,
-      version: state.version,
-      contestInfoData: state.contestInfoData,
-    })),
-  );
 
   const {
     data: metadataSchema,
     isError: isMetadataError,
     isLoading: isMetadataLoading,
   } = useReadContract({
-    abi: contestAbi as Abi,
-    address: contestInfoData.contestAddress as `0x${string}`,
-    chainId: contestInfoData.contestChainId,
+    abi: abi,
+    address: address,
+    chainId: chainId,
     functionName: "metadataFieldsSchema",
     query: {
-      enabled: Boolean(compareVersions(version, METADATA_FIELDS_VERSION) >= 0),
+      enabled: !!version && Boolean(compareVersions(version, METADATA_FIELDS_VERSION) >= 0) && enabled,
     },
   });
 

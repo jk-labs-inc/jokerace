@@ -49,9 +49,14 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   const { isLoading, error } = useSubmitProposal();
   const { isMobileConfirmModalOpen, setIsMobileConfirmModalOpen, setIsLoading, setIsSuccess, setProposalId } =
     useSubmitProposalStore(state => state);
-  const { contestPrompt } = useContestStore(state => state);
+  const { contestPrompt, contestInfoData, contestAbi, version } = useContestStore(state => state);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
-  const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields();
+  const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields({
+    address: contestInfoData.contestAddress as `0x${string}`,
+    chainId: contestInfoData.contestChainId,
+    abi: contestAbi,
+    version: version,
+  });
   const { fields: metadataFields } = useMetadataStore(state => state);
   const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);
 

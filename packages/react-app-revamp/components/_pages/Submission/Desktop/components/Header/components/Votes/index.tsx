@@ -1,22 +1,15 @@
-import useProposalVotes from "@hooks/useProposalVotes";
+import { useEntryContractConfigStore } from "@components/_pages/Submission/hooks/useEntryContractConfig/store";
+import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ordinalize } from "@helpers/ordinalize";
-import { pluralize } from "@helpers/pluralize";
-import { formatNumberAbbreviated, formatNumberWithCommas } from "@helpers/formatNumber";
+import useProposalVotes from "@hooks/useProposalVotes";
 
-interface SubmissionPageDesktopVotesProps {
-  contestInfo: {
-    address: string;
-    chain: string;
-    chainId: number;
-  };
-  proposalId: string;
-}
-
-const SubmissionPageDesktopVotes = ({ contestInfo, proposalId }: SubmissionPageDesktopVotesProps) => {
+const SubmissionPageDesktopVotes = () => {
+  const { contestAddress, contestChainId, contestAbi, proposalId } = useEntryContractConfigStore(state => state);
   const { votes, rank, isTied, isLoading, isError, error, refetch } = useProposalVotes({
-    contestAddress: contestInfo.address,
+    contestAddress: contestAddress,
     proposalId: proposalId,
-    chainId: contestInfo.chainId,
+    chainId: contestChainId,
+    abi: contestAbi,
   });
 
   // TODO: add loading and error states
@@ -39,7 +32,7 @@ const SubmissionPageDesktopVotes = ({ contestInfo, proposalId }: SubmissionPageD
   if (votes === 0) return null;
 
   return (
-    <div className="w-40 h-8 bg-neutral-16 border border-positive-13 rounded-2xl flex items-center justify-center px-2">
+    <div className="h-8 bg-neutral-16 border border-positive-13 rounded-2xl flex items-center justify-center px-2">
       <span className="text-positive-14 text-base font-bold">
         {rank > 0 ? (
           <>

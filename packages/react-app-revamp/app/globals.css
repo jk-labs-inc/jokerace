@@ -163,6 +163,7 @@
   --color-neutral-15: #d0d0d0;
   /* //TODO: move this up */
   --color-neutral-16: #16101b;
+  --color-neutral-17: #3c3c3c;
 
   /* Additional Colors */
   --color-ffdd3e: #ffdd3e;
@@ -213,6 +214,7 @@
   --background-image-gradient-vote-rainbow: linear-gradient(90deg, #ffe25b 0%, #ff78a9 50%, #78ffc6 75%, #bb65ff 100%);
   --background-image-gradient-vote-purple: linear-gradient(90deg, #bb65ff 0%, #bb65ff 50%, #ff78a9 75%, #ffe25b 100%);
   --background-image-gradient-gold: linear-gradient(90deg, #ffe25b 0%, #fffae1 100%);
+  --background-image-gradient-entry-title: linear-gradient(180deg, #381d4c 0%, #000000 100%);
 
   /* Box Shadows */
   --shadow-create-header: 0 3px 4px 0 rgba(106, 106, 106, 1);

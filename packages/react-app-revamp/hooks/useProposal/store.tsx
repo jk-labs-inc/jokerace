@@ -14,7 +14,7 @@ export interface ProposalCore {
   isContentImage: boolean;
   tweet: Tweet;
   commentsCount: number;
-  metadataFields: RawMetadataFields;
+  fieldsMetadata: RawMetadataFields;
 }
 
 export interface MappedProposalIds {

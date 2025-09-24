@@ -13,7 +13,7 @@ interface UserProfileDisplayProps {
   ethereumAddress: string;
   shortenOnFallback: boolean;
   textColor?: string;
-  size?: "extraSmall" | "small" | "medium" | "large";
+  size?: "extraSmall" | "compact" | "small" | "medium" | "large";
   textualVersion?: boolean;
   avatarVersion?: boolean;
   includeSocials?: boolean;
@@ -25,6 +25,10 @@ export const SIZES = {
   extraSmall: {
     avatarSizeClass: "w-8 h-8",
     textSizeClass: "text-[12px]",
+  },
+  compact: {
+    avatarSizeClass: "w-6 h-6",
+    textSizeClass: "text-[16px]",
   },
   small: {
     avatarSizeClass: "w-8 h-8",
@@ -79,6 +83,7 @@ const UserProfileDisplay = ({
   if (avatarVersion) {
     return (
       <CustomLink
+        target="_blank"
         href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
         className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}
       >

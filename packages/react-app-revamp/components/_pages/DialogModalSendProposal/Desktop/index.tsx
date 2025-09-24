@@ -66,7 +66,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   onSwitchNetwork,
   onSubmitProposal,
 }) => {
-  const { contestPrompt } = useContestStore(state => state);
+  const { contestPrompt, contestInfoData, contestAbi, version } = useContestStore(state => state);
   const {
     setWantsSubscription,
     setEmailForSubscription,
@@ -80,7 +80,12 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const insufficientBalance = (accountData?.value ?? 0) < charge.type.costToPropose;
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const showEntryCharge = charge.type.costToPropose && accountData && isCorrectNetwork;
-  const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields();
+  const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields({
+    address: contestInfoData.contestAddress as `0x${string}`,
+    chainId: contestInfoData.contestChainId,
+    abi: contestAbi,
+    version: version,
+  });
   const { fields: metadataFields } = useMetadataStore(state => state);
   const [error, setError] = useState<ReactNode | null>(null);
   const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
