@@ -7826,20 +7826,6 @@
     loupe "^2.3.7"
     pretty-format "^29.7.0"
 
-"@wagmi/connectors@5.10.1":
-  version "5.10.1"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.10.1.tgz#2d0a2b432ffa698f5ed20603ca3c1b314296f1dd"
-  integrity sha512-ho07FF5WLCqiR3+HsSZV1R3UrkLTi6F+EDiQdJOlgLLYsUHvB7Y7s8uLePP5lRxYUmDoFRURK1PwTGNSwlcKAA==
-  dependencies:
-    "@base-org/account" "1.1.1"
-    "@coinbase/wallet-sdk" "4.3.6"
-    "@gemini-wallet/core" "0.2.0"
-    "@metamask/sdk" "0.33.1"
-    "@safe-global/safe-apps-provider" "0.18.6"
-    "@safe-global/safe-apps-sdk" "9.1.0"
-    "@walletconnect/ethereum-provider" "2.21.1"
-    cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
-
 "@wagmi/connectors@5.10.2":
   version "5.10.2"
   resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.10.2.tgz#0679542915878e47ce35b45b135ada14eb7ed764"
@@ -7853,15 +7839,6 @@
     "@safe-global/safe-apps-sdk" "9.1.0"
     "@walletconnect/ethereum-provider" "2.21.1"
     cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
-
-"@wagmi/core@2.21.0":
-  version "2.21.0"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.21.0.tgz#33cad9915eec1faf818a12e4288efab2172c7110"
-  integrity sha512-ZtQBUvHEyfSM22BCeXZDjwcpby2vZjivjP8mMkQHxuVqRDnunaS5DIlZr2XPJKv01lPdlUajFSoiziNcIZlH5w==
-  dependencies:
-    eventemitter3 "5.0.1"
-    mipd "0.0.7"
-    zustand "5.0.0"
 
 "@wagmi/core@2.21.1":
   version "2.21.1"
@@ -16224,13 +16201,13 @@ w3c-keyname@^2.2.0:
   resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.8.tgz#7b17c8c6883d4e8b86ac8aba79d39e880f8869c5"
   integrity sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==
 
-wagmi@2.17.1:
-  version "2.17.1"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.17.1.tgz#7eacfc7e7ca55a919a91110b404e365c2f73dc54"
-  integrity sha512-Y1CTRPENz/+A0fRgezmdkpTUoRnzDe+OUd+x2+nVPWuffoNDXVLAs/d3qFA18Z5/3B8u2/2/E8ntP1McunfisQ==
+wagmi@2.17.2:
+  version "2.17.2"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.17.2.tgz#17a6966bcc2ee0e11aa0025d5cf1adb449f86191"
+  integrity sha512-r5yf2Nwzs469aT066tsGAuRt38z4RpQ2YZ09Kaxhd8q0IhLvw0aWBBgzXXbPqcGNEAJHtHAkXzum3wkqoHLgmA==
   dependencies:
-    "@wagmi/connectors" "5.10.1"
-    "@wagmi/core" "2.21.0"
+    "@wagmi/connectors" "5.10.2"
+    "@wagmi/core" "2.21.1"
     use-sync-external-store "1.4.0"
 
 watchpack@2.4.0:
