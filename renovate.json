@@ -13,10 +13,10 @@
   ],
   "packageRules": [
     {
-      "enabled": false,
       "matchPackageNames": [
         "*"
-      ]
+      ],
+      "enabled": false
     },
     {
       "matchFileNames": [
@@ -38,6 +38,12 @@
         "@tiptap/**"
       ],
       "enabled": false
+    },
+    {
+      "matchPackageNames":[
+        "viem"
+      ],
+      "automerge": false
     }
   ]
 }
