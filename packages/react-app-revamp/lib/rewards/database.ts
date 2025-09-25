@@ -14,8 +14,6 @@ export const getTokenAddresses = async (rewardsModuleAddress: string, networkNam
     const config = await import("@config/supabase");
     const supabase = config.supabase;
 
-    console.log({ rewardsModuleAddress, networkName });
-
     const { data: tokens, error } = await supabase
       .from("analytics_rewards_v3")
       .select("token_address")
