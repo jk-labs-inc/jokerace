@@ -168,6 +168,7 @@
   /* Additional Colors */
   --color-ffdd3e: #ffdd3e;
   --color-78ffc6: #78ffc6;
+  --color-381d4c: #381d4c;
 
   /* Keyframes */
   --animate-card-rotation: card-rotation 2000ms linear infinite;
@@ -215,6 +216,13 @@
   --background-image-gradient-vote-purple: linear-gradient(90deg, #bb65ff 0%, #bb65ff 50%, #ff78a9 75%, #ffe25b 100%);
   --background-image-gradient-gold: linear-gradient(90deg, #ffe25b 0%, #fffae1 100%);
   --background-image-gradient-entry-title: linear-gradient(180deg, #381d4c 0%, #000000 100%);
+  --background-image-gradient-timer: radial-gradient(
+    99% 99% at 8.93% 19.92%,
+    #381d4c 0%,
+    #000000 0%,
+    #1c0f26 92.09%,
+    #381d4c 100%
+  );
 
   /* Box Shadows */
   --shadow-create-header: 0 3px 4px 0 rgba(106, 106, 106, 1);

@@ -4,19 +4,17 @@ import TotalCharge from "@components/ChargeLayout/components/Vote/components/Tot
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import StepSlider from "@components/UI/Slider";
 import { VotingButtonText } from "@components/Voting";
-import { Charge, VoteType } from "@hooks/useDeployContest/types";
 import { FC, useEffect, useState } from "react";
 import { GetBalanceData } from "wagmi/query";
 
 interface VotingWidgetMobileProps {
-  isUpvote: boolean;
   isInvalid: boolean;
   inputRef: React.RefObject<HTMLInputElement | null>;
   amount: number;
   amountOfVotes: number;
   isFocused: boolean;
   sliderValue: number;
-  charge: Charge;
+  costToVote: number;
   chainId: number;
   voteDisabled: boolean;
   insufficientBalance: boolean;
@@ -26,14 +24,12 @@ interface VotingWidgetMobileProps {
   handleKeyDownInput: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   handleKeyDownSlider: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   handleSliderChange: (value: number) => void;
-  handleClick: (isUpvote: boolean) => void;
   setIsFocused: (value: boolean) => void;
   handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onAddFunds?: () => void;
 }
 
 const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
-  isUpvote,
   isInvalid,
   inputRef,
   amount,
@@ -46,11 +42,10 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
   handleKeyDownInput,
   handleKeyDownSlider,
   handleSliderChange,
-  handleClick,
   setIsFocused,
   handleInput,
   sliderValue,
-  charge,
+  costToVote,
   chainId,
   voteDisabled,
   onAddFunds,
@@ -71,17 +66,15 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              {charge.voteType === VoteType.PerVote ? (
-                <>
-                  <MyVotes
-                    balanceData={balanceData}
-                    amountOfVotes={amountOfVotes}
-                    charge={charge}
-                    onAddFunds={onAddFunds}
-                  />
-                  <ChargeInfo charge={charge} />
-                </>
-              ) : null}
+              <>
+                <MyVotes
+                  balanceData={balanceData}
+                  amountOfVotes={amountOfVotes}
+                  costToVote={costToVote}
+                  onAddFunds={onAddFunds}
+                />
+                <ChargeInfo />
+              </>
             </div>
           </div>
           <div className="flex flex-col gap-6">
@@ -111,13 +104,7 @@ const VotingWidgetMobile: FC<VotingWidgetMobileProps> = ({
             </div>
             <div className="flex flex-col gap-4">
               <StepSlider val={sliderValue} onChange={handleSliderChange} onKeyDown={handleKeyDownSlider} />
-              {charge.voteType === VoteType.PerTransaction ? (
-                <>
-                  <MyVotes balanceData={balanceData} amountOfVotes={amountOfVotes} charge={charge} />
-                  <ChargeInfo charge={charge} />
-                </>
-              ) : null}
-              <TotalCharge charge={charge} amountOfVotes={amount} />
+              <TotalCharge costToVote={costToVote} amountOfVotes={amount} />
             </div>
           </div>
 

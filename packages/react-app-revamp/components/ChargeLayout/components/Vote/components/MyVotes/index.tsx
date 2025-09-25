@@ -1,19 +1,17 @@
 import { formatBalance } from "@helpers/formatBalance";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
-import { Charge, VoteType } from "@hooks/useDeployContest/types";
 import React from "react";
 import { GetBalanceData } from "wagmi/query";
 
 interface MyVotesProps {
   amountOfVotes: number;
   balanceData: GetBalanceData | undefined;
-  charge: Charge;
+  costToVote: number;
   onAddFunds?: () => void;
 }
 
-const MyVotes: React.FC<MyVotesProps> = ({ charge, balanceData, amountOfVotes, onAddFunds }) => {
-  const insufficientBalance = balanceData ? balanceData.value < BigInt(charge.type.costToVote) : false;
-  const isPerVote = charge.voteType === VoteType.PerVote;
+const MyVotes: React.FC<MyVotesProps> = ({ costToVote, balanceData, amountOfVotes, onAddFunds }) => {
+  const insufficientBalance = balanceData ? balanceData.value < BigInt(costToVote) : false;
 
   return (
     <div
@@ -22,8 +20,8 @@ const MyVotes: React.FC<MyVotesProps> = ({ charge, balanceData, amountOfVotes, o
       } transition-colors duration-300`}
     >
       <p className="text-neutral-9">
-        {isPerVote ? "my wallet" : "my votes:"}{" "}
-        {isPerVote && !insufficientBalance ? (
+        my wallet{" "}
+        {!insufficientBalance ? (
           <>
             {" "}
             <span className="mx-1">|</span>{" "}
@@ -34,7 +32,7 @@ const MyVotes: React.FC<MyVotesProps> = ({ charge, balanceData, amountOfVotes, o
         ) : null}
       </p>
       <div className="flex items-center gap-2">
-        {balanceData && isPerVote ? (
+        {balanceData ? (
           <span className="text-neutral-9">
             {formatBalance(balanceData.formatted)} {balanceData.symbol}
           </span>

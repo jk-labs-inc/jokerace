@@ -1,22 +1,20 @@
-import { useEntryContractConfigStore } from "@components/_pages/Submission/hooks/useEntryContractConfig/store";
 import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { getChainFromId } from "@helpers/getChainFromId";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 
 const SubmissionPageDesktopEntryNavigation = () => {
-  const { contestAddress, contestChainId, contestAbi, contestVersion, proposalId } = useEntryContractConfigStore(
-    state => state,
-  );
+  const { contestConfig, proposalId } = useContestConfigStore(state => state);
   const { currentIndex, totalProposals, handlePreviousEntry, handleNextEntry } = useNavigateProposals({
     contestInfo: {
-      chain: getChainFromId(contestChainId)?.name ?? "",
-      address: contestAddress,
+      chain: getChainFromId(contestConfig.chainId)?.name ?? "",
+      address: contestConfig.address,
     },
-    proposalId,
+    proposalId: proposalId,
   });
 
   return (
-    <div className="flex items-center gap-2 ml-auto">
+    <div className="flex items-center gap-2">
       {currentIndex !== 0 && (
         <ButtonV3
           colorClass="bg-primary-2"

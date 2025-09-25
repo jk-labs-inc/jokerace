@@ -83,13 +83,12 @@ const Page = async (props: { params: Promise<{ chain: string; address: string; s
   const { chain, address, submission } = params;
 
   try {
-    const chainId = getChainId(chain);
 
-    if (!REGEX_ETHEREUM_ADDRESS.test(address) || !chainId) {
+    if (!REGEX_ETHEREUM_ADDRESS.test(address) || !chain) {
       return notFound();
     }
 
-    return <Submission address={address} chain={chain} submission={submission} chainId={chainId} />;
+    return <Submission address={address} chain={chain} submission={submission} />;
   } catch (error) {
     console.error("failed to render submission page:", error);
     return notFound();

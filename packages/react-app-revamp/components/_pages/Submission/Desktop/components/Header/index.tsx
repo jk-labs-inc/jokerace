@@ -4,7 +4,7 @@ import SubmissionPageDesktopVotes from "./components/Votes";
 
 const SubmissionPageDesktopHeader = () => {
   return (
-    <div className="flex items-center pl-10">
+    <div className="flex items-center gap-4 pl-10">
       <SubmissionPageDesktopVotes />
       <SubmissionPageDesktopEntryNavigation />
     </div>

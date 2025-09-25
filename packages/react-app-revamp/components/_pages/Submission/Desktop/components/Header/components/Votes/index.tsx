@@ -1,15 +1,15 @@
-import { useEntryContractConfigStore } from "@components/_pages/Submission/hooks/useEntryContractConfig/store";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ordinalize } from "@helpers/ordinalize";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useProposalVotes from "@hooks/useProposalVotes";
 
 const SubmissionPageDesktopVotes = () => {
-  const { contestAddress, contestChainId, contestAbi, proposalId } = useEntryContractConfigStore(state => state);
+  const { contestConfig, proposalId } = useContestConfigStore(state => state);
   const { votes, rank, isTied, isLoading, isError, error, refetch } = useProposalVotes({
-    contestAddress: contestAddress,
+    contestAddress: contestConfig.address,
     proposalId: proposalId,
-    chainId: contestChainId,
-    abi: contestAbi,
+    chainId: contestConfig.chainId,
+    abi: contestConfig.abi,
   });
 
   // TODO: add loading and error states

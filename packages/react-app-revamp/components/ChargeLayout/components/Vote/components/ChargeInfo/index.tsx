@@ -1,35 +1,10 @@
-import { Charge, VoteType } from "@hooks/useDeployContest/types";
-import React from "react";
 import ChargeInfoContainer from "./components/Container";
-import ChargeInfoFlat from "./components/Curve/Flat";
-import { useContestStore } from "@hooks/useContest/store";
-import { useShallow } from "zustand/shallow";
-import { compareVersions } from "compare-versions";
 import ChargeInfoCurve from "./components/Curve";
-import { VOTING_PRICE_CURVES_VERSION } from "constants/versions";
 
-interface ChargeInfoProps {
-  charge: Charge;
-}
-
-const ChargeInfo: React.FC<ChargeInfoProps> = ({ charge }) => {
-  const version = useContestStore(useShallow(state => state.version));
-  const chargeLabel = charge.voteType === VoteType.PerVote ? "charge per vote" : "charge to vote";
-
-  if (compareVersions(version, VOTING_PRICE_CURVES_VERSION) < 0) {
-    return (
-      <ChargeInfoContainer
-        className={charge.voteType === VoteType.PerTransaction ? "text-neutral-11" : "text-neutral-9"}
-      >
-        <p>{chargeLabel}:</p>
-        <ChargeInfoFlat />
-      </ChargeInfoContainer>
-    );
-  }
-
+const ChargeInfo = () => {
   return (
-    <ChargeInfoContainer className={charge.voteType === VoteType.PerTransaction ? "text-neutral-11" : "text-neutral-9"}>
-      <p>{chargeLabel}:</p>
+    <ChargeInfoContainer className="text-neutral-9">
+      <p>charge per vote:</p>
       <ChargeInfoCurve />
     </ChargeInfoContainer>
   );

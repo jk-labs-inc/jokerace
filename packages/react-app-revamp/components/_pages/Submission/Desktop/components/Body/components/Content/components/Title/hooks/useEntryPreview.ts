@@ -1,5 +1,5 @@
 import { verifyEntryPreviewPrompt } from "@components/_pages/DialogModalSendProposal/utils";
-import { useEntryContractConfigStore } from "@components/_pages/Submission/hooks/useEntryContractConfig/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import useMetadataFields from "@hooks/useMetadataFields";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
@@ -13,12 +13,12 @@ interface UseEntryPreviewReturn {
 }
 
 export const useEntryPreview = (): UseEntryPreviewReturn => {
-  const { contestAddress, contestChainId, contestAbi, contestVersion } = useEntryContractConfigStore(state => state);
+  const { contestConfig } = useContestConfigStore(state => state);
   const { isLoading, isError } = useMetadataFields({
-    address: contestAddress as `0x${string}`,
-    chainId: contestChainId,
-    abi: contestAbi,
-    version: contestVersion,
+    address: contestConfig.address,
+    chainId: contestConfig.chainId,
+    abi: contestConfig.abi,
+    version: contestConfig.version,
   });
 
   const metadataFields = useMetadataStore(useShallow(state => state.fields));

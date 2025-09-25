@@ -1,16 +1,15 @@
 import { getTotalCharge } from "@helpers/totalCharge";
 import { useContestStore } from "@hooks/useContest/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
-import { Charge, VoteType } from "@hooks/useDeployContest/types";
 import React, { useEffect, useState } from "react";
-import { formatEther } from "viem";
 import { useShallow } from "zustand/shallow";
+
 interface TotalChargeProps {
-  charge: Charge;
+  costToVote: number;
   amountOfVotes: number;
 }
 
-const TotalCharge: React.FC<TotalChargeProps> = ({ charge: contestCharge, amountOfVotes }) => {
+const TotalCharge: React.FC<TotalChargeProps> = ({ costToVote, amountOfVotes }) => {
   const [totalCharge, setTotalCharge] = useState("0");
   const { contestInfo, contestAbi, votingClose } = useContestStore(
     useShallow(state => ({
@@ -32,21 +31,13 @@ const TotalCharge: React.FC<TotalChargeProps> = ({ charge: contestCharge, amount
       return;
     }
 
-    if (contestCharge.type.costToVote === 0) {
+    if (costToVote === 0) {
       setTotalCharge("0");
       return;
     }
 
-    if (contestCharge.voteType === VoteType.PerVote) {
-      setTotalCharge(getTotalCharge(amountOfVotes, currentPricePerVote));
-    } else {
-      setTotalCharge(formatEther(BigInt(contestCharge.type.costToVote)));
-    }
-  }, [contestCharge, amountOfVotes]);
-
-  if (contestCharge.voteType === VoteType.PerTransaction) {
-    return null;
-  }
+    setTotalCharge(getTotalCharge(amountOfVotes, currentPricePerVote));
+  }, [costToVote, amountOfVotes]);
 
   return (
     <div className="flex items-center justify-between text-neutral-11 text-[16px]">

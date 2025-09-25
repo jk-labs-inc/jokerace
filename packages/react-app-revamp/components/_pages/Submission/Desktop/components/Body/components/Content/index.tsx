@@ -1,16 +1,16 @@
-import { useEntryContractConfigStore } from "@components/_pages/Submission/hooks/useEntryContractConfig/store";
-import SubmissionPageDesktopBodyContentTitle from "./components/Title";
 import useEntryData from "@components/_pages/Submission/hooks/useEntryData";
-import SubmissionPageDesktopBodyContentInfo from "./components/Info";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import SubmissionPageDesktopBodyContentDescription from "./components/Description";
+import SubmissionPageDesktopBodyContentInfo from "./components/Info";
+import SubmissionPageDesktopBodyContentTitle from "./components/Title";
 
 const SubmissionPageDesktopBodyContent = () => {
-  const { contestAddress, contestChainId, contestAbi, proposalId } = useEntryContractConfigStore(state => state);
+  const { contestConfig, proposalId } = useContestConfigStore(state => state);
   const { proposalData, isLoadingProposal, isErrorProposal } = useEntryData({
-    contestAddress,
-    contestChainId,
-    contestAbi,
-    proposalId,
+    contestAddress: contestConfig.address,
+    contestChainId: contestConfig.chainId,
+    contestAbi: contestConfig.abi,
+    proposalId: proposalId,
   });
 
   //TODO: add loading and error states

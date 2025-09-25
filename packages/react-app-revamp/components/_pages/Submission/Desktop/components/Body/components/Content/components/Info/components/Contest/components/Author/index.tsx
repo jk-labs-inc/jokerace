@@ -1,16 +1,16 @@
-import { useEntryContractConfigStore } from "@components/_pages/Submission/hooks/useEntryContractConfig/store";
 import { useContestAuthor } from "../../../../../../../../../../../hooks/useContestAuthor";
 import { useEnsName } from "wagmi";
 import { mainnet } from "@config/wagmi/custom-chains/mainnet";
 import Link from "next/link";
 import { ROUTE_VIEW_USER } from "@config/routes";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 
 const SubmissionPageDesktopBodyContentInfoContestAuthor = () => {
-  const { contestAddress, contestChainId, contestAbi } = useEntryContractConfigStore();
+  const { contestConfig } = useContestConfigStore(state => state);
   const { contestAuthor, isLoading, isError } = useContestAuthor({
-    contestAddress: contestAddress,
-    contestChainId: contestChainId,
-    contestAbi: contestAbi,
+    contestAddress: contestConfig.address,
+    contestChainId: contestConfig.chainId,
+    contestAbi: contestConfig.abi,
   });
   const {
     data: contestAuthorEnsName,

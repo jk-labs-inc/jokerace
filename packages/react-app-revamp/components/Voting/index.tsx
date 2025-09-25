@@ -1,15 +1,6 @@
 import { toastInfo } from "@components/UI/Toast";
-import { chains, config } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
-import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import { useContestStore } from "@hooks/useContest/store";
-import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { switchChain } from "@wagmi/core";
-import { usePathname } from "next/navigation";
 import { FC, RefObject, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useAccount, useBalance } from "wagmi";
 import VotingWidgetMobile from "./components/Mobile";
 import VoteAmountInput from "./components/VoteAmountInput";
 import VoteButton from "./components/VoteButton";
@@ -17,10 +8,18 @@ import VoteInfoSection from "./components/VoteInfoSection";
 import VoteSlider from "./components/VoteSlider";
 
 interface VotingWidgetProps {
-  proposalId: string;
   amountOfVotes: number;
-  onVote?: (amount: number, isUpvote: boolean) => void;
+  costToVote: number;
+  chainId: number;
+  balanceData: any; // TODO: proper type from wagmi
+  isLoading: boolean;
+  isVotingClosed: boolean;
+  isContestCanceled: boolean;
+  insufficientBalance: boolean;
+  isCorrectNetwork: boolean;
+  onVote?: (amount: number) => void;
   onAddFunds?: () => void;
+  onSwitchChain?: (chainId: number) => Promise<void>;
 }
 
 export enum VotingButtonText {
@@ -28,34 +27,28 @@ export enum VotingButtonText {
   ADD_VOTES = "add votes to entry",
 }
 
-const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote, onAddFunds }) => {
-  const { charge } = useContestStore(state => state);
-  const { contestStatus } = useContestStatusStore(state => state);
-  const isVotingClosed = contestStatus === ContestStatus.VotingClosed;
+const VotingWidget: FC<VotingWidgetProps> = ({
+  amountOfVotes,
+  costToVote,
+  chainId,
+  balanceData,
+  isLoading,
+  isVotingClosed,
+  isContestCanceled,
+  insufficientBalance,
+  isCorrectNetwork,
+  onVote,
+  onAddFunds,
+  onSwitchChain,
+}) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const asPath = usePathname();
-  const { chainId: accountChainId, address: userAddress } = useAccount();
-  const { chainName } = extractPathSegments(asPath ?? "");
-  const { isLoading } = useCastVotesStore(state => state);
-  const [isUpvote, setIsUpvote] = useState(true);
   const [amount, setAmount] = useState(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [isInvalid, setIsInvalid] = useState(false);
   const [isFocused, setIsFocused] = useState(true);
   const voteDisabled = isLoading || isInvalid || isNaN(amount) || amount === 0;
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
-  )?.[0]?.id;
-  const isCorrectNetwork = chainId === accountChainId;
-  const { contestState } = useContestStateStore(state => state);
-  const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const inputRef = useRef<HTMLInputElement>(null);
   const [buttonText, setButtonText] = useState(VotingButtonText.ADD_VOTES);
-  const { data: balanceData } = useBalance({
-    address: userAddress,
-    chainId,
-  });
-  const insufficientBalance = charge && balanceData ? balanceData.value < BigInt(charge.type.costToVote) : false;
 
   useEffect(() => {
     if (insufficientBalance) {
@@ -70,10 +63,6 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote
       inputRef.current.focus();
     }
   }, []);
-
-  const handleVoteTypeChange = (value: boolean) => {
-    setIsUpvote(value);
-  };
 
   const handleSliderChange = (value: any) => {
     const newAmount = Math.round((value / 100) * amountOfVotes);
@@ -128,8 +117,8 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote
   };
 
   const handleVote = async () => {
-    if (!isCorrectNetwork) {
-      await switchChain(config, { chainId });
+    if (!isCorrectNetwork && onSwitchChain) {
+      await onSwitchChain(chainId);
     }
 
     if (isVotingClosed) {
@@ -139,7 +128,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote
       return;
     }
 
-    onVote?.(amount, isUpvote);
+    onVote?.(amount);
   };
 
   if (isContestCanceled) return null;
@@ -150,17 +139,15 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote
         amount={amount}
         inputRef={inputRef}
         sliderValue={sliderValue}
-        isUpvote={isUpvote}
         handleVote={handleVote}
         chainId={chainId}
-        charge={charge}
+        costToVote={costToVote}
         amountOfVotes={amountOfVotes}
         balanceData={balanceData}
         isFocused={isFocused}
         setIsFocused={setIsFocused}
         isInvalid={isInvalid}
         voteDisabled={voteDisabled}
-        handleClick={handleVoteTypeChange}
         handleSliderChange={handleSliderChange}
         handleChange={handleAmountChange}
         handleKeyDownSlider={handleKeyDownSlider}
@@ -193,7 +180,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote
           <VoteInfoSection
             balanceData={balanceData}
             amountOfVotes={amountOfVotes}
-            charge={charge}
+            costToVote={costToVote}
             voteAmount={amount}
             onAddFunds={onAddFunds}
           />

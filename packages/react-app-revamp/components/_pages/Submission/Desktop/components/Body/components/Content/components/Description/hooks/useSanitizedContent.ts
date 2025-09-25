@@ -16,7 +16,6 @@ export const useSanitizedContent = (
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = content;
 
-    // Apply sanitization rules based on options
     if (options.removeEntryPreviewTitle) {
       const titleParagraphs = tempDiv.querySelectorAll("p#entry-preview-title");
       titleParagraphs.forEach(p => p.remove());

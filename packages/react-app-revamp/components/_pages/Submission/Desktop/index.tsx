@@ -1,5 +1,6 @@
 import SubmissionPageDesktopBody from "./components/Body";
 import SubmissionPageDesktopHeader from "./components/Header";
+import SubmissionPageDesktopVotingArea from "./components/VotingArea";
 
 const SubmissionPageDesktopLayout = () => {
   return (
@@ -10,8 +11,7 @@ const SubmissionPageDesktopLayout = () => {
           <SubmissionPageDesktopBody />
         </div>
         <div className="w-[40%]">
-          {/* Right content - 40% width */}
-          <p>Right side content (40%)</p>
+          <SubmissionPageDesktopVotingArea />
         </div>
       </div>
     </div>

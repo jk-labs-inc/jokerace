@@ -6,19 +6,32 @@ import { FC } from "react";
 interface VoteInfoSectionProps {
   balanceData: any;
   amountOfVotes: number;
-  charge: any;
+  costToVote: number;
   voteAmount: number;
   onAddFunds?: () => void;
 }
 
-const VoteInfoSection: FC<VoteInfoSectionProps> = ({ balanceData, amountOfVotes, charge, voteAmount, onAddFunds }) => {
+const VoteInfoSection: FC<VoteInfoSectionProps> = ({
+  balanceData,
+  amountOfVotes,
+  costToVote,
+  voteAmount,
+  onAddFunds,
+}) => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <MyVotes balanceData={balanceData} amountOfVotes={amountOfVotes} charge={charge} onAddFunds={onAddFunds} />
-        <ChargeInfo charge={charge} />
+        <MyVotes
+          balanceData={balanceData}
+          amountOfVotes={amountOfVotes}
+          costToVote={costToVote}
+          onAddFunds={onAddFunds}
+        />
+
+        {/* TODO: see how we wanna resolve stuff in this component */}
+        <ChargeInfo />
       </div>
-      <TotalCharge charge={charge} amountOfVotes={voteAmount} />
+      <TotalCharge costToVote={costToVote} amountOfVotes={voteAmount} />
     </div>
   );
 };

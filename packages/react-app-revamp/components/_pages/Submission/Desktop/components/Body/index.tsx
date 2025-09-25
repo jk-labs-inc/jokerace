@@ -6,6 +6,7 @@ const SubmissionPageDesktopBody = () => {
       <div className="p-4 flex-1">
         <SubmissionPageDesktopBodyContent />
       </div>
+      {/* TODO: add comments */}
     </div>
   );
 };
