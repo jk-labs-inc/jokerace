@@ -17,7 +17,7 @@ export const getTokenAddresses = async (rewardsModuleAddress: string, networkNam
     const { data: tokens, error } = await supabase
       .from("analytics_rewards_v3")
       .select("token_address")
-      .eq("rewards_module_address", rewardsModuleAddress)
+      .ilike("rewards_module_address", rewardsModuleAddress)
       .eq("network_name", networkName.toLowerCase())
       .not("token_address", "is", null);
 
