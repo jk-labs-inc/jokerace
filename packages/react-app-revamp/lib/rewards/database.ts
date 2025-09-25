@@ -18,6 +18,7 @@ export const getTokenAddresses = async (rewardsModuleAddress: string, networkNam
       .from("analytics_rewards_v3")
       .select("token_address")
       .ilike("rewards_module_address", rewardsModuleAddress)
+      .eq("network_name", networkName.toLowerCase())
       .not("token_address", "is", null);
 
     if (error) {
