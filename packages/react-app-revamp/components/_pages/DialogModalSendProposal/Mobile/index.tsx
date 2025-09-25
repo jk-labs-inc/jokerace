@@ -3,6 +3,7 @@ import DialogModalV3 from "@components/UI/DialogModalV3";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import useMetadataFields from "@hooks/useMetadataFields";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
@@ -11,11 +12,12 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useEffect } from "react";
-import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
-import DialogModalSendProposalMobileLayoutConfirm from "./components/ConfirmDialog";
-import { isEntryPreviewPrompt } from "../utils";
-import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
+import { useShallow } from "zustand/shallow";
 import DialogModalSendProposalEditor from "../components/Editor";
+import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
+import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
+import { isEntryPreviewPrompt } from "../utils";
+import DialogModalSendProposalMobileLayoutConfirm from "./components/ConfirmDialog";
 
 interface DialogModalSendProposalMobileLayoutProps {
   chainName: string;
@@ -49,13 +51,14 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   const { isLoading, error } = useSubmitProposal();
   const { isMobileConfirmModalOpen, setIsMobileConfirmModalOpen, setIsLoading, setIsSuccess, setProposalId } =
     useSubmitProposalStore(state => state);
-  const { contestPrompt, contestInfoData, contestAbi, version } = useContestStore(state => state);
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const { contestPrompt } = useContestStore(state => state);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields({
-    address: contestInfoData.contestAddress as `0x${string}`,
-    chainId: contestInfoData.contestChainId,
-    abi: contestAbi,
-    version: version,
+    address: contestConfig.address,
+    chainId: contestConfig.chainId,
+    abi: contestConfig.abi,
+    version: contestConfig.version,
   });
   const { fields: metadataFields } = useMetadataStore(state => state);
   const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);

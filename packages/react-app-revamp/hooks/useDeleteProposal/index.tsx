@@ -2,24 +2,30 @@ import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { extractPathSegments } from "@helpers/extractPath";
-import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { ContestStatus } from "@hooks/useContestStatus/store";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { compareVersions } from "compare-versions";
 import { saveUpdatedProposalsStatusToAnalyticsV3 } from "lib/analytics/participants";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 import { useDeleteProposalStore } from "./store";
-import { ContestStatus } from "@hooks/useContestStatus/store";
-import { compareVersions } from "compare-versions";
 
 export const ENTRANT_CAN_DELETE_VERSION = "5.3";
 
 export function useDeleteProposal() {
-  const { contestAbi: abi, version } = useContestStore(state => state);
+  const { abi, version } = useContestConfigStore(
+    useShallow(state => ({
+      abi: state.contestConfig.abi,
+      version: state.contestConfig.version,
+    })),
+  );
   const { address: userAddress } = useAccount();
   const asPath = usePathname();
   const { address, chainName } = extractPathSegments(asPath ?? "");

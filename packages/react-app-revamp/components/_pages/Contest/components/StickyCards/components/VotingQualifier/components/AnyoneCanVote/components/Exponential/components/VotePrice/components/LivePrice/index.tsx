@@ -1,4 +1,5 @@
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import { motion } from "motion/react";
 import { FC } from "react";
@@ -8,19 +9,18 @@ import { useShallow } from "zustand/react/shallow";
 
 const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const { contestInfoData, contestAbi, votingClose } = useContestStore(
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const { votingClose } = useContestStore(
     useShallow(state => ({
-      contestInfoData: state.contestInfoData,
-      contestAbi: state.contestAbi,
       votingClose: state.votesClose,
     })),
   );
 
   const { currentPricePerVoteFormatted, isLoading, isRefetching, isError, hasPriceChanged, isPreloading } =
     useCurrentPricePerVoteWithRefetch({
-      address: contestInfoData.contestAddress,
-      abi: contestAbi,
-      chainId: contestInfoData.contestChainId,
+      address: contestConfig.address,
+      abi: contestConfig.abi,
+      chainId: contestConfig.chainId,
       votingClose,
     });
 
@@ -45,7 +45,7 @@ const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC = () => {
     >
       {currentPricePerVoteFormatted}
       <span className="text-[16px] md:text-[24px] text-neutral-9 uppercase">
-        {contestInfoData.contestChainNativeCurrencySymbol}
+        {contestConfig.chainNativeCurrencySymbol}
       </span>{" "}
       {isMobile && <span className="text-[12px] text-neutral-11">/ vote</span>}
     </motion.p>

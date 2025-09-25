@@ -1,6 +1,7 @@
-import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { formatUnits } from "viem";
 import { useReadContract } from "wagmi";
+import { useShallow } from "zustand/shallow";
 
 interface UseTotalVotesPerUserParams {
   contractAddress: `0x${string}`;
@@ -9,8 +10,7 @@ interface UseTotalVotesPerUserParams {
 }
 
 const useTotalVotesPerUser = ({ contractAddress, chainId, userAddress }: UseTotalVotesPerUserParams) => {
-  const { contestAbi: abi } = useContestStore(state => state);
-
+  const abi = useContestConfigStore(useShallow(state => state.contestConfig.abi));
   const result = useReadContract({
     address: contractAddress,
     abi,

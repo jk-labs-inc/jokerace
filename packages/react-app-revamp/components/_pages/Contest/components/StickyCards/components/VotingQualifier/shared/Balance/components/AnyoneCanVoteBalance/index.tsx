@@ -1,12 +1,12 @@
-import { useUserStore } from "@hooks/useUser/store";
-import { useUserNativeBalance } from "@hooks/useUserBalance";
-import { useShallow } from "zustand/react/shallow";
-import { FC, useState } from "react";
-import Skeleton from "react-loading-skeleton";
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
-import { useContestStore } from "@hooks/useContest/store";
 import AddFundsModal from "@components/AddFunds/components/Modal";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useUserStore } from "@hooks/useUser/store";
+import { useUserNativeBalance } from "@hooks/useUserBalance";
+import { FC, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import { useShallow } from "zustand/react/shallow";
 
 const BalanceOrSkeleton = ({
   isUserBalanceLoading,
@@ -41,10 +41,8 @@ interface VotingQualifierAnyoneCanVoteBalanceProps {
 }
 
 const VotingQualifierAnyoneCanVoteBalance: FC<VotingQualifierAnyoneCanVoteBalanceProps> = ({ userAddress }) => {
-  const { contestChainId, contestChainNativeCurrencySymbol, contestChainName } = useContestStore(
-    useShallow(state => state.contestInfoData),
-  );
-  const { data, isLoading, error } = useUserNativeBalance({ address: userAddress, chainId: contestChainId });
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const { data, isLoading, error } = useUserNativeBalance({ address: userAddress, chainId: contestConfig.chainId });
   const currentUserAvailableVotesAmount = useUserStore(useShallow(state => state.currentUserAvailableVotesAmount));
   const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
 
@@ -55,8 +53,8 @@ const VotingQualifierAnyoneCanVoteBalance: FC<VotingQualifierAnyoneCanVoteBalanc
     return (
       <>
         <AddFundsModal
-          chain={contestChainName}
-          asset={contestChainNativeCurrencySymbol}
+          chain={contestConfig.chainName}
+          asset={contestConfig.chainNativeCurrencySymbol}
           isOpen={isAddFundsOpen}
           onClose={() => setIsAddFundsOpen(false)}
         />
@@ -77,7 +75,7 @@ const VotingQualifierAnyoneCanVoteBalance: FC<VotingQualifierAnyoneCanVoteBalanc
       <BalanceOrSkeleton
         isUserBalanceLoading={isLoading}
         userBalance={data}
-        nativeCurrencySymbol={contestChainNativeCurrencySymbol}
+        nativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol}
       />
       <span className="text-neutral-11 ml-1">
         {formatNumberAbbreviated(currentUserAvailableVotesAmount)} vote

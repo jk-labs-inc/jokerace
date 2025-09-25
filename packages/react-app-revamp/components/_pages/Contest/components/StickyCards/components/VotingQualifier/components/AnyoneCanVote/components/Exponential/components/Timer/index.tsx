@@ -1,5 +1,5 @@
 import { ArrowLongUpIcon } from "@heroicons/react/24/outline";
-import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
 import { FC } from "react";
@@ -19,15 +19,7 @@ const VotingQualifierAnyoneCanVoteExponentialTimer: FC<VotingQualifierAnyoneCanV
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
   const secondsUntilNextUpdate = votingTimeLeft % priceCurveUpdateInterval;
-  const { address, abi, chainId } = useContestStore(
-    useShallow(state => ({
-      address: state.contestInfoData.contestAddress,
-      abi: state.contestAbi,
-      chainId: state.contestInfoData.contestChainId,
-      version: state.version,
-      votingClose: state.votesClose,
-    })),
-  );
+  const { address, abi, chainId } = useContestConfigStore(useShallow(state => state.contestConfig));
   const { currentPricePercentageData, isError } = useCurrentPricePercentageIncrease({
     address,
     abi,

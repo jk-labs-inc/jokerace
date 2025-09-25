@@ -1,5 +1,6 @@
 import { getTotalCharge } from "@helpers/totalCharge";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import React, { useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
@@ -11,17 +12,16 @@ interface TotalChargeProps {
 
 const TotalCharge: React.FC<TotalChargeProps> = ({ costToVote, amountOfVotes }) => {
   const [totalCharge, setTotalCharge] = useState("0");
-  const { contestInfo, contestAbi, votingClose } = useContestStore(
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const { votingClose } = useContestStore(
     useShallow(state => ({
-      contestInfo: state.contestInfoData,
-      contestAbi: state.contestAbi,
       votingClose: state.votesClose,
     })),
   );
   const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged } = useCurrentPricePerVoteWithRefetch({
-    address: contestInfo.contestAddress,
-    abi: contestAbi,
-    chainId: contestInfo.contestChainId,
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
     votingClose,
   });
 
@@ -43,7 +43,7 @@ const TotalCharge: React.FC<TotalChargeProps> = ({ costToVote, amountOfVotes }) 
     <div className="flex items-center justify-between text-neutral-11 text-[16px]">
       <p>total charge:</p>
       <p className="text-[24px] font-bold">
-        {totalCharge} {contestInfo.contestChainNativeCurrencySymbol}
+        {totalCharge} {contestConfig.chainNativeCurrencySymbol}
       </p>
     </div>
   );

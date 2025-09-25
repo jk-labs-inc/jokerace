@@ -13,14 +13,20 @@ interface TimerDisplayProps {
 const TimerDisplay: FC<TimerDisplayProps> = ({ timeRemaining }) => {
   const { days, hours, minutes, seconds } = timeRemaining;
 
-  return (
-    <div className="flex items-baseline gap-2">
-      <TimeUnit value={days} unit="d" />
-      <TimeUnit value={hours} unit="h" />
-      <TimeUnit value={minutes} unit="m" />
-      <TimeUnit value={seconds} unit="s" />
-    </div>
-  );
+  const units = [];
+
+  if (days > 0) {
+    units.push(<TimeUnit key="days" value={days} unit="d" />);
+  }
+
+  if (hours > 0) {
+    units.push(<TimeUnit key="hours" value={hours} unit="h" />);
+  }
+
+  units.push(<TimeUnit key="minutes" value={minutes} unit="m" />);
+  units.push(<TimeUnit key="seconds" value={seconds} unit="s" />);
+
+  return <div className="flex items-baseline gap-2">{units}</div>;
 };
 
 export default TimerDisplay;

@@ -1,13 +1,16 @@
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { formatEther } from "viem";
 import { useShallow } from "zustand/shallow";
 import VotingQualifierBalance from "../../../../shared/Balance";
 
 const VotingQualifierAnyoneCanVoteFlat = () => {
-  const { costToVote, nativeCurrencySymbol } = useContestStore(
+  const chainNativeCurrencySymbol = useContestConfigStore(
+    useShallow(state => state.contestConfig.chainNativeCurrencySymbol),
+  );
+  const { costToVote } = useContestStore(
     useShallow(state => ({
       costToVote: state.charge.type.costToVote,
-      nativeCurrencySymbol: state.contestInfoData.contestChainNativeCurrencySymbol,
     })),
   );
   const costToVoteFormatted = formatEther(BigInt(costToVote));
@@ -19,7 +22,7 @@ const VotingQualifierAnyoneCanVoteFlat = () => {
         <p className="text-[12px] md:text-[16px] font-bold text-neutral-9">my wallet</p>
         <span className="hidden md:flex text-[16px] text-neutral-9">|</span>
         <p className="hidden md:flex text-[16px] text-neutral-9">
-          1 vote = {costToVoteFormatted} {nativeCurrencySymbol}
+          1 vote = {costToVoteFormatted} {chainNativeCurrencySymbol}
         </p>
       </div>
       <VotingQualifierBalance />

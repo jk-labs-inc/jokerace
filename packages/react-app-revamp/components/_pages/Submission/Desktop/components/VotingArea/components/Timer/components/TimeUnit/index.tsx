@@ -6,12 +6,10 @@ interface TimeUnitProps {
 }
 
 const TimeUnit: FC<TimeUnitProps> = ({ value, unit }) => {
-  // Format value to always show 2 digits for consistency
-  const formattedValue = value.toString().padStart(2, "0");
-
+  // TODO: check with david about logic here, why he has 03 in the time units
   return (
     <span className="inline-flex items-baseline gap-0">
-      <span className="text-[24px] font-bold text-neutral-11">{formattedValue}</span>
+      <span className="text-[24px] font-bold text-neutral-11">{value}</span>
       <span className="text-[16px] font-normal text-neutral-11">{unit}</span>
     </span>
   );

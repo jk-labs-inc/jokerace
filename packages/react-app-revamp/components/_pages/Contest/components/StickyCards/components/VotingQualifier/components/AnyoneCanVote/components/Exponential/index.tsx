@@ -1,6 +1,6 @@
 import usePriceCurveChartStore from "@components/_pages/Contest/components/PriceCurveChart/store";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
-import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
 import { motion } from "motion/react";
@@ -21,18 +21,11 @@ const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteEx
 }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
-  const { contestInfoData, contestAbi, contestVersion } = useContestStore(
-    useShallow(state => ({
-      contestInfoData: state.contestInfoData,
-      contestAbi: state.contestAbi,
-      contestVersion: state.version,
-    })),
-  );
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { priceCurveUpdateInterval, isLoading, isError, refetch } = usePriceCurveUpdateInterval({
-    address: contestInfoData.contestAddress,
-    abi: contestAbi,
-    chainId: contestInfoData.contestChainId,
-    version: contestVersion,
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
   });
   const { isExpanded, setIsExpanded } = usePriceCurveChartStore();
   const isPriceCurveChartToggleDisabled = isMobile;

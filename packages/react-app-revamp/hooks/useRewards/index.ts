@@ -1,41 +1,33 @@
 import { chains, config } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
-import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useQuery } from "@tanstack/react-query";
 import { readContracts } from "@wagmi/core";
 import { getRewardsModuleAddress, getRewardsModuleInfo } from "lib/rewards/contracts";
 import { ModuleType, RewardModuleInfo } from "lib/rewards/types";
-import { usePathname } from "next/navigation";
 import { Abi } from "viem";
-import { useShallow } from "zustand/react/shallow";
 
 export function useRewardsModule() {
-  const asPath = usePathname();
-  const contestAbi = useContestStore(useShallow(state => state.contestAbi));
-  const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
-  )?.[0]?.id;
+  const { contestConfig } = useContestConfigStore(state => state);
 
   const getRewardsConfig = (rewardsModuleAddress: string, abi: Abi) => ({
     address: rewardsModuleAddress as `0x${string}`,
     abi: abi as Abi,
-    chainId,
+    chainId: contestConfig.chainId,
   });
 
   const fetchContestRewardsModule = async (): Promise<RewardModuleInfo | null> => {
-    if (!contestAddress || !contestAbi || !chainId) {
+    if (!contestConfig.address || !contestConfig.abi || !contestConfig.chainId) {
       return null;
     }
 
-    const rewardsConfig = getRewardsConfig(contestAddress as `0x${string}`, contestAbi);
+    const rewardsConfig = getRewardsConfig(contestConfig.address as `0x${string}`, contestConfig.abi);
 
     const rewardsModuleAddress = await getRewardsModuleAddress(rewardsConfig);
     if (!rewardsModuleAddress) {
       return null;
     }
 
-    const { abi, moduleType } = await getRewardsModuleInfo(rewardsModuleAddress, chainId);
+    const { abi, moduleType } = await getRewardsModuleInfo(rewardsModuleAddress, contestConfig.chainId);
     if (!abi) {
       throw new Error("Failed to get rewards module ABI");
     }
@@ -74,15 +66,15 @@ export function useRewardsModule() {
       totalShares: totalSharesFormatted,
       moduleType: moduleType ?? ModuleType.VOTER_REWARDS,
       blockExplorers: chains.filter(
-        (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName,
+        (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestConfig.chainName,
       )?.[0]?.blockExplorers?.default.url,
     };
   };
 
   return useQuery({
-    queryKey: ["rewards-module", contestAddress, contestAbi, chainId],
+    queryKey: ["rewards-module", contestConfig.address, contestConfig.abi, contestConfig.chainId],
     queryFn: fetchContestRewardsModule,
-    enabled: Boolean(contestAddress && contestAbi && chainId),
+    enabled: Boolean(contestConfig.address && contestConfig.abi && contestConfig.chainId),
     staleTime: Infinity,
   });
 }

@@ -20,6 +20,7 @@ import { FC, useEffect, useState, useCallback } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/react/shallow";
 import { Proposal } from "../ProposalContent";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 
 interface DialogModalVoteForProposalProps {
   isOpen: boolean;
@@ -29,19 +30,15 @@ interface DialogModalVoteForProposalProps {
 
 export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = ({ isOpen, setIsOpen, proposal }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const {
     contestPrompt,
     charge: contestCharge,
-    contestInfoData,
-    contestAbi,
     votingClose,
   } = useContestStore(
     useShallow(state => ({
       contestPrompt: state.contestPrompt,
       charge: state.charge,
-      contestInfoData: state.contestInfoData,
-      contestAbi: state.contestAbi,
-      contestVersion: state.version,
       votingClose: state.votesClose,
     })),
   );
@@ -56,7 +53,6 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
   const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
   const [totalCharge, setTotalCharge] = useState("");
-  const nativeToken = getNativeTokenSymbol(contestInfoData.contestChainName);
   const [showAddFunds, setShowAddFunds] = useState(false);
   const {
     currentPricePerVote,
@@ -66,9 +62,9 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     isRefetching: isCurrentPricePerVoteRefetching,
     isRefetchError: isCurrentPricePerVoteRefetchError,
   } = useCurrentPricePerVoteWithRefetch({
-    address: contestInfoData.contestAddress,
-    abi: contestAbi,
-    chainId: contestInfoData.contestChainId,
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
     votingClose: votingClose,
   });
   const earlyReturn =
@@ -128,12 +124,12 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   return (
     <DialogModalV4 isOpen={isOpen} onClose={handleModalClose}>
       <div className="flex flex-col gap-4 pt-6 pb-4 md:py-16 px-6 md:pl-32 md:pr-16">
-        {showAddFunds && nativeToken && contestInfoData.contestChainName ? (
+        {showAddFunds && contestConfig.chainNativeCurrencySymbol && contestConfig.chainName ? (
           <div className="animate-swing-in-left">
             <AddFunds
               className="md:w-[400px]"
-              chain={contestInfoData.contestChainName}
-              asset={nativeToken ?? ""}
+              chain={contestConfig.chainName}
+              asset={contestConfig.chainNativeCurrencySymbol ?? ""}
               onGoBack={() => setShowAddFunds(false)}
             />
           </div>
@@ -153,7 +149,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
 
             {showMaxVoteConfirmation ? (
               <DialogMaxVotesAlert
-                token={nativeToken ?? ""}
+                token={contestConfig.chainNativeCurrencySymbol ?? ""}
                 totalCost={totalCharge}
                 onConfirm={confirmMaxVote}
                 onCancel={cancelMaxVote}

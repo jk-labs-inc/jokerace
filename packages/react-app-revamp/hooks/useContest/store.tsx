@@ -1,6 +1,5 @@
 import { Charge, SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { createContext, useContext, useRef } from "react";
-import { Abi } from "viem";
 import { createStore, useStore } from "zustand";
 
 export enum ErrorType {
@@ -10,18 +9,9 @@ export enum ErrorType {
   UNSUPPORTED_VERSION = "UNSUPPORTED_VERSION",
 }
 
-export interface ContestInfoData {
-  contestAddress: string;
-  contestChainName: string;
-  contestChainId: number;
-  contestChainNativeCurrencySymbol: string;
-}
-
 export interface ContestState {
   contestName: string;
-  contestInfoData: ContestInfoData;
   contestPrompt: string;
-  contestAbi: Abi;
   contestAuthorEthereumAddress: string;
   submissionsOpen: Date;
   votesOpen: Date;
@@ -34,7 +24,6 @@ export interface ContestState {
   sortingEnabled: boolean;
   charge: Charge;
   isReadOnly: boolean;
-  version: string;
   canEditTitleAndDescription: boolean;
   rewardsModuleAddress: string;
   setSortingEnabled: (isAllowed: boolean) => void;
@@ -51,11 +40,8 @@ export interface ContestState {
   setIsV3: (value: boolean) => void;
   setCharge: (charge: Charge) => void;
   setIsReadOnly: (value: boolean) => void;
-  setContestAbi: (abi: Abi) => void;
-  setVersion: (version: string) => void;
   setCanEditTitleAndDescription: (value: boolean) => void;
   setRewardsModuleAddress: (address: string) => void;
-  setContestInfoData: (contestInfoData: ContestInfoData) => void;
   getTotalVotingMinutes: () => number;
   getCurrentVotingMinute: () => number;
 }
@@ -63,14 +49,7 @@ export interface ContestState {
 export const createContestStore = () =>
   createStore<ContestState>((set, get) => ({
     contestName: "",
-    contestInfoData: {
-      contestAddress: "",
-      contestChainName: "",
-      contestChainId: 0,
-      contestChainNativeCurrencySymbol: "",
-    },
     contestPrompt: "",
-    contestAbi: [],
     contestAuthorEthereumAddress: "",
     submissionsOpen: new Date(),
     votesOpen: new Date(),
@@ -94,7 +73,6 @@ export const createContestStore = () =>
     sortingEnabled: false,
     isV3: false,
     isReadOnly: false,
-    version: "",
     canEditTitleAndDescription: false,
     rewardsModuleAddress: "",
     setSortingEnabled: isAllowed => set({ sortingEnabled: isAllowed }),
@@ -111,11 +89,8 @@ export const createContestStore = () =>
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),
     setCharge: charge => set({ charge: charge }),
-    setContestAbi: abi => set({ contestAbi: abi }),
-    setVersion: version => set({ version: version }),
     setCanEditTitleAndDescription: value => set({ canEditTitleAndDescription: value }),
     setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
-    setContestInfoData: contestInfoData => set({ contestInfoData: contestInfoData }),
     getTotalVotingMinutes: () => {
       const state = get();
       const diffMs = state.votesClose.getTime() - state.votesOpen.getTime();

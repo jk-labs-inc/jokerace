@@ -1,5 +1,6 @@
 import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { MAX_SUBMISSIONS_PER_CONTEST } from "@hooks/useDeployContest/types";
 import { AnyoneCanSubmit, useUserStore } from "@hooks/useUser/store";
 import { formatEther } from "viem";
@@ -16,10 +17,13 @@ const ContestParametersSubmissionsCurrent = () => {
       contestMaxNumberSubmissionsPerUser: state.contestMaxNumberSubmissionsPerUser,
     })),
   );
-  const { charge, contestChainNativeCurrencySymbol, contestMaxProposalCount } = useContestStore(
+
+  const chainNativeCurrencySymbol = useContestConfigStore(
+    useShallow(state => state.contestConfig.chainNativeCurrencySymbol),
+  );
+  const { charge, contestMaxProposalCount } = useContestStore(
     useShallow(state => ({
       charge: state.charge,
-      contestChainNativeCurrencySymbol: state.contestInfoData.contestChainNativeCurrencySymbol,
       contestMaxProposalCount: state.contestMaxProposalCount,
     })),
   );
@@ -32,7 +36,7 @@ const ContestParametersSubmissionsCurrent = () => {
       <ul className="pl-4 text-[16px] text-neutral-9">
         <li className="list-disc">{generateUserQualifiedMessage(anyoneCanSubmit)}</li>
         <li className="list-disc">
-          {formatEther(BigInt(charge.type.costToPropose))} {contestChainNativeCurrencySymbol} to enter
+          {formatEther(BigInt(charge.type.costToPropose))} {chainNativeCurrencySymbol} to enter
         </li>
         <li className="list-disc">
           {anyoneCanSubmit === AnyoneCanSubmit.ANYONE_CAN_SUBMIT ? "players" : "creator"} can enter{" "}

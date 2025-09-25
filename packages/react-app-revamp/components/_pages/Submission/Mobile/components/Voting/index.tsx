@@ -4,6 +4,7 @@ import VotingWidget from "@components/Voting";
 import { getNativeTokenSymbol } from "@helpers/nativeToken";
 import { getTotalCharge } from "@helpers/totalCharge";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import { Charge } from "@hooks/useDeployContest/types";
 import { FC, useCallback, useRef, useState } from "react";
@@ -38,9 +39,9 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
   currentUserAvailableVotesAmount,
   onVote,
 }) => {
-  const { contestAbi, votesClose } = useContestStore(
+  const abi = useContestConfigStore(useShallow(state => state.contestConfig.abi));
+  const { votesClose } = useContestStore(
     useShallow(state => ({
-      contestAbi: state.contestAbi,
       votesClose: state.votesClose,
     })),
   );
@@ -59,7 +60,7 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
     isRefetchError: isCurrentPricePerVoteRefetchError,
   } = useCurrentPricePerVoteWithRefetch({
     address: contestInfo.address,
-    abi: contestAbi,
+    abi: abi,
     chainId: contestInfo.chainId,
     votingClose: votesClose,
   });

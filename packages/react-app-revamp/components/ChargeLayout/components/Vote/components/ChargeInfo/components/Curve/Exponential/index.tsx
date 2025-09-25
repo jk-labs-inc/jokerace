@@ -1,23 +1,23 @@
 import VotingQualifierError from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Error";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import Skeleton from "react-loading-skeleton";
 import { useShallow } from "zustand/react/shallow";
 
 const ChargeInfoExponential = () => {
-  const { contestInfo, contestAbi, votingClose } = useContestStore(
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const { votingClose } = useContestStore(
     useShallow(state => ({
-      contestInfo: state.contestInfoData,
-      contestAbi: state.contestAbi,
       votingClose: state.votesClose,
     })),
   );
 
   const { currentPricePerVoteFormatted, isLoading, isRefetching, isError, hasPriceChanged, isPreloading, refetch } =
     useCurrentPricePerVoteWithRefetch({
-      address: contestInfo.contestAddress,
-      abi: contestAbi,
-      chainId: contestInfo.contestChainId,
+      address: contestConfig.address,
+      abi: contestConfig.abi,
+      chainId: contestConfig.chainId,
       votingClose,
     });
 
@@ -32,7 +32,7 @@ const ChargeInfoExponential = () => {
   return (
     <p>
       {/* TODO: figure out how we wanna style the timer for the price per vote */}
-      {currentPricePerVoteFormatted} {contestInfo.contestChainNativeCurrencySymbol}
+      {currentPricePerVoteFormatted} {contestConfig.chainNativeCurrencySymbol}
     </p>
   );
 };

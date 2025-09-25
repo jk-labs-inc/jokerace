@@ -1,11 +1,12 @@
-import { useContestStore } from "@hooks/useContest/store";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { useReadContract } from "wagmi";
-import { readContracts } from "@wagmi/core";
 import { config } from "@config/wagmi";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { useMemo } from "react";
 import { formatEther } from "viem";
+import { useReadContract } from "wagmi";
+import { useShallow } from "zustand/shallow";
 
 export const VOTES_PER_PAGE = 4;
 
@@ -28,7 +29,12 @@ export function useProposalVoters(
   chainId: number,
   addressPerPage = VOTES_PER_PAGE,
 ) {
-  const { contestAbi: abi, version } = useContestStore(state => state);
+  const { abi, version } = useContestConfigStore(
+    useShallow(state => ({
+      abi: state.contestConfig.abi,
+      version: state.contestConfig.version,
+    })),
+  );
   const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
 
   const {

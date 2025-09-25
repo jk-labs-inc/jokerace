@@ -1,28 +1,24 @@
-import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { PriceCurveType } from "@hooks/useDeployContest/types";
 import usePriceCurveType from "@hooks/usePriceCurveType";
 import { FC } from "react";
 import { useShallow } from "zustand/react/shallow";
-import VotingQualifierAnyoneCanVoteFlat from "../Flat";
-import VotingQualifierAnyoneCanVoteExponential from "../Exponential";
-import VotingQualifierSkeleton from "../../../../shared/Skeleton";
 import VotingQualifierError from "../../../../shared/Error";
+import VotingQualifierSkeleton from "../../../../shared/Skeleton";
+import VotingQualifierAnyoneCanVoteExponential from "../Exponential";
+import VotingQualifierAnyoneCanVoteFlat from "../Flat";
 
 interface VotingQualifierAnyoneCanVoteCurveProps {
   votingTimeLeft: number;
 }
 
 const VotingQualifierAnyoneCanVoteCurve: FC<VotingQualifierAnyoneCanVoteCurveProps> = ({ votingTimeLeft }) => {
-  const { contestInfo, contestAbi } = useContestStore(
-    useShallow(state => ({
-      contestInfo: state.contestInfoData,
-      contestAbi: state.contestAbi,
-    })),
-  );
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const { address, abi, chainId } = contestConfig;
   const { priceCurveType, isLoading, isError, refetch } = usePriceCurveType({
-    address: contestInfo.contestAddress,
-    abi: contestAbi,
-    chainId: contestInfo.contestChainId,
+    address,
+    abi,
+    chainId,
   });
 
   if (isLoading) return <VotingQualifierSkeleton />;

@@ -1,6 +1,9 @@
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { getChainId } from "@helpers/getChainId";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { getNativeTokenSymbol } from "@helpers/nativeToken";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
 import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
@@ -60,13 +63,11 @@ export function useContest() {
     setVotesOpen,
     setSubmissionsOpen,
     setCharge,
-    setContestAbi,
     setSortingEnabled,
-    setVersion,
     setRewardsModuleAddress,
     setCanEditTitleAndDescription,
-    setContestInfoData,
   } = useContestStore(state => state);
+  const { setContestConfig } = useContestConfigStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
     state => state,
   );
@@ -87,7 +88,6 @@ export function useContest() {
         setIsListProposalsSuccess(false);
         setIsListProposalsLoading(false);
         setIsLoading(false);
-        setContestAbi([]);
         return;
       }
 
@@ -97,8 +97,8 @@ export function useContest() {
         chainId: chainId,
       };
 
-      setContestAbi(abi as Abi);
-      setVersion(version);
+      setContestConfigData(addressFromUrl, chainFromUrl, abi as Abi, version);
+
       return { contractConfig, version };
     } catch (e) {
       setError(ErrorType.CONTRACT);
@@ -106,7 +106,6 @@ export function useContest() {
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
       setIsLoading(false);
-      setContestAbi([]);
     }
   }
 
@@ -246,8 +245,6 @@ export function useContest() {
 
       const rewardsModuleAddress = await fetchRewardsModuleData(contractConfig);
 
-      setContestData(addressFromUrl, chainFromUrl);
-
       if (compareVersions(version, "4.0") < 0) {
         setError(ErrorType.UNSUPPORTED_VERSION);
         setIsLoading(false);
@@ -307,18 +304,17 @@ export function useContest() {
     return SplitFeeDestinationType.AnotherWallet;
   }
 
-  //TODO: this could maybe be a separate store?
-  function setContestData(contestAddress: string, contestChainName: string) {
-    const contestChainNativeCurrencySymbol = chains.filter(
-      chain => chain.name.toLowerCase().replace(" ", "") === contestChainName,
-    )?.[0]?.nativeCurrency.symbol;
-    const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.[0]?.id;
+  function setContestConfigData(contestAddress: string, contestChainName: string, abi: Abi, version: string) {
+    const contestChainNativeCurrencySymbol = getNativeTokenSymbol(contestChainName);
+    const chainId = getChainId(contestChainName);
 
-    setContestInfoData({
-      contestAddress: contestAddress,
-      contestChainName: contestChainName,
-      contestChainId: chainId,
-      contestChainNativeCurrencySymbol: contestChainNativeCurrencySymbol,
+    setContestConfig({
+      address: contestAddress as `0x${string}`,
+      chainName: contestChainName,
+      chainId,
+      chainNativeCurrencySymbol: contestChainNativeCurrencySymbol ?? "",
+      abi: abi as Abi,
+      version,
     });
   }
 
