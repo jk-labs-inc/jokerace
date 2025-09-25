@@ -1,8 +1,7 @@
-import { extractPathSegments } from "@helpers/extractPath";
-import { getChainId } from "@helpers/getChainId";
 import { ContractConfig } from "@hooks/useContest";
-import { usePathname } from "next/navigation";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 import { useUserStore } from "./store";
 import { useAnyoneCanVote } from "./useAnyoneCanVote";
 import { useSubmitQualification } from "./useSubmitQualification";
@@ -10,9 +9,7 @@ import { createUserVoteQualificationSetter } from "./utils";
 export { EMPTY_ROOT } from "./utils";
 
 export function useUser() {
-  const asPath = usePathname();
-  const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const chainId = getChainId(chainName);
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const { address: userAddress } = useAccount();
   const {
     setCurrentUserAvailableVotesAmount,
@@ -23,7 +20,11 @@ export function useUser() {
   } = useUserStore(state => state);
 
   const { checkIfCurrentUserQualifyToSubmit } = useSubmitQualification(userAddress);
-  const { checkAnyoneCanVoteUserQualification } = useAnyoneCanVote(userAddress, contestAddress, chainId);
+  const { checkAnyoneCanVoteUserQualification } = useAnyoneCanVote(
+    userAddress,
+    contestConfig.address,
+    contestConfig.chainId,
+  );
 
   const setUserVoteQualification = createUserVoteQualificationSetter(
     setCurrentUserTotalVotesAmount,

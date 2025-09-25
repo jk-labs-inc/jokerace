@@ -216,6 +216,7 @@
   --background-image-gradient-vote-purple: linear-gradient(90deg, #bb65ff 0%, #bb65ff 50%, #ff78a9 75%, #ffe25b 100%);
   --background-image-gradient-gold: linear-gradient(90deg, #ffe25b 0%, #fffae1 100%);
   --background-image-gradient-entry-title: linear-gradient(180deg, #381d4c 0%, #000000 100%);
+  --background-image-gradient-voting-area: linear-gradient(190.68deg, #2b8b8b 8.06%, #000000 57.27%);
   --background-image-gradient-timer: radial-gradient(
     99% 99% at 8.93% 19.92%,
     #381d4c 0%,

@@ -7,20 +7,19 @@ import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import DialogMaxVotesAlert from "@components/_pages/DialogMaxVotesAlert";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
-import { getNativeTokenSymbol } from "@helpers/nativeToken";
 import ordinalize from "@helpers/ordinalize";
 import { getTotalCharge } from "@helpers/totalCharge";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { useUserStore } from "@hooks/useUser/store";
-import { FC, useEffect, useState, useCallback } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/react/shallow";
 import { Proposal } from "../ProposalContent";
-import useContestConfigStore from "@hooks/useContestConfig/store";
 
 interface DialogModalVoteForProposalProps {
   isOpen: boolean;
