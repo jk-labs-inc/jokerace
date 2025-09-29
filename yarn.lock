@@ -1428,7 +1428,7 @@
     viem "^2.31.7"
     zustand "5.0.3"
 
-"@bigmi/client@^0.5.2", "@bigmi/client@^0.5.3":
+"@bigmi/client@^0.5.3", "@bigmi/client@^0.5.4":
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.5.4.tgz#263665ddf9ad44383a10c7391d3118f820bb410c"
   integrity sha512-eXWdtxaHJIajqI/3v6dR8qHTMt0e/V3TZxUKiN0LGGBmHrGK7hmuIBQlPeNEesvw7NA9b4qtK3TAly/rfpKODQ==
@@ -1437,7 +1437,7 @@
     eventemitter3 "^5.0.1"
     zustand "^5.0.8"
 
-"@bigmi/core@^0.5.2", "@bigmi/core@^0.5.3", "@bigmi/core@^0.5.4":
+"@bigmi/core@^0.5.3", "@bigmi/core@^0.5.4":
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/@bigmi/core/-/core-0.5.4.tgz#2ef7daf53d9c4dfa644cc3510eab8517cba4af27"
   integrity sha512-AfV+pgFe7N6KoyU0OWPrVstrxMJSL5nLODeyGGbYVfi7u6jPjOZ9b7KsOxNDlQp8ZCuQS46263VJyNiG3IsPaA==
@@ -1449,13 +1449,13 @@
     eventemitter3 "^5.0.1"
     zustand "^5.0.8"
 
-"@bigmi/react@0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.5.2.tgz#d63a979e2598e82af697c479a0df1991f7ad0fe3"
-  integrity sha512-oF95TEuTOuAPRaPGZkl9D//t1H/Cv00LN8tcgUgorsuMi7ZIjLaWZMF1P24YcbXiq2jV4QFmnEAMsvwTiRszWQ==
+"@bigmi/react@0.5.4":
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.5.4.tgz#107d8f2963d70c08735c93d84994d621ddabe12c"
+  integrity sha512-+46VYWnfG5LcRUd+v0petdfMM7JVZuuKPdsdwfQ0MgK8WMXP5iamW9WoAcNRaUWDEc6HgrTQnRVoJh/rffOtDw==
   dependencies:
-    "@bigmi/client" "^0.5.2"
-    "@bigmi/core" "^0.5.2"
+    "@bigmi/client" "^0.5.4"
+    "@bigmi/core" "^0.5.4"
 
 "@bitcoinerlab/secp256k1@^1.2.0":
   version "1.2.0"
@@ -7203,14 +7203,7 @@
   dependencies:
     react-window "*"
 
-"@types/react@*":
-  version "19.1.15"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-19.1.15.tgz#cf854cdf6624f79e34633ddf6dc1e104be459908"
-  integrity sha512-+kLxJpaJzXybyDyFXYADyP1cznTO8HSuBpenGlnKOAkH4hyNINiywvXS/tGJhsrGGP/gM185RA3xpjY0Yg4erA==
-  dependencies:
-    csstype "^3.0.2"
-
-"@types/react@19.1.15":
+"@types/react@*", "@types/react@19.1.15":
   version "19.1.15"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-19.1.15.tgz#cf854cdf6624f79e34633ddf6dc1e104be459908"
   integrity sha512-+kLxJpaJzXybyDyFXYADyP1cznTO8HSuBpenGlnKOAkH4hyNINiywvXS/tGJhsrGGP/gM185RA3xpjY0Yg4erA==
