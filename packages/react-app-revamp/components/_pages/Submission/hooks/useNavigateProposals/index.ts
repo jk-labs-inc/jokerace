@@ -1,8 +1,12 @@
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
-import useCastVotes from "@hooks/useCastVotes";
-import { useProposalStore } from "@hooks/useProposal/store";
+import { getProposalIdsRaw } from "@hooks/useProposal/utils";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { shuffle } from "lodash";
+import { formatEther } from "viem";
+import { compareVersions } from "compare-versions";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useShallow } from "zustand/shallow";
 
 interface UseNavigateProposalsProps {
   contestInfo: {
@@ -17,6 +21,7 @@ interface UseNavigateProposalsReturn {
   totalProposals: number;
   canGoNext: boolean;
   canGoPrevious: boolean;
+  isLoading: boolean;
   handleNextEntry?: () => void;
   handlePreviousEntry?: () => void;
   handleClose?: () => void;
@@ -25,21 +30,66 @@ interface UseNavigateProposalsReturn {
 
 const useNavigateProposals = ({ contestInfo, proposalId }: UseNavigateProposalsProps): UseNavigateProposalsReturn => {
   const router = useRouter();
-  const { listProposalsIds } = useProposalStore(state => state);
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
 
-  const navigationState = useMemo(() => {
-    const currentIndex = listProposalsIds.indexOf(proposalId);
-    const totalProposals = listProposalsIds.length;
-    const canGoNext = currentIndex !== -1 && currentIndex < totalProposals - 1;
-    const canGoPrevious = currentIndex > 0;
+  const {
+    data: proposalIds = [],
+    isLoading: isLoadingProposals,
+    isError,
+  } = useQuery({
+    queryKey: ["proposalIds", contestInfo.address, contestInfo.chain],
+    queryFn: async () => {
+      const contractConfig = {
+        address: contestConfig.address as `0x${string}`,
+        abi: contestConfig.abi,
+        chainId: contestConfig.chainId,
+      };
 
-    return {
-      currentIndex,
-      totalProposals,
-      canGoNext,
-      canGoPrevious,
-    };
-  }, [listProposalsIds, proposalId]);
+      const useLegacyGetAllProposalsIdFn = compareVersions(contestConfig.version, "4.15") <= 0;
+
+      const proposalsIdsRawData = await getProposalIdsRaw(
+        contractConfig,
+        useLegacyGetAllProposalsIdFn,
+        contestConfig.version,
+      );
+
+      let proposalsIds: string[];
+
+      if (!useLegacyGetAllProposalsIdFn) {
+        const hasDownvotes = compareVersions(contestConfig.version, "5.1") < 0;
+
+        const extractVotes = (index: number) => {
+          if (hasDownvotes) {
+            const forVotesValue = BigInt(proposalsIdsRawData[1][index].forVotes);
+            const againstVotesValue = BigInt(proposalsIdsRawData[1][index].againstVotes);
+            return Number(formatEther(forVotesValue - againstVotesValue));
+          }
+          return Number(formatEther(proposalsIdsRawData[1][index]));
+        };
+
+        const mappedProposals = proposalsIdsRawData[0].map((data: any, index: number) => ({
+          votes: extractVotes(index),
+          id: data.toString(),
+        }));
+
+        // Sort by votes (highest first)
+        proposalsIds = [...mappedProposals]
+          .sort((a: { votes: number }, b: { votes: number }) => b.votes - a.votes)
+          .map((proposal: { id: any }) => proposal.id);
+      } else {
+        proposalsIds = proposalsIdsRawData as string[];
+      }
+
+      return proposalsIds;
+    },
+    enabled: !!(contestConfig.address && contestConfig.abi && contestConfig.chainId),
+    refetchOnWindowFocus: false,
+  });
+
+  const currentIndex = proposalIds.indexOf(proposalId);
+  const totalProposals = proposalIds.length;
+  const canGoNext = currentIndex !== -1 && currentIndex < totalProposals - 1;
+  const canGoPrevious = currentIndex > 0;
 
   const goToProposal = (targetProposalId: string) => {
     const path = ROUTE_CONTEST_PROPOSAL.replace("[chain]", contestInfo.chain)
@@ -50,14 +100,14 @@ const useNavigateProposals = ({ contestInfo, proposalId }: UseNavigateProposalsP
   };
 
   const handleNextEntry = () => {
-    if (!navigationState.canGoNext) return;
-    const nextProposalId = listProposalsIds[navigationState.currentIndex + 1];
+    if (isLoadingProposals || isError || !canGoNext) return;
+    const nextProposalId = proposalIds[currentIndex + 1];
     goToProposal(nextProposalId);
   };
 
   const handlePreviousEntry = () => {
-    if (!navigationState.canGoPrevious) return;
-    const previousProposalId = listProposalsIds[navigationState.currentIndex - 1];
+    if (isLoadingProposals || isError || !canGoPrevious) return;
+    const previousProposalId = proposalIds[currentIndex - 1];
     goToProposal(previousProposalId);
   };
 
@@ -66,10 +116,11 @@ const useNavigateProposals = ({ contestInfo, proposalId }: UseNavigateProposalsP
   };
 
   return {
-    currentIndex: navigationState.currentIndex,
-    totalProposals: navigationState.totalProposals,
-    canGoNext: navigationState.canGoNext,
-    canGoPrevious: navigationState.canGoPrevious,
+    currentIndex: isLoadingProposals || isError || proposalIds.length === 0 ? -1 : currentIndex,
+    totalProposals: isLoadingProposals || isError ? 0 : totalProposals,
+    canGoNext: !isLoadingProposals && !isError && canGoNext,
+    canGoPrevious: !isLoadingProposals && !isError && canGoPrevious,
+    isLoading: isLoadingProposals,
     handleNextEntry,
     handlePreviousEntry,
     handleClose,

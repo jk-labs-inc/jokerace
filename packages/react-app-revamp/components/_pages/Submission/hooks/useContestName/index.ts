@@ -17,6 +17,9 @@ export const useContestName = ({ contestAddress, contestChainId, contestAbi }: U
     abi: contestAbi,
     functionName: "name",
     chainId: contestChainId,
+    query: {
+      staleTime: Infinity,
+    },
   });
 
   return { contestName: contestName as string, isLoading, isError };

@@ -8,6 +8,7 @@ interface UseContestAuthorProps {
 }
 
 export const useContestAuthor = ({ contestAddress, contestChainId, contestAbi }: UseContestAuthorProps) => {
+  //TODO: test staleTime
   const {
     data: contestAuthor,
     isLoading,
@@ -17,6 +18,9 @@ export const useContestAuthor = ({ contestAddress, contestChainId, contestAbi }:
     abi: contestAbi,
     functionName: "creator",
     chainId: contestChainId,
+    query: {
+      staleTime: Infinity,
+    },
   });
 
   return { contestAuthor: contestAuthor as string, isLoading, isError };

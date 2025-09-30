@@ -1,32 +1,25 @@
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
-import { VotingButtonText } from "@components/Voting";
 import { FC } from "react";
 
 interface VoteButtonProps {
-  buttonText: VotingButtonText;
   isDisabled: boolean;
   onVote: () => void;
-  onAddFunds?: () => void;
 }
 
-const VoteButton: FC<VoteButtonProps> = ({ buttonText, isDisabled, onVote, onAddFunds }) => {
+const VoteButton: FC<VoteButtonProps> = ({ isDisabled, onVote }) => {
   const handleClick = () => {
-    if (buttonText === VotingButtonText.ADD_FUNDS) {
-      onAddFunds?.();
-    } else {
-      onVote();
-    }
+    onVote();
   };
 
   return (
     <ButtonV3
       type={ButtonType.TX_ACTION}
-      isDisabled={buttonText === VotingButtonText.ADD_FUNDS ? false : isDisabled}
+      isDisabled={isDisabled}
       colorClass="px-[20px] bg-gradient-purple rounded-[40px] w-full"
       size={ButtonSize.FULL}
       onClick={handleClick}
     >
-      <span className="w-full text-center">{buttonText}</span>
+      <span className="w-full text-center">buy votes</span>
     </ButtonV3>
   );
 };

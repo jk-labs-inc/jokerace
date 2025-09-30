@@ -20,6 +20,9 @@ const useEntryData = ({ contestAddress, contestChainId, contestAbi, proposalId }
     functionName: "getProposal",
     args: [proposalId],
     chainId: contestChainId,
+    query: {
+      staleTime: Infinity,
+    },
   });
 
   return {

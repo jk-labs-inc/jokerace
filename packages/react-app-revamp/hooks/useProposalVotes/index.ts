@@ -14,6 +14,7 @@ const useProposalVotes = ({
     data,
     isLoading: isContractsLoading,
     isError: isContractsError,
+    isRefetching: isContractsRefetching,
     error,
     refetch,
   } = useReadContracts({
@@ -94,6 +95,7 @@ const useProposalVotes = ({
     isTied: data?.isTied ?? false,
     isLoading: isContractsLoading,
     isError: isContractsError,
+    isRefetching: isContractsRefetching,
     error,
     refetch,
   };

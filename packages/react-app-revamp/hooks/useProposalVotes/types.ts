@@ -14,6 +14,7 @@ export interface ProposalVotesAndRankResult {
   isTied: boolean;
   isLoading: boolean;
   isError: boolean;
+  isRefetching: boolean;
   error: any;
   refetch: () => void;
 }

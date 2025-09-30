@@ -5,8 +5,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import { getNativeTokenSymbol } from "@helpers/nativeToken";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
-import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
-import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
+import { VoteType } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -20,7 +19,7 @@ import { getRewardsModuleAddress } from "lib/rewards/contracts";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
-import { createResultGetter } from "./helpers";
+import { createResultGetter, determineSplitFeeDestination } from "./helpers";
 import { ErrorType, useContestStore } from "./store";
 import { getContracts } from "./v3v4/contracts";
 
@@ -281,27 +280,6 @@ export function useContest() {
       checkIfCurrentUserQualifyToSubmit(contractConfig),
       checkIfCurrentUserQualifyToVote(contractConfig),
     ]);
-  }
-
-  function determineSplitFeeDestination(
-    splitFeeDestination: string,
-    percentageToCreator: number,
-    creatorWalletAddress: string,
-    rewardsModuleAddress?: string,
-  ): SplitFeeDestinationType {
-    if (splitFeeDestination === JK_LABS_SPLIT_DESTINATION_DEFAULT || percentageToCreator === 0) {
-      return SplitFeeDestinationType.NoSplit;
-    }
-
-    if (splitFeeDestination === creatorWalletAddress) {
-      return SplitFeeDestinationType.CreatorWallet;
-    }
-
-    if (rewardsModuleAddress && splitFeeDestination === rewardsModuleAddress) {
-      return SplitFeeDestinationType.RewardsPool;
-    }
-
-    return SplitFeeDestinationType.AnotherWallet;
   }
 
   function setContestConfigData(contestAddress: string, contestChainName: string, abi: Abi, version: string) {

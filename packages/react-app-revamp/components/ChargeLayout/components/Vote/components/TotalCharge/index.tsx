@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
 interface TotalChargeProps {
-  costToVote: number;
+  costToVote: bigint;
   amountOfVotes: number;
 }
 
@@ -31,7 +31,7 @@ const TotalCharge: React.FC<TotalChargeProps> = ({ costToVote, amountOfVotes }) 
       return;
     }
 
-    if (costToVote === 0) {
+    if (costToVote === 0n) {
       setTotalCharge("0");
       return;
     }

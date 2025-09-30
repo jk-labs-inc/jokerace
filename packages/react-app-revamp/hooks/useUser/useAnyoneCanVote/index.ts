@@ -1,7 +1,5 @@
 import { PriceCurveType } from "@hooks/useDeployContest/types";
 import { useEffect, useRef, useState } from "react";
-
-// Internal modules
 import { Abi } from "viem";
 import { fetchExponentialCurveData, getPriceCurveType } from "./contract";
 import { cleanupExponentialUpdates as cleanupUpdates, setupExponentialUpdates } from "./exponential";

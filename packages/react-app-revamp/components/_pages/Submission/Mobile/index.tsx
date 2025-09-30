@@ -12,7 +12,6 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { useProposalVotes } from "@hooks/useProposalVoters";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { switchChain } from "@wagmi/core";
@@ -27,6 +26,7 @@ import SubmissionPageMobileAddFunds from "./components/AddFunds";
 import StickyVoteFooter from "./components/VoteFooter";
 import SubmissionPageMobileVotersList from "./components/VotersList";
 import SubmissionPageMobileVoting from "./components/Voting";
+import { useProposalVoters } from "@hooks/useProposalVoters";
 interface SubmissionPageMobileLayoutProps {
   contestInfo: {
     address: string;
@@ -73,7 +73,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;
   const chainCurrencySymbol = chains.find(chain => chain.id === contestInfo.chainId)?.nativeCurrency?.symbol;
-  const { addressesVoted } = useProposalVotes(contestInfo.address, proposalId, contestInfo.chainId);
+  const { addressesVoted } = useProposalVoters(contestInfo.address, proposalId, contestInfo.chainId);
   const [showVotingModal, setShowVotingModal] = useState(false);
   const [showAddFunds, setShowAddFunds] = useState(false);
   const isVotingOpen = contestStatus === ContestStatus.VotingOpen;

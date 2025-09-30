@@ -47,7 +47,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     })),
   );
   const isPayPerVote = contestCharge.voteType === VoteType.PerVote;
-  const { castVotes, isSuccess } = useCastVotes();
+  const { castVotes, isSuccess } = useCastVotes({ charge: contestCharge, votesClose: votingClose });
   const [readFullEntry, setReadFullEntry] = useState(false);
   const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
   const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
@@ -199,7 +199,6 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
                   <div className="flex flex-col gap-4 md:gap-8 md:w-80">
                     <hr className="hidden md:block border border-neutral-2" />
                     <VotingWidget
-                      proposalId={proposal.id}
                       amountOfVotes={currentUserAvailableVotesAmount}
                       onVote={onSubmitCastVotes}
                       onAddFunds={onAddFunds}

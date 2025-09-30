@@ -1,7 +1,7 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { ChevronUpIcon } from "@heroicons/react/24/outline";
-import { VOTES_PER_PAGE, useProposalVotes } from "@hooks/useProposalVoters";
+import { VOTES_PER_PAGE, useProposalVoters } from "@hooks/useProposalVoters";
 import { usePathname } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
@@ -36,7 +36,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
   )?.[0]?.id;
 
   const { accumulatedVotesData, currentPage, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useProposalVotes(address, proposalId, chainId);
+    useProposalVoters(address, proposalId, chainId);
 
   const onLoadMoreCalledRef = useRef(false);
   const initialSkeletonCount = votedAddresses ? Math.min(votedAddresses.length, VOTES_PER_PAGE) : VOTES_PER_PAGE;

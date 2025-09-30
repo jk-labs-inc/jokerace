@@ -2,9 +2,9 @@ import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 import { config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
+import { Charge } from "@hooks/useDeployContest/types";
 import { useEmailSend } from "@hooks/useEmailSend";
 import { useError } from "@hooks/useError";
 import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
@@ -27,15 +27,13 @@ import { createVotingEmailSender } from "./utils/email";
 import { calculateChargeAmount } from "./utils/helpers";
 import { usePriceTracking } from "./utils/priceTracking";
 
-export function useCastVotes() {
-  const { contestConfig } = useContestConfigStore(useShallow(state => state));
-  const { charge, votesClose } = useContestStore(
-    useShallow(state => ({
-      charge: state.charge,
-      votesClose: state.votesClose,
-    })),
-  );
+interface UseCastVotesProps {
+  charge: Charge;
+  votesClose: Date;
+}
 
+export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { data: rewards } = useRewardsModule();
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
@@ -82,8 +80,8 @@ export function useCastVotes() {
   });
   const { startNewVotingSession, getPrices } = usePriceTracking(currentPricePerVote);
   const getChargeAmount = useCallback(
-    (amountOfVotes: number) => calculateChargeAmount(amountOfVotes, charge, currentPricePerVote),
-    [charge, currentPricePerVote],
+    (amountOfVotes: number) => calculateChargeAmount(amountOfVotes, currentPricePerVote),
+    [currentPricePerVote],
   );
 
   async function castVotes(amountOfVotes: number) {

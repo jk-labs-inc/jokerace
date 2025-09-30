@@ -5,7 +5,7 @@ import useProposalVotes from "@hooks/useProposalVotes";
 
 const SubmissionPageDesktopVotes = () => {
   const { contestConfig, proposalId } = useContestConfigStore(state => state);
-  const { votes, rank, isTied, isLoading, isError, error, refetch } = useProposalVotes({
+  const { votes, rank, isTied, isLoading, isError, isRefetching } = useProposalVotes({
     contestAddress: contestConfig.address,
     proposalId: proposalId,
     chainId: contestConfig.chainId,
@@ -13,7 +13,7 @@ const SubmissionPageDesktopVotes = () => {
   });
 
   // TODO: add loading and error states
-  if (isLoading) {
+  if (isLoading || isRefetching) {
     return (
       <div className="w-40 h-8 bg-neutral-16 border border-positive-13 rounded-2xl flex items-center justify-center">
         <span className="text-positive-14 text-base font-bold">loading...</span>
@@ -32,7 +32,7 @@ const SubmissionPageDesktopVotes = () => {
   if (votes === 0) return null;
 
   return (
-    <div className="h-8 bg-neutral-16 border border-positive-13 rounded-2xl flex items-center justify-center px-2">
+    <div className="h-8 bg-neutral-16 border border-positive-13 rounded-2xl flex items-center justify-center px-4">
       <span className="text-positive-14 text-base font-bold">
         {rank > 0 ? (
           <>

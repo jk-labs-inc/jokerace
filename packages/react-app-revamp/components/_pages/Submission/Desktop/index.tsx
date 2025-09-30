@@ -4,7 +4,7 @@ import SubmissionPageDesktopVotingArea from "./components/VotingArea";
 
 const SubmissionPageDesktopLayout = () => {
   return (
-    <div className="px-20 mt-8">
+    <div className="px-20 mt-8 animate-reveal">
       <div className="flex gap-4">
         <div className="flex flex-col gap-8 w-[60%]">
           <SubmissionPageDesktopHeader />

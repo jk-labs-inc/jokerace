@@ -4,6 +4,7 @@ import { mainnet } from "@config/wagmi/custom-chains/mainnet";
 import Link from "next/link";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 
 const SubmissionPageDesktopBodyContentInfoContestAuthor = () => {
   const { contestConfig } = useContestConfigStore(state => state);
@@ -35,7 +36,7 @@ const SubmissionPageDesktopBodyContentInfoContestAuthor = () => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        {contestAuthorEnsName || contestAuthor}
+        {contestAuthorEnsName || shortenEthereumAddress(contestAuthor)}
       </Link>
     </div>
   );

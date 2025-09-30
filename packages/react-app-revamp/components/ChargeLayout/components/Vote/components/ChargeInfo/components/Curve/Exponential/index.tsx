@@ -31,7 +31,6 @@ const ChargeInfoExponential = () => {
 
   return (
     <p>
-      {/* TODO: figure out how we wanna style the timer for the price per vote */}
       {currentPricePerVoteFormatted} {contestConfig.chainNativeCurrencySymbol}
     </p>
   );

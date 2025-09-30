@@ -1,9 +1,7 @@
 "use client";
 import SubmissionPage from "@components/_pages/Submission";
-import { getChainId } from "@helpers/getChainId";
 import { getNativeTokenSymbol } from "@helpers/nativeToken";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import useContestAbiAndVersion from "@hooks/useContestAbiAndVersion";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { FC, useEffect } from "react";
 import { Abi } from "viem";
@@ -13,15 +11,13 @@ interface SubmissionProps {
   address: string;
   chain: string;
   submission: string;
+  abi: Abi;
+  version: string;
+  chainId: number;
 }
 
-const Submission: FC<SubmissionProps> = ({ address, chain, submission }) => {
+const Submission: FC<SubmissionProps> = ({ address, chain, submission, abi, version, chainId }) => {
   const setPickProposal = useCastVotesStore(useShallow(state => state.setPickedProposal));
-  const chainId = getChainId(chain);
-  const { abi, version, isLoading, isError } = useContestAbiAndVersion({
-    address: address as `0x${string}`,
-    chainId: chainId,
-  });
   const { setContestConfig, setProposalId } = useContestConfigStore(
     useShallow(state => ({
       setContestConfig: state.setContestConfig,
@@ -30,14 +26,12 @@ const Submission: FC<SubmissionProps> = ({ address, chain, submission }) => {
   );
 
   useEffect(() => {
-    if (isLoading || isError) return;
-
     setContestConfig({
       address: address as `0x${string}`,
       chainName: chain,
       chainId,
       chainNativeCurrencySymbol: getNativeTokenSymbol(chain) ?? "",
-      abi: abi as Abi,
+      abi,
       version,
     });
   }, [abi, version, setContestConfig, chain, chainId, address]);
@@ -45,16 +39,7 @@ const Submission: FC<SubmissionProps> = ({ address, chain, submission }) => {
   useEffect(() => {
     setPickProposal(submission);
     setProposalId(submission);
-  }, [setPickProposal, submission]);
-
-  // TODO: add loading and error states
-  if (isLoading) {
-    return <p>loading...</p>;
-  }
-
-  if (isError) {
-    return <p>error</p>;
-  }
+  }, [setPickProposal, submission, setProposalId]);
 
   return <SubmissionPage />;
 };

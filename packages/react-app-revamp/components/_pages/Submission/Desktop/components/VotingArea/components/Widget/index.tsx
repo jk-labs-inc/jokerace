@@ -1,21 +1,40 @@
-import VotingWidget from "@components/Voting";
+import useContestVoteDeadline from "@components/_pages/Submission/hooks/useContestVoteDeadline";
+import useCharge from "@hooks/useCharge";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useShallow } from "zustand/shallow";
+import SubmissionPageDesktopVotingAreaWidgetHandler from "./components/Handler";
 
 const SubmissionPageDesktopVotingAreaWidget = () => {
-  return (
-    <div className="pl-8 pt-4 pb-6 pr-12 bg-gradient-voting-area rounded-4xl">
-      <VotingWidget
-        amountOfVotes={100}
-        costToVote={100}
-        chainId={1}
-        balanceData={undefined}
-        isLoading={false}
-        isVotingClosed={false}
-        isContestCanceled={false}
-        insufficientBalance={false}
-        isCorrectNetwork={false}
-      />
-    </div>
-  );
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const {
+    contestDeadline,
+    isLoading: isContestVoteDeadlineLoading,
+    isError: isContestVoteDeadlineError,
+  } = useContestVoteDeadline({
+    contestAddress: contestConfig.address,
+    contestChainId: contestConfig.chainId,
+    contestAbi: contestConfig.abi,
+  });
+  const votesClose = new Date(Number(contestDeadline as string) * 1000 + 1000);
+  const {
+    charge,
+    isLoading: isChargeLoading,
+    isError: isChargeError,
+  } = useCharge({
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+  });
+
+  if (isChargeError || isContestVoteDeadlineError) {
+    return <div>Error loading charge</div>;
+  }
+
+  if (isChargeLoading || isContestVoteDeadlineLoading) {
+    return <div>Loading charge</div>;
+  }
+
+  return <SubmissionPageDesktopVotingAreaWidgetHandler charge={charge} votesClose={votesClose} />;
 };
 
 export default SubmissionPageDesktopVotingAreaWidget;

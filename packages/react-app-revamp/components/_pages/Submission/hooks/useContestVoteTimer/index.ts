@@ -26,6 +26,7 @@ interface ContestVoteTimerReturn {
   } | null;
   isVotingOpen: boolean;
   isLoading: boolean;
+  isError: boolean;
 }
 
 /**
@@ -39,7 +40,7 @@ const useContestVoteTimer = ({
   contestChainId,
   contestAbi,
 }: ContestVoteTimerProps): ContestVoteTimerReturn => {
-  const { voteStart, contestDeadline, isLoading } = useContestVoteDeadline({
+  const { voteStart, contestDeadline, isLoading, isError } = useContestVoteDeadline({
     contestAddress,
     contestChainId,
     contestAbi,
@@ -140,6 +141,7 @@ const useContestVoteTimer = ({
     timeRemaining,
     isVotingOpen: votingStatus === VotingStatus.VotingOpen,
     isLoading,
+    isError,
   };
 };
 

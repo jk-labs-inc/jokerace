@@ -8,7 +8,7 @@ interface ContestTimingsProps {
 }
 
 const useContestVoteDeadline = ({ contestAddress, contestChainId, contestAbi }: ContestTimingsProps) => {
-  const { data, isLoading, error } = useReadContracts({
+  const { data, isLoading, isError } = useReadContracts({
     contracts: [
       {
         address: contestAddress as `0x${string}`,
@@ -31,7 +31,7 @@ const useContestVoteDeadline = ({ contestAddress, contestChainId, contestAbi }: 
     voteStart: data?.[0]?.result,
     contestDeadline: data?.[1]?.result,
     isLoading,
-    error,
+    isError,
   };
 };
 

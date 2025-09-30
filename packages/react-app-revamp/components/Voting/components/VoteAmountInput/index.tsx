@@ -1,3 +1,4 @@
+import { VotingWidgetStyle } from "@components/Voting";
 import { FC, RefObject } from "react";
 
 interface VoteAmountInputProps {
@@ -6,10 +7,12 @@ interface VoteAmountInputProps {
   isInvalid: boolean;
   isFocused: boolean;
   inputRef: RefObject<HTMLInputElement>;
-  onAmountChange: (value: string) => void;
-  onFocusChange: (focused: boolean) => void;
-  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  onInput: React.ChangeEventHandler<HTMLInputElement>;
+  style?: VotingWidgetStyle;
+  onInput?: React.ChangeEventHandler<HTMLInputElement>;
+  onAmountChange?: (value: string) => void;
+  onFocusChange?: (focused: boolean) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onMaxClick?: () => void;
 }
 
 const VoteAmountInput: FC<VoteAmountInputProps> = ({
@@ -17,34 +20,43 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   amountOfVotes,
   isInvalid,
   isFocused,
+  style = VotingWidgetStyle.classic,
   inputRef,
   onAmountChange,
   onFocusChange,
   onKeyDown,
   onInput,
+  onMaxClick,
 }) => {
   return (
     <div
-      className={`relative flex w-full h-16 items-center px-8 text-[16px] bg-transparent font-bold ${
-        isInvalid ? "text-negative-11" : "text-neutral-11"
-      } border-2 ${
-        isFocused && !isInvalid ? "border-neutral-11" : isInvalid ? "border-negative-11" : "border-neutral-10"
+      className={`relative flex ${
+        style === VotingWidgetStyle.colored ? "w-[368px]" : "w-full"
+      } h-[72px] items-center px-8 text-[16px] ${
+        style === VotingWidgetStyle.colored ? "bg-secondary-13" : "bg-transparent"
+      } font-bold ${isInvalid ? "text-negative-11" : "text-neutral-11"} border ${
+        isFocused && !isInvalid ? "border-secondary-14" : isInvalid ? "border-negative-11" : "border-secondary-14"
       } rounded-[40px] transition-colors duration-300`}
     >
       <input
         ref={inputRef}
         type="number"
         value={amount || ""}
-        onChange={e => onAmountChange(e.target.value)}
-        onFocus={() => onFocusChange(true)}
-        onBlur={() => onFocusChange(false)}
+        onChange={e => onAmountChange?.(e.target.value)}
+        onFocus={() => onFocusChange?.(true)}
+        onBlur={() => onFocusChange?.(false)}
         placeholder="0"
         max={amountOfVotes}
         onKeyDown={onKeyDown}
         onInput={onInput}
-        className="w-full text-[32px] bg-transparent outline-none placeholder-primary-5"
+        className="w-full text-[40px] bg-transparent outline-none placeholder-primary-5 pr-20"
       />
-      <span className="absolute right-4 text-neutral-9 text-[16px] font-bold">vote{amount !== 1 ? "s" : ""}</span>
+      <button
+        onClick={onMaxClick}
+        className="absolute w-20 h-6 bg-primary-14 rounded-[40px] right-4 text-positive-11 text-[16px] border-secondary-14 border font-bold flex items-center justify-center hover:bg-positive-11 hover:text-primary-14 transition-colors duration-300 ease-in-out"
+      >
+        max
+      </button>
     </div>
   );
 };
