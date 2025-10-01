@@ -84,6 +84,7 @@ const useNavigateProposals = ({ contestInfo, proposalId }: UseNavigateProposalsP
     },
     enabled: !!(contestConfig.address && contestConfig.abi && contestConfig.chainId),
     refetchOnWindowFocus: false,
+    //TODO: check if this is needed
   });
 
   const currentIndex = proposalIds.indexOf(proposalId);

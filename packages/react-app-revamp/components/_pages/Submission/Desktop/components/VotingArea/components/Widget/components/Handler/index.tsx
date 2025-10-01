@@ -10,6 +10,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import { FC, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
+import { useAddressesVoted } from "../Voters/hooks/useAddressesVoted";
 
 interface SubmissionPageDesktopVotingAreaWidgetHandlerProps {
   charge: Charge;
@@ -33,11 +34,19 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
     chainId: contestConfig.chainId,
     abi: contestConfig.abi,
   });
+  const { refetchAddressesVoted } = useAddressesVoted({
+    contestAddress: contestConfig.address,
+    contestAbi: contestConfig.abi,
+    contestChainId: contestConfig.chainId,
+    proposalId: proposalId,
+  });
 
   const onVote = async (amount: number) => {
     try {
       await castVotes(amount);
       refetchProposalVotes();
+      //TODO: move this out, since it's only changing when new addresses arrive, not refetching on old addresses
+      refetchAddressesVoted();
     } catch (error) {
       console.error("Failed to cast vote:", error);
     }

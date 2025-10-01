@@ -32,6 +32,7 @@ const SubmissionPageDesktopVotes = () => {
 
   if (votes === 0) return null;
 
+  //TODO: check ties
   return (
     <div className="h-8 bg-neutral-16 border border-positive-13 rounded-2xl flex items-center justify-center px-4">
       <span className="text-positive-14 text-base font-bold">

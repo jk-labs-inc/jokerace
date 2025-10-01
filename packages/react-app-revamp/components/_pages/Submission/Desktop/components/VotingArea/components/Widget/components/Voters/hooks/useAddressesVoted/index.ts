@@ -12,6 +12,7 @@ interface UseAddressesVotedReturn {
   addressesVoted: string[];
   isLoadingAddressesVoted: boolean;
   isErrorAddressesVoted: boolean;
+  refetchAddressesVoted: () => void;
 }
 
 export const useAddressesVoted = ({
@@ -24,6 +25,7 @@ export const useAddressesVoted = ({
     data: addressesVoted,
     isLoading: isLoadingAddressesVoted,
     isError: isErrorAddressesVoted,
+    refetch: refetchAddressesVoted,
   } = useReadContract({
     address: contestAddress as `0x${string}`,
     abi: contestAbi,
@@ -39,5 +41,6 @@ export const useAddressesVoted = ({
     addressesVoted: addressesVoted as string[],
     isLoadingAddressesVoted,
     isErrorAddressesVoted,
+    refetchAddressesVoted,
   };
 };

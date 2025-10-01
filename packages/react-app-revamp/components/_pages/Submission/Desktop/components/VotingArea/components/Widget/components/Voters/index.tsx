@@ -2,14 +2,16 @@ import { ListProposalVotes } from "@components/_pages/ListProposalVotes";
 import GradientText from "@components/UI/GradientText";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import Image from "next/image";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import SubmissionPageDesktopVotingAreaWidgetVotersLoadingSkeleton from "./components/LoadingSkeleton";
+import NoVotersPlaceholder from "./components/NoVotersPlaceholder";
 import { useAddressesVoted } from "./hooks/useAddressesVoted";
 
 interface SubmissionPageDesktopVotingAreaWidgetVotersProps {
   proposalId: string;
   isVotingOpen: boolean;
+  onRefetchReady?: (refetch: () => void) => void;
 }
 
 const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotingAreaWidgetVotersProps> = ({
@@ -34,6 +36,8 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
   }
 
   const votedAddressesArray = addressesVoted as string[];
+  const hasNoVoters = votedAddressesArray.length === 0;
+  const shouldShowPlaceholder = hasNoVoters && isVotingOpen;
 
   return (
     <div className="w-full flex-1 min-h-0">
@@ -49,7 +53,15 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
             </p>
           </div>
 
-          <ListProposalVotes proposalId={proposalId} votedAddresses={votedAddressesArray} className="text-neutral-11" />
+          {shouldShowPlaceholder ? (
+            <NoVotersPlaceholder />
+          ) : (
+            <ListProposalVotes
+              proposalId={proposalId}
+              votedAddresses={votedAddressesArray}
+              className="text-neutral-11"
+            />
+          )}
         </div>
       </div>
     </div>
