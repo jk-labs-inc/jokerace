@@ -118,6 +118,7 @@ export function useProposal() {
     contestDates: { submissionOpen: Date; votesOpen: Date },
   ) {
     setIsListProposalsLoading(true);
+    setProposalData([]);
 
     try {
       const useLegacyGetAllProposalsIdFn =
@@ -194,7 +195,15 @@ export function useProposal() {
       setIndexPaginationProposalPerId(paginationChunks);
 
       if (paginationChunks.length)
-        fetchProposalsPage(contractConfig, version, 0, paginationChunks[0], paginationChunks.length, mappedProposals);
+        fetchProposalsPage(
+          contractConfig,
+          version,
+          0,
+          paginationChunks[0],
+          paginationChunks.length,
+          mappedProposals,
+          true,
+        );
     } catch (e) {
       handleError(e, "Something went wrong while getting proposal ids.");
       setIsListProposalsSuccess(false);

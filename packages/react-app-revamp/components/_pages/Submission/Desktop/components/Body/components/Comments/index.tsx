@@ -3,6 +3,7 @@ import { useShallow } from "zustand/shallow";
 import useNumberOfComments from "./hooks/useNumberOfComments";
 import GradientText from "@components/UI/GradientText";
 import Image from "next/image";
+import SubmissionPageDesktopBodyCommentsLoadingSkeleton from "./components/LoadingSkeleton";
 
 const SubmissionPageDesktopBodyComments = () => {
   const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
@@ -12,6 +13,10 @@ const SubmissionPageDesktopBodyComments = () => {
     contestAbi: contestConfig.abi,
     proposalId: proposalId,
   });
+
+  if (isLoading) {
+    return <SubmissionPageDesktopBodyCommentsLoadingSkeleton />;
+  }
 
   return (
     <div className="w-full pl-8 pt-4 pb-4 h-44 bg-gradient-voting-area-purple rounded-4xl">

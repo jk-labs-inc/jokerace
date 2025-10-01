@@ -3,6 +3,7 @@ import useContestConfigStore from "@hooks/useContestConfig/store";
 import SubmissionPageDesktopBodyContentDescription from "./components/Description";
 import SubmissionPageDesktopBodyContentInfo from "./components/Info";
 import SubmissionPageDesktopBodyContentTitle from "./components/Title";
+import SubmissionPageDesktopBodyContentLoadingSkeleton from "./components/LoadingSkeleton";
 
 const SubmissionPageDesktopBodyContent = () => {
   const { contestConfig, proposalId } = useContestConfigStore(state => state);
@@ -13,8 +14,11 @@ const SubmissionPageDesktopBodyContent = () => {
     proposalId: proposalId,
   });
 
-  //TODO: add loading and error states
-  if (isLoadingProposal || isErrorProposal) {
+  if (isLoadingProposal) {
+    return <SubmissionPageDesktopBodyContentLoadingSkeleton />;
+  }
+
+  if (isErrorProposal) {
     return null;
   }
 

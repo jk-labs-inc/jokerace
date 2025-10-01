@@ -42,7 +42,11 @@ const SubmissionPageDesktopVotingArea = () => {
   }
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex flex-col p-4 gap-4 bg-primary-1 rounded-4xl xl:w-[480px]" style={{ minHeight: "600px" }}>
+        <SubmissionPageDesktopVotingAreaWidgetVoters proposalId={proposalId} isVotingOpen={false} />
+      </div>
+    );
   }
 
   return (

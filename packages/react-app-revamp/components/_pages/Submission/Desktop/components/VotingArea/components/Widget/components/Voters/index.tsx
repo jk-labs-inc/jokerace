@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FC } from "react";
 import { useReadContract } from "wagmi";
 import { useShallow } from "zustand/shallow";
+import SubmissionPageDesktopVotingAreaWidgetVotersLoadingSkeleton from "./components/LoadingSkeleton";
 
 interface SubmissionPageDesktopVotingAreaWidgetVotersProps {
   proposalId: string;
@@ -31,9 +32,8 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
     },
   });
 
-  //   TODO: add loading and error states
   if (isLoadingAddressesVoted) {
-    return <div>Loading...</div>;
+    return <SubmissionPageDesktopVotingAreaWidgetVotersLoadingSkeleton />;
   }
 
   if (isErrorAddressesVoted) {

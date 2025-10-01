@@ -3,6 +3,7 @@ import useCharge from "@hooks/useCharge";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useShallow } from "zustand/shallow";
 import SubmissionPageDesktopVotingAreaWidgetHandler from "./components/Handler";
+import SubmissionPageDesktopVotingAreaWidgetLoadingSkeleton from "./components/LoadingSkeleton";
 
 const SubmissionPageDesktopVotingAreaWidget = () => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
@@ -26,13 +27,12 @@ const SubmissionPageDesktopVotingAreaWidget = () => {
     chainId: contestConfig.chainId,
   });
 
-  // TODO: add loading and error states
   if (isChargeError || isContestVoteDeadlineError) {
     return <div>Error loading charge</div>;
   }
 
   if (isChargeLoading || isContestVoteDeadlineLoading) {
-    return <div>Loading charge</div>;
+    return <SubmissionPageDesktopVotingAreaWidgetLoadingSkeleton />;
   }
 
   return <SubmissionPageDesktopVotingAreaWidgetHandler charge={charge} votesClose={votesClose} />;
