@@ -40,11 +40,6 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
     return <div>Error loading addresses voted</div>;
   }
 
-  // TODO: check types
-  if (!addressesVoted || (Array.isArray(addressesVoted) && addressesVoted.length === 0)) {
-    return null;
-  }
-
   const votedAddressesArray = addressesVoted as string[];
 
   return (

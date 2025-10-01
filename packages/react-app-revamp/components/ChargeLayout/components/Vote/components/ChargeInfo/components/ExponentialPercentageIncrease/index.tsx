@@ -87,7 +87,7 @@ const ChargeInfoExponentialPercentageIncrease = ({ costToVote }: ChargeInfoExpon
     <div className="flex items-center justify-between">
       <p className="text-[12px] text-neutral-9">
         increases{" "}
-        {currentPricePercentageData?.isBelowThreshold ? "" : `${currentPricePercentageData?.percentageIncrease}%`}
+        {currentPricePercentageData?.isBelowThreshold ? "" : `${currentPricePercentageData?.percentageIncrease}% `}
         in {secondsUntilNextUpdate} seconds
       </p>
       {secondsUntilNextUpdate < SECONDS_UNTIL_NEXT_UPDATE_THRESHOLD && (

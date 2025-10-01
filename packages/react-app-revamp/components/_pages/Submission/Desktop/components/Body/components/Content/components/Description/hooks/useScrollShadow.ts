@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, DependencyList } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface UseScrollShadowReturn {
   scrollRef: React.RefObject<HTMLDivElement | null>;
@@ -9,7 +9,7 @@ interface UseScrollShadowReturn {
 
 const SCROLL_THRESHOLD = 10;
 
-export const useScrollShadow = (dependencies: DependencyList = []): UseScrollShadowReturn => {
+export const useScrollShadow = (content: string): UseScrollShadowReturn => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showTopShadow, setShowTopShadow] = useState(false);
   const [showBottomShadow, setShowBottomShadow] = useState(false);
@@ -52,8 +52,7 @@ export const useScrollShadow = (dependencies: DependencyList = []): UseScrollSha
       scrollElement.removeEventListener("scroll", handleScroll);
       resizeObserver.disconnect();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, dependencies);
+  }, [content]);
 
   return {
     scrollRef,
