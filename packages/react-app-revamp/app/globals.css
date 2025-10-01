@@ -452,6 +452,10 @@ li {
   font-family: "Lato" !important;
 }
 
+.react-datepicker__day-names {
+  text-align: center !important;
+}
+
 .popper-custom {
   position: unset !important;
   transform: none !important;
