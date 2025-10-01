@@ -1,8 +1,6 @@
-import { useContestStore } from "@hooks/useContest/store";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { Abi, formatEther, ReadContractErrorType } from "viem";
 import { useReadContract } from "wagmi";
-import { useShallow } from "zustand/shallow";
 
 interface CurrentPricePerVoteParams {
   address: string;

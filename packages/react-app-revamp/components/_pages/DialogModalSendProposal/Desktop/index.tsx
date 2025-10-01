@@ -200,7 +200,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
               )}
 
               {isMetadataFieldsLoading ? (
-                <p className="loadingDots font-sabo text-[16px] text-neutral-14">loading metadata fields</p>
+                <p className="loadingDots font-sabo-filled text-[16px] text-neutral-14">loading metadata fields</p>
               ) : isMetadataFieldsError ? (
                 <p className="text-negative-11">Error while loading metadata fields. Please reload the page.</p>
               ) : metadataFields.length > 0 ? (

@@ -11,9 +11,12 @@ interface VoteRowProps {
 const VoterRow: FC<VoteRowProps> = ({ votesPerAddress, address, addressesLength, className }) => {
   return (
     <div
-      className={`flex justify-between items-center text-[16px] font-bold pb-1 ${addressesLength > 1 ? "border-b border-neutral-2" : ""}`}
+      className={`flex justify-between items-center text-[12px] font-bold pb-1 ${
+        addressesLength > 1 ? "border-b border-primary-3" : ""
+      }`}
     >
-      <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} textColor={className} />
+      {/* TODO: maybe remove the user profile display and just use the address display and avatar */}
+      <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} textColor={className} size="extraSmall" />
       <p className={className}>
         {formatNumberAbbreviated(votesPerAddress[address])} {votesPerAddress[address] === 1 ? "vote" : "votes"}
       </p>

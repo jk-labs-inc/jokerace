@@ -66,7 +66,7 @@ const SubmissionPageDesktopBodyContentDescription: FC<SubmissionPageDesktopBodyC
   description,
 }) => {
   const sanitizedContent = useSanitizedContent(description);
-  const { scrollRef, showTopShadow, showBottomShadow, hasScrollableContent } = useScrollShadow(sanitizedContent);
+  const { scrollRef, showTopShadow, showBottomShadow, hasScrollableContent } = useScrollShadow([sanitizedContent]);
 
   return (
     <div className="relative">
@@ -74,7 +74,7 @@ const SubmissionPageDesktopBodyContentDescription: FC<SubmissionPageDesktopBodyC
 
       <div
         ref={scrollRef}
-        className={`pl-8 py-4 pr-4 flex-1 max-h-[550px] ${
+        className={`pl-8 py-4 pr-4 flex-1 min-h-[450px] max-h-[450px] ${
           hasScrollableContent ? "overflow-y-auto" : "overflow-y-hidden"
         }`}
       >

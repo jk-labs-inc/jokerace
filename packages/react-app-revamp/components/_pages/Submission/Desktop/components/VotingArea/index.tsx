@@ -1,9 +1,9 @@
 import useContestVoteTimer from "@components/_pages/Submission/hooks/useContestVoteTimer";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/shallow";
-import SubmissionPageDesktopVotingAreaTimer from "./components/Timer";
 import SubmissionPageDesktopVotingAreaWidget from "./components/Widget";
-import ListProposalVotes from "@components/_pages/ListProposalVotes";
+import SubmissionPageDesktopVotingAreaWidgetVoters from "./components/Widget/components/Voters";
 
 const SubmissionPageDesktopVotingArea = () => {
   const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
@@ -12,6 +12,30 @@ const SubmissionPageDesktopVotingArea = () => {
     contestChainId: contestConfig.chainId,
     contestAbi: contestConfig.abi,
   });
+  const [maxHeight, setMaxHeight] = useState<number | null>(null);
+  const observerRef = useRef<ResizeObserver | null>(null);
+
+  useEffect(() => {
+    const leftContainer = document.getElementById("submission-body-container");
+
+    if (!leftContainer) return;
+
+    const updateMaxHeight = () => {
+      const height = leftContainer.getBoundingClientRect().height;
+      setMaxHeight(height);
+    };
+
+    updateMaxHeight();
+
+    observerRef.current = new ResizeObserver(updateMaxHeight);
+    observerRef.current.observe(leftContainer);
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, []);
 
   if (isError) {
     return <div>Error</div>;
@@ -22,14 +46,12 @@ const SubmissionPageDesktopVotingArea = () => {
   }
 
   return (
-    <div className="flex flex-col gap-6 items-start">
-      <SubmissionPageDesktopVotingAreaTimer />
-      <div className="bg-primary-1 rounded-4xl">
-        <div className="p-4">{isVotingOpen && <SubmissionPageDesktopVotingAreaWidget />}</div>
-        <div className="p-4">
-          <ListProposalVotes proposalId={proposalId} votedAddresses={[]} className="text-neutral-9" />
-        </div>
-      </div>
+    <div
+      className="flex flex-col p-4 gap-4 bg-primary-1 rounded-4xl xl:w-[480px]"
+      style={{ maxHeight: maxHeight ? `${maxHeight}px` : undefined, height: maxHeight ? `${maxHeight}px` : undefined }}
+    >
+      {isVotingOpen && <SubmissionPageDesktopVotingAreaWidget />}
+      <SubmissionPageDesktopVotingAreaWidgetVoters proposalId={proposalId} isVotingOpen={isVotingOpen} />
     </div>
   );
 };

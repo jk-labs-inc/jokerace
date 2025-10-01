@@ -1,16 +1,23 @@
 import SubmissionPageDesktopBody from "./components/Body";
 import SubmissionPageDesktopHeader from "./components/Header";
 import SubmissionPageDesktopVotingArea from "./components/VotingArea";
+import SubmissionPageDesktopVotingAreaTimer from "./components/VotingArea/components/Timer";
 
 const SubmissionPageDesktopLayout = () => {
   return (
     <div className="px-20 mt-8 animate-reveal">
-      <div className="flex gap-4">
-        <div className="flex flex-col gap-8 w-[60%]">
+      <div className="grid grid-cols-[50%_50%] xl:grid-cols-[60%_40%] gap-x-4 gap-y-8 items-start">
+        <div className="min-w-0">
           <SubmissionPageDesktopHeader />
+        </div>
+        <div className="min-w-0">
+          <SubmissionPageDesktopVotingAreaTimer />
+        </div>
+
+        <div className="min-w-0 self-stretch" id="submission-body-container">
           <SubmissionPageDesktopBody />
         </div>
-        <div className="w-[40%]">
+        <div className="min-w-0 self-start">
           <SubmissionPageDesktopVotingArea />
         </div>
       </div>

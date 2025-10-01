@@ -3,9 +3,8 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { VOTES_PER_PAGE, useProposalVoters } from "@hooks/useProposalVoters";
 import { usePathname } from "next/navigation";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import SimpleBar from "simplebar-react";
 import VoterRow from "./components/VoterRow";
 
 interface ListProposalVotesProps {
@@ -44,8 +43,6 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
     onLoadMoreCalledRef.current && votedAddresses ? votedAddresses.length - currentPage * VOTES_PER_PAGE : 0;
   const count =
     isFetchingNextPage && onLoadMoreCalledRef.current ? Math.min(remainingItems, VOTES_PER_PAGE) : initialSkeletonCount;
-  const [hasScrollbar, setHasScrollbar] = useState(false);
-  const simpleBarRef = useRef<any>(null);
 
   useEffect(() => {
     onLoadMoreCalledRef.current = false;
@@ -60,58 +57,33 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
 
   const addresses = Object.keys(accumulatedVotesData);
 
-  useEffect(() => {
-    const checkForScrollbar = () => {
-      if (simpleBarRef.current) {
-        const scrollElement = simpleBarRef.current.getScrollElement();
-        const hasVerticalScrollbar = scrollElement.scrollHeight > scrollElement.clientHeight;
-        setHasScrollbar(hasVerticalScrollbar);
-      }
-    };
-
-    if (simpleBarRef.current) {
-      const scrollElement = simpleBarRef.current.getScrollElement();
-      scrollElement.addEventListener("scroll", checkForScrollbar);
-      checkForScrollbar();
-    }
-
-    return () => {
-      if (simpleBarRef.current) {
-        const scrollElement = simpleBarRef.current.getScrollElement();
-        scrollElement.removeEventListener("scroll", checkForScrollbar);
-      }
-    };
-  }, [addresses]);
-
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full min-h-0">
         {votedAddresses ? (
           <>
             {isLoading && !onLoadMoreCalledRef.current ? (
               <LoadingSkeleton count={count} />
             ) : (
-              <div className="min-h-[40px] h-full">
-                <SimpleBar ref={simpleBarRef} style={{ maxHeight: "100%", height: "100%" }} autoHide={false}>
-                  <div className={`flex flex-col gap-4 ${hasScrollbar ? "pr-6" : ""}`}>
-                    {addresses.map(address => (
-                      <VoterRow
-                        key={address}
-                        votesPerAddress={accumulatedVotesData}
-                        address={address}
-                        addressesLength={addresses.length}
-                        className={className}
-                      />
-                    ))}
-                    {hasNextPage && (
-                      <button className="flex gap-2 items-center" onClick={onLoadMore}>
-                        <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
-                        <ChevronUpIcon height={20} className="text-positive-11" />
-                      </button>
-                    )}
-                    {isFetchingNextPage && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
-                  </div>
-                </SimpleBar>
+              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+                <div className="flex flex-col gap-4 pr-6">
+                  {addresses.map(address => (
+                    <VoterRow
+                      key={address}
+                      votesPerAddress={accumulatedVotesData}
+                      address={address}
+                      addressesLength={addresses.length}
+                      className={className}
+                    />
+                  ))}
+                  {hasNextPage && (
+                    <button className="flex gap-2 items-center" onClick={onLoadMore}>
+                      <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
+                      <ChevronUpIcon height={20} className="text-positive-11" />
+                    </button>
+                  )}
+                  {isFetchingNextPage && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
+                </div>
               </div>
             )}
           </>

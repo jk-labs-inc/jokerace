@@ -28,7 +28,7 @@ const TitleParser = ({ stringArray, enabledPreview }: TitleParserProps) => {
   return (
     <div className="bg-gradient-entry-title rounded-t-4xl">
       <div className="pl-8 pr-4 py-6">
-        <p className="text-[40px] font-bold text-neutral-11">“{title}”</p>
+        <p className="text-[40px] font-bold text-neutral-11 normal-case">“{title}”</p>
       </div>
     </div>
   );

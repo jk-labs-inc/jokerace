@@ -131,7 +131,7 @@ export const ListProposals = () => {
                 isTied: proposal.isTied,
                 commentsCount: proposal.commentsCount,
                 // TODO: check if this is correct
-                metadataFields: proposal.metadataFields ?? [],
+                metadataFields: proposal.fieldsMetadata ?? [],
               }}
               enabledPreview={enabledPreview}
               selectedProposalIds={selectedProposalIds}

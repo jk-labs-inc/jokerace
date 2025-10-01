@@ -25,7 +25,6 @@ import SubmissionPageMobileComments from "./components/Comments";
 import SubmissionPageMobileAddFunds from "./components/AddFunds";
 import StickyVoteFooter from "./components/VoteFooter";
 import SubmissionPageMobileVotersList from "./components/VotersList";
-import SubmissionPageMobileVoting from "./components/Voting";
 import { useProposalVoters } from "@hooks/useProposalVoters";
 interface SubmissionPageMobileLayoutProps {
   contestInfo: {
@@ -137,7 +136,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
       <div className="flex flex-col gap-6 mt-5 pb-32">
         <ContestPrompt type="modal" prompt={prompt} hidePrompt />
         {isProposalLoading ? (
-          <p className="loadingDots font-sabo text-[18px] mt-12 text-neutral-9">loading submission info</p>
+          <p className="loadingDots font-sabo-filled text-[18px] mt-12 text-neutral-9">loading submission info</p>
         ) : (
           <div className="animate-reveal flex flex-col gap-6">
             <div className="flex flex-col gap-4">
@@ -236,7 +235,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
         </div>
       </div>
 
-      {showVotingModal && (
+      {/* {showVotingModal && (
         <SubmissionPageMobileVoting
           isOpen={showVotingModal}
           onClose={() => setShowVotingModal(false)}
@@ -248,7 +247,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           currentUserAvailableVotesAmount={currentUserAvailableVotesAmount}
           contestInfo={contestInfo}
         />
-      )}
+      )} */}
 
       {showAddFunds && (
         <SubmissionPageMobileAddFunds

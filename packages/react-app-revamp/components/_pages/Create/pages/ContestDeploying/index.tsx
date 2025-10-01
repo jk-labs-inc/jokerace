@@ -47,7 +47,7 @@ const CreateContestDeploying = () => {
 
   return (
     <div className="flex flex-col gap-4 mt-12 lg:mt-[100px] animate-swing-in-left">
-      <p className="text-[24px] font-bold text-neutral-11 uppercase font-sabo">
+      <p className="text-[24px] font-bold text-neutral-11 uppercase font-sabo-filled">
         congratulations, you created a contest 👑
       </p>
       <p className="text-[18px] text-neutral-11">we'll redirect you to it as soon as it deploys...</p>
@@ -55,7 +55,7 @@ const CreateContestDeploying = () => {
 
       <div className="relative w-[400px] border-4 border-true-black rounded-[10px] overflow-hidden">
         <div className="absolute top-0 left-0 bg-transparent py-1 px-2">
-          <span className="text-[14px] text-true-black font-sabo font-bold">JOKETV</span>
+          <span className="text-[14px] text-true-black font-sabo-filled font-bold">JOKETV</span>
         </div>
         <img
           src="https://media.giphy.com/media/xT8qB8JY8car00rGLe/giphy.gif"

@@ -20,6 +20,8 @@ import { FC, useCallback, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/react/shallow";
 import { Proposal } from "../ProposalContent";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 
 interface DialogModalVoteForProposalProps {
   isOpen: boolean;
@@ -41,13 +43,15 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
       votingClose: state.votesClose,
     })),
   );
+  const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
+  const contestState = useContestStateStore(useShallow(state => state.contestState));
   const { currentUserAvailableVotesAmount } = useUserStore(
     useShallow(state => ({
       currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
     })),
   );
   const isPayPerVote = contestCharge.voteType === VoteType.PerVote;
-  const { castVotes, isSuccess } = useCastVotes({ charge: contestCharge, votesClose: votingClose });
+  const { castVotes, isSuccess, isLoading } = useCastVotes({ charge: contestCharge, votesClose: votingClose });
   const [readFullEntry, setReadFullEntry] = useState(false);
   const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
   const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
@@ -196,10 +200,14 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
                       </>
                     )}
                   </div>
-                  <div className="flex flex-col gap-4 md:gap-8 md:w-80">
+                  <div className="flex flex-col gap-4 md:gap-8 md:w-[368px]">
                     <hr className="hidden md:block border border-neutral-2" />
                     <VotingWidget
                       amountOfVotes={currentUserAvailableVotesAmount}
+                      costToVote={Number(currentPricePerVote)}
+                      isLoading={isCurrentPricePerVoteLoading || isLoading}
+                      isVotingClosed={contestStatus === ContestStatus.VotingClosed}
+                      isContestCanceled={contestState === ContestStateEnum.Canceled}
                       onVote={onSubmitCastVotes}
                       onAddFunds={onAddFunds}
                     />

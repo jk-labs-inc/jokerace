@@ -62,8 +62,10 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
           onGoBack={() => setShowAddFundsModal(false)}
         />
       ) : (
+        //TODO: we should prolly pass currentPricePerVote to the widget
         <VotingWidget
           amountOfVotes={currentUserAvailableVotesAmount}
+          costToVote={charge.type.costToVote}
           style={VotingWidgetStyle.colored}
           isLoading={isLoading}
           isVotingClosed={false}

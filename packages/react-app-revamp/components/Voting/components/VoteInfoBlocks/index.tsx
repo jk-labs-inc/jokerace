@@ -35,7 +35,14 @@ const VoteInfoBlocks: FC<VoteInfoBlocksProps> = props => {
 
   switch (props.type) {
     case "my-votes":
-      return <MyVotes userAddress={props.userAddress} costToVote={costToVote} onAddFunds={props.onAddFunds} />;
+      return (
+        <MyVotes
+          balance={props.balance}
+          symbol={props.symbol}
+          insufficientBalance={props.insufficientBalance}
+          onAddFunds={props.onAddFunds}
+        />
+      );
     case "charge-info":
       return <ChargeInfo costToVote={costToVote} />;
     case "total-charge":

@@ -37,7 +37,7 @@ const TokenSearchModalUserTokens: FC<TokenSearchModalUserTokensProps> = ({
   }
 
   if (isLoading) {
-    return <p className="loadingDots font-sabo text-[14px] text-neutral-14">loading your tokens</p>;
+    return <p className="loadingDots font-sabo-filled text-[14px] text-neutral-14">loading your tokens</p>;
   }
 
   if (!tokens) return null;

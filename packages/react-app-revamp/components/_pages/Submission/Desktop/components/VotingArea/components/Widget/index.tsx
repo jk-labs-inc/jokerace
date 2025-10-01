@@ -26,6 +26,7 @@ const SubmissionPageDesktopVotingAreaWidget = () => {
     chainId: contestConfig.chainId,
   });
 
+  // TODO: add loading and error states
   if (isChargeError || isContestVoteDeadlineError) {
     return <div>Error loading charge</div>;
   }

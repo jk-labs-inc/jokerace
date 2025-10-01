@@ -96,7 +96,7 @@ const LayoutUser = (props: LayoutUserProps) => {
                       tabRefs.current[index] = el;
                       return;
                     }}
-                    className={`font-sabo py-2 text-[14px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
+                    className={`font-sabo-filled py-2 text-[14px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
                       isActiveLink(pathname ?? "", link.href, address) ? "text-positive-11" : "text-neutral-11"
                     }`}
                   >

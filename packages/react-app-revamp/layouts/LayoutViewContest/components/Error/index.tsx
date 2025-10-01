@@ -12,7 +12,7 @@ const LayoutViewContestError: FC<LayoutViewContestErrorProps> = ({ error, bugRep
   if (error === ErrorType.RPC) {
     return (
       <div className="flex flex-col gap-6 m-auto animate-appear">
-        <h1 className="text-[40px] lg:text-[40px] font-sabo text-negative-10 text-center">ruh-roh!</h1>
+        <h1 className="text-[40px] lg:text-[40px] font-sabo-filled text-negative-10 text-center">ruh-roh!</h1>
         <p className="text-[16px] font-bold text-neutral-11 text-center">
           it looks like we can’t connect to the chain to load this contest—please check the link as well as any malware
           blockers you have installed, or try on another browser or device. <br />
@@ -28,7 +28,7 @@ const LayoutViewContestError: FC<LayoutViewContestErrorProps> = ({ error, bugRep
   if (error === ErrorType.CONTRACT) {
     return (
       <div className="flex flex-col gap-6 m-auto animate-appear">
-        <h1 className="text-[40px] lg:text-[40px] font-sabo text-negative-10 text-center">ruh-roh!</h1>
+        <h1 className="text-[40px] lg:text-[40px] font-sabo-filled text-negative-10 text-center">ruh-roh!</h1>
         <p className="text-[16px] font-bold text-neutral-11 text-center">
           we were unable to fetch this contest — please check url to make sure it’s accurate <i>or</i> search for
           contests{" "}
@@ -43,7 +43,7 @@ const LayoutViewContestError: FC<LayoutViewContestErrorProps> = ({ error, bugRep
   if (error === ErrorType.IS_NOT_JOKERACE_CONTRACT) {
     return (
       <div className="flex flex-col gap-6 m-auto animate-appear">
-        <h1 className="text-[40px] lg:text-[40px] font-sabo text-negative-10 text-center">ruh-roh!</h1>
+        <h1 className="text-[40px] lg:text-[40px] font-sabo-filled text-negative-10 text-center">ruh-roh!</h1>
         <p className="text-[16px] font-bold text-neutral-11 text-center">
           looks like this contract wasn’t deployed through Jokerace. Please check the contract address and try again.
         </p>
@@ -54,7 +54,7 @@ const LayoutViewContestError: FC<LayoutViewContestErrorProps> = ({ error, bugRep
   if (error === ErrorType.UNSUPPORTED_VERSION) {
     return (
       <div className="flex flex-col gap-6 m-auto animate-appear">
-        <h1 className="text-[40px] lg:text-[40px] font-sabo text-negative-10 text-center">ruh-roh!</h1>
+        <h1 className="text-[40px] lg:text-[40px] font-sabo-filled text-negative-10 text-center">ruh-roh!</h1>
         <p className="text-[16px] font-bold text-neutral-11 text-center">
           this contest is of an outdated version that is no longer supported - you can always check the transactions
           onchain though!

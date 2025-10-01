@@ -6,8 +6,9 @@ interface BaseVoteInfoBlocksProps {
 
 export interface MyVotesProps extends BaseVoteInfoBlocksProps {
   type: "my-votes";
-  userAddress: string;
-  amountOfVotes: number;
+  balance: string;
+  symbol: string;
+  insufficientBalance: boolean;
   onAddFunds?: () => void;
 }
 

@@ -26,7 +26,7 @@ const ChargeInfoExponential = () => {
   }
 
   if (isLoading || isRefetching || isPreloading) {
-    return <Skeleton width={100} height={24} baseColor="#6A6A6A" highlightColor="#BB65FF" />;
+    return <Skeleton width={100} height={16} baseColor="#6A6A6A" highlightColor="#BB65FF" />;
   }
 
   return (

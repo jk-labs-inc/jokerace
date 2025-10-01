@@ -2,6 +2,7 @@ import { ProposalData, fetchProposalData } from "lib/proposal";
 import { useCallback, useEffect, useState } from "react";
 import { Abi } from "viem";
 
+//TODO: delete afterwards
 const useFetchProposalData = (abi: Abi, version: string, address: string, chainId: number, submission: string) => {
   const [data, setData] = useState<ProposalData | null>(null);
   const [loading, setLoading] = useState(false);

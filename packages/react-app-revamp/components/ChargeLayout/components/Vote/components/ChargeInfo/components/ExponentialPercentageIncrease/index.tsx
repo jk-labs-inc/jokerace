@@ -2,6 +2,7 @@ import useContestVoteDeadline from "@components/_pages/Submission/hooks/useConte
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
+import { useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
 interface ChargeInfoExponentialPercentageIncreaseProps {
@@ -12,6 +13,8 @@ const SECONDS_UNTIL_NEXT_UPDATE_THRESHOLD = 15;
 
 const ChargeInfoExponentialPercentageIncrease = ({ costToVote }: ChargeInfoExponentialPercentageIncreaseProps) => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const [currentTime, setCurrentTime] = useState(() => Math.floor(Date.now() / 1000));
+
   const {
     voteStart,
     contestDeadline,
@@ -26,8 +29,15 @@ const ChargeInfoExponentialPercentageIncrease = ({ costToVote }: ChargeInfoExpon
   const totalVotingMinutes =
     contestDeadline && voteStart ? Math.floor((Number(contestDeadline) - Number(voteStart)) / 60) : 0;
 
-  const now = Math.floor(Date.now() / 1000);
-  const votingTimeLeft = contestDeadline ? Math.max(0, Number(contestDeadline) - now) : 0;
+  const votingTimeLeft = contestDeadline ? Math.max(0, Number(contestDeadline) - currentTime) : 0;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Math.floor(Date.now() / 1000));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const {
     currentPricePercentageData,
@@ -69,14 +79,16 @@ const ChargeInfoExponentialPercentageIncrease = ({ costToVote }: ChargeInfoExpon
     return null;
   }
 
-  if (isPriceError || !currentPricePercentageData || currentPricePercentageData.isBelowThreshold) {
+  if (isPriceError || !currentPricePercentageData) {
     return <p className="text-[12px] text-neutral-9">increases in {secondsUntilNextUpdate} seconds</p>;
   }
 
   return (
     <div className="flex items-center justify-between">
       <p className="text-[12px] text-neutral-9">
-        increases {currentPricePercentageData?.percentageIncrease}% in {secondsUntilNextUpdate} seconds
+        increases{" "}
+        {currentPricePercentageData?.isBelowThreshold ? "" : `${currentPricePercentageData?.percentageIncrease}%`}
+        in {secondsUntilNextUpdate} seconds
       </p>
       {secondsUntilNextUpdate < SECONDS_UNTIL_NEXT_UPDATE_THRESHOLD && (
         <p className="text-[12px] text-secondary-11 animate-pulse">wait for price update or tx may fail</p>

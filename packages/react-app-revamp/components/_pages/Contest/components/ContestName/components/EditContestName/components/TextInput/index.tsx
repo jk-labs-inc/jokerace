@@ -21,7 +21,7 @@ const EditContestNameTextInput: FC<EditContestNameTextInputProps> = ({
         autoFocus
         value={value}
         onChange={handleTextAreaChange}
-        className="text-[24px] md:text-[31px] font-sabo outline-none
+        className="text-[24px] md:text-[31px] font-sabo-filled outline-none
         bg-transparent
         text-transparent
         placeholder:text-neutral-10
@@ -42,7 +42,7 @@ const EditContestNameTextInput: FC<EditContestNameTextInputProps> = ({
       autoFocus
       value={value}
       onChange={handleInputChange}
-      className="text-[24px] md:text-[31px] font-sabo outline-none
+      className="text-[24px] md:text-[31px] font-sabo-filled outline-none
       bg-transparent
       text-transparent
       placeholder:text-neutral-10

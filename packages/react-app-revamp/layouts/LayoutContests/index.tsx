@@ -61,7 +61,7 @@ const LayoutContests = (props: LayoutContestsProps) => {
                   tabRefs.current[index] = el;
                   return;
                 }}
-                className={`navLink-desktop whitespace-nowrap font-sabo text-[14px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
+                className={`navLink-desktop whitespace-nowrap font-sabo-filled text-[14px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
                   pathname === link.href ? "text-positive-11" : "text-neutral-11"
                 }`}
               >

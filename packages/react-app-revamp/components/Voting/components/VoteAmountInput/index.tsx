@@ -1,5 +1,6 @@
 import { VotingWidgetStyle } from "@components/Voting";
 import { FC, RefObject } from "react";
+import { motion } from "motion/react";
 
 interface VoteAmountInputProps {
   amount: number;
@@ -30,9 +31,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
 }) => {
   return (
     <div
-      className={`relative flex ${
-        style === VotingWidgetStyle.colored ? "w-[368px]" : "w-full"
-      } h-[72px] items-center px-8 text-[16px] ${
+      className={`relative flex w-full h-[72px] items-center px-8 text-[16px] ${
         style === VotingWidgetStyle.colored ? "bg-secondary-13" : "bg-transparent"
       } font-bold ${isInvalid ? "text-negative-11" : "text-neutral-11"} border ${
         isFocused && !isInvalid ? "border-secondary-14" : isInvalid ? "border-negative-11" : "border-secondary-14"
@@ -51,12 +50,14 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
         onInput={onInput}
         className="w-full text-[40px] bg-transparent outline-none placeholder-primary-5 pr-20"
       />
-      <button
+      <motion.button
         onClick={onMaxClick}
-        className="absolute w-20 h-6 bg-primary-14 rounded-[40px] right-4 text-positive-11 text-[16px] border-secondary-14 border font-bold flex items-center justify-center hover:bg-positive-11 hover:text-primary-14 transition-colors duration-300 ease-in-out"
+        className="absolute w-20 h-6 bg-primary-14 rounded-[40px] right-4 text-positive-11 text-[16px] border-secondary-14 border font-bold flex items-center justify-center"
+        style={{ willChange: "transform" }}
+        whileTap={{ scale: 0.97 }}
       >
         max
-      </button>
+      </motion.button>
     </div>
   );
 };

@@ -38,7 +38,7 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ chain, onError }) =
   }
 
   if (isLoading) {
-    return <p className="loadingDots font-sabo text-[20px] text-neutral-9">Loading charge fees</p>;
+    return <p className="loadingDots font-sabo-filled text-[20px] text-neutral-9">Loading charge fees</p>;
   }
 
   const handleSplitFeeDestinationTypeChange = (type: SplitFeeDestinationType) => {

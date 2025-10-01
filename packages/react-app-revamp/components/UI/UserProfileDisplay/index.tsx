@@ -23,7 +23,7 @@ interface UserProfileDisplayProps {
 
 export const SIZES = {
   extraSmall: {
-    avatarSizeClass: "w-8 h-8",
+    avatarSizeClass: "w-6 h-6",
     textSizeClass: "text-[12px]",
   },
   compact: {
@@ -36,11 +36,11 @@ export const SIZES = {
   },
   medium: {
     avatarSizeClass: "w-14 h-14",
-    textSizeClass: "text-[18px] font-sabo",
+    textSizeClass: "text-[18px] font-sabo-filled",
   },
   large: {
     avatarSizeClass: "w-[100px] h-[100px]",
-    textSizeClass: "text-[24px] font-sabo",
+    textSizeClass: "text-[24px] font-sabo-filled",
   },
 };
 
