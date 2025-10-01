@@ -1,4 +1,4 @@
-import useContestVoteTimer from "@components/_pages/Submission/hooks/useContestVoteTimer";
+import useContestVoteTimer, { VotingStatus } from "@components/_pages/Submission/hooks/useContestVoteTimer";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/shallow";
@@ -7,7 +7,7 @@ import SubmissionPageDesktopVotingAreaWidgetVoters from "./components/Widget/com
 
 const SubmissionPageDesktopVotingArea = () => {
   const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
-  const { isVotingOpen, isLoading, isError } = useContestVoteTimer({
+  const { isLoading, votingStatus, isVotingOpen, isError } = useContestVoteTimer({
     contestAddress: contestConfig.address,
     contestChainId: contestConfig.chainId,
     contestAbi: contestConfig.abi,
@@ -42,6 +42,7 @@ const SubmissionPageDesktopVotingArea = () => {
   }
 
   if (isLoading) {
+    //TODO: check this
     return (
       <div className="flex flex-col p-4 gap-4 bg-primary-1 rounded-4xl xl:w-[480px]" style={{ minHeight: "600px" }}>
         <SubmissionPageDesktopVotingAreaWidgetVoters proposalId={proposalId} isVotingOpen={false} />
@@ -54,8 +55,10 @@ const SubmissionPageDesktopVotingArea = () => {
       className="flex flex-col p-4 gap-4 bg-primary-1 rounded-4xl xl:w-[480px]"
       style={{ maxHeight: maxHeight ? `${maxHeight}px` : undefined, height: maxHeight ? `${maxHeight}px` : undefined }}
     >
-      {isVotingOpen && <SubmissionPageDesktopVotingAreaWidget />}
-      <SubmissionPageDesktopVotingAreaWidgetVoters proposalId={proposalId} isVotingOpen={isVotingOpen} />
+      {votingStatus === VotingStatus.VotingOpen && <SubmissionPageDesktopVotingAreaWidget />}
+      {(votingStatus === VotingStatus.VotingOpen || votingStatus === VotingStatus.VotingClosed) && (
+        <SubmissionPageDesktopVotingAreaWidgetVoters proposalId={proposalId} isVotingOpen={isVotingOpen} />
+      )}
     </div>
   );
 };

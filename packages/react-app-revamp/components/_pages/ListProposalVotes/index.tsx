@@ -58,7 +58,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
   const addresses = Object.keys(accumulatedVotesData);
 
   return (
-    <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
+    <SkeletonTheme baseColor="#706f78" highlightColor="#bb65ff" duration={1}>
       <div className="flex flex-col h-full min-h-0">
         {votedAddresses ? (
           <>

@@ -19,8 +19,8 @@ const SubmissionPageDesktopBodyComments = () => {
   }
 
   return (
-    <div className="w-full pl-8 pt-4 pb-4 h-44 bg-gradient-voting-area-purple rounded-4xl">
-      <div className="flex items-baseline gap-1 flex-shrink-0">
+    <div className="w-full pl-8 pt-4 pb-4 h-44 bg-gradient-comments-area-purple rounded-4xl">
+      <div className="flex items-baseline gap-2 flex-shrink-0">
         <Image src="/entry/comment.svg" alt="comments" width={24} height={24} className="self-center mt-1" />
         <GradientText isFontSabo={false} textSizeClassName="text-[24px] font-bold">
           comments

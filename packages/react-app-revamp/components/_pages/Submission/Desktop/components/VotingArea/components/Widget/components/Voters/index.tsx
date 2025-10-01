@@ -3,9 +3,9 @@ import GradientText from "@components/UI/GradientText";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import Image from "next/image";
 import { FC } from "react";
-import { useReadContract } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import SubmissionPageDesktopVotingAreaWidgetVotersLoadingSkeleton from "./components/LoadingSkeleton";
+import { useAddressesVoted } from "./hooks/useAddressesVoted";
 
 interface SubmissionPageDesktopVotingAreaWidgetVotersProps {
   proposalId: string;
@@ -17,25 +17,18 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
   isVotingOpen,
 }) => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
-  const {
-    data: addressesVoted,
-    isLoading: isLoadingAddressesVoted,
-    isError: isErrorAddressesVoted,
-  } = useReadContract({
-    address: contestConfig.address as `0x${string}`,
-    abi: contestConfig.abi,
-    chainId: contestConfig.chainId,
-    functionName: "proposalAddressesHaveVoted",
-    args: [proposalId],
-    query: {
-      enabled: !!contestConfig.address && !!contestConfig.abi && !!contestConfig.chainId && !!proposalId,
-    },
+  const { addressesVoted, isLoadingAddressesVoted, isErrorAddressesVoted } = useAddressesVoted({
+    contestAddress: contestConfig.address,
+    contestAbi: contestConfig.abi,
+    contestChainId: contestConfig.chainId,
+    proposalId,
   });
 
   if (isLoadingAddressesVoted) {
     return <SubmissionPageDesktopVotingAreaWidgetVotersLoadingSkeleton />;
   }
 
+  //TODO: add error design
   if (isErrorAddressesVoted) {
     return <div>Error loading addresses voted</div>;
   }
@@ -46,7 +39,7 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
     <div className="w-full flex-1 min-h-0">
       <div className="bg-gradient-voting-area-purple rounded-4xl pl-8 pr-12 py-4 w-full h-full flex flex-col">
         <div className="flex flex-col gap-6 min-h-0 flex-1">
-          <div className="flex items-baseline gap-1 flex-shrink-0">
+          <div className="flex items-baseline gap-2 flex-shrink-0">
             <Image src="/entry/vote-ballot.svg" alt="voters" width={24} height={24} className="self-center" />
             <GradientText isFontSabo={false} textSizeClassName="text-[24px] font-bold">
               voters
