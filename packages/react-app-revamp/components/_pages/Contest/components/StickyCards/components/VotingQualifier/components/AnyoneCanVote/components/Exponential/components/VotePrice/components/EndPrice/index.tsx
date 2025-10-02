@@ -7,7 +7,7 @@ import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import { calculateEndPrice } from "lib/priceCurve";
 import { FC } from "react";
 import { formatEther } from "viem";
-import { useShallow } from "zustand/react/shallow";
+import { useShallow } from "zustand/shallow";
 
 const VotingQualifierAnyoneCanVoteExponentialEndPrice: FC = () => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));

@@ -4,14 +4,14 @@ import useCastVotes from "@hooks/useCastVotes";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Charge } from "@hooks/useDeployContest/types";
+import { useProposalVoters } from "@hooks/useProposalVoters";
 import useProposalVotes from "@hooks/useProposalVotes";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { FC, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
-import { useAddressesVoted } from "../Voters/hooks/useAddressesVoted";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 interface SubmissionPageDesktopVotingAreaWidgetHandlerProps {
   charge: Charge;
@@ -29,30 +29,34 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
   const currentUserAvailableVotesAmount = useUserStore(useShallow(state => state.currentUserAvailableVotesAmount));
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
   const { castVotes } = useCastVotes({ charge: charge, votesClose: votesClose });
-  const { isLoading } = useCastVotesStore(state => state);
+  const { isLoading, isSuccess } = useCastVotesStore(state => state);
   const { refetch: refetchProposalVotes } = useProposalVotes({
     contestAddress: contestConfig.address,
     proposalId: proposalId,
     chainId: contestConfig.chainId,
     abi: contestConfig.abi,
   });
-  const { refetchAddressesVoted } = useAddressesVoted({
-    contestAddress: contestConfig.address,
-    contestAbi: contestConfig.abi,
-    contestChainId: contestConfig.chainId,
-    proposalId: proposalId,
-  });
+  const { refetch: refetchProposalVoters } = useProposalVoters(
+    contestConfig.address,
+    proposalId,
+    contestConfig.chainId,
+  );
 
-  const onVote = async (amount: number) => {
-    try {
-      await castVotes(amount);
-      refetchProposalVotes();
-      //TODO: move this out, since it's only changing when new addresses arrive, not refetching on old addresses
-      refetchAddressesVoted();
-    } catch (error) {
-      console.error("Failed to cast vote:", error);
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (isSuccess) {
+      // Add delay to ensure blockchain state has propagated to RPC nodes
+      const refetchWithDelay = async () => {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        refetchProposalVotes();
+        refetchProposalVoters();
+      };
+
+      refetchWithDelay();
     }
-  };
+  }, [isSuccess, isLoading, refetchProposalVotes, refetchProposalVoters]);
 
   useEffect(() => {
     checkIfCurrentUserQualifyToVote({
@@ -88,7 +92,7 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
               onAddFunds={() => {
                 setShowAddFundsModal(true);
               }}
-              onVote={onVote}
+              onVote={castVotes}
             />
           )}
         </div>

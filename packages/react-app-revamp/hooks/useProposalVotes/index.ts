@@ -43,6 +43,7 @@ const useProposalVotes = ({
     ],
     query: {
       enabled: enabled && !!abi && !!proposalId && !!contestAddress && !!chainId,
+      gcTime: 0,
       select: data => {
         const [proposalVotesResult, allProposalsResult, deletedProposalsResult] = data;
 

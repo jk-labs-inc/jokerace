@@ -3,7 +3,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import Skeleton from "react-loading-skeleton";
-import { useShallow } from "zustand/react/shallow";
+import { useShallow } from "zustand/shallow";
 
 const ChargeInfoExponential = () => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));

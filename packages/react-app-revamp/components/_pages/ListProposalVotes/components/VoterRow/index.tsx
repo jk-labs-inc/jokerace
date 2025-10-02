@@ -1,6 +1,7 @@
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { FC } from "react";
+import AnimatedVoteCount from "./components/AnimatedVoteCount";
 interface VoteRowProps {
   votesPerAddress: Record<string, number>;
   address: string;
@@ -16,9 +17,9 @@ const VoterRow: FC<VoteRowProps> = ({ votesPerAddress, address, addressesLength,
       }`}
     >
       <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} textColor={className} size="compact" />
-      <p className={className}>
+      <AnimatedVoteCount votes={votesPerAddress[address]} className={className}>
         {formatNumberAbbreviated(votesPerAddress[address])} {votesPerAddress[address] === 1 ? "vote" : "votes"}
-      </p>
+      </AnimatedVoteCount>
     </div>
   );
 };

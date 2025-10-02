@@ -6,7 +6,7 @@ import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
 import { motion } from "motion/react";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useShallow } from "zustand/react/shallow";
+import { useShallow } from "zustand/shallow";
 import VotingQualifierError from "../../../../shared/Error";
 import VotingQualifierSkeleton from "../../../../shared/Skeleton";
 import VotingQualifierAnyoneCanVoteExponentialTimer from "./components/Timer";

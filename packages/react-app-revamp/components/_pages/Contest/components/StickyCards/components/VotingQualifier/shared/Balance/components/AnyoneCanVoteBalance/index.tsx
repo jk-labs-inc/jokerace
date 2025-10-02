@@ -6,7 +6,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import { useUserNativeBalance } from "@hooks/useUserBalance";
 import { FC, useState } from "react";
 import Skeleton from "react-loading-skeleton";
-import { useShallow } from "zustand/react/shallow";
+import { useShallow } from "zustand/shallow";
 
 const BalanceOrSkeleton = ({
   isUserBalanceLoading,

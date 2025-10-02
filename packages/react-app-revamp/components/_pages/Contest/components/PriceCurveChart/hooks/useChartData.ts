@@ -1,7 +1,7 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useMemo } from "react";
-import { useShallow } from "zustand/react/shallow";
 import { ChartDataPoint } from "../types";
+import { useShallow } from "zustand/shallow";
 
 export interface ProcessedChartData {
   current: ChartDataPoint | null;

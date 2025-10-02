@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
-import { useShallow } from "zustand/react/shallow";
+import { useShallow } from "zustand/shallow";
 
 const VotingQualifierAnyoneCanVoteExponentialLivePrice: FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });

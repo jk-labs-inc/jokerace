@@ -1,8 +1,8 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { PriceCurveType } from "@hooks/useDeployContest/types";
 import usePriceCurveType from "@hooks/usePriceCurveType";
+import { useShallow } from "zustand/shallow";
 import { FC } from "react";
-import { useShallow } from "zustand/react/shallow";
 import VotingQualifierError from "../../../../shared/Error";
 import VotingQualifierSkeleton from "../../../../shared/Skeleton";
 import VotingQualifierAnyoneCanVoteExponential from "../Exponential";

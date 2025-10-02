@@ -18,7 +18,7 @@ import { VoteType } from "@hooks/useDeployContest/types";
 import { useUserStore } from "@hooks/useUser/store";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useShallow } from "zustand/react/shallow";
+import { useShallow } from "zustand/shallow";
 import { Proposal } from "../ProposalContent";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";

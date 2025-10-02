@@ -2,23 +2,32 @@ import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ordinalize } from "@helpers/ordinalize";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useProposalVotes from "@hooks/useProposalVotes";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import { motion } from "motion/react";
+import AnimatedVoteText from "./components/AnimatedVoteText";
 
 const SubmissionPageDesktopVotes = () => {
   const { contestConfig, proposalId } = useContestConfigStore(state => state);
-  const { votes, rank, isTied, isLoading, isError, isRefetching } = useProposalVotes({
+  const { votes, rank, isTied, isLoading, isError } = useProposalVotes({
     contestAddress: contestConfig.address,
     proposalId: proposalId,
     chainId: contestConfig.chainId,
     abi: contestConfig.abi,
   });
 
-  if (isLoading || isRefetching) {
+  if (isLoading) {
     return (
-      <SkeletonTheme baseColor="#706f78" highlightColor="#bb65ff" duration={1}>
-        <Skeleton width={160} height={32} borderRadius={16} />
-      </SkeletonTheme>
+      <div className="relative w-40 h-8 bg-neutral-16 border border-positive-13 rounded-2xl overflow-hidden">
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+          initial={{ x: "-100%" }}
+          animate={{ x: "100%" }}
+          transition={{
+            duration: 1,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      </div>
     );
   }
 
@@ -34,8 +43,8 @@ const SubmissionPageDesktopVotes = () => {
 
   //TODO: check ties
   return (
-    <div className="h-8 bg-neutral-16 border border-positive-13 rounded-2xl flex items-center justify-center px-4">
-      <span className="text-positive-14 text-base font-bold">
+    <div className="min-w-[200px] h-8 bg-neutral-16 border border-positive-13 rounded-2xl flex items-center justify-center px-4">
+      <AnimatedVoteText votes={votes}>
         {rank > 0 ? (
           <>
             {rank}
@@ -45,7 +54,7 @@ const SubmissionPageDesktopVotes = () => {
         ) : (
           `${formatNumberAbbreviated(votes)} ${votes === 1 ? "vote" : "votes"}`
         )}
-      </span>
+      </AnimatedVoteText>
     </div>
   );
 };

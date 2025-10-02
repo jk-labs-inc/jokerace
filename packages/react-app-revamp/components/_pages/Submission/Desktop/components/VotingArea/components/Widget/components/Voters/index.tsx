@@ -43,7 +43,7 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
     <div className="w-full flex-1 min-h-0">
       <div className="bg-gradient-voting-area-purple rounded-4xl pl-8 pr-12 py-4 w-full h-full flex flex-col">
         <div className="flex flex-col gap-6 min-h-0 flex-1">
-          <div className="flex items-baseline gap-2 flex-shrink-0">
+          <div className="flex items-baseline gap-2 flex-shrink-0 pr-6">
             <Image src="/entry/vote-ballot.svg" alt="voters" width={24} height={24} className="self-center" />
             <GradientText isFontSabo={false} textSizeClassName="text-[24px] font-bold">
               voters

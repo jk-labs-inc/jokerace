@@ -5,7 +5,7 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useShallow } from "zustand/react/shallow";
+import { useShallow } from "zustand/shallow";
 
 interface VotingQualifierAnyoneCanVoteExponentialTimerProps {
   votingTimeLeft: number;

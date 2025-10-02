@@ -1,6 +1,6 @@
 import CreateFlowMonetizationInput from "@components/_pages/Create/components/MonetizationInput";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useShallow } from "zustand/react/shallow";
+import { useShallow } from "zustand/shallow";
 import { FC, useState } from "react";
 import { validateCostToPropose } from "../../validation";
 
