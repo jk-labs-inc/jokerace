@@ -4,7 +4,6 @@ import { ContractConfig } from "@hooks/useContest";
 import { useError } from "@hooks/useError";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
-import { COMMENTS_VERSION } from "lib/proposal";
 import { shuffle, sortBy as sortUnique } from "lodash";
 import { formatEther } from "viem";
 import { MappedProposalIds, ProposalCore, SortOptions, useProposalStore } from "./store";
@@ -17,6 +16,8 @@ import {
 } from "./utils";
 
 export const PROPOSALS_PER_PAGE = 4;
+
+export const COMMENTS_VERSION = "4.13";
 
 export function useProposal() {
   const {
