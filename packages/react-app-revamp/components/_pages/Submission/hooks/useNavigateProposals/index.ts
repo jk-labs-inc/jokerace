@@ -10,8 +10,8 @@ interface UseNavigateProposalsReturn {
   totalProposals: number;
   canGoNext: boolean;
   canGoPrevious: boolean;
-  handleNextEntry?: () => void;
-  handlePreviousEntry?: () => void;
+  previousEntryUrl: string | null;
+  nextEntryUrl: string | null;
   handleClose?: () => void;
   goToProposal?: (proposalId: string) => void;
 }
@@ -21,30 +21,23 @@ const useNavigateProposals = (): UseNavigateProposalsReturn => {
   const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
   const proposalIds = useSubmissionPageStore(useShallow(state => state.allProposalIds));
   const chain = getChainFromId(contestConfig.chainId);
-
   const currentIndex = proposalIds.indexOf(proposalId);
   const totalProposals = proposalIds.length;
   const canGoNext = currentIndex !== -1 && currentIndex < totalProposals - 1;
   const canGoPrevious = currentIndex > 0;
 
-  const goToProposal = (targetProposalId: string) => {
-    const path = ROUTE_CONTEST_PROPOSAL.replace("[chain]", chain?.name.toLowerCase() ?? "")
+  const buildProposalUrl = (targetProposalId: string): string => {
+    return ROUTE_CONTEST_PROPOSAL.replace("[chain]", chain?.name.toLowerCase() ?? "")
       .replace("[address]", contestConfig.address)
       .replace("[submission]", targetProposalId);
+  };
 
+  const previousEntryUrl = canGoPrevious ? buildProposalUrl(proposalIds[currentIndex - 1]) : null;
+  const nextEntryUrl = canGoNext ? buildProposalUrl(proposalIds[currentIndex + 1]) : null;
+
+  const goToProposal = (targetProposalId: string) => {
+    const path = buildProposalUrl(targetProposalId);
     router.push(path, { scroll: false });
-  };
-
-  const handleNextEntry = () => {
-    if (!canGoNext) return;
-    const nextProposalId = proposalIds[currentIndex + 1];
-    goToProposal(nextProposalId);
-  };
-
-  const handlePreviousEntry = () => {
-    if (!canGoPrevious) return;
-    const previousProposalId = proposalIds[currentIndex - 1];
-    goToProposal(previousProposalId);
   };
 
   const handleClose = () => {
@@ -52,12 +45,12 @@ const useNavigateProposals = (): UseNavigateProposalsReturn => {
   };
 
   return {
-    currentIndex: currentIndex,
-    totalProposals: totalProposals,
-    canGoNext: canGoNext,
-    canGoPrevious: canGoPrevious,
-    handleNextEntry,
-    handlePreviousEntry,
+    currentIndex,
+    totalProposals,
+    canGoNext,
+    canGoPrevious,
+    previousEntryUrl,
+    nextEntryUrl,
     handleClose,
     goToProposal,
   };

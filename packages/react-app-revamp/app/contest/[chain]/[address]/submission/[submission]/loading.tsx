@@ -52,14 +52,14 @@ export default function Loading() {
         </div>
 
         {/* Voting Area */}
-        <div className="min-w-0 self-start">
-          <div className="flex flex-col gap-4">
+        <div className="min-w-0 self-stretch">
+          <div className="flex flex-col gap-4 h-full">
             {/* Voting Widget */}
-            <div className="relative bg-gradient-voting-area rounded-4xl h-[400px] overflow-hidden">
+            <div className="relative bg-gradient-voting-area rounded-4xl flex-1 overflow-hidden">
               <ShimmerOverlay />
             </div>
             {/* Voters/Comments */}
-            <div className="relative bg-gradient-voting-area-purple rounded-4xl h-[300px] overflow-hidden">
+            <div className="relative bg-gradient-voting-area-purple rounded-4xl flex-1 overflow-hidden">
               <ShimmerOverlay />
             </div>
           </div>
