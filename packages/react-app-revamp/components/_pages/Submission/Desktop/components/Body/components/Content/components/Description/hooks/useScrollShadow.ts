@@ -48,9 +48,28 @@ export const useScrollShadow = (content: string): UseScrollShadowReturn => {
     const resizeObserver = new ResizeObserver(handleScroll);
     resizeObserver.observe(scrollElement);
 
+    const images = scrollElement.querySelectorAll("img");
+    const handleImageLoad = () => {
+      setTimeout(handleScroll, 50);
+    };
+
+    images.forEach(img => {
+      if (img.complete) {
+        handleImageLoad();
+      } else {
+        img.addEventListener("load", handleImageLoad);
+      }
+    });
+
+    const timeoutId = setTimeout(handleScroll, 100);
+
     return () => {
       scrollElement.removeEventListener("scroll", handleScroll);
       resizeObserver.disconnect();
+      images.forEach(img => {
+        img.removeEventListener("load", handleImageLoad);
+      });
+      clearTimeout(timeoutId);
     };
   }, [content]);
 

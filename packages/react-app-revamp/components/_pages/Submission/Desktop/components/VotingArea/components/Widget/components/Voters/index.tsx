@@ -2,7 +2,7 @@ import { ListProposalVotes } from "@components/_pages/ListProposalVotes";
 import GradientText from "@components/UI/GradientText";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import Image from "next/image";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { useShallow } from "zustand/shallow";
 import SubmissionPageDesktopVotingAreaWidgetVotersLoadingSkeleton from "./components/LoadingSkeleton";
 import NoVotersPlaceholder from "./components/NoVotersPlaceholder";
@@ -48,9 +48,7 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
             <GradientText isFontSabo={false} textSizeClassName="text-[24px] font-bold">
               voters
             </GradientText>
-            <p className="text-[16px] text-neutral-11 font-bold">
-              {votedAddressesArray.length > 0 ? `(${votedAddressesArray.length})` : ""}
-            </p>
+            <p className="text-[16px] text-neutral-11 font-bold">{`(${votedAddressesArray.length})`}</p>
           </div>
 
           {shouldShowPlaceholder ? (

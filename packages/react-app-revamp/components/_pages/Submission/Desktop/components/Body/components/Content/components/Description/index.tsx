@@ -22,7 +22,7 @@ const SubmissionPageDesktopBodyContentDescription: FC<SubmissionPageDesktopBodyC
 
       <div
         ref={scrollRef}
-        className={`pl-8 py-4 pr-4 flex-1 min-h-[450px] max-h-[450px] ${
+        className={`pl-8 py-4 pr-4 flex-1 min-h-[360px] max-h-[360px] ${
           hasScrollableContent ? "overflow-y-auto" : "overflow-y-hidden"
         }`}
       >

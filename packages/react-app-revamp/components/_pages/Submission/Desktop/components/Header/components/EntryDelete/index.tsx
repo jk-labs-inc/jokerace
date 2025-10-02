@@ -1,8 +1,15 @@
+import useContestVoteTimer, { VotingStatus } from "@components/_pages/Submission/hooks/useContestVoteTimer";
 import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
+import SubmissionPageDesktopHeaderEntryDeleteHandler from "./components/Handler";
 
 const SubmittionPageDesktopEntryDelete = () => {
+  const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));
+  const { votingStatus } = useContestVoteTimer({
+    voteStart: voteTimings?.voteStart ?? null,
+    contestDeadline: voteTimings?.contestDeadline ?? null,
+  });
   const { proposalStaticData, contestAuthor } = useSubmissionPageStore(
     useShallow(state => ({
       proposalStaticData: state.proposalStaticData,
@@ -11,15 +18,16 @@ const SubmittionPageDesktopEntryDelete = () => {
   );
   const { address } = useAccount();
 
-  // Server-rendered data should always be available, no loading states needed
   if (!contestAuthor || !proposalStaticData) return null;
 
-  // Only show delete button if:
-  // 1. User is the contest author, OR
-  // 2. User is the proposal author
-  if (address !== contestAuthor && address !== proposalStaticData.author) return null;
+  if (
+    (address !== contestAuthor && address !== proposalStaticData.author) ||
+    votingStatus === VotingStatus.VotingOpen ||
+    votingStatus === VotingStatus.VotingClosed
+  )
+    return null;
 
-  return <div>SubmittionPageDesktopEntryDelete</div>;
+  return <SubmissionPageDesktopHeaderEntryDeleteHandler />;
 };
 
 export default SubmittionPageDesktopEntryDelete;
