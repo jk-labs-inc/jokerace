@@ -4,13 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import SubmissionPageDesktopVotingAreaWidget from "./components/Widget";
 import SubmissionPageDesktopVotingAreaWidgetVoters from "./components/Widget/components/Voters";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 
 const SubmissionPageDesktopVotingArea = () => {
-  const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
-  const { isLoading, votingStatus, isVotingOpen, isError } = useContestVoteTimer({
-    contestAddress: contestConfig.address,
-    contestChainId: contestConfig.chainId,
-    contestAbi: contestConfig.abi,
+  const proposalId = useContestConfigStore(useShallow(state => state.proposalId));
+  const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));
+  const { votingStatus, isVotingOpen } = useContestVoteTimer({
+    voteStart: voteTimings?.voteStart ?? null,
+    contestDeadline: voteTimings?.contestDeadline ?? null,
   });
   const [maxHeight, setMaxHeight] = useState<number | null>(null);
   const observerRef = useRef<ResizeObserver | null>(null);
@@ -36,19 +37,6 @@ const SubmissionPageDesktopVotingArea = () => {
       }
     };
   }, []);
-
-  if (isError) {
-    return <div>Error</div>;
-  }
-
-  if (isLoading) {
-    //TODO: check this
-    return (
-      <div className="flex flex-col p-4 gap-4 bg-primary-1 rounded-4xl xl:w-[480px]" style={{ minHeight: "600px" }}>
-        <SubmissionPageDesktopVotingAreaWidgetVoters proposalId={proposalId} isVotingOpen={false} />
-      </div>
-    );
-  }
 
   return (
     <div

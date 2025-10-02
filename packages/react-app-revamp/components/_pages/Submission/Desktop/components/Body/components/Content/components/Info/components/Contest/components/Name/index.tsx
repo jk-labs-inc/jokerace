@@ -1,19 +1,14 @@
-import useContestConfigStore from "@hooks/useContestConfig/store";
-import { useContestName } from "../../../../../../../../../../../hooks/useContestName";
-import Link from "next/link";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import { ROUTE_VIEW_CONTEST } from "@config/routes";
 import { getChainFromId } from "@helpers/getChainFromId";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import Link from "next/link";
+import { useShallow } from "zustand/shallow";
 
 const SubmissionPageDesktopBodyContentInfoContestName = () => {
   const { contestConfig } = useContestConfigStore(state => state);
-  const { contestName, isLoading, isError } = useContestName({
-    contestAddress: contestConfig.address,
-    contestChainId: contestConfig.chainId,
-    contestAbi: contestConfig.abi,
-  });
+  const contestName = useSubmissionPageStore(useShallow(state => state.contestDetails.name));
   const chain = getChainFromId(contestConfig.chainId);
-
-  //TODO: add loading and error states
 
   return (
     <Link

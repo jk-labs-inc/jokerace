@@ -62,7 +62,7 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
 
   return (
     <div
-      className={`pl-8 pt-4 pb-6 pr-12 rounded-4xl ${showAddFundsModal ? "bg-primary-13" : "bg-gradient-voting-area "}`}
+      className={`pl-8 pt-4 pb-6 pr-12 rounded-4xl ${showAddFundsModal ? "bg-primary-13" : "bg-gradient-voting-area"}`}
     >
       {showAddFundsModal ? (
         <AddFunds

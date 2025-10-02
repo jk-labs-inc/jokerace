@@ -1,17 +1,8 @@
 import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { getChainFromId } from "@helpers/getChainFromId";
-import useContestConfigStore from "@hooks/useContestConfig/store";
 
 const SubmissionPageDesktopEntryNavigation = () => {
-  const { contestConfig, proposalId } = useContestConfigStore(state => state);
-  const { currentIndex, totalProposals, handlePreviousEntry, handleNextEntry } = useNavigateProposals({
-    contestInfo: {
-      chain: getChainFromId(contestConfig.chainId)?.name ?? "",
-      address: contestConfig.address,
-    },
-    proposalId: proposalId,
-  });
+  const { currentIndex, totalProposals, handlePreviousEntry, handleNextEntry } = useNavigateProposals();
 
   return (
     <div className="flex items-center gap-2">

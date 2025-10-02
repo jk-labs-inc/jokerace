@@ -1,25 +1,15 @@
 import useContestVoteTimer, { VotingStatus } from "@components/_pages/Submission/hooks/useContestVoteTimer";
-import useContestConfigStore from "@hooks/useContestConfig/store";
-import Skeleton from "react-loading-skeleton";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import TimerDisplay from "./components/TimerDisplay";
 import TimerLabel from "./components/TimerLabel";
+import { useShallow } from "zustand/shallow";
 
 const SubmissionPageDesktopVotingAreaTimer = () => {
-  const { contestConfig } = useContestConfigStore(state => state);
-  const { votingStatus, timeRemaining, isLoading } = useContestVoteTimer({
-    contestAddress: contestConfig.address,
-    contestChainId: contestConfig.chainId,
-    contestAbi: contestConfig.abi,
+  const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));
+  const { votingStatus, timeRemaining } = useContestVoteTimer({
+    voteStart: voteTimings?.voteStart ?? null,
+    contestDeadline: voteTimings?.contestDeadline ?? null,
   });
-
-  if (isLoading) {
-    return (
-      <div className="inline-flex items-center gap-6 pl-6 pr-8 py-4 rounded-3xl border border-381d4c bg-gradient-timer">
-        <Skeleton width={120} height={20} baseColor="#6A6A6A" highlightColor="#BB65FF" />
-        <Skeleton width={200} height={24} baseColor="#6A6A6A" highlightColor="#BB65FF" />
-      </div>
-    );
-  }
 
   // Don't show timer when voting is not open or closed
   if (votingStatus === VotingStatus.VotingNotOpen || votingStatus === VotingStatus.VotingClosed) {

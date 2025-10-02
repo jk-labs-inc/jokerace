@@ -1,18 +1,14 @@
-import { useContestAuthor } from "../../../../../../../../../../../hooks/useContestAuthor";
 import { useEnsName } from "wagmi";
 import { mainnet } from "@config/wagmi/custom-chains/mainnet";
 import Link from "next/link";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
+import { useShallow } from "zustand/shallow";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 
 const SubmissionPageDesktopBodyContentInfoContestAuthor = () => {
-  const { contestConfig } = useContestConfigStore(state => state);
-  const { contestAuthor, isLoading, isError } = useContestAuthor({
-    contestAddress: contestConfig.address,
-    contestChainId: contestConfig.chainId,
-    contestAbi: contestConfig.abi,
-  });
+  const contestAuthor = useSubmissionPageStore(useShallow(state => state.contestDetails.author));
   const {
     data: contestAuthorEnsName,
     isLoading: contestAuthorEnsNameLoading,
@@ -20,23 +16,27 @@ const SubmissionPageDesktopBodyContentInfoContestAuthor = () => {
   } = useEnsName({
     address: contestAuthor as `0x${string}`,
     chainId: mainnet.id,
-    query: {
-      enabled: !isLoading && !isError,
-    },
   });
 
   //TODO: add loading and error states
+  if (contestAuthorEnsNameLoading) {
+    return <div className="text-neutral-11 font-bold text-[12px]">by loading...</div>;
+  }
+
+  if (contestAuthorEnsNameError) {
+    return <div className="text-neutral-11 font-bold text-[12px]">by error...</div>;
+  }
 
   return (
     <div className="text-neutral-11 font-bold text-[12px]">
       by{" "}
       <Link
         className="text-positive-11"
-        href={`${ROUTE_VIEW_USER.replace("[address]", contestAuthor)}`}
+        href={`${ROUTE_VIEW_USER.replace("[address]", contestAuthor as string)}`}
         target="_blank"
         rel="noopener noreferrer"
       >
-        {contestAuthorEnsName || shortenEthereumAddress(contestAuthor)}
+        {contestAuthorEnsName || shortenEthereumAddress(contestAuthor as string)}
       </Link>
     </div>
   );

@@ -1,12 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { Abi } from "viem";
 import moment from "moment";
-import useContestVoteDeadline from "../useContestVoteDeadline";
 
 interface ContestVoteTimerProps {
-  contestAddress: string;
-  contestChainId: number;
-  contestAbi: Abi;
+  voteStart: bigint | null;
+  contestDeadline: bigint | null;
 }
 
 export enum VotingStatus {
@@ -25,8 +22,6 @@ interface ContestVoteTimerReturn {
     totalSeconds: number;
   } | null;
   isVotingOpen: boolean;
-  isLoading: boolean;
-  isError: boolean;
 }
 
 /**
@@ -35,17 +30,7 @@ interface ContestVoteTimerReturn {
  * Following Dan Abramov's approach for declarative timers:
  * https://overreacted.io/making-setinterval-declarative-with-react-hooks/
  */
-const useContestVoteTimer = ({
-  contestAddress,
-  contestChainId,
-  contestAbi,
-}: ContestVoteTimerProps): ContestVoteTimerReturn => {
-  const { voteStart, contestDeadline, isLoading, isError } = useContestVoteDeadline({
-    contestAddress,
-    contestChainId,
-    contestAbi,
-  });
-
+const useContestVoteTimer = ({ voteStart, contestDeadline }: ContestVoteTimerProps): ContestVoteTimerReturn => {
   const [votingStatus, setVotingStatus] = useState<VotingStatus>(VotingStatus.VotingNotOpen);
   const [timeRemaining, setTimeRemaining] = useState<ContestVoteTimerReturn["timeRemaining"]>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -123,7 +108,7 @@ const useContestVoteTimer = ({
   };
 
   useEffect(() => {
-    if (isLoading || !voteStart || !contestDeadline) {
+    if (!voteStart || !contestDeadline) {
       return;
     }
 
@@ -134,14 +119,12 @@ const useContestVoteTimer = ({
     intervalRef.current = setInterval(updateTimer, 1000);
 
     return clearPreviousInterval;
-  }, [voteStart, contestDeadline, isLoading]);
+  }, [voteStart, contestDeadline]);
 
   return {
     votingStatus,
     timeRemaining,
     isVotingOpen: votingStatus === VotingStatus.VotingOpen,
-    isLoading,
-    isError,
   };
 };
 

@@ -1,35 +1,20 @@
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+"use client";
+import { motion } from "motion/react";
 
 const SubmissionPageDesktopVotingAreaWidgetLoadingSkeleton = () => {
   return (
-    <SkeletonTheme baseColor="#706f78" highlightColor="#bb65ff" duration={1}>
-      <div className="flex flex-col gap-4">
-        {/* Voting type toggle skeleton */}
-        <div className="flex gap-2">
-          <Skeleton width={120} height={48} borderRadius={40} />
-          <Skeleton width={120} height={48} borderRadius={40} />
-        </div>
-
-        {/* Charge display skeleton */}
-        <div className="flex flex-col gap-2">
-          <Skeleton width="100%" height={24} />
-          <Skeleton width="80%" height={20} />
-        </div>
-
-        {/* Input field skeleton */}
-        <Skeleton width="100%" height={56} borderRadius={16} />
-
-        {/* Cost display skeleton */}
-        <div className="flex justify-between items-center">
-          <Skeleton width={100} height={20} />
-          <Skeleton width={80} height={24} />
-        </div>
-
-        {/* Submit button skeleton */}
-        <Skeleton width="100%" height={48} borderRadius={40} />
-      </div>
-    </SkeletonTheme>
+    <div className="relative bg-gradient-voting-area rounded-4xl pl-8 pt-4 pb-6 pr-12 min-h-[400px] overflow-hidden">
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+        initial={{ x: "-100%" }}
+        animate={{ x: "100%" }}
+        transition={{
+          duration: 1,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+    </div>
   );
 };
 

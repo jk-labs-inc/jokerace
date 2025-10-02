@@ -1,11 +1,17 @@
 import { chains, serverConfig } from "@config/wagmi/server";
+import { getChainId } from "@helpers/getChainId";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContract } from "@wagmi/core";
+import {
+  fetchAllProposalIds,
+  fetchContestDetails,
+  fetchContestVoteTimings,
+  fetchProposalStaticData,
+} from "lib/submission";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Abi } from "viem";
 import Submission from "./submission";
-import { getChainId } from "@helpers/getChainId";
 
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
@@ -94,6 +100,17 @@ const Page = async (props: { params: Promise<{ chain: string; address: string; s
       return notFound();
     }
 
+    const [proposalStaticData, contestDetails, allProposalIds, voteTimings] = await Promise.all([
+      fetchProposalStaticData(address, submission, chainId, abi as Abi),
+      fetchContestDetails(address, chainId, abi as Abi),
+      fetchAllProposalIds(address, chainId, abi as Abi, version),
+      fetchContestVoteTimings(address, chainId, abi as Abi),
+    ]);
+
+    if (!proposalStaticData) {
+      return notFound();
+    }
+
     return (
       <Submission
         address={address}
@@ -102,6 +119,10 @@ const Page = async (props: { params: Promise<{ chain: string; address: string; s
         abi={abi as Abi}
         version={version}
         chainId={chainId}
+        proposalStaticData={proposalStaticData}
+        contestDetails={contestDetails}
+        allProposalIds={allProposalIds}
+        voteTimings={voteTimings}
       />
     );
   } catch (error) {

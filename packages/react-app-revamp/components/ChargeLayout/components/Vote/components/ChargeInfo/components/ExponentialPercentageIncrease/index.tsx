@@ -1,4 +1,4 @@
-import useContestVoteDeadline from "@components/_pages/Submission/hooks/useContestVoteDeadline";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
@@ -14,22 +14,16 @@ const SECONDS_UNTIL_NEXT_UPDATE_THRESHOLD = 15;
 const ChargeInfoExponentialPercentageIncrease = ({ costToVote }: ChargeInfoExponentialPercentageIncreaseProps) => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const [currentTime, setCurrentTime] = useState(() => Math.floor(Date.now() / 1000));
-
-  const {
-    voteStart,
-    contestDeadline,
-    isLoading: isVotingPeriodLoading,
-    isError: isVotingPeriodError,
-  } = useContestVoteDeadline({
-    contestAddress: contestConfig.address,
-    contestChainId: contestConfig.chainId,
-    contestAbi: contestConfig.abi,
-  });
+  const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));
 
   const totalVotingMinutes =
-    contestDeadline && voteStart ? Math.floor((Number(contestDeadline) - Number(voteStart)) / 60) : 0;
+    voteTimings?.contestDeadline && voteTimings?.voteStart
+      ? Math.floor((Number(voteTimings?.contestDeadline) - Number(voteTimings?.voteStart)) / 60)
+      : 0;
 
-  const votingTimeLeft = contestDeadline ? Math.max(0, Number(contestDeadline) - currentTime) : 0;
+  const votingTimeLeft = voteTimings?.contestDeadline
+    ? Math.max(0, Number(voteTimings?.contestDeadline) - currentTime)
+    : 0;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -63,15 +57,20 @@ const ChargeInfoExponentialPercentageIncrease = ({ costToVote }: ChargeInfoExpon
 
   const secondsUntilNextUpdate = priceCurveUpdateInterval > 0 ? votingTimeLeft % priceCurveUpdateInterval : 0;
 
-  if (isVotingPeriodLoading || isPriceLoading || isIntervalLoading) {
+  if (isPriceLoading || isIntervalLoading) {
     return null;
   }
 
-  if (isVotingPeriodError || isPriceError || isIntervalError) {
+  if (isPriceError || isIntervalError) {
     return null;
   }
 
-  if (!voteStart || !contestDeadline || totalVotingMinutes === 0 || !currentPricePercentageData) {
+  if (
+    !voteTimings?.voteStart ||
+    !voteTimings?.contestDeadline ||
+    totalVotingMinutes === 0 ||
+    !currentPricePercentageData
+  ) {
     return null;
   }
 

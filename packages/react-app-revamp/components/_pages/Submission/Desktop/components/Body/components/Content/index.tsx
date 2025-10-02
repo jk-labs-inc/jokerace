@@ -1,36 +1,21 @@
-import useEntryData from "@components/_pages/Submission/hooks/useEntryData";
-import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
+import { useShallow } from "zustand/shallow";
 import SubmissionPageDesktopBodyContentDescription from "./components/Description";
 import SubmissionPageDesktopBodyContentInfo from "./components/Info";
 import SubmissionPageDesktopBodyContentTitle from "./components/Title";
-import SubmissionPageDesktopBodyContentLoadingSkeleton from "./components/LoadingSkeleton";
 
 const SubmissionPageDesktopBodyContent = () => {
-  const { contestConfig, proposalId } = useContestConfigStore(state => state);
-  const { proposalData, isLoadingProposal, isErrorProposal } = useEntryData({
-    contestAddress: contestConfig.address,
-    contestChainId: contestConfig.chainId,
-    contestAbi: contestConfig.abi,
-    proposalId: proposalId,
-  });
+  const proposalStaticData = useSubmissionPageStore(useShallow(state => state.proposalStaticData));
 
-  if (isLoadingProposal) {
-    return <SubmissionPageDesktopBodyContentLoadingSkeleton />;
-  }
-
-  if (isErrorProposal) {
-    return null;
-  }
-
-  if (!proposalData) {
+  if (!proposalStaticData) {
     return null;
   }
 
   return (
     <div className="bg-primary-13 rounded-4xl flex flex-col">
-      <SubmissionPageDesktopBodyContentTitle stringArray={proposalData.fieldsMetadata.stringArray} />
-      <SubmissionPageDesktopBodyContentInfo proposalData={proposalData} />
-      <SubmissionPageDesktopBodyContentDescription description={proposalData.description} />
+      <SubmissionPageDesktopBodyContentTitle stringArray={proposalStaticData.fieldsMetadata.stringArray} />
+      <SubmissionPageDesktopBodyContentInfo proposalStaticData={proposalStaticData} />
+      <SubmissionPageDesktopBodyContentDescription description={proposalStaticData.description} />
     </div>
   );
 };
