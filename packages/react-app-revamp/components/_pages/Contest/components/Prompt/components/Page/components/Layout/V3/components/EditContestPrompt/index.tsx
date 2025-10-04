@@ -1,14 +1,14 @@
 import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
-import { chains, config } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
+import { config } from "@config/wagmi";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import useEditContestPrompt from "@hooks/useEditContestPrompt";
 import { switchChain } from "@wagmi/core";
-import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 import EditContestPromptModal, { EditPrompt } from "./components/Modal";
 
 interface EditContestPromptProps {
@@ -19,11 +19,9 @@ interface EditContestPromptProps {
 const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }) => {
   const { contestType, contestSummary, contestEvaluate, contestContactDetails, contestImageUrl } = parsePrompt(prompt);
   const { address, chain: accountChain } = useAccount();
-  const pathname = usePathname();
-  const { address: contestAddress, chainName: contestChainName } = extractPathSegments(pathname ?? "");
-  const isOnCorrectChain = accountChain?.name.toLowerCase() === contestChainName.toLowerCase();
-  const contestChainId = chains.find(chain => chain.name.toLowerCase() === contestChainName.toLowerCase())?.id;
-  const { contestAuthorEthereumAddress, contestAbi } = useContestStore(state => state);
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const isOnCorrectChain = accountChain?.name.toLowerCase() === contestConfig.chainName.toLowerCase();
+  const { contestAuthorEthereumAddress } = useContestStore(state => state);
   const isAuthor = address === contestAuthorEthereumAddress;
   const { contestState } = useContestStateStore(state => state);
   const isCompletedOrCanceled =
@@ -31,8 +29,8 @@ const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }
   const shouldRender = canEditPrompt && !isCompletedOrCanceled && isAuthor;
   const [isEditContestNameModalOpen, setIsEditContestNameModalOpen] = useState(false);
   const { editPrompt } = useEditContestPrompt({
-    contestAbi,
-    contestAddress,
+    contestAbi: contestConfig.abi,
+    contestAddress: contestConfig.address,
   });
   const [newPrompt, setNewPrompt] = useState<EditPrompt>({
     contestSummary,
@@ -49,9 +47,9 @@ const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }
   };
 
   const handleSavePrompt = async () => {
-    if (!contestChainId) return;
+    if (!contestConfig.chainId) return;
 
-    if (!isOnCorrectChain) await switchChain(config, { chainId: contestChainId });
+    if (!isOnCorrectChain) await switchChain(config, { chainId: contestConfig.chainId });
 
     const formattedPrompt = new URLSearchParams({
       type: contestType,

@@ -23,7 +23,7 @@ const SubmissionPageMobileAddFunds: FC<SubmissionPageMobileAddFundsProps> = ({ i
       className={`fixed inset-0 z-50 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
       onClick={handleBackdropClick}
     >
-      <div className="absolute inset-0 bg-neutral-8 bg-neutral-8/40 pointer-events-none" />
+      <div className="absolute inset-0 bg-neutral-8/40 pointer-events-none" />
       <div
         className={`absolute animate-appear inset-x-0 bottom-0 bg-true-black 
               border-t border-neutral-9 rounded-t-[40px] p-6 pb-4

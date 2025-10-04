@@ -7,19 +7,21 @@ import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import DialogMaxVotesAlert from "@components/_pages/DialogMaxVotesAlert";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
-import { getNativeTokenSymbol } from "@helpers/nativeToken";
 import ordinalize from "@helpers/ordinalize";
 import { getTotalCharge } from "@helpers/totalCharge";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { useUserStore } from "@hooks/useUser/store";
-import { FC, useEffect, useState, useCallback } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useShallow } from "zustand/react/shallow";
+import { useShallow } from "zustand/shallow";
 import { Proposal } from "../ProposalContent";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 
 interface DialogModalVoteForProposalProps {
   isOpen: boolean;
@@ -29,35 +31,31 @@ interface DialogModalVoteForProposalProps {
 
 export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = ({ isOpen, setIsOpen, proposal }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const {
     contestPrompt,
     charge: contestCharge,
-    contestInfoData,
-    contestAbi,
-    contestVersion,
     votingClose,
   } = useContestStore(
     useShallow(state => ({
       contestPrompt: state.contestPrompt,
       charge: state.charge,
-      contestInfoData: state.contestInfoData,
-      contestAbi: state.contestAbi,
-      contestVersion: state.version,
       votingClose: state.votesClose,
     })),
   );
+  const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
+  const contestState = useContestStateStore(useShallow(state => state.contestState));
   const { currentUserAvailableVotesAmount } = useUserStore(
     useShallow(state => ({
       currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
     })),
   );
   const isPayPerVote = contestCharge.voteType === VoteType.PerVote;
-  const { castVotes, isSuccess } = useCastVotes();
+  const { castVotes, isSuccess, isLoading } = useCastVotes({ charge: contestCharge, votesClose: votingClose });
   const [readFullEntry, setReadFullEntry] = useState(false);
   const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
   const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
   const [totalCharge, setTotalCharge] = useState("");
-  const nativeToken = getNativeTokenSymbol(contestInfoData.contestChainName);
   const [showAddFunds, setShowAddFunds] = useState(false);
   const {
     currentPricePerVote,
@@ -67,10 +65,9 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     isRefetching: isCurrentPricePerVoteRefetching,
     isRefetchError: isCurrentPricePerVoteRefetchError,
   } = useCurrentPricePerVoteWithRefetch({
-    address: contestInfoData.contestAddress,
-    abi: contestAbi,
-    chainId: contestInfoData.contestChainId,
-    version: contestVersion,
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
     votingClose: votingClose,
   });
   const earlyReturn =
@@ -130,12 +127,12 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   return (
     <DialogModalV4 isOpen={isOpen} onClose={handleModalClose}>
       <div className="flex flex-col gap-4 pt-6 pb-4 md:py-16 px-6 md:pl-32 md:pr-16">
-        {showAddFunds && nativeToken && contestInfoData.contestChainName ? (
+        {showAddFunds && contestConfig.chainNativeCurrencySymbol && contestConfig.chainName ? (
           <div className="animate-swing-in-left">
             <AddFunds
               className="md:w-[400px]"
-              chain={contestInfoData.contestChainName}
-              asset={nativeToken ?? ""}
+              chain={contestConfig.chainName}
+              asset={contestConfig.chainNativeCurrencySymbol ?? ""}
               onGoBack={() => setShowAddFunds(false)}
             />
           </div>
@@ -155,7 +152,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
 
             {showMaxVoteConfirmation ? (
               <DialogMaxVotesAlert
-                token={nativeToken ?? ""}
+                token={contestConfig.chainNativeCurrencySymbol ?? ""}
                 totalCost={totalCharge}
                 onConfirm={confirmMaxVote}
                 onCancel={cancelMaxVote}
@@ -203,11 +200,14 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
                       </>
                     )}
                   </div>
-                  <div className="flex flex-col gap-4 md:gap-8 md:w-80">
+                  <div className="flex flex-col gap-4 md:gap-8 md:w-[368px]">
                     <hr className="hidden md:block border border-neutral-2" />
                     <VotingWidget
-                      proposalId={proposal.id}
                       amountOfVotes={currentUserAvailableVotesAmount}
+                      costToVote={Number(currentPricePerVote)}
+                      isLoading={isCurrentPricePerVoteLoading || isLoading}
+                      isVotingClosed={contestStatus === ContestStatus.VotingClosed}
+                      isContestCanceled={contestState === ContestStateEnum.Canceled}
                       onVote={onSubmitCastVotes}
                       onAddFunds={onAddFunds}
                     />

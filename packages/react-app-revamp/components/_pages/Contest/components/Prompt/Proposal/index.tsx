@@ -14,9 +14,9 @@ import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
-import { ProposalState } from "lib/proposal";
 import { usePathname } from "next/navigation";
 import { FC, ReactNode } from "react";
+import { ProposalState } from "@components/_pages/Submission/types";
 
 interface ContestProposalProps {
   proposal: Proposal;

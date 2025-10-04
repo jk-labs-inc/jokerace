@@ -1,12 +1,14 @@
 import Loader from "@components/UI/Loader";
 import { useClaimRewards } from "@hooks/useClaimRewards";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import useUserRewards from "@hooks/useUserRewards";
 import { useUserTiedRankings } from "@hooks/useUserTiedRankings";
 import { RewardModuleInfo } from "lib/rewards/types";
 import { FC } from "react";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 import RewardsError from "../../../../shared/Error";
 import RewardsPlayerViewClaimRewards from "../../../../shared/PlayerView/ClaimRewards";
 import RewardsPlayerLosingStatus from "../../../../shared/PlayerView/LosingStatus";
@@ -28,7 +30,8 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
   tiedRankings,
 }) => {
   const { address: userAddress } = useAccount();
-  const { contestAuthorEthereumAddress, version, contestAbi } = useContestStore(state => state);
+  const contestAuthorEthereumAddress = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const isCreator = userAddress === contestAuthorEthereumAddress;
   const {
     data: userTiedRankings = [],
@@ -38,9 +41,9 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
     tiedRankings,
     contestAddress,
     chainId,
-    contestAbi,
+    contestAbi: contestConfig.abi,
     userAddress: userAddress as `0x${string}`,
-    version,
+    version: contestConfig.version,
     enabled: tiedRankings.length > 0 && !!userAddress && !isCreator,
   });
 
@@ -59,7 +62,7 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
     rankings: rewards.payees,
     creatorAddress: contestAuthorEthereumAddress as `0x${string}`,
     claimedEnabled: contestStatus === ContestStatus.VotingClosed,
-    version,
+    version: contestConfig.version,
   });
 
   const {

@@ -14,7 +14,7 @@ export const Loader = (props: LoaderProps) => {
         width={72}
         className="animate-card-rotation rounded-[5px]"
       />
-      <p className="font-sabo text-neutral-14 text-[16px]">{children ?? "Loading, one moment please"}</p>
+      <p className="font-sabo-filled text-neutral-14 text-[16px]">{children ?? "Loading, one moment please"}</p>
     </div>
   );
 };

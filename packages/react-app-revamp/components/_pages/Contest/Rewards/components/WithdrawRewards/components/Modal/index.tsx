@@ -47,7 +47,7 @@ const WithdrawRewardsModal: FC<WithdrawRewardsModalProps> = ({
         </div>
         <div className="w-full">
           {isReleasableRewardsLoading ? (
-            <p className="loadingDots font-sabo text-[14px] text-neutral-14">Loading rewards</p>
+            <p className="loadingDots font-sabo-filled text-[14px] text-neutral-14">Loading rewards</p>
           ) : availableTokens.length === 0 ? (
             <p className="text-[16px] text-neutral-11 font-bold">you have withdrawn funds</p>
           ) : (

@@ -35,7 +35,7 @@ const RewardsCanceled: FC<RewardsCanceledProps> = ({
       <div className="flex flex-col gap-10">
         <div className="flex flex-col gap-2 items-start">
           <p className="text-[24px] text-negative-11">rewards have been canceled</p>
-          <p className="loadingDots font-sabo text-[14px] text-neutral-14 mt-4">loading cancellation details</p>
+          <p className="loadingDots font-sabo-filled text-[14px] text-neutral-14 mt-4">loading cancellation details</p>
         </div>
       </div>
     );

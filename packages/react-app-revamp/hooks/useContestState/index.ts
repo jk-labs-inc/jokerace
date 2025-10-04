@@ -1,10 +1,8 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { chains, config } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
-import { useContestStore } from "@hooks/useContest/store";
+import { config } from "@config/wagmi";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useError } from "@hooks/useError";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ContestStateEnum, useContestStateStore } from "./store";
 
@@ -15,10 +13,7 @@ interface CancelContestResult {
 }
 
 export function useContestState(): CancelContestResult {
-  const asPath = usePathname();
-  const { chainName, address } = extractPathSegments(asPath ?? "");
-  const chainId = chains.find(chain => chain.name === chainName)?.id;
-  const { contestAbi: abi } = useContestStore(state => state);
+  const { contestConfig } = useContestConfigStore(state => state);
   const { setContestState } = useContestStateStore(state => state);
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -33,9 +28,9 @@ export function useContestState(): CancelContestResult {
 
     try {
       const { request } = await simulateContract(config, {
-        chainId,
-        abi,
-        address: address as `0x${string}`,
+        chainId: contestConfig.chainId,
+        abi: contestConfig.abi,
+        address: contestConfig.address as `0x${string}`,
         functionName: "cancel",
       });
 

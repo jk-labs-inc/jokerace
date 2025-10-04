@@ -1,12 +1,12 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { chains, config } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
+import { config } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { SplitFeeDestination } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { useShallow } from "zustand/shallow";
 
 interface SetCreatorSplitDestinationResult {
   setCreatorSplitDestination: (splitFeeDestination: SplitFeeDestination) => Promise<void>;
@@ -15,10 +15,14 @@ interface SetCreatorSplitDestinationResult {
 }
 
 export function useCreatorSplitDestination(): SetCreatorSplitDestinationResult {
-  const asPath = usePathname();
-  const { chainName, address } = extractPathSegments(asPath ?? "");
-  const chainId = chains.find(chain => chain.name === chainName)?.id;
-  const { contestAbi: abi, setCharge, charge } = useContestStore(state => state);
+  const { abi, chainId, address } = useContestConfigStore(
+    useShallow(state => ({
+      abi: state.contestConfig.abi,
+      address: state.contestConfig.address,
+      chainId: state.contestConfig.chainId,
+    })),
+  );
+  const { setCharge, charge } = useContestStore(state => state);
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const { handleError } = useError();

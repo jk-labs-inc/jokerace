@@ -44,7 +44,7 @@ const ContestName: FC<ContestNameProps> = ({ contestName, contestAddress, chainN
             <div className="flex justify-end flex-col gap-2">
               {filteredLinks.map((link, key) => (
                 <a
-                  className="font-sabo text-neutral-11 text-[24px]"
+                  className="font-sabo-filled text-neutral-11 text-[24px]"
                   key={`footer-link-${key}`}
                   href={link.href}
                   rel="nofollow noreferrer"

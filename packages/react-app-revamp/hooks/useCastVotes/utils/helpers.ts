@@ -1,15 +1,7 @@
 import { VoteType, Charge } from "@hooks/useDeployContest/types";
 import { parseEther, formatEther } from "viem";
 
-export const calculateChargeAmount = (
-  amountOfVotes: number,
-  charge: Charge,
-  currentPricePerVote: string,
-): bigint | undefined => {
-  if (charge.voteType === VoteType.PerTransaction) {
-    return BigInt(charge.type.costToVote);
-  }
-
+export const calculateChargeAmount = (amountOfVotes: number, currentPricePerVote: string): bigint | undefined => {
   const pricePerVoteInWei = parseEther(currentPricePerVote);
   const totalCost = BigInt(amountOfVotes) * pricePerVoteInWei;
 

@@ -2,10 +2,9 @@ import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 import { config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { extractPathSegments } from "@helpers/extractPath";
-import { getChainId } from "@helpers/getChainId";
-import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
+import { Charge } from "@hooks/useDeployContest/types";
 import { useEmailSend } from "@hooks/useEmailSend";
 import { useError } from "@hooks/useError";
 import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
@@ -17,7 +16,6 @@ import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import moment from "moment";
-import { usePathname } from "next/navigation";
 import { useCallback } from "react";
 import { checkAndMarkPriceChangeError } from "utils/error";
 import { formatEther, parseUnits } from "viem";
@@ -29,21 +27,13 @@ import { createVotingEmailSender } from "./utils/email";
 import { calculateChargeAmount } from "./utils/helpers";
 import { usePriceTracking } from "./utils/priceTracking";
 
-export function useCastVotes() {
-  const {
-    charge,
-    contestAbi: abi,
-    version,
-    votesClose,
-  } = useContestStore(
-    useShallow(state => ({
-      charge: state.charge,
-      contestAbi: state.contestAbi,
-      version: state.version,
-      votesClose: state.votesClose,
-    })),
-  );
+interface UseCastVotesProps {
+  charge: Charge;
+  votesClose: Date;
+}
 
+export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { data: rewards } = useRewardsModule();
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
@@ -60,37 +50,38 @@ export function useCastVotes() {
     resetStore,
   } = useCastVotesStore(state => state);
   const { address: userAddress } = useAccount();
-  const asPath = usePathname();
   const { updateCurrentUserVotes } = useUser();
   const { error: errorMessage, handleError } = useError();
-  const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
-  const chainId = getChainId(chainName);
-  const { refetch: refetchTotalVotesCastOnContest } = useTotalVotesCastOnContest(contestAddress, chainId);
+  const { refetch: refetchTotalVotesCastOnContest } = useTotalVotesCastOnContest(
+    contestConfig.address,
+    contestConfig.chainId,
+  );
   const { refetch: refetchCurrentUserVotesOnProposal } = useFetchUserVotesOnProposal(
-    contestAddress,
+    contestConfig.address,
     pickedProposal ?? "",
   );
   const isEarningsTowardsRewards = rewards?.contractAddress === charge.splitFeeDestination.address;
   const { refetch: refetchTotalRewards } = useTotalRewards({
     rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
     rewardsModuleAbi: rewards?.abi,
-    chainId,
+    chainId: contestConfig.chainId,
   });
   const { sendEmail } = useEmailSend();
   const sendVotingEmail = createVotingEmailSender(sendEmail);
   const formattedVotesClose = moment(votesClose).format("MMMM Do, h:mm a");
-  const contestLink = `${window.location.origin}/contest/${chainName.toLowerCase()}/${contestAddress}`;
+  const contestLink = `${window.location.origin}/contest/${contestConfig.chainName.toLowerCase()}/${
+    contestConfig.address
+  }`;
   const { currentPricePerVote } = useCurrentPricePerVoteWithRefetch({
-    address: contestAddress,
-    abi: abi,
-    chainId: chainId,
-    version,
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
     votingClose: votesClose,
   });
   const { startNewVotingSession, getPrices } = usePriceTracking(currentPricePerVote);
   const getChargeAmount = useCallback(
-    (amountOfVotes: number) => calculateChargeAmount(amountOfVotes, charge, currentPricePerVote),
-    [charge, currentPricePerVote],
+    (amountOfVotes: number) => calculateChargeAmount(amountOfVotes, currentPricePerVote),
+    [currentPricePerVote],
   );
 
   async function castVotes(amountOfVotes: number) {
@@ -111,9 +102,9 @@ export function useCastVotes() {
       const castVoteArgs = [pickedProposal, parseUnits(amountOfVotes.toString(), 18)];
 
       const { request } = await simulateContract(config, {
-        address: contestAddress as `0x${string}`,
-        abi: abi ? abi : DeployedContestContract.abi,
-        chainId,
+        address: contestConfig.address as `0x${string}`,
+        abi: contestConfig.abi ? contestConfig.abi : DeployedContestContract.abi,
+        chainId: contestConfig.chainId,
         functionName: "castVote",
         args: castVoteArgs,
         //@ts-ignore (ignoring this becaues for some reason value type is set as undefined?)
@@ -121,18 +112,18 @@ export function useCastVotes() {
       });
 
       const hash = await writeContract(config, request);
-      const receipt = await waitForTransactionReceipt(config, { chainId, hash });
+      const receipt = await waitForTransactionReceipt(config, { chainId: contestConfig.chainId, hash });
 
       const analyticsParams: CombinedAnalyticsParams = {
-        contestAddress,
+        contestAddress: contestConfig.address,
         userAddress,
-        chainName,
+        chainName: contestConfig.chainName,
         pickedProposal,
         amountOfVotes,
         costToVote,
         charge,
         isEarningsTowardsRewards,
-        address: contestAddress,
+        address: contestConfig.address,
         rewardsModuleAddress: rewards?.contractAddress ?? "",
         operation: "deposit",
         token_address: null,
@@ -145,7 +136,7 @@ export function useCastVotes() {
 
       try {
         const voteCount = (await readContract(config, {
-          address: contestAddress as `0x${string}`,
+          address: contestConfig.address as `0x${string}`,
           abi: DeployedContestContract.abi,
           functionName: "proposalVotes",
           args: [pickedProposal],
@@ -167,7 +158,7 @@ export function useCastVotes() {
         console.error("Error updating proposal votes after casting:", voteUpdateError);
       }
 
-      await updateCurrentUserVotes(abi);
+      await updateCurrentUserVotes(contestConfig.abi);
       refetchTotalVotesCastOnContest();
       refetchCurrentUserVotesOnProposal();
       setIsLoading(false);

@@ -1,14 +1,16 @@
-import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
 import AddFunds from "@components/AddFunds";
+import ChargeLayoutSubmission from "@components/ChargeLayout/components/Submission";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EmailSubscription from "@components/UI/EmailSubscription";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
+import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 import { FOOTER_LINKS } from "@config/links";
 import { chains } from "@config/wagmi";
 import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import useMetadataFields from "@hooks/useMetadataFields";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
@@ -17,12 +19,12 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, ReactNode, useEffect, useState } from "react";
+import { useShallow } from "zustand/shallow";
 import DialogModalSendProposalEditor from "../components/Editor";
 import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
 import { isEntryPreviewPrompt } from "../utils";
-import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -66,6 +68,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   onSwitchNetwork,
   onSubmitProposal,
 }) => {
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { contestPrompt } = useContestStore(state => state);
   const {
     setWantsSubscription,
@@ -80,7 +83,12 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const insufficientBalance = (accountData?.value ?? 0) < charge.type.costToPropose;
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const showEntryCharge = charge.type.costToPropose && accountData && isCorrectNetwork;
-  const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields();
+  const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields({
+    address: contestConfig.address,
+    chainId: contestConfig.chainId,
+    abi: contestConfig.abi,
+    version: contestConfig.version,
+  });
   const { fields: metadataFields } = useMetadataStore(state => state);
   const [error, setError] = useState<ReactNode | null>(null);
   const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
@@ -192,7 +200,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
               )}
 
               {isMetadataFieldsLoading ? (
-                <p className="loadingDots font-sabo text-[16px] text-neutral-14">loading metadata fields</p>
+                <p className="loadingDots font-sabo-filled text-[16px] text-neutral-14">loading metadata fields</p>
               ) : isMetadataFieldsError ? (
                 <p className="text-negative-11">Error while loading metadata fields. Please reload the page.</p>
               ) : metadataFields.length > 0 ? (

@@ -1,30 +1,27 @@
 import { getTotalCharge } from "@helpers/totalCharge";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
-import { Charge, VoteType } from "@hooks/useDeployContest/types";
 import React, { useEffect, useState } from "react";
-import { formatEther } from "viem";
 import { useShallow } from "zustand/shallow";
+
 interface TotalChargeProps {
-  charge: Charge;
+  costToVote: bigint;
   amountOfVotes: number;
 }
 
-const TotalCharge: React.FC<TotalChargeProps> = ({ charge: contestCharge, amountOfVotes }) => {
+const TotalCharge: React.FC<TotalChargeProps> = ({ costToVote, amountOfVotes }) => {
   const [totalCharge, setTotalCharge] = useState("0");
-  const { contestInfo, contestAbi, version, votingClose } = useContestStore(
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const { votingClose } = useContestStore(
     useShallow(state => ({
-      contestInfo: state.contestInfoData,
-      contestAbi: state.contestAbi,
-      version: state.version,
       votingClose: state.votesClose,
     })),
   );
   const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged } = useCurrentPricePerVoteWithRefetch({
-    address: contestInfo.contestAddress,
-    abi: contestAbi,
-    chainId: contestInfo.contestChainId,
-    version,
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
     votingClose,
   });
 
@@ -34,27 +31,19 @@ const TotalCharge: React.FC<TotalChargeProps> = ({ charge: contestCharge, amount
       return;
     }
 
-    if (contestCharge.type.costToVote === 0) {
+    if (costToVote === 0n) {
       setTotalCharge("0");
       return;
     }
 
-    if (contestCharge.voteType === VoteType.PerVote) {
-      setTotalCharge(getTotalCharge(amountOfVotes, currentPricePerVote));
-    } else {
-      setTotalCharge(formatEther(BigInt(contestCharge.type.costToVote)));
-    }
-  }, [contestCharge, amountOfVotes]);
-
-  if (contestCharge.voteType === VoteType.PerTransaction) {
-    return null;
-  }
+    setTotalCharge(getTotalCharge(amountOfVotes, currentPricePerVote));
+  }, [costToVote, amountOfVotes]);
 
   return (
     <div className="flex items-center justify-between text-neutral-11 text-[16px]">
       <p>total charge:</p>
       <p className="text-[24px] font-bold">
-        {totalCharge} {contestInfo.contestChainNativeCurrencySymbol}
+        {totalCharge} {contestConfig.chainNativeCurrencySymbol}
       </p>
     </div>
   );

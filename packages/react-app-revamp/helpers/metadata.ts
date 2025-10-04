@@ -72,7 +72,7 @@ export function generateEntryPreviewHTML(fieldInputs: MetadataFieldWithInput[]):
   let previewHTML = "";
   switch (enabledPreview) {
     case EntryPreview.TITLE:
-      previewHTML = `<p style="font-size: 24px; color: #E5E5E5; font-weight: 600;">${firstFieldInput.inputValue}</p>`;
+      previewHTML = `<p style="font-size: 24px; color: #E5E5E5; font-weight: 600;" id="entry-preview-title">${firstFieldInput.inputValue}</p>`;
       break;
     case EntryPreview.IMAGE:
       previewHTML = `<img src="${firstFieldInput.inputValue}" alt="Preview Image" />`;
@@ -84,7 +84,7 @@ export function generateEntryPreviewHTML(fieldInputs: MetadataFieldWithInput[]):
 
       previewHTML = `
           <div style="display: flex; flex-direction: column; gap: 8px;">
-            <p style="font-size: 24px; color: #E5E5E5; font-weight: 600;">${title}</p>
+            <p style="font-size: 24px; color: #E5E5E5; font-weight: 600;" id="entry-preview-title">${title}</p>
             <img src="${imageUrl}" alt="Preview Image" style="max-width: 100%; border-radius: 8px;" />
           </div>`;
       break;

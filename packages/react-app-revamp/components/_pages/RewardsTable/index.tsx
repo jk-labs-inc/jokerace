@@ -32,7 +32,7 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
 
   if (isLoading) {
     return (
-      <p className="loadingDots list-disc font-sabo text-[14px] text-neutral-14">
+      <p className="loadingDots list-disc font-sabo-filled text-[14px] text-neutral-14">
         Loading rewards data for rank {`${payee}`}
       </p>
     );
@@ -46,7 +46,9 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
 
   return (
     <div
-      className={`flex w-full md:w-72 justify-between gap-4 items-center text-neutral-11 font-bold hover:text-positive-11 transition-colors duration-300 ${payee !== totalPayees ? "border-b border-primary-2" : ""} pb-2`}
+      className={`flex w-full md:w-72 justify-between gap-4 items-center text-neutral-11 font-bold hover:text-positive-11 transition-colors duration-300 ${
+        payee !== totalPayees ? "border-b border-primary-2" : ""
+      } pb-2`}
     >
       <p className="text-[16px]">
         {payee}

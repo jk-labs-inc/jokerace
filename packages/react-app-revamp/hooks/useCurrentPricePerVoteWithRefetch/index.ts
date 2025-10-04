@@ -9,7 +9,6 @@ interface CurrentPricePerVoteWithRefetchParams {
   address: string;
   abi: Abi;
   chainId: number;
-  version: string;
   votingClose: Date;
   enabled?: boolean;
 }
@@ -32,7 +31,6 @@ const useCurrentPricePerVoteWithRefetch = ({
   address,
   abi,
   chainId,
-  version,
   votingClose,
   enabled = true,
 }: CurrentPricePerVoteWithRefetchParams): CurrentPricePerVoteWithRefetchResponse => {
@@ -44,7 +42,6 @@ const useCurrentPricePerVoteWithRefetch = ({
     address,
     abi,
     chainId,
-    version,
     enabled,
   });
 
@@ -64,7 +61,6 @@ const useCurrentPricePerVoteWithRefetch = ({
     address,
     abi,
     chainId,
-    version,
     enabled,
     scopeKey: "useCurrentPricePerVoteWithRefetch",
     priceCurveUpdateInterval,

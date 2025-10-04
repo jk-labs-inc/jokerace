@@ -1,19 +1,21 @@
-import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { FC } from "react";
 import { formatEther } from "viem";
 import { useShallow } from "zustand/shallow";
 
-const ChargeInfoFlat = () => {
-  const { charge, contestInfoData } = useContestStore(
-    useShallow(state => ({
-      charge: state.charge,
-      contestInfoData: state.contestInfoData,
-    })),
+interface ChargeInfoFlatProps {
+  costToVote: bigint;
+}
+
+const ChargeInfoFlat: FC<ChargeInfoFlatProps> = ({ costToVote }) => {
+  const chainNativeCurrencySymbol = useContestConfigStore(
+    useShallow(state => state.contestConfig.chainNativeCurrencySymbol),
   );
-  const entryChargeFormatted = formatEther(BigInt(charge.type.costToVote));
+  const entryChargeFormatted = formatEther(costToVote);
 
   return (
     <p>
-      {entryChargeFormatted} {contestInfoData.contestChainNativeCurrencySymbol}
+      {entryChargeFormatted} {chainNativeCurrencySymbol}
     </p>
   );
 };

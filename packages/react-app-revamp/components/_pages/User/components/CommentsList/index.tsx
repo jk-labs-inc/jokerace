@@ -32,7 +32,7 @@ const UserComments: FC<UserCommentsProps> = ({ comments, page, itemsPerPage, set
   if (isError) {
     return (
       <div className="container mx-auto flex flex-col gap-6 animate-appear mt-6">
-        <h1 className="text-[40px] lg:text-[40px] font-sabo text-negative-10">ruh-roh!</h1>
+        <h1 className="text-[40px] lg:text-[40px] font-sabo-filled text-negative-10">ruh-roh!</h1>
         <p className="text-[16px] font-bold text-neutral-11">
           we were unable to fetch comments for this user — please check url to make sure it's accurate <i>or</i> search
           for contests{" "}

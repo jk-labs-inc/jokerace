@@ -1,18 +1,17 @@
+import { config } from "@config/wagmi";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
+import useEditContestPrompt from "@hooks/useEditContestPrompt";
+import useEditContestTitle from "@hooks/useEditContestTitle";
+import useEditContestTitleAndImage from "@hooks/useEditContestTitleAndImage";
+import { switchChain } from "@wagmi/core";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
-import EditContestNameModal from "./components/Modal";
-import useEditContestTitle from "@hooks/useEditContestTitle";
-import { usePathname } from "next/navigation";
-import { extractPathSegments } from "@helpers/extractPath";
-import { switchChain } from "@wagmi/core";
-import { chains, config } from "@config/wagmi";
-import useEditContestPrompt from "@hooks/useEditContestPrompt";
+import { useShallow } from "zustand/shallow";
 import { parsePrompt } from "../../../Prompt/utils";
-import useEditContestTitleAndImage from "@hooks/useEditContestTitleAndImage";
-
+import EditContestNameModal from "./components/Modal";
 interface EditContestNameProps {
   contestName: string;
   contestPrompt: string;
@@ -21,13 +20,11 @@ interface EditContestNameProps {
 
 const EditContestName: FC<EditContestNameProps> = ({ contestName, contestPrompt, canEditTitle }) => {
   const { address, chain: accountChain } = useAccount();
-  const pathname = usePathname();
   const { contestType, contestSummary, contestEvaluate, contestContactDetails, contestImageUrl } =
     parsePrompt(contestPrompt);
-  const { address: contestAddress, chainName: contestChainName } = extractPathSegments(pathname ?? "");
-  const isOnCorrectChain = accountChain?.name.toLowerCase() === contestChainName.toLowerCase();
-  const contestChainId = chains.find(chain => chain.name.toLowerCase() === contestChainName.toLowerCase())?.id;
-  const { contestAuthorEthereumAddress, contestAbi } = useContestStore(state => state);
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const isOnCorrectChain = accountChain?.name.toLowerCase() === contestConfig.chainName.toLowerCase();
+  const { contestAuthorEthereumAddress } = useContestStore(state => state);
   const isAuthor = address === contestAuthorEthereumAddress;
   const { contestState } = useContestStateStore(state => state);
   const isCompletedOrCanceled =
@@ -35,16 +32,16 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, contestPrompt,
   const shouldRender = canEditTitle && !isCompletedOrCanceled && isAuthor;
   const [isEditContestNameModalOpen, setIsEditContestNameModalOpen] = useState(false);
   const { editTitle } = useEditContestTitle({
-    contestAbi,
-    contestAddress,
+    contestAbi: contestConfig.abi,
+    contestAddress: contestConfig.address,
   });
   const { editPrompt } = useEditContestPrompt({
-    contestAbi,
-    contestAddress,
+    contestAbi: contestConfig.abi,
+    contestAddress: contestConfig.address,
   });
   const { updateContestTitleAndImage } = useEditContestTitleAndImage({
-    contestAbi,
-    contestAddress,
+    contestAbi: contestConfig.abi,
+    contestAddress: contestConfig.address,
   });
 
   if (!shouldRender) return null;
@@ -53,11 +50,11 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, contestPrompt,
 
   const handleEditContestNameAndImage = async (value: string, imageValue?: string) => {
     // early returns for validation
-    if (!contestChainId) return;
+    if (!contestConfig.chainId) return;
 
     // ensure correct chain
     if (!isOnCorrectChain) {
-      await switchChain(config, { chainId: contestChainId });
+      await switchChain(config, { chainId: contestConfig.chainId });
     }
 
     // create formatted prompt if image is being updated

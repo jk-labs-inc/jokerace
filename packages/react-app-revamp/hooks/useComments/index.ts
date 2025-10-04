@@ -1,12 +1,13 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { getBlockDetails } from "@helpers/getBlock";
-import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useError } from "@hooks/useError";
 import { readContract, readContracts, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics, saveUpdatedProposalsCommentStatusToAnalyticsV3 } from "lib/analytics/participants";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 import { Comment, CommentCore, useCommentsStore } from "./store";
 
 export const COMMENTS_PER_PAGE = 4;
@@ -18,7 +19,11 @@ export const COMMENTS_PER_PAGE = 4;
  */
 const useComments = (address: string, chainId: number, proposalId: string) => {
   const { address: accountAddress } = useAccount();
-  const { contestAbi: abi } = useContestStore(state => state);
+  const { abi } = useContestConfigStore(
+    useShallow(state => ({
+      abi: state.contestConfig.abi,
+    })),
+  );
   const {
     setIsLoading,
     setIsSuccess,

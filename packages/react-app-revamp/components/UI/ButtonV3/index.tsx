@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { useAccount } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { motion } from "motion/react";
 
 export enum ButtonType {
   DEFAULT = "default",
@@ -68,13 +69,15 @@ const Button: React.FC<ButtonProps> = ({
   const disabledClasses = useMemo(() => (isDisabled ? "button-delete-state" : ""), [isDisabled]);
 
   return (
-    <button
+    <motion.button
       className={`text-[16px] tracking-tighter rounded-[10px] font-bold ${disabledClasses} ${textColorClass} ${colorClass} ${sizeClasses[size]} `}
+      style={{ willChange: "transform" }}
+      whileTap={{ scale: 0.97 }}
       onClick={handleOnClick}
       disabled={isDisabled}
     >
       {children}
-    </button>
+    </motion.button>
   );
 };
 

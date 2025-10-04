@@ -6,7 +6,7 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useShallow } from "zustand/react/shallow";
+import { useShallow } from "zustand/shallow";
 import { validateCostToVote } from "../../validation";
 import CreateContestChargeVoteCurves from "./components/Curves";
 

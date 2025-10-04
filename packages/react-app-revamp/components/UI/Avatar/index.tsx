@@ -3,7 +3,7 @@ import { SIZES } from "../UserProfileDisplay";
 
 export interface AvatarProps {
   src: string;
-  size: "extraSmall" | "small" | "medium" | "large";
+  size: "extraSmall" | "compact" | "small" | "medium" | "large";
 }
 
 export const Avatar: FC<AvatarProps> = ({ src, size }) => {

@@ -4,7 +4,6 @@ import { ContractConfig } from "@hooks/useContest";
 import { useError } from "@hooks/useError";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
-import { COMMENTS_VERSION } from "lib/proposal";
 import { shuffle, sortBy as sortUnique } from "lodash";
 import { formatEther } from "viem";
 import { MappedProposalIds, ProposalCore, SortOptions, useProposalStore } from "./store";
@@ -17,6 +16,8 @@ import {
 } from "./utils";
 
 export const PROPOSALS_PER_PAGE = 4;
+
+export const COMMENTS_VERSION = "4.13";
 
 export function useProposal() {
   const {
@@ -118,6 +119,7 @@ export function useProposal() {
     contestDates: { submissionOpen: Date; votesOpen: Date },
   ) {
     setIsListProposalsLoading(true);
+    setProposalData([]);
 
     try {
       const useLegacyGetAllProposalsIdFn =
@@ -194,7 +196,15 @@ export function useProposal() {
       setIndexPaginationProposalPerId(paginationChunks);
 
       if (paginationChunks.length)
-        fetchProposalsPage(contractConfig, version, 0, paginationChunks[0], paginationChunks.length, mappedProposals);
+        fetchProposalsPage(
+          contractConfig,
+          version,
+          0,
+          paginationChunks[0],
+          paginationChunks.length,
+          mappedProposals,
+          true,
+        );
     } catch (e) {
       handleError(e, "Something went wrong while getting proposal ids.");
       setIsListProposalsSuccess(false);

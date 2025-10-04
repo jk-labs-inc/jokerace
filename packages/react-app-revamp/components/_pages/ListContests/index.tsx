@@ -72,7 +72,7 @@ export const ListContests: FC<ListContestsProps> = ({
         <div className="grid grid-cols-1 gap-4 md:grid-cols-(--grid-list-contests) lg:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
           <div className="order-3 md:order-0">
             {customTitle ? (
-              <span className="text-[20px] font-bold font-sabo">{customTitle}</span>
+              <span className="text-[20px] font-bold font-sabo-filled">{customTitle}</span>
             ) : (
               totalCount !== null && (
                 <span aria-hidden="true">
@@ -96,7 +96,7 @@ export const ListContests: FC<ListContestsProps> = ({
         {isInitialLoading ? (
           placeholders.map((_, index) => <ContestSkeleton key={`skeleton-contest-${index}`} />)
         ) : totalCount === 0 ? (
-          <div className="text-neutral-9 mt-20 font-sabo text-[24px] text-center italic mb-6 animate-appear">
+          <div className="text-neutral-9 mt-20 font-sabo-filled text-[24px] text-center italic mb-6 animate-appear">
             No contests found
           </div>
         ) : (

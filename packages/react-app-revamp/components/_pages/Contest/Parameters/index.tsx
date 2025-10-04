@@ -8,9 +8,12 @@ import ContestParametersRewards from "./components/Rewards";
 import ContestParametersSubmissions from "./components/Submissions";
 import ContestParametersTimeline from "./components/Timeline";
 import ContestParametersVoting from "./components/Voting";
+import { useShallow } from "zustand/shallow";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 
 const ContestParameters = () => {
-  const { submissionsOpen, votesClose, votesOpen, contestAuthorEthereumAddress, charge, version } = useContestStore(
+  const version = useContestConfigStore(useShallow(state => state.contestConfig.version));
+  const { submissionsOpen, votesClose, votesOpen, contestAuthorEthereumAddress, charge } = useContestStore(
     state => state,
   );
   const asPath = usePathname();

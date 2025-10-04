@@ -1,14 +1,14 @@
-import { useContestStore } from "@hooks/useContest/store";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import { calculateStaticMinuteToMinutePercentage } from "lib/priceCurve";
 import { useMemo } from "react";
 import { Abi, formatEther } from "viem";
-import { useShallow } from "zustand/react/shallow";
 
 interface CurrentPricePercentageIncreaseParams {
   address: string;
   abi: Abi;
   chainId: number;
+  costToVote: number;
+  totalVotingMinutes: number;
   enabled?: boolean;
 }
 
@@ -23,14 +23,9 @@ const useCurrentPricePercentageIncrease = ({
   abi,
   chainId,
   enabled = true,
+  costToVote,
+  totalVotingMinutes,
 }: CurrentPricePercentageIncreaseParams): CurrentPricePercentageIncreaseResponse => {
-  const { costToVote, getTotalVotingMinutes } = useContestStore(
-    useShallow(state => ({
-      costToVote: state.charge.type.costToVote,
-      getTotalVotingMinutes: state.getTotalVotingMinutes,
-    })),
-  );
-
   const {
     priceCurveMultiple,
     isLoading: isMultipleLoading,
@@ -50,19 +45,18 @@ const useCurrentPricePercentageIncrease = ({
     try {
       const multiple = Number(priceCurveMultiple);
       const costToVoteNumber = Number(formatEther(BigInt(costToVote)));
-      const totalMinutes = getTotalVotingMinutes();
 
       const { percentageIncrease, isBelowThreshold } = calculateStaticMinuteToMinutePercentage(
         costToVoteNumber,
         multiple,
-        totalMinutes,
+        totalVotingMinutes,
       );
 
       return { percentageIncrease, isBelowThreshold };
     } catch (error) {
       return null;
     }
-  }, [costToVote, priceCurveMultiple, isMultipleLoading, getTotalVotingMinutes]);
+  }, [costToVote, priceCurveMultiple, isMultipleLoading, totalVotingMinutes]);
 
   const isLoading = isMultipleLoading;
   const isError = isMultipleError;

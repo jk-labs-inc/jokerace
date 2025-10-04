@@ -1,9 +1,10 @@
-import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { formatEther } from "viem";
 import { useReadContract } from "wagmi";
+import { useShallow } from "zustand/shallow";
 
 const useTotalVotesCastOnContest = (address: string, chainId?: number) => {
-  const { contestAbi: abi } = useContestStore(state => state);
+  const abi = useContestConfigStore(useShallow(state => state.contestConfig.abi));
 
   const { data, refetch, isLoading, isError } = useReadContract({
     address: address as `0x${string}`,

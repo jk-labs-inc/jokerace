@@ -1,6 +1,13 @@
 import { chains, serverConfig } from "@config/wagmi/server";
+import { getChainId } from "@helpers/getChainId";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContract } from "@wagmi/core";
+import {
+  fetchAllProposalIds,
+  fetchContestDetails,
+  fetchContestVoteTimings,
+  fetchProposalStaticData,
+} from "lib/submission";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Abi } from "viem";
@@ -82,16 +89,42 @@ const Page = async (props: { params: Promise<{ chain: string; address: string; s
   const { chain, address, submission } = params;
 
   try {
-    const chainId = chains.find(
-      (c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain.toLowerCase(),
-    )?.id;
-    const { abi, version } = await getContestContractVersion(address, chainId ?? 1);
-
-    if (!REGEX_ETHEREUM_ADDRESS.test(address) || !abi || version === "unknown") {
+    if (!REGEX_ETHEREUM_ADDRESS.test(address) || !chain) {
       return notFound();
     }
 
-    return <Submission address={address} chain={chain} submission={submission} abi={abi as Abi} version={version} />;
+    const chainId = getChainId(chain);
+    const { abi, version } = await getContestContractVersion(address, chainId);
+
+    if (!abi) {
+      return notFound();
+    }
+
+    const [proposalStaticData, contestDetails, allProposalIds, voteTimings] = await Promise.all([
+      fetchProposalStaticData(address, submission, chainId, abi as Abi),
+      fetchContestDetails(address, chainId, abi as Abi),
+      fetchAllProposalIds(address, chainId, abi as Abi, version),
+      fetchContestVoteTimings(address, chainId, abi as Abi),
+    ]);
+
+    if (!proposalStaticData) {
+      return notFound();
+    }
+
+    return (
+      <Submission
+        address={address}
+        chain={chain}
+        submission={submission}
+        abi={abi as Abi}
+        version={version}
+        chainId={chainId}
+        proposalStaticData={proposalStaticData}
+        contestDetails={contestDetails}
+        allProposalIds={allProposalIds}
+        voteTimings={voteTimings}
+      />
+    );
   } catch (error) {
     console.error("failed to render submission page:", error);
     return notFound();
