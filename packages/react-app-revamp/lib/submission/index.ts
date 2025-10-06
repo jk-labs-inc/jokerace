@@ -35,7 +35,7 @@ const defaultMetadataFields = {
 };
 
 /**
- * Fetch static proposal data server-side
+ * Fetch static proposal data
  * Only includes data that doesn't change (no votes, no voters, no comments)
  */
 export const fetchProposalStaticData = async (

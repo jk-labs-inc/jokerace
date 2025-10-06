@@ -26,7 +26,6 @@ interface VotingWidgetProps {
   onAddFunds?: () => void;
 }
 
-//TODO: add mobile version
 const VotingWidget: FC<VotingWidgetProps> = ({
   amountOfVotes,
   costToVote,

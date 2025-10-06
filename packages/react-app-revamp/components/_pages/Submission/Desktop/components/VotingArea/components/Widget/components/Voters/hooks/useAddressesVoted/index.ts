@@ -6,6 +6,7 @@ interface UseAddressesVotedProps {
   contestAbi: Abi;
   contestChainId: number;
   proposalId: string;
+  enabled?: boolean;
 }
 
 interface UseAddressesVotedReturn {
@@ -20,6 +21,7 @@ export const useAddressesVoted = ({
   contestAbi,
   contestChainId,
   proposalId,
+  enabled = true,
 }: UseAddressesVotedProps): UseAddressesVotedReturn => {
   const {
     data: addressesVoted,
@@ -33,7 +35,7 @@ export const useAddressesVoted = ({
     functionName: "proposalAddressesHaveVoted",
     args: [proposalId],
     query: {
-      enabled: !!contestAddress && !!contestAbi && !!contestChainId && !!proposalId,
+      enabled: !!contestAddress && !!contestAbi && !!contestChainId && !!proposalId && enabled,
     },
   });
 

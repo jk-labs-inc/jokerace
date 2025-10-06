@@ -41,7 +41,7 @@ const SubmissionPageDesktopVotes = () => {
 
   if (votes === 0) return null;
 
-  //TODO: check ties
+  //TODO: check ties and min-w
   return (
     <div className="min-w-[200px] h-8 bg-neutral-16 border border-positive-13 rounded-2xl flex items-center justify-center px-4">
       <AnimatedVoteText votes={votes}>

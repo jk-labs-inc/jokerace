@@ -24,7 +24,6 @@ export const useProposalVoters = (
 
   const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
 
-  // Step 1: Fetch all addresses that voted
   const {
     addresses,
     totalCount,
@@ -38,7 +37,6 @@ export const useProposalVoters = (
     abi,
   });
 
-  // Step 2: Fetch votes for current page
   const {
     voters,
     isLoading: isLoadingVotes,
@@ -55,7 +53,6 @@ export const useProposalVoters = (
     hasDownvotes,
   });
 
-  // Pagination helpers
   const totalPages = useMemo(() => {
     return Math.ceil(totalCount / pageSize);
   }, [totalCount, pageSize]);
@@ -88,7 +85,6 @@ export const useProposalVoters = (
     }, {} as Record<string, number>);
   }, [voters]);
 
-  // Unified refetch function
   const refetch = async () => {
     await refetchAddresses();
     await refetchVotes();

@@ -1,4 +1,5 @@
 "use client";
+
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { ContestWrapper } from "@hooks/useContest/store";
 import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";

@@ -24,6 +24,7 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
     contestAbi: contestConfig.abi,
     contestChainId: contestConfig.chainId,
     proposalId,
+    enabled: !!proposalId && isVotingOpen,
   });
 
   if (isLoadingAddressesVoted) {

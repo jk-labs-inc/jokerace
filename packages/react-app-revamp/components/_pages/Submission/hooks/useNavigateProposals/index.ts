@@ -12,7 +12,7 @@ interface UseNavigateProposalsReturn {
   canGoPrevious: boolean;
   previousEntryUrl: string | null;
   nextEntryUrl: string | null;
-  handleClose?: () => void;
+  closeUrl: string;
   goToProposal?: (proposalId: string) => void;
 }
 
@@ -32,16 +32,17 @@ const useNavigateProposals = (): UseNavigateProposalsReturn => {
       .replace("[submission]", targetProposalId);
   };
 
+  const buildCloseUrl = (): string => {
+    return `/contest/${chain?.name.toLowerCase() ?? ""}/${contestConfig.address}`;
+  };
+
   const previousEntryUrl = canGoPrevious ? buildProposalUrl(proposalIds[currentIndex - 1]) : null;
   const nextEntryUrl = canGoNext ? buildProposalUrl(proposalIds[currentIndex + 1]) : null;
+  const closeUrl = buildCloseUrl();
 
   const goToProposal = (targetProposalId: string) => {
     const path = buildProposalUrl(targetProposalId);
     router.push(path, { scroll: false });
-  };
-
-  const handleClose = () => {
-    router.push(`/contest/${chain?.name.toLowerCase() ?? ""}/${contestConfig.address}`, { scroll: false });
   };
 
   return {
@@ -51,7 +52,7 @@ const useNavigateProposals = (): UseNavigateProposalsReturn => {
     canGoPrevious,
     previousEntryUrl,
     nextEntryUrl,
-    handleClose,
+    closeUrl,
     goToProposal,
   };
 };

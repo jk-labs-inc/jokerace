@@ -1,155 +1,109 @@
-// import DialogMaxVotesAlert from "@components/_pages/DialogMaxVotesAlert";
-// import { ButtonSize } from "@components/UI/ButtonV3";
-// import VotingWidget from "@components/Voting";
-// import { getNativeTokenSymbol } from "@helpers/nativeToken";
-// import { getTotalCharge } from "@helpers/totalCharge";
-// import { useContestStore } from "@hooks/useContest/store";
-// import useContestConfigStore from "@hooks/useContestConfig/store";
-// import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
-// import { Charge } from "@hooks/useDeployContest/types";
-// import { FC, useCallback, useRef, useState } from "react";
-// import ReactDOM from "react-dom";
-// import { useShallow } from "zustand/shallow";
-// import SubmissionPageMobileAddFunds from "../AddFunds";
+import AddFunds from "@components/AddFunds";
+import VotingWidget from "@components/Voting";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
+import useCastVotes from "@hooks/useCastVotes";
+import { useCastVotesStore } from "@hooks/useCastVotes/store";
+import useCharge from "@hooks/useCharge";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useUserStore } from "@hooks/useUser/store";
+import { FC, useEffect, useRef, useState } from "react";
+import ReactDOM from "react-dom";
+import { useShallow } from "zustand/shallow";
+import { useReadContract } from "wagmi";
 
-// interface SubmissionPageMobileVotingProps {
-//   isOpen: boolean;
-//   proposalId: string;
-//   amountOfVotes: number;
-//   charge: Charge;
-//   isPayPerVote: boolean;
-//   currentUserAvailableVotesAmount: number;
-//   contestInfo: {
-//     address: string;
-//     chain: string;
-//     chainId: number;
-//     version: string;
-//   };
-//   onVote?: (amount: number) => void;
-//   onClose?: () => void;
-// }
-// const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({
-//   isOpen,
-//   onClose,
-//   proposalId,
-//   amountOfVotes,
-//   contestInfo,
-//   charge,
-//   isPayPerVote,
-//   currentUserAvailableVotesAmount,
-//   onVote,
-// }) => {
-//   const abi = useContestConfigStore(useShallow(state => state.contestConfig.abi));
-//   const { votesClose } = useContestStore(
-//     useShallow(state => ({
-//       votesClose: state.votesClose,
-//     })),
-//   );
-//   const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
-//   const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
-//   const [totalCharge, setTotalCharge] = useState("");
-//   const nativeToken = getNativeTokenSymbol(contestInfo.chain);
-//   const backdropRef = useRef<HTMLDivElement>(null);
-//   const [showAddFunds, setShowAddFunds] = useState(false);
-//   const {
-//     currentPricePerVote,
-//     isLoading: isCurrentPricePerVoteLoading,
-//     isError: isCurrentPricePerVoteError,
-//     isPreloading: isCurrentPricePerVotePreloading,
-//     isRefetching: isCurrentPricePerVoteRefetching,
-//     isRefetchError: isCurrentPricePerVoteRefetchError,
-//   } = useCurrentPricePerVoteWithRefetch({
-//     address: contestInfo.address,
-//     abi: abi,
-//     chainId: contestInfo.chainId,
-//     votingClose: votesClose,
-//   });
-//   const earlyReturn =
-//     isCurrentPricePerVoteLoading ||
-//     isCurrentPricePerVoteError ||
-//     isCurrentPricePerVotePreloading ||
-//     isCurrentPricePerVoteRefetching ||
-//     isCurrentPricePerVoteRefetchError ||
-//     !currentPricePerVote;
+interface SubmissionPageMobileVotingProps {
+  isOpen: boolean;
+  onClose?: () => void;
+}
 
-//   const onSubmitCastVotes = useCallback(
-//     (amount: number) => {
-//       if (earlyReturn) {
-//         return;
-//       }
+const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpen, onClose }) => {
+  const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
+  const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));
+  const currentUserAvailableVotesAmount = useUserStore(useShallow(state => state.currentUserAvailableVotesAmount));
+  const [showAddFunds, setShowAddFunds] = useState(false);
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const { charge, isLoading: isChargeLoading } = useCharge({
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+  });
+  const votesClose = new Date(Number(voteTimings?.contestDeadline) * 1000 + 1000);
+  const { castVotes } = useCastVotes({ charge: charge, votesClose: votesClose });
+  const { isLoading, isSuccess } = useCastVotesStore(state => state);
+  const { refetch: refetchProposalVotes } = useReadContract({
+    address: contestConfig.address as `0x${string}`,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+    functionName: "proposalVotes",
+    args: [proposalId],
+  });
 
-//       if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
-//         setShowMaxVoteConfirmation(true);
-//         setPendingVote({ amount });
-//         setTotalCharge(getTotalCharge(amount, currentPricePerVote));
-//         return;
-//       }
+  const { refetch: refetchProposalVoters } = useReadContract({
+    address: contestConfig.address as `0x${string}`,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+    functionName: "proposalAddressesHaveVoted",
+    args: [proposalId],
+  });
 
-//       onVote?.(amount);
-//     },
-//     [currentUserAvailableVotesAmount, isPayPerVote, currentPricePerVote, onVote],
-//   );
+  useEffect(() => {
+    if (isLoading) return;
 
-//   const confirmMaxVote = () => {
-//     if (pendingVote) {
-//       onVote?.(pendingVote.amount);
-//       setShowMaxVoteConfirmation(false);
-//       setPendingVote(null);
-//     }
-//   };
+    if (isSuccess) {
+      const refetchWithDelay = async () => {
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
-//   const cancelMaxVote = () => {
-//     setShowMaxVoteConfirmation(false);
-//     setPendingVote(null);
-//   };
+        refetchProposalVotes();
+        refetchProposalVoters();
+      };
 
-//   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-//     if (e.target === backdropRef.current) {
-//       onClose?.();
-//     }
-//   };
+      refetchWithDelay();
+    }
+  }, [isSuccess, isLoading, refetchProposalVotes, refetchProposalVoters, onClose]);
 
-//   return ReactDOM.createPortal(
-//     <div
-//       ref={backdropRef}
-//       className={`fixed inset-0 z-50 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
-//       onClick={handleBackdropClick}
-//     >
-//       <div className="absolute inset-0 bg-neutral-8/40 pointer-events-none" />
-//       <div
-//         className={`absolute animate-appear inset-x-0 bottom-0 bg-true-black
-//                 border-t border-neutral-9 rounded-t-[40px] p-6 pb-4
-//                 ${isOpen ? "translate-y-0" : "translate-y-full"} transition-transform duration-300`}
-//       >
-//         {showAddFunds ? (
-//           <SubmissionPageMobileAddFunds
-//             chain={contestInfo.chain}
-//             asset={nativeToken ?? ""}
-//             isOpen={showAddFunds}
-//             onClose={() => setShowAddFunds(false)}
-//           />
-//         ) : showMaxVoteConfirmation ? (
-//           <DialogMaxVotesAlert
-//             token={nativeToken ?? ""}
-//             totalCost={totalCharge}
-//             onConfirm={confirmMaxVote}
-//             onCancel={cancelMaxVote}
-//             buttonSize={ButtonSize.FULL}
-//           />
-//         ) : (
-//           <VotingWidget
-//             proposalId={proposalId}
-//             amountOfVotes={amountOfVotes}
-//             onVote={onSubmitCastVotes}
-//             onAddFunds={() => {
-//               setShowAddFunds(true);
-//             }}
-//           />
-//         )}
-//       </div>
-//     </div>,
-//     document.body,
-//   );
-// };
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === backdropRef.current) {
+      onClose?.();
+    }
+  };
 
-// export default SubmissionPageMobileVoting;
+  if (isChargeLoading) {
+    return null;
+  }
+
+  return ReactDOM.createPortal(
+    <div
+      ref={backdropRef}
+      className={`fixed inset-0 z-50 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+      onClick={handleBackdropClick}
+    >
+      <div className="absolute inset-0 bg-neutral-8/40 pointer-events-none" />
+      <div
+        className={`absolute animate-appear inset-x-0 bottom-0 bg-true-black
+                border-t border-neutral-9 rounded-t-[40px] p-6 pb-4
+                ${isOpen ? "translate-y-0" : "translate-y-full"} transition-transform duration-300`}
+      >
+        {showAddFunds ? (
+          <AddFunds
+            chain={contestConfig.chainName}
+            asset={contestConfig.chainNativeCurrencySymbol}
+            onGoBack={() => setShowAddFunds(false)}
+          />
+        ) : (
+          <VotingWidget
+            amountOfVotes={currentUserAvailableVotesAmount}
+            costToVote={charge.type.costToVote}
+            isLoading={isLoading}
+            isVotingClosed={false}
+            isContestCanceled={false}
+            onVote={castVotes}
+            onAddFunds={() => setShowAddFunds(true)}
+          />
+        )}
+      </div>
+    </div>,
+    document.body,
+  );
+};
+
+export default SubmissionPageMobileVoting;

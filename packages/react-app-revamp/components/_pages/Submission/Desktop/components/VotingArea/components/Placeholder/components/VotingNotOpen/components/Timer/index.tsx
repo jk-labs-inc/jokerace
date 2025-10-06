@@ -12,21 +12,21 @@ interface TimerProps {
   timeRemaining: TimeRemaining;
 }
 
+const timeUnits = (timeRemaining: TimeRemaining) => [
+  { value: timeRemaining.days, label: "DAYS", format: false },
+  { value: timeRemaining.hours, label: "HOURS", format: true },
+  { value: timeRemaining.minutes, label: "MINUTES", format: true },
+  { value: timeRemaining.seconds, label: "SECONDS", format: true },
+];
+
 const Timer: FC<TimerProps> = ({ timeRemaining }) => {
   const formatTimeValue = (value: number): string => {
     return value.toString().padStart(2, "0");
   };
 
-  const timeUnits = [
-    { value: timeRemaining.days, label: "DAYS", format: false },
-    { value: timeRemaining.hours, label: "HOURS", format: true },
-    { value: timeRemaining.minutes, label: "MINUTES", format: true },
-    { value: timeRemaining.seconds, label: "SECONDS", format: true },
-  ];
-
   return (
     <div className="flex gap-4">
-      {timeUnits.map(unit => (
+      {timeUnits(timeRemaining).map(unit => (
         <div
           key={unit.label}
           className="w-[88px] h-[88px] border border-neutral-10 rounded-2xl flex flex-col items-center justify-center"

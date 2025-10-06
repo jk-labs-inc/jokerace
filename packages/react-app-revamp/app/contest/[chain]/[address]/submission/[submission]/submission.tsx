@@ -1,4 +1,5 @@
 "use client";
+
 import SubmissionPage from "@components/_pages/Submission";
 import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import { getNativeTokenSymbol } from "@helpers/nativeToken";

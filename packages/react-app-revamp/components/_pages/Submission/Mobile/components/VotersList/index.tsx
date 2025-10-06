@@ -1,13 +1,15 @@
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { FC, useState } from "react";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
+import { useShallow } from "zustand/shallow";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 
 interface SubmissionPageMobileVotersListProps {
-  proposalId: string;
   addressesVoted: string[];
 }
 
-const SubmissionPageMobileVotersList: FC<SubmissionPageMobileVotersListProps> = ({ proposalId, addressesVoted }) => {
+const SubmissionPageMobileVotersList: FC<SubmissionPageMobileVotersListProps> = ({ addressesVoted }) => {
+  const proposalId = useContestConfigStore(useShallow(state => state.proposalId));
   const [isExpanded, setIsExpanded] = useState(true);
 
   const handleToggle = () => {
