@@ -96,7 +96,7 @@ export async function generateMetadata(props: {
   }
 }
 
-const Page = async (props: { params: Promise<{ chain: string; address: string }>; children: React.ReactNode }) => {
+const Page = async (props: { params: Promise<{ chain: string; address: string }> }) => {
   const params = await props.params;
   const { chain, address } = params;
 
