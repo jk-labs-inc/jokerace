@@ -1,10 +1,12 @@
 import useNumberOfComments from "@components/_pages/Submission/Desktop/components/Body/components/Comments/hooks/useNumberOfComments";
 import SubmissionPageMobileComments from "@components/_pages/Submission/Mobile/components/Comments";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useProposalIdStore from "@hooks/useProposalId/store";
 import { useShallow } from "zustand/shallow";
 
 const SubmissionPageMobileBodyComments = () => {
-  const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const { numberOfComments, isLoading, isError } = useNumberOfComments({
     contestAddress: contestConfig.address,
     contestChainId: contestConfig.chainId,

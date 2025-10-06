@@ -17,6 +17,7 @@ interface CommentsProps {
 
 const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalId, numberOfComments, className }) => {
   const query = useSearchParams();
+  //TODO: we need to pass this info instead of getting it from the store
   const contestState = useContestStateStore(useShallow(state => state.contestState));
   const isCompletedOrCanceled =
     contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;

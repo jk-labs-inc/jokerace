@@ -1,12 +1,14 @@
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import ordinalize from "@helpers/ordinalize";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useProposalIdStore from "@hooks/useProposalId/store";
 import useProposalVotes from "@hooks/useProposalVotes";
 import Skeleton from "react-loading-skeleton";
 import { useShallow } from "zustand/shallow";
 
 const SubmissionPageMobileBodyContentInfoVotes = () => {
-  const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const { votes, rank, isTied, isLoading, isError } = useProposalVotes({
     contestAddress: contestConfig.address,
     proposalId: proposalId,

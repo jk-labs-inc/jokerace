@@ -1,12 +1,14 @@
-import useContestConfigStore from "@hooks/useContestConfig/store";
-import { useShallow } from "zustand/shallow";
-import useNumberOfComments from "./hooks/useNumberOfComments";
 import GradientText from "@components/UI/GradientText";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import useProposalIdStore from "@hooks/useProposalId/store";
 import Image from "next/image";
+import { useShallow } from "zustand/shallow";
 import SubmissionPageDesktopBodyCommentsLoadingSkeleton from "./components/LoadingSkeleton";
+import useNumberOfComments from "./hooks/useNumberOfComments";
 
 const SubmissionPageDesktopBodyComments = () => {
-  const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const { numberOfComments, isLoading, isError } = useNumberOfComments({
     contestAddress: contestConfig.address,
     contestChainId: contestConfig.chainId,

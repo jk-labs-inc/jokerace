@@ -1,6 +1,7 @@
 import SubmissionDeleteModal from "@components/_pages/Submission/components/Modals/Delete";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useProposalIdStore from "@hooks/useProposalId/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
@@ -9,12 +10,8 @@ import { useShallow } from "zustand/shallow";
 
 const SubmissionPageDesktopHeaderEntryDeleteHandler = () => {
   const router = useRouter();
-  const { proposalId, contestConfig } = useContestConfigStore(
-    useShallow(state => ({
-      proposalId: state.proposalId,
-      contestConfig: state.contestConfig,
-    })),
-  );
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const { deleteProposal, isLoading, isSuccess } = useDeleteProposal();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 

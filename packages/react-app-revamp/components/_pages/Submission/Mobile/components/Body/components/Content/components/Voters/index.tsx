@@ -1,11 +1,13 @@
 import { useAddressesVoted } from "@components/_pages/Submission/Desktop/components/VotingArea/components/Widget/components/Voters/hooks/useAddressesVoted";
 import SubmissionPageMobileVotersList from "@components/_pages/Submission/Mobile/components/VotersList";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useProposalIdStore from "@hooks/useProposalId/store";
 import useProposalVotes from "@hooks/useProposalVotes";
 import { useShallow } from "zustand/shallow";
 
 const SubmissionPageMobileBodyContentVoters = () => {
-  const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const { votes } = useProposalVotes({
     contestAddress: contestConfig.address,
     proposalId: proposalId,

@@ -10,6 +10,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { useShallow } from "zustand/shallow";
 import { useReadContract } from "wagmi";
+import useProposalIdStore from "@hooks/useProposalId/store";
 
 interface SubmissionPageMobileVotingProps {
   isOpen: boolean;
@@ -17,7 +18,8 @@ interface SubmissionPageMobileVotingProps {
 }
 
 const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpen, onClose }) => {
-  const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));
   const currentUserAvailableVotesAmount = useUserStore(useShallow(state => state.currentUserAvailableVotesAmount));
   const [showAddFunds, setShowAddFunds] = useState(false);

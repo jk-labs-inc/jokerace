@@ -87,14 +87,13 @@ export async function generateMetadata(props: {
 const Page = async (props: { params: Promise<{ chain: string; address: string; submission: string }> }) => {
   const params = await props.params;
   const { chain, address, submission } = params;
+  const chainId = getChainId(chain);
+  const { abi, version } = await getContestContractVersion(address, chainId);
 
   try {
     if (!REGEX_ETHEREUM_ADDRESS.test(address) || !chain) {
       return notFound();
     }
-
-    const chainId = getChainId(chain);
-    const { abi, version } = await getContestContractVersion(address, chainId);
 
     if (!abi) {
       return notFound();

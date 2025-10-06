@@ -2,6 +2,7 @@ import Comments from "@components/Comments";
 import { FC, useState } from "react";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useProposalIdStore from "@hooks/useProposalId/store";
 import { useShallow } from "zustand/shallow";
 
 interface SubmissionPageMobileCommentsProps {
@@ -9,7 +10,8 @@ interface SubmissionPageMobileCommentsProps {
 }
 
 const SubmissionPageMobileComments: FC<SubmissionPageMobileCommentsProps> = ({ numberOfComments }) => {
-  const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const [isExpanded, setIsExpanded] = useState(true);
 
   const handleToggle = () => {

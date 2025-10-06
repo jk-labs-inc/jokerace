@@ -1,14 +1,18 @@
 "use client";
 
 import SubmissionPage from "@components/_pages/Submission";
-import { useSubmissionPageStore } from "@components/_pages/Submission/store";
+import { SubmissionPageStoreProvider } from "@components/_pages/Submission/store";
 import { getNativeTokenSymbol } from "@helpers/nativeToken";
-import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import useContestConfigStore from "@hooks/useContestConfig/store";
+import { CastVotesWrapper } from "@hooks/useCastVotes/store";
+import { ContestWrapper } from "@hooks/useContest/store";
+import { ContestConfigStoreProvider } from "@hooks/useContestConfig/store";
+import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
+import { ProposalWrapper } from "@hooks/useProposal/store";
+import { ProposalIdStoreProvider } from "@hooks/useProposalId/store";
+import { UserWrapper } from "@hooks/useUser/store";
 import { ContestVoteTimings, ProposalStaticData } from "lib/submission";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { Abi } from "viem";
-import { useShallow } from "zustand/shallow";
 
 interface SubmissionProps {
   address: string;
@@ -38,54 +42,39 @@ const Submission: FC<SubmissionProps> = ({
   allProposalIds,
   voteTimings,
 }) => {
-  const setPickProposal = useCastVotesStore(useShallow(state => state.setPickedProposal));
-  const { setContestConfig, setProposalId } = useContestConfigStore(
-    useShallow(state => ({
-      setContestConfig: state.setContestConfig,
-      setProposalId: state.setProposalId,
-    })),
+  const contestConfig = {
+    address: address as `0x${string}`,
+    chainName: chain,
+    chainId,
+    chainNativeCurrencySymbol: getNativeTokenSymbol(chain) ?? "",
+    abi,
+    version,
+  };
+
+  return (
+    <ContestWrapper>
+      <ProposalWrapper>
+        <DeleteProposalWrapper>
+          <UserWrapper>
+            <CastVotesWrapper>
+              <ContestConfigStoreProvider contestConfig={contestConfig}>
+                <ProposalIdStoreProvider proposalId={submission}>
+                  <SubmissionPageStoreProvider
+                    proposalStaticData={proposalStaticData}
+                    contestDetails={contestDetails ?? { author: null, name: null }}
+                    allProposalIds={allProposalIds}
+                    voteTimings={voteTimings}
+                  >
+                    <SubmissionPage />
+                  </SubmissionPageStoreProvider>
+                </ProposalIdStoreProvider>
+              </ContestConfigStoreProvider>
+            </CastVotesWrapper>
+          </UserWrapper>
+        </DeleteProposalWrapper>
+      </ProposalWrapper>
+    </ContestWrapper>
   );
-  const { setProposalStaticData, setContestDetails, setAllProposalIds, setVoteTimings, resetStore } =
-    useSubmissionPageStore(
-      useShallow(state => ({
-        setProposalStaticData: state.setProposalStaticData,
-        setContestDetails: state.setContestDetails,
-        setAllProposalIds: state.setAllProposalIds,
-        setVoteTimings: state.setVoteTimings,
-        resetStore: state.resetStore,
-      })),
-    );
-
-  useEffect(() => {
-    setContestConfig({
-      address: address as `0x${string}`,
-      chainName: chain,
-      chainId,
-      chainNativeCurrencySymbol: getNativeTokenSymbol(chain) ?? "",
-      abi,
-      version,
-    });
-  }, [abi, version, chain, chainId, address]);
-
-  useEffect(() => {
-    setPickProposal(submission);
-    setProposalId(submission);
-  }, [submission]);
-
-  useEffect(() => {
-    setProposalStaticData(proposalStaticData);
-    setContestDetails(contestDetails ?? { author: null, name: null });
-    setAllProposalIds(allProposalIds);
-    setVoteTimings(voteTimings);
-  }, [proposalStaticData, contestDetails, allProposalIds, voteTimings]);
-
-  useEffect(() => {
-    return () => {
-      resetStore();
-    };
-  }, [resetStore]);
-
-  return <SubmissionPage />;
 };
 
 export default Submission;

@@ -1,14 +1,14 @@
 import useContestVoteTimer, { VotingStatus } from "@components/_pages/Submission/hooks/useContestVoteTimer";
-import useContestConfigStore from "@hooks/useContestConfig/store";
+import useProposalIdStore from "@hooks/useProposalId/store";
 import { useEffect, useRef, useState } from "react";
-import { useShallow } from "zustand/shallow";
 import SubmissionPageDesktopVotingAreaWidget from "./components/Widget";
 import SubmissionPageDesktopVotingAreaWidgetVoters from "./components/Widget/components/Voters";
 import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import SubmissionPageDesktopVotingAreaWidgetVotingNotOpen from "./components/Placeholder/components/VotingNotOpen";
+import { useShallow } from "zustand/shallow";
 
 const SubmissionPageDesktopVotingArea = () => {
-  const proposalId = useContestConfigStore(useShallow(state => state.proposalId));
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));
   const { votingStatus, isVotingOpen, timeRemaining } = useContestVoteTimer({
     voteStart: voteTimings?.voteStart ?? null,

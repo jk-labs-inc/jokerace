@@ -1,6 +1,7 @@
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { getChainFromId } from "@helpers/getChainFromId";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useProposalIdStore from "@hooks/useProposalId/store";
 import { useRouter } from "next/navigation";
 import { useShallow } from "zustand/shallow";
 import { useSubmissionPageStore } from "../../store";
@@ -18,7 +19,8 @@ interface UseNavigateProposalsReturn {
 
 const useNavigateProposals = (): UseNavigateProposalsReturn => {
   const router = useRouter();
-  const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const proposalIds = useSubmissionPageStore(useShallow(state => state.allProposalIds));
   const chain = getChainFromId(contestConfig.chainId);
   const currentIndex = proposalIds.indexOf(proposalId);

@@ -33,7 +33,7 @@ const SubmissionPageMobileVotingFooter = () => {
       abi: contestConfig.abi,
       chainId: contestConfig.chainId,
     });
-  }, [address]);
+  }, [address, contestConfig]);
 
   const handleConnectWallet = () => {
     if (openConnectModal) {

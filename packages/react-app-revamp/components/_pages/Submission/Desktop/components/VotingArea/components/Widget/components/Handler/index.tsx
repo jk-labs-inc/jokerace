@@ -3,6 +3,7 @@ import VotingWidget, { VotingWidgetStyle } from "@components/Voting";
 import useCastVotes from "@hooks/useCastVotes";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useProposalIdStore from "@hooks/useProposalId/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useProposalVoters } from "@hooks/useProposalVoters";
 import useProposalVotes from "@hooks/useProposalVotes";
@@ -24,7 +25,8 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
 }) => {
   const { openConnectModal } = useConnectModal();
   const { address, isConnected } = useAccount();
-  const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const { checkIfCurrentUserQualifyToVote } = useUser();
   const currentUserAvailableVotesAmount = useUserStore(useShallow(state => state.currentUserAvailableVotesAmount));
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);

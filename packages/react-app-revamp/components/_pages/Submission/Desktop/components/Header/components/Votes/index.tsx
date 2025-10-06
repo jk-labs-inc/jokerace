@@ -1,12 +1,15 @@
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ordinalize } from "@helpers/ordinalize";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useProposalIdStore from "@hooks/useProposalId/store";
 import useProposalVotes from "@hooks/useProposalVotes";
 import { motion } from "motion/react";
 import AnimatedVoteText from "./components/AnimatedVoteText";
+import { useShallow } from "zustand/shallow";
 
 const SubmissionPageDesktopVotes = () => {
-  const { contestConfig, proposalId } = useContestConfigStore(state => state);
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const { votes, rank, isTied, isLoading, isError } = useProposalVotes({
     contestAddress: contestConfig.address,
     proposalId: proposalId,

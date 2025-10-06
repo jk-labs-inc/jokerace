@@ -1,12 +1,14 @@
 import { generateUrlSubmissions } from "@helpers/share";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useProposalIdStore from "@hooks/useProposalId/store";
 import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
-import { useShallow } from "zustand/shallow";
 import { Link } from "interweave-autolink";
+import { useShallow } from "zustand/shallow";
 
 const SubmissionPageMobileHeader = () => {
-  const { contestConfig, proposalId } = useContestConfigStore(useShallow(state => state));
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const { closeUrl } = useNavigateProposals();
 
   const handleShare = () => {

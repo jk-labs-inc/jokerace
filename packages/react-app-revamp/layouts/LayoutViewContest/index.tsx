@@ -33,7 +33,7 @@ import { useAccount, useAccountEffect } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import LayoutViewContestError from "./components/Error";
 
-const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
+const LayoutViewContest = () => {
   const pathname = usePathname();
   const url = useUrl();
   const { address: accountAddress } = useAccount();
@@ -217,8 +217,6 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                       <ContestTabs tab={tab} onChange={tab => setTab(tab)} />
                     </div>
                     {renderTabs}
-
-                    {children}
                   </div>
                 </div>
               </>

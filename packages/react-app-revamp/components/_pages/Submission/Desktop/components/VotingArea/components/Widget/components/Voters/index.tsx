@@ -24,7 +24,6 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
     contestAbi: contestConfig.abi,
     contestChainId: contestConfig.chainId,
     proposalId,
-    enabled: !!proposalId && isVotingOpen,
   });
 
   if (isLoadingAddressesVoted) {
@@ -36,8 +35,8 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
     return <div>Error loading addresses voted</div>;
   }
 
-  const votedAddressesArray = addressesVoted as string[];
-  const hasNoVoters = votedAddressesArray.length === 0;
+  const votedAddressesArray = addressesVoted;
+  const hasNoVoters = votedAddressesArray && votedAddressesArray.length === 0;
   const shouldShowPlaceholder = hasNoVoters && isVotingOpen;
 
   return (
