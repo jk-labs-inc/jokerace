@@ -11,6 +11,8 @@ import ReactDOM from "react-dom";
 import { useShallow } from "zustand/shallow";
 import { useReadContract } from "wagmi";
 import useProposalIdStore from "@hooks/useProposalId/store";
+import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
+import useContestVoteTimer from "@components/_pages/Submission/hooks/useContestVoteTimer";
 
 interface SubmissionPageMobileVotingProps {
   isOpen: boolean;
@@ -30,6 +32,10 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
     chainId: contestConfig.chainId,
   });
   const votesClose = new Date(Number(voteTimings?.contestDeadline) * 1000 + 1000);
+  const { isVotingOpen } = useContestVoteTimer({
+    voteStart: voteTimings?.voteStart ?? null,
+    contestDeadline: voteTimings?.contestDeadline ?? null,
+  });
   const { castVotes } = useCastVotes({ charge: charge, votesClose: votesClose });
   const { isLoading, isSuccess } = useCastVotesStore(state => state);
   const { refetch: refetchProposalVotes } = useReadContract({
@@ -39,13 +45,18 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
     functionName: "proposalVotes",
     args: [proposalId],
   });
-
   const { refetch: refetchProposalVoters } = useReadContract({
     address: contestConfig.address as `0x${string}`,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
     functionName: "proposalAddressesHaveVoted",
     args: [proposalId],
+  });
+  const { currentPricePerVote } = useCurrentPricePerVoteWithRefetch({
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+    votingClose: votesClose,
   });
 
   useEffect(() => {
@@ -94,9 +105,9 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
         ) : (
           <VotingWidget
             amountOfVotes={currentUserAvailableVotesAmount}
-            costToVote={charge.type.costToVote}
+            costToVote={Number(currentPricePerVote)}
             isLoading={isLoading}
-            isVotingClosed={false}
+            isVotingClosed={!isVotingOpen}
             isContestCanceled={false}
             onVote={castVotes}
             onAddFunds={() => setShowAddFunds(true)}

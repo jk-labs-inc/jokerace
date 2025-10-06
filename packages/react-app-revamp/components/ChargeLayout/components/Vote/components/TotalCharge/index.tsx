@@ -13,16 +13,17 @@ interface TotalChargeProps {
 const TotalCharge: React.FC<TotalChargeProps> = ({ costToVote, amountOfVotes }) => {
   const [totalCharge, setTotalCharge] = useState("0");
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
-  const { votingClose } = useContestStore(
-    useShallow(state => ({
-      votingClose: state.votesClose,
-    })),
-  );
+  //TODO: we need to pass this info instead of getting it from the store
+  // const { votingClose } = useContestStore(
+  //   useShallow(state => ({
+  //     votingClose: state.votesClose,
+  //   })),
+  // );
   const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged } = useCurrentPricePerVoteWithRefetch({
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
-    votingClose,
+    votingClose: new Date(),
   });
 
   useEffect(() => {

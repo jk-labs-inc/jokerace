@@ -1,10 +1,13 @@
+import useContestVoteTimer from "@components/_pages/Submission/hooks/useContestVoteTimer";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import AddFunds from "@components/AddFunds";
 import VotingWidget, { VotingWidgetStyle } from "@components/Voting";
 import useCastVotes from "@hooks/useCastVotes";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import useProposalIdStore from "@hooks/useProposalId/store";
+import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import { Charge } from "@hooks/useDeployContest/types";
+import useProposalIdStore from "@hooks/useProposalId/store";
 import { useProposalVoters } from "@hooks/useProposalVoters";
 import useProposalVotes from "@hooks/useProposalVotes";
 import useUser from "@hooks/useUser";
@@ -27,9 +30,14 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
   const { address, isConnected } = useAccount();
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
+  const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));
   const { checkIfCurrentUserQualifyToVote } = useUser();
   const currentUserAvailableVotesAmount = useUserStore(useShallow(state => state.currentUserAvailableVotesAmount));
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
+  const { isVotingOpen } = useContestVoteTimer({
+    voteStart: voteTimings?.voteStart ?? null,
+    contestDeadline: voteTimings?.contestDeadline ?? null,
+  });
   const { castVotes } = useCastVotes({ charge: charge, votesClose: votesClose });
   const { isLoading, isSuccess } = useCastVotesStore(state => state);
   const { refetch: refetchProposalVotes } = useProposalVotes({
@@ -43,6 +51,12 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
     proposalId,
     contestConfig.chainId,
   );
+  const { currentPricePerVote } = useCurrentPricePerVoteWithRefetch({
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+    votingClose: votesClose,
+  });
 
   useEffect(() => {
     if (isLoading) return;
@@ -83,13 +97,13 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
               onGoBack={() => setShowAddFundsModal(false)}
             />
           ) : (
-            //TODO: we should prolly pass currentPricePerVote to the widget
             <VotingWidget
               amountOfVotes={currentUserAvailableVotesAmount}
-              costToVote={charge.type.costToVote}
+              costToVote={Number(currentPricePerVote)}
               style={VotingWidgetStyle.colored}
               isLoading={isLoading}
-              isVotingClosed={false}
+              isVotingClosed={!isVotingOpen}
+              //TODO: add isContestCanceled
               isContestCanceled={false}
               onAddFunds={() => {
                 setShowAddFundsModal(true);

@@ -1,5 +1,8 @@
 "use client";
+
+import Loader from "@components/UI/Loader";
 import { motion } from "motion/react";
+import { useMediaQuery } from "react-responsive";
 
 const ShimmerOverlay = () => (
   <motion.div
@@ -15,6 +18,12 @@ const ShimmerOverlay = () => (
 );
 
 export default function Loading() {
+  const isMobile = useMediaQuery({ maxWidth: 968 });
+
+  if (isMobile) {
+    return <Loader>Loading entry...</Loader>;
+  }
+
   return (
     <div className="px-20 mt-8 animate-reveal">
       <div className="grid grid-cols-[50%_50%] xl:grid-cols-[60%_40%] gap-x-4 gap-y-8 items-center">

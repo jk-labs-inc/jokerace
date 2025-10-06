@@ -1,6 +1,6 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { compareVersions } from "compare-versions";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { useProposalVoterAddresses } from "./hooks/useProposalVoterAddresses";
 import { useProposalVoterVotes } from "./hooks/useProposalVoterVotes";
@@ -14,7 +14,13 @@ export const useProposalVoters = (
   pageSize: number = VOTES_PER_PAGE,
 ) => {
   const [currentPage, setCurrentPage] = useState(0);
+  const [allLoadedVoters, setAllLoadedVoters] = useState<Record<string, number>>({});
 
+  // Reset accumulated voters when proposalId changes
+  useEffect(() => {
+    setAllLoadedVoters({});
+    setCurrentPage(0);
+  }, [proposalId]);
   const { abi, version } = useContestConfigStore(
     useShallow(state => ({
       abi: state.contestConfig.abi,
@@ -78,12 +84,18 @@ export const useProposalVoters = (
     }
   };
 
-  const accumulatedVotesData = useMemo(() => {
-    return voters.reduce((acc, { address, formattedVotes }) => {
-      acc[address] = formattedVotes;
-      return acc;
-    }, {} as Record<string, number>);
+  useEffect(() => {
+    if (voters.length > 0) {
+      const newVoters = voters.reduce((acc, { address, formattedVotes }) => {
+        acc[address] = formattedVotes;
+        return acc;
+      }, {} as Record<string, number>);
+
+      setAllLoadedVoters(prev => ({ ...prev, ...newVoters }));
+    }
   }, [voters]);
+
+  const accumulatedVotesData = allLoadedVoters;
 
   const refetch = async () => {
     await refetchAddresses();

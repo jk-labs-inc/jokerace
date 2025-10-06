@@ -38,13 +38,13 @@ export const useVoteExecution = ({
 }: UseVoteExecutionProps): UseVoteExecutionReturn => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   //TODO: we need to pass this info instead of getting it from the store
-  const { votingClose } = useContestStore(useShallow(state => ({ votingClose: state.votesClose })));
+  // const { votingClose } = useContestStore(useShallow(state => ({ votingClose: state.votesClose })));
   const [showMaxVotesDialog, setShowMaxVotesDialog] = useState(false);
   const { currentPricePerVote } = useCurrentPricePerVoteWithRefetch({
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
-    votingClose,
+    votingClose: new Date(),
   });
 
   const onSwitchNetwork = async (chainId: number) => {

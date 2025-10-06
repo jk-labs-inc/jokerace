@@ -52,28 +52,26 @@ const Submission: FC<SubmissionProps> = ({
   };
 
   return (
-    <ContestWrapper>
-      <ProposalWrapper>
-        <DeleteProposalWrapper>
-          <UserWrapper>
-            <CastVotesWrapper>
-              <ContestConfigStoreProvider contestConfig={contestConfig}>
-                <ProposalIdStoreProvider proposalId={submission}>
-                  <SubmissionPageStoreProvider
-                    proposalStaticData={proposalStaticData}
-                    contestDetails={contestDetails ?? { author: null, name: null }}
-                    allProposalIds={allProposalIds}
-                    voteTimings={voteTimings}
-                  >
-                    <SubmissionPage />
-                  </SubmissionPageStoreProvider>
-                </ProposalIdStoreProvider>
-              </ContestConfigStoreProvider>
-            </CastVotesWrapper>
-          </UserWrapper>
-        </DeleteProposalWrapper>
-      </ProposalWrapper>
-    </ContestWrapper>
+    <ProposalWrapper>
+      <DeleteProposalWrapper>
+        <UserWrapper>
+          <CastVotesWrapper>
+            <ContestConfigStoreProvider contestConfig={contestConfig}>
+              <ProposalIdStoreProvider proposalId={submission}>
+                <SubmissionPageStoreProvider
+                  proposalStaticData={proposalStaticData}
+                  contestDetails={contestDetails ?? { author: null, name: null }}
+                  allProposalIds={allProposalIds}
+                  voteTimings={voteTimings}
+                >
+                  <SubmissionPage />
+                </SubmissionPageStoreProvider>
+              </ProposalIdStoreProvider>
+            </ContestConfigStoreProvider>
+          </CastVotesWrapper>
+        </UserWrapper>
+      </DeleteProposalWrapper>
+    </ProposalWrapper>
   );
 };
 

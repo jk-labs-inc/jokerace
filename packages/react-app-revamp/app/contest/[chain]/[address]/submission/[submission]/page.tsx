@@ -95,10 +95,6 @@ const Page = async (props: { params: Promise<{ chain: string; address: string; s
       return notFound();
     }
 
-    if (!abi) {
-      return notFound();
-    }
-
     const [proposalStaticData, contestDetails, allProposalIds, voteTimings] = await Promise.all([
       fetchProposalStaticData(address, submission, chainId, abi as Abi),
       fetchContestDetails(address, chainId, abi as Abi),

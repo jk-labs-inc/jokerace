@@ -7,18 +7,19 @@ import { useShallow } from "zustand/shallow";
 
 const ChargeInfoExponential = () => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
-  const { votingClose } = useContestStore(
-    useShallow(state => ({
-      votingClose: state.votesClose,
-    })),
-  );
+  //TODO: we need to pass this info instead of getting it from the store
+  // const { votingClose } = useContestStore(
+  //   useShallow(state => ({
+  //     votingClose: state.votesClose,
+  //   })),
+  // );
 
   const { currentPricePerVoteFormatted, isLoading, isRefetching, isError, hasPriceChanged, isPreloading, refetch } =
     useCurrentPricePerVoteWithRefetch({
       address: contestConfig.address,
       abi: contestConfig.abi,
       chainId: contestConfig.chainId,
-      votingClose,
+      votingClose: new Date(),
     });
 
   if (isError) {

@@ -72,7 +72,6 @@ export async function generateMetadata(props: {
     const contestTitle = contestDetails[0].result as string;
     const prompt = contestDetails[1].result as string;
     const contestPrompt = parsePrompt(prompt);
-
     const contestDescriptionRaw =
       contestPrompt.contestSummary + contestPrompt.contestEvaluate + contestPrompt.contestContactDetails;
 
