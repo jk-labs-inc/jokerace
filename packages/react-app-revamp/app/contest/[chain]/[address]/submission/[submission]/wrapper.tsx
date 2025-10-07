@@ -1,49 +1,68 @@
 "use client";
-
 import SubmissionPage from "@components/_pages/Submission";
+import SubmissionLoader from "@components/_pages/Submission/components/Loader";
 import { SubmissionPageStoreProvider } from "@components/_pages/Submission/store";
 import { getNativeTokenSymbol } from "@helpers/nativeToken";
+import { useAllProposalIds } from "@hooks/useAllProposalIds";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
-import { ContestWrapper } from "@hooks/useContest/store";
 import { ContestConfigStoreProvider } from "@hooks/useContestConfig/store";
-import { ContestStateEnum } from "@hooks/useContestState/store";
+import { useContestDetails } from "@hooks/useContestDetails";
+import { useContestVoteTimings } from "@hooks/useContestVoteTimings";
 import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
 import { ProposalIdStoreProvider } from "@hooks/useProposalId/store";
+import { useProposalStaticData } from "@hooks/useProposalStaticData";
 import { UserWrapper } from "@hooks/useUser/store";
-import { ContestVoteTimings, ProposalStaticData } from "lib/submission";
+import { notFound } from "next/navigation";
 import { FC } from "react";
 import { Abi } from "viem";
 
-interface SubmissionProps {
+interface SubmissionWrapperProps {
   address: string;
   chain: string;
   submission: string;
   abi: Abi;
   version: string;
   chainId: number;
-  proposalStaticData: ProposalStaticData;
-  contestDetails: {
-    author: string;
-    name: string;
-    state: ContestStateEnum;
-  } | null;
-  allProposalIds: string[];
-  voteTimings: ContestVoteTimings | null;
 }
 
-const Submission: FC<SubmissionProps> = ({
-  address,
-  chain,
-  submission,
-  abi,
-  version,
-  chainId,
-  proposalStaticData,
-  contestDetails,
-  allProposalIds,
-  voteTimings,
-}) => {
+const SubmissionWrapper: FC<SubmissionWrapperProps> = ({ address, chain, submission, abi, version, chainId }) => {
+  const { proposalStaticData, isLoading: isLoadingProposal } = useProposalStaticData({
+    address: address as `0x${string}`,
+    proposalId: submission,
+    chainId,
+    abi,
+  });
+
+  const { voteTimings, isLoading: isLoadingTimings } = useContestVoteTimings({
+    address: address as `0x${string}`,
+    chainId,
+    abi,
+  });
+
+  const { allProposalIds, isLoading: isLoadingIds } = useAllProposalIds({
+    address: address as `0x${string}`,
+    chainId,
+    abi,
+    version,
+  });
+
+  const { contestDetails, isLoading: isLoadingDetails } = useContestDetails({
+    address: address as `0x${string}`,
+    chainId,
+    abi,
+  });
+
+  const isLoading = isLoadingProposal || isLoadingTimings || isLoadingIds || isLoadingDetails;
+
+  if (!isLoading && (!proposalStaticData || !proposalStaticData.exists)) {
+    return notFound();
+  }
+
+  if (isLoading) {
+    return <SubmissionLoader />;
+  }
+
   const contestConfig = {
     address: address as `0x${string}`,
     chainName: chain,
@@ -77,4 +96,4 @@ const Submission: FC<SubmissionProps> = ({
   );
 };
 
-export default Submission;
+export default SubmissionWrapper;

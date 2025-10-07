@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { createStore, useStore } from "zustand";
-import { ProposalStaticData, ContestVoteTimings } from "lib/submission";
+import { ProposalStaticData, ContestVoteTimings } from "@components/_pages/Submission/types";
 import { ContestStateEnum } from "@hooks/useContestState/store";
 
 interface SubmissionPageStoreState {

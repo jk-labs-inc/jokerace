@@ -1,4 +1,4 @@
-import { ProposalStaticData } from "lib/submission";
+import { ProposalStaticData } from "@components/_pages/Submission/types";
 import SubmissionPageDesktopBodyContentInfoContest from "./components/Contest";
 import SubmissionPageDesktopBodyContentInfoCreator from "./components/Creator";
 import { FC } from "react";

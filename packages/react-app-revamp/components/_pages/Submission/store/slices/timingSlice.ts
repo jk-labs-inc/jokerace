@@ -1,4 +1,4 @@
-import { ContestVoteTimings } from "lib/submission";
+import { ContestVoteTimings } from "@components/_pages/Submission/types";
 
 export interface TimingSliceState {
   voteTimings: ContestVoteTimings | null;

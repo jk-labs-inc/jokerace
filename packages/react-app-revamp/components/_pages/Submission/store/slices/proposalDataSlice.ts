@@ -1,5 +1,4 @@
-import { ProposalStaticData } from "lib/submission";
-
+import { ProposalStaticData } from "@components/_pages/Submission/types";
 export interface ProposalDataSliceState {
   proposalStaticData: ProposalStaticData | null;
 }
