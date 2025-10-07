@@ -51,7 +51,7 @@ const SubmissionPageDesktopVotes = () => {
         {rank > 0 ? (
           <>
             {rank}
-            <sup>{ordinalize(rank).suffix}</sup> place | {formatNumberAbbreviated(votes)}{" "}
+            <sup>{ordinalize(rank).suffix}</sup> place {isTied ? "(tied)" : ""} | {formatNumberAbbreviated(votes)}{" "}
             {votes === 1 ? "vote" : "votes"}
           </>
         ) : (

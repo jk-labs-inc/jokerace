@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { switchChain } from "@wagmi/core";
 import { config } from "@config/wagmi";
+import { useContestDeadline } from "@hooks/useContestTimings";
 
 interface UseVoteExecutionProps {
   amount: number;
@@ -37,14 +38,22 @@ export const useVoteExecution = ({
   onCancelMaxVotes,
 }: UseVoteExecutionProps): UseVoteExecutionReturn => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
-  //TODO: we need to pass this info instead of getting it from the store
-  // const { votingClose } = useContestStore(useShallow(state => ({ votingClose: state.votesClose })));
+  const {
+    value: votingClose,
+    isLoading: isLoadingVotingClose,
+    isError: isErrorVotingClose,
+  } = useContestDeadline({
+    contestAddress: contestConfig.address,
+    contestChainId: contestConfig.chainId,
+    contestAbi: contestConfig.abi,
+  });
   const [showMaxVotesDialog, setShowMaxVotesDialog] = useState(false);
   const { currentPricePerVote } = useCurrentPricePerVoteWithRefetch({
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
-    votingClose: new Date(),
+    votingClose: votingClose ?? new Date(),
+    enabled: !isLoadingVotingClose && !isErrorVotingClose,
   });
 
   const onSwitchNetwork = async (chainId: number) => {

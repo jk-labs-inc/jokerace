@@ -6,6 +6,7 @@ import { getNativeTokenSymbol } from "@helpers/nativeToken";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { ContestWrapper } from "@hooks/useContest/store";
 import { ContestConfigStoreProvider } from "@hooks/useContestConfig/store";
+import { ContestStateEnum } from "@hooks/useContestState/store";
 import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
 import { ProposalIdStoreProvider } from "@hooks/useProposalId/store";
@@ -25,6 +26,7 @@ interface SubmissionProps {
   contestDetails: {
     author: string;
     name: string;
+    state: ContestStateEnum;
   } | null;
   allProposalIds: string[];
   voteTimings: ContestVoteTimings | null;
@@ -60,7 +62,7 @@ const Submission: FC<SubmissionProps> = ({
               <ProposalIdStoreProvider proposalId={submission}>
                 <SubmissionPageStoreProvider
                   proposalStaticData={proposalStaticData}
-                  contestDetails={contestDetails ?? { author: null, name: null }}
+                  contestDetails={contestDetails ?? { author: null, name: null, state: null }}
                   allProposalIds={allProposalIds}
                   voteTimings={voteTimings}
                 >

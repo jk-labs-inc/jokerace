@@ -20,6 +20,7 @@ const SubmissionPageDesktopVotingAreaWidget = () => {
 
   const votesClose = new Date(Number(voteTimings?.contestDeadline) * 1000 + 1000);
 
+  //TODO: add error design
   if (isChargeError) {
     return <div>Error loading charge</div>;
   }

@@ -4,12 +4,26 @@ import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useError } from "@hooks/useError";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { useState } from "react";
+import { Abi } from "viem";
+import { useReadContract } from "wagmi";
 import { ContestStateEnum, useContestStateStore } from "./store";
 
 interface CancelContestResult {
   cancelContest: () => Promise<void>;
   isLoading: boolean;
   isConfirmed: boolean;
+}
+
+interface ReadContestStateParams {
+  contestAddress: `0x${string}`;
+  contestChainId: number;
+  contestAbi: Abi;
+}
+
+interface ReadContestStateResult {
+  state: ContestStateEnum | undefined;
+  isLoading: boolean;
+  isError: boolean;
 }
 
 export function useContestState(): CancelContestResult {
@@ -58,3 +72,27 @@ export function useContestState(): CancelContestResult {
     isConfirmed,
   };
 }
+
+export const useReadContestState = ({
+  contestAddress,
+  contestChainId,
+  contestAbi,
+}: ReadContestStateParams): ReadContestStateResult => {
+  const { data, isLoading, isError } = useReadContract({
+    address: contestAddress,
+    chainId: contestChainId,
+    abi: contestAbi,
+    functionName: "state",
+    query: {
+      select: data => {
+        return Number(data) as ContestStateEnum;
+      },
+    },
+  });
+
+  return {
+    state: data,
+    isLoading,
+    isError,
+  };
+};

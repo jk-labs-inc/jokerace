@@ -1,17 +1,19 @@
 import { createContext, useContext, useState } from "react";
 import { createStore, useStore } from "zustand";
 import { ProposalStaticData, ContestVoteTimings } from "lib/submission";
+import { ContestStateEnum } from "@hooks/useContestState/store";
 
 interface SubmissionPageStoreState {
   proposalStaticData: ProposalStaticData | null;
   contestDetails: {
     author: string | null;
     name: string | null;
+    state: ContestStateEnum | null;
   };
   allProposalIds: string[];
   voteTimings: ContestVoteTimings | null;
   setProposalStaticData: (data: ProposalStaticData | null) => void;
-  setContestDetails: (details: { author: string | null; name: string | null }) => void;
+  setContestDetails: (details: { author: string | null; name: string | null; state: ContestStateEnum | null }) => void;
   setAllProposalIds: (ids: string[]) => void;
   setVoteTimings: (timings: ContestVoteTimings | null) => void;
 }
@@ -20,7 +22,7 @@ type SubmissionPageStoreApi = ReturnType<typeof createSubmissionPageStore>;
 
 const createSubmissionPageStore = (
   initialProposalData: ProposalStaticData | null,
-  initialContestDetails: { author: string | null; name: string | null },
+  initialContestDetails: { author: string | null; name: string | null; state: ContestStateEnum | null },
   initialProposalIds: string[],
   initialVoteTimings: ContestVoteTimings | null,
 ) => {
@@ -30,7 +32,8 @@ const createSubmissionPageStore = (
     allProposalIds: initialProposalIds,
     voteTimings: initialVoteTimings,
     setProposalStaticData: (data: ProposalStaticData | null) => set({ proposalStaticData: data }),
-    setContestDetails: (details: { author: string | null; name: string | null }) => set({ contestDetails: details }),
+    setContestDetails: (details: { author: string | null; name: string | null; state: ContestStateEnum | null }) =>
+      set({ contestDetails: details }),
     setAllProposalIds: (ids: string[]) => set({ allProposalIds: ids }),
     setVoteTimings: (timings: ContestVoteTimings | null) => set({ voteTimings: timings }),
   }));
@@ -50,6 +53,7 @@ export const SubmissionPageStoreProvider = ({
   contestDetails: {
     author: string | null;
     name: string | null;
+    state: ContestStateEnum | null;
   };
   allProposalIds: string[];
   voteTimings: ContestVoteTimings | null;

@@ -1,4 +1,5 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { formatEther, parseEther } from "viem";
 import { useAccount, useBalance } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
@@ -27,7 +28,8 @@ export const useVoteBalance = (costToVote: number): UseVoteBalanceReturn => {
     chainId: contestChainId,
   });
 
-  const insufficientBalance = !isLoading && !isError && balance ? balance.value < costToVote : false;
+  const insufficientBalance =
+    !isLoading && !isError && balance ? Number(formatEther(balance.value)) < costToVote : false;
   const isCorrectNetwork = userChainId === contestChainId;
 
   return {

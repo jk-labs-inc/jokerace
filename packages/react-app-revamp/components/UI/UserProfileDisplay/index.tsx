@@ -71,7 +71,7 @@ const UserProfileDisplay = ({
   if (textualVersion) {
     return (
       <CustomLink
-        className={`text-[16px] font-bold ${textColor || "text-neutral-11"}`}
+        className={`${textSizeClass} font-bold ${textColor || "text-neutral-11"}`}
         target="_blank"
         href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
       >

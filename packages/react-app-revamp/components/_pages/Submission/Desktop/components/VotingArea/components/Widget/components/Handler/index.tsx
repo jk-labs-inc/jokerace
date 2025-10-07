@@ -1,21 +1,11 @@
-import useContestVoteTimer from "@components/_pages/Submission/hooks/useContestVoteTimer";
-import { useSubmissionPageStore } from "@components/_pages/Submission/store";
-import AddFunds from "@components/AddFunds";
-import VotingWidget, { VotingWidgetStyle } from "@components/Voting";
-import useCastVotes from "@hooks/useCastVotes";
-import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import useContestConfigStore from "@hooks/useContestConfig/store";
-import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
+import { useVotingActions } from "@components/_pages/Submission/hooks/useVotingActions";
+import { useVotingSetup } from "@components/_pages/Submission/hooks/useVotingSetup";
 import { Charge } from "@hooks/useDeployContest/types";
-import useProposalIdStore from "@hooks/useProposalId/store";
-import { useProposalVoters } from "@hooks/useProposalVoters";
-import useProposalVotes from "@hooks/useProposalVotes";
-import useUser from "@hooks/useUser";
-import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { useAccount } from "wagmi";
-import { useShallow } from "zustand/shallow";
+import ConnectWalletOverlay from "./components/ConnectWalletOverlay";
+import VotingContainer from "./components/VotingContainer";
 
 interface SubmissionPageDesktopVotingAreaWidgetHandlerProps {
   charge: Charge;
@@ -28,98 +18,31 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
 }) => {
   const { openConnectModal } = useConnectModal();
   const { address, isConnected } = useAccount();
-  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
-  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
-  const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));
-  const { checkIfCurrentUserQualifyToVote } = useUser();
-  const currentUserAvailableVotesAmount = useUserStore(useShallow(state => state.currentUserAvailableVotesAmount));
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
-  const { isVotingOpen } = useContestVoteTimer({
-    voteStart: voteTimings?.voteStart ?? null,
-    contestDeadline: voteTimings?.contestDeadline ?? null,
-  });
-  const { castVotes } = useCastVotes({ charge: charge, votesClose: votesClose });
-  const { isLoading, isSuccess } = useCastVotesStore(state => state);
-  const { refetch: refetchProposalVotes } = useProposalVotes({
-    contestAddress: contestConfig.address,
-    proposalId: proposalId,
-    chainId: contestConfig.chainId,
-    abi: contestConfig.abi,
-  });
-  const { refetch: refetchProposalVoters } = useProposalVoters(
-    contestConfig.address,
-    proposalId,
-    contestConfig.chainId,
-  );
-  const { currentPricePerVote } = useCurrentPricePerVoteWithRefetch({
-    address: contestConfig.address,
-    abi: contestConfig.abi,
-    chainId: contestConfig.chainId,
-    votingClose: votesClose,
-  });
+  const { contestConfig, contestDetails, currentUserAvailableVotesAmount, currentPricePerVote, isVotingOpen } =
+    useVotingSetup(votesClose, address);
+  const { castVotes, isLoading } = useVotingActions({ charge, votesClose });
 
-  useEffect(() => {
-    if (isLoading) return;
-
-    if (isSuccess) {
-      // Add delay to ensure blockchain state has propagated to RPC nodes
-      const refetchWithDelay = async () => {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        refetchProposalVotes();
-        refetchProposalVoters();
-      };
-
-      refetchWithDelay();
-    }
-  }, [isSuccess, isLoading, refetchProposalVotes, refetchProposalVoters]);
-
-  useEffect(() => {
-    checkIfCurrentUserQualifyToVote({
-      address: contestConfig.address,
-      abi: contestConfig.abi,
-      chainId: contestConfig.chainId,
-    });
-  }, [address]);
+  const handleConnectWallet = () => {
+    openConnectModal?.();
+  };
 
   return (
-    <div className="relative">
-      <div
-        className={`pl-8 pt-4 pb-6 pr-12 rounded-4xl ${
-          showAddFundsModal ? "bg-primary-13" : "bg-gradient-voting-area"
-        }`}
-      >
-        <div className={`${!isConnected ? "blur-lg pointer-events-none" : ""}`}>
-          {showAddFundsModal ? (
-            <AddFunds
-              chain={contestConfig.chainName}
-              asset={contestConfig.chainNativeCurrencySymbol}
-              onGoBack={() => setShowAddFundsModal(false)}
-            />
-          ) : (
-            <VotingWidget
-              amountOfVotes={currentUserAvailableVotesAmount}
-              costToVote={Number(currentPricePerVote)}
-              style={VotingWidgetStyle.colored}
-              isLoading={isLoading}
-              isVotingClosed={!isVotingOpen}
-              //TODO: add isContestCanceled
-              isContestCanceled={false}
-              onAddFunds={() => {
-                setShowAddFundsModal(true);
-              }}
-              onVote={castVotes}
-            />
-          )}
-        </div>
-      </div>
-
-      {!isConnected && (
-        <button className="absolute inset-0 flex items-center justify-center" onClick={openConnectModal}>
-          <p className="text-positive-11 text-[16px] font-bold">connect wallet to add votes</p>
-        </button>
-      )}
-    </div>
+    <VotingContainer
+      isConnected={isConnected}
+      showAddFundsModal={showAddFundsModal}
+      chainName={contestConfig.chainName}
+      chainNativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol}
+      amountOfVotes={currentUserAvailableVotesAmount}
+      costToVote={Number(currentPricePerVote)}
+      isLoading={isLoading}
+      isVotingOpen={isVotingOpen}
+      contestState={contestDetails.state ?? 0}
+      onGoBack={() => setShowAddFundsModal(false)}
+      onAddFunds={() => setShowAddFundsModal(true)}
+      onVote={castVotes}
+      connectOverlay={<ConnectWalletOverlay onConnect={handleConnectWallet} />}
+    />
   );
 };
 

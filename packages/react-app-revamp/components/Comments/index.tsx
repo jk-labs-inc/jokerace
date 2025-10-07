@@ -1,28 +1,46 @@
 /* eslint-disable react/no-unescaped-entities */
 import useComments from "@hooks/useComments";
 import { useCommentsStore } from "@hooks/useComments/store";
+import { useReadContestState } from "@hooks/useContestState";
+import { ContestStateEnum } from "@hooks/useContestState/store";
 import { useSearchParams } from "next/navigation";
 import { FC, useEffect, useRef } from "react";
+import { Abi } from "viem";
 import CommentsForm from "./components/Form";
 import CommentsList from "./components/List";
-import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
-import { useShallow } from "zustand/shallow";
 interface CommentsProps {
   contestAddress: string;
   contestChainId: number;
+  contestAbi: Abi;
   proposalId: string;
   numberOfComments: number | null;
   className?: string;
 }
 
-const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalId, numberOfComments, className }) => {
+const Comments: FC<CommentsProps> = ({
+  contestAddress,
+  contestChainId,
+  contestAbi,
+  proposalId,
+  numberOfComments,
+  className,
+}) => {
   const query = useSearchParams();
-  //TODO: we need to pass this info instead of getting it from the store
-  const contestState = useContestStateStore(useShallow(state => state.contestState));
+  const {
+    state: contestState,
+    isLoading: isLoadingContestState,
+    isError: isErrorContestState,
+  } = useReadContestState({
+    contestAddress: contestAddress as `0x${string}`,
+    contestChainId,
+    contestAbi,
+  });
   const isCompletedOrCanceled =
-    contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
+    isLoadingContestState || isErrorContestState
+      ? true
+      : contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
   const { getAllCommentsIdsPerProposal, getCommentsWithSpecificFirst, addComment, deleteComments, getCommentsPerPage } =
-    useComments(contestAddress, contestChainId, proposalId);
+    useComments(contestAddress as `0x${string}`, contestChainId, proposalId);
   const {
     comments,
     isLoading,

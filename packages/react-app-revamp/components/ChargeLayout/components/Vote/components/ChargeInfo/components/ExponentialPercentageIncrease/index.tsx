@@ -1,5 +1,5 @@
-import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useContestTimings } from "@hooks/useContestTimings";
 import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
 import { useEffect, useState } from "react";
@@ -13,25 +13,15 @@ const SECONDS_UNTIL_NEXT_UPDATE_THRESHOLD = 15;
 
 const ChargeInfoExponentialPercentageIncrease = ({ costToVote }: ChargeInfoExponentialPercentageIncreaseProps) => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const { contestDeadline, voteStart } = useContestTimings({
+    contestAddress: contestConfig.address,
+    contestChainId: contestConfig.chainId,
+    contestAbi: contestConfig.abi,
+  });
   const [currentTime, setCurrentTime] = useState(() => Math.floor(Date.now() / 1000));
-  const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));
-
   const totalVotingMinutes =
-    voteTimings?.contestDeadline && voteTimings?.voteStart
-      ? Math.floor((Number(voteTimings?.contestDeadline) - Number(voteTimings?.voteStart)) / 60)
-      : 0;
-
-  const votingTimeLeft = voteTimings?.contestDeadline
-    ? Math.max(0, Number(voteTimings?.contestDeadline) - currentTime)
-    : 0;
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(Math.floor(Date.now() / 1000));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
+    contestDeadline && voteStart ? Math.floor((contestDeadline.getTime() - voteStart.getTime()) / 1000 / 60) : 0;
+  const votingTimeLeft = contestDeadline ? Math.max(0, Math.floor(contestDeadline.getTime() / 1000) - currentTime) : 0;
 
   const {
     currentPricePercentageData,
@@ -55,6 +45,14 @@ const ChargeInfoExponentialPercentageIncrease = ({ costToVote }: ChargeInfoExpon
     chainId: contestConfig.chainId,
   });
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Math.floor(Date.now() / 1000));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const secondsUntilNextUpdate = priceCurveUpdateInterval > 0 ? votingTimeLeft % priceCurveUpdateInterval : 0;
 
   if (isPriceLoading || isIntervalLoading) {
@@ -65,12 +63,7 @@ const ChargeInfoExponentialPercentageIncrease = ({ costToVote }: ChargeInfoExpon
     return null;
   }
 
-  if (
-    !voteTimings?.voteStart ||
-    !voteTimings?.contestDeadline ||
-    totalVotingMinutes === 0 ||
-    !currentPricePercentageData
-  ) {
+  if (totalVotingMinutes === 0 || !currentPricePercentageData) {
     return null;
   }
 

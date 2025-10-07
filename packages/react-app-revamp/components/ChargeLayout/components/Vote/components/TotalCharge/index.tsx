@@ -1,29 +1,32 @@
 import { getTotalCharge } from "@helpers/totalCharge";
-import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useContestDeadline } from "@hooks/useContestTimings";
 import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
 import React, { useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
 interface TotalChargeProps {
-  costToVote: bigint;
   amountOfVotes: number;
 }
 
-const TotalCharge: React.FC<TotalChargeProps> = ({ costToVote, amountOfVotes }) => {
+const TotalCharge: React.FC<TotalChargeProps> = ({ amountOfVotes }) => {
   const [totalCharge, setTotalCharge] = useState("0");
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
-  //TODO: we need to pass this info instead of getting it from the store
-  // const { votingClose } = useContestStore(
-  //   useShallow(state => ({
-  //     votingClose: state.votesClose,
-  //   })),
-  // );
-  const { currentPricePerVote, isLoading, isRefetching, isError, hasPriceChanged } = useCurrentPricePerVoteWithRefetch({
+  const {
+    value: votingClose,
+    isLoading: isLoadingVotingClose,
+    isError: isErrorVotingClose,
+  } = useContestDeadline({
+    contestAddress: contestConfig.address,
+    contestChainId: contestConfig.chainId,
+    contestAbi: contestConfig.abi,
+  });
+  const { currentPricePerVote } = useCurrentPricePerVoteWithRefetch({
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
-    votingClose: new Date(),
+    votingClose: votingClose ?? new Date(),
+    enabled: !isLoadingVotingClose && !isErrorVotingClose,
   });
 
   useEffect(() => {
@@ -32,13 +35,13 @@ const TotalCharge: React.FC<TotalChargeProps> = ({ costToVote, amountOfVotes }) 
       return;
     }
 
-    if (costToVote === 0n) {
+    if (Number(currentPricePerVote) === 0) {
       setTotalCharge("0");
       return;
     }
 
     setTotalCharge(getTotalCharge(amountOfVotes, currentPricePerVote));
-  }, [costToVote, amountOfVotes]);
+  }, [amountOfVotes, currentPricePerVote]);
 
   return (
     <div className="flex items-center justify-between text-neutral-11 text-[16px]">

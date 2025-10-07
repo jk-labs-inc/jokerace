@@ -4,6 +4,7 @@ import { Abi } from "viem";
 import { getProposalIdsRaw } from "@hooks/useProposal/utils";
 import { formatEther } from "viem";
 import { compareVersions } from "compare-versions";
+import { ContestStateEnum } from "@hooks/useContestState/store";
 
 /**
  * Static proposal data that doesn't change after creation
@@ -96,7 +97,7 @@ export const fetchContestDetails = async (
   address: string,
   chainId: number,
   abi: Abi,
-): Promise<{ author: string; name: string } | null> => {
+): Promise<{ author: string; name: string; state: ContestStateEnum } | null> => {
   try {
     const results = await readContracts(serverConfig, {
       contracts: [
@@ -112,12 +113,19 @@ export const fetchContestDetails = async (
           chainId,
           functionName: "name",
         },
+        {
+          address: address as `0x${string}`,
+          abi,
+          chainId,
+          functionName: "state",
+        },
       ],
     });
 
     return {
       author: results[0].result as string,
       name: results[1].result as string,
+      state: results[2].result as ContestStateEnum,
     };
   } catch (error) {
     console.error("Error fetching contest author:", error);

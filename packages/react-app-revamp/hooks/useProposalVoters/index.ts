@@ -21,6 +21,7 @@ export const useProposalVoters = (
     setAllLoadedVoters({});
     setCurrentPage(0);
   }, [proposalId]);
+
   const { abi, version } = useContestConfigStore(
     useShallow(state => ({
       abi: state.contestConfig.abi,
