@@ -39,6 +39,7 @@ const SubmissionPageMobileComments: FC<SubmissionPageMobileCommentsProps> = ({ n
       {isExpanded && (
         <Comments
           contestAddress={contestConfig.address}
+          contestAbi={contestConfig.abi}
           contestChainId={contestConfig.chainId}
           proposalId={proposalId}
           numberOfComments={numberOfComments}

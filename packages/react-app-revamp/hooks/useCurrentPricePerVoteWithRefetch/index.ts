@@ -20,7 +20,6 @@ interface CurrentPricePerVoteWithRefetchResponse {
   isError: boolean;
   isRefetching: boolean;
   isRefetchError: boolean;
-  hasPriceChanged: boolean;
   isPreloading: boolean;
   refetch: (
     options?: RefetchOptions | undefined,
@@ -95,13 +94,6 @@ const useCurrentPricePerVoteWithRefetch = ({
     }
   }, [isRefetching]);
 
-  const hasPriceChanged =
-    prevPriceRef.current !== null &&
-    prevPriceRef.current !== currentPricePerVote &&
-    !isPriceLoading &&
-    !isRefetching &&
-    !isIntervalLoading;
-
   useEffect(() => {
     if (!isPriceLoading && !isRefetching && !isIntervalLoading && currentPricePerVote) {
       prevPriceRef.current = currentPricePerVote;
@@ -122,7 +114,6 @@ const useCurrentPricePerVoteWithRefetch = ({
     isRefetching,
     isRefetchError,
     refetch,
-    hasPriceChanged,
     isPreloading,
   };
 };
