@@ -6,6 +6,8 @@ import Comment from "../Comment";
 import CommentsSkeleton from "./components/CommentsSkeleton";
 import DeleteButton from "./components/DeleteButton";
 import LoadMoreButton from "./components/LoadMoreButton";
+import MotionSpinner from "@components/UI/MotionSpinner";
+import useScrollFade from "@hooks/useScrollFade";
 
 interface CommentsListProps {
   comments: CommentType[];
@@ -39,11 +41,12 @@ const CommentsList: FC<CommentsListProps> = ({
   const query = useSearchParams();
   const [selectedCommentIds, setSelectedCommentIds] = useState<string[]>([]);
   const commentsRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const showDeleteButton = selectedCommentIds.length > 0 && !isDeleting;
   const initialSkeletonCount = numberOfComments ? Math.min(numberOfComments, COMMENTS_PER_PAGE) : COMMENTS_PER_PAGE;
-  const remainingCommentsToLoad = numberOfComments ? numberOfComments - comments.length : 0;
-  const skeletonRemainingLoaderCount = Math.min(remainingCommentsToLoad, COMMENTS_PER_PAGE);
   const showLoadMore = currentPage < totalPages && !isLoading;
+
+  const { shouldApplyFade, maskImageStyle } = useScrollFade(scrollContainerRef, comments.length, [comments]);
 
   useEffect(() => {
     if (query.has("comments")) {
@@ -87,8 +90,19 @@ const CommentsList: FC<CommentsListProps> = ({
   }
 
   return (
-    <div className="flex flex-col min-h-0 h-20" ref={commentsRef}>
-      <div className="flex flex-col gap-4 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-9 scrollbar-track-neutral-2">
+    <div className="flex flex-col" ref={commentsRef}>
+      <div
+        ref={scrollContainerRef}
+        className="flex flex-col gap-4 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-9 scrollbar-track-neutral-2 min-h-0 pb-4 h-32 md:h-20"
+        style={
+          shouldApplyFade
+            ? {
+                maskImage: maskImageStyle,
+                WebkitMaskImage: maskImageStyle,
+              }
+            : undefined
+        }
+      >
         {comments.map(comment => {
           if (selectedCommentIds.includes(comment.id) && isDeleting) {
             return <CommentsSkeleton key={comment.id} length={1} highlightColor="#FF78A9" />;
@@ -104,7 +118,11 @@ const CommentsList: FC<CommentsListProps> = ({
             />
           );
         })}
-        {isPaginating && <CommentsSkeleton length={skeletonRemainingLoaderCount} />}
+        {isPaginating && (
+          <div className="flex items-center justify-center py-4">
+            <MotionSpinner size={32} />
+          </div>
+        )}
 
         {showLoadMore && <LoadMoreButton onLoadMore={handleLoadMoreComments} />}
       </div>

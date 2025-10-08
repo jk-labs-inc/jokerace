@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { FC, useEffect, useRef } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import VoterRow from "./components/VoterRow";
+import MotionSpinner from "@components/UI/MotionSpinner";
+import useScrollFade from "@hooks/useScrollFade";
 
 interface ListProposalVotesProps {
   proposalId: string;
@@ -38,11 +40,12 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
     useProposalVoters(address, proposalId, chainId);
 
   const onLoadMoreCalledRef = useRef(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const initialSkeletonCount = votedAddresses ? Math.min(votedAddresses.length, VOTES_PER_PAGE) : VOTES_PER_PAGE;
-  const remainingItems =
-    onLoadMoreCalledRef.current && votedAddresses ? votedAddresses.length - currentPage * VOTES_PER_PAGE : 0;
-  const count =
-    isFetchingNextPage && onLoadMoreCalledRef.current ? Math.min(remainingItems, VOTES_PER_PAGE) : initialSkeletonCount;
+  const addresses = Object.keys(accumulatedVotesData);
+  const { shouldApplyFade, maskImageStyle } = useScrollFade(scrollContainerRef, addresses.length, [
+    accumulatedVotesData,
+  ]);
 
   useEffect(() => {
     onLoadMoreCalledRef.current = false;
@@ -55,17 +58,26 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
     }
   };
 
-  const addresses = Object.keys(accumulatedVotesData);
-
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#bb65ff" duration={1}>
       <div className="flex flex-col h-full min-h-0">
         {votedAddresses ? (
           <>
             {isLoading && !onLoadMoreCalledRef.current ? (
-              <LoadingSkeleton count={count} />
+              <LoadingSkeleton count={initialSkeletonCount} />
             ) : (
-              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+              <div
+                ref={scrollContainerRef}
+                className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden"
+                style={
+                  shouldApplyFade
+                    ? {
+                        maskImage: maskImageStyle,
+                        WebkitMaskImage: maskImageStyle,
+                      }
+                    : undefined
+                }
+              >
                 <div className="flex flex-col gap-4 pr-6">
                   {addresses.map(address => (
                     <VoterRow
@@ -82,7 +94,11 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
                       <ChevronUpIcon height={20} className="text-positive-11" />
                     </button>
                   )}
-                  {isFetchingNextPage && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
+                  {isFetchingNextPage && onLoadMoreCalledRef.current && (
+                    <div className="flex items-center justify-center py-4">
+                      <MotionSpinner size={32} />
+                    </div>
+                  )}
                 </div>
               </div>
             )}

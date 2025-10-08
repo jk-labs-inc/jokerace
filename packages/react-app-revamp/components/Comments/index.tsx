@@ -3,7 +3,6 @@ import { useCommentsStore } from "@hooks/useComments/store";
 import { ContestStateEnum } from "@hooks/useContestState/store";
 import { useSearchParams } from "next/navigation";
 import { FC, useEffect, useRef } from "react";
-import { Abi } from "viem";
 import CommentsForm from "./components/Form";
 import CommentsList from "./components/List";
 

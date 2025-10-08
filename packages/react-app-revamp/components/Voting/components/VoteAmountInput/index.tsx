@@ -16,6 +16,15 @@ interface VoteAmountInputProps {
   onMaxClick?: () => void;
 }
 
+const STYLE_CONFIG = {
+  colored: {
+    background: "bg-secondary-13",
+  },
+  classic: {
+    background: "bg-transparent",
+  },
+} as const;
+
 const VoteAmountInput: FC<VoteAmountInputProps> = ({
   amount,
   amountOfVotes,
@@ -29,13 +38,13 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   onInput,
   onMaxClick,
 }) => {
+  const styleConfig = STYLE_CONFIG[style];
+  const textColor = isInvalid ? "text-negative-11" : "text-neutral-11";
+  const borderColor = isInvalid ? "border-negative-11" : "border-secondary-14";
+
   return (
     <div
-      className={`relative flex w-full h-[72px] items-center px-8 text-[16px] ${
-        style === VotingWidgetStyle.colored ? "bg-secondary-13" : "bg-transparent"
-      } font-bold ${isInvalid ? "text-negative-11" : "text-neutral-11"} border ${
-        isFocused && !isInvalid ? "border-secondary-14" : isInvalid ? "border-negative-11" : "border-secondary-14"
-      } rounded-[40px] transition-colors duration-300`}
+      className={`relative flex w-full h-[72px] items-center px-8 text-[16px] ${styleConfig.background} font-bold ${textColor} border ${borderColor} rounded-[40px] transition-colors duration-300`}
     >
       <input
         ref={inputRef}

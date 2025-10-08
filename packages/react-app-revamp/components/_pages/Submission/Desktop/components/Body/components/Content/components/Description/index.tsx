@@ -1,10 +1,9 @@
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
-import { FC } from "react";
-import ScrollShadow from "./components/ScrollShadow";
-import { useScrollShadow } from "./hooks/useScrollShadow";
+import { FC, useRef } from "react";
 import { useSanitizedContent } from "./hooks/useSanitizedContent";
 import { transform } from "./helpers/transform";
+import useScrollFade from "@hooks/useScrollFade";
 
 interface SubmissionPageDesktopBodyContentDescriptionProps {
   description: string;
@@ -14,17 +13,22 @@ const SubmissionPageDesktopBodyContentDescription: FC<SubmissionPageDesktopBodyC
   description,
 }) => {
   const sanitizedContent = useSanitizedContent(description);
-  const { scrollRef, showTopShadow, showBottomShadow, hasScrollableContent } = useScrollShadow(sanitizedContent);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const { shouldApplyFade, maskImageStyle } = useScrollFade(scrollRef, 3, [sanitizedContent]);
 
   return (
     <div className="relative">
-      <ScrollShadow showTopShadow={showTopShadow} showBottomShadow={showBottomShadow} />
-
       <div
         ref={scrollRef}
-        className={`pl-8 py-4 pr-4 flex-1 min-h-[400px] max-h-[400px] ${
-          hasScrollableContent ? "overflow-y-auto" : "overflow-y-hidden"
-        }`}
+        className="pl-8 py-4 pr-4 flex-1 min-h-[400px] max-h-[400px] overflow-y-auto"
+        style={
+          shouldApplyFade
+            ? {
+                maskImage: maskImageStyle,
+                WebkitMaskImage: maskImageStyle,
+              }
+            : undefined
+        }
       >
         <Interweave
           className={`prose prose-invert overflow-hidden`}

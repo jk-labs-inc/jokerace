@@ -1,5 +1,4 @@
 "use client";
-
 import Loader from "@components/UI/Loader";
 import { motion } from "motion/react";
 import { useMediaQuery } from "react-responsive";
@@ -61,7 +60,7 @@ const SubmissionLoader = () => {
         </div>
 
         {/* Voting Area */}
-        <div className="min-w-0 self-stretch">
+        <div className="min-w-0 self-stretch w-[480px]">
           <div className="flex flex-col gap-4 h-full">
             {/* Voting Widget */}
             <div className="relative bg-gradient-voting-area rounded-4xl flex-1 overflow-hidden">

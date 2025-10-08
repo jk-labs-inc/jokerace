@@ -17,7 +17,7 @@ const SubmissionPageDesktopLayout = () => {
         <div className="min-w-0 self-stretch" id="submission-body-container">
           <SubmissionPageDesktopBody />
         </div>
-        <div className="min-w-0 self-start">
+        <div className="min-w-0 self-stretch">
           <SubmissionPageDesktopVotingArea />
         </div>
       </div>

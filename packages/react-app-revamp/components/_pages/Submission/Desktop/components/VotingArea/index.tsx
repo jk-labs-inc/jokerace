@@ -27,17 +27,28 @@ const SubmissionPageDesktopVotingArea = () => {
       setMaxHeight(height);
     };
 
-    updateMaxHeight();
+    // Delay initial measurement to allow content to render
+    const timeoutId = setTimeout(() => {
+      updateMaxHeight();
+    }, 100);
 
-    observerRef.current = new ResizeObserver(updateMaxHeight);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(updateMaxHeight);
+    });
+
+    observerRef.current = new ResizeObserver(() => {
+      requestAnimationFrame(updateMaxHeight);
+    });
+
     observerRef.current.observe(leftContainer);
 
     return () => {
+      clearTimeout(timeoutId);
       if (observerRef.current) {
         observerRef.current.disconnect();
       }
     };
-  }, []);
+  }, [proposalId]);
 
   return (
     <div

@@ -5,9 +5,7 @@ import useContestConfigStore from "@hooks/useContestConfig/store";
 import useProposalIdStore from "@hooks/useProposalId/store";
 import Image from "next/image";
 import { useShallow } from "zustand/shallow";
-import SubmissionPageDesktopBodyCommentsLoadingSkeleton from "./components/LoadingSkeleton";
 import useNumberOfComments from "./hooks/useNumberOfComments";
-import { ContestStateEnum } from "@hooks/useContestState/store";
 
 const SubmissionPageDesktopBodyComments = () => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
@@ -18,24 +16,12 @@ const SubmissionPageDesktopBodyComments = () => {
       contestState: state.contestDetails.state,
     })),
   );
-
-  const { numberOfComments, isLoading, isError } = useNumberOfComments({
+  const { numberOfComments } = useNumberOfComments({
     contestAddress: contestConfig.address,
     contestChainId: contestConfig.chainId,
     contestAbi: contestConfig.abi,
     proposalId: proposalId,
   });
-
-  if (isLoading) {
-    return <SubmissionPageDesktopBodyCommentsLoadingSkeleton />;
-  }
-
-  if (
-    contestState === ContestStateEnum.Canceled ||
-    (contestState === ContestStateEnum.Completed && numberOfComments === 0)
-  ) {
-    return null;
-  }
 
   return (
     <div className="w-full flex flex-col gap-3 pl-8 pt-4 pb-4 bg-gradient-comments-area-purple rounded-4xl">
@@ -45,7 +31,7 @@ const SubmissionPageDesktopBodyComments = () => {
           comments
         </GradientText>
         <p className="text-[16px] text-neutral-11 font-bold">
-          {numberOfComments !== undefined && numberOfComments > 0 ? `(${numberOfComments})` : ""}
+          {numberOfComments !== undefined && `(${numberOfComments})`}
         </p>
       </div>
       <Comments
