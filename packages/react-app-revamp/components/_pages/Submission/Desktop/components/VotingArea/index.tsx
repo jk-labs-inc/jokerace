@@ -48,7 +48,7 @@ const SubmissionPageDesktopVotingArea = () => {
         observerRef.current.disconnect();
       }
     };
-  }, [proposalId]);
+  }, []);
 
   return (
     <div

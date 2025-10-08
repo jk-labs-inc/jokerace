@@ -1,7 +1,7 @@
+import SubmissionDelete from "@components/_pages/Submission/shared/components/SubmissionDelete";
 import SubmissionPageDesktopEntryNavigation from "./components/EntryNavigation";
-import SubmissionPageDesktopVotes from "./components/Votes";
-import SubmittionPageDesktopEntryDelete from "./components/EntryDelete";
 import SubmissionPageDesktopHeaderShare from "./components/Share";
+import SubmissionPageDesktopVotes from "./components/Votes";
 
 const SubmissionPageDesktopHeader = () => {
   return (
@@ -10,7 +10,7 @@ const SubmissionPageDesktopHeader = () => {
       <SubmissionPageDesktopHeaderShare />
       <SubmissionPageDesktopEntryNavigation />
       <div className="ml-auto">
-        <SubmittionPageDesktopEntryDelete />
+        <SubmissionDelete />
       </div>
     </div>
   );

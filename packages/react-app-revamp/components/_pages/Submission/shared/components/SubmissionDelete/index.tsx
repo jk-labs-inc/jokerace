@@ -1,19 +1,28 @@
 import SubmissionDeleteModal from "@components/_pages/Submission/components/Modals/Delete";
+import useContestVoteTimer, { VotingStatus } from "@components/_pages/Submission/hooks/useContestVoteTimer";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import useProposalIdStore from "@hooks/useProposalId/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
-import { motion } from "motion/react";
+import useProposalIdStore from "@hooks/useProposalId/store";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
-const SubmissionPageDesktopHeaderEntryDeleteHandler = () => {
+const SubmissionDelete = () => {
   const router = useRouter();
   const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
+  const { contestDetails, voteTimings } = useSubmissionPageStore(useShallow(state => state));
+  const { votingStatus } = useContestVoteTimer({
+    voteStart: voteTimings?.voteStart ?? null,
+    contestDeadline: voteTimings?.contestDeadline ?? null,
+  });
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
-  const { deleteProposal, isLoading, isSuccess } = useDeleteProposal();
+  const { deleteProposal, isLoading, isSuccess, canDeleteProposal } = useDeleteProposal();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const { address } = useAccount();
 
   const handleDeleteProposal = async (proposalId: string) => {
     await deleteProposal([proposalId]);
@@ -25,6 +34,14 @@ const SubmissionPageDesktopHeaderEntryDeleteHandler = () => {
       router.push(contestRoute);
     }
   }, [isSuccess, contestConfig.chainName, contestConfig.address, router]);
+
+  if (
+    (address !== contestDetails.author && address !== proposalId) ||
+    votingStatus === VotingStatus.VotingOpen ||
+    votingStatus === VotingStatus.VotingClosed
+  ) {
+    return null;
+  }
 
   return (
     <div>
@@ -46,4 +63,4 @@ const SubmissionPageDesktopHeaderEntryDeleteHandler = () => {
   );
 };
 
-export default SubmissionPageDesktopHeaderEntryDeleteHandler;
+export default SubmissionDelete;

@@ -1,12 +1,11 @@
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
+import SubmissionDelete from "@components/_pages/Submission/shared/components/SubmissionDelete";
 import { useSubmissionPageStore } from "@components/_pages/Submission/store";
-import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import SubmissionPageMobileBodyContentInfoVotes from "./components/Votes";
 
 const SubmissionPageMobileBodyContentInfo = () => {
   const proposalStaticData = useSubmissionPageStore(useShallow(state => state.proposalStaticData));
-  const { address: userAddress } = useAccount();
 
   return (
     <div className="flex flex-col gap-2">
@@ -16,13 +15,7 @@ const SubmissionPageMobileBodyContentInfo = () => {
           shortenOnFallback={true}
           textColor="text-neutral-9"
         />
-        {/* TODO: handle delete */}
-        {/* {allowDelete && (
-            <SubmissionDeleteButton
-              onClick={() => {
-              }}
-            />
-          )} */}
+        <SubmissionDelete />
       </div>
       <SubmissionPageMobileBodyContentInfoVotes />
     </div>
