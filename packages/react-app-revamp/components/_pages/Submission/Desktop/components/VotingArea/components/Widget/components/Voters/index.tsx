@@ -30,9 +30,12 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
     return <SubmissionPageDesktopVotingAreaWidgetVotersLoadingSkeleton />;
   }
 
-  //TODO: add error design
   if (isErrorAddressesVoted) {
-    return <div>Error loading addresses voted</div>;
+    return (
+      <div className="text-[16px] pl-8 pr-12 py-4 text-negative-11 font-bold">
+        ruh-roh! we were unable to fetch the voters, please reload the page.
+      </div>
+    );
   }
 
   const votedAddressesArray = addressesVoted;

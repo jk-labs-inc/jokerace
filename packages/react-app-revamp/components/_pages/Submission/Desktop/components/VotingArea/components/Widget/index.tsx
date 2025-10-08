@@ -20,9 +20,12 @@ const SubmissionPageDesktopVotingAreaWidget = () => {
 
   const votesClose = new Date(Number(voteTimings?.contestDeadline) * 1000 + 1000);
 
-  //TODO: add error design
   if (isChargeError) {
-    return <div>Error loading charge</div>;
+    return (
+      <div className="text-[16px] pl-8 pr-12 py-4 text-negative-11 font-bold">
+        ruh-roh! we were unable to fetch vote details, please reload the page.
+      </div>
+    );
   }
 
   if (isChargeLoading) {

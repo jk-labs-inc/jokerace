@@ -14,7 +14,6 @@ const SubmissionPageMobileBodyComments = () => {
     proposalId: proposalId,
   });
 
-  // TODO: add loading and error states
   if (isLoading) {
     return (
       <div className="flex flex-col gap-4">

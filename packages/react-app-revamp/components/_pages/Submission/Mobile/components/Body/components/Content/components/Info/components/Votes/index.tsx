@@ -24,11 +24,12 @@ const SubmissionPageMobileBodyContentInfoVotes = () => {
     );
   }
 
-  // TODO: fix error states
   if (isError) {
     return (
       <div className="flex gap-2 items-center">
-        <p className="text-[16px] font-bold text-negative-11">error</p>
+        <p className="text-[16px] font-bold text-negative-11">
+          ruh-roh! we were unable to fetch voters, please reload the page.
+        </p>
       </div>
     );
   }
