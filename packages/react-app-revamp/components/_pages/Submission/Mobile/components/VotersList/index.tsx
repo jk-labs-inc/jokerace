@@ -17,7 +17,7 @@ const SubmissionPageMobileVotersList: FC<SubmissionPageMobileVotersListProps> = 
   };
 
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col max-h-48 overflow-y-auto">
       <div className="flex flex-col gap-4">
         <div
           className="flex items-center gap-4 cursor-pointer"

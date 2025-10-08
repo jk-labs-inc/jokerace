@@ -37,7 +37,11 @@ const SubmissionPageDesktopBodyComments = () => {
   }
 
   return (
-    <div className="w-full flex flex-col gap-3 pl-8 pt-4 pb-4 bg-gradient-comments-area-purple rounded-4xl">
+    <div
+      className={`w-full flex flex-col gap-2 pl-8 py-4 bg-gradient-comments-area-purple rounded-4xl ${
+        numberOfComments !== undefined && numberOfComments > 0 ? "h-52" : "h-auto"
+      }`}
+    >
       <div className="flex items-baseline gap-2 flex-shrink-0">
         <Image src="/entry/comment.svg" alt="comments" width={24} height={24} className="self-center mt-1" />
         <GradientText isFontSabo={false} textSizeClassName="text-[24px] font-bold">
@@ -47,14 +51,16 @@ const SubmissionPageDesktopBodyComments = () => {
           {numberOfComments !== undefined && `(${numberOfComments})`}
         </p>
       </div>
-      <Comments
-        contestAddress={contestConfig.address}
-        contestChainId={contestConfig.chainId}
-        proposalId={proposalId}
-        numberOfComments={numberOfComments ?? null}
-        contestAuthor={contestAuthor ?? ""}
-        contestState={contestState}
-      />
+      <div className="flex-1 min-h-0">
+        <Comments
+          contestAddress={contestConfig.address}
+          contestChainId={contestConfig.chainId}
+          proposalId={proposalId}
+          numberOfComments={numberOfComments ?? null}
+          contestAuthor={contestAuthor ?? ""}
+          contestState={contestState}
+        />
+      </div>
     </div>
   );
 };

@@ -92,7 +92,7 @@ const Comment: FC<CommentProps> = ({
           )}
         </div>
 
-        <div className={`prose prose-invert text-[16px] bg-primary-2 px-2 py-1 rounded-[8px] ${className}`}>
+        <div className={`prose prose-invert text-[12px] bg-primary-2 px-2 py-1 rounded-[8px] ${className}`}>
           <Interweave content={comment.content} matchers={[new UrlMatcher("url")]} />
         </div>
       </div>

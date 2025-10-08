@@ -90,10 +90,10 @@ const CommentsList: FC<CommentsListProps> = ({
   }
 
   return (
-    <div className="flex flex-col" ref={commentsRef}>
+    <div className="flex flex-col h-full" ref={commentsRef}>
       <div
         ref={scrollContainerRef}
-        className="flex flex-col gap-4 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-9 scrollbar-track-neutral-2 min-h-0 pb-4 h-32 md:h-20"
+        className="flex flex-col gap-6 pr-4 min-h-0 overflow-y-auto flex-1"
         style={
           shouldApplyFade
             ? {

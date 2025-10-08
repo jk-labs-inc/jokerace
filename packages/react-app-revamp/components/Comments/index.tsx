@@ -68,30 +68,34 @@ const Comments: FC<CommentsProps> = ({
   };
 
   return (
-    <div className="flex flex-col gap-2 w-full h-full" id="comments" ref={commentsRef}>
+    <div className="flex flex-col gap-2 w-full h-full min-h-0" id="comments" ref={commentsRef}>
       {!isCompletedOrCanceled && (
-        <CommentsForm
-          contestChainId={contestChainId}
-          onSend={handleAddComment}
-          isAddingSuccess={isAddingSuccess}
-          isAdding={isAdding}
-        />
+        <div className="flex-shrink-0">
+          <CommentsForm
+            contestChainId={contestChainId}
+            onSend={handleAddComment}
+            isAddingSuccess={isAddingSuccess}
+            isAdding={isAdding}
+          />
+        </div>
       )}
       {comments.length > 0 && (
-        <CommentsList
-          contestAuthor={contestAuthor}
-          className={className}
-          comments={comments}
-          isLoading={isLoading}
-          isPaginating={isPaginating}
-          isDeleting={isDeleting}
-          isDeletingSuccess={isDeletingSuccess}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onDeleteSelectedComments={handleDeleteComments}
-          onLoadMoreComments={handleLoadMoreComments}
-          numberOfComments={numberOfComments}
-        />
+        <div className="flex-1 min-h-0">
+          <CommentsList
+            contestAuthor={contestAuthor}
+            className={className}
+            comments={comments}
+            isLoading={isLoading}
+            isPaginating={isPaginating}
+            isDeleting={isDeleting}
+            isDeletingSuccess={isDeletingSuccess}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onDeleteSelectedComments={handleDeleteComments}
+            onLoadMoreComments={handleLoadMoreComments}
+            numberOfComments={numberOfComments}
+          />
+        </div>
       )}
     </div>
   );

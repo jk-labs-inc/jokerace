@@ -21,7 +21,7 @@ const SubmissionPageMobileComments: FC<SubmissionPageMobileCommentsProps> = ({ n
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 max-h-48 overflow-y-auto">
       <div
         className="flex items-center gap-4 cursor-pointer"
         onClick={handleToggle}
@@ -46,7 +46,7 @@ const SubmissionPageMobileComments: FC<SubmissionPageMobileCommentsProps> = ({ n
           contestAuthor={contestDetails.author ?? ""}
           proposalId={proposalId}
           numberOfComments={numberOfComments}
-          className="text-neutral-9"
+          className="text-neutral-11"
         />
       )}
     </div>
