@@ -18,7 +18,8 @@ const SubmissionPageDesktopVotingArea = () => {
   const observerRef = useRef<ResizeObserver | null>(null);
 
   useEffect(() => {
-    const leftContainer = document.getElementById("submission-body-container");
+    const leftContainerWrapper = document.getElementById("submission-body-container");
+    const leftContainer = leftContainerWrapper?.firstElementChild as HTMLElement;
 
     if (!leftContainer) return;
 
