@@ -43,7 +43,10 @@ const Timer: FC<TimerProps> = ({ timeRemaining }) => {
   };
 
   // Filter units to show: only show units with values greater than 0
-  const visibleUnits = timeUnits(timeRemaining).filter(unit => unit.value > 0);
+  // Always show seconds if there are other time units present
+  const allUnits = timeUnits(timeRemaining);
+  const hasOtherUnits = timeRemaining.days > 0 || timeRemaining.hours > 0 || timeRemaining.minutes > 0;
+  const visibleUnits = allUnits.filter(unit => unit.value > 0 || (unit.label === Label.SECONDS && hasOtherUnits));
 
   // If only seconds remain, show without box
   if (visibleUnits.length === 1 && visibleUnits[0].label === Label.SECONDS) {

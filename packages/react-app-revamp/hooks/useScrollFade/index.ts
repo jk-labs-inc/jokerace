@@ -1,7 +1,6 @@
 import { useEffect, useState, RefObject } from "react";
 
 interface UseScrollFadeOptions {
-  minItemsForFade?: number;
   topFadePercentage?: number;
   bottomFadePercentage?: number;
 }
@@ -25,8 +24,7 @@ const useScrollFade = (
   dependencies: any[] = [],
   options: UseScrollFadeOptions = {},
 ): UseScrollFadeReturn => {
-  const { minItemsForFade = 2, topFadePercentage = 10, bottomFadePercentage = 10 } = options;
-
+  const { topFadePercentage = 10, bottomFadePercentage = 10 } = options;
   const [hasOverflow, setHasOverflow] = useState(false);
   const [isScrolledToTop, setIsScrolledToTop] = useState(true);
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
@@ -62,7 +60,7 @@ const useScrollFade = (
     return () => container?.removeEventListener("scroll", handleScroll);
   }, dependencies);
 
-  const shouldApplyFade = itemsCount > minItemsForFade && hasOverflow;
+  const shouldApplyFade = itemsCount >= 2 && hasOverflow;
 
   const getMaskImage = (): string | undefined => {
     if (!shouldApplyFade) return undefined;
