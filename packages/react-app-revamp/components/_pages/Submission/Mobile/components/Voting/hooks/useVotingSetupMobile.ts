@@ -6,7 +6,12 @@ import { useShallow } from "zustand/shallow";
 
 export const useVotingSetupMobile = () => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
-  const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));
+  const { voteTimings, contestState } = useSubmissionPageStore(
+    useShallow(state => ({
+      voteTimings: state.voteTimings,
+      contestState: state.contestDetails.state,
+    })),
+  );
   const { charge, isLoading: isChargeLoading } = useCharge({
     address: contestConfig.address,
     abi: contestConfig.abi,
@@ -20,6 +25,7 @@ export const useVotingSetupMobile = () => {
   return {
     ...votingSetup,
     charge,
+    contestState,
     isChargeLoading,
     votesClose,
   };

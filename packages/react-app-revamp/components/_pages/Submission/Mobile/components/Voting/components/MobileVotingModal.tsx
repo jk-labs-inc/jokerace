@@ -12,6 +12,7 @@ interface MobileVotingModalProps {
   costToVote: number;
   isLoading: boolean;
   isVotingOpen: boolean;
+  isContestCanceled: boolean;
   backdropRef: RefObject<HTMLDivElement | null>;
   onBackdropClick: (e: React.MouseEvent<HTMLDivElement>) => void;
   onGoBack: () => void;
@@ -28,6 +29,7 @@ const MobileVotingModal: FC<MobileVotingModalProps> = ({
   costToVote,
   isLoading,
   isVotingOpen,
+  isContestCanceled,
   backdropRef,
   onBackdropClick,
   onGoBack,
@@ -54,7 +56,7 @@ const MobileVotingModal: FC<MobileVotingModalProps> = ({
             costToVote={costToVote}
             isLoading={isLoading}
             isVotingClosed={!isVotingOpen}
-            isContestCanceled={false}
+            isContestCanceled={isContestCanceled}
             onVote={onVote}
             onAddFunds={onAddFunds}
           />

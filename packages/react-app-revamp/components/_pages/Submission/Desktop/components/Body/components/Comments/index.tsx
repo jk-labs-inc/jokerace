@@ -1,14 +1,24 @@
+import Comments from "@components/Comments";
 import GradientText from "@components/UI/GradientText";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useProposalIdStore from "@hooks/useProposalId/store";
 import Image from "next/image";
 import { useShallow } from "zustand/shallow";
 import SubmissionPageDesktopBodyCommentsLoadingSkeleton from "./components/LoadingSkeleton";
 import useNumberOfComments from "./hooks/useNumberOfComments";
+import { ContestStateEnum } from "@hooks/useContestState/store";
 
 const SubmissionPageDesktopBodyComments = () => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
+  const { contestAuthor, contestState } = useSubmissionPageStore(
+    useShallow(state => ({
+      contestAuthor: state.proposalStaticData?.author,
+      contestState: state.contestDetails.state,
+    })),
+  );
+
   const { numberOfComments, isLoading, isError } = useNumberOfComments({
     contestAddress: contestConfig.address,
     contestChainId: contestConfig.chainId,
@@ -20,8 +30,15 @@ const SubmissionPageDesktopBodyComments = () => {
     return <SubmissionPageDesktopBodyCommentsLoadingSkeleton />;
   }
 
+  if (
+    contestState === ContestStateEnum.Canceled ||
+    (contestState === ContestStateEnum.Completed && numberOfComments === 0)
+  ) {
+    return null;
+  }
+
   return (
-    <div className="w-full pl-8 pt-4 pb-4 h-44 bg-gradient-comments-area-purple rounded-4xl">
+    <div className="w-full flex flex-col gap-3 pl-8 pt-4 pb-4 bg-gradient-comments-area-purple rounded-4xl">
       <div className="flex items-baseline gap-2 flex-shrink-0">
         <Image src="/entry/comment.svg" alt="comments" width={24} height={24} className="self-center mt-1" />
         <GradientText isFontSabo={false} textSizeClassName="text-[24px] font-bold">
@@ -31,6 +48,14 @@ const SubmissionPageDesktopBodyComments = () => {
           {numberOfComments !== undefined && numberOfComments > 0 ? `(${numberOfComments})` : ""}
         </p>
       </div>
+      <Comments
+        contestAddress={contestConfig.address}
+        contestChainId={contestConfig.chainId}
+        proposalId={proposalId}
+        numberOfComments={numberOfComments ?? null}
+        contestAuthor={contestAuthor ?? ""}
+        contestState={contestState}
+      />
     </div>
   );
 };

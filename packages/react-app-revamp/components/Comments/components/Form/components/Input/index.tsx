@@ -7,7 +7,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { switchChain } from "@wagmi/core";
-import { useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { useMedia } from "react-use";
 import { useAccount } from "wagmi";
 import CommentFormInputSubmitButton from "./components/SubmitButton";
@@ -51,16 +51,16 @@ const commentEditorConfig = ({ content, placeholderText, onUpdate, isMobile }: C
   };
 };
 
-const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestChainId, isAddingSuccess, isAdding }) => {
+const CommentsFormInput: FC<CommentsFormInputProps> = ({ onSend, contestChainId, isAddingSuccess, isAdding }) => {
   const { openConnectModal } = useConnectModal();
   const { address, isConnected, chainId } = useAccount();
-  const isUserOnCorrectNetwork = chainId === contestChainId;
   const [commentContent, setCommentContent] = useState("");
-  const placeholderText = "add a comment...";
   const [allowSend, setAllowSend] = useState(false);
-  const isMobile = useMedia("(max-width: 768px)");
   const [containerHeight, setContainerHeight] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMedia("(max-width: 768px)");
+  const placeholderText = "add a comment...";
+  const isUserOnCorrectNetwork = chainId === contestChainId;
 
   const commentEditor = useEditor(
     commentEditorConfig({
@@ -88,22 +88,22 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
   useEffect(() => {
     if (!isAddingSuccess) return;
 
-    resetStates();
-  }, [isAddingSuccess]);
-
-  const resetStates = () => {
     setCommentContent("");
     setAllowSend(false);
     commentEditor?.commands.clearContent();
-  };
+  }, [isAddingSuccess]);
 
-  const onSendCommentHandler = async () => {
+  const handleSendComment = async () => {
     if (!allowSend || isAdding) return;
 
     if (!isConnected) {
       openConnectModal?.();
-    } else if (!isUserOnCorrectNetwork) {
+      return;
+    }
+
+    if (!isUserOnCorrectNetwork) {
       await switchChain(config, { chainId: contestChainId });
+      return;
     }
 
     onSend?.(commentContent);
@@ -112,7 +112,7 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
   const handleKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     const allowEnter = !event.shiftKey && !isMobile;
     if (event.key === "Enter" && allowEnter) {
-      onSendCommentHandler();
+      handleSendComment();
     }
   };
 
@@ -121,14 +121,14 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
       ref={containerRef}
       className={`flex ${
         containerHeight > 48 ? "items-end" : "items-center"
-      } p-2 gap-3 w-full rounded-[10px] bg-primary-2`}
+      } p-2 gap-3 w-full md:w-[544px] rounded-[10px] bg-secondary-1 border border-neutral-17`}
     >
       <div>
         <UserProfileDisplay avatarVersion ethereumAddress={address ?? ""} shortenOnFallback />
       </div>
       <EditorContent
         editor={commentEditor}
-        className="bg-transparent outline-none w-full overflow-y-auto max-h-[300px] "
+        className="bg-transparent outline-none w-full overflow-y-auto max-h-[300px]"
         onKeyDown={handleKeyDown}
       />
       <CommentFormInputSubmitButton
@@ -136,7 +136,7 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
         isAdding={isAdding}
         isMobile={isMobile}
         isConnected={isConnected}
-        onSend={onSendCommentHandler}
+        onSend={handleSendComment}
         onConnect={openConnectModal}
       />
     </div>
