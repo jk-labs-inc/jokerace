@@ -39,12 +39,19 @@ const SubmissionPageDesktopVotes = () => {
       <AnimatedVoteText votes={votes}>
         {rank > 0 ? (
           <>
-            {rank}
-            <sup>{ordinalize(rank).suffix}</sup> place {isTied ? "(tied)" : ""} | {formatNumberAbbreviated(votes)}{" "}
-            {votes === 1 ? "vote" : "votes"}
+            <span className="text-base">
+              {rank}
+              <sup>{ordinalize(rank).suffix}</sup> place {isTied ? "(tied)" : ""}
+            </span>
+            <span className="text-base"> | </span>
+            <span className="text-xs">
+              {formatNumberAbbreviated(votes)} {votes === 1 ? "vote" : "votes"}
+            </span>
           </>
         ) : (
-          `${formatNumberAbbreviated(votes)} ${votes === 1 ? "vote" : "votes"}`
+          <span className="text-xs">
+            {formatNumberAbbreviated(votes)} {votes === 1 ? "vote" : "votes"}
+          </span>
         )}
       </AnimatedVoteText>
     </div>

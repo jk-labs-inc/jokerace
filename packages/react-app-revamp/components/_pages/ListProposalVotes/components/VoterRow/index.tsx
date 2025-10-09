@@ -12,11 +12,11 @@ interface VoteRowProps {
 const VoterRow: FC<VoteRowProps> = ({ votesPerAddress, address, addressesLength, className }) => {
   return (
     <div
-      className={`flex justify-between items-center text-[16px] font-bold pb-1 ${
+      className={`flex justify-between items-center font-bold pb-1 ${
         addressesLength > 1 ? "border-b border-primary-3" : ""
       }`}
     >
-      <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} textColor={className} size="compact" />
+      <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} textColor={className} size="extraSmall" />
       <AnimatedVoteCount votes={votesPerAddress[address]} className={className}>
         {formatNumberAbbreviated(votesPerAddress[address])} {votesPerAddress[address] === 1 ? "vote" : "votes"}
       </AnimatedVoteCount>

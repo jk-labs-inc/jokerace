@@ -60,7 +60,7 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
             <ListProposalVotes
               proposalId={proposalId}
               votedAddresses={votedAddressesArray}
-              className="text-neutral-11"
+              className="text-neutral-11 text-[12px]"
             />
           )}
         </div>

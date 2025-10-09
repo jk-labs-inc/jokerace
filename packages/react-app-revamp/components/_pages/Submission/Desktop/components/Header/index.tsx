@@ -7,7 +7,7 @@ const SubmissionPageDesktopHeader = () => {
   return (
     <div className="flex items-center gap-4 px-10">
       <SubmissionPageDesktopVotes />
-      <SubmissionPageDesktopHeaderShare />
+      {/* <SubmissionPageDesktopHeaderShare /> TODO: add share button back when we decide on design */}
       <SubmissionPageDesktopEntryNavigation />
       <div className="ml-auto">
         <SubmissionDelete />
