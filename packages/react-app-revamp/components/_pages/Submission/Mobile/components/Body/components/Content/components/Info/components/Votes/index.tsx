@@ -35,8 +35,6 @@ const SubmissionPageMobileBodyContentInfoVotes = () => {
     );
   }
 
-  if (votes === 0) return null;
-
   return (
     <div className="flex gap-2 items-center">
       {rank > 0 && (
@@ -48,7 +46,7 @@ const SubmissionPageMobileBodyContentInfoVotes = () => {
         </>
       )}
       <p className="text-[16px] font-bold text-neutral-9">
-        {formatNumberAbbreviated(votes)} vote{votes > 1 ? "s" : ""}
+        {formatNumberAbbreviated(votes)} {votes === 1 ? "vote" : "votes"}
       </p>
     </div>
   );

@@ -26,7 +26,7 @@ const TimerDisplay: FC<TimerDisplayProps> = ({ timeRemaining }) => {
   units.push(<TimeUnit key="minutes" value={minutes} unit="m" />);
   units.push(<TimeUnit key="seconds" value={seconds} unit="s" />);
 
-  return <div className="flex items-baseline gap-2">{units}</div>;
+  return <div className="flex items-baseline gap-2 ml-auto">{units}</div>;
 };
 
 export default TimerDisplay;
