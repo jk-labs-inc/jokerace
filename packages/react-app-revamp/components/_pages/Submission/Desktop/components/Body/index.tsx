@@ -7,9 +7,7 @@ const SubmissionPageDesktopBody = () => {
       <div className="p-4 flex-1">
         <SubmissionPageDesktopBodyContent />
       </div>
-      <div className="pl-4 pr-4 pb-4">
-        <SubmissionPageDesktopBodyComments />
-      </div>
+      <SubmissionPageDesktopBodyComments />
     </div>
   );
 };

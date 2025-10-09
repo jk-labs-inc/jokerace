@@ -124,7 +124,7 @@ const CommentsFormInput: FC<CommentsFormInputProps> = ({ onSend, contestChainId,
       } p-2 gap-3 w-full md:w-[544px] rounded-[10px] bg-secondary-1 border border-neutral-17`}
     >
       <div>
-        <UserProfileDisplay avatarVersion ethereumAddress={address ?? ""} shortenOnFallback />
+        <UserProfileDisplay avatarVersion ethereumAddress={address ?? ""} shortenOnFallback size="compact" />
       </div>
       <EditorContent
         editor={commentEditor}
