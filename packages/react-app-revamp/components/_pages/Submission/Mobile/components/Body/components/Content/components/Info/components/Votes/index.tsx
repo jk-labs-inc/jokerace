@@ -14,6 +14,7 @@ const SubmissionPageMobileBodyContentInfoVotes = () => {
     proposalId: proposalId,
     chainId: contestConfig.chainId,
     abi: contestConfig.abi,
+    version: contestConfig.version,
   });
 
   if (isLoading) {

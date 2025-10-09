@@ -25,6 +25,7 @@ export const useVotingActions = ({ charge, votesClose }: UseVotingActionsParams)
     proposalId: proposalId,
     chainId: contestConfig.chainId,
     abi: contestConfig.abi,
+    version: contestConfig.version,
   });
   const { refetch: refetchProposalVoters } = useProposalVoters(
     contestConfig.address,

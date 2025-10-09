@@ -13,6 +13,7 @@ const SubmissionPageMobileBodyContentVoters = () => {
     proposalId: proposalId,
     chainId: contestConfig.chainId,
     abi: contestConfig.abi,
+    version: contestConfig.version,
   });
   const { addressesVoted, isLoadingAddressesVoted, isErrorAddressesVoted } = useAddressesVoted({
     contestAddress: contestConfig.address,
