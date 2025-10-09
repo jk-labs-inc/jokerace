@@ -5,7 +5,7 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useShallow } from "zustand/shallow";
-import Link from "next/link";
+import CustomLink from "@components/UI/Link";
 
 interface SubmissionPageMobileEntryNavigationProps {
   isInPwaMode: boolean;
@@ -27,24 +27,24 @@ const SubmissionPageMobileEntryNavigation: FC<SubmissionPageMobileEntryNavigatio
           } px-8 pt-4 pb-8 z-50 border-t-neutral-2 border-t-2 bg-true-black`}
         >
           {previousEntryUrl && currentIndex !== 0 && (
-            <Link
+            <CustomLink
               href={previousEntryUrl}
               scroll={false}
               className="flex items-center justify-center gap-2 text-positive-11 text-[16px] font-bold transform transition-transform duration-200 active:scale-95"
             >
               <img src="/contest/previous-entry-mobile.svg" alt="prev-entry" width={16} height={16} className="mt-1" />
               previous entry
-            </Link>
+            </CustomLink>
           )}
           {nextEntryUrl && currentIndex !== totalProposals - 1 && (
-            <Link
+            <CustomLink
               href={nextEntryUrl}
               scroll={false}
               className="flex items-center justify-center gap-2 text-positive-11 text-[16px] font-bold transform transition-transform duration-200 active:scale-95"
             >
               next entry
               <img src="/contest/next-entry-mobile.svg" alt="next-entry" width={16} height={16} className="mt-1" />
-            </Link>
+            </CustomLink>
           )}
         </div>
       )}
