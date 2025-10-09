@@ -1436,7 +1436,7 @@
     viem "^2.31.7"
     zustand "5.0.3"
 
-"@bigmi/client@^0.5.3", "@bigmi/client@^0.5.4":
+"@bigmi/client@^0.5.4":
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.5.4.tgz#263665ddf9ad44383a10c7391d3118f820bb410c"
   integrity sha512-eXWdtxaHJIajqI/3v6dR8qHTMt0e/V3TZxUKiN0LGGBmHrGK7hmuIBQlPeNEesvw7NA9b4qtK3TAly/rfpKODQ==
@@ -1445,7 +1445,16 @@
     eventemitter3 "^5.0.1"
     zustand "^5.0.8"
 
-"@bigmi/core@^0.5.3", "@bigmi/core@^0.5.4":
+"@bigmi/client@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.6.0.tgz#b891c9d2fe113dc03ccf92dd8c06f42e6aad02c0"
+  integrity sha512-ODWNkt5pmyoupaaX+HPA9v9VaQOdnudiSoGazvHXnSoi6B+kXgX8p+j8ixdr/p5h2IoLFr6bRQVea4X7YGOAow==
+  dependencies:
+    "@bigmi/core" "^0.6.0"
+    eventemitter3 "^5.0.1"
+    zustand "^5.0.8"
+
+"@bigmi/core@^0.5.4":
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/@bigmi/core/-/core-0.5.4.tgz#2ef7daf53d9c4dfa644cc3510eab8517cba4af27"
   integrity sha512-AfV+pgFe7N6KoyU0OWPrVstrxMJSL5nLODeyGGbYVfi7u6jPjOZ9b7KsOxNDlQp8ZCuQS46263VJyNiG3IsPaA==
@@ -1453,6 +1462,18 @@
     "@noble/hashes" "^1.8.0"
     bech32 "^2.0.0"
     bitcoinjs-lib "^7.0.0-rc.0"
+    bs58 "^6.0.0"
+    eventemitter3 "^5.0.1"
+    zustand "^5.0.8"
+
+"@bigmi/core@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@bigmi/core/-/core-0.6.0.tgz#d3d8e4872b22a1cb65d0ae3086614f35806d8bbe"
+  integrity sha512-heteOig6vKvJZcBe2etvjJk4DqZujrmHWm7n+Vh6jiAtNIMOvSqwvsyiRXhtNAXreXMw0+XREnX+Hc2Hj4cjPA==
+  dependencies:
+    "@noble/hashes" "^1.8.0"
+    bech32 "^2.0.0"
+    bitcoinjs-lib "^7.0.0"
     bs58 "^6.0.0"
     eventemitter3 "^5.0.1"
     zustand "^5.0.8"
@@ -3160,81 +3181,81 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lifi/sdk@^3.12.11":
-  version "3.12.11"
-  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.12.11.tgz#01297fd2d0efd4307ef7c0755cdc0833060cc01f"
-  integrity sha512-shjb2fxP7I9gtAqJ+ZuIyAPUpIy4G+iDl1J2FZN6R/I2Dj3Gp62utM3RqxBXIMTCo4qg6HOg7PverTRDa3PKSA==
+"@lifi/sdk@^3.12.14":
+  version "3.12.14"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.12.14.tgz#74b588df85d2e4c726006ad13123a293e99bccf9"
+  integrity sha512-SM3fMBdL1ggGq9+fApZVeLnMg8F0UrFPYXgrdCIRZjQAaCKdiYTTxK67hhpfDde+0Rpgaw3AZWzwu5MlFg7VGw==
   dependencies:
-    "@bigmi/core" "^0.5.3"
+    "@bigmi/core" "^0.6.0"
     "@bitcoinerlab/secp256k1" "^1.2.0"
-    "@lifi/types" "^17.38.0"
-    "@mysten/sui" "^1.38.0"
-    "@mysten/wallet-standard" "^0.17.0"
+    "@lifi/types" "^17.41.0"
+    "@mysten/sui" "^1.39.1"
+    "@mysten/wallet-standard" "^0.18.1"
     "@noble/curves" "^1.9.7"
     "@solana/wallet-adapter-base" "^0.9.27"
     "@solana/web3.js" "^1.98.4"
     bech32 "^2.0.0"
-    bitcoinjs-lib "^7.0.0-rc.0"
+    bitcoinjs-lib "^7.0.0"
     bs58 "^6.0.0"
-    viem "^2.37.8"
+    viem "^2.38.0"
 
-"@lifi/types@^17.38.0":
-  version "17.38.0"
-  resolved "https://registry.yarnpkg.com/@lifi/types/-/types-17.38.0.tgz#b884bc25518a0d5c225ed9c0e93de284eb404863"
-  integrity sha512-dZFy/cVCr6WyBjbqpXFol9Fyo0U+mR6FlWK4URgvTQwhH0E6e+aBn6ivPndxYvLPccAiNKJlQzQvSh6ort0+rw==
+"@lifi/types@^17.41.0":
+  version "17.41.0"
+  resolved "https://registry.yarnpkg.com/@lifi/types/-/types-17.41.0.tgz#b9db13953cf2a0b6574b68cfddb2846bcce99fc6"
+  integrity sha512-K/QfUpbYhABZcxlf+YFuWeC9TI8n5oKYFNWUchd/yRMg4oxx8w3QPoCkhXNGPfAbnq5xRvq0W+9bwpXY/vAe7w==
   dependencies:
     viem "^2.33.2"
 
-"@lifi/wallet-management@^3.17.3":
-  version "3.17.3"
-  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.17.3.tgz#accd5c6e9948d155228eae390f4a7a9ba3e94e5d"
-  integrity sha512-b5Z7iolbQKk+RiI746PvnFyu+JwZJfwLAf2YzKfJsd9BN+RjNwsfMbRw81CVu3X6Tk7ydt8N69Mkc1DXxgj/vw==
+"@lifi/wallet-management@^3.18.1":
+  version "3.18.1"
+  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.18.1.tgz#1f27bd478191642e249fd62b4ee1399d44625833"
+  integrity sha512-SVqUAgQ8uZubnBSQInGrmUnARWNP0NoMBc7+XuUPtm3czxu5KlePypKj38YHU9hI6+X02hDz+no4o3Wip7dZZg==
   dependencies:
-    "@bigmi/client" "^0.5.3"
-    "@bigmi/core" "^0.5.3"
+    "@bigmi/client" "^0.6.0"
+    "@bigmi/core" "^0.6.0"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.12.11"
-    "@mui/icons-material" "^7.3.2"
-    "@mui/material" "^7.3.2"
-    "@mui/system" "^7.3.2"
-    "@mysten/wallet-standard" "^0.17.0"
+    "@lifi/sdk" "^3.12.14"
+    "@mui/icons-material" "7.3.2"
+    "@mui/material" "7.3.2"
+    "@mui/system" "7.3.2"
+    "@mysten/wallet-standard" "^0.18.1"
     "@solana/wallet-adapter-base" "^0.9.27"
     "@solana/web3.js" "^1.98.4"
-    i18next "^25.5.2"
+    i18next "^25.5.3"
     mitt "^3.0.1"
     react-i18next "^16.0.0"
-    use-sync-external-store "^1.5.0"
-    viem "^2.37.7"
+    use-sync-external-store "^1.6.0"
+    viem "^2.38.0"
     zustand "^5.0.8"
 
-"@lifi/widget@3.32.2":
-  version "3.32.2"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.32.2.tgz#9cd3da98d2824c84b31516e2328662857d39830e"
-  integrity sha512-+e7GQAIcC2D+Jmgt5Epm62aK/Pgrk5QfQved2+IdexwSAlzeBStwtrwCFGDu1X4nR0zeXDqhRY+cEeM8/WXJRg==
+"@lifi/widget@3.33.1":
+  version "3.33.1"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.33.1.tgz#a51cd26ac3c1b0d5434e215859368293d543b5ea"
+  integrity sha512-+67G2m8tUjUm2Pges4kr/qU1C+6U03ClGZCdQb8+x42r6bTFG57ZmjrPQ3C6fSbZkU2nl+aFdndsIlf1ekREeA==
   dependencies:
-    "@bigmi/client" "^0.5.3"
-    "@bigmi/core" "^0.5.3"
+    "@bigmi/client" "^0.6.0"
+    "@bigmi/core" "^0.6.0"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.12.11"
-    "@lifi/wallet-management" "^3.17.3"
-    "@mui/icons-material" "^7.3.2"
-    "@mui/material" "^7.3.2"
-    "@mui/system" "^7.3.2"
-    "@mysten/sui" "^1.38.0"
+    "@lifi/sdk" "^3.12.14"
+    "@lifi/wallet-management" "^3.18.1"
+    "@mui/icons-material" "7.3.2"
+    "@mui/material" "7.3.2"
+    "@mui/system" "7.3.2"
+    "@mysten/sui" "^1.39.1"
     "@solana/wallet-adapter-base" "^0.9.27"
     "@solana/wallet-adapter-coinbase" "^0.1.23"
     "@solana/web3.js" "^1.98.4"
     "@tanstack/react-virtual" "^3.13.12"
-    i18next "^25.5.2"
+    i18next "^25.5.3"
     microdiff "^1.5.0"
     mitt "^3.0.1"
     react-i18next "^16.0.0"
     react-intersection-observer "^9.16.0"
-    react-router-dom "^6.30.0"
+    react-router-dom "^6.30.1"
     react-transition-group "^4.4.5"
-    viem "^2.37.7"
+    viem "^2.38.0"
     zustand "^5.0.8"
 
 "@lit-labs/ssr-dom-shim@^1.4.0":
@@ -3483,14 +3504,14 @@
   resolved "https://registry.yarnpkg.com/@mui/core-downloads-tracker/-/core-downloads-tracker-7.3.2.tgz#896a7890864d619093dc79541ec1ecfa3b507ad2"
   integrity sha512-AOyfHjyDKVPGJJFtxOlept3EYEdLoar/RvssBTWVAvDJGIE676dLi2oT/Kx+FoVXFoA/JdV7DEMq/BVWV3KHRw==
 
-"@mui/icons-material@^7.3.2":
+"@mui/icons-material@7.3.2":
   version "7.3.2"
   resolved "https://registry.yarnpkg.com/@mui/icons-material/-/icons-material-7.3.2.tgz#050049cd6195b815e85888aaebd436e8e95084b8"
   integrity sha512-TZWazBjWXBjR6iGcNkbKklnwodcwj0SrChCNHc9BhD9rBgET22J1eFhHsEmvSvru9+opDy3umqAimQjokhfJlQ==
   dependencies:
     "@babel/runtime" "^7.28.3"
 
-"@mui/material@^7.3.2":
+"@mui/material@7.3.2":
   version "7.3.2"
   resolved "https://registry.yarnpkg.com/@mui/material/-/material-7.3.2.tgz#21ad66bba695e2cd36e4a93e2e4ff5e04d8636a1"
   integrity sha512-qXvbnawQhqUVfH1LMgMaiytP+ZpGoYhnGl7yYq2x57GYzcFL/iPzSZ3L30tlbwEjSVKNYcbiKO8tANR1tadjUg==
@@ -3529,7 +3550,7 @@
     csstype "^3.1.3"
     prop-types "^15.8.1"
 
-"@mui/system@^7.3.2":
+"@mui/system@7.3.2", "@mui/system@^7.3.2":
   version "7.3.2"
   resolved "https://registry.yarnpkg.com/@mui/system/-/system-7.3.2.tgz#e838097fc6cb0a2e4c1822478950db89affb116a"
   integrity sha512-9d8JEvZW+H6cVkaZ+FK56R53vkJe3HsTpcjMUtH8v1xK6Y1TjzHdZ7Jck02mGXJsE6MQGWVs3ogRHTQmS9Q/rA==
@@ -3600,10 +3621,28 @@
     mitt "^3.0.1"
     valibot "^0.36.0"
 
-"@mysten/sui@1.38.0", "@mysten/sui@^1.38.0":
+"@mysten/sui@1.38.0":
   version "1.38.0"
   resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.38.0.tgz#2ca46e0d45ac7624d653e3ace3a4c856864102b0"
   integrity sha512-tH6V4BJsYi5d97MOiLoOhyldrYxkm/cu8dYV52asqh1i88HrSVMbPAJ9sVoeWN2Ju+QsJ/Go4ldSjdCkaBCyJQ==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.2.0"
+    "@mysten/bcs" "1.8.0"
+    "@mysten/utils" "0.2.0"
+    "@noble/curves" "^1.9.4"
+    "@noble/hashes" "^1.8.0"
+    "@scure/base" "^1.2.6"
+    "@scure/bip32" "^1.7.0"
+    "@scure/bip39" "^1.6.0"
+    gql.tada "^1.8.13"
+    graphql "^16.11.0"
+    poseidon-lite "0.2.1"
+    valibot "^0.36.0"
+
+"@mysten/sui@1.39.1", "@mysten/sui@^1.39.1":
+  version "1.39.1"
+  resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.39.1.tgz#bcf623aa067eca8055ed6fbaa0946d8cc900f826"
+  integrity sha512-SNCal+mBl/jNAIVO16GkuSZ4ljGYQewbkwg+YQFT0zVCZU1z/PLRZ8opzE1qbUq6cHlautGtSiAadtWoB/P6NA==
   dependencies:
     "@graphql-typed-document-node/core" "^3.2.0"
     "@mysten/bcs" "1.8.0"
@@ -3625,12 +3664,20 @@
   dependencies:
     "@scure/base" "^1.2.6"
 
-"@mysten/wallet-standard@0.17.0", "@mysten/wallet-standard@^0.17.0":
+"@mysten/wallet-standard@0.17.0":
   version "0.17.0"
   resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.17.0.tgz#4ca2b0bf3d0701b3cfe13525a4d8470e1a44609d"
   integrity sha512-UQ6tvqQ/lDKZhQm2d3ajky/xl+NgpYpNXYIpWfYGOLvGe4GyK6GHysMNHsRpFa+xA2yVa6w3nWO2RQ8WIy7ivA==
   dependencies:
     "@mysten/sui" "1.38.0"
+    "@wallet-standard/core" "1.1.1"
+
+"@mysten/wallet-standard@^0.18.1":
+  version "0.18.1"
+  resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.18.1.tgz#d73fb14fae0cdab34ab095993f5145e025cf72bc"
+  integrity sha512-pPQXLSiB4PvSgewmq8UHfuGKcnUIzdrNCifl5UhSKpCSgXDpwYPOfi1q/q6vcqa8v6YeEzwma/Ft+a/gfY6Wng==
+  dependencies:
+    "@mysten/sui" "1.39.1"
     "@wallet-standard/core" "1.1.1"
 
 "@mysten/window-wallet-core@0.1.0":
@@ -8927,6 +8974,14 @@ bindings@^1.4.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
+bip174@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/bip174/-/bip174-3.0.0.tgz#fbf60cc7a6e39dde17afdda0cf1a27e5508ae075"
+  integrity sha512-N3vz3rqikLEu0d6yQL8GTrSkpYb35NQKWMR7Hlza0lOj6ZOlvQ3Xr7N9Y+JPebaCVoEUHdBeBSuLxcHr71r+Lw==
+  dependencies:
+    uint8array-tools "^0.0.9"
+    varuint-bitcoin "^2.0.0"
+
 bip174@^3.0.0-rc.0:
   version "3.0.0-rc.1"
   resolved "https://registry.yarnpkg.com/bip174/-/bip174-3.0.0-rc.1.tgz#08c41d5a4cbfa0790075335b64b9a16630fcd73f"
@@ -8939,6 +8994,19 @@ birpc@0.2.14:
   version "0.2.14"
   resolved "https://registry.yarnpkg.com/birpc/-/birpc-0.2.14.tgz#4a5498771e6ff24cf8ae5f47faf90e76ca2fce03"
   integrity sha512-37FHE8rqsYM5JEKCnXFyHpBCzvgHEExwVVTq+nUmloInU7l8ezD1TpOhKpS8oe1DTYFqEK27rFZVKG43oTqXRA==
+
+bitcoinjs-lib@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/bitcoinjs-lib/-/bitcoinjs-lib-7.0.0.tgz#0bea06c164b9048b4453914507514ed7ee3018c2"
+  integrity sha512-2W6dGXFd1KG3Bs90Bzb5+ViCeSKNIYkCUWZ4cvUzUgwnneiNNZ6Sk8twGNcjlesmxC0JyLc/958QycfpvXLg7A==
+  dependencies:
+    "@noble/hashes" "^1.2.0"
+    bech32 "^2.0.0"
+    bip174 "^3.0.0"
+    bs58check "^4.0.0"
+    uint8array-tools "^0.0.9"
+    valibot "^0.38.0"
+    varuint-bitcoin "^2.0.0"
 
 bitcoinjs-lib@^7.0.0-rc.0:
   version "7.0.0-rc.0"
@@ -11627,10 +11695,10 @@ hyphenate-style-name@^1.0.0, hyphenate-style-name@^1.0.3:
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.1.0.tgz#1797bf50369588b47b72ca6d5e65374607cf4436"
   integrity sha512-WDC/ui2VVRrz3jOVi+XtjqkDjiVjTtFaAGiW37k6b+ohyQ5wYDOGkvCZa8+H0nx3gyvv0+BST9xuOgIyGQ00gw==
 
-i18next@^25.5.2:
-  version "25.5.2"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-25.5.2.tgz#16efa309e154d46dac7583e6a315ccb47e3e3a10"
-  integrity sha512-lW8Zeh37i/o0zVr+NoCHfNnfvVw+M6FQbRp36ZZ/NyHDJ3NJVpp2HhAUyU9WafL5AssymNoOjMRB48mmx2P6Hw==
+i18next@^25.5.3:
+  version "25.5.3"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-25.5.3.tgz#23a63f4aeb0a61cacf148a8d2bd83693d1e5e335"
+  integrity sha512-joFqorDeQ6YpIXni944upwnuHBf5IoPMuqAchGVeQLdWC2JOjxgM9V8UGLhNIIH/Q8QleRxIi0BSRQehSrDLcg==
   dependencies:
     "@babel/runtime" "^7.27.6"
 
@@ -14264,7 +14332,7 @@ react-responsive@10.0.1:
     prop-types "^15.6.1"
     shallow-equal "^3.1.0"
 
-react-router-dom@^6.30.0:
+react-router-dom@^6.30.1:
   version "6.30.1"
   resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.30.1.tgz#da2580c272ddb61325e435478566be9563a4a237"
   integrity sha512-llKsgOkZdbPU1Eg3zK8lCn+sjD9wMRZZPuzmdWWX5SUs8OFkN5HnFVC0u5KMeMaC9aoancFI/KoLuKPqN+hxHw==
@@ -16096,6 +16164,11 @@ use-sync-external-store@^1.2.2, use-sync-external-store@^1.4.0, use-sync-externa
   resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.5.0.tgz#55122e2a3edd2a6c106174c27485e0fd59bcfca0"
   integrity sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==
 
+use-sync-external-store@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.6.0.tgz#b174bfa65cb2b526732d9f2ac0a408027876f32d"
+  integrity sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==
+
 utf-8-validate@^5.0.2:
   version "5.0.10"
   resolved "https://registry.yarnpkg.com/utf-8-validate/-/utf-8-validate-5.0.10.tgz#d7d10ea39318171ca982718b6b96a8d2442571a2"
@@ -16196,10 +16269,24 @@ viem@2.23.2:
     ox "0.6.7"
     ws "8.18.0"
 
-viem@2.37.9, viem@>=2.29.0, viem@^2.1.1, viem@^2.23.15, viem@^2.27.2, viem@^2.31.7, viem@^2.33.2, viem@^2.37.7, viem@^2.37.8:
+viem@2.37.9, viem@>=2.29.0, viem@^2.1.1, viem@^2.23.15, viem@^2.27.2, viem@^2.31.7, viem@^2.33.2:
   version "2.37.9"
   resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.9.tgz#6157527084c317f43e5e8a079bd8ad59802a8771"
   integrity sha512-XXUOE5yJcjr9/M9kRoQcPMUfetwHprO9aTho6vNELjBKJIBx7rYq1fjvBw+xEnhsRjhh5lsORi6B0h8fYFB7NA==
+  dependencies:
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "1.8.0"
+    "@scure/bip32" "1.7.0"
+    "@scure/bip39" "1.6.0"
+    abitype "1.1.0"
+    isows "1.0.7"
+    ox "0.9.6"
+    ws "8.18.3"
+
+viem@^2.38.0:
+  version "2.38.0"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.38.0.tgz#48f9f91f6d540c83e9eb9f6d62ecb8e648517ca6"
+  integrity sha512-YU5TG8dgBNeYPrCMww0u9/JVeq2ZCk9fzk6QybrPkBooFysamHXL1zC3ua10aLPt9iWoA/gSVf1D9w7nc5B1aA==
   dependencies:
     "@noble/curves" "1.9.1"
     "@noble/hashes" "1.8.0"
