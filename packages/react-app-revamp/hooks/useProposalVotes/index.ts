@@ -54,18 +54,18 @@ const useProposalVotes = ({
         let proposalVotes = 0;
 
         if (proposalVotesResult.result) {
-          if (hasDownvotes) {
-            const voteForBigInt = BigInt((proposalVotesResult.result as any)[0]);
-            const voteAgainstBigInt = BigInt((proposalVotesResult.result as any)[1]);
-            proposalVotes = Number(formatEther(voteForBigInt - voteAgainstBigInt));
-          } else {
-            proposalVotes = Number(formatEther(proposalVotesResult.result as bigint));
+          try {
+            if (hasDownvotes && Array.isArray(proposalVotesResult.result)) {
+              const voteForBigInt = BigInt(proposalVotesResult.result[0]);
+              const voteAgainstBigInt = BigInt(proposalVotesResult.result[1]);
+              proposalVotes = Number(formatEther(voteForBigInt - voteAgainstBigInt));
+            } else {
+              proposalVotes = Number(formatEther(proposalVotesResult.result as bigint));
+            }
+          } catch (error) {
+            console.error("Error parsing proposal votes:", error);
+            proposalVotes = 0;
           }
-        }
-
-        // If no votes, return early
-        if (proposalVotes === 0) {
-          return { votes: 0, rank: 0, isTied: false };
         }
 
         // Extract all proposals data for ranking
@@ -86,12 +86,17 @@ const useProposalVotes = ({
         const mappedProposals: MappedProposal[] = allProposals
           .map((id: bigint, index: number) => {
             let votes = 0;
-            if (hasDownvotes) {
-              const voteForBigInt = BigInt(allVotes[index][0]);
-              const voteAgainstBigInt = BigInt(allVotes[index][1]);
-              votes = Number(formatEther(voteForBigInt - voteAgainstBigInt));
-            } else {
-              votes = Number(formatEther(allVotes[index] as bigint));
+            try {
+              if (hasDownvotes && Array.isArray(allVotes[index])) {
+                const voteForBigInt = BigInt(allVotes[index][0]);
+                const voteAgainstBigInt = BigInt(allVotes[index][1]);
+                votes = Number(formatEther(voteForBigInt - voteAgainstBigInt));
+              } else {
+                votes = Number(formatEther(allVotes[index] as bigint));
+              }
+            } catch (error) {
+              console.error("Error parsing votes for proposal:", id.toString(), error);
+              votes = 0;
             }
             return {
               id: id.toString(),

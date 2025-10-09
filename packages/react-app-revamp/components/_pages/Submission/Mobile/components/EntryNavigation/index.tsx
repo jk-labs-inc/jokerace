@@ -1,4 +1,3 @@
-"use client";
 import { FC } from "react";
 import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
 import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
@@ -17,16 +16,13 @@ const SubmissionPageMobileEntryNavigation: FC<SubmissionPageMobileEntryNavigatio
   const { openConnectModal } = useConnectModal();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { currentIndex, totalProposals, previousEntryUrl, nextEntryUrl } = useNavigateProposals();
-
   const showNavigation = totalProposals > 1;
 
   return (
     <>
       {showNavigation && (
         <div
-          className={`fixed ${
-            isInPwaMode ? "bottom-[88px]" : "bottom-12"
-          } left-0 right-0 flex ${
+          className={`fixed ${isInPwaMode ? "bottom-[88px]" : "bottom-12"} left-0 right-0 flex ${
             currentIndex === 0 || currentIndex === totalProposals - 1 ? "justify-center" : "justify-between"
           } px-8 pt-4 pb-8 z-50 border-t-neutral-2 border-t-2 bg-true-black`}
         >
@@ -36,13 +32,7 @@ const SubmissionPageMobileEntryNavigation: FC<SubmissionPageMobileEntryNavigatio
               scroll={false}
               className="flex items-center justify-center gap-2 text-positive-11 text-[16px] font-bold transform transition-transform duration-200 active:scale-95"
             >
-              <img
-                src="/contest/previous-entry-mobile.svg"
-                alt="prev-entry"
-                width={16}
-                height={16}
-                className="mt-1"
-              />
+              <img src="/contest/previous-entry-mobile.svg" alt="prev-entry" width={16} height={16} className="mt-1" />
               previous entry
             </Link>
           )}
@@ -68,4 +58,3 @@ const SubmissionPageMobileEntryNavigation: FC<SubmissionPageMobileEntryNavigatio
 };
 
 export default SubmissionPageMobileEntryNavigation;
-

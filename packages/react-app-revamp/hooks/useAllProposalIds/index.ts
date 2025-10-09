@@ -97,12 +97,17 @@ export const useAllProposalIds = ({
 
         // Extract votes helper function
         const extractVotes = (index: number): number => {
-          if (hasDownvotes) {
-            const forVotes = BigInt(voteCounts[index].forVotes);
-            const againstVotes = BigInt(voteCounts[index].againstVotes);
-            return Number(formatEther(forVotes - againstVotes));
+          try {
+            if (hasDownvotes && Array.isArray(voteCounts[index])) {
+              const voteForBigInt = BigInt(voteCounts[index][0]);
+              const voteAgainstBigInt = BigInt(voteCounts[index][1]);
+              return Number(formatEther(voteForBigInt - voteAgainstBigInt));
+            }
+            return Number(formatEther(voteCounts[index] as bigint));
+          } catch (error) {
+            console.error("Error extracting votes for proposal at index:", index, error);
+            return 0;
           }
-          return Number(formatEther(voteCounts[index]));
         };
 
         // Filter out deleted proposals and map to objects with votes

@@ -23,7 +23,13 @@ const SubmissionPageDesktopVotingAreaWidgetVotingNotOpen: FC<
         <p className="text-center font-sabo-filled text-neutral-11 text-[32px] font-bold">voting opens in</p>
         {timeRemaining && <Timer timeRemaining={timeRemaining} />}
       </div>
-      <Image src="/entry/voting-not-open-bubbles.png" alt="not-open-image" width={361} height={288} />
+      <Image
+        className="self-center"
+        src="/entry/voting-not-open-bubbles.png"
+        alt="not-open-image"
+        width={300}
+        height={200}
+      />
     </div>
   );
 };
