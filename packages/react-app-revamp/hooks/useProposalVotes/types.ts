@@ -5,6 +5,7 @@ export interface UseProposalVotesAndRankParams {
   proposalId: string;
   chainId: number;
   abi: Abi;
+  version: string;
   enabled?: boolean;
 }
 

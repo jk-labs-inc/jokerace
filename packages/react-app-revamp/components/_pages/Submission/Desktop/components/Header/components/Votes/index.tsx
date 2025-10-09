@@ -14,6 +14,7 @@ const SubmissionPageDesktopVotes = () => {
     proposalId: proposalId,
     chainId: contestConfig.chainId,
     abi: contestConfig.abi,
+    version: contestConfig.version,
   });
 
   if (isLoading) {
@@ -31,8 +32,6 @@ const SubmissionPageDesktopVotes = () => {
       </div>
     );
   }
-
-  if (votes === 0) return null;
 
   return (
     <div className="h-8 bg-neutral-16 border border-positive-13 rounded-2xl flex items-center justify-center px-4">
