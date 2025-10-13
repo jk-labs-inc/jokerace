@@ -36,13 +36,11 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
         }`}
       >
         {showAddFundsModal ? (
-          <div className="max-h-[400px] overflow-y-auto p-1">
-            <AddFunds
-              chain={contestConfig.chainName}
-              asset={contestConfig.chainNativeCurrencySymbol}
-              onGoBack={() => setShowAddFundsModal(false)}
-            />
-          </div>
+          <AddFunds
+            chain={contestConfig.chainName}
+            asset={contestConfig.chainNativeCurrencySymbol}
+            onGoBack={() => setShowAddFundsModal(false)}
+          />
         ) : (
           <VotingWidget
             costToVote={currentPricePerVote}
