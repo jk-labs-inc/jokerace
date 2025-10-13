@@ -1436,33 +1436,12 @@
     viem "^2.31.7"
     zustand "5.0.3"
 
-"@bigmi/client@^0.5.4":
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.5.4.tgz#263665ddf9ad44383a10c7391d3118f820bb410c"
-  integrity sha512-eXWdtxaHJIajqI/3v6dR8qHTMt0e/V3TZxUKiN0LGGBmHrGK7hmuIBQlPeNEesvw7NA9b4qtK3TAly/rfpKODQ==
-  dependencies:
-    "@bigmi/core" "^0.5.4"
-    eventemitter3 "^5.0.1"
-    zustand "^5.0.8"
-
 "@bigmi/client@^0.6.0":
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.6.0.tgz#b891c9d2fe113dc03ccf92dd8c06f42e6aad02c0"
   integrity sha512-ODWNkt5pmyoupaaX+HPA9v9VaQOdnudiSoGazvHXnSoi6B+kXgX8p+j8ixdr/p5h2IoLFr6bRQVea4X7YGOAow==
   dependencies:
     "@bigmi/core" "^0.6.0"
-    eventemitter3 "^5.0.1"
-    zustand "^5.0.8"
-
-"@bigmi/core@^0.5.4":
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/@bigmi/core/-/core-0.5.4.tgz#2ef7daf53d9c4dfa644cc3510eab8517cba4af27"
-  integrity sha512-AfV+pgFe7N6KoyU0OWPrVstrxMJSL5nLODeyGGbYVfi7u6jPjOZ9b7KsOxNDlQp8ZCuQS46263VJyNiG3IsPaA==
-  dependencies:
-    "@noble/hashes" "^1.8.0"
-    bech32 "^2.0.0"
-    bitcoinjs-lib "^7.0.0-rc.0"
-    bs58 "^6.0.0"
     eventemitter3 "^5.0.1"
     zustand "^5.0.8"
 
@@ -1478,13 +1457,13 @@
     eventemitter3 "^5.0.1"
     zustand "^5.0.8"
 
-"@bigmi/react@0.5.4":
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.5.4.tgz#107d8f2963d70c08735c93d84994d621ddabe12c"
-  integrity sha512-+46VYWnfG5LcRUd+v0petdfMM7JVZuuKPdsdwfQ0MgK8WMXP5iamW9WoAcNRaUWDEc6HgrTQnRVoJh/rffOtDw==
+"@bigmi/react@0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.6.0.tgz#dbab301718245ae7fa3d86424987fdf473250ac3"
+  integrity sha512-zXh2b3DQhsJQBm85VcIluA/YmG9nFoFjTtzKOX6FXm7S5Qsrqq7VpxLKnsr8xSzpd4B1tdwfyEkA0pUWlt8C5A==
   dependencies:
-    "@bigmi/client" "^0.5.4"
-    "@bigmi/core" "^0.5.4"
+    "@bigmi/client" "^0.6.0"
+    "@bigmi/core" "^0.6.0"
 
 "@bitcoinerlab/secp256k1@^1.2.0":
   version "1.2.0"
@@ -3591,15 +3570,15 @@
     "@mysten/utils" "0.2.0"
     "@scure/base" "^1.2.6"
 
-"@mysten/dapp-kit@0.18.0":
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/@mysten/dapp-kit/-/dapp-kit-0.18.0.tgz#0c5e0ea5b614d841066463c0388cad88feaadb0f"
-  integrity sha512-Cxnp2yzqD4RPBc1qRnNrSZCceIVANHKzl2Mgc66e6ICNdRKdIBcDuYFjtaVlVUe2vR/ewCBIGcaQA+BeFH2xnw==
+"@mysten/dapp-kit@0.19.2":
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/@mysten/dapp-kit/-/dapp-kit-0.19.2.tgz#53178887d94b48e34d87f06d880defa360903a74"
+  integrity sha512-iMQAwWRTtEUg06MYtYjSmFJmvF+XoVK+8v6Y+jdxWd7zgdgJiK70k95aq0VmxjHZM4e+IXPOzGl6XpMPUZDERA==
   dependencies:
-    "@mysten/slush-wallet" "0.2.0"
-    "@mysten/sui" "1.38.0"
+    "@mysten/slush-wallet" "0.2.3"
+    "@mysten/sui" "1.40.0"
     "@mysten/utils" "0.2.0"
-    "@mysten/wallet-standard" "0.17.0"
+    "@mysten/wallet-standard" "0.19.0"
     "@radix-ui/react-dialog" "^1.1.15"
     "@radix-ui/react-dropdown-menu" "^2.1.16"
     "@radix-ui/react-slot" "^1.2.3"
@@ -3609,22 +3588,22 @@
     clsx "^2.1.1"
     zustand "^4.5.4"
 
-"@mysten/slush-wallet@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@mysten/slush-wallet/-/slush-wallet-0.2.0.tgz#26098afa2e10ae57f5a82218b5f9a9bf9710eb38"
-  integrity sha512-2tvTRN1D2n/7XX62oK98VTShhquaHYLysw4tTWAGxIK0Ax6zLc+CPO9cVbgRLjGEmQm2ZN/X3wZVBRUly9GXnA==
+"@mysten/slush-wallet@0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@mysten/slush-wallet/-/slush-wallet-0.2.3.tgz#e8f385d5e8824cf72aeb130471a6a595353b5f80"
+  integrity sha512-eZJohIj1PCO7BCORkwu35thAdj7q9P/0PwxKoUjRvTi8H2mys9IMnI3z+wCv63RS2ifk/eNTIlTJJLPlbKUcdw==
   dependencies:
-    "@mysten/sui" "1.38.0"
+    "@mysten/sui" "1.40.0"
     "@mysten/utils" "0.2.0"
-    "@mysten/wallet-standard" "0.17.0"
+    "@mysten/wallet-standard" "0.19.0"
     "@mysten/window-wallet-core" "0.1.0"
     mitt "^3.0.1"
     valibot "^0.36.0"
 
-"@mysten/sui@1.38.0":
-  version "1.38.0"
-  resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.38.0.tgz#2ca46e0d45ac7624d653e3ace3a4c856864102b0"
-  integrity sha512-tH6V4BJsYi5d97MOiLoOhyldrYxkm/cu8dYV52asqh1i88HrSVMbPAJ9sVoeWN2Ju+QsJ/Go4ldSjdCkaBCyJQ==
+"@mysten/sui@1.39.1", "@mysten/sui@^1.39.1":
+  version "1.39.1"
+  resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.39.1.tgz#bcf623aa067eca8055ed6fbaa0946d8cc900f826"
+  integrity sha512-SNCal+mBl/jNAIVO16GkuSZ4ljGYQewbkwg+YQFT0zVCZU1z/PLRZ8opzE1qbUq6cHlautGtSiAadtWoB/P6NA==
   dependencies:
     "@graphql-typed-document-node/core" "^3.2.0"
     "@mysten/bcs" "1.8.0"
@@ -3639,10 +3618,10 @@
     poseidon-lite "0.2.1"
     valibot "^0.36.0"
 
-"@mysten/sui@1.39.1", "@mysten/sui@^1.39.1":
-  version "1.39.1"
-  resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.39.1.tgz#bcf623aa067eca8055ed6fbaa0946d8cc900f826"
-  integrity sha512-SNCal+mBl/jNAIVO16GkuSZ4ljGYQewbkwg+YQFT0zVCZU1z/PLRZ8opzE1qbUq6cHlautGtSiAadtWoB/P6NA==
+"@mysten/sui@1.40.0":
+  version "1.40.0"
+  resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.40.0.tgz#6e7b142ed30a802784b45ff53baff1c98ab1fb2e"
+  integrity sha512-1MDF68v2mQIE1YEpPfyX++Jwat2JyeJM0htZKmKBqLghAvnbSgxUydogx+0b7jKn+Q2XpbvWhQlXEbUHOBTZQQ==
   dependencies:
     "@graphql-typed-document-node/core" "^3.2.0"
     "@mysten/bcs" "1.8.0"
@@ -3664,12 +3643,12 @@
   dependencies:
     "@scure/base" "^1.2.6"
 
-"@mysten/wallet-standard@0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.17.0.tgz#4ca2b0bf3d0701b3cfe13525a4d8470e1a44609d"
-  integrity sha512-UQ6tvqQ/lDKZhQm2d3ajky/xl+NgpYpNXYIpWfYGOLvGe4GyK6GHysMNHsRpFa+xA2yVa6w3nWO2RQ8WIy7ivA==
+"@mysten/wallet-standard@0.19.0":
+  version "0.19.0"
+  resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.19.0.tgz#ff978afff2e7bc97a080d4d6289898da3512505a"
+  integrity sha512-GwJxd+f5EBQUty2pQ4r5G0h7JmABIlBIAyb1NaSns91lim2fEcBGKwTzvOGUsBpYBkBvXwoZDgz6xNzxKbobtQ==
   dependencies:
-    "@mysten/sui" "1.38.0"
+    "@mysten/sui" "1.40.0"
     "@wallet-standard/core" "1.1.1"
 
 "@mysten/wallet-standard@^0.18.1":
@@ -7921,10 +7900,10 @@
     loupe "^2.3.7"
     pretty-format "^29.7.0"
 
-"@wagmi/connectors@5.11.2":
-  version "5.11.2"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.11.2.tgz#5882c9d253c6a2cc3d0b0a10cbf7c5f3f4ea111b"
-  integrity sha512-OkiElOI8xXGPDZE5UdG6NgDT3laSkEh9llX1DDapUnfnKecK3Tr/HUf5YzgwDhEoox8mdxp+8ZCjtnTKz56SdA==
+"@wagmi/connectors@6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-6.0.0.tgz#4d1cf72f46e0b4c503669557c023ccde12a35fbd"
+  integrity sha512-0yMyRiUw/zwZO0VwL8TWSEeyt2U8KzfuuKD4cnnMFk+089HghIFYrBU37s+5163KvQsJVUvpfMZTDUAfXl6WRQ==
   dependencies:
     "@base-org/account" "1.1.1"
     "@coinbase/wallet-sdk" "4.3.6"
@@ -7940,6 +7919,15 @@
   version "2.21.2"
   resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.21.2.tgz#bd6989b1d35d913425dc9c629be3c8b2df00ef2c"
   integrity sha512-Rp4waam2z0FQUDINkJ91jq38PI5wFUHCv1YBL2LXzAQswaEk1ZY8d6+WG3vYGhFHQ22DXy2AlQ8IWmj+2EG3zQ==
+  dependencies:
+    eventemitter3 "5.0.1"
+    mipd "0.0.7"
+    zustand "5.0.0"
+
+"@wagmi/core@2.22.0":
+  version "2.22.0"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.22.0.tgz#95e904c700766561361e7510b1aa08b713af90e1"
+  integrity sha512-PYBe1zX+FfQBvoF5mVLXJuX5nW1CtfCUWxZ/QfJMYHp9KBwgsem5cyry6UET0kZmwalRAn9qfrcjdWeL9WCm7Q==
   dependencies:
     eventemitter3 "5.0.1"
     mipd "0.0.7"
@@ -8981,14 +8969,6 @@ bip174@^3.0.0:
     uint8array-tools "^0.0.9"
     varuint-bitcoin "^2.0.0"
 
-bip174@^3.0.0-rc.0:
-  version "3.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/bip174/-/bip174-3.0.0-rc.1.tgz#08c41d5a4cbfa0790075335b64b9a16630fcd73f"
-  integrity sha512-+8P3BpSairVNF2Nee6Ksdc1etIjWjBOi/MH0MwKtq9YaYp+S2Hk2uvup0e8hCT4IKlS58nXJyyQVmW92zPoD4Q==
-  dependencies:
-    uint8array-tools "^0.0.9"
-    varuint-bitcoin "^2.0.0"
-
 birpc@0.2.14:
   version "0.2.14"
   resolved "https://registry.yarnpkg.com/birpc/-/birpc-0.2.14.tgz#4a5498771e6ff24cf8ae5f47faf90e76ca2fce03"
@@ -9002,19 +8982,6 @@ bitcoinjs-lib@^7.0.0:
     "@noble/hashes" "^1.2.0"
     bech32 "^2.0.0"
     bip174 "^3.0.0"
-    bs58check "^4.0.0"
-    uint8array-tools "^0.0.9"
-    valibot "^0.38.0"
-    varuint-bitcoin "^2.0.0"
-
-bitcoinjs-lib@^7.0.0-rc.0:
-  version "7.0.0-rc.0"
-  resolved "https://registry.yarnpkg.com/bitcoinjs-lib/-/bitcoinjs-lib-7.0.0-rc.0.tgz#841a7e3a00d4fd719ab7f85f691b2e0455494786"
-  integrity sha512-7CQgOIbREemKR/NT2uc3uO/fkEy+6CM0sLxboVVY6bv6DbZmPt3gg5Y/hhWgQFeZu5lfTbtVAv32MIxf7lMh4g==
-  dependencies:
-    "@noble/hashes" "^1.2.0"
-    bech32 "^2.0.0"
-    bip174 "^3.0.0-rc.0"
     bs58check "^4.0.0"
     uint8array-tools "^0.0.9"
     valibot "^0.38.0"
@@ -16292,7 +16259,21 @@ viem@2.23.2:
     ox "0.6.7"
     ws "8.18.0"
 
-viem@2.37.9, viem@>=2.29.0, viem@^2.1.1, viem@^2.23.15, viem@^2.27.2, viem@^2.31.7, viem@^2.33.2:
+viem@2.38.1:
+  version "2.38.1"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.38.1.tgz#affd53d31343e6b604066ad230a24285513f2f95"
+  integrity sha512-+5c5b8AmGBYJGMU0A3spIFgsBXseV1E+LlQnSDG80IBoXYDqeQ2XZ8wrwCl9FqLVeP+8NgXtouJaPpmv9VGwHQ==
+  dependencies:
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "1.8.0"
+    "@scure/bip32" "1.7.0"
+    "@scure/bip39" "1.6.0"
+    abitype "1.1.0"
+    isows "1.0.7"
+    ox "0.9.6"
+    ws "8.18.3"
+
+viem@>=2.29.0, viem@^2.1.1, viem@^2.23.15, viem@^2.27.2, viem@^2.31.7, viem@^2.33.2:
   version "2.37.9"
   resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.9.tgz#6157527084c317f43e5e8a079bd8ad59802a8771"
   integrity sha512-XXUOE5yJcjr9/M9kRoQcPMUfetwHprO9aTho6vNELjBKJIBx7rYq1fjvBw+xEnhsRjhh5lsORi6B0h8fYFB7NA==
@@ -16378,13 +16359,13 @@ w3c-keyname@^2.2.0:
   resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.8.tgz#7b17c8c6883d4e8b86ac8aba79d39e880f8869c5"
   integrity sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==
 
-wagmi@2.17.5:
-  version "2.17.5"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.17.5.tgz#aa026818af2998b79de2be09a2add7afeb77b500"
-  integrity sha512-Sk2e40gfo68gbJ6lHkpIwCMkH76rO0+toCPjf3PzdQX37rZo9042DdNTYcSg3zhnx8abFJtrk/5vAWfR8APTDw==
+wagmi@2.18.0:
+  version "2.18.0"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.18.0.tgz#bfad3e235ef81e4f28645eec792b18dd643ee8e6"
+  integrity sha512-HZ2A8m6HpHtyEKZIsSfQpMu3PeQqIbmyh+YYN00NCDltl6fsJX2M0Ti3kTa1YJDF/Toi5F3JFIXJS/7paFAPmw==
   dependencies:
-    "@wagmi/connectors" "5.11.2"
-    "@wagmi/core" "2.21.2"
+    "@wagmi/connectors" "6.0.0"
+    "@wagmi/core" "2.22.0"
     use-sync-external-store "1.4.0"
 
 watchpack@2.4.0:
