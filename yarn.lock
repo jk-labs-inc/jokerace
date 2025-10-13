@@ -14442,10 +14442,10 @@ react-window@*:
   resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.1.2.tgz#f18900ab9e60a7c6549e670cded4845f656ae382"
   integrity sha512-3PnhB1bXauRVTR1vVwEmFjbaNDCIubOoNLTvvHrOI9cGOkPGb5XAzlprNN/FuUlnKsaaws31t3IJYbJJvhJcBQ==
 
-react-window@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.2.0.tgz#6473ac28b94aaee35ccc3548c7321f5a418ca99b"
-  integrity sha512-Y2L7yonHq6K1pQA2P98wT5QdIsEcjBTB7T8o6Mub12hH9eYppXoYu6vgClmcjlh3zfNcW2UrXiJJJqDxUY7GVw==
+react-window@2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.2.1.tgz#3adbafffba43ed045895adec2d050883670953ff"
+  integrity sha512-jrUMKDLW1B4yX4OU0QjdytGgWIg6wqWfiTe86lUhFsCUltkNNB/zYxFU0DTKAzBOMRbkpLVWS1IkLvQeO4L7nw==
 
 react@19.2.0:
   version "19.2.0"
