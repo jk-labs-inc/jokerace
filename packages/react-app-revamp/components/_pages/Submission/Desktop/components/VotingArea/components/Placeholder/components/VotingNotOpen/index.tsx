@@ -31,7 +31,7 @@ const SubmissionPageDesktopVotingAreaWidgetVotingNotOpen: FC<
         width={300}
         height={200}
       />
-      <div className="mt-2">
+      <div className="mt-auto">
         <SubmissionEmailSignup />
       </div>
     </div>
