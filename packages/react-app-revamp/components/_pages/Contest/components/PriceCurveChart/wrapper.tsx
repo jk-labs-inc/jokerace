@@ -1,24 +1,23 @@
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import usePriceCurveChartData from "@hooks/usePriceCurveChartData";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import usePriceCurvePoints from "@hooks/usePriceCurvePoints";
+import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
 import { useParentSize } from "@visx/responsive";
 import { useShallow } from "zustand/shallow";
-import PriceCurveChart from "./index";
-import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
-import PriceCurveChartLoading from "./components/ChartLoading";
 import PriceCurveChartError from "./components/ChartError";
+import PriceCurveChartLoading from "./components/ChartLoading";
+import PriceCurveChart from "./index";
 
 const PriceCurveWrapper = () => {
   const { parentRef, width, height } = useParentSize({ debounceTime: 150 });
-  const { contestInfo, abi, startPrice, startTime, endTime, version } = useContestStore(
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const { startPrice, startTime, endTime } = useContestStore(
     useShallow(state => ({
-      contestInfo: state.contestInfoData,
-      abi: state.contestAbi,
       startPrice: state.charge.type.costToVote,
       startTime: state.votesOpen,
       endTime: state.votesClose,
-      version: state.version,
     })),
   );
 
@@ -27,9 +26,9 @@ const PriceCurveWrapper = () => {
     isLoading: isPriceCurveMultipleLoading,
     isError: isPriceCurveMultipleError,
   } = usePriceCurveMultiple({
-    address: contestInfo.contestAddress,
-    abi: abi,
-    chainId: contestInfo.contestChainId,
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
   });
 
   const {
@@ -37,10 +36,9 @@ const PriceCurveWrapper = () => {
     isLoading: isPriceCurveUpdateIntervalLoading,
     isError: isPriceCurveUpdateIntervalError,
   } = usePriceCurveUpdateInterval({
-    address: contestInfo.contestAddress,
-    abi: abi,
-    chainId: contestInfo.contestChainId,
-    version: version,
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
   });
 
   const {

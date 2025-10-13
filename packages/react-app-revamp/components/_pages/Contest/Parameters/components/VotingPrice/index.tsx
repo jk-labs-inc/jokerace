@@ -1,26 +1,25 @@
+import VotingQualifierError from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Error";
+import VotingQualifierSkeleton from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Skeleton";
 import { formatBalance } from "@helpers/formatBalance";
 import { useContestStore } from "@hooks/useContest/store";
-import { formatEther } from "viem";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { PriceCurveType, VoteType } from "@hooks/useDeployContest/types";
+import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
+import usePriceCurveType from "@hooks/usePriceCurveType";
 import { compareVersions } from "compare-versions";
 import { VOTING_PRICE_CURVES_VERSION } from "constants/versions";
-import { useShallow } from "zustand/shallow";
-import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
-import VotingQualifierSkeleton from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Skeleton";
-import VotingQualifierError from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Error";
-import usePriceCurveType from "@hooks/usePriceCurveType";
-import { PriceCurveType, VoteType } from "@hooks/useDeployContest/types";
 import { calculateEndPrice } from "lib/priceCurve";
+import { formatEther } from "viem";
+import { useShallow } from "zustand/shallow";
 
 const ContestParametersVotingPrice = () => {
-  const { version, charge, contestInfoData, contestAbi } = useContestStore(
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const { charge } = useContestStore(
     useShallow(state => ({
-      version: state.version,
       charge: state.charge,
-      contestInfoData: state.contestInfoData,
-      contestAbi: state.contestAbi,
     })),
   );
-  const isVotingPriceCurveEnabled = compareVersions(version, VOTING_PRICE_CURVES_VERSION) >= 0;
+  const isVotingPriceCurveEnabled = compareVersions(contestConfig.version, VOTING_PRICE_CURVES_VERSION) >= 0;
 
   const {
     priceCurveMultiple,
@@ -28,9 +27,9 @@ const ContestParametersVotingPrice = () => {
     isError: isPriceCurveMultipleError,
     refetch: refetchPriceCurveMultiple,
   } = usePriceCurveMultiple({
-    address: contestInfoData.contestAddress,
-    abi: contestAbi,
-    chainId: contestInfoData.contestChainId,
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
     enabled: isVotingPriceCurveEnabled,
   });
 
@@ -40,9 +39,9 @@ const ContestParametersVotingPrice = () => {
     isError: isPriceCurveTypeError,
     refetch: refetchPriceCurveType,
   } = usePriceCurveType({
-    address: contestInfoData.contestAddress,
-    abi: contestAbi,
-    chainId: contestInfoData.contestChainId,
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
     enabled: isVotingPriceCurveEnabled,
   });
 
@@ -57,7 +56,7 @@ const ContestParametersVotingPrice = () => {
   if (!isVotingPriceCurveEnabled || priceCurveType !== PriceCurveType.Exponential) {
     return (
       <li className="list-disc">
-        {formatEther(BigInt(charge.type.costToVote))} {contestInfoData.contestChainNativeCurrencySymbol}
+        {formatEther(BigInt(charge.type.costToVote))} {contestConfig.chainNativeCurrencySymbol}
         {charge.voteType === VoteType.PerVote ? " per vote" : " to vote"}
       </li>
     );
@@ -65,9 +64,9 @@ const ContestParametersVotingPrice = () => {
 
   return (
     <li className="list-disc">
-      {formatBalance(formatEther(BigInt(charge.type.costToVote)))} {contestInfoData.contestChainNativeCurrencySymbol}{" "}
-      (at start) to {formatBalance(formatEther(calculateEndPrice(charge.type.costToVote, Number(priceCurveMultiple))))}{" "}
-      {contestInfoData.contestChainNativeCurrencySymbol} (at finish) per vote
+      {formatBalance(formatEther(BigInt(charge.type.costToVote)))} {contestConfig.chainNativeCurrencySymbol} (at start)
+      to {formatBalance(formatEther(calculateEndPrice(charge.type.costToVote, Number(priceCurveMultiple))))}{" "}
+      {contestConfig.chainNativeCurrencySymbol} (at finish) per vote
     </li>
   );
 };

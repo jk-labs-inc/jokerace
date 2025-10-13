@@ -1,29 +1,24 @@
 import Loader from "@components/UI/Loader";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
-import { chains } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
+import { getChainExplorer } from "@helpers/getChainExplorer";
 import { useCancelRewards } from "@hooks/useCancelRewards";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useRewardsModule from "@hooks/useRewards";
 import { ModuleType } from "lib/rewards/types";
-import { usePathname } from "next/navigation";
 import { Abi } from "viem";
 import { useAccount, useAccountEffect } from "wagmi";
+import { useShallow } from "zustand/shallow";
+import CreateRewards from "./components/Create";
 import NoRewardsInfo from "./components/NoRewards";
 import RewardsError from "./modules/shared/Error";
 import RewardsCanceled from "./modules/shared/RewardsCanceled";
 import VotersRewardsPage from "./modules/Voters";
-import CreateRewards from "./components/Create";
-import { getChainExplorer } from "@helpers/getChainExplorer";
 
 const ContestRewards = () => {
-  const asPath = usePathname();
-  const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
-  )?.[0]?.id;
-  const chainExplorer = getChainExplorer(chainId);
-  const { contestAuthorEthereumAddress, version } = useContestStore(state => state);
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const chainExplorer = getChainExplorer(contestConfig.chainId);
+  const { contestAuthorEthereumAddress } = useContestStore(state => state);
   const { data: rewards, isLoading, isError, refetch, isRefetching } = useRewardsModule();
   const { address: accountAddress } = useAccount();
   const creator = contestAuthorEthereumAddress === accountAddress;
@@ -34,8 +29,8 @@ const ContestRewards = () => {
   } = useCancelRewards({
     rewardsAddress: rewards?.contractAddress as `0x${string}`,
     abi: rewards?.abi as Abi,
-    chainId,
-    version,
+    chainId: contestConfig.chainId,
+    version: contestConfig.version,
   });
 
   useAccountEffect({
@@ -69,8 +64,8 @@ const ContestRewards = () => {
         rewardsModuleAddress={rewards.contractAddress as `0x${string}`}
         rewardsAbi={rewards.abi as Abi}
         rankings={rewards.payees}
-        chainId={chainId}
-        version={version}
+        chainId={contestConfig.chainId}
+        version={contestConfig. version}
       />
     );
   }
@@ -80,9 +75,9 @@ const ContestRewards = () => {
       {rewards.moduleType === ModuleType.VOTER_REWARDS ? (
         <VotersRewardsPage
           rewards={rewards}
-          contestAddress={contestAddress as `0x${string}`}
-          chainId={chainId}
-          version={version}
+          contestAddress={contestConfig.address as `0x${string}`}
+          chainId={contestConfig.chainId}
+          version={contestConfig.version}
         />
       ) : rewards.moduleType === ModuleType.AUTHOR_REWARDS ? (
         <div className="flex flex-col gap-2">

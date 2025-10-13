@@ -84,9 +84,9 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="overflow-hidden border-l border-r border-b border-transparent rounded-b-2xl"
+              className="overflow-hidden border-l border-r border-b border-transparent rounded-b-2xl w-full max-w-full"
             >
-              {children}
+              <div className="w-full max-w-full overflow-x-hidden">{children}</div>
             </motion.div>
           )}
         </AnimatePresence>

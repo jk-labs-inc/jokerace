@@ -1,12 +1,14 @@
-import { useUserStore } from "@hooks/useUser/store";
-import { useUserNativeBalance } from "@hooks/useUserBalance";
-import { useShallow } from "zustand/react/shallow";
-import { FC, useState } from "react";
-import Skeleton from "react-loading-skeleton";
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
-import { useContestStore } from "@hooks/useContest/store";
 import AddFundsModal from "@components/AddFunds/components/Modal";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
+import { useCurrentUserVotes } from "@hooks/useCurrentUserVotes";
+import { useVoteBalance } from "@hooks/useVoteBalance";
+import { FC, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import { useShallow } from "zustand/shallow";
 
 const BalanceOrSkeleton = ({
   isUserBalanceLoading,
@@ -41,22 +43,44 @@ interface VotingQualifierAnyoneCanVoteBalanceProps {
 }
 
 const VotingQualifierAnyoneCanVoteBalance: FC<VotingQualifierAnyoneCanVoteBalanceProps> = ({ userAddress }) => {
-  const { contestChainId, contestChainNativeCurrencySymbol, contestChainName } = useContestStore(
-    useShallow(state => state.contestInfoData),
-  );
-  const { data, isLoading, error } = useUserNativeBalance({ address: userAddress, chainId: contestChainId });
-  const currentUserAvailableVotesAmount = useUserStore(useShallow(state => state.currentUserAvailableVotesAmount));
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const votingClose = useContestStore(useShallow(state => state.votesClose));
+  const {
+    currentPricePerVote,
+    isLoading: isLoadingCurrentPricePerVote,
+    isError: isErrorCurrentPricePerVote,
+  } = useCurrentPricePerVote({
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+    votingClose,
+  });
+  const {
+    spendableBalance,
+    insufficientBalance,
+    isLoading: isLoadingSpendableBalance,
+    isError: isErrorSpendableBalance,
+  } = useVoteBalance({
+    chainId: contestConfig.chainId,
+    costToVote: currentPricePerVote,
+  });
+  const currentUserAvailableVotesAmount = useCurrentUserVotes({
+    spendableBalance: spendableBalance,
+    costToVote: currentPricePerVote,
+  });
   const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
 
   // add error handling for native balance
-  if (error) return <p className="text-[16px] md:text-[24px] text-secondary-11 font-bold">error</p>;
+  if (isErrorCurrentPricePerVote || isErrorSpendableBalance) {
+    return <p className="text-[16px] md:text-[24px] text-secondary-11 font-bold">error</p>;
+  }
 
-  if (currentUserAvailableVotesAmount === 0) {
+  if (insufficientBalance) {
     return (
       <>
         <AddFundsModal
-          chain={contestChainName}
-          asset={contestChainNativeCurrencySymbol}
+          chain={contestConfig.chainName}
+          asset={contestConfig.chainNativeCurrencySymbol}
           isOpen={isAddFundsOpen}
           onClose={() => setIsAddFundsOpen(false)}
         />
@@ -75,9 +99,9 @@ const VotingQualifierAnyoneCanVoteBalance: FC<VotingQualifierAnyoneCanVoteBalanc
   return (
     <p className="text-[16px] md:text-[24px] font-bold flex items-center">
       <BalanceOrSkeleton
-        isUserBalanceLoading={isLoading}
-        userBalance={data}
-        nativeCurrencySymbol={contestChainNativeCurrencySymbol}
+        isUserBalanceLoading={isLoadingSpendableBalance}
+        userBalance={spendableBalance}
+        nativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol}
       />
       <span className="text-neutral-11 ml-1">
         {formatNumberAbbreviated(currentUserAvailableVotesAmount)} vote

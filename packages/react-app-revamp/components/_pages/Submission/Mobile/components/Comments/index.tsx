@@ -1,20 +1,19 @@
 import Comments from "@components/Comments";
 import { FC, useState } from "react";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import useProposalIdStore from "@hooks/useProposalId/store";
+import { useShallow } from "zustand/shallow";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 
 interface SubmissionPageMobileCommentsProps {
-  proposalId: string;
   numberOfComments: number | null;
-  address: string;
-  chainId: number;
 }
 
-const SubmissionPageMobileComments: FC<SubmissionPageMobileCommentsProps> = ({
-  proposalId,
-  numberOfComments,
-  address,
-  chainId,
-}) => {
+const SubmissionPageMobileComments: FC<SubmissionPageMobileCommentsProps> = ({ numberOfComments }) => {
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
+  const contestDetails = useSubmissionPageStore(useShallow(state => state.contestDetails));
   const [isExpanded, setIsExpanded] = useState(true);
 
   const handleToggle = () => {
@@ -22,7 +21,7 @@ const SubmissionPageMobileComments: FC<SubmissionPageMobileCommentsProps> = ({
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 max-h-48 overflow-y-auto">
       <div
         className="flex items-center gap-4 cursor-pointer"
         onClick={handleToggle}
@@ -41,11 +40,13 @@ const SubmissionPageMobileComments: FC<SubmissionPageMobileCommentsProps> = ({
 
       {isExpanded && (
         <Comments
-          contestAddress={address}
-          contestChainId={chainId}
+          contestAddress={contestConfig.address}
+          contestChainId={contestConfig.chainId}
+          contestState={contestDetails.state}
+          contestAuthor={contestDetails.author ?? ""}
           proposalId={proposalId}
           numberOfComments={numberOfComments}
-          className="text-neutral-9"
+          className="text-neutral-11"
         />
       )}
     </div>

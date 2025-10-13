@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { useUserStore } from "@hooks/useUser/store";
+import { useUserStore } from "@hooks/useUserSubmitQualification/store";
 import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
 import { useAccount } from "wagmi";

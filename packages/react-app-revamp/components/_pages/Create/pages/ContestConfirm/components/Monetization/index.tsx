@@ -70,7 +70,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
       >
         <p className="text-neutral-9 text-[12px] font-bold uppercase">monetization</p>
         {isLoading ? (
-          <p className="loadingDots font-sabo text-[14px] text-neutral-14">loading charge fees</p>
+          <p className="loadingDots font-sabo-filled text-[14px] text-neutral-14">loading charge fees</p>
         ) : (
           <ul className="flex flex-col pl-6 list-disc">
             <CostToEnterMessage costToPropose={type.costToPropose} nativeCurrencySymbol={nativeCurrencySymbol} />

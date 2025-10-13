@@ -1,12 +1,11 @@
 import { config } from "@config/wagmi";
-import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useQuery } from "@tanstack/react-query";
 import { readContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
-import { useShallow } from "zustand/react/shallow";
 
 export interface VoterRewardsStatistics {
   userVotes: bigint;
@@ -23,17 +22,17 @@ export const useVoterRewardsStatistics = (
   chainId: number,
 ) => {
   const { address } = useAccount();
-  const { contestAbi, version } = useContestStore(useShallow(state => state));
+  const { contestConfig } = useContestConfigStore(state => state);
   const { data: rewards } = useRewardsModule();
 
-  const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
+  const hasDownvotes = contestConfig.version ? compareVersions(contestConfig.version, "5.1") < 0 : false;
 
   const fetchProposalId = async () => {
     try {
       const proposalId = await readContract(config, {
         address: rewardsContractAddress as `0x${string}`,
         abi: rewards?.abi ?? [],
-        chainId,
+        chainId: contestConfig.chainId,
         functionName: "getProposalIdOfRanking",
         args: [BigInt(ranking)],
       });
@@ -51,7 +50,7 @@ export const useVoterRewardsStatistics = (
     try {
       const votes = await readContract(config, {
         address: contractAddress as `0x${string}`,
-        abi: contestAbi,
+        abi: contestConfig.abi,
         chainId,
         functionName: "proposalAddressVotes",
         args: [proposalId, address],
@@ -73,7 +72,7 @@ export const useVoterRewardsStatistics = (
     try {
       const votes = await readContract(config, {
         address: contractAddress as `0x${string}`,
-        abi: contestAbi,
+        abi: contestConfig.abi,
         chainId,
         functionName: "proposalVotes",
         args: [proposalId],

@@ -1,15 +1,17 @@
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { getChainId } from "@helpers/getChainId";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { getNativeTokenSymbol } from "@helpers/nativeToken";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
-import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
-import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
+import { VoteType } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import useUser from "@hooks/useUser";
-import { useUserStore } from "@hooks/useUser/store";
-import { VOTE_AND_EARN_VERSION } from "@hooks/useUser/utils";
+import useUser from "@hooks/useUserSubmitQualification";
+import { useUserStore } from "@hooks/useUserSubmitQualification/store";
+import { VOTE_AND_EARN_VERSION } from "@hooks/useUserSubmitQualification/utils";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { checkIfContestExists } from "lib/contests";
@@ -17,7 +19,7 @@ import { getRewardsModuleAddress } from "lib/rewards/contracts";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
-import { createResultGetter } from "./helpers";
+import { createResultGetter, determineSplitFeeDestination } from "./helpers";
 import { ErrorType, useContestStore } from "./store";
 import { getContracts } from "./v3v4/contracts";
 
@@ -60,18 +62,16 @@ export function useContest() {
     setVotesOpen,
     setSubmissionsOpen,
     setCharge,
-    setContestAbi,
     setSortingEnabled,
-    setVersion,
     setRewardsModuleAddress,
     setCanEditTitleAndDescription,
-    setContestInfoData,
   } = useContestStore(state => state);
+  const { setContestConfig } = useContestConfigStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
     state => state,
   );
   const { setContestMaxNumberSubmissionsPerUser } = useUserStore(state => state);
-  const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
+  const { checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList } = useProposal();
   const { setContestState } = useContestStateStore(state => state);
   const { error: errorMessage, handleError } = useError();
@@ -87,7 +87,6 @@ export function useContest() {
         setIsListProposalsSuccess(false);
         setIsListProposalsLoading(false);
         setIsLoading(false);
-        setContestAbi([]);
         return;
       }
 
@@ -97,8 +96,8 @@ export function useContest() {
         chainId: chainId,
       };
 
-      setContestAbi(abi as Abi);
-      setVersion(version);
+      setContestConfigData(addressFromUrl, chainFromUrl, abi as Abi, version);
+
       return { contractConfig, version };
     } catch (e) {
       setError(ErrorType.CONTRACT);
@@ -106,7 +105,6 @@ export function useContest() {
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
       setIsLoading(false);
-      setContestAbi([]);
     }
   }
 
@@ -246,8 +244,6 @@ export function useContest() {
 
       const rewardsModuleAddress = await fetchRewardsModuleData(contractConfig);
 
-      setContestData(addressFromUrl, chainFromUrl);
-
       if (compareVersions(version, "4.0") < 0) {
         setError(ErrorType.UNSUPPORTED_VERSION);
         setIsLoading(false);
@@ -280,45 +276,20 @@ export function useContest() {
   async function processUserQualifications(contractConfig: ContractConfig, version: string) {
     if (compareVersions(version, VOTE_AND_EARN_VERSION) <= 0) return;
 
-    await Promise.all([
-      checkIfCurrentUserQualifyToSubmit(contractConfig),
-      checkIfCurrentUserQualifyToVote(contractConfig),
-    ]);
+    await checkIfCurrentUserQualifyToSubmit(contractConfig);
   }
 
-  function determineSplitFeeDestination(
-    splitFeeDestination: string,
-    percentageToCreator: number,
-    creatorWalletAddress: string,
-    rewardsModuleAddress?: string,
-  ): SplitFeeDestinationType {
-    if (splitFeeDestination === JK_LABS_SPLIT_DESTINATION_DEFAULT || percentageToCreator === 0) {
-      return SplitFeeDestinationType.NoSplit;
-    }
+  function setContestConfigData(contestAddress: string, contestChainName: string, abi: Abi, version: string) {
+    const contestChainNativeCurrencySymbol = getNativeTokenSymbol(contestChainName);
+    const chainId = getChainId(contestChainName);
 
-    if (splitFeeDestination === creatorWalletAddress) {
-      return SplitFeeDestinationType.CreatorWallet;
-    }
-
-    if (rewardsModuleAddress && splitFeeDestination === rewardsModuleAddress) {
-      return SplitFeeDestinationType.RewardsPool;
-    }
-
-    return SplitFeeDestinationType.AnotherWallet;
-  }
-
-  //TODO: this could maybe be a separate store?
-  function setContestData(contestAddress: string, contestChainName: string) {
-    const contestChainNativeCurrencySymbol = chains.filter(
-      chain => chain.name.toLowerCase().replace(" ", "") === contestChainName,
-    )?.[0]?.nativeCurrency.symbol;
-    const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.[0]?.id;
-
-    setContestInfoData({
-      contestAddress: contestAddress,
-      contestChainName: contestChainName,
-      contestChainId: chainId,
-      contestChainNativeCurrencySymbol: contestChainNativeCurrencySymbol,
+    setContestConfig({
+      address: contestAddress as `0x${string}`,
+      chainName: contestChainName,
+      chainId,
+      chainNativeCurrencySymbol: contestChainNativeCurrencySymbol ?? "",
+      abi: abi as Abi,
+      version,
     });
   }
 

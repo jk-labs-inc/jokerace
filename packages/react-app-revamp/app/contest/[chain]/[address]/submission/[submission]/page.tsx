@@ -1,10 +1,11 @@
 import { chains, serverConfig } from "@config/wagmi/server";
+import { getChainId } from "@helpers/getChainId";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContract } from "@wagmi/core";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Abi } from "viem";
-import Submission from "./submission";
+import SubmissionWrapper from "./wrapper";
 
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
@@ -21,7 +22,7 @@ const defaultMetadata = {
   },
 };
 
-async function getContestDetails(address: string, chainName: string) {
+async function getContestName(address: string, chainName: string) {
   try {
     const chainId = chains.find(
       (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
@@ -38,7 +39,7 @@ async function getContestDetails(address: string, chainName: string) {
 
     return result as string;
   } catch (error) {
-    console.error("failed to fetch contest details:", error);
+    console.error("failed to fetch contest name:", error);
     return "contest";
   }
 }
@@ -55,7 +56,7 @@ export async function generateMetadata(props: {
   }
 
   try {
-    const contestName = await getContestDetails(address, chain);
+    const contestName = await getContestName(address, chain);
     const title = `Entry for ${contestName} contest on JokeRace`;
     const description = `Entry for ${contestName} contest on JokeRace`;
 
@@ -80,18 +81,24 @@ export async function generateMetadata(props: {
 const Page = async (props: { params: Promise<{ chain: string; address: string; submission: string }> }) => {
   const params = await props.params;
   const { chain, address, submission } = params;
+  const chainId = getChainId(chain);
+  const { abi, version } = await getContestContractVersion(address, chainId);
 
   try {
-    const chainId = chains.find(
-      (c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain.toLowerCase(),
-    )?.id;
-    const { abi, version } = await getContestContractVersion(address, chainId ?? 1);
-
-    if (!REGEX_ETHEREUM_ADDRESS.test(address) || !abi || version === "unknown") {
+    if (!REGEX_ETHEREUM_ADDRESS.test(address) || !chain || !abi || !version) {
       return notFound();
     }
 
-    return <Submission address={address} chain={chain} submission={submission} abi={abi as Abi} version={version} />;
+    return (
+      <SubmissionWrapper
+        address={address}
+        chain={chain}
+        submission={submission}
+        abi={abi as Abi}
+        version={version}
+        chainId={chainId}
+      />
+    );
   } catch (error) {
     console.error("failed to render submission page:", error);
     return notFound();

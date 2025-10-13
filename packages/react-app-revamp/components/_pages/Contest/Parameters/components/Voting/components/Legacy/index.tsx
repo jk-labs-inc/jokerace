@@ -1,26 +1,21 @@
-import { useContestStore } from "@hooks/useContest/store";
-import ContestParametersVotingPrice from "../../../VotingPrice";
-import { useShallow } from "zustand/shallow";
-import { useReadContract } from "wagmi";
-import Skeleton from "react-loading-skeleton";
 import { EMPTY_MERKLE_ROOT } from "@components/_pages/Contest/Parameters/constants";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import Skeleton from "react-loading-skeleton";
+import { useReadContract } from "wagmi";
+import { useShallow } from "zustand/shallow";
+import ContestParametersVotingPrice from "../../../VotingPrice";
 
 const ContestParametersVotingLegacy = () => {
-  const { contestInfoData, contestAbi } = useContestStore(
-    useShallow(state => ({
-      contestInfoData: state.contestInfoData,
-      contestAbi: state.contestAbi,
-    })),
-  );
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const {
     data: votingMerkleRoot,
     isLoading: isLoadingVotingMerkleRoot,
     isError: isErrorVotingMerkleRoot,
     refetch: refetchVotingMerkleRoot,
   } = useReadContract({
-    address: contestInfoData.contestAddress as `0x${string}`,
-    chainId: contestInfoData.contestChainId,
-    abi: contestAbi,
+    address: contestConfig.address,
+    chainId: contestConfig.chainId,
+    abi: contestConfig.abi,
     functionName: "votingMerkleRoot",
   });
 

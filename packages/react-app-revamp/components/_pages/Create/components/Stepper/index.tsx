@@ -28,7 +28,7 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
   if (!isSupabaseConfigured) {
     return (
       <div className="flex flex-col gap-3 justify-center items-center mt-40">
-        <p className="text-[24px] font-sabo text-neutral-11">
+        <p className="text-[24px] font-sabo-filled text-neutral-11">
           Oops, it seems you've forgotten to include environmental variables!
         </p>
         <p className="text-[16px]">
@@ -61,8 +61,8 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
                     currentStep === index
                       ? "border-neutral-11"
                       : currentStep > index
-                        ? "border-neutral-10"
-                        : "border-neutral-10"
+                      ? "border-neutral-10"
+                      : "border-neutral-10"
                   }`}
                 />
                 {currentStep === index ? (

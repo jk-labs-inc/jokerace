@@ -23,7 +23,6 @@ export const usePriceTracking = (currentPrice: string) => {
   const getPrices = () => ({
     initialPrice: priceRef.current.initial,
     currentPrice: priceRef.current.current,
-    hasPriceChanged: priceRef.current.initial !== null && priceRef.current.initial !== priceRef.current.current,
   });
 
   return { startNewVotingSession, getPrices };

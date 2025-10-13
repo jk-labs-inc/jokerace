@@ -1,7 +1,7 @@
 import { chains } from "@config/wagmi";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useShallow } from "zustand/react/shallow";
+import { useShallow } from "zustand/shallow";
 import { SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
 import ContestParamsSplitFeeDestination from "./components/SplitFeeDestination";
@@ -38,7 +38,7 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ chain, onError }) =
   }
 
   if (isLoading) {
-    return <p className="loadingDots font-sabo text-[20px] text-neutral-9">Loading charge fees</p>;
+    return <p className="loadingDots font-sabo-filled text-[20px] text-neutral-9">Loading charge fees</p>;
   }
 
   const handleSplitFeeDestinationTypeChange = (type: SplitFeeDestinationType) => {

@@ -1,13 +1,12 @@
+import { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup/types";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { PriceCurveType } from "@hooks/useDeployContest/types";
 import { FC } from "react";
-import { useShallow } from "zustand/react/shallow";
-import PriceCurveSelector from "./components/PriceCurveSelector";
-import CreateFlowMonetizationInput from "@components/_pages/Create/components/MonetizationInput";
-import FlatPricingOption from "./components/FlatPricingOption";
-import { PRICE_CURVE_LABELS } from "./constants";
+import { useShallow } from "zustand/shallow";
 import ExponentialPricingOption from "./components/ExponentialPricingOption";
-import { RadioOption } from "@components/_pages/Create/components/RadioButtonsGroup/types";
+import FlatPricingOption from "./components/FlatPricingOption";
+import PriceCurveSelector from "./components/PriceCurveSelector";
+import { PRICE_CURVE_LABELS } from "./constants";
 
 interface CreateContestChargeVoteCurvesProps {
   label: string;

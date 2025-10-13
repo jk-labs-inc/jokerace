@@ -31,7 +31,7 @@ const initialState = {
 
 export const createCastVotesStore = () =>
   createStore<CastVotesState>(set => ({
-    ...initialState, // Spread initial state
+    ...initialState,
     setTransactionData: value => set({ transactionData: value }),
     setPickedProposal: value => set({ pickedProposal: value }),
     setIsModalOpen: value => set({ isModalOpen: value }),

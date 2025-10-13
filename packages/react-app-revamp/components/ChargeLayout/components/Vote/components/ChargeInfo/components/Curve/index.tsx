@@ -1,34 +1,19 @@
-import { useContestStore } from "@hooks/useContest/store";
 import { PriceCurveType } from "@hooks/useDeployContest/types";
-import usePriceCurveType from "@hooks/usePriceCurveType";
-import { useShallow } from "zustand/react/shallow";
-import ChargeInfoFlat from "./Flat";
+import { FC } from "react";
 import ChargeInfoExponential from "./Exponential";
-import VotingQualifierSkeleton from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Skeleton";
-import VotingQualifierError from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Error";
+import ChargeInfoFlat from "./Flat";
 
-const ChargeInfoCurve = () => {
-  const { contestInfo, contestAbi } = useContestStore(
-    useShallow(state => ({
-      contestInfo: state.contestInfoData,
-      contestAbi: state.contestAbi,
-    })),
-  );
-  const { priceCurveType, isLoading, isError, refetch } = usePriceCurveType({
-    address: contestInfo.contestAddress,
-    abi: contestAbi,
-    chainId: contestInfo.contestChainId,
-  });
+interface ChargeInfoCurveProps {
+  costToVote: string;
+  priceCurveType: PriceCurveType;
+}
 
-  if (isLoading) return <VotingQualifierSkeleton />;
-
-  if (isError) return <VotingQualifierError onClick={() => refetch()} />;
-
+const ChargeInfoCurve: FC<ChargeInfoCurveProps> = ({ costToVote, priceCurveType }) => {
   if (priceCurveType === PriceCurveType.Flat) {
-    return <ChargeInfoFlat />;
+    return <ChargeInfoFlat costToVote={costToVote} />;
   }
 
-  return <ChargeInfoExponential />;
+  return <ChargeInfoExponential costToVote={costToVote} />;
 };
 
 export default ChargeInfoCurve;

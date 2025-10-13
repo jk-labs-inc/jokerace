@@ -1,11 +1,9 @@
-import { extractPathSegments } from "@helpers/extractPath";
 import { useBelloRedirectUrl } from "@hooks/useBello";
-import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { compareVersions } from "compare-versions";
-import { usePathname } from "next/navigation";
+import { useShallow } from "zustand/shallow";
 import { Extension } from "../../../types";
 import ExtensionCard from "../../Card";
-import { useShallow } from "zustand/shallow";
 
 const BELLO_EXTENSION: Extension = {
   name: "bello",
@@ -35,12 +33,13 @@ const BELLO_SUPPORTED_CHAINS = [
 const JOKERACE_MIN_VERSION = "3.16";
 
 const BelloExtension = () => {
-  const asPath = usePathname();
-  const { chainName, address } = extractPathSegments(asPath ?? "");
-  const version = useContestStore(useShallow(state => state.version));
-  const { redirectUrl, isLoading, isError } = useBelloRedirectUrl(address, chainName.toLowerCase());
-  const isSupportedChain = BELLO_SUPPORTED_CHAINS.includes(chainName.toLowerCase());
-  const isSupportedVersion = compareVersions(version, JOKERACE_MIN_VERSION) >= 0;
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const { redirectUrl, isLoading, isError } = useBelloRedirectUrl(
+    contestConfig.address,
+    contestConfig.chainName.toLowerCase(),
+  );
+  const isSupportedChain = BELLO_SUPPORTED_CHAINS.includes(contestConfig.chainName.toLowerCase());
+  const isSupportedVersion = compareVersions(contestConfig.version, JOKERACE_MIN_VERSION) >= 0;
 
   if (!isSupportedChain || !isSupportedVersion) return null;
 

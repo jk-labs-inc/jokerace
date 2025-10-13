@@ -1,37 +1,45 @@
-import { Charge, VoteType } from "@hooks/useDeployContest/types";
-import React from "react";
+import { FC } from "react";
 import ChargeInfoContainer from "./components/Container";
-import ChargeInfoFlat from "./components/Curve/Flat";
-import { useContestStore } from "@hooks/useContest/store";
-import { useShallow } from "zustand/shallow";
-import { compareVersions } from "compare-versions";
 import ChargeInfoCurve from "./components/Curve";
-import { VOTING_PRICE_CURVES_VERSION } from "constants/versions";
+import usePriceCurveType from "@hooks/usePriceCurveType";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useShallow } from "zustand/shallow";
+import VotingQualifierError from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Error";
+import VotingQualifierSkeleton from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Skeleton";
+import { PriceCurveType } from "@hooks/useDeployContest/types";
+import ChargeInfoExponentialPercentageIncrease from "./components/ExponentialPercentageIncrease";
+import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
 
 interface ChargeInfoProps {
-  charge: Charge;
+  costToVote: string;
+  costToVoteRaw: bigint;
 }
 
-const ChargeInfo: React.FC<ChargeInfoProps> = ({ charge }) => {
-  const version = useContestStore(useShallow(state => state.version));
-  const chargeLabel = charge.voteType === VoteType.PerVote ? "charge per vote" : "charge to vote";
+const ChargeInfo: FC<ChargeInfoProps> = ({ costToVote, costToVoteRaw }) => {
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const { priceCurveType, isLoading, isError, refetch } = usePriceCurveType({
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+  });
 
-  if (compareVersions(version, VOTING_PRICE_CURVES_VERSION) < 0) {
-    return (
-      <ChargeInfoContainer
-        className={charge.voteType === VoteType.PerTransaction ? "text-neutral-11" : "text-neutral-9"}
-      >
-        <p>{chargeLabel}:</p>
-        <ChargeInfoFlat />
-      </ChargeInfoContainer>
-    );
-  }
+  if (isLoading) return <VotingQualifierSkeleton />;
+
+  if (isError) return <VotingQualifierError onClick={() => refetch()} />;
 
   return (
-    <ChargeInfoContainer className={charge.voteType === VoteType.PerTransaction ? "text-neutral-11" : "text-neutral-9"}>
-      <p>{chargeLabel}:</p>
-      <ChargeInfoCurve />
-    </ChargeInfoContainer>
+    <div className="flex flex-col gap-1">
+      <ChargeInfoContainer className="text-neutral-9">
+        <div className="flex items-center gap-1">
+          <p>price per vote</p>
+          {priceCurveType === PriceCurveType.Exponential && <ArrowTrendingUpIcon className="w-4 h-4 text-neutral-9" />}
+        </div>
+        <ChargeInfoCurve costToVote={costToVote} priceCurveType={priceCurveType} />
+      </ChargeInfoContainer>
+      {priceCurveType === PriceCurveType.Exponential && (
+        <ChargeInfoExponentialPercentageIncrease costToVote={costToVoteRaw} />
+      )}
+    </div>
   );
 };
 

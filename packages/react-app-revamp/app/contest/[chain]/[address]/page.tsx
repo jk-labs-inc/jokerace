@@ -1,11 +1,13 @@
 import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
 import { chains, serverConfig } from "@config/wagmi/server";
+import { getChainId } from "@helpers/getChainId";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContracts } from "@wagmi/core";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { parse } from "node-html-parser";
 import { Abi } from "viem";
+import Contest from "./contest";
 
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
@@ -70,7 +72,6 @@ export async function generateMetadata(props: {
     const contestTitle = contestDetails[0].result as string;
     const prompt = contestDetails[1].result as string;
     const contestPrompt = parsePrompt(prompt);
-
     const contestDescriptionRaw =
       contestPrompt.contestSummary + contestPrompt.contestEvaluate + contestPrompt.contestContactDetails;
 
@@ -98,15 +99,25 @@ const Page = async (props: { params: Promise<{ chain: string; address: string }>
   const params = await props.params;
   const { chain, address } = params;
 
-  if (!REGEX_ETHEREUM_ADDRESS.test(address)) {
-    return notFound();
-  }
+  try {
+    if (!REGEX_ETHEREUM_ADDRESS.test(address)) {
+      return notFound();
+    }
 
-  const isValidChain = chains.some(
-    (c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain.toLowerCase(),
-  );
+    const isValidChain = chains.some(
+      (c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain.toLowerCase(),
+    );
 
-  if (!isValidChain) {
+    if (!isValidChain) {
+      return notFound();
+    }
+
+    const chainId = getChainId(chain);
+    const { abi, version } = await getContestContractVersion(address, chainId);
+
+    return <Contest address={address} chain={chain} chainId={chainId} abi={abi as Abi} version={version} />;
+  } catch (error) {
+    console.error("failed to render contest page:", error);
     return notFound();
   }
 };

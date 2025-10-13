@@ -111,7 +111,7 @@ const SearchContests = () => {
     <div>
       <div className={`container mx-auto ${adjustPaddingForInline}`}>
         {!searchCriteria.searchString.length && (
-          <h1 className="text-[16px] sm:text-[28px] font-sabo text-neutral-11 font-bold mb-4 text-center">
+          <h1 className="text-[16px] sm:text-[28px] font-sabo-filled text-neutral-11 font-bold mb-4 text-center">
             Search contests
           </h1>
         )}

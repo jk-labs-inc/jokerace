@@ -54,12 +54,14 @@ const Tabs: FC<TabsProps> = ({ tabs, activeTab, onChange, optionalInfo }) => {
     <div className="relative flex flex-col gap-2">
       <div className="flex gap-6 md:gap-8 mb-4" role="tablist">
         {tabs.map((tab, index) => (
-          <div
+          <motion.div
             key={tab}
             ref={(el: HTMLDivElement | null) => {
               tabRefs.current[index] = el;
             }}
             className="text-[16px] md:text-[24px] cursor-pointer relative"
+            style={{ willChange: "transform" }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => handleTabChange(tab)}
             onKeyDown={e => handleKeyDown(e, tab)}
             role="tab"
@@ -93,7 +95,7 @@ const Tabs: FC<TabsProps> = ({ tabs, activeTab, onChange, optionalInfo }) => {
                 </motion.span>
               )}
             </motion.span>
-          </div>
+          </motion.div>
         ))}
       </div>
       <div className="absolute left-0 w-full h-px bottom-0 bg-neutral-0" />

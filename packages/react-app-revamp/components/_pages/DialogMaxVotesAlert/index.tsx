@@ -1,33 +1,36 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import { useVotingStore } from "@components/Voting/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { FC, useCallback, useRef } from "react";
 import ReactDOM from "react-dom";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/shallow";
 
 interface DialogMaxVotesAlertProps {
-  token: string;
-  totalCost: string;
   onConfirm?: () => void;
   onCancel?: () => void;
   buttonSize?: ButtonSize;
 }
 
 const DialogMaxVotesAlert: FC<DialogMaxVotesAlertProps> = ({
-  token,
-  totalCost,
   onConfirm,
   onCancel,
   buttonSize = ButtonSize.EXTRA_LARGE_LONG_MOBILE,
 }) => {
+  const chainNativeCurrencySymbol = useContestConfigStore(
+    useShallow(state => state.contestConfig.chainNativeCurrencySymbol),
+  );
+  const inputValue = useVotingStore(useShallow(state => state.inputValue));
   return (
     <div className="flex flex-col gap-8 animate-swing-in-left">
       <p className="text-neutral-11 text-[24px] font-bold">vote it all 😈</p>
       <div className="flex flex-col gap-4">
         <p className="text-neutral-11 text-[16px]">
           looks like you're planning to vote with 100% of your available funds in
-          <span className="normal-case"> {token}</span>
+          <span className="normal-case"> {chainNativeCurrencySymbol}</span>
         </p>
         <p className="text-neutral-11 text-[16px]">
-          🚨 you will spend {totalCost} <span className="normal-case">{token}</span>
+          🚨 you will spend {inputValue} <span className="normal-case">{chainNativeCurrencySymbol}</span>
         </p>
         <p className="text-neutral-11 text-[16px]">🚨 this transaction is irreversible</p>
         <p className="text-neutral-11 font-bold text-[16px]">
