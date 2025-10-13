@@ -3591,15 +3591,15 @@
     "@mysten/utils" "0.2.0"
     "@scure/base" "^1.2.6"
 
-"@mysten/dapp-kit@0.18.0":
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/@mysten/dapp-kit/-/dapp-kit-0.18.0.tgz#0c5e0ea5b614d841066463c0388cad88feaadb0f"
-  integrity sha512-Cxnp2yzqD4RPBc1qRnNrSZCceIVANHKzl2Mgc66e6ICNdRKdIBcDuYFjtaVlVUe2vR/ewCBIGcaQA+BeFH2xnw==
+"@mysten/dapp-kit@0.19.2":
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/@mysten/dapp-kit/-/dapp-kit-0.19.2.tgz#53178887d94b48e34d87f06d880defa360903a74"
+  integrity sha512-iMQAwWRTtEUg06MYtYjSmFJmvF+XoVK+8v6Y+jdxWd7zgdgJiK70k95aq0VmxjHZM4e+IXPOzGl6XpMPUZDERA==
   dependencies:
-    "@mysten/slush-wallet" "0.2.0"
-    "@mysten/sui" "1.38.0"
+    "@mysten/slush-wallet" "0.2.3"
+    "@mysten/sui" "1.40.0"
     "@mysten/utils" "0.2.0"
-    "@mysten/wallet-standard" "0.17.0"
+    "@mysten/wallet-standard" "0.19.0"
     "@radix-ui/react-dialog" "^1.1.15"
     "@radix-ui/react-dropdown-menu" "^2.1.16"
     "@radix-ui/react-slot" "^1.2.3"
@@ -3609,22 +3609,22 @@
     clsx "^2.1.1"
     zustand "^4.5.4"
 
-"@mysten/slush-wallet@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@mysten/slush-wallet/-/slush-wallet-0.2.0.tgz#26098afa2e10ae57f5a82218b5f9a9bf9710eb38"
-  integrity sha512-2tvTRN1D2n/7XX62oK98VTShhquaHYLysw4tTWAGxIK0Ax6zLc+CPO9cVbgRLjGEmQm2ZN/X3wZVBRUly9GXnA==
+"@mysten/slush-wallet@0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@mysten/slush-wallet/-/slush-wallet-0.2.3.tgz#e8f385d5e8824cf72aeb130471a6a595353b5f80"
+  integrity sha512-eZJohIj1PCO7BCORkwu35thAdj7q9P/0PwxKoUjRvTi8H2mys9IMnI3z+wCv63RS2ifk/eNTIlTJJLPlbKUcdw==
   dependencies:
-    "@mysten/sui" "1.38.0"
+    "@mysten/sui" "1.40.0"
     "@mysten/utils" "0.2.0"
-    "@mysten/wallet-standard" "0.17.0"
+    "@mysten/wallet-standard" "0.19.0"
     "@mysten/window-wallet-core" "0.1.0"
     mitt "^3.0.1"
     valibot "^0.36.0"
 
-"@mysten/sui@1.38.0":
-  version "1.38.0"
-  resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.38.0.tgz#2ca46e0d45ac7624d653e3ace3a4c856864102b0"
-  integrity sha512-tH6V4BJsYi5d97MOiLoOhyldrYxkm/cu8dYV52asqh1i88HrSVMbPAJ9sVoeWN2Ju+QsJ/Go4ldSjdCkaBCyJQ==
+"@mysten/sui@1.39.1", "@mysten/sui@^1.39.1":
+  version "1.39.1"
+  resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.39.1.tgz#bcf623aa067eca8055ed6fbaa0946d8cc900f826"
+  integrity sha512-SNCal+mBl/jNAIVO16GkuSZ4ljGYQewbkwg+YQFT0zVCZU1z/PLRZ8opzE1qbUq6cHlautGtSiAadtWoB/P6NA==
   dependencies:
     "@graphql-typed-document-node/core" "^3.2.0"
     "@mysten/bcs" "1.8.0"
@@ -3639,10 +3639,10 @@
     poseidon-lite "0.2.1"
     valibot "^0.36.0"
 
-"@mysten/sui@1.39.1", "@mysten/sui@^1.39.1":
-  version "1.39.1"
-  resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.39.1.tgz#bcf623aa067eca8055ed6fbaa0946d8cc900f826"
-  integrity sha512-SNCal+mBl/jNAIVO16GkuSZ4ljGYQewbkwg+YQFT0zVCZU1z/PLRZ8opzE1qbUq6cHlautGtSiAadtWoB/P6NA==
+"@mysten/sui@1.40.0":
+  version "1.40.0"
+  resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.40.0.tgz#6e7b142ed30a802784b45ff53baff1c98ab1fb2e"
+  integrity sha512-1MDF68v2mQIE1YEpPfyX++Jwat2JyeJM0htZKmKBqLghAvnbSgxUydogx+0b7jKn+Q2XpbvWhQlXEbUHOBTZQQ==
   dependencies:
     "@graphql-typed-document-node/core" "^3.2.0"
     "@mysten/bcs" "1.8.0"
@@ -3664,12 +3664,12 @@
   dependencies:
     "@scure/base" "^1.2.6"
 
-"@mysten/wallet-standard@0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.17.0.tgz#4ca2b0bf3d0701b3cfe13525a4d8470e1a44609d"
-  integrity sha512-UQ6tvqQ/lDKZhQm2d3ajky/xl+NgpYpNXYIpWfYGOLvGe4GyK6GHysMNHsRpFa+xA2yVa6w3nWO2RQ8WIy7ivA==
+"@mysten/wallet-standard@0.19.0":
+  version "0.19.0"
+  resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.19.0.tgz#ff978afff2e7bc97a080d4d6289898da3512505a"
+  integrity sha512-GwJxd+f5EBQUty2pQ4r5G0h7JmABIlBIAyb1NaSns91lim2fEcBGKwTzvOGUsBpYBkBvXwoZDgz6xNzxKbobtQ==
   dependencies:
-    "@mysten/sui" "1.38.0"
+    "@mysten/sui" "1.40.0"
     "@wallet-standard/core" "1.1.1"
 
 "@mysten/wallet-standard@^0.18.1":
