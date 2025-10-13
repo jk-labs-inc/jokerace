@@ -39,7 +39,7 @@ const ProgressiveImg: FC<ProgressiveImgProps> = ({ src, alt }) => {
       <img
         src={src}
         alt={alt}
-        className={`w-full h-auto max-h-[320px] object-contain object-left rounded-lg my-4 cursor-zoom-in hover:opacity-90 transition-opacity`}
+        className={`w-full h-auto max-h-[418px] object-contain object-left rounded-lg my-4 cursor-zoom-in hover:opacity-90 transition-opacity`}
         style={{
           filter: isLoaded ? "blur(0px)" : "blur(10px)",
           transition: isLoaded ? "filter 0.5s linear" : "none",

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
 interface ChargeInfoExponentialPercentageIncreaseProps {
-  costToVote: number;
+  costToVote: bigint;
 }
 
 const SECONDS_UNTIL_NEXT_UPDATE_THRESHOLD = 15;

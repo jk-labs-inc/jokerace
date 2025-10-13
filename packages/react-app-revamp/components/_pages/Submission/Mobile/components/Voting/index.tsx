@@ -1,8 +1,8 @@
 import { useVotingActions } from "@components/_pages/Submission/hooks/useVotingActions";
+import { ContestStateEnum } from "@hooks/useContestState/store";
 import { FC, useRef, useState } from "react";
 import MobileVotingModal from "./components/MobileVotingModal";
 import { useVotingSetupMobile } from "./hooks/useVotingSetupMobile";
-import { ContestStateEnum } from "@hooks/useContestState/store";
 
 interface SubmissionPageMobileVotingProps {
   isOpen: boolean;
@@ -14,8 +14,8 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
   const backdropRef = useRef<HTMLDivElement>(null);
   const {
     contestConfig,
-    currentUserAvailableVotesAmount,
     currentPricePerVote,
+    currentPricePerVoteRaw,
     isVotingOpen,
     charge,
     contestState,
@@ -40,8 +40,8 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
       showAddFunds={showAddFunds}
       chainName={contestConfig.chainName}
       chainNativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol}
-      amountOfVotes={currentUserAvailableVotesAmount}
-      costToVote={Number(currentPricePerVote)}
+      costToVote={currentPricePerVote}
+      costToVoteRaw={currentPricePerVoteRaw}
       isLoading={isLoading}
       isVotingOpen={isVotingOpen}
       isContestCanceled={contestState === ContestStateEnum.Canceled}

@@ -8,8 +8,8 @@ interface MobileVotingModalProps {
   showAddFunds: boolean;
   chainName: string;
   chainNativeCurrencySymbol: string;
-  amountOfVotes: number;
-  costToVote: number;
+  costToVote: string;
+  costToVoteRaw: bigint;
   isLoading: boolean;
   isVotingOpen: boolean;
   isContestCanceled: boolean;
@@ -25,8 +25,8 @@ const MobileVotingModal: FC<MobileVotingModalProps> = ({
   showAddFunds,
   chainName,
   chainNativeCurrencySymbol,
-  amountOfVotes,
   costToVote,
+  costToVoteRaw,
   isLoading,
   isVotingOpen,
   isContestCanceled,
@@ -52,8 +52,8 @@ const MobileVotingModal: FC<MobileVotingModalProps> = ({
           <AddFunds chain={chainName} asset={chainNativeCurrencySymbol} onGoBack={onGoBack} />
         ) : (
           <VotingWidget
-            amountOfVotes={amountOfVotes}
             costToVote={costToVote}
+            costToVoteRaw={costToVoteRaw}
             isLoading={isLoading}
             isVotingClosed={!isVotingOpen}
             isContestCanceled={isContestCanceled}

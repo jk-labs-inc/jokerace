@@ -13,7 +13,7 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
-import { useUserStore } from "@hooks/useUser/store";
+import { useUserStore } from "@hooks/useUserSubmitQualification/store";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";

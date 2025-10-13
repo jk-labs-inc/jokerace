@@ -31,7 +31,7 @@ const VotingQualifierAnyoneCanVoteExponentialTimer: FC<VotingQualifierAnyoneCanV
     address,
     abi,
     chainId,
-    costToVote,
+    costToVote: BigInt(costToVote ?? 0),
     totalVotingMinutes: getTotalVotingMinutes(),
   });
 

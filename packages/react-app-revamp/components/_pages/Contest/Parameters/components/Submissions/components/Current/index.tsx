@@ -2,7 +2,7 @@ import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { MAX_SUBMISSIONS_PER_CONTEST } from "@hooks/useDeployContest/types";
-import { AnyoneCanSubmit, useUserStore } from "@hooks/useUser/store";
+import { AnyoneCanSubmit, useUserStore } from "@hooks/useUserSubmitQualification/store";
 import { formatEther } from "viem";
 import { useShallow } from "zustand/shallow";
 

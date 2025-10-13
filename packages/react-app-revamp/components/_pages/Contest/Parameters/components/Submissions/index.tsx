@@ -1,5 +1,5 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import { VOTE_AND_EARN_VERSION } from "@hooks/useUser/utils";
+import { VOTE_AND_EARN_VERSION } from "@hooks/useUserSubmitQualification/utils";
 import { compareVersions } from "compare-versions";
 import { useShallow } from "zustand/shallow";
 import ContestParametersSubmissionsCurrent from "./components/Current";

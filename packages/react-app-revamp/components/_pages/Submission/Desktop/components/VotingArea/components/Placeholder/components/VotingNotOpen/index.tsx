@@ -1,6 +1,7 @@
 import { FC } from "react";
 import Timer from "./components/Timer";
 import Image from "next/image";
+import SubmissionEmailSignup from "@components/_pages/Submission/components/EmailSignup";
 
 interface TimeRemaining {
   days: number;
@@ -18,7 +19,7 @@ const SubmissionPageDesktopVotingAreaWidgetVotingNotOpen: FC<
   SubmissionPageDesktopVotingAreaWidgetVotingNotOpenProps
 > = ({ timeRemaining }) => {
   return (
-    <div className="bg-gradient-voting-area-not-open px-6 pt-12 pb-16 rounded-4xl h-full flex flex-col gap-20">
+    <div className="bg-gradient-voting-area-not-open px-6 pt-12 pb-20 rounded-4xl min-h-full flex flex-col gap-20">
       <div className="flex flex-col gap-14">
         <p className="text-center font-sabo-filled text-neutral-11 text-[32px] font-bold">voting opens in</p>
         {timeRemaining && <Timer timeRemaining={timeRemaining} />}
@@ -30,6 +31,9 @@ const SubmissionPageDesktopVotingAreaWidgetVotingNotOpen: FC<
         width={300}
         height={200}
       />
+      <div className="mt-2">
+        <SubmissionEmailSignup />
+      </div>
     </div>
   );
 };

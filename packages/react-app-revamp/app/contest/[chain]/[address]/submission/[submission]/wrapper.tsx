@@ -12,7 +12,6 @@ import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
 import { ProposalIdStoreProvider } from "@hooks/useProposalId/store";
 import { useProposalStaticData } from "@hooks/useProposalStaticData";
-import { UserWrapper } from "@hooks/useUser/store";
 import { notFound } from "next/navigation";
 import { FC } from "react";
 import { Abi } from "viem";
@@ -75,22 +74,20 @@ const SubmissionWrapper: FC<SubmissionWrapperProps> = ({ address, chain, submiss
   return (
     <ProposalWrapper>
       <DeleteProposalWrapper>
-        <UserWrapper>
-          <CastVotesWrapper>
-            <ContestConfigStoreProvider contestConfig={contestConfig}>
-              <ProposalIdStoreProvider proposalId={submission}>
-                <SubmissionPageStoreProvider
-                  proposalStaticData={proposalStaticData}
-                  contestDetails={contestDetails ?? { author: null, name: null, state: null }}
-                  allProposalIds={allProposalIds}
-                  voteTimings={voteTimings}
-                >
-                  <SubmissionPage />
-                </SubmissionPageStoreProvider>
-              </ProposalIdStoreProvider>
-            </ContestConfigStoreProvider>
-          </CastVotesWrapper>
-        </UserWrapper>
+        <CastVotesWrapper>
+          <ContestConfigStoreProvider contestConfig={contestConfig}>
+            <ProposalIdStoreProvider proposalId={submission}>
+              <SubmissionPageStoreProvider
+                proposalStaticData={proposalStaticData}
+                contestDetails={contestDetails ?? { author: null, name: null, state: null }}
+                allProposalIds={allProposalIds}
+                voteTimings={voteTimings}
+              >
+                <SubmissionPage />
+              </SubmissionPageStoreProvider>
+            </ProposalIdStoreProvider>
+          </ContestConfigStoreProvider>
+        </CastVotesWrapper>
       </DeleteProposalWrapper>
     </ProposalWrapper>
   );

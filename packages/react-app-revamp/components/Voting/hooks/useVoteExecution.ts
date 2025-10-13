@@ -1,22 +1,17 @@
 import { toastInfo } from "@components/UI/Toast";
-import { getTotalCharge } from "@helpers/totalCharge";
-import { useContestStore } from "@hooks/useContest/store";
-import useContestConfigStore from "@hooks/useContestConfig/store";
-import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
-import { useState } from "react";
-import { useShallow } from "zustand/shallow";
-import { switchChain } from "@wagmi/core";
+import { useVotingStore } from "@components/Voting/store";
 import { config } from "@config/wagmi";
-import { useContestDeadline } from "@hooks/useContestTimings";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { switchChain } from "@wagmi/core";
+import { useState } from "react";
+import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 
 interface UseVoteExecutionProps {
-  amount: number;
-  amountOfVotes: number;
-  isCorrectNetwork: boolean;
-  contestChainId: number;
+  maxBalance: string;
+  costToVote: string;
   isVotingClosed: boolean;
-  onVote?: (amount: number) => void;
-  onSwitchChain?: (chainId: number) => Promise<void>;
+  onVote?: (amountOfVotes: number) => void;
   onCancelMaxVotes?: () => void;
 }
 
@@ -25,44 +20,37 @@ interface UseVoteExecutionReturn {
   handleVote: () => Promise<void>;
   handleMaxVoteConfirm: () => void;
   handleMaxVoteCancel: () => void;
-  getTotalCost: () => string;
 }
 
 export const useVoteExecution = ({
-  amount,
-  amountOfVotes,
-  isCorrectNetwork,
-  contestChainId,
+  maxBalance,
+  costToVote,
   isVotingClosed,
   onVote,
   onCancelMaxVotes,
 }: UseVoteExecutionProps): UseVoteExecutionReturn => {
+  const { chainId } = useAccount();
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
-  const {
-    value: votingClose,
-    isLoading: isLoadingVotingClose,
-    isError: isErrorVotingClose,
-  } = useContestDeadline({
-    contestAddress: contestConfig.address,
-    contestChainId: contestConfig.chainId,
-    contestAbi: contestConfig.abi,
-  });
+  const isCorrectNetwork = chainId === contestConfig.chainId;
   const [showMaxVotesDialog, setShowMaxVotesDialog] = useState(false);
-  const { currentPricePerVote } = useCurrentPricePerVoteWithRefetch({
-    address: contestConfig.address,
-    abi: contestConfig.abi,
-    chainId: contestConfig.chainId,
-    votingClose: votingClose ?? new Date(),
-    enabled: !isLoadingVotingClose && !isErrorVotingClose,
-  });
+  const inputValue = useVotingStore(useShallow(state => state.inputValue));
 
   const onSwitchNetwork = async (chainId: number) => {
     await switchChain(config, { chainId });
   };
 
+  const getVotesFromBalance = (): number => {
+    const balanceInput = parseFloat(inputValue);
+    if (isNaN(balanceInput) || balanceInput === 0 || Number(costToVote) === 0) {
+      return 0;
+    }
+
+    return Math.floor(balanceInput / Number(costToVote));
+  };
+
   const handleVote = async () => {
     if (!isCorrectNetwork) {
-      await onSwitchNetwork(contestChainId);
+      await onSwitchNetwork(contestConfig.chainId);
     }
 
     if (isVotingClosed) {
@@ -72,17 +60,23 @@ export const useVoteExecution = ({
       return;
     }
 
-    if (amount === amountOfVotes) {
+    const amountOfVotes = getVotesFromBalance();
+    const maxBalanceNum = parseFloat(maxBalance);
+    const inputBalanceNum = parseFloat(inputValue);
+
+    // Check if user is voting with max balance
+    if (inputBalanceNum >= maxBalanceNum) {
       setShowMaxVotesDialog(true);
       return;
     }
 
-    onVote?.(amount);
+    onVote?.(amountOfVotes);
   };
 
   const handleMaxVoteConfirm = () => {
     setShowMaxVotesDialog(false);
-    onVote?.(amount);
+    const amountOfVotes = getVotesFromBalance();
+    onVote?.(amountOfVotes);
   };
 
   const handleMaxVoteCancel = () => {
@@ -90,16 +84,10 @@ export const useVoteExecution = ({
     onCancelMaxVotes?.();
   };
 
-  const getTotalCost = () => {
-    if (!currentPricePerVote || !amount) return "0";
-    return getTotalCharge(amount, currentPricePerVote);
-  };
-
   return {
     showMaxVotesDialog,
     handleVote,
     handleMaxVoteConfirm,
     handleMaxVoteCancel,
-    getTotalCost,
   };
 };

@@ -5,7 +5,7 @@ import { ContestWrapper } from "@hooks/useContest/store";
 import { ContestConfigStoreProvider } from "@hooks/useContestConfig/store";
 import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
-import { UserWrapper } from "@hooks/useUser/store";
+import { UserWrapper } from "@hooks/useUserSubmitQualification/store";
 import LayoutViewContest from "@layouts/LayoutViewContest";
 import { FC } from "react";
 import { Abi } from "viem";

@@ -6,7 +6,7 @@ import SubmissionPageDesktopVotingAreaTimer from "./components/VotingArea/compon
 const SubmissionPageDesktopLayout = () => {
   return (
     <div className="px-20 mt-8 animate-reveal">
-      <div className="grid grid-cols-[50%_50%] xl:grid-cols-[60%_40%] gap-x-4 gap-y-8 items-center">
+      <div className="grid grid-cols-[50%_50%] xl:grid-cols-[60%_40%] gap-x-4 gap-y-4 items-stretch">
         <div className="min-w-0">
           <SubmissionPageDesktopHeader />
         </div>
@@ -14,7 +14,7 @@ const SubmissionPageDesktopLayout = () => {
           <SubmissionPageDesktopVotingAreaTimer />
         </div>
 
-        <div className="min-w-0 self-stretch" id="submission-body-container">
+        <div className="min-w-0 self-stretch">
           <SubmissionPageDesktopBody />
         </div>
         <div className="min-w-0 self-stretch">

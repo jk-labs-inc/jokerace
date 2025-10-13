@@ -10,7 +10,11 @@ interface AddFundsJumperWidgetProps {
 const AddFundsJumperWidget: FC<AddFundsJumperWidgetProps> = ({ chainId, asset }) => {
   const widgetConfig = createJumperWidgetConfig(chainId, asset);
 
-  return <LiFiWidget integrator="JokeRace" config={widgetConfig} />;
+  return (
+    <div className="w-full max-w-full overflow-hidden">
+      <LiFiWidget integrator="JokeRace" config={widgetConfig} />
+    </div>
+  );
 };
 
 export default AddFundsJumperWidget;

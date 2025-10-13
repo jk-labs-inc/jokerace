@@ -22,8 +22,8 @@ import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useContestStatusTimer } from "@hooks/useContestStatusTimer";
-import useUser from "@hooks/useUser";
-import { VOTE_AND_EARN_VERSION } from "@hooks/useUser/utils";
+import useUser from "@hooks/useUserSubmitQualification";
+import { VOTE_AND_EARN_VERSION } from "@hooks/useUserSubmitQualification/utils";
 import { compareVersions } from "compare-versions";
 import { usePathname } from "next/navigation";
 import { useUrl } from "nextjs-current-url";
@@ -51,7 +51,7 @@ const LayoutViewContest = () => {
     canEditTitleAndDescription,
   } = useContestStore(state => state);
   const { accountChanged, resetAccountChanged } = useAccountChange();
-  const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
+  const { checkIfCurrentUserQualifyToSubmit } = useUser();
   const { setContestStatus } = useContestStatusStore(state => state);
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -91,10 +91,7 @@ const LayoutViewContest = () => {
         abi: contestConfig.abi,
         chainId: contestConfig.chainId,
       };
-      await Promise.all([
-        checkIfCurrentUserQualifyToSubmit(contractConfig),
-        checkIfCurrentUserQualifyToVote(contractConfig),
-      ]);
+      await checkIfCurrentUserQualifyToSubmit(contractConfig);
 
       resetAccountChanged();
     };

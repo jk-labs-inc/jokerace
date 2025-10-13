@@ -11,10 +11,11 @@ import ChargeInfoExponentialPercentageIncrease from "./components/ExponentialPer
 import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
 
 interface ChargeInfoProps {
-  costToVote: bigint;
+  costToVote: string;
+  costToVoteRaw: bigint;
 }
 
-const ChargeInfo: FC<ChargeInfoProps> = ({ costToVote }) => {
+const ChargeInfo: FC<ChargeInfoProps> = ({ costToVote, costToVoteRaw }) => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { priceCurveType, isLoading, isError, refetch } = usePriceCurveType({
     address: contestConfig.address,
@@ -36,7 +37,7 @@ const ChargeInfo: FC<ChargeInfoProps> = ({ costToVote }) => {
         <ChargeInfoCurve costToVote={costToVote} priceCurveType={priceCurveType} />
       </ChargeInfoContainer>
       {priceCurveType === PriceCurveType.Exponential && (
-        <ChargeInfoExponentialPercentageIncrease costToVote={Number(costToVote)} />
+        <ChargeInfoExponentialPercentageIncrease costToVote={costToVoteRaw} />
       )}
     </div>
   );

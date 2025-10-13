@@ -7,7 +7,7 @@ interface CurrentPricePercentageIncreaseParams {
   address: string;
   abi: Abi;
   chainId: number;
-  costToVote: number;
+  costToVote: bigint;
   totalVotingMinutes: number;
   enabled?: boolean;
 }
@@ -44,7 +44,7 @@ const useCurrentPricePercentageIncrease = ({
 
     try {
       const multiple = Number(priceCurveMultiple);
-      const costToVoteNumber = Number(formatEther(BigInt(costToVote)));
+      const costToVoteNumber = Number(formatEther(costToVote));
 
       const { percentageIncrease, isBelowThreshold } = calculateStaticMinuteToMinutePercentage(
         costToVoteNumber,
@@ -54,6 +54,7 @@ const useCurrentPricePercentageIncrease = ({
 
       return { percentageIncrease, isBelowThreshold };
     } catch (error) {
+      console.error("error", error);
       return null;
     }
   }, [costToVote, priceCurveMultiple, isMultipleLoading, totalVotingMinutes]);

@@ -1,24 +1,22 @@
-import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
 import useContestVoteTimer from "@components/_pages/Submission/hooks/useContestVoteTimer";
-import { useSubmissionPageStore } from "@components/_pages/Submission/store";
+import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
 import SubmissionPageMobileAddFunds from "@components/_pages/Submission/Mobile/components/AddFunds";
-import SubmissionPageMobileVoting from "@components/_pages/Submission/Mobile/components/Voting";
 import StickyVoteFooter from "@components/_pages/Submission/Mobile/components/VoteFooter";
+import SubmissionPageMobileVoting from "@components/_pages/Submission/Mobile/components/Voting";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import { useUserStore } from "@hooks/useUser/store";
+import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
+import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
-import useUser from "@hooks/useUser";
 
 const SubmissionPageMobileVotingFooter = () => {
   const { isConnected, address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));
-  const { checkIfCurrentUserQualifyToVote } = useUser();
-  const currentUserAvailableVotesAmount = useUserStore(useShallow(state => state.currentUserAvailableVotesAmount));
   const { totalProposals } = useNavigateProposals();
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [showVotingModal, setShowVotingModal] = useState(false);
@@ -26,14 +24,17 @@ const SubmissionPageMobileVotingFooter = () => {
     voteStart: voteTimings?.voteStart ?? null,
     contestDeadline: voteTimings?.contestDeadline ?? null,
   });
-
-  useEffect(() => {
-    checkIfCurrentUserQualifyToVote({
-      address: contestConfig.address,
-      abi: contestConfig.abi,
-      chainId: contestConfig.chainId,
-    });
-  }, [address, contestConfig]);
+  const { currentPricePerVote } = useCurrentPricePerVote({
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+    //TODO: check this
+    votingClose: new Date(Number(voteTimings?.contestDeadline ?? 0)),
+  });
+  const { balance, insufficientBalance } = useVoteBalance({
+    chainId: contestConfig.chainId,
+    costToVote: currentPricePerVote,
+  });
 
   const handleConnectWallet = () => {
     if (openConnectModal) {
@@ -47,8 +48,8 @@ const SubmissionPageMobileVotingFooter = () => {
     <>
       <StickyVoteFooter
         isConnected={isConnected}
+        insufficientBalance={insufficientBalance}
         totalProposals={totalProposals}
-        currentUserAvailableVotesAmount={currentUserAvailableVotesAmount}
         onConnectWallet={handleConnectWallet}
         setShowVotingModal={setShowVotingModal}
         onAddFunds={() => setShowAddFunds(true)}

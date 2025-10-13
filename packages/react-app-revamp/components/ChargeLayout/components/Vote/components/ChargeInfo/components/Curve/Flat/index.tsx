@@ -4,18 +4,17 @@ import { formatEther } from "viem";
 import { useShallow } from "zustand/shallow";
 
 interface ChargeInfoFlatProps {
-  costToVote: bigint;
+  costToVote: string;
 }
 
 const ChargeInfoFlat: FC<ChargeInfoFlatProps> = ({ costToVote }) => {
   const chainNativeCurrencySymbol = useContestConfigStore(
     useShallow(state => state.contestConfig.chainNativeCurrencySymbol),
   );
-  const entryChargeFormatted = formatEther(costToVote);
 
   return (
     <p>
-      {entryChargeFormatted} {chainNativeCurrencySymbol}
+      {costToVote} {chainNativeCurrencySymbol}
     </p>
   );
 };

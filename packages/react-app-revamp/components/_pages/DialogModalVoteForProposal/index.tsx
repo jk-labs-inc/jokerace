@@ -8,20 +8,17 @@ import ContestProposal from "@components/_pages/Contest/components/Prompt/Propos
 import DialogMaxVotesAlert from "@components/_pages/DialogMaxVotesAlert";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import ordinalize from "@helpers/ordinalize";
-import { getTotalCharge } from "@helpers/totalCharge";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
-import { VoteType } from "@hooks/useDeployContest/types";
-import { useUserStore } from "@hooks/useUser/store";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import { Proposal } from "../ProposalContent";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 
 interface DialogModalVoteForProposalProps {
   isOpen: boolean;
@@ -45,38 +42,23 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   );
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const contestState = useContestStateStore(useShallow(state => state.contestState));
-  const { currentUserAvailableVotesAmount } = useUserStore(
-    useShallow(state => ({
-      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
-    })),
-  );
-  const isPayPerVote = contestCharge.voteType === VoteType.PerVote;
   const { castVotes, isSuccess, isLoading } = useCastVotes({ charge: contestCharge, votesClose: votingClose });
   const [readFullEntry, setReadFullEntry] = useState(false);
   const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
   const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
-  const [totalCharge, setTotalCharge] = useState("");
   const [showAddFunds, setShowAddFunds] = useState(false);
   const {
     currentPricePerVote,
+    currentPricePerVoteRaw,
     isLoading: isCurrentPricePerVoteLoading,
     isError: isCurrentPricePerVoteError,
-    isPreloading: isCurrentPricePerVotePreloading,
-    isRefetching: isCurrentPricePerVoteRefetching,
-    isRefetchError: isCurrentPricePerVoteRefetchError,
-  } = useCurrentPricePerVoteWithRefetch({
+  } = useCurrentPricePerVote({
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
-    votingClose: votingClose,
+    votingClose,
   });
-  const earlyReturn =
-    isCurrentPricePerVoteLoading ||
-    isCurrentPricePerVoteError ||
-    isCurrentPricePerVotePreloading ||
-    isCurrentPricePerVoteRefetching ||
-    isCurrentPricePerVoteRefetchError ||
-    !currentPricePerVote;
+  const earlyReturn = isCurrentPricePerVoteLoading || isCurrentPricePerVoteError || !currentPricePerVote;
 
   const onSubmitCastVotes = useCallback(
     (amount: number) => {
@@ -84,16 +66,9 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
         return;
       }
 
-      if (amount === currentUserAvailableVotesAmount && isPayPerVote) {
-        setShowMaxVoteConfirmation(true);
-        setPendingVote({ amount });
-        setTotalCharge(getTotalCharge(amount, currentPricePerVote));
-        return;
-      }
-
       castVotes(amount);
     },
-    [currentUserAvailableVotesAmount, isPayPerVote, currentPricePerVote, castVotes],
+    [currentPricePerVote, castVotes],
   );
 
   const confirmMaxVote = () => {
@@ -152,8 +127,6 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
 
             {showMaxVoteConfirmation ? (
               <DialogMaxVotesAlert
-                token={contestConfig.chainNativeCurrencySymbol ?? ""}
-                totalCost={totalCharge}
                 onConfirm={confirmMaxVote}
                 onCancel={cancelMaxVote}
                 buttonSize={isMobile ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG_MOBILE}
@@ -203,8 +176,8 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
                   <div className="flex flex-col gap-4 md:gap-8 md:w-[368px]">
                     <hr className="hidden md:block border border-neutral-2" />
                     <VotingWidget
-                      amountOfVotes={currentUserAvailableVotesAmount}
-                      costToVote={Number(currentPricePerVote)}
+                      costToVote={currentPricePerVote}
+                      costToVoteRaw={currentPricePerVoteRaw}
                       isLoading={isCurrentPricePerVoteLoading || isLoading}
                       isVotingClosed={contestStatus === ContestStatus.VotingClosed}
                       isContestCanceled={contestState === ContestStateEnum.Canceled}

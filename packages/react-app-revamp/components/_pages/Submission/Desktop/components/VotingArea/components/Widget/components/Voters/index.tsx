@@ -10,13 +10,11 @@ import { useAddressesVoted } from "./hooks/useAddressesVoted";
 
 interface SubmissionPageDesktopVotingAreaWidgetVotersProps {
   proposalId: string;
-  isVotingOpen: boolean;
   onRefetchReady?: (refetch: () => void) => void;
 }
 
 const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotingAreaWidgetVotersProps> = ({
   proposalId,
-  isVotingOpen,
 }) => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { addressesVoted, isLoadingAddressesVoted, isErrorAddressesVoted } = useAddressesVoted({
@@ -40,7 +38,7 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
 
   const votedAddressesArray = addressesVoted;
   const hasNoVoters = votedAddressesArray && votedAddressesArray.length === 0;
-  const shouldShowPlaceholder = hasNoVoters && isVotingOpen;
+  const shouldShowPlaceholder = hasNoVoters;
 
   return (
     <div className="w-full flex-1 min-h-0">

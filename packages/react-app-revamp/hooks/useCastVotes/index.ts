@@ -3,7 +3,7 @@ import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading
 import { config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import useCurrentPricePerVoteWithRefetch from "@hooks/useCurrentPricePerVoteWithRefetch";
+import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useEmailSend } from "@hooks/useEmailSend";
 import { useError } from "@hooks/useError";
@@ -13,10 +13,8 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
-import useUser from "@hooks/useUser";
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import moment from "moment";
-import { useCallback } from "react";
 import { checkAndMarkPriceChangeError } from "utils/error";
 import { formatEther, parseUnits } from "viem";
 import { useAccount } from "wagmi";
@@ -24,8 +22,11 @@ import { useShallow } from "zustand/shallow";
 import { useCastVotesStore } from "./store";
 import { CombinedAnalyticsParams, performAnalytics } from "./utils/analytics";
 import { createVotingEmailSender } from "./utils/email";
-import { calculateChargeAmount } from "./utils/helpers";
 import { usePriceTracking } from "./utils/priceTracking";
+import { calculateChargeAmount } from "./utils/helpers";
+import { useVoteBalance } from "@hooks/useVoteBalance";
+import useEmailSignup from "@hooks/useEmailSignup";
+import { useVotingStore } from "@components/Voting/store";
 
 interface UseCastVotesProps {
   charge: Charge;
@@ -50,7 +51,6 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
     resetStore,
   } = useCastVotesStore(state => state);
   const { address: userAddress } = useAccount();
-  const { updateCurrentUserVotes } = useUser();
   const { error: errorMessage, handleError } = useError();
   const { refetch: refetchTotalVotesCastOnContest } = useTotalVotesCastOnContest(
     contestConfig.address,
@@ -72,17 +72,24 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
   const contestLink = `${window.location.origin}/contest/${contestConfig.chainName.toLowerCase()}/${
     contestConfig.address
   }`;
-  const { currentPricePerVote } = useCurrentPricePerVoteWithRefetch({
+  const { currentPricePerVote, currentPricePerVoteRaw } = useCurrentPricePerVote({
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
     votingClose: votesClose,
   });
   const { startNewVotingSession, getPrices } = usePriceTracking(currentPricePerVote);
-  const getChargeAmount = useCallback(
-    (amountOfVotes: number) => calculateChargeAmount(amountOfVotes, currentPricePerVote),
-    [currentPricePerVote],
+  const { refetchBalance } = useVoteBalance({
+    chainId: contestConfig.chainId,
+    costToVote: currentPricePerVote,
+  });
+  const { emailAddress, resetVotingStore } = useVotingStore(
+    useShallow(state => ({
+      emailAddress: state.emailAddress,
+      resetVotingStore: state.reset,
+    })),
   );
+  const { subscribeUser } = useEmailSignup();
 
   async function castVotes(amountOfVotes: number) {
     toastLoading({
@@ -98,8 +105,9 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
     startNewVotingSession();
 
     try {
-      const costToVote = getChargeAmount(amountOfVotes);
       const castVoteArgs = [pickedProposal, parseUnits(amountOfVotes.toString(), 18)];
+
+      const estimatedCost = calculateChargeAmount(amountOfVotes, currentPricePerVoteRaw);
 
       const { request } = await simulateContract(config, {
         address: contestConfig.address as `0x${string}`,
@@ -107,8 +115,8 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         chainId: contestConfig.chainId,
         functionName: "castVote",
         args: castVoteArgs,
-        //@ts-ignore (ignoring this becaues for some reason value type is set as undefined?)
-        value: costToVote,
+        //@ts-ignore
+        value: estimatedCost,
       });
 
       const hash = await writeContract(config, request);
@@ -120,7 +128,7 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         chainName: contestConfig.chainName,
         pickedProposal,
         amountOfVotes,
-        costToVote,
+        costToVote: estimatedCost,
         charge,
         isEarningsTowardsRewards,
         address: contestConfig.address,
@@ -158,14 +166,20 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         console.error("Error updating proposal votes after casting:", voteUpdateError);
       }
 
-      await updateCurrentUserVotes(contestConfig.abi);
       refetchTotalVotesCastOnContest();
       refetchCurrentUserVotesOnProposal();
+      refetchBalance?.();
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess({
         message: "your votes have been deployed successfully",
       });
+
+      if (emailAddress) {
+        await subscribeUser(emailAddress, userAddress);
+      }
+
+      resetVotingStore();
 
       await sendVotingEmail(userAddress ?? "", {
         contest_link: contestLink,

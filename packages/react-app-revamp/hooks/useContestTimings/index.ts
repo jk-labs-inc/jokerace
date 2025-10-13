@@ -52,6 +52,7 @@ export const useContestTimings = ({
       },
     ],
     query: {
+      staleTime: Infinity,
       select: data => {
         return {
           contestStart: new Date(Number(data[0].result) * 1000 + 1000),
@@ -82,6 +83,7 @@ export const useContestStart = ({
     abi: contestAbi,
     functionName: "contestStart",
     query: {
+      staleTime: Infinity,
       select: data => {
         return new Date(Number(data) * 1000 + 1000);
       },
@@ -106,6 +108,7 @@ export const useContestDeadline = ({
     abi: contestAbi,
     functionName: "contestDeadline",
     query: {
+      staleTime: Infinity,
       select: data => {
         return new Date(Number(data) * 1000 + 1000);
       },
@@ -130,6 +133,7 @@ export const useVoteStart = ({
     abi: contestAbi,
     functionName: "voteStart",
     query: {
+      staleTime: Infinity,
       select: data => {
         return new Date(Number(data) * 1000 + 1000);
       },

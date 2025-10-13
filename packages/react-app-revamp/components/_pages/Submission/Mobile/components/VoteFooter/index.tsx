@@ -3,8 +3,8 @@ import { FC } from "react";
 
 interface StickyVoteFooterProps {
   isConnected: boolean;
+  insufficientBalance: boolean;
   totalProposals: number;
-  currentUserAvailableVotesAmount: number;
   onConnectWallet: () => void;
   setShowVotingModal: (show: boolean) => void;
   onAddFunds?: () => void;
@@ -12,8 +12,8 @@ interface StickyVoteFooterProps {
 
 const StickyVoteFooter: FC<StickyVoteFooterProps> = ({
   isConnected,
+  insufficientBalance,
   totalProposals,
-  currentUserAvailableVotesAmount,
   onConnectWallet,
   setShowVotingModal,
   onAddFunds,
@@ -22,7 +22,7 @@ const StickyVoteFooter: FC<StickyVoteFooterProps> = ({
     <div className={`fixed ${totalProposals > 1 ? "bottom-[106px]" : "bottom-14"} left-0 right-0 bg-transparent pb-8`}>
       <div className="mx-auto flex justify-center px-8 max-w-md w-full">
         {isConnected ? (
-          currentUserAvailableVotesAmount > 0 ? (
+          !insufficientBalance ? (
             <ButtonV3
               onClick={() => setShowVotingModal(true)}
               colorClass="bg-gradient-purple"

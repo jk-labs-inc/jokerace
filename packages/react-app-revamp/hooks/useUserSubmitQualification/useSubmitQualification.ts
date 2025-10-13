@@ -1,6 +1,5 @@
 import { config } from "@config/wagmi";
 import { ContractConfig } from "@hooks/useContest";
-import { useContestStore } from "@hooks/useContest/store";
 import { readContract, readContracts } from "@wagmi/core";
 import { AnyoneCanSubmit, useUserStore } from "./store";
 

@@ -25,7 +25,7 @@ const SubmissionLoader = () => {
 
   return (
     <div className="px-20 mt-8 animate-reveal">
-      <div className="grid grid-cols-[50%_50%] xl:grid-cols-[60%_40%] gap-x-4 gap-y-8 items-center">
+      <div className="grid grid-cols-[50%_50%] xl:grid-cols-[60%_40%] gap-x-4 gap-y-4 items-center">
         {/* Header */}
         <div className="min-w-0">
           <div className="flex items-center gap-4 px-10">

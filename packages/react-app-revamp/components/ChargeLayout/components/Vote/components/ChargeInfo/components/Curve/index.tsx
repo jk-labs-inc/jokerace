@@ -4,7 +4,7 @@ import ChargeInfoExponential from "./Exponential";
 import ChargeInfoFlat from "./Flat";
 
 interface ChargeInfoCurveProps {
-  costToVote: bigint;
+  costToVote: string;
   priceCurveType: PriceCurveType;
 }
 
@@ -13,7 +13,7 @@ const ChargeInfoCurve: FC<ChargeInfoCurveProps> = ({ costToVote, priceCurveType 
     return <ChargeInfoFlat costToVote={costToVote} />;
   }
 
-  return <ChargeInfoExponential />;
+  return <ChargeInfoExponential costToVote={costToVote} />;
 };
 
 export default ChargeInfoCurve;

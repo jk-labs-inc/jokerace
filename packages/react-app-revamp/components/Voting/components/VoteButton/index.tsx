@@ -1,19 +1,45 @@
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { FC } from "react";
 
 interface VoteButtonProps {
   isDisabled: boolean;
   isInvalidBalance: boolean;
+  isConnected: boolean;
   onVote?: () => void;
   onAddFunds?: () => void;
 }
 
-const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, onVote, onAddFunds }) => {
-  const buttonText = isInvalidBalance ? "add funds to vote" : "buy votes";
+enum VoteButtonType {
+  INSUFFICIENT_BALANCE = "insufficientBalance",
+  CONNECT_WALLET = "connectWallet",
+  DEFAULT = "default",
+}
+
+const ButtonText = {
+  [VoteButtonType.INSUFFICIENT_BALANCE]: "add funds to vote",
+  [VoteButtonType.CONNECT_WALLET]: "connect wallet",
+  [VoteButtonType.DEFAULT]: "buy votes",
+};
+
+const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConnected, onVote, onAddFunds }) => {
+  const { openConnectModal } = useConnectModal();
+
+  const getButtonText = () => {
+    if (isInvalidBalance) {
+      return ButtonText[VoteButtonType.INSUFFICIENT_BALANCE];
+    } else if (isConnected) {
+      return ButtonText[VoteButtonType.DEFAULT];
+    } else {
+      return ButtonText[VoteButtonType.CONNECT_WALLET];
+    }
+  };
 
   const handleClick = () => {
     if (isInvalidBalance) {
       onAddFunds?.();
+    } else if (!isConnected) {
+      openConnectModal?.();
     } else {
       onVote?.();
     }
@@ -27,7 +53,7 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, onVote,
       size={ButtonSize.FULL}
       onClick={handleClick}
     >
-      <span className="w-full text-center">{buttonText}</span>
+      <span className="w-full text-center">{getButtonText()}</span>
     </ButtonV3>
   );
 };

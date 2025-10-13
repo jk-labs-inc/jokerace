@@ -9,30 +9,18 @@ export enum AnyoneCanSubmit {
 interface UserState {
   anyoneCanSubmit: AnyoneCanSubmit;
   currentUserQualifiedToSubmit: boolean;
-  currentUserQualifiedToVote: boolean;
-  currentUserTotalVotesAmount: number;
-  currentUserAvailableVotesAmount: number;
   contestMaxNumberSubmissionsPerUser: number;
   currentUserProposalCount: number;
   isCurrentUserSubmitQualificationLoading: boolean;
   isCurrentUserSubmitQualificationSuccess: boolean;
   isCurrentUserSubmitQualificationError: boolean;
-  isCurrentUserVoteQualificationLoading: boolean;
-  isCurrentUserVoteQualificationSuccess: boolean;
-  isCurrentUserVoteQualificationError: boolean;
   setCurrentUserQualifiedToSubmit: (value: boolean) => void;
-  setCurrentUserQualifiedToVote: (value: boolean) => void;
-  setCurrentUserAvailableVotesAmount: (amount: number) => void;
-  setCurrentUserTotalVotesAmount: (amount: number) => void;
   setContestMaxNumberSubmissionsPerUser: (amount: number) => void;
   increaseCurrentUserProposalCount: () => void;
   setCurrentUserProposalCount: (amount: number) => void;
   setIsCurrentUserSubmitQualificationLoading: (value: boolean) => void;
   setIsCurrentUserSubmitQualificationSuccess: (value: boolean) => void;
   setIsCurrentUserSubmitQualificationError: (value: boolean) => void;
-  setIsCurrentUserVoteQualificationLoading: (value: boolean) => void;
-  setIsCurrentUserVoteQualificationSuccess: (value: boolean) => void;
-  setIsCurrentUserVoteQualificationError: (value: boolean) => void;
   setAnyoneCanSubmit: (value: AnyoneCanSubmit) => void;
 }
 
@@ -40,25 +28,13 @@ export const createUserStore = () =>
   createStore<UserState>(set => ({
     anyoneCanSubmit: AnyoneCanSubmit.ANYONE_CAN_SUBMIT,
     currentUserQualifiedToSubmit: false,
-    currentUserQualifiedToVote: false,
-    currentUserAvailableVotesAmount: 0,
-    currentUserTotalVotesAmount: 0,
     contestMaxNumberSubmissionsPerUser: 0,
     currentUserProposalCount: 0,
-    isLoading: false,
-    isSuccess: false,
-    error: "",
     isCurrentUserSubmitQualificationLoading: false,
     isCurrentUserSubmitQualificationSuccess: false,
     isCurrentUserSubmitQualificationError: false,
-    isCurrentUserVoteQualificationLoading: false,
-    isCurrentUserVoteQualificationSuccess: false,
-    isCurrentUserVoteQualificationError: false,
     setAnyoneCanSubmit: value => set({ anyoneCanSubmit: value }),
     setCurrentUserQualifiedToSubmit: value => set({ currentUserQualifiedToSubmit: value }),
-    setCurrentUserQualifiedToVote: value => set({ currentUserQualifiedToVote: value }),
-    setCurrentUserAvailableVotesAmount: amount => set({ currentUserAvailableVotesAmount: amount }),
-    setCurrentUserTotalVotesAmount: amount => set({ currentUserTotalVotesAmount: amount }),
     setContestMaxNumberSubmissionsPerUser: amount => set({ contestMaxNumberSubmissionsPerUser: amount }),
     setCurrentUserProposalCount: amount => set({ currentUserProposalCount: amount }),
     increaseCurrentUserProposalCount: () =>
@@ -66,9 +42,6 @@ export const createUserStore = () =>
     setIsCurrentUserSubmitQualificationLoading: value => set({ isCurrentUserSubmitQualificationLoading: value }),
     setIsCurrentUserSubmitQualificationSuccess: value => set({ isCurrentUserSubmitQualificationSuccess: value }),
     setIsCurrentUserSubmitQualificationError: value => set({ isCurrentUserSubmitQualificationError: value }),
-    setIsCurrentUserVoteQualificationLoading: value => set({ isCurrentUserVoteQualificationLoading: value }),
-    setIsCurrentUserVoteQualificationSuccess: value => set({ isCurrentUserVoteQualificationSuccess: value }),
-    setIsCurrentUserVoteQualificationError: value => set({ isCurrentUserVoteQualificationError: value }),
   }));
 
 export const UserContext = createContext<ReturnType<typeof createUserStore> | null>(null);
