@@ -60,7 +60,7 @@ const GradientText: FC<PropsWithChildren<GradientTextProps>> = ({
 
   return (
     <div className="relative inline-block">
-      <span className={`${textSizeClassName} ${isFontSabo ? "font-sabo" : ""} inline-block`}>
+      <span className={`${textSizeClassName} ${isFontSabo ? "font-sabo-filled" : ""} inline-block`}>
         {isStrikethrough && (
           <span className="absolute inset-0 flex items-center overflow-hidden">
             <span className="w-full h-0.5 bg-gradient-purple"></span>

@@ -96,7 +96,7 @@ const LandingHeader = () => {
       <>
         <CustomLink href="/">
           <div className="pl-4 md:pl-16 md:pr-16 3xl:pl-28">
-            <h1 className="font-sabo text-neutral-11 normal-case text-[45px] relative">
+            <h1 className="font-sabo-filled text-neutral-11 normal-case text-[45px] relative">
               <span className="joke-3d" data-text="J">
                 J
               </span>
@@ -202,7 +202,7 @@ const LandingHeader = () => {
     <header className="flex items-center pl-16 3xl:pl-28 pr-[60px] mt-4 max-w-[1850px]">
       <CustomLink href="/">
         <div>
-          <h1 className="font-sabo text-neutral-11 normal-case text-[60px]">
+          <h1 className="font-sabo-filled text-neutral-11 normal-case text-[60px]">
             <span className="joke-3d" data-text="J">
               J
             </span>

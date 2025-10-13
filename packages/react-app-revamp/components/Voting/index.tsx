@@ -1,69 +1,72 @@
-import { toastInfo } from "@components/UI/Toast";
-import { chains, config } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
-import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import { useContestStore } from "@hooks/useContest/store";
-import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { switchChain } from "@wagmi/core";
-import { usePathname } from "next/navigation";
-import { FC, RefObject, useEffect, useRef, useState } from "react";
-import { useMediaQuery } from "react-responsive";
-import { useAccount, useBalance } from "wagmi";
-import VotingWidgetMobile from "./components/Mobile";
+import DialogMaxVotesAlert from "@components/_pages/DialogMaxVotesAlert";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useVoteBalance } from "@hooks/useVoteBalance";
+import { FC, RefObject, useEffect, useRef } from "react";
+import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 import VoteAmountInput from "./components/VoteAmountInput";
 import VoteButton from "./components/VoteButton";
-import VoteInfoSection from "./components/VoteInfoSection";
+import VoteInfoBlocks from "./components/VoteInfoBlocks";
 import VoteSlider from "./components/VoteSlider";
+import { useVoteExecution } from "./hooks/useVoteExecution";
+import { useVotingStore } from "./store";
+import VotingWidgetEmailSignup from "./components/EmailSignup";
+
+export enum VotingWidgetStyle {
+  classic = "classic",
+  colored = "colored",
+}
 
 interface VotingWidgetProps {
-  proposalId: string;
-  amountOfVotes: number;
-  onVote?: (amount: number, isUpvote: boolean) => void;
+  costToVote: string;
+  costToVoteRaw: bigint;
+  isLoading: boolean;
+  isVotingClosed: boolean;
+  isContestCanceled: boolean;
+  style?: VotingWidgetStyle;
+  onVote?: (amountOfVotes: number) => void;
   onAddFunds?: () => void;
 }
 
-export enum VotingButtonText {
-  ADD_FUNDS = "add funds to vote",
-  ADD_VOTES = "add votes to entry",
-}
-
-const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote, onAddFunds }) => {
-  const { charge } = useContestStore(state => state);
-  const { contestStatus } = useContestStatusStore(state => state);
-  const isVotingClosed = contestStatus === ContestStatus.VotingClosed;
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const asPath = usePathname();
-  const { chainId: accountChainId, address: userAddress } = useAccount();
-  const { chainName } = extractPathSegments(asPath ?? "");
-  const { isLoading } = useCastVotesStore(state => state);
-  const [isUpvote, setIsUpvote] = useState(true);
-  const [amount, setAmount] = useState(0);
-  const [sliderValue, setSliderValue] = useState(0);
-  const [isInvalid, setIsInvalid] = useState(false);
-  const [isFocused, setIsFocused] = useState(true);
-  const voteDisabled = isLoading || isInvalid || isNaN(amount) || amount === 0;
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
-  )?.[0]?.id;
-  const isCorrectNetwork = chainId === accountChainId;
-  const { contestState } = useContestStateStore(state => state);
-  const isContestCanceled = contestState === ContestStateEnum.Canceled;
+const VotingWidget: FC<VotingWidgetProps> = ({
+  costToVote,
+  costToVoteRaw,
+  isLoading,
+  isVotingClosed,
+  isContestCanceled,
+  style = VotingWidgetStyle.classic,
+  onVote,
+  onAddFunds,
+}) => {
+  const { address: userAddress, isConnected } = useAccount();
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const inputRef = useRef<HTMLInputElement>(null);
-  const [buttonText, setButtonText] = useState(VotingButtonText.ADD_VOTES);
-  const { data: balanceData } = useBalance({
-    address: userAddress,
-    chainId,
+  const { inputValue, sliderValue, setSliderValue, isInvalid, reset } = useVotingStore(
+    useShallow(state => ({
+      inputValue: state.inputValue,
+      sliderValue: state.sliderValue,
+      setSliderValue: state.setSliderValue,
+      isInvalid: state.isInvalid,
+      reset: state.reset,
+    })),
+  );
+  const {
+    balance,
+    insufficientBalance,
+    isLoading: isBalanceLoading,
+    isError: isBalanceError,
+  } = useVoteBalance({
+    chainId: contestConfig.chainId,
+    costToVote,
+    inputValue,
   });
-  const insufficientBalance = charge && balanceData ? balanceData.value < BigInt(charge.type.costToVote) : false;
-
-  useEffect(() => {
-    if (insufficientBalance) {
-      setButtonText(VotingButtonText.ADD_FUNDS);
-    } else {
-      setButtonText(VotingButtonText.ADD_VOTES);
-    }
-  }, [insufficientBalance]);
+  const { showMaxVotesDialog, handleVote, handleMaxVoteConfirm, handleMaxVoteCancel } = useVoteExecution({
+    maxBalance: balance?.formatted || "0",
+    costToVote,
+    isVotingClosed,
+    onVote,
+    onCancelMaxVotes: reset,
+  });
 
   useEffect(() => {
     if (inputRef.current) {
@@ -71,38 +74,11 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote
     }
   }, []);
 
-  const handleVoteTypeChange = (value: boolean) => {
-    setIsUpvote(value);
-  };
+  useEffect(() => {
+    reset();
+  }, [userAddress, reset]);
 
-  const handleSliderChange = (value: any) => {
-    const newAmount = Math.round((value / 100) * amountOfVotes);
-
-    setAmount(newAmount);
-    const sliderPercentage = Math.round((newAmount / amountOfVotes) * 100);
-    setSliderValue(sliderPercentage);
-  };
-
-  const handleAmountChange = (value: string) => {
-    const numericInput = parseInt(value, 10);
-
-    setAmount(numericInput);
-
-    const isInputInvalid = numericInput === 0 || numericInput > amountOfVotes;
-    setIsInvalid(isInputInvalid);
-
-    if (isInputInvalid) {
-      if (numericInput === 0) {
-        setSliderValue(0);
-        return;
-      } else if (numericInput > amountOfVotes) {
-        setSliderValue(100);
-      }
-    } else {
-      const sliderValue = Math.round((numericInput / amountOfVotes) * 100);
-      setSliderValue(sliderValue);
-    }
-  };
+  const voteDisabled = isBalanceLoading || isLoading || isInvalid || !inputValue || inputValue === "0";
 
   const handleKeyDownSlider = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
@@ -110,96 +86,59 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, onVote
     }
   };
 
-  const handleInput: React.ChangeEventHandler<HTMLInputElement> = event => {
-    event.target.value = event.target.value.replace(/[^0-9]*/g, "");
-  };
-
-  const handleKeyDownInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === ".") {
-      e.preventDefault();
-    }
+  const handleKeyDownInputWithVote = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleVote();
     }
   };
 
-  const handleFocusChange = (focused: boolean) => {
-    setIsFocused(focused);
-  };
-
-  const handleVote = async () => {
-    if (!isCorrectNetwork) {
-      await switchChain(config, { chainId });
-    }
-
-    if (isVotingClosed) {
-      toastInfo({
-        message: "Voting is closed for this contest",
-      });
-      return;
-    }
-
-    onVote?.(amount, isUpvote);
-  };
-
   if (isContestCanceled) return null;
 
-  if (isMobile) {
-    return (
-      <VotingWidgetMobile
-        amount={amount}
-        inputRef={inputRef}
-        sliderValue={sliderValue}
-        isUpvote={isUpvote}
-        handleVote={handleVote}
-        chainId={chainId}
-        charge={charge}
-        amountOfVotes={amountOfVotes}
-        balanceData={balanceData}
-        isFocused={isFocused}
-        setIsFocused={setIsFocused}
-        isInvalid={isInvalid}
-        voteDisabled={voteDisabled}
-        handleClick={handleVoteTypeChange}
-        handleSliderChange={handleSliderChange}
-        handleChange={handleAmountChange}
-        handleKeyDownSlider={handleKeyDownSlider}
-        handleKeyDownInput={handleKeyDownInput}
-        handleInput={handleInput}
-        onAddFunds={onAddFunds}
-        insufficientBalance={insufficientBalance}
-      />
-    );
-  }
-
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-6">
-            <VoteAmountInput
-              amount={amount}
-              amountOfVotes={amountOfVotes}
-              isInvalid={isInvalid}
-              isFocused={isFocused}
-              inputRef={inputRef as RefObject<HTMLInputElement>}
-              onAmountChange={handleAmountChange}
-              onFocusChange={handleFocusChange}
-              onKeyDown={handleKeyDownInput}
-              onInput={handleInput}
+    <div className="flex flex-col gap-6">
+      {showMaxVotesDialog ? (
+        <DialogMaxVotesAlert onConfirm={handleMaxVoteConfirm} onCancel={handleMaxVoteCancel} />
+      ) : (
+        <>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <VoteAmountInput
+                maxBalance={balance?.formatted || "0"}
+                symbol={contestConfig.chainNativeCurrencySymbol}
+                isConnected={isConnected}
+                style={style}
+                inputRef={inputRef as RefObject<HTMLInputElement>}
+                onKeyDown={handleKeyDownInputWithVote}
+              />
+              <VoteInfoBlocks
+                type="my-votes"
+                balance={isBalanceError ? "Error loading balance" : balance?.formatted || "0"}
+                symbol={contestConfig.chainNativeCurrencySymbol}
+                insufficientBalance={insufficientBalance}
+                isConnected={isConnected}
+                onAddFunds={onAddFunds}
+              />
+            </div>
+            <VoteSlider
+              value={sliderValue}
+              onChange={value => setSliderValue(value, balance?.formatted || "0", isConnected)}
+              onKeyDown={handleKeyDownSlider}
             />
-            <VoteSlider value={sliderValue} onChange={handleSliderChange} onKeyDown={handleKeyDownSlider} />
+            <div className="flex flex-col gap-2">
+              <VoteInfoBlocks type="charge-info" costToVote={costToVote} costToVoteRaw={costToVoteRaw} />
+              <VoteInfoBlocks type="total-votes" costToVote={costToVote} spendableBalance={balance?.formatted || "0"} />
+            </div>
           </div>
-          <VoteInfoSection
-            balanceData={balanceData}
-            amountOfVotes={amountOfVotes}
-            charge={charge}
-            voteAmount={amount}
+          <VotingWidgetEmailSignup />
+          <VoteButton
+            isDisabled={voteDisabled}
+            isInvalidBalance={insufficientBalance && isConnected}
+            isConnected={isConnected}
+            onVote={handleVote}
             onAddFunds={onAddFunds}
           />
-          <VoteButton buttonText={buttonText} isDisabled={voteDisabled} onVote={handleVote} onAddFunds={onAddFunds} />
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };

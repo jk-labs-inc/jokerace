@@ -1,60 +1,35 @@
-import { chains } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
-import { useContestStore } from "@hooks/useContest/store";
-import { MetadataField } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { compareVersions } from "compare-versions";
-import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { Abi } from "viem";
 import { useReadContract } from "wagmi";
-import { ParsedMetadataField, useMetadataStore } from "./store";
 import { useShallow } from "zustand/shallow";
+import { parseMetadataFieldsSchema } from "./helpers";
+import { useMetadataStore } from "./store";
 
 const METADATA_FIELDS_VERSION = "4.31";
 
-function parseMetadataFieldsSchema(schema: string): ParsedMetadataField[] {
-  try {
-    const parsedSchema = JSON.parse(schema) as Record<string, string | string[]>;
-
-    return Object.entries(parsedSchema).flatMap(([metadataType, prompt]) => {
-      if (Array.isArray(prompt)) {
-        return prompt.map(p => ({
-          metadataType: metadataType as MetadataField["metadataType"],
-          prompt: p,
-        }));
-      } else {
-        return [
-          {
-            metadataType: metadataType as MetadataField["metadataType"],
-            prompt: prompt,
-          },
-        ];
-      }
-    });
-  } catch (error) {
-    console.error("Error parsing metadataFieldsSchema:", error);
-    return [];
-  }
+interface UseMetadataFieldsParams {
+  address: `0x${string}`;
+  chainId: number;
+  abi: Abi;
+  version: string;
+  enabled?: boolean;
 }
 
-const useMetadataFields = () => {
+const useMetadataFields = ({ address, chainId, abi, version, enabled = true }: UseMetadataFieldsParams) => {
   const setFields = useMetadataStore(useShallow(state => state.setFields));
-  const pathname = usePathname();
-  const { address: contestAddress, chainName: contestChainName } = extractPathSegments(pathname ?? "");
-  const contestChainId = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.id;
-  const { contestAbi, version } = useContestStore(state => state);
 
   const {
     data: metadataSchema,
     isError: isMetadataError,
     isLoading: isMetadataLoading,
   } = useReadContract({
-    abi: contestAbi as Abi,
-    address: contestAddress as `0x${string}`,
-    chainId: contestChainId,
+    abi: abi,
+    address: address,
+    chainId: chainId,
     functionName: "metadataFieldsSchema",
     query: {
-      enabled: Boolean(compareVersions(version, METADATA_FIELDS_VERSION) >= 0),
+      enabled: !!version && Boolean(compareVersions(version, METADATA_FIELDS_VERSION) >= 0) && enabled,
     },
   });
 

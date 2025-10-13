@@ -6,7 +6,7 @@ const ContestExtensions = () => {
   const { enabledExtensions, isLoading, isError } = useExtensions();
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
-  if (isLoading) return <p className="loadingDots font-sabo text-[16px] text-neutral-14">loading extensions</p>;
+  if (isLoading) return <p className="loadingDots font-sabo-filled text-[16px] text-neutral-14">loading extensions</p>;
 
   if (isError)
     return (

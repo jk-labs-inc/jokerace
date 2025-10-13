@@ -1,31 +1,34 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { chains, config } from "@config/wagmi";
+import { config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { extractPathSegments } from "@helpers/extractPath";
-import { useContestStore } from "@hooks/useContest/store";
+import { getChainFromId } from "@helpers/getChainFromId";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { ContestStatus } from "@hooks/useContestStatus/store";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { compareVersions } from "compare-versions";
 import { saveUpdatedProposalsStatusToAnalyticsV3 } from "lib/analytics/participants";
-import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 import { useDeleteProposalStore } from "./store";
-import { ContestStatus } from "@hooks/useContestStatus/store";
-import { compareVersions } from "compare-versions";
 
 export const ENTRANT_CAN_DELETE_VERSION = "5.3";
 
 export function useDeleteProposal() {
-  const { contestAbi: abi, version } = useContestStore(state => state);
+  const { abi, version, contestConfig } = useContestConfigStore(
+    useShallow(state => ({
+      contestConfig: state.contestConfig,
+      abi: state.contestConfig.abi,
+      version: state.contestConfig.version,
+    })),
+  );
   const { address: userAddress } = useAccount();
-  const asPath = usePathname();
-  const { address, chainName } = extractPathSegments(asPath ?? "");
-  const chain = chains.filter(chain => chain.name.toLowerCase() === chainName.toLowerCase())[0];
-  const contestChainId = chain.id;
-  const contestChainBlockExplorer = chain.blockExplorers?.default?.url;
+  const chain = getChainFromId(contestConfig.chainId);
+  const contestChainBlockExplorer = chain?.blockExplorers?.default?.url;
   const { removeProposal } = useProposal();
   const { submissionsCount, setSubmissionsCount } = useProposalStore(state => state);
   const {
@@ -52,9 +55,9 @@ export function useDeleteProposal() {
     setTransactionData(null);
 
     const contractConfig = {
-      address: address as `0x${string}`,
+      address: contestConfig.address as `0x${string}`,
       abi: abi ? abi : (DeployedContestContract.abi as Abi),
-      chainId: contestChainId,
+      chainId: contestConfig.chainId,
     };
 
     if (!contractConfig.abi) return;
@@ -71,20 +74,25 @@ export function useDeleteProposal() {
       });
 
       const receipt = await waitForTransactionReceipt(config, {
-        chainId: contestChainId,
+        chainId: contestConfig.chainId,
         hash: hash,
       });
 
       setTransactionData({
         hash: receipt.transactionHash,
-        chainId: contestChainId,
+        chainId: contestConfig.chainId,
         transactionHref: `${contestChainBlockExplorer}/tx/${hash}`,
       });
 
       try {
         if (!userAddress) return;
 
-        await saveUpdatedProposalsStatusToAnalyticsV3(userAddress, address, chainName, proposalIds);
+        await saveUpdatedProposalsStatusToAnalyticsV3(
+          userAddress,
+          contestConfig.address,
+          contestConfig.chainName,
+          proposalIds,
+        );
       } catch (error: any) {
         console.error("Error saving updated proposals status to analytics", error.message);
       }

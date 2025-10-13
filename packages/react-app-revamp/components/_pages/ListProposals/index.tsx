@@ -1,31 +1,26 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
-import { chains, config } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
+import { config } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
-import useProposal, { PROPOSALS_PER_PAGE } from "@hooks/useProposal";
+import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { switchChain } from "@wagmi/core";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
+import { useDescriptionExpansionStore } from "../Contest/components/Prompt/components/Page/components/Layout/V3/store";
 import { verifyEntryPreviewPrompt } from "../DialogModalSendProposal/utils";
 import ListProposalsContainer from "./container";
-import { useDescriptionExpansionStore } from "../Contest/components/Prompt/components/Page/components/Layout/V3/store";
 import ListProposalsLoader from "./loader";
 import ListProposalsSkeleton from "./skeleton";
 
 export const ListProposals = () => {
-  const { address, chainId: userChainId } = useAccount();
-  const asPath = usePathname();
-  const { address: contestAddress, chainName: contestChainName } = extractPathSegments(asPath);
-  const contestChainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase() === contestChainName.toLowerCase(),
-  )?.[0]?.id;
-
+  const { chainId: userChainId } = useAccount();
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { fetchProposalsPage } = useProposal();
   const { deleteProposal, isLoading: isDeleteInProcess, isSuccess: isDeleteSuccess } = useDeleteProposal();
   const {
@@ -38,14 +33,12 @@ export const ListProposals = () => {
     totalPagesPaginationProposals,
     listProposalsData,
   } = useProposalStore(state => state);
-  const { contestAuthorEthereumAddress, contestAbi: abi, version } = useContestStore(state => state);
+  const { contestAuthorEthereumAddress } = useContestStore(state => state);
   const { expansionKey } = useDescriptionExpansionStore(state => state);
   const [deletingProposalIds, setDeletingProposalIds] = useState<string[]>([]);
   const [selectedProposalIds, setSelectedProposalIds] = useState<string[]>([]);
   const showDeleteButton = selectedProposalIds.length > 0 && !isDeleteInProcess;
-  const remainingProposalsToLoad = submissionsCount - listProposalsData.length;
-  const skeletonRemainingLoaderCount = Math.min(remainingProposalsToLoad, PROPOSALS_PER_PAGE);
-  const isUserOnCorrectChain = contestChainId === userChainId;
+  const isUserOnCorrectChain = contestConfig.chainId === userChainId;
   const { fields: metadataFieldsConfig } = useMetadataStore(state => state);
   const { enabledPreview } =
     metadataFieldsConfig.length > 0
@@ -57,11 +50,11 @@ export const ListProposals = () => {
   const handleLoadMore = () => {
     fetchProposalsPage(
       {
-        chainId: contestChainId,
-        address: contestAddress as `0x${string}`,
-        abi,
+        chainId: contestConfig.chainId,
+        address: contestConfig.address as `0x${string}`,
+        abi: contestConfig.abi,
       },
-      version,
+      contestConfig.version,
       currentPagePaginationProposals + 1,
       indexPaginationProposals[currentPagePaginationProposals + 1],
       totalPagesPaginationProposals,
@@ -81,7 +74,7 @@ export const ListProposals = () => {
     setDeletingProposalIds(selectedProposalIds);
 
     if (!isUserOnCorrectChain) {
-      await switchChain(config, { chainId: contestChainId });
+      await switchChain(config, { chainId: contestConfig.chainId });
     }
 
     await deleteProposal(selectedProposalIds);
@@ -137,7 +130,9 @@ export const ListProposals = () => {
                 rank: proposal.rank,
                 isTied: proposal.isTied,
                 commentsCount: proposal.commentsCount,
-                metadataFields: proposal.metadataFields,
+                // TODO: check if this is correct (it is, but we need to fix the type, we can do this afterwards)
+                // @ts-ignore
+                metadataFields: proposal.metadataFields ?? [],
               }}
               enabledPreview={enabledPreview}
               selectedProposalIds={selectedProposalIds}

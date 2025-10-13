@@ -3,7 +3,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { v4 as uuidV4 } from "uuid";
-import { useShallow } from "zustand/react/shallow";
+import { useShallow } from "zustand/shallow";
 import { useFundPoolStore } from "../../store";
 import { generateNativeToken } from "../../utils";
 import TokenWidget from "./components";

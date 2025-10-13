@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { FC } from "react";
 import ProposalStatisticsTotalVotesCast from "./components/TotalVotesCast";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
+import { useShallow } from "zustand/shallow";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 
 interface ProposalStatisticsPanelVotingOpenOrClosedProps {
   submissionsCount: number;
@@ -15,7 +17,7 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
   submissionsCount,
 }) => {
   const asPath = usePathname();
-  const { version } = useContestStore(state => state);
+  const version = useContestConfigStore(useShallow(state => state.contestConfig.version));
   const { address, chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,

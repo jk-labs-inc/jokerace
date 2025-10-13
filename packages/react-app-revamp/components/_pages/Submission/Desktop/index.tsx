@@ -1,55 +1,27 @@
-import DialogModalProposal from "@components/_pages/DialogModalProposal";
-import { ProposalData } from "lib/proposal";
-import { FC } from "react";
+import SubmissionPageDesktopBody from "./components/Body";
+import SubmissionPageDesktopHeader from "./components/Header";
+import SubmissionPageDesktopVotingArea from "./components/VotingArea";
+import SubmissionPageDesktopVotingAreaTimer from "./components/VotingArea/components/Timer";
 
-interface SubmissionPageDesktopLayoutProps {
-  contestInfo: {
-    address: string;
-    chain: string;
-    chainId: number;
-    version: string;
-  };
-  proposalId: string;
-  prompt: string;
-  proposalData: ProposalData | null;
-  isProposalLoading: boolean;
-  isProposalError: boolean;
-  onClose?: () => void;
-  onVote?: (amount: number) => void;
-  onPreviousEntry?: () => void;
-  onNextEntry?: () => void;
-  onConnectWallet?: () => void;
-}
-
-const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
-  contestInfo,
-  proposalId,
-  prompt,
-  proposalData,
-  isProposalLoading,
-  isProposalError,
-  onClose,
-  onVote,
-  onPreviousEntry,
-  onNextEntry,
-  onConnectWallet,
-}) => {
+const SubmissionPageDesktopLayout = () => {
   return (
-    <DialogModalProposal
-      contestInfo={contestInfo}
-      proposalId={proposalId}
-      prompt={prompt}
-      isOpen={true}
-      proposalData={proposalData}
-      isProposalLoading={isProposalLoading}
-      isProposalError={isProposalError}
-      onClose={onClose}
-      onVote={onVote}
-      onConnectWallet={onConnectWallet}
-      onNextEntry={onNextEntry}
-      onPreviousEntry={onPreviousEntry}
-      setIsOpen={onClose}
-    />
+    <div className="px-20 mt-8 animate-reveal">
+      <div className="grid grid-cols-[50%_50%] xl:grid-cols-[60%_40%] gap-x-4 gap-y-4 items-center">
+        <div className="min-w-0">
+          <SubmissionPageDesktopHeader />
+        </div>
+        <div className="min-w-0">
+          <SubmissionPageDesktopVotingAreaTimer />
+        </div>
+
+        <div className="min-w-0 self-stretch">
+          <SubmissionPageDesktopBody />
+        </div>
+        <div className="min-w-0 self-stretch">
+          <SubmissionPageDesktopVotingArea />
+        </div>
+      </div>
+    </div>
   );
 };
 

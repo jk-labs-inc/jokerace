@@ -1,13 +1,15 @@
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { FC, useState } from "react";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
+import useProposalIdStore from "@hooks/useProposalId/store";
+import { useShallow } from "zustand/shallow";
 
 interface SubmissionPageMobileVotersListProps {
-  proposalId: string;
   addressesVoted: string[];
 }
 
-const SubmissionPageMobileVotersList: FC<SubmissionPageMobileVotersListProps> = ({ proposalId, addressesVoted }) => {
+const SubmissionPageMobileVotersList: FC<SubmissionPageMobileVotersListProps> = ({ addressesVoted }) => {
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const [isExpanded, setIsExpanded] = useState(true);
 
   const handleToggle = () => {
@@ -15,7 +17,7 @@ const SubmissionPageMobileVotersList: FC<SubmissionPageMobileVotersListProps> = 
   };
 
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col max-h-48 overflow-y-auto">
       <div className="flex flex-col gap-4">
         <div
           className="flex items-center gap-4 cursor-pointer"

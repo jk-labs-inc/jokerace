@@ -4,7 +4,7 @@ import { PriceCurveType } from "@hooks/useDeployContest/types";
 import { calculateExponentialMultiple } from "lib/priceCurve";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useShallow } from "zustand/react/shallow";
+import { useShallow } from "zustand/shallow";
 import { validateCostToVote, validateStartAndEndPrice } from "../../../../../../validation";
 
 interface ExponentialPricingOptionProps {

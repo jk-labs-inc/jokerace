@@ -1,15 +1,21 @@
-import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { compareVersions } from "compare-versions";
 import { useAccount, useReadContract } from "wagmi";
+import { useShallow } from "zustand/shallow";
 
 export const useFetchUserVotesOnProposal = (contestAddress: string, proposalId: string) => {
-  const { contestAbi, version } = useContestStore(state => state);
+  const { abi, version } = useContestConfigStore(
+    useShallow(state => ({
+      abi: state.contestConfig.abi,
+      version: state.contestConfig.version,
+    })),
+  );
   const { address, chainId } = useAccount();
   const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
 
   const currentUserVotesOnProposal = useReadContract({
     address: contestAddress as `0x${string}`,
-    abi: contestAbi,
+    abi,
     chainId: chainId,
     functionName: "proposalAddressVotes",
     args: [proposalId, address],
@@ -25,7 +31,7 @@ export const useFetchUserVotesOnProposal = (contestAddress: string, proposalId: 
           return Number(currentUserVotesOnProposal.toString());
         }
       },
-      enabled: !!contestAbi && !!proposalId && !!address,
+      enabled: !!abi && !!proposalId && !!address,
     },
   });
 

@@ -7,7 +7,7 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { useUserStore } from "@hooks/useUser/store";
+import { useUserStore } from "@hooks/useUserSubmitQualification/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";

@@ -5,15 +5,17 @@ import useProfileData from "@hooks/useProfileData";
 import { useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import { Avatar } from "../Avatar";
-import CustomLink from "../Link";
-import SendFundsButton from "./componentts/SendFundsButton";
+import SendFundsButton from "./components/SendFundsButton";
 import { erc20ChainDropdownOptions } from "@helpers/tokens";
+import { SIZES } from "./constants/sizes";
+import { UserProfileName } from "../UserProfileName";
+import { UserProfileSocials } from "../UserProfileSocials";
 
 interface UserProfileDisplayProps {
   ethereumAddress: string;
   shortenOnFallback: boolean;
   textColor?: string;
-  size?: "extraSmall" | "small" | "medium" | "large";
+  size?: "extraSmall" | "compact" | "small" | "medium" | "large";
   textualVersion?: boolean;
   avatarVersion?: boolean;
   includeSocials?: boolean;
@@ -21,24 +23,7 @@ interface UserProfileDisplayProps {
   onSendFundsClick?: () => void;
 }
 
-export const SIZES = {
-  extraSmall: {
-    avatarSizeClass: "w-8 h-8",
-    textSizeClass: "text-[12px]",
-  },
-  small: {
-    avatarSizeClass: "w-8 h-8",
-    textSizeClass: "text-[16px]",
-  },
-  medium: {
-    avatarSizeClass: "w-14 h-14",
-    textSizeClass: "text-[18px] font-sabo",
-  },
-  large: {
-    avatarSizeClass: "w-[100px] h-[100px]",
-    textSizeClass: "text-[24px] font-sabo",
-  },
-};
+export { SIZES };
 
 const UserProfileDisplay = ({
   textualVersion,
@@ -64,29 +49,6 @@ const UserProfileDisplay = ({
     return erc20ChainDropdownOptions.some(option => option.value.toLowerCase() === chain?.name.toLowerCase());
   }, [chain]);
 
-  if (textualVersion) {
-    return (
-      <CustomLink
-        className={`text-[16px] font-bold ${textColor || "text-neutral-11"}`}
-        target="_blank"
-        href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
-      >
-        by {profileName}
-      </CustomLink>
-    );
-  }
-
-  if (avatarVersion) {
-    return (
-      <CustomLink
-        href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
-        className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}
-      >
-        <Avatar src={profileAvatar} size={size} />
-      </CustomLink>
-    );
-  }
-
   const copyToClipboard = () => {
     navigator.clipboard.writeText(ethereumAddress);
     setIsAddressCopied(true);
@@ -95,28 +57,52 @@ const UserProfileDisplay = ({
     }, 1000);
   };
 
+  if (textualVersion) {
+    return (
+      <UserProfileName
+        ethereumAddress={ethereumAddress}
+        profileName={profileName}
+        size={size}
+        textColor={textColor}
+        showBy={true}
+        target="_blank"
+      />
+    );
+  }
+
+  if (avatarVersion) {
+    return (
+      <Avatar
+        src={profileAvatar}
+        size={size}
+        asLink={true}
+        href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
+      />
+    );
+  }
+
   return (
     <div
       className={`flex ${size === "large" ? "gap-6" : size === "medium" ? "gap-4" : "gap-2"} items-center ${
         textColor || "text-neutral-11"
       } font-bold`}
     >
-      <div className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}>
-        <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={profileAvatar} alt="avatar" />
-      </div>
+      <Avatar src={profileAvatar} size={size} />
+
       {isLoading ? (
         <p className={`${textSizeClass} animate-flicker-infinite`}>Loading profile data</p>
       ) : (
         <div className="animate-reveal flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <a
-              className={`no-underline ${textSizeClass} ${textColor || "text-neutral-11"} font-bold`}
+            <UserProfileName
+              ethereumAddress={ethereumAddress}
+              profileName={profileName}
+              size={size}
+              textColor={textColor}
+              asLink={!includeSocials}
               target="_blank"
-              rel="noopener noreferrer"
-              href={includeSocials ? undefined : `${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
-            >
-              {profileName}
-            </a>
+            />
+
             {isAddressCopied ? (
               <CheckCircleIcon className="w-4 h-4 text-positive-11" />
             ) : (
@@ -127,23 +113,8 @@ const UserProfileDisplay = ({
           </div>
 
           <div className="flex items-center gap-4">
-            {includeSocials ? (
-              <div className="flex gap-2 items-center">
-                <a href={socials?.etherscan} target="_blank">
-                  <div className="w-6 h-6 flex justify-center items-center overflow-hidden rounded-full">
-                    <img className="object-cover" src="/etherscan.svg" alt="Etherscan" />
-                  </div>
-                </a>
+            {includeSocials && socials ? <UserProfileSocials socials={socials} /> : null}
 
-                {socials?.cluster ? (
-                  <a href={socials.cluster} target="_blank">
-                    <div className="w-6 h-6 flex justify-center items-center overflow-hidden rounded-full">
-                      <img className="object-cover" src="/socials/cluster.png" alt="Cluster" />
-                    </div>
-                  </a>
-                ) : null}
-              </div>
-            ) : null}
             {includeSendFunds &&
             isConnected &&
             isChainSupportedForSendFunds &&

@@ -1,0 +1,26 @@
+import { Abi } from "viem";
+
+export interface UseProposalVotesAndRankParams {
+  contestAddress: string;
+  proposalId: string;
+  chainId: number;
+  abi: Abi;
+  version: string;
+  enabled?: boolean;
+}
+
+export interface ProposalVotesAndRankResult {
+  votes: number;
+  rank: number;
+  isTied: boolean;
+  isLoading: boolean;
+  isError: boolean;
+  isRefetching: boolean;
+  error: any;
+  refetch: () => void;
+}
+
+export interface MappedProposal {
+  id: string;
+  votes: number;
+}

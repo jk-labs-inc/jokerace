@@ -1,11 +1,11 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
-import { chains, config } from "@config/wagmi";
+import { config } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
-import { extractPathSegments } from "@helpers/extractPath";
 import { getProposalId } from "@helpers/getProposalId";
 import { generateEntryPreviewHTML, generateFieldInputsHTML, processFieldInputs } from "@helpers/metadata";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
@@ -13,11 +13,10 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
-import { useUserStore } from "@hooks/useUser/store";
+import { useUserStore } from "@hooks/useUserSubmitQualification/store";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
-import { usePathname } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
@@ -55,12 +54,10 @@ interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsP
 
 export function useSubmitProposal() {
   const { address: userAddress, chain } = useAccount();
-  const asPath = usePathname();
-  const { chainName, address } = extractPathSegments(asPath ?? "");
-  const chainId = chains.filter(chain => chain.name.toLowerCase() === chainName.toLowerCase())[0]?.id;
+  const { contestConfig } = useContestConfigStore(state => state);
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
-  const { charge, contestAbi: abi, version, rewardsModuleAddress } = useContestStore(state => state);
+  const { charge, rewardsModuleAddress } = useContestStore(state => state);
   const { data: rewards } = useRewardsModule();
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
@@ -73,7 +70,7 @@ export function useSubmitProposal() {
   const { refetch: refetchTotalRewards } = useTotalRewards({
     rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
     rewardsModuleAbi: rewards?.abi,
-    chainId,
+    chainId: contestConfig.chainId,
   });
 
   const calculateChargeAmount = () => {
@@ -82,9 +79,9 @@ export function useSubmitProposal() {
 
   const getContractConfig = () => {
     return {
-      address: address as `0x${string}`,
-      abi: abi,
-      chainId: chainId,
+      address: contestConfig.address as `0x${string}`,
+      abi: contestConfig.abi,
+      chainId: contestConfig.chainId,
     };
   };
 
@@ -134,7 +131,7 @@ export function useSubmitProposal() {
         hash = await writeContract(config, request);
 
         const receipt = await waitForTransactionReceipt(config, {
-          chainId: chainId,
+          chainId: contestConfig.chainId,
           hash: hash,
         });
 
@@ -145,15 +142,15 @@ export function useSubmitProposal() {
         const proposalId = await getProposalId(proposalCore, contractConfig);
 
         setTransactionData({
-          chainId: chainId,
+          chainId: contestConfig.chainId,
           hash: receipt.transactionHash,
           transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${hash}`,
         });
 
         await performAnalytics({
-          address,
+          address: contestConfig.address,
           userAddress,
-          chainName,
+          chainName: contestConfig.chainName,
           proposalId,
           charge,
           isEarningsTowardsRewards,
@@ -163,7 +160,7 @@ export function useSubmitProposal() {
           token_address: null,
         });
 
-        await fetchSingleProposal(getContractConfig(), version, proposalId);
+        await fetchSingleProposal(getContractConfig(), contestConfig.version, proposalId);
 
         setIsLoading(false);
         setIsSuccess(true);

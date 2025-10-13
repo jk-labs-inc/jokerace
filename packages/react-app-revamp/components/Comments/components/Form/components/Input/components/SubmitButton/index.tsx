@@ -32,8 +32,8 @@ const CommentFormInputSubmitButton: FC<CommentFormInputSubmitButtonProps> = ({
       }`}
       src="/comments/send.svg"
       alt="send"
-      width={32}
-      height={32}
+      width={24}
+      height={24}
       onClick={onSendFromMobile}
     />
   ) : (
@@ -43,8 +43,8 @@ const CommentFormInputSubmitButton: FC<CommentFormInputSubmitButtonProps> = ({
       }`}
       src="/comments/send.svg"
       alt="send"
-      width={32}
-      height={32}
+      width={24}
+      height={24}
       onClick={onSend}
     />
   );

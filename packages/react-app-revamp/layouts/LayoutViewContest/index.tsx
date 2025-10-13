@@ -14,16 +14,17 @@ import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
-import { chains } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
 import { ContractConfig, useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useContestStatusTimer } from "@hooks/useContestStatusTimer";
-import useUser from "@hooks/useUser";
+import useUser from "@hooks/useUserSubmitQualification";
+import { VOTE_AND_EARN_VERSION } from "@hooks/useUserSubmitQualification/utils";
+import { compareVersions } from "compare-versions";
 import { usePathname } from "next/navigation";
 import { useUrl } from "nextjs-current-url";
 import { ReactNode, useEffect, useMemo, useState } from "react";
@@ -31,17 +32,14 @@ import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import LayoutViewContestError from "./components/Error";
-import { compareVersions } from "compare-versions";
-import { VOTE_AND_EARN_VERSION } from "@hooks/useUser/utils";
 
-const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
+const LayoutViewContest = () => {
   const pathname = usePathname();
   const url = useUrl();
-  const { address: accountAddress, connector: activeConnector } = useAccount();
-  const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(pathname ?? "");
-  const chainId = chains.filter(chain => chain.name.toLowerCase() === chainNameFromUrl.toLowerCase())[0]?.id;
+  const { address: accountAddress } = useAccount();
+  const { contestConfig } = useContestConfigStore(state => state);
   const { showRewards, setShowRewards } = useShowRewardsStore(useShallow(state => state));
-  const { isLoading, address, fetchContestInfo, isSuccess, error, chainName } = useContest();
+  const { isLoading, fetchContestInfo, isSuccess, error } = useContest();
   const {
     submissionsOpen,
     votesClose,
@@ -49,13 +47,11 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     contestAuthorEthereumAddress,
     contestName,
     isReadOnly,
-    contestAbi,
     contestPrompt,
     canEditTitleAndDescription,
-    version,
   } = useContestStore(state => state);
   const { accountChanged, resetAccountChanged } = useAccountChange();
-  const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
+  const { checkIfCurrentUserQualifyToSubmit } = useUser();
   const { setContestStatus } = useContestStatusStore(state => state);
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -81,28 +77,31 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   }, [contestStatus, setContestStatus]);
 
   useEffect(() => {
-    if (isLoading || !isSuccess || !accountChanged || compareVersions(version, VOTE_AND_EARN_VERSION) <= 0) return;
+    if (
+      isLoading ||
+      !isSuccess ||
+      !accountChanged ||
+      compareVersions(contestConfig.version, VOTE_AND_EARN_VERSION) <= 0
+    )
+      return;
 
     const fetchUserData = async () => {
       const contractConfig: ContractConfig = {
-        address: address as `0x${string}`,
-        abi: contestAbi,
-        chainId: chainId,
+        address: contestConfig.address as `0x${string}`,
+        abi: contestConfig.abi,
+        chainId: contestConfig.chainId,
       };
-      await Promise.all([
-        checkIfCurrentUserQualifyToSubmit(contractConfig),
-        checkIfCurrentUserQualifyToVote(contractConfig),
-      ]);
+      await checkIfCurrentUserQualifyToSubmit(contractConfig);
 
       resetAccountChanged();
     };
 
     fetchUserData();
-  }, [accountChanged, isLoading, isSuccess, version]);
+  }, [accountChanged, isLoading, isSuccess, contestConfig.version]);
 
   useEffect(() => {
     fetchContestInfo();
-  }, [chainNameFromUrl, addressFromUrl]);
+  }, [contestConfig.chainName, contestConfig.address]);
 
   useEffect(() => {
     if (showRewards) {
@@ -183,8 +182,8 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                       ) : null}
                       <ContestName
                         contestName={contestName}
-                        contestAddress={address}
-                        chainName={chainName}
+                        contestAddress={contestConfig.address}
+                        chainName={contestConfig.chainName}
                         contestPrompt={contestPrompt}
                         canEditTitle={canEditTitleAndDescription}
                       />
@@ -199,7 +198,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                           textualVersion={!isMobile}
                         />
 
-                        <ContestRewardsInfo version={version} />
+                        <ContestRewardsInfo version={contestConfig.version} />
                       </div>
 
                       <div
@@ -215,8 +214,6 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                       <ContestTabs tab={tab} onChange={tab => setTab(tab)} />
                     </div>
                     {renderTabs}
-
-                    {children}
                   </div>
                 </div>
               </>
