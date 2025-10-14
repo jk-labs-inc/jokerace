@@ -50,10 +50,10 @@ export const useVotingStore = create<VotingStore>((set, get) => ({
 
     const maxBalanceNum = parseFloat(maxBalance);
     const calculatedBalance = (value / 100) * maxBalanceNum;
-    const formattedBalance = formatBalance(calculatedBalance.toString());
+    const balanceString = calculatedBalance.toString();
 
     set({
-      inputValue: formattedBalance,
+      inputValue: balanceString,
       sliderValue: value,
       isInvalid: false,
     });
