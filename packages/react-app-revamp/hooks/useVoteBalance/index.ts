@@ -48,7 +48,8 @@ export const useVoteBalance = ({ chainId, costToVote, inputValue = "" }: UseVote
   const rawBalance = balance?.value || 0n;
   const totalGasCost = gasPrice ? gasPrice * BigInt(STANDARD_ANYONE_CAN_VOTE_GAS_LIMIT) : 0n;
   const spendableBalanceWei = rawBalance > totalGasCost ? rawBalance - totalGasCost : 0n;
-  const spendableBalance = formatBalance(formatUnits(spendableBalanceWei, chainCurrencyDecimals));
+  const spendableBalance = formatUnits(spendableBalanceWei, chainCurrencyDecimals);
+
   const spendableBalanceNum = parseFloat(spendableBalance);
 
   const inputBalanceNum = parseFloat(inputValue);
