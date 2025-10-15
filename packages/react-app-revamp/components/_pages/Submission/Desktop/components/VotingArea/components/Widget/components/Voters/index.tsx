@@ -2,7 +2,7 @@ import { ListProposalVotes } from "@components/_pages/ListProposalVotes";
 import GradientText from "@components/UI/GradientText";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import Image from "next/image";
-import { FC } from "react";
+import { FC, useRef, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import SubmissionPageDesktopVotingAreaWidgetVotersLoadingSkeleton from "./components/LoadingSkeleton";
 import NoVotersPlaceholder from "./components/NoVotersPlaceholder";
@@ -16,6 +16,8 @@ interface SubmissionPageDesktopVotingAreaWidgetVotersProps {
 const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotingAreaWidgetVotersProps> = ({
   proposalId,
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [maxHeight, setMaxHeight] = useState<number>(0);
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { addressesVoted, isLoadingAddressesVoted, isErrorAddressesVoted } = useAddressesVoted({
     contestAddress: contestConfig.address,
@@ -23,6 +25,20 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
     contestChainId: contestConfig.chainId,
     proposalId,
   });
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      const currentHeight = containerRef.current?.clientHeight ?? 0;
+
+      setMaxHeight(currentHeight);
+    });
+
+    resizeObserver.observe(containerRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, [addressesVoted]);
 
   if (isLoadingAddressesVoted) {
     return <SubmissionPageDesktopVotingAreaWidgetVotersLoadingSkeleton />;
@@ -41,7 +57,11 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
   const shouldShowPlaceholder = hasNoVoters;
 
   return (
-    <div className="w-full flex-1 min-h-0 max-h-[841px]">
+    <div
+      ref={containerRef}
+      className="w-full flex-1"
+      style={maxHeight ? { maxHeight: `${maxHeight}px` } : { height: "100%" }}
+    >
       <div className="bg-gradient-voting-area-purple rounded-4xl pl-8 pr-12 py-4 w-full h-full flex flex-col">
         <div className="flex flex-col gap-6 min-h-0 flex-1">
           <div className="flex items-baseline gap-2 flex-shrink-0 pr-6">
