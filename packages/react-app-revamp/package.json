@@ -22,7 +22,7 @@
     "@lifi/widget": "3.33.1",
     "@mysten/dapp-kit": "0.19.2",
     "@next/third-parties": "15.5.5",
-    "@rainbow-me/rainbowkit": "2.2.8",
+    "@rainbow-me/rainbowkit": "2.2.9",
     "@solana/wallet-adapter-react": "0.15.39",
     "@supabase/supabase-js": "2.75.0",
     "@tailwindcss/postcss": "4.1.14",
