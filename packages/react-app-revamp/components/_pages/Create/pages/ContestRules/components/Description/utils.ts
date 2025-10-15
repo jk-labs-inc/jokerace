@@ -57,17 +57,14 @@ export const generateDynamicSummary = (
 
   let result = template;
 
-  const endPrice =
-    isExponential && charge.type.costToVoteEndPrice ? charge.type.costToVoteEndPrice : charge.type.costToVote;
-
   const entryPriceText =
     charge.type.costToPropose === 0 ? "" : " for " + charge.type.costToPropose + " " + nativeCurrency;
 
   const placeholders = {
     "[entry price]": entryPriceText,
     "[voting price]": charge.type.costToVote + " " + nativeCurrency,
-    "[voting start price]": charge.type.costToVote + " " + nativeCurrency,
-    "[voting end price]": endPrice + " " + nativeCurrency,
+    "[voting start price]": charge.type.costToVoteStartPrice + " " + nativeCurrency,
+    "[voting end price]": charge.type.costToVoteEndPrice + " " + nativeCurrency,
     "[entry open date]": formatDate(submissionOpen),
     "[entry closing date]": formatDate(votingOpen),
     "[voting open date]": formatDate(votingOpen),
