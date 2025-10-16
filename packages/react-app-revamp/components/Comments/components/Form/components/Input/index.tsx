@@ -48,6 +48,7 @@ const commentEditorConfig = ({ content, placeholderText, onUpdate, isMobile }: C
       },
     },
     onUpdate: onUpdate,
+    immediatelyRender: false,
   };
 };
 

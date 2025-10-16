@@ -21,6 +21,7 @@ export const TipTapPreview = (props: any) => {
     },
     editable: false,
     content: content,
+    immediatelyRender: false,
   });
   return <EditorContent editor={previewEditor} />;
 };
@@ -44,10 +45,7 @@ const TipTapEditor = (props: TipTapEditorProps) => {
               <TipTapEditorControls editor={editor} />
             </div>
 
-            <EditorContent
-              className="flex flex-col grow min-h-[20em] max-h-[26em] overflow-y-auto"
-              editor={editor}
-            />
+            <EditorContent className="flex flex-col grow min-h-[20em] max-h-[26em] overflow-y-auto" editor={editor} />
           </div>
         </>
       )}
