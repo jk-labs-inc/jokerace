@@ -11,8 +11,17 @@ import { useAccount } from "wagmi";
 
 const CreateContestRulesDescription = () => {
   const { chainId } = useAccount();
-  const { prompt, setPrompt, contestType, charge, submissionOpen, votingOpen, votingClose, entryPreviewConfig, priceCurve } =
-    useDeployContestStore(state => state);
+  const {
+    prompt,
+    setPrompt,
+    contestType,
+    charge,
+    submissionOpen,
+    votingOpen,
+    votingClose,
+    entryPreviewConfig,
+    priceCurve,
+  } = useDeployContestStore(state => state);
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const [isEditorInitialized, setIsEditorInitialized] = useState(false);
@@ -41,6 +50,7 @@ const CreateContestRulesDescription = () => {
       },
     }),
     onFocus: () => setActiveEditor(editorSummarize),
+    immediatelyRender: false,
   });
 
   const editorEvaluateVoters = useEditor({
@@ -66,6 +76,7 @@ const CreateContestRulesDescription = () => {
       },
     }),
     onFocus: () => setActiveEditor(editorEvaluateVoters),
+    immediatelyRender: false,
   });
 
   const editorContactDetails = useEditor({
@@ -84,6 +95,7 @@ const CreateContestRulesDescription = () => {
       },
     }),
     onFocus: () => setActiveEditor(editorContactDetails),
+    immediatelyRender: false,
   });
 
   useEffect(() => {
@@ -122,7 +134,9 @@ const CreateContestRulesDescription = () => {
             </CreateGradientTitle>
             <div className="flex flex-col gap-2">
               <div
-                className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
+                className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${
+                  isMobile ? "" : "shadow-file-upload p-2"
+                }`}
               >
                 <EditorContent
                   editor={editorSummarize}
@@ -138,7 +152,9 @@ const CreateContestRulesDescription = () => {
 
             <div className="flex flex-col gap-2">
               <div
-                className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
+                className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${
+                  isMobile ? "" : "shadow-file-upload p-2"
+                }`}
               >
                 <EditorContent
                   editor={editorEvaluateVoters}
@@ -152,7 +168,9 @@ const CreateContestRulesDescription = () => {
               what's the best way for players to reach you?
             </CreateGradientTitle>
             <div
-              className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
+              className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${
+                isMobile ? "" : "shadow-file-upload p-2"
+              }`}
             >
               <EditorContent
                 editor={editorContactDetails}

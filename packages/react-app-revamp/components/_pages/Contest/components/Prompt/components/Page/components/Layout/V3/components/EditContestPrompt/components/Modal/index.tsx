@@ -48,6 +48,7 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
       },
     }),
     onFocus: () => setActiveEditor(editorSummarize),
+    immediatelyRender: false,
   });
 
   const editorEvaluateVoters = useEditor({
@@ -66,6 +67,7 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
       },
     }),
     onFocus: () => setActiveEditor(editorEvaluateVoters),
+    immediatelyRender: false,
   });
 
   const editorContactDetails = useEditor({
@@ -84,6 +86,7 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
       },
     }),
     onFocus: () => setActiveEditor(editorContactDetails),
+    immediatelyRender: false,
   });
 
   const onSavePrompt = () => {
@@ -139,7 +142,9 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
                     what’s the best way for players to reach you? <span className="font-normal">(recommended)</span>
                   </p>
                   <div
-                    className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
+                    className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${
+                      isMobile ? "" : "shadow-file-upload p-2"
+                    }`}
                   >
                     <EditorContent
                       editor={editorContactDetails}
@@ -151,7 +156,9 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
                   <p className="text-neutral-11 text-[20px] font-bold">summarize the contest, rewards, and voters:</p>
                   <div className="flex flex-col gap-2">
                     <div
-                      className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
+                      className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${
+                        isMobile ? "" : "shadow-file-upload p-2"
+                      }`}
                     >
                       <EditorContent
                         editor={editorSummarize}
@@ -166,7 +173,9 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
                   </p>
                   <div className="flex flex-col gap-2">
                     <div
-                      className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"}`}
+                      className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${
+                        isMobile ? "" : "shadow-file-upload p-2"
+                      }`}
                     >
                       <EditorContent
                         editor={editorEvaluateVoters}
