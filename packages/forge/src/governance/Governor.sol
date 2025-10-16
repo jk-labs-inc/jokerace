@@ -109,7 +109,7 @@ abstract contract Governor is GovernorSorting {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.5"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.6"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -150,9 +150,9 @@ abstract contract Governor is GovernorSorting {
     error IncorrectCostSent(uint256 msgValue, uint256 costToVote);
 
     error OnlyCreatorCanSubmit();
-    error ContestMustBeQueuedToPropose(ContestState currentState);
-    error ContestMustBeActiveToVote(ContestState currentState);
-    error ContestMustBeActiveToGetCurrentVotePrice(ContestState currentState);
+    error ContestMustBeQueuedToPropose();
+    error ContestMustBeActiveToVote();
+    error ContestMustBeActiveToGetCurrentVotePrice();
     error SenderSubmissionLimitReached(uint256 numAllowedProposalSubmissions);
     error ContestSubmissionLimitReached(uint256 maxProposalCount);
     error DuplicateSubmission(uint256 proposalId);
@@ -364,7 +364,7 @@ abstract contract Governor is GovernorSorting {
      * @dev Returns the current cost per vote.
      */
     function currentPricePerVote() public view returns (uint256) {
-        if (state() != ContestState.Active) revert ContestMustBeActiveToGetCurrentVotePrice(state());
+        if (state() != ContestState.Active) revert ContestMustBeActiveToGetCurrentVotePrice();
 
         if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Exponential) {
             uint256 currentInterval = (block.timestamp - (voteStart() + 1)) / PRICE_CURVE_UPDATE_INTERVAL; // voteStart is the last block that one can enter, so voting period is exclusive of it, hence the plus 1
@@ -434,7 +434,7 @@ abstract contract Governor is GovernorSorting {
     }
 
     function _castProposal(ProposalCore memory proposal) internal returns (uint256) {
-        if (state() != ContestState.Queued) revert ContestMustBeQueuedToPropose(state());
+        if (state() != ContestState.Queued) revert ContestMustBeQueuedToPropose();
         if (numSubmissions[msg.sender] == numAllowedProposalSubmissions) {
             revert SenderSubmissionLimitReached(numAllowedProposalSubmissions);
         }
@@ -520,7 +520,7 @@ abstract contract Governor is GovernorSorting {
      * Emits a {IGovernor-VoteCast} event.
      */
     function _castVote(uint256 proposalId, address account, uint256 numVotes) internal returns (uint256) {
-        if (state() != ContestState.Active) revert ContestMustBeActiveToVote(state());
+        if (state() != ContestState.Active) revert ContestMustBeActiveToVote();
         if (numVotes == 0) revert NeedAtLeastOneVoteToVote();
 
         _countVote(proposalId, account, numVotes);

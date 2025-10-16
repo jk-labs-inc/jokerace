@@ -54,6 +54,7 @@ import RmDeleteVotesUpdateContract from "@contracts/bytecodeAndAbi/Contest.6.2.r
 import DocsDeleteOnlyInEntryContract from "@contracts/bytecodeAndAbi/Contest.6.3.docsDeleteOnlyInEntry.sol/Contest.json";
 import RmUnusedErrorsContract from "@contracts/bytecodeAndAbi/Contest.6.4.rmUnusedErrors.sol/Contest.json";
 import OnlySetOfficialModuleOnceContract from "@contracts/bytecodeAndAbi/Contest.6.5.onlySetOfficialModuleOnce.sol/Contest.json";
+import FixStateErrorsContract from "@contracts/bytecodeAndAbi/Contest.6.6.fixStateErrors.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
 import { createTransport } from "@config/wagmi/transports";
@@ -79,7 +80,9 @@ export async function getContestContractVersion(address: string, chainId: number
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
     const defaultReturn = { abi: null, version: "unknown" };
-    if (version === "6.5") {
+    if (version === "6.6") {
+      return { abi: FixStateErrorsContract.abi, version };
+    } else if (version === "6.5") {
       return { abi: OnlySetOfficialModuleOnceContract.abi, version };
     } else if (version === "6.4") {
       return { abi: RmUnusedErrorsContract.abi, version };

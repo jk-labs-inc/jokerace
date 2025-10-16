@@ -109,6 +109,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       };
       saveSubmissionToLocalStorage("submissions", submissionCache);
     },
+    immediatelyRender: false,
   });
 
   const onSwitchNetwork = async () => {
