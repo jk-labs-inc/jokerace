@@ -2,14 +2,14 @@ import { ProcessedContest } from "lib/contests/types";
 import { FC } from "react";
 import Dot from "./components/Dot";
 import { useContestStatusTimer } from "./hooks/useContestStatusTimer";
+import { ContestStateType } from "./helpers";
 
 interface ContestStatusProps {
   contest: ProcessedContest;
-  isAnyoneCanSubmit?: boolean;
 }
 
-const ContestStatus: FC<ContestStatusProps> = ({ contest, isAnyoneCanSubmit = false }) => {
-  const contestState = useContestStatusTimer(contest, isAnyoneCanSubmit);
+const ContestStatus: FC<ContestStatusProps> = ({ contest }) => {
+  const contestState = useContestStatusTimer(contest);
 
   return (
     <div className="flex flex-col">
@@ -20,7 +20,7 @@ const ContestStatus: FC<ContestStatusProps> = ({ contest, isAnyoneCanSubmit = fa
       <div className="text-[16px] text-neutral-9">
         {contestState.timeLeft && (
           <div>
-            within <b>{contestState.timeLeft}</b>
+            {contestState.type === ContestStateType.VOTING ? "within" : "in"} <b>{contestState.timeLeft}</b>
           </div>
         )}
       </div>

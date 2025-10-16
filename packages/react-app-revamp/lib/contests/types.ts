@@ -14,7 +14,6 @@ export interface ContestReward {
 
 export interface BaseContestData {
   created_at: string;
-  start_at: string;
   end_at: string;
   address: string;
   author_address: string;
@@ -22,7 +21,6 @@ export interface BaseContestData {
   vote_start_at: string;
   featured: boolean;
   type: string;
-  anyone_can_submit: number;
 }
 
 export interface ProcessedContest extends BaseContestData {

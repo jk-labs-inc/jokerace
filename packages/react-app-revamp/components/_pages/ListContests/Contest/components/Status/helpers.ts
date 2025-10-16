@@ -1,7 +1,12 @@
 import { ProcessedContest } from "lib/contests/types";
 import moment from "moment";
 
-export type ContestStateType = "canceled" | "finished" | "voting" | "entry" | "upcoming";
+export enum ContestStateType {
+  CANCELED = "canceled",
+  FINISHED = "finished",
+  VOTING = "voting",
+  UPCOMING = "upcoming",
+}
 export type DotColor = "green" | "pink" | "purple" | "yellow";
 
 export interface ContestState {
@@ -36,10 +41,10 @@ export const formatDuration = (duration: moment.Duration): string => {
   return parts.length > 0 ? parts.join(" ") : "0s";
 };
 
-export const getContestState = (contest: ProcessedContest, isAnyoneCanSubmit: boolean = false): ContestState => {
+export const getContestState = (contest: ProcessedContest): ContestState => {
   if (contest.isCanceled) {
     return {
-      type: "canceled",
+      type: ContestStateType.CANCELED,
       text: "canceled",
       color: "pink",
       timeLeft: "",
@@ -47,25 +52,14 @@ export const getContestState = (contest: ProcessedContest, isAnyoneCanSubmit: bo
   }
 
   const now = moment();
-  const start = moment(contest.start_at);
   const voteStart = moment(contest.vote_start_at);
   const end = moment(contest.end_at);
 
   if (now.isAfter(end)) {
     return {
-      type: "finished",
+      type: ContestStateType.FINISHED,
       text: "finished",
       color: "purple",
-      timeLeft: "",
-    };
-  }
-
-  if (now.isBefore(start)) {
-    const duration = moment.duration(start.diff(now));
-    return {
-      type: "upcoming",
-      text: `opens in ${formatDuration(duration)}`,
-      color: "yellow",
       timeLeft: "",
     };
   }
@@ -73,9 +67,9 @@ export const getContestState = (contest: ProcessedContest, isAnyoneCanSubmit: bo
   if (now.isBefore(voteStart)) {
     const duration = moment.duration(voteStart.diff(now));
     return {
-      type: "entry",
-      text: isAnyoneCanSubmit ? "submit an entry" : "creator submit entries",
-      color: "green",
+      type: ContestStateType.UPCOMING,
+      text: "voting opens in",
+      color: "yellow",
       timeLeft: formatDuration(duration),
     };
   }
@@ -83,7 +77,7 @@ export const getContestState = (contest: ProcessedContest, isAnyoneCanSubmit: bo
   if (now.isBefore(end)) {
     const duration = moment.duration(end.diff(now));
     return {
-      type: "voting",
+      type: ContestStateType.VOTING,
       text: "vote on entries",
       color: "green",
       timeLeft: formatDuration(duration),
@@ -91,7 +85,7 @@ export const getContestState = (contest: ProcessedContest, isAnyoneCanSubmit: bo
   }
 
   return {
-    type: "finished",
+    type: ContestStateType.FINISHED,
     text: "finished",
     color: "purple",
     timeLeft: "",
