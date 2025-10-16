@@ -17,20 +17,13 @@ interface FeaturedContestCardProps {
 
 function getContestStatus(contest: ProcessedContest): { status: string; timeLeft: string } {
   const now = moment();
-  const start = moment(contest.start_at);
   const voteStart = moment(contest.vote_start_at);
   const end = moment(contest.end_at);
 
-  if (now.isBefore(start)) {
-    const duration = moment.duration(start.diff(now));
-    return {
-      status: "enter to win in",
-      timeLeft: formatDuration(duration),
-    };
-  } else if (now.isBefore(voteStart)) {
+  if (now.isBefore(voteStart)) {
     const duration = moment.duration(voteStart.diff(now));
     return {
-      status: "enter to win within",
+      status: "voting opens in",
       timeLeft: formatDuration(duration),
     };
   } else if (now.isBefore(end)) {
@@ -109,7 +102,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
   }, [rewardsToDisplay]);
 
   const { status, timeLeft } = contestStatus;
-  const isContestActive = status === "enter to win within" || status === "Voting closes in";
+  const isContestActive = status === "voting opens in" || status === "Voting closes in";
   const {
     profileAvatar,
     profileName,
@@ -121,9 +114,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
     const now = moment();
     let nextUpdate = moment(contestData.end_at);
 
-    if (contestData.start_at && now.isBefore(contestData.start_at)) {
-      nextUpdate = moment(contestData.start_at);
-    } else if (contestData.vote_start_at && now.isBefore(contestData.vote_start_at)) {
+    if (contestData.vote_start_at && now.isBefore(contestData.vote_start_at)) {
       nextUpdate = moment(contestData.vote_start_at);
     }
 
