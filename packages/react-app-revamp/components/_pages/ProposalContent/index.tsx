@@ -141,7 +141,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   return (
     <>
       {renderLayout()}
-      <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={setIsVotingModalOpen} proposal={proposal} />
+      <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={setIsVotingModalOpen} />
     </>
   );
 };
