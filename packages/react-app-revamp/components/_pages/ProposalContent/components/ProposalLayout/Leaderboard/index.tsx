@@ -32,6 +32,7 @@ interface ProposalLayoutLeaderboardProps {
   commentLink: string;
   allowDelete: boolean;
   selectedProposalIds: string[];
+  isHighlighted: boolean;
   handleVotingModalOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
 }
@@ -47,6 +48,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
   commentLink,
   allowDelete,
   selectedProposalIds,
+  isHighlighted,
   handleVotingModalOpen,
   toggleProposalSelection,
 }) => {
@@ -86,6 +88,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
         handleVotingModalOpen={handleVotingModalOpen}
         chainName={chainName}
         contestAddress={contestAddress}
+        isHighlighted={isHighlighted}
       />
     );
   }
@@ -99,7 +102,11 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
           toggleProposalSelection={toggleProposalSelection}
         />
       )}
-      <div className="w-full flex flex-col min-h-16 gap-6 bg-true-black shadow-entry-card px-8 py-6 rounded-2xl border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out">
+      <div
+        className={`w-full flex flex-col min-h-16 gap-6 bg-true-black shadow-entry-card px-8 py-6 rounded-2xl border transition-colors duration-300 ease-in-out ${
+          isHighlighted ? "border-secondary-14" : "border-transparent hover:border-primary-3"
+        }`}
+      >
         <div className={`flex gap-6 ${isContentHidden ? "items-center" : ""}`}>
           <div className={`${isContentHidden ? "" : "-mt-1"}`}>
             <ProposalLayoutLeaderboardRankOrPlaceholder proposal={proposal} contestStatus={contestStatus} />

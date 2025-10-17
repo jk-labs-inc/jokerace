@@ -14,8 +14,10 @@ const Drawer: FC<DrawerProps> = ({ isOpen, children, className, onClose }) => {
       <VaulDrawer.Portal>
         <VaulDrawer.Overlay className="fixed inset-0 bg-neutral-8/40 z-40" />
         <VaulDrawer.Content
-          className={`z-50 rounded-t-4xl border-t border-l border-r border-neutral-17 h-fit fixed bottom-0 left-0 right-0 outline-none ${className}`}
+          title="Drawer"
+          className={`z-50 rounded-t-[40px] border-t border-l border-r border-neutral-17 h-fit fixed bottom-0 left-0 right-0 outline-none ${className}`}
         >
+          <VaulDrawer.Title hidden>Drawer</VaulDrawer.Title>
           <VaulDrawer.Handle className="!mx-auto !w-12 !h-1.5 !flex-shrink-0 !rounded-full !bg-neutral-9 !my-4" />
           {children}
         </VaulDrawer.Content>

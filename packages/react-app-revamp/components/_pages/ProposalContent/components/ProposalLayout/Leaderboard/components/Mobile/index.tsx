@@ -23,6 +23,7 @@ interface ProposalLayoutLeaderboardMobileProps {
   selectedProposalIds: string[];
   chainName: string;
   contestAddress: string;
+  isHighlighted: boolean;
   toggleProposalSelection?: (proposalId: string) => void;
   handleVotingModalOpen?: () => void;
 }
@@ -38,6 +39,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
   handleVotingModalOpen,
   chainName,
   contestAddress,
+  isHighlighted,
 }) => {
   const router = useRouter();
   const entryTitle = proposal.metadataFields.stringArray[0];
@@ -66,7 +68,9 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
   return (
     <CustomLink
       href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
-      className="w-full flex flex-col min-h-20 gap-4 bg-true-black shadow-entry-card p-4 rounded-2xl border border-transparent"
+      className={`w-full flex flex-col min-h-20 gap-4 bg-true-black shadow-entry-card p-4 rounded-2xl border transition-colors duration-300 ease-in-out ${
+        isHighlighted ? "border-secondary-14" : "border-transparent"
+      }`}
     >
       <div className="flex items-center gap-6">
         <ProposalLayoutLeaderboardRankOrPlaceholder proposal={proposal} contestStatus={contestStatus} />

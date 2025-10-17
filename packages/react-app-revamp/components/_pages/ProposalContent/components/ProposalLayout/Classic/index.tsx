@@ -26,6 +26,7 @@ interface ProposalLayoutClassicProps {
   commentLink: string;
   allowDelete: boolean;
   selectedProposalIds: string[];
+  isHighlighted: boolean;
   handleVotingModalOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
 }
@@ -40,6 +41,7 @@ const ProposalLayoutClassic = ({
   commentLink,
   allowDelete,
   selectedProposalIds,
+  isHighlighted,
   handleVotingModalOpen,
   toggleProposalSelection,
 }: ProposalLayoutClassicProps) => {
@@ -72,7 +74,9 @@ const ProposalLayoutClassic = ({
         <div className="md:mx-8 flex flex-col gap-4">
           <div className="flex w-full">
             <CustomLink
-              className="inline-block p-4 rounded-[8px] bg-primary-1 border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out overflow-hidden"
+              className={`inline-block p-4 rounded-[8px] bg-primary-1 border transition-colors duration-300 ease-in-out overflow-hidden ${
+                isHighlighted ? "border-secondary-14" : "border-transparent hover:border-neutral-9"
+              }`}
               href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
               shallow
               scroll={false}

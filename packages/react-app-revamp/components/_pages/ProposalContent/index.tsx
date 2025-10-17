@@ -68,8 +68,14 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const { votesOpen } = useContestStore(state => state);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
-  const setPickProposal = useCastVotesStore(useShallow(state => state.setPickedProposal));
+  const { setPickedProposal, pickedProposal } = useCastVotesStore(
+    useShallow(state => ({
+      setPickedProposal: state.setPickedProposal,
+      pickedProposal: state.pickedProposal,
+    })),
+  );
   const formattedVotingOpen = moment(votesOpen);
+  const isHighlighted = isVotingModalOpen && pickedProposal === proposal.id;
   const commentLink = {
     pathname: `/contest/${chainName}/${contestAddress}/submission/${proposal.id}`,
     query: { comments: "comments" },
@@ -99,8 +105,15 @@ const ProposalContent: FC<ProposalContentProps> = ({
       return;
     }
 
-    setPickProposal(proposal.id);
+    setPickedProposal(proposal.id);
     setIsVotingModalOpen(true);
+  };
+
+  const handleVotingModalClose = (isOpen: boolean) => {
+    setIsVotingModalOpen(isOpen);
+    if (!isOpen) {
+      setPickedProposal(null);
+    }
   };
 
   const props = {
@@ -122,6 +135,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
     formattedVotingOpen,
     enabledPreview,
     commentLink: commentLink.pathname,
+    isHighlighted,
   };
 
   const renderLayout = () => {
@@ -141,7 +155,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   return (
     <>
       {renderLayout()}
-      <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={setIsVotingModalOpen} />
+      <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={handleVotingModalClose} />
     </>
   );
 };

@@ -26,6 +26,7 @@ interface ProposalLayoutTweetProps {
   commentLink: string;
   allowDelete: boolean;
   selectedProposalIds: string[];
+  isHighlighted: boolean;
   handleVotingModalOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
 }
@@ -46,6 +47,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
   commentLink,
   allowDelete,
   selectedProposalIds,
+  isHighlighted,
   handleVotingModalOpen,
   toggleProposalSelection,
 }) => {
@@ -78,7 +80,9 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
     <CustomLink
       scroll={false}
       href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
-      className="flex flex-col gap-4 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out"
+      className={`flex flex-col gap-4 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border transition-colors duration-300 ease-in-out ${
+        isHighlighted ? "border-secondary-14" : "border-transparent hover:border-primary-3"
+      }`}
     >
       <div className="pl-2 items-center flex justify-between w-full">
         <div className="flex items-center gap-6">
@@ -121,7 +125,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
                 <CheckIcon
                   className={`absolute inset-0 transform transition-all ease-in-out duration-300 
             ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
-            text-positive-11 bg-white bg-transparent border border-positive-11 hover:text-positive-10 
+            text-positive-11 bg-transparent border border-positive-11 hover:text-positive-10 
             shadow-md hover:shadow-lg rounded-md`}
                 />
                 <TrashIcon
