@@ -41,7 +41,8 @@
     },
     {
       "matchPackageNames":[
-        "viem"
+        "viem",
+        "wagmi"
       ],
       "automerge": false
     }
