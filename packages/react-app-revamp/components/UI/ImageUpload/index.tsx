@@ -1,22 +1,15 @@
-import CreateTextInput from "@components/_pages/Create/components/TextInput";
-import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useUploadImageStore } from "@hooks/useUploadImage";
-import CreateRadioButtonsGroup from "components/_pages/Create/components/RadioButtonsGroup";
 import React, { FC, useEffect, useRef, useState } from "react";
+import NetworkErrorRetry from "./components/NetworkErrorRetry";
+import SelectedImagePreview from "./components/SelectedImagePreview";
+import UploadArea from "./components/UploadArea";
+import UrlInputField from "./components/UrlInputField";
 import { ACCEPTED_FILE_TYPES } from "./utils";
-import {
-  RadioButtonsGroupType,
-  RadioButtonsLabelFontSize,
-  RadioOption,
-} from "@components/_pages/Create/components/RadioButtonsGroup/types";
 
 interface ImageUploadProps {
   initialImageUrl?: string;
   onImageLoad?: (imageUrl: string) => void;
 }
-
-const fileUploadIconWidth = 58;
-const fileUploadIconHeight = 34;
 
 const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, onImageLoad }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -192,99 +185,41 @@ const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, onImageLoad }) => 
     }
   };
 
-  const renderUploadArea = () => (
-    <div className="flex flex-col gap-2">
-      <div
-        onClick={handleClick}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        onDragLeave={handleDragLeave}
-        className={`relative flex shadow-file-upload m-auto md:m-0 flex-col w-full h-40 md:w-[376px] md:h-36 justify-center items-center border ${
-          validationError?.upload ? "border-negative-11" : "border-transparent hover:border-positive-11"
-        } gap-2 py-2 px-10 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out`}
-      >
-        <input ref={fileInputRef} type="file" style={{ display: "none" }} onChange={handleFileInput} accept="image/*" />
-        <div className="flex flex-col items-center gap-1">
-          {isLoading ? (
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 border-t-2 border-positive-11 rounded-full animate-spin"></div>
-            </div>
-          ) : (
-            <>
-              <img
-                src="/create-flow/csv_upload.png"
-                width={fileUploadIconWidth}
-                height={fileUploadIconHeight}
-                alt="upload"
-              />
-              <div className="flex flex-col">
-                <p className="text-neutral-11 text-[16px] font-bold">drag & drop image</p>
-                <span className="text-neutral-11 text-[16px] font-normal text-center">
-                  or <span className="text-[16px] text-positive-11">browse</span>
-                </span>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-      {validationError?.upload && (
-        <p className="text-negative-11 text-[16px] font-bold mt-1 normal-case">{validationError.upload}</p>
-      )}
-    </div>
-  );
-
-  const renderUrlInput = () => (
-    <div className="flex flex-col gap-2 w-full md:w-[376px]">
-      <CreateTextInput value={imageUrl} onChange={handleUrlChange} placeholder="https://i.imgur.com/example.jpg" />
-      {validationError?.url && <p className="text-negative-11 text-[16px] font-bold">{validationError.url}</p>}
-    </div>
-  );
-
-  const networkErrorRadioOptions: RadioOption[] = [
-    {
-      label: "try to upload again",
-      value: "upload",
-      content: renderUploadArea(),
-    },
-    {
-      label: "insert image URL",
-      value: "url",
-      content: renderUrlInput(),
-    },
-  ];
-
   return (
     <div className="flex flex-col gap-4">
       {selectedImage && !isLoading ? (
-        <div
-          className={`relative flex shadow-file-upload m-auto md:m-0 flex-col w-full h-40 md:w-[376px] md:h-36 justify-center items-center border border-transparent hover:border-positive-11 gap-2 py-2 px-10 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out`}
-          style={{
-            backgroundImage: `url(${selectedImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-          }}
-        >
-          <button
-            onClick={handleRemoveImage}
-            className="absolute top-2 right-2 bg-true-black rounded-full p-1 shadow-md hover:bg-neutral-3 transition-colors duration-200"
-          >
-            <XMarkIcon className="w-6 h-6 text-neutral-11" />
-          </button>
-        </div>
+        <SelectedImagePreview imageUrl={selectedImage} onRemove={handleRemoveImage} />
       ) : isNetworkError ? (
-        <div className="flex flex-col gap-4">
-          <CreateRadioButtonsGroup
-            type={RadioButtonsGroupType.NORMAL}
-            options={networkErrorRadioOptions}
-            value={inputMethod}
-            onChange={setInputMethod}
-            className="mt-2"
-            labelFontSize={RadioButtonsLabelFontSize.SMALL}
-          />
-        </div>
+        <NetworkErrorRetry
+          inputMethod={inputMethod}
+          onInputMethodChange={setInputMethod}
+          uploadAreaComponent={
+            <UploadArea
+              isLoading={isLoading}
+              validationError={validationError?.upload}
+              onClick={handleClick}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              onDragLeave={handleDragLeave}
+              fileInputRef={fileInputRef}
+              onFileInput={handleFileInput}
+            />
+          }
+          urlInputComponent={
+            <UrlInputField value={imageUrl} onChange={handleUrlChange} validationError={validationError?.url} />
+          }
+        />
       ) : (
-        renderUploadArea()
+        <UploadArea
+          isLoading={isLoading}
+          validationError={validationError?.upload}
+          onClick={handleClick}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onDragLeave={handleDragLeave}
+          fileInputRef={fileInputRef}
+          onFileInput={handleFileInput}
+        />
       )}
     </div>
   );
