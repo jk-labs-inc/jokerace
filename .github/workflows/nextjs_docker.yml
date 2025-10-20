@@ -1,6 +1,6 @@
 name: nextjs-docker
 
-on: 
+on:
   push:
     branches:
       - main
@@ -50,7 +50,6 @@ jobs:
             NEXT_PUBLIC_QUICKNODE_KEY=${{ secrets.PROD_NEXT_PUBLIC_QUICKNODE_KEY }}
             NEXT_PUBLIC_ALCHEMY_KEY=${{ secrets.PROD_NEXT_PUBLIC_ALCHEMY_KEY }}
             NEXT_PUBLIC_PARA_API_KEY=${{ secrets.PROD_NEXT_PUBLIC_PARA_API_KEY }}
-            NEXT_PUBLIC_PARA_ENVIRONMENT=${{ secrets.PROD_NEXT_PUBLIC_PARA_ENVIRONMENT }}
             NEXT_PUBLIC_BREVO_API_KEY=${{ secrets.PROD_NEXT_PUBLIC_BREVO_API_KEY }}
             NEXT_PUBLIC_ENVIRONMENT=${{ secrets.PROD_NEXT_PUBLIC_ENVIRONMENT }}
 

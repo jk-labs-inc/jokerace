@@ -51,7 +51,7 @@ jobs:
         run: yarn install --production
       - name: Build with Next.js
         run: yarn build
-        env: 
+        env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_SUPABASE_URL || secrets.DEV_NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_SUPABASE_ANON_KEY || secrets.DEV_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || secrets.DEV_NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
@@ -63,6 +63,5 @@ jobs:
           NEXT_PUBLIC_QUICKNODE_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_QUICKNODE_KEY || secrets.DEV_NEXT_PUBLIC_QUICKNODE_KEY }}
           NEXT_PUBLIC_ALCHEMY_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_ALCHEMY_KEY || secrets.DEV_NEXT_PUBLIC_ALCHEMY_KEY }}
           NEXT_PUBLIC_PARA_API_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_PARA_API_KEY || secrets.DEV_NEXT_PUBLIC_PARA_API_KEY }}
-          NEXT_PUBLIC_PARA_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_PARA_ENVIRONMENT || secrets.DEV_NEXT_PUBLIC_PARA_ENVIRONMENT }}
           NEXT_PUBLIC_BREVO_API_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_BREVO_API_KEY || secrets.DEV_NEXT_PUBLIC_BREVO_API_KEY }}
           NEXT_PUBLIC_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_ENVIRONMENT || secrets.DEV_NEXT_PUBLIC_ENVIRONMENT }}
