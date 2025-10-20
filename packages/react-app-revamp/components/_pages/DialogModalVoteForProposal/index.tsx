@@ -71,7 +71,12 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   };
 
   return (
-    <Drawer isOpen={isOpen} onClose={handleModalClose} className="bg-true-black w-full h-auto md:max-w-[500px] m-auto">
+    <Drawer
+      isHandleHidden={!isMobile}
+      isOpen={isOpen}
+      onClose={handleModalClose}
+      className="bg-true-black w-full h-auto md:max-w-[500px] m-auto"
+    >
       <div className="flex flex-col gap-4 p-6 md:p-8">
         {showAddFunds ? (
           <div className="animate-swing-in-left">

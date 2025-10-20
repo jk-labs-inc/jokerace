@@ -75,7 +75,9 @@ const ProposalContent: FC<ProposalContentProps> = ({
     })),
   );
   const formattedVotingOpen = moment(votesOpen);
-  const isHighlighted = isVotingModalOpen && pickedProposal === proposal.id;
+  const isAnyModalOpen = pickedProposal !== null;
+  const isHighlighted = isAnyModalOpen && pickedProposal === proposal.id;
+  const shouldReduceOpacity = isAnyModalOpen && !isHighlighted;
   const commentLink = {
     pathname: `/contest/${chainName}/${contestAddress}/submission/${proposal.id}`,
     query: { comments: "comments" },
@@ -154,7 +156,11 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
   return (
     <>
-      {renderLayout()}
+      <div
+        className={`transition-opacity duration-300 ease-in-out ${shouldReduceOpacity ? "opacity-30" : "opacity-100"}`}
+      >
+        {renderLayout()}
+      </div>
       <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={handleVotingModalClose} />
     </>
   );
