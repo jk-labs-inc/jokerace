@@ -157,7 +157,13 @@ const ProposalContent: FC<ProposalContentProps> = ({
   return (
     <>
       <div
-        className={`transition-opacity duration-300 ease-in-out ${shouldReduceOpacity ? "opacity-30" : "opacity-100"}`}
+        className={`transition-all duration-300 ease-in-out ${
+          shouldReduceOpacity
+            ? "opacity-30 scale-[0.98]"
+            : isHighlighted
+            ? "opacity-100 scale-[1.02] -translate-y-1 shadow-xl z-10 relative"
+            : "opacity-100 scale-100"
+        }`}
       >
         {renderLayout()}
       </div>
