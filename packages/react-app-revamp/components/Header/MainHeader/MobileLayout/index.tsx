@@ -1,6 +1,6 @@
 import { IconMagnifyingGlassSolid } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
-import { MobileProfilePortal } from "@components/UI/MobileWalletPortal";
+import { MobileProfileDrawer } from "@components/UI/MobileWalletPortal";
 import {
   ROUTE_CREATE_CONTEST,
   ROUTE_LANDING,
@@ -63,11 +63,11 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
     }
   }, [closeWalletPortal]);
 
-  const WalletPortal = () => {
+  const WalletDrawer = () => {
     if (!isClient) return null;
 
     return (
-      <MobileProfilePortal
+      <MobileProfileDrawer
         isOpen={showWalletPortal}
         onClose={closeWalletPortal}
         address={address}
@@ -132,7 +132,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
         </div>
       </header>
 
-      <WalletPortal />
+      <WalletDrawer />
     </>
   );
 };

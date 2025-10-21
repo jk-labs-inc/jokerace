@@ -26,7 +26,8 @@ interface ProposalLayoutGalleryProps {
   allowDelete: boolean;
   selectedProposalIds: string[];
   enabledPreview: EntryPreview | null;
-  handleVotingModalOpen?: () => void;
+  isHighlighted: boolean;
+  handleVotingDrawerOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
 }
 
@@ -39,7 +40,8 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
   allowDelete,
   selectedProposalIds,
   enabledPreview,
-  handleVotingModalOpen,
+  isHighlighted,
+  handleVotingDrawerOpen,
   toggleProposalSelection,
 }) => {
   const [imgUrl, setImgUrl] = useState<string>("");
@@ -59,11 +61,11 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
     }
   };
 
-  const onVotingModalOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onVotingDrawerOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
-    handleVotingModalOpen?.();
+    handleVotingDrawerOpen?.();
   };
 
   const onDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -81,7 +83,9 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
     <CustomLink
       scroll={false}
       href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
-      className="flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full max-h-[70vh] border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out"
+      className={`flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full max-h-[70vh] border transition-colors duration-300 ease-in-out ${
+        isHighlighted ? "border-secondary-14" : "border-transparent hover:border-primary-3"
+      }`}
     >
       <div className="rounded-2xl overflow-hidden relative">
         <ImageWithFallback fullSrc={imgUrl} alt="entry image" />
@@ -135,7 +139,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 
         {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
           <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
-            <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingModalOpen} />
+            <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} />
           </div>
         ) : null}
       </div>

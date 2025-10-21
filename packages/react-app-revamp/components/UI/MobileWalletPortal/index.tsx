@@ -5,13 +5,13 @@ import {
   ROUTE_VIEW_USER_VOTING,
 } from "@config/routes";
 import { ChevronRightIcon, PowerIcon } from "@heroicons/react/24/outline";
-import React, { useCallback, useRef, useState } from "react";
-import ReactDOM from "react-dom";
+import React, { useState } from "react";
 import CustomLink from "../Link";
 import UserProfileDisplay from "../UserProfileDisplay";
 import SendFunds from "@components/SendFunds";
+import Drawer from "../Drawer";
 
-interface MobileProfilePortalProps {
+interface MobileProfileDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   address: string;
@@ -37,34 +37,14 @@ const navLinks = [
   },
 ];
 
-export const MobileProfilePortal: React.FC<MobileProfilePortalProps> = ({ isOpen, onClose, address, onDisconnect }) => {
-  const backdropRef = useRef<HTMLDivElement>(null);
+export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen, onClose, address, onDisconnect }) => {
   const [isSendFundsModalOpen, setIsSendFundsModalOpen] = useState(false);
 
-  const handleBackdropClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (e.target === backdropRef.current) {
-        onClose();
-      }
-    },
-    [onClose],
-  );
-
-  if (typeof window === "undefined") return null;
-
-  return ReactDOM.createPortal(
-    <div
-      ref={backdropRef}
-      className={`fixed inset-0 z-50  ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
-      onClick={handleBackdropClick}
-    >
-      <div className="absolute inset-0 bg-neutral-8/40  pointer-events-none" />
-      <div
-        className={`absolute animate-appear inset-x-0 bottom-0 bg-true-black
-        border-t border-neutral-9 rounded-t-[40px] ${isOpen ? "translate-y-0" : "translate-y-full"}`}
-      >
+  return (
+    <>
+      <Drawer isOpen={isOpen} onClose={onClose} className="bg-true-black w-full h-auto">
         <div className="flex flex-col gap-8">
-          <div className="flex flex-col gap-6 px-8 pt-8">
+          <div className="flex flex-col gap-6 px-8 pt-4">
             <UserProfileDisplay
               size="medium"
               ethereumAddress={address}
@@ -90,7 +70,7 @@ export const MobileProfilePortal: React.FC<MobileProfilePortalProps> = ({ isOpen
             <PowerIcon width={32} height={32} className="text-negative-11" />
           </div>
         </div>
-      </div>
+      </Drawer>
       {isSendFundsModalOpen && (
         <SendFunds
           isOpen={isSendFundsModalOpen}
@@ -98,7 +78,6 @@ export const MobileProfilePortal: React.FC<MobileProfilePortalProps> = ({ isOpen
           recipientAddress={address}
         />
       )}
-    </div>,
-    document.body,
+    </>
   );
 };

@@ -1,6 +1,5 @@
-import { create } from "zustand";
-import { formatBalance } from "@helpers/formatBalance";
 import { emailRegex } from "@helpers/regex";
+import { create } from "zustand";
 
 interface VotingStore {
   inputValue: string;

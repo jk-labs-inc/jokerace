@@ -22,7 +22,7 @@ const DialogMaxVotesAlert: FC<DialogMaxVotesAlertProps> = ({
   );
   const inputValue = useVotingStore(useShallow(state => state.inputValue));
   return (
-    <div className="flex flex-col gap-8 animate-swing-in-left">
+    <div className="flex flex-col gap-8 animate-swing-in-left w-full">
       <p className="text-neutral-11 text-[24px] font-bold">vote it all 😈</p>
       <div className="flex flex-col gap-4">
         <p className="text-neutral-11 text-[16px]">

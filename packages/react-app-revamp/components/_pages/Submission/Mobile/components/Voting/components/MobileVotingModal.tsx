@@ -1,9 +1,9 @@
 import AddFunds from "@components/AddFunds";
+import Drawer from "@components/UI/Drawer";
 import VotingWidget from "@components/Voting";
-import { FC, RefObject } from "react";
-import ReactDOM from "react-dom";
+import { FC } from "react";
 
-interface MobileVotingModalProps {
+interface MobileVotingDrawerProps {
   isOpen: boolean;
   showAddFunds: boolean;
   chainName: string;
@@ -13,14 +13,13 @@ interface MobileVotingModalProps {
   isLoading: boolean;
   isVotingOpen: boolean;
   isContestCanceled: boolean;
-  backdropRef: RefObject<HTMLDivElement | null>;
-  onBackdropClick: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onClose: () => void;
   onGoBack: () => void;
   onAddFunds: () => void;
   onVote: (amount: number) => void;
 }
 
-const MobileVotingModal: FC<MobileVotingModalProps> = ({
+const MobileVotingDrawer: FC<MobileVotingDrawerProps> = ({
   isOpen,
   showAddFunds,
   chainName,
@@ -30,24 +29,14 @@ const MobileVotingModal: FC<MobileVotingModalProps> = ({
   isLoading,
   isVotingOpen,
   isContestCanceled,
-  backdropRef,
-  onBackdropClick,
+  onClose,
   onGoBack,
   onAddFunds,
   onVote,
 }) => {
-  return ReactDOM.createPortal(
-    <div
-      ref={backdropRef}
-      className={`fixed inset-0 z-50 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
-      onClick={onBackdropClick}
-    >
-      <div className="absolute inset-0 bg-neutral-8/40 pointer-events-none" />
-      <div
-        className={`absolute animate-appear inset-x-0 bottom-0 bg-true-black
-                border-t border-neutral-9 rounded-t-[40px] p-6 pb-4
-                ${isOpen ? "translate-y-0" : "translate-y-full"} transition-transform duration-300`}
-      >
+  return (
+    <Drawer isOpen={isOpen} onClose={onClose} className="bg-true-black w-full h-auto">
+      <div className="flex flex-col gap-4 p-6">
         {showAddFunds ? (
           <AddFunds chain={chainName} asset={chainNativeCurrencySymbol} onGoBack={onGoBack} />
         ) : (
@@ -62,9 +51,8 @@ const MobileVotingModal: FC<MobileVotingModalProps> = ({
           />
         )}
       </div>
-    </div>,
-    document.body,
+    </Drawer>
   );
 };
 
-export default MobileVotingModal;
+export default MobileVotingDrawer;

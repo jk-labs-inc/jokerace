@@ -16,7 +16,7 @@ import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
-import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
+import DrawerVoteForProposal from "../DrawerVoteForProposal";
 import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
 import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
 import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
@@ -64,12 +64,20 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
+  const [isVotingDrawerOpen, setIsVotingDrawerOpen] = useState(false);
   const { votesOpen } = useContestStore(state => state);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
-  const setPickProposal = useCastVotesStore(useShallow(state => state.setPickedProposal));
+  const { setPickedProposal, pickedProposal } = useCastVotesStore(
+    useShallow(state => ({
+      setPickedProposal: state.setPickedProposal,
+      pickedProposal: state.pickedProposal,
+    })),
+  );
   const formattedVotingOpen = moment(votesOpen);
+  const isAnyDrawerOpen = pickedProposal !== null;
+  const isHighlighted = isAnyDrawerOpen && pickedProposal === proposal.id;
+  const shouldReduceOpacity = isAnyDrawerOpen && !isHighlighted;
   const commentLink = {
     pathname: `/contest/${chainName}/${contestAddress}/submission/${proposal.id}`,
     query: { comments: "comments" },
@@ -81,7 +89,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
     isError: isUserProfileError,
   } = useProfileData(proposal.authorEthereumAddress, true);
 
-  const handleVotingModalOpen = () => {
+  const handleVotingDrawerOpen = () => {
     if (isContestCanceled) {
       alert("This contest has been canceled and voting is terminated.");
       return;
@@ -99,8 +107,15 @@ const ProposalContent: FC<ProposalContentProps> = ({
       return;
     }
 
-    setPickProposal(proposal.id);
-    setIsVotingModalOpen(true);
+    setPickedProposal(proposal.id);
+    setIsVotingDrawerOpen(true);
+  };
+
+  const handleVotingDrawerClose = (isOpen: boolean) => {
+    setIsVotingDrawerOpen(isOpen);
+    if (!isOpen) {
+      setPickedProposal(null);
+    }
   };
 
   const props = {
@@ -117,11 +132,12 @@ const ProposalContent: FC<ProposalContentProps> = ({
     contestStatus,
     allowDelete,
     selectedProposalIds,
-    handleVotingModalOpen,
+    handleVotingDrawerOpen,
     toggleProposalSelection,
     formattedVotingOpen,
     enabledPreview,
     commentLink: commentLink.pathname,
+    isHighlighted,
   };
 
   const renderLayout = () => {
@@ -140,8 +156,18 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
   return (
     <>
-      {renderLayout()}
-      <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={setIsVotingModalOpen} proposal={proposal} />
+      <div
+        className={`transition-all duration-300 ease-in-out ${
+          shouldReduceOpacity
+            ? "opacity-30 scale-[0.98]"
+            : isHighlighted
+            ? "opacity-100 scale-[1.02] -translate-y-1 z-[45] relative"
+            : "opacity-100 scale-100"
+        }`}
+      >
+        {renderLayout()}
+      </div>
+      <DrawerVoteForProposal isOpen={isVotingDrawerOpen} setIsOpen={handleVotingDrawerClose} />
     </>
   );
 };

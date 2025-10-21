@@ -32,7 +32,8 @@ interface ProposalLayoutLeaderboardProps {
   commentLink: string;
   allowDelete: boolean;
   selectedProposalIds: string[];
-  handleVotingModalOpen?: () => void;
+  isHighlighted: boolean;
+  handleVotingDrawerOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
 }
 
@@ -47,7 +48,8 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
   commentLink,
   allowDelete,
   selectedProposalIds,
-  handleVotingModalOpen,
+  isHighlighted,
+  handleVotingDrawerOpen,
   toggleProposalSelection,
 }) => {
   const [isContentHidden, setIsContentHidden] = useState(true);
@@ -83,9 +85,10 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
         allowDelete={allowDelete}
         selectedProposalIds={selectedProposalIds}
         toggleProposalSelection={toggleProposalSelection}
-        handleVotingModalOpen={handleVotingModalOpen}
+        handleVotingDrawerOpen={handleVotingDrawerOpen}
         chainName={chainName}
         contestAddress={contestAddress}
+        isHighlighted={isHighlighted}
       />
     );
   }
@@ -99,7 +102,11 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
           toggleProposalSelection={toggleProposalSelection}
         />
       )}
-      <div className="w-full flex flex-col min-h-16 gap-6 bg-true-black shadow-entry-card px-8 py-6 rounded-2xl border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out">
+      <div
+        className={`w-full flex flex-col min-h-16 gap-6 bg-true-black shadow-entry-card px-8 py-6 rounded-2xl border transition-colors duration-300 ease-in-out ${
+          isHighlighted ? "border-secondary-14" : "border-transparent hover:border-primary-3"
+        }`}
+      >
         <div className={`flex gap-6 ${isContentHidden ? "items-center" : ""}`}>
           <div className={`${isContentHidden ? "" : "-mt-1"}`}>
             <ProposalLayoutLeaderboardRankOrPlaceholder proposal={proposal} contestStatus={contestStatus} />
@@ -127,7 +134,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
               </div>
               <div className="flex gap-4 items-center">
                 {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-                  <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={handleVotingModalOpen} />
+                  <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={handleVotingDrawerOpen} />
                 ) : null}
                 <ChevronDownIcon
                   className={`w-6 h-6 text-positive-11 cursor-pointer transition-transform duration-300 ${
@@ -150,7 +157,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                 </div>
                 <div className="flex gap-2 items-center">
                   {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-                    <ProposalContentVoteSecondary proposal={proposal} handleVotingModalOpen={handleVotingModalOpen} />
+                    <ProposalContentVoteSecondary proposal={proposal} handleVotingModalOpen={handleVotingDrawerOpen} />
                   ) : (
                     <p className="text-neutral-10 text-[16px] font-bold">
                       voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
