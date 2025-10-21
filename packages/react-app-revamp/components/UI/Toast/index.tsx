@@ -3,7 +3,8 @@ import ErrorToast from "./components/Error";
 import InfoToast from "./components/Info";
 import LoadingToast from "./components/Loading";
 import SuccessToast from "./components/Success";
-import { ErrorToastConfig, InfoToastConfig, LoadingToastConfig, SuccessToastConfig } from "./types";
+import { ErrorToastConfig, InfoToastConfig, LoadingToastConfig, SuccessToastConfig, WarningToastConfig } from "./types";
+import WarningToast from "./components/Warning";
 
 let toastId: any = null;
 
@@ -33,6 +34,10 @@ export const toastInfo = (config: InfoToastConfig) => {
 
 export const toastSuccess = (config: SuccessToastConfig) => {
   createToast("success", <SuccessToast message={config.message} />);
+};
+
+export const toastWarning = (config: WarningToastConfig) => {
+  createToast("warning", <WarningToast message={config.message} additionalMessage={config.additionalMessage} />);
 };
 
 export const toastError = (config: ErrorToastConfig) => {
