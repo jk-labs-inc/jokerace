@@ -1,7 +1,7 @@
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import { IconMagnifyingGlassSolid, IconTrophy } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
-import { MobileProfilePortal } from "@components/UI/MobileWalletPortal";
+import { MobileProfileDrawer } from "@components/UI/MobileWalletPortal";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { FOOTER_LINKS } from "@config/links";
 import {
@@ -78,11 +78,11 @@ const LandingHeader = () => {
     }
   }, [closeWalletPortal]);
 
-  const WalletPortal = () => {
+  const WalletDrawer = () => {
     if (!isClient) return null;
 
     return (
-      <MobileProfilePortal
+      <MobileProfileDrawer
         isOpen={showWalletPortal}
         onClose={closeWalletPortal}
         address={address ?? ""}
@@ -192,7 +192,7 @@ const LandingHeader = () => {
               </div>
             </div>
           </div>
-          <WalletPortal />
+          <WalletDrawer />
         </header>
       </>
     );

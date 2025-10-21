@@ -23,8 +23,9 @@ interface ProposalLayoutLeaderboardMobileProps {
   selectedProposalIds: string[];
   chainName: string;
   contestAddress: string;
+  isHighlighted: boolean;
   toggleProposalSelection?: (proposalId: string) => void;
-  handleVotingModalOpen?: () => void;
+  handleVotingDrawerOpen?: () => void;
 }
 
 const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> = ({
@@ -35,9 +36,10 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
   allowDelete,
   selectedProposalIds,
   toggleProposalSelection,
-  handleVotingModalOpen,
+  handleVotingDrawerOpen,
   chainName,
   contestAddress,
+  isHighlighted,
 }) => {
   const router = useRouter();
   const entryTitle = proposal.metadataFields.stringArray[0];
@@ -49,11 +51,11 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
     router.push(commentLink);
   };
 
-  const navigateToVotingModal = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const navigateToVotingDrawer = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
-    handleVotingModalOpen?.();
+    handleVotingDrawerOpen?.();
   };
 
   const navigateToProposal = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -66,7 +68,9 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
   return (
     <CustomLink
       href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
-      className="w-full flex flex-col min-h-20 gap-4 bg-true-black shadow-entry-card p-4 rounded-2xl border border-transparent"
+      className={`w-full flex flex-col min-h-20 gap-4 bg-true-black shadow-entry-card p-4 rounded-2xl border transition-colors duration-300 ease-in-out ${
+        isHighlighted ? "border-secondary-14" : "border-transparent"
+      }`}
     >
       <div className="flex items-center gap-6">
         <ProposalLayoutLeaderboardRankOrPlaceholder proposal={proposal} contestStatus={contestStatus} />
@@ -81,7 +85,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
         <div className="flex items-center ml-auto" onClick={e => e.stopPropagation()}>
           {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
             <button
-              onClick={navigateToVotingModal}
+              onClick={navigateToVotingDrawer}
               className="min-w-12 shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-gradient-vote rounded-[16px] cursor-pointer text-true-black"
             >
               <img src="/contest/upvote-mobile.svg" width={11} height={15} alt="upvote" className="shrink-0" />

@@ -11,6 +11,7 @@ import VoteSlider from "./components/VoteSlider";
 import { useVoteExecution } from "./hooks/useVoteExecution";
 import { useVotingStore } from "./store";
 import VotingWidgetEmailSignup from "./components/EmailSignup";
+import { useMediaQuery } from "react-responsive";
 
 export enum VotingWidgetStyle {
   classic = "classic",
@@ -38,6 +39,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   onVote,
   onAddFunds,
 }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { address: userAddress, isConnected } = useAccount();
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const inputRef = useRef<HTMLInputElement>(null);
@@ -69,10 +71,12 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   });
 
   useEffect(() => {
+    if (isMobile) return;
+
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     reset();

@@ -26,7 +26,8 @@ interface ProposalLayoutTweetProps {
   commentLink: string;
   allowDelete: boolean;
   selectedProposalIds: string[];
-  handleVotingModalOpen?: () => void;
+  isHighlighted: boolean;
+  handleVotingDrawerOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
 }
 
@@ -46,18 +47,19 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
   commentLink,
   allowDelete,
   selectedProposalIds,
-  handleVotingModalOpen,
+  isHighlighted,
+  handleVotingDrawerOpen,
   toggleProposalSelection,
 }) => {
   const tweetUrl = proposal.metadataFields.stringArray[0];
   const tweetId = extractTweetId(tweetUrl);
   const router = useRouter();
 
-  const onVotingModalOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onVotingDrawerOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
-    handleVotingModalOpen?.();
+    handleVotingDrawerOpen?.();
   };
 
   const onCommentLinkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -78,7 +80,9 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
     <CustomLink
       scroll={false}
       href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
-      className="flex flex-col gap-4 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border border-transparent hover:border-primary-3 transition-colors duration-300 ease-in-out"
+      className={`flex flex-col gap-4 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border transition-colors duration-300 ease-in-out ${
+        isHighlighted ? "border-secondary-14" : "border-transparent hover:border-primary-3"
+      }`}
     >
       <div className="pl-2 items-center flex justify-between w-full">
         <div className="flex items-center gap-6">
@@ -93,14 +97,14 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
           />
         </div>
         {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-          <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingModalOpen} />
+          <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} />
         ) : null}
       </div>
       <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />
       <div className="mt-auto pl-2">
         <div className="flex gap-2 items-center">
           {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-            <ProposalContentVoteSecondary proposal={proposal} handleVotingModalOpen={onVotingModalOpen} />
+            <ProposalContentVoteSecondary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} />
           ) : (
             <p className="text-neutral-10 text-[14px] font-bold">
               voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
@@ -121,7 +125,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
                 <CheckIcon
                   className={`absolute inset-0 transform transition-all ease-in-out duration-300 
             ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
-            text-positive-11 bg-white bg-transparent border border-positive-11 hover:text-positive-10 
+            text-positive-11 bg-transparent border border-positive-11 hover:text-positive-10 
             shadow-md hover:shadow-lg rounded-md`}
                 />
                 <TrashIcon

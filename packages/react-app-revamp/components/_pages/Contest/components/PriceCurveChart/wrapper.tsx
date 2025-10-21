@@ -73,7 +73,7 @@ const PriceCurveWrapper = () => {
   }
 
   return (
-    <div className="animate-reveal" ref={parentRef}>
+    <div className="animate-fade-in" ref={parentRef}>
       <PriceCurveChart
         data={chartData}
         currentPrice={currentPrice}

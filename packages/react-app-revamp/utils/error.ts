@@ -26,7 +26,7 @@ const errorMessages: { [key in ErrorCodes]?: string } = {
     "This transaction was replaced by another with the same nonce, maybe due to a higher gas price.",
   [ErrorCodes.UNPREDICTABLE_GAS_LIMIT]:
     "Gas estimation failed. Consider setting a gas limit manually, or ensure the transaction is valid.",
-  [ErrorCodes.DUPLICATE_PROPOSAL]: "Duplicate proposals are not allowed. Please check your proposal details.",
+  [ErrorCodes.DUPLICATE_PROPOSAL]: "Entry already entered!",
   [ErrorCodes.PRICE_CHANGED]: "Ahh, looks like the price has gone up.",
 };
 
@@ -36,12 +36,14 @@ function handleContractFunctionExecutionError(error: any): {
   message: string;
   codeFound: boolean;
   additionalMessage?: string;
+  isWarning?: boolean;
 } {
-  if (error.message.includes("duplicate proposals not allowed")) {
+  if (error.message.includes("DuplicateSubmission")) {
     return {
       message: errorMessages[ErrorCodes.DUPLICATE_PROPOSAL]!,
       codeFound: true,
-      additionalMessage: error.additionalMessage,
+      additionalMessage: "This looks like a duplicate submission.",
+      isWarning: true,
     };
   }
 
@@ -89,7 +91,8 @@ export function didUserReject(error: any): boolean {
 export function handleError(
   error: any,
   chainName?: string,
-): { message: string; codeFound: boolean; additionalMessage?: string } {
+): { message: string; codeFound: boolean; additionalMessage?: string; isWarning?: boolean } {
+  console.log({ error });
   if (error.codeFound === true && error.code in errorMessages) {
     return {
       message: errorMessages[error.code as ErrorCodes]!,

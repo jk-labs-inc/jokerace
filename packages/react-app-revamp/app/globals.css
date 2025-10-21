@@ -691,11 +691,13 @@ li {
     --toastify-color-success: #78ffc6 !important;
     --toastify-color-error: #ff78a9 !important;
     --toastify-color-info: #ffff !important;
+    --toastify-color-warning: #ffe25b !important;
     --toastify-icon-color-error: #ff78a9 !important;
     --toastify-icon-color-info: #bb65ff !important;
     --toastify-text-color-success: black !important;
     --toastify-text-color-info: black !important;
     --toastify-text-color-error: black !important;
+    --toastify-text-color-warning: black !important;
     --toastify-toast-width: 360px !important;
     --toastify-toast-min-height: 80px !important;
   }

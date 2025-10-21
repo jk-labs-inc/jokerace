@@ -1,4 +1,4 @@
-import { toastDismiss, toastError } from "@components/UI/Toast";
+import { toastDismiss, toastError, toastWarning } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { usePathname } from "next/navigation";
@@ -23,6 +23,13 @@ export function useError() {
     const handledError = handleUtilityError(e, chainName);
 
     setError(handledError.message);
+
+    if (handledError.isWarning) {
+      return toastWarning({
+        message: handledError.message,
+        additionalMessage: handledError.additionalMessage,
+      });
+    }
 
     if (handledError.codeFound) {
       toastError({
