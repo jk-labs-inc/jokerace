@@ -26,6 +26,11 @@ export interface ErrorToastConfig extends BaseToastConfig {
   codeFound?: boolean;
 }
 
+export interface WarningToastConfig extends BaseToastConfig {
+  message: string;
+  additionalMessage?: string;
+}
+
 export interface LoadingToastConfig extends BaseToastConfig {
   message: string;
   additionalMessageType?: LoadingToastMessageType;
