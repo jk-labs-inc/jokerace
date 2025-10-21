@@ -49,7 +49,7 @@ const BurgerMenu = ({ children, className, onOpen, onClose }: BurgerMenuProps) =
               style={{ zIndex: 9999 }}
             >
               <DialogPanel className={`w-screen max-w-md transform transition ease-in-out duration-300 ${className}`}>
-                <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+                <div className="flex h-full flex-col overflow-y-scroll bg-true-black shadow-xl">
                   <div className="mt-24 relative flex-1">{children}</div>
                   <div className="absolute top-2 right-0 pt-4 pr-6">
                     <button type="button" onClick={onMenuClose}>

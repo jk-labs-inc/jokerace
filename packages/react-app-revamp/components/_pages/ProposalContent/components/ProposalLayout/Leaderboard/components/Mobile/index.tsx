@@ -25,7 +25,7 @@ interface ProposalLayoutLeaderboardMobileProps {
   contestAddress: string;
   isHighlighted: boolean;
   toggleProposalSelection?: (proposalId: string) => void;
-  handleVotingModalOpen?: () => void;
+  handleVotingDrawerOpen?: () => void;
 }
 
 const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> = ({
@@ -36,7 +36,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
   allowDelete,
   selectedProposalIds,
   toggleProposalSelection,
-  handleVotingModalOpen,
+  handleVotingDrawerOpen,
   chainName,
   contestAddress,
   isHighlighted,
@@ -51,11 +51,11 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
     router.push(commentLink);
   };
 
-  const navigateToVotingModal = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const navigateToVotingDrawer = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
-    handleVotingModalOpen?.();
+    handleVotingDrawerOpen?.();
   };
 
   const navigateToProposal = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -85,7 +85,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
         <div className="flex items-center ml-auto" onClick={e => e.stopPropagation()}>
           {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
             <button
-              onClick={navigateToVotingModal}
+              onClick={navigateToVotingDrawer}
               className="min-w-12 shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-gradient-vote rounded-[16px] cursor-pointer text-true-black"
             >
               <img src="/contest/upvote-mobile.svg" width={11} height={15} alt="upvote" className="shrink-0" />

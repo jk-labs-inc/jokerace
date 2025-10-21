@@ -27,7 +27,7 @@ interface ProposalLayoutGalleryProps {
   selectedProposalIds: string[];
   enabledPreview: EntryPreview | null;
   isHighlighted: boolean;
-  handleVotingModalOpen?: () => void;
+  handleVotingDrawerOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
 }
 
@@ -41,7 +41,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
   selectedProposalIds,
   enabledPreview,
   isHighlighted,
-  handleVotingModalOpen,
+  handleVotingDrawerOpen,
   toggleProposalSelection,
 }) => {
   const [imgUrl, setImgUrl] = useState<string>("");
@@ -61,11 +61,11 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
     }
   };
 
-  const onVotingModalOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onVotingDrawerOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
-    handleVotingModalOpen?.();
+    handleVotingDrawerOpen?.();
   };
 
   const onDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -139,7 +139,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 
         {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
           <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
-            <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingModalOpen} />
+            <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} />
           </div>
         ) : null}
       </div>

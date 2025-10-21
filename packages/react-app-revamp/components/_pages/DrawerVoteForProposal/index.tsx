@@ -13,12 +13,12 @@ import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 
-interface DialogModalVoteForProposalProps {
+interface DrawerVoteForProposalProps {
   isOpen: boolean;
   setIsOpen?: (isOpen: boolean) => void;
 }
 
-export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = ({ isOpen, setIsOpen }) => {
+export const DrawerVoteForProposal: FC<DrawerVoteForProposalProps> = ({ isOpen, setIsOpen }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { charge: contestCharge, votingClose } = useContestStore(
@@ -65,7 +65,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     setShowAddFunds(true);
   };
 
-  const handleModalClose = () => {
+  const handleDrawerClose = () => {
     setIsOpen?.(false);
     setShowAddFunds(false);
   };
@@ -74,7 +74,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     <Drawer
       isHandleHidden={!isMobile}
       isOpen={isOpen}
-      onClose={handleModalClose}
+      onClose={handleDrawerClose}
       className="bg-true-black w-full h-auto md:max-w-[500px] m-auto"
     >
       <div className="flex flex-col gap-4 p-6 md:p-8">
@@ -112,4 +112,4 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   );
 };
 
-export default DialogModalVoteForProposal;
+export default DrawerVoteForProposal;

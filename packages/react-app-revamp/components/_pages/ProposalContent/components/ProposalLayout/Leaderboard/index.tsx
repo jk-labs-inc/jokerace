@@ -33,7 +33,7 @@ interface ProposalLayoutLeaderboardProps {
   allowDelete: boolean;
   selectedProposalIds: string[];
   isHighlighted: boolean;
-  handleVotingModalOpen?: () => void;
+  handleVotingDrawerOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
 }
 
@@ -49,7 +49,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
   allowDelete,
   selectedProposalIds,
   isHighlighted,
-  handleVotingModalOpen,
+  handleVotingDrawerOpen,
   toggleProposalSelection,
 }) => {
   const [isContentHidden, setIsContentHidden] = useState(true);
@@ -85,7 +85,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
         allowDelete={allowDelete}
         selectedProposalIds={selectedProposalIds}
         toggleProposalSelection={toggleProposalSelection}
-        handleVotingModalOpen={handleVotingModalOpen}
+        handleVotingDrawerOpen={handleVotingDrawerOpen}
         chainName={chainName}
         contestAddress={contestAddress}
         isHighlighted={isHighlighted}
@@ -134,7 +134,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
               </div>
               <div className="flex gap-4 items-center">
                 {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-                  <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={handleVotingModalOpen} />
+                  <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={handleVotingDrawerOpen} />
                 ) : null}
                 <ChevronDownIcon
                   className={`w-6 h-6 text-positive-11 cursor-pointer transition-transform duration-300 ${
@@ -157,7 +157,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
                 </div>
                 <div className="flex gap-2 items-center">
                   {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-                    <ProposalContentVoteSecondary proposal={proposal} handleVotingModalOpen={handleVotingModalOpen} />
+                    <ProposalContentVoteSecondary proposal={proposal} handleVotingModalOpen={handleVotingDrawerOpen} />
                   ) : (
                     <p className="text-neutral-10 text-[16px] font-bold">
                       voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}

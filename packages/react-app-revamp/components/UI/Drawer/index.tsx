@@ -10,8 +10,14 @@ interface DrawerProps {
 }
 
 const Drawer: FC<DrawerProps> = ({ isOpen, children, className, onClose, isHandleHidden = false }) => {
+  const handleOpenChange = (open: boolean) => {
+    if (!open && onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <VaulDrawer.Root open={isOpen} onClose={onClose}>
+    <VaulDrawer.Root open={isOpen} onOpenChange={handleOpenChange}>
       <VaulDrawer.Portal>
         <VaulDrawer.Overlay className="fixed inset-0 bg-neutral-8/40 z-40" />
         <VaulDrawer.Content

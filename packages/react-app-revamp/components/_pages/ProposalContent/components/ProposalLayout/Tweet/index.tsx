@@ -27,7 +27,7 @@ interface ProposalLayoutTweetProps {
   allowDelete: boolean;
   selectedProposalIds: string[];
   isHighlighted: boolean;
-  handleVotingModalOpen?: () => void;
+  handleVotingDrawerOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
 }
 
@@ -48,18 +48,18 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
   allowDelete,
   selectedProposalIds,
   isHighlighted,
-  handleVotingModalOpen,
+  handleVotingDrawerOpen,
   toggleProposalSelection,
 }) => {
   const tweetUrl = proposal.metadataFields.stringArray[0];
   const tweetId = extractTweetId(tweetUrl);
   const router = useRouter();
 
-  const onVotingModalOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onVotingDrawerOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
-    handleVotingModalOpen?.();
+    handleVotingDrawerOpen?.();
   };
 
   const onCommentLinkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -97,14 +97,14 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
           />
         </div>
         {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-          <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingModalOpen} />
+          <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} />
         ) : null}
       </div>
       <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />
       <div className="mt-auto pl-2">
         <div className="flex gap-2 items-center">
           {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-            <ProposalContentVoteSecondary proposal={proposal} handleVotingModalOpen={onVotingModalOpen} />
+            <ProposalContentVoteSecondary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} />
           ) : (
             <p className="text-neutral-10 text-[14px] font-bold">
               voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}

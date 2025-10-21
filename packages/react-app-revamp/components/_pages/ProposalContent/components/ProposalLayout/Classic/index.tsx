@@ -27,7 +27,7 @@ interface ProposalLayoutClassicProps {
   allowDelete: boolean;
   selectedProposalIds: string[];
   isHighlighted: boolean;
-  handleVotingModalOpen?: () => void;
+  handleVotingDrawerOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
 }
 
@@ -42,7 +42,7 @@ const ProposalLayoutClassic = ({
   allowDelete,
   selectedProposalIds,
   isHighlighted,
-  handleVotingModalOpen,
+  handleVotingDrawerOpen,
   toggleProposalSelection,
 }: ProposalLayoutClassicProps) => {
   const [isContentHidden, setIsContentHidden] = useState(false);
@@ -95,7 +95,7 @@ const ProposalLayoutClassic = ({
             <div className="flex gap-2 items-center">
               {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
                 <button
-                  onClick={handleVotingModalOpen}
+                  onClick={handleVotingDrawerOpen}
                   className="min-w-36 shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-primary-1 rounded-[16px] cursor-pointer border border-transparent hover:border-positive-11 transition-colors duration-300 ease-in-out"
                 >
                   <img src="/contest/upvote.svg" width={21.56} height={20.44} alt="upvote" className="shrink-0" />

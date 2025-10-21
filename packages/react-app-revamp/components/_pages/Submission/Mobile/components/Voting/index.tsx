@@ -1,7 +1,7 @@
 import { useVotingActions } from "@components/_pages/Submission/hooks/useVotingActions";
 import { ContestStateEnum } from "@hooks/useContestState/store";
-import { FC, useRef, useState } from "react";
-import MobileVotingModal from "./components/MobileVotingModal";
+import { FC, useState } from "react";
+import MobileVotingDrawer from "./components/MobileVotingModal";
 import { useVotingSetupMobile } from "./hooks/useVotingSetupMobile";
 
 interface SubmissionPageMobileVotingProps {
@@ -11,7 +11,6 @@ interface SubmissionPageMobileVotingProps {
 
 const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpen, onClose }) => {
   const [showAddFunds, setShowAddFunds] = useState(false);
-  const backdropRef = useRef<HTMLDivElement>(null);
   const {
     contestConfig,
     currentPricePerVote,
@@ -24,10 +23,9 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
   } = useVotingSetupMobile();
   const { castVotes, isLoading } = useVotingActions({ charge, votesClose });
 
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === backdropRef.current) {
-      onClose?.();
-    }
+  const handleClose = () => {
+    setShowAddFunds(false);
+    onClose?.();
   };
 
   if (isChargeLoading) {
@@ -35,18 +33,17 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
   }
 
   return (
-    <MobileVotingModal
+    <MobileVotingDrawer
       isOpen={isOpen}
       showAddFunds={showAddFunds}
       chainName={contestConfig.chainName}
-      chainNativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol}
+      chainNativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol ?? ""}
       costToVote={currentPricePerVote}
       costToVoteRaw={currentPricePerVoteRaw}
       isLoading={isLoading}
       isVotingOpen={isVotingOpen}
       isContestCanceled={contestState === ContestStateEnum.Canceled}
-      backdropRef={backdropRef}
-      onBackdropClick={handleBackdropClick}
+      onClose={handleClose}
       onGoBack={() => setShowAddFunds(false)}
       onAddFunds={() => setShowAddFunds(true)}
       onVote={castVotes}
