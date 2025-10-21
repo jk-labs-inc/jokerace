@@ -24,7 +24,7 @@
     "@next/third-parties": "15.5.6",
     "@rainbow-me/rainbowkit": "2.2.9",
     "@solana/wallet-adapter-react": "0.15.39",
-    "@supabase/supabase-js": "2.75.1",
+    "@supabase/supabase-js": "2.76.1",
     "@tailwindcss/postcss": "4.1.15",
     "@tailwindcss/typography": "0.5.19",
     "@tanstack/react-query": "5.90.5",
