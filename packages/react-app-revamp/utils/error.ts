@@ -92,7 +92,6 @@ export function handleError(
   error: any,
   chainName?: string,
 ): { message: string; codeFound: boolean; additionalMessage?: string; isWarning?: boolean } {
-  console.log({ error });
   if (error.codeFound === true && error.code in errorMessages) {
     return {
       message: errorMessages[error.code as ErrorCodes]!,
