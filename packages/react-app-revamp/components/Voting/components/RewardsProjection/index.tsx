@@ -11,20 +11,29 @@ import VotingWidgetRewardsProjectionContainer from "./components/Container";
 import VotingWidgetRewardProjectionLoader from "./components/Loader";
 
 interface VotingWidgetRewardsProjectionProps {
+  currentPricePerVote: bigint;
   inputValue: string;
   submissionsCount: number;
 }
 
 const TOOLTIP_ID = "rewards-projection-tooltip";
 
-const VotingWidgetRewardsProjection: FC<VotingWidgetRewardsProjectionProps> = ({ inputValue, submissionsCount }) => {
+const VotingWidgetRewardsProjection: FC<VotingWidgetRewardsProjectionProps> = ({
+  currentPricePerVote,
+  inputValue,
+  submissionsCount,
+}) => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const { priceCurveType, isLoading, isError } = usePriceCurveType({
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
   });
-  const { winUpToFormatted, shouldShow } = useVotingRewardsProjection({ inputValue, submissionsCount });
+  const { winUpToFormatted, shouldShow } = useVotingRewardsProjection({
+    currentPricePerVote,
+    inputValue,
+    submissionsCount,
+  });
 
   if (isLoading) return <VotingWidgetRewardProjectionLoader />;
 

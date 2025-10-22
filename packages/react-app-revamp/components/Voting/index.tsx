@@ -135,7 +135,11 @@ const VotingWidget: FC<VotingWidgetProps> = ({
               <VoteInfoBlocks type="charge-info" costToVote={costToVote} costToVoteRaw={costToVoteRaw} />
               <VoteInfoBlocks type="total-votes" costToVote={costToVote} spendableBalance={balance?.formatted || "0"} />
             </div>
-            <VotingWidgetRewardsProjection inputValue={inputValue} submissionsCount={submissionsCount} />
+            <VotingWidgetRewardsProjection
+              currentPricePerVote={costToVoteRaw}
+              inputValue={inputValue}
+              submissionsCount={submissionsCount}
+            />
           </div>
           <VotingWidgetEmailSignup />
           <VoteButton

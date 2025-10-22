@@ -9,11 +9,13 @@ interface UseVotingRewardsProjectionReturn {
 }
 
 interface UseVotingRewardsProjectionParams {
+  currentPricePerVote: bigint;
   inputValue: string;
   submissionsCount: number;
 }
 
 export const useVotingRewardsProjection = ({
+  currentPricePerVote,
   inputValue,
   submissionsCount,
 }: UseVotingRewardsProjectionParams): UseVotingRewardsProjectionReturn => {
@@ -53,8 +55,9 @@ export const useVotingRewardsProjection = ({
   const spendingAmount = parseFloat(inputValue) || 0;
 
   const winUpToFormatted = calculateVotingRewardsProjection({
+    currentPricePerVote,
     spendingAmount,
-    costToVote,
+    costToVoteAtStart: costToVote,
     multiple,
     percentageToCreator,
     firstPlaceSharePercentage,
