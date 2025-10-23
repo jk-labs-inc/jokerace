@@ -1,8 +1,6 @@
 import AddFunds from "@components/AddFunds";
-import { ButtonSize } from "@components/UI/ButtonV3";
 import Drawer from "@components/UI/Drawer";
 import VotingWidget from "@components/Voting";
-import DialogMaxVotesAlert from "@components/_pages/DialogMaxVotesAlert";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
@@ -32,8 +30,6 @@ export const DrawerVoteForProposal: FC<DrawerVoteForProposalProps> = ({ isOpen, 
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const contestState = useContestStateStore(useShallow(state => state.contestState));
   const { castVotes, isLoading } = useCastVotes({ charge: contestCharge, votesClose: votingClose });
-  const [showMaxVoteConfirmation, setShowMaxVoteConfirmation] = useState(false);
-  const [pendingVote, setPendingVote] = useState<{ amount: number } | null>(null);
   const [showAddFunds, setShowAddFunds] = useState(false);
   const {
     currentPricePerVote,
@@ -48,19 +44,6 @@ export const DrawerVoteForProposal: FC<DrawerVoteForProposalProps> = ({ isOpen, 
 
   const onVote = (amount: number) => {
     castVotes(amount);
-  };
-
-  const confirmMaxVote = () => {
-    if (pendingVote) {
-      castVotes(pendingVote.amount);
-      setShowMaxVoteConfirmation(false);
-      setPendingVote(null);
-    }
-  };
-
-  const cancelMaxVote = () => {
-    setShowMaxVoteConfirmation(false);
-    setPendingVote(null);
   };
 
   const onAddFunds = () => {
@@ -90,24 +73,16 @@ export const DrawerVoteForProposal: FC<DrawerVoteForProposalProps> = ({ isOpen, 
           </div>
         ) : (
           <>
-            {showMaxVoteConfirmation ? (
-              <DialogMaxVotesAlert
-                onConfirm={confirmMaxVote}
-                onCancel={cancelMaxVote}
-                buttonSize={isMobile ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG_MOBILE}
-              />
-            ) : (
-              <VotingWidget
-                costToVote={currentPricePerVote}
-                costToVoteRaw={currentPricePerVoteRaw}
-                isLoading={isCurrentPricePerVoteLoading || isLoading}
-                isVotingClosed={contestStatus === ContestStatus.VotingClosed}
-                isContestCanceled={contestState === ContestStateEnum.Canceled}
-                submissionsCount={submissionsCount}
-                onVote={onVote}
-                onAddFunds={onAddFunds}
-              />
-            )}
+            <VotingWidget
+              costToVote={currentPricePerVote}
+              costToVoteRaw={currentPricePerVoteRaw}
+              isLoading={isCurrentPricePerVoteLoading || isLoading}
+              isVotingClosed={contestStatus === ContestStatus.VotingClosed}
+              isContestCanceled={contestState === ContestStateEnum.Canceled}
+              onVote={onVote}
+              onAddFunds={onAddFunds}
+              submissionsCount={submissionsCount}
+            />
           </>
         )}
       </div>
