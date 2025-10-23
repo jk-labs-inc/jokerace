@@ -45,6 +45,10 @@ export function useRewardsModule() {
         ...getRewardsConfig(rewardsModuleAddress, abi),
         functionName: "totalShares",
       },
+      {
+        ...contestConfig,
+        functionName: "creatorSplitDestination",
+      },
     ];
 
     const rewardsModule = await readContracts(config, {
@@ -52,22 +56,36 @@ export function useRewardsModule() {
     });
 
     const creator = rewardsModule[0].result as string;
-    const payees = rewardsModule[1].result as bigint[];
+    const payeeRankings = rewardsModule[1].result as bigint[];
     const totalShares = rewardsModule[2].result as bigint;
+    const creatorSplitDestination = rewardsModule[3].result as string;
+    const shareContracts = payeeRankings.map(ranking => ({
+      ...getRewardsConfig(rewardsModuleAddress, abi),
+      functionName: "shares",
+      args: [ranking],
+    }));
 
-    const formattedPayees = payees.map(payee => Number(payee));
+    const sharesResults = await readContracts(config, {
+      contracts: shareContracts,
+    });
+
+    const formattedPayees = payeeRankings.map(payee => Number(payee));
+    const formattedPayeeShares = sharesResults.map(result => Number(result.result as bigint));
     const totalSharesFormatted = Number(totalShares);
+    const isSelfFunded = creatorSplitDestination.toLowerCase() === rewardsModuleAddress.toLowerCase();
 
     return {
       abi,
       contractAddress: rewardsModuleAddress,
       creator,
       payees: formattedPayees,
+      payeeShares: formattedPayeeShares,
       totalShares: totalSharesFormatted,
       moduleType: moduleType ?? ModuleType.VOTER_REWARDS,
       blockExplorers: chains.filter(
         (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestConfig.chainName,
       )?.[0]?.blockExplorers?.default.url,
+      isSelfFunded,
     };
   };
 
