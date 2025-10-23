@@ -1,7 +1,11 @@
+import AddFunds from "@components/AddFunds";
+import Drawer from "@components/UI/Drawer";
+import VotingWidget from "@components/Voting";
 import { useVotingActions } from "@components/_pages/Submission/hooks/useVotingActions";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import { ContestStateEnum } from "@hooks/useContestState/store";
 import { FC, useState } from "react";
-import MobileVotingDrawer from "./components/MobileVotingModal";
+import { useShallow } from "zustand/shallow";
 import { useVotingSetupMobile } from "./hooks/useVotingSetupMobile";
 
 interface SubmissionPageMobileVotingProps {
@@ -11,6 +15,7 @@ interface SubmissionPageMobileVotingProps {
 
 const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpen, onClose }) => {
   const [showAddFunds, setShowAddFunds] = useState(false);
+  const submissionsCount = useSubmissionPageStore(useShallow(state => state.allProposalIds.length));
   const {
     contestConfig,
     currentPricePerVote,
@@ -33,21 +38,28 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
   }
 
   return (
-    <MobileVotingDrawer
-      isOpen={isOpen}
-      showAddFunds={showAddFunds}
-      chainName={contestConfig.chainName}
-      chainNativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol ?? ""}
-      costToVote={currentPricePerVote}
-      costToVoteRaw={currentPricePerVoteRaw}
-      isLoading={isLoading}
-      isVotingOpen={isVotingOpen}
-      isContestCanceled={contestState === ContestStateEnum.Canceled}
-      onClose={handleClose}
-      onGoBack={() => setShowAddFunds(false)}
-      onAddFunds={() => setShowAddFunds(true)}
-      onVote={castVotes}
-    />
+    <Drawer isOpen={isOpen} onClose={handleClose} className="bg-true-black w-full h-auto">
+      <div className="flex flex-col gap-4 p-6">
+        {showAddFunds ? (
+          <AddFunds
+            chain={contestConfig.chainName}
+            asset={contestConfig.chainNativeCurrencySymbol}
+            onGoBack={() => setShowAddFunds(false)}
+          />
+        ) : (
+          <VotingWidget
+            costToVote={currentPricePerVote}
+            costToVoteRaw={currentPricePerVoteRaw}
+            submissionsCount={submissionsCount}
+            isLoading={isLoading}
+            isVotingClosed={!isVotingOpen}
+            isContestCanceled={contestState === ContestStateEnum.Canceled}
+            onVote={(amount: number) => castVotes(amount)}
+            onAddFunds={() => setShowAddFunds(true)}
+          />
+        )}
+      </div>
+    </Drawer>
   );
 };
 

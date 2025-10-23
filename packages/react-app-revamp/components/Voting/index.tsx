@@ -1,16 +1,17 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { FC, RefObject, useEffect, useRef } from "react";
+import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
+import VotingWidgetEmailSignup from "./components/EmailSignup";
+import VotingWidgetRewardsProjection from "./components/RewardsProjection";
 import VoteAmountInput from "./components/VoteAmountInput";
 import VoteButton from "./components/VoteButton";
 import VoteInfoBlocks from "./components/VoteInfoBlocks";
 import VoteSlider from "./components/VoteSlider";
 import { useVoteExecution } from "./hooks/useVoteExecution";
 import { useVotingStore } from "./store";
-import VotingWidgetEmailSignup from "./components/EmailSignup";
-import { useMediaQuery } from "react-responsive";
 
 export enum VotingWidgetStyle {
   classic = "classic",
@@ -23,6 +24,7 @@ interface VotingWidgetProps {
   isLoading: boolean;
   isVotingClosed: boolean;
   isContestCanceled: boolean;
+  submissionsCount: number;
   style?: VotingWidgetStyle;
   onVote?: (amountOfVotes: number) => void;
   onAddFunds?: () => void;
@@ -34,6 +36,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   isLoading,
   isVotingClosed,
   isContestCanceled,
+  submissionsCount,
   style = VotingWidgetStyle.classic,
   onVote,
   onAddFunds,
@@ -125,6 +128,11 @@ const VotingWidget: FC<VotingWidgetProps> = ({
           <VoteInfoBlocks type="charge-info" costToVote={costToVote} costToVoteRaw={costToVoteRaw} />
           <VoteInfoBlocks type="total-votes" costToVote={costToVote} spendableBalance={balance?.formatted || "0"} />
         </div>
+        <VotingWidgetRewardsProjection
+          currentPricePerVote={costToVoteRaw}
+          inputValue={inputValue}
+          submissionsCount={submissionsCount}
+        />
       </div>
       <VotingWidgetEmailSignup />
       <VoteButton

@@ -7,6 +7,7 @@ import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
+import { useProposalStore } from "@hooks/useProposal/store";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
@@ -25,6 +26,7 @@ export const DrawerVoteForProposal: FC<DrawerVoteForProposalProps> = ({ isOpen, 
       votingClose: state.votesClose,
     })),
   );
+  const submissionsCount = useProposalStore(useShallow(state => state.submissionsCount));
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const contestState = useContestStateStore(useShallow(state => state.contestState));
   const { castVotes, isLoading } = useCastVotes({ charge: contestCharge, votesClose: votingClose });
@@ -79,6 +81,7 @@ export const DrawerVoteForProposal: FC<DrawerVoteForProposalProps> = ({ isOpen, 
               isContestCanceled={contestState === ContestStateEnum.Canceled}
               onVote={onVote}
               onAddFunds={onAddFunds}
+              submissionsCount={submissionsCount}
             />
           </>
         )}

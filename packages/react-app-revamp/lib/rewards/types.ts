@@ -46,8 +46,10 @@ export interface RewardModuleInfo {
   contractAddress: string;
   creator: string;
   payees: number[];
+  payeeShares: number[];
   totalShares: number;
   blockExplorers?: string;
+  isSelfFunded: boolean;
 }
 
 export const VOTER_REWARDS_VERSION = "5.5";
