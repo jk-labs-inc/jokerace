@@ -1,17 +1,17 @@
-import DialogMaxVotesAlert from "@components/_pages/DialogMaxVotesAlert";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { FC, RefObject, useEffect, useRef } from "react";
+import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
+import VotingWidgetEmailSignup from "./components/EmailSignup";
+import VotingWidgetRewardsProjection from "./components/RewardsProjection";
 import VoteAmountInput from "./components/VoteAmountInput";
 import VoteButton from "./components/VoteButton";
 import VoteInfoBlocks from "./components/VoteInfoBlocks";
 import VoteSlider from "./components/VoteSlider";
 import { useVoteExecution } from "./hooks/useVoteExecution";
 import { useVotingStore } from "./store";
-import VotingWidgetEmailSignup from "./components/EmailSignup";
-import { useMediaQuery } from "react-responsive";
 
 export enum VotingWidgetStyle {
   classic = "classic",
@@ -24,6 +24,7 @@ interface VotingWidgetProps {
   isLoading: boolean;
   isVotingClosed: boolean;
   isContestCanceled: boolean;
+  submissionsCount: number;
   style?: VotingWidgetStyle;
   onVote?: (amountOfVotes: number) => void;
   onAddFunds?: () => void;
@@ -35,6 +36,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   isLoading,
   isVotingClosed,
   isContestCanceled,
+  submissionsCount,
   style = VotingWidgetStyle.classic,
   onVote,
   onAddFunds,
@@ -62,12 +64,10 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     costToVote,
     inputValue,
   });
-  const { showMaxVotesDialog, handleVote, handleMaxVoteConfirm, handleMaxVoteCancel } = useVoteExecution({
-    maxBalance: balance?.formatted || "0",
+  const { handleVote } = useVoteExecution({
     costToVote,
     isVotingClosed,
     onVote,
-    onCancelMaxVotes: reset,
   });
 
   useEffect(() => {
@@ -100,49 +100,48 @@ const VotingWidget: FC<VotingWidgetProps> = ({
 
   return (
     <div className="flex flex-col gap-6">
-      {showMaxVotesDialog ? (
-        <DialogMaxVotesAlert onConfirm={handleMaxVoteConfirm} onCancel={handleMaxVoteCancel} />
-      ) : (
-        <>
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <VoteAmountInput
-                maxBalance={balance?.formatted || "0"}
-                symbol={contestConfig.chainNativeCurrencySymbol}
-                isConnected={isConnected}
-                style={style}
-                inputRef={inputRef as RefObject<HTMLInputElement>}
-                onKeyDown={handleKeyDownInputWithVote}
-              />
-              <VoteInfoBlocks
-                type="my-votes"
-                balance={isBalanceError ? "Error loading balance" : balance?.formatted || "0"}
-                symbol={contestConfig.chainNativeCurrencySymbol}
-                insufficientBalance={insufficientBalance}
-                isConnected={isConnected}
-                onAddFunds={onAddFunds}
-              />
-            </div>
-            <VoteSlider
-              value={sliderValue}
-              onChange={value => setSliderValue(value, balance?.formatted || "0", isConnected)}
-              onKeyDown={handleKeyDownSlider}
-            />
-            <div className="flex flex-col gap-2">
-              <VoteInfoBlocks type="charge-info" costToVote={costToVote} costToVoteRaw={costToVoteRaw} />
-              <VoteInfoBlocks type="total-votes" costToVote={costToVote} spendableBalance={balance?.formatted || "0"} />
-            </div>
-          </div>
-          <VotingWidgetEmailSignup />
-          <VoteButton
-            isDisabled={voteDisabled}
-            isInvalidBalance={insufficientBalance && isConnected}
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <VoteAmountInput
+            maxBalance={balance?.formatted || "0"}
+            symbol={contestConfig.chainNativeCurrencySymbol}
             isConnected={isConnected}
-            onVote={handleVote}
+            style={style}
+            inputRef={inputRef as RefObject<HTMLInputElement>}
+            onKeyDown={handleKeyDownInputWithVote}
+          />
+          <VoteInfoBlocks
+            type="my-votes"
+            balance={isBalanceError ? "Error loading balance" : balance?.formatted || "0"}
+            symbol={contestConfig.chainNativeCurrencySymbol}
+            insufficientBalance={insufficientBalance}
+            isConnected={isConnected}
             onAddFunds={onAddFunds}
           />
-        </>
-      )}
+        </div>
+        <VoteSlider
+          value={sliderValue}
+          onChange={value => setSliderValue(value, balance?.formatted || "0", isConnected)}
+          onKeyDown={handleKeyDownSlider}
+        />
+        <div className="flex flex-col gap-2">
+          <VoteInfoBlocks type="charge-info" costToVote={costToVote} costToVoteRaw={costToVoteRaw} />
+          <VoteInfoBlocks type="total-votes" costToVote={costToVote} spendableBalance={balance?.formatted || "0"} />
+        </div>
+        <VotingWidgetRewardsProjection
+          currentPricePerVote={costToVoteRaw}
+          inputValue={inputValue}
+          submissionsCount={submissionsCount}
+        />
+      </div>
+      <VotingWidgetEmailSignup />
+      <VoteButton
+        isDisabled={voteDisabled}
+        isInvalidBalance={insufficientBalance && isConnected}
+        isConnected={isConnected}
+        onVote={handleVote}
+        onAddFunds={onAddFunds}
+      />
     </div>
   );
 };

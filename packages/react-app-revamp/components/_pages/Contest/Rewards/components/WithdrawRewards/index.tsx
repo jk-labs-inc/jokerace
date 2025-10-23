@@ -63,11 +63,13 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({
           </button>
           {isCanceledByJkLabs && (
             <Tooltip
+              opacity={1}
               id={tooltipId}
-              className="max-w-64 p-2 opacity-100! z-50! border border-transparent rounded-lg focus:outline-none"
+              className="max-w-64 p-2 z-50! border border-transparent rounded-lg focus:outline-none"
             >
               <div className="text-[12px] text-white">
-                this rewards module has been canceled by jk labs at least a week after the underlying contest has ended and only they can withdraw the remaining funds in it to resolve any issues.
+                this rewards module has been canceled by jk labs at least a week after the underlying contest has ended
+                and only they can withdraw the remaining funds in it to resolve any issues.
               </div>
             </Tooltip>
           )}

@@ -62,10 +62,10 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
           onBlur={() => setIsFocused(false)}
           placeholder="0.00"
           onKeyDown={onKeyDown}
-          className="text-[40px] bg-transparent outline-none placeholder-primary-5 max-w-48"
+          className="text-[40px] bg-transparent outline-none placeholder-primary-5 max-w-42 md:max-w-48"
           style={{ width: `${width || 1}ch` }}
         />
-        <span className="text-[16px] text-neutral-9 whitespace-nowrap ml-1">{symbol}</span>
+        <span className="text-[16px] text-neutral-9 whitespace-nowrap ml-2">{symbol}</span>
       </div>
       <motion.button
         onClick={() => handleMaxClick(maxBalance, isConnected)}

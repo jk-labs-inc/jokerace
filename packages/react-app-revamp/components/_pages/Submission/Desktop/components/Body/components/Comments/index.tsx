@@ -43,7 +43,7 @@ const SubmissionPageDesktopBodyComments = () => {
           numberOfComments !== undefined && numberOfComments > 0 ? "h-52" : "h-auto"
         }`}
       >
-        <div className="flex items-baseline gap-2 flex-shrink-0">
+        <div className="flex items-baseline gap-2">
           <Image src="/entry/comment.svg" alt="comments" width={24} height={24} className="self-center mt-1" />
           <GradientText isFontSabo={false} textSizeClassName="text-[24px] font-bold">
             comments

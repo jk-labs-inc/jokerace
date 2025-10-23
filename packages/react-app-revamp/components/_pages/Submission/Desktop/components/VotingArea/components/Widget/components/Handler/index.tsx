@@ -1,11 +1,13 @@
 import { useVotingActions } from "@components/_pages/Submission/hooks/useVotingActions";
 import { useVotingSetup } from "@components/_pages/Submission/hooks/useVotingSetup";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import AddFunds from "@components/AddFunds";
 import VotingWidget, { VotingWidgetStyle } from "@components/Voting";
 import { ContestStateEnum } from "@hooks/useContestState/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 
 interface SubmissionPageDesktopVotingAreaWidgetHandlerProps {
   charge: Charge;
@@ -16,7 +18,8 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
   charge,
   votesClose,
 }) => {
-  const { address, isConnected } = useAccount();
+  const { address } = useAccount();
+  const submissionsCount = useSubmissionPageStore(useShallow(state => state.allProposalIds.length));
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
   const { contestConfig, contestDetails, currentPricePerVote, currentPricePerVoteRaw, isVotingOpen } = useVotingSetup(
     votesClose,
@@ -49,6 +52,7 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
             isLoading={isLoading}
             isVotingClosed={!isVotingOpen}
             isContestCanceled={contestDetails.state === ContestStateEnum.Canceled}
+            submissionsCount={submissionsCount}
             onAddFunds={() => setShowAddFundsModal(true)}
             onVote={onVote}
           />
