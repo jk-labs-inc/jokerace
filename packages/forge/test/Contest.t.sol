@@ -28,7 +28,6 @@ contract ContestTest is Test {
     uint256 public constant EXPONENTIAL_PRICE_CURVE_TYPE = 1;
     uint256 public constant ZERO_EXPONENT_MULTIPLE = 0;
     uint256 public constant STANDARD_EXPONENT_MULTIPLE = 33000000000000000; // for a terminal value 10x from min
-    address public constant CREATOR_SPLIT_DESTINATION = CREATOR_ADDRESS;
     address public constant JK_LABS_SPLIT_DESTINATION = JK_LABS_ADDRESS;
 
     // SORTING INT PARAMS
@@ -59,7 +58,6 @@ contract ContestTest is Test {
         CONTEST_NAME,
         CONTEST_PROMPT,
         payPerVoteExpCurveIntConstructorArgs,
-        CREATOR_SPLIT_DESTINATION,
         JK_LABS_SPLIT_DESTINATION,
         METADATA_FIELDS_SCHEMA
     );
@@ -92,6 +90,11 @@ contract ContestTest is Test {
         })
     });
 
+    // REWARDS MODULE VARS
+    VoterRewardsModule public voterRewardsModule;
+    uint256[] public payees = [1, 2, 3];
+    uint256[] public shares = [3, 2, 1];
+
     /////////////////////////////
 
     // SETUP
@@ -100,6 +103,8 @@ contract ContestTest is Test {
         vm.startPrank(CREATOR_ADDRESS);
 
         payPerVoteExpCurveContest = new Contest(payPerVoteExpCurveParams);
+        voterRewardsModule = new VoterRewardsModule(payees, shares, Contest(payPerVoteExpCurveContest));
+        payPerVoteExpCurveContest.setOfficialRewardsModule(address(voterRewardsModule));
 
         vm.stopPrank();
     }

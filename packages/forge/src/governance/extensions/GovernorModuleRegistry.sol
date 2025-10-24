@@ -17,6 +17,13 @@ abstract contract GovernorModuleRegistry is Governor {
     error OfficialRewardsModuleMustPointToThisContest();
 
     /**
+     * @dev Returns the official rewards module.
+     */
+    function getOfficialRewardsModule() public view override returns (address) {
+        return officialRewardsModule;
+    }
+
+    /**
      * @dev Get the official rewards module contract for this contest (effectively reverse record).
      */
     function setOfficialRewardsModule(address officialRewardsModule_) public {
