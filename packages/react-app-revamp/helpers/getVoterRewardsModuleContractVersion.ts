@@ -14,6 +14,7 @@ import DocsDeleteOnlyInEntryVoterRewards from "@contracts/bytecodeAndAbi/modules
 import RmUnusedErrorsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.4.rmUnusedErrors.sol/VoterRewardsModule.json";
 import OnlySetOfficialModuleOnceVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.5.onlySetOfficialModuleOnce.sol/VoterRewardsModule.json";
 import FixStateErrorsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.6.fixStateErrors.sol/VoterRewardsModule.json";
+import UpdatePeriodConstraintsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.7.updatePeriodConstraints.sol/VoterRewardsModule.json";
 import DeployedVoterRewardsContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { createPublicClient, getContract, http } from "viem";
 import { getChainFromId } from "./getChainFromId";
@@ -35,7 +36,9 @@ export async function getVoterRewardsModuleContractVersion(address: string, chai
   try {
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
-    if (version === "6.6") {
+    if (version === "6.7") {
+      return { abi: UpdatePeriodConstraintsVoterRewards.abi, version };
+    } else if (version === "6.6") {
       return { abi: FixStateErrorsVoterRewards.abi, version };
     } else if (version === "6.5") {
       return { abi: OnlySetOfficialModuleOnceVoterRewards.abi, version };

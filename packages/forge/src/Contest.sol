@@ -6,9 +6,9 @@ import "./governance/extensions/GovernorModuleRegistry.sol";
 import "./governance/extensions/GovernorEngagement.sol";
 
 contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEngagement {
-    uint256 public constant SECONDS_IN_WEEK = 604800;
+    uint256 public constant SECONDS_IN_DAY = 86400;
 
-    error PeriodsCannotBeMoreThanAWeek();
+    error PeriodsOutsideBounds();
     error RankLimitCannotBeZero();
 
     constructor(ConstructorArgs memory _constructorArgs)
@@ -16,10 +16,10 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
         GovernorSorting(_constructorArgs.intConstructorArgs.sortingEnabled, _constructorArgs.intConstructorArgs.rankLimit)
     {
         if (
-            (_constructorArgs.intConstructorArgs.votingDelay > SECONDS_IN_WEEK)
-                || (_constructorArgs.intConstructorArgs.votingPeriod > SECONDS_IN_WEEK)
+            (_constructorArgs.intConstructorArgs.votingDelay > SECONDS_IN_DAY)
+                || (_constructorArgs.intConstructorArgs.votingPeriod > 30 * SECONDS_IN_DAY)
         ) {
-            revert PeriodsCannotBeMoreThanAWeek();
+            revert PeriodsOutsideBounds();
         }
 
         if (_constructorArgs.intConstructorArgs.rankLimit == 0) revert RankLimitCannotBeZero();
