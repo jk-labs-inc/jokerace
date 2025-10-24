@@ -3783,15 +3783,23 @@
     "@mysten/utils" "0.2.0"
     "@scure/base" "^1.2.6"
 
-"@mysten/dapp-kit@0.19.2":
-  version "0.19.2"
-  resolved "https://registry.yarnpkg.com/@mysten/dapp-kit/-/dapp-kit-0.19.2.tgz#53178887d94b48e34d87f06d880defa360903a74"
-  integrity sha512-iMQAwWRTtEUg06MYtYjSmFJmvF+XoVK+8v6Y+jdxWd7zgdgJiK70k95aq0VmxjHZM4e+IXPOzGl6XpMPUZDERA==
+"@mysten/bcs@1.9.1":
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@mysten/bcs/-/bcs-1.9.1.tgz#cd991805aacb4da9148967a54b22ee0348833fea"
+  integrity sha512-EJejUrgv/FSjrssJw47/QQkK6FS2/4+YjDyQxHa2AbrCdENs252G7Owu2chapSwT3CXQVhmknECpFRkGMWOw9Q==
   dependencies:
-    "@mysten/slush-wallet" "0.2.3"
-    "@mysten/sui" "1.40.0"
     "@mysten/utils" "0.2.0"
-    "@mysten/wallet-standard" "0.19.0"
+    "@scure/base" "^1.2.6"
+
+"@mysten/dapp-kit@0.19.6":
+  version "0.19.6"
+  resolved "https://registry.yarnpkg.com/@mysten/dapp-kit/-/dapp-kit-0.19.6.tgz#aa1cc8a04e1912e064f0741906694e6a8cee0f2e"
+  integrity sha512-Bwdl3PCo3E8BtZMxhYfG2wyQ94WAOIdUf+z2b8XGGHGQc70nkLXWDLuLqLwUN4bByoU+EtJ4GSwQw6qJHvLS7Q==
+  dependencies:
+    "@mysten/slush-wallet" "0.2.7"
+    "@mysten/sui" "1.43.1"
+    "@mysten/utils" "0.2.0"
+    "@mysten/wallet-standard" "0.19.4"
     "@radix-ui/react-dialog" "^1.1.15"
     "@radix-ui/react-dropdown-menu" "^2.1.16"
     "@radix-ui/react-slot" "^1.2.3"
@@ -3801,14 +3809,14 @@
     clsx "^2.1.1"
     zustand "^4.5.4"
 
-"@mysten/slush-wallet@0.2.3":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/@mysten/slush-wallet/-/slush-wallet-0.2.3.tgz#e8f385d5e8824cf72aeb130471a6a595353b5f80"
-  integrity sha512-eZJohIj1PCO7BCORkwu35thAdj7q9P/0PwxKoUjRvTi8H2mys9IMnI3z+wCv63RS2ifk/eNTIlTJJLPlbKUcdw==
+"@mysten/slush-wallet@0.2.7":
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/@mysten/slush-wallet/-/slush-wallet-0.2.7.tgz#194815c54da321a3b2da7beb309610043fe2a275"
+  integrity sha512-sdrhN7KFMrDVala46W5RTjetDVLQeYCbvKFzhmcd33h38e1KHfM3hKWpK8ElhYHCp0Sjg11PeBr3c2pl97y5xQ==
   dependencies:
-    "@mysten/sui" "1.40.0"
+    "@mysten/sui" "1.43.1"
     "@mysten/utils" "0.2.0"
-    "@mysten/wallet-standard" "0.19.0"
+    "@mysten/wallet-standard" "0.19.4"
     "@mysten/window-wallet-core" "0.1.0"
     mitt "^3.0.1"
     valibot "^0.36.0"
@@ -3831,16 +3839,19 @@
     poseidon-lite "0.2.1"
     valibot "^0.36.0"
 
-"@mysten/sui@1.40.0":
-  version "1.40.0"
-  resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.40.0.tgz#6e7b142ed30a802784b45ff53baff1c98ab1fb2e"
-  integrity sha512-1MDF68v2mQIE1YEpPfyX++Jwat2JyeJM0htZKmKBqLghAvnbSgxUydogx+0b7jKn+Q2XpbvWhQlXEbUHOBTZQQ==
+"@mysten/sui@1.43.1":
+  version "1.43.1"
+  resolved "https://registry.yarnpkg.com/@mysten/sui/-/sui-1.43.1.tgz#23bcfddd357752bbc2aee6d0e604ebb405502fb1"
+  integrity sha512-DWD5q+19gi7c+gxtIfqgGlTFAIQlo4jB4bZcEE4SR8Z2hlnY2JK2CYllKSXAkDl9WpIjAe5In9uoQwuzyQ1t+Q==
   dependencies:
     "@graphql-typed-document-node/core" "^3.2.0"
-    "@mysten/bcs" "1.8.0"
+    "@mysten/bcs" "1.9.1"
     "@mysten/utils" "0.2.0"
-    "@noble/curves" "^1.9.4"
+    "@noble/curves" "=1.9.4"
     "@noble/hashes" "^1.8.0"
+    "@protobuf-ts/grpcweb-transport" "^2.11.1"
+    "@protobuf-ts/runtime" "^2.11.1"
+    "@protobuf-ts/runtime-rpc" "^2.11.1"
     "@scure/base" "^1.2.6"
     "@scure/bip32" "^1.7.0"
     "@scure/bip39" "^1.6.0"
@@ -3877,12 +3888,12 @@
   dependencies:
     "@scure/base" "^1.2.6"
 
-"@mysten/wallet-standard@0.19.0":
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.19.0.tgz#ff978afff2e7bc97a080d4d6289898da3512505a"
-  integrity sha512-GwJxd+f5EBQUty2pQ4r5G0h7JmABIlBIAyb1NaSns91lim2fEcBGKwTzvOGUsBpYBkBvXwoZDgz6xNzxKbobtQ==
+"@mysten/wallet-standard@0.19.4":
+  version "0.19.4"
+  resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.19.4.tgz#a03967863bb264e4ebfb3ec507632a5ac2d99051"
+  integrity sha512-fXFqWsbEazrYBFs3CejfEjRZaj1KAzY9hvt47kGYJ5TFuRRgGyKgTlJAFmuVvbS++lNbwYExWLJf3HH+iwnykQ==
   dependencies:
-    "@mysten/sui" "1.40.0"
+    "@mysten/sui" "1.43.1"
     "@wallet-standard/core" "1.1.1"
 
 "@mysten/wallet-standard@^0.18.1":
