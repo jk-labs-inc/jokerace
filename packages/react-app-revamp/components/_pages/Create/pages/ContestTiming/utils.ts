@@ -1,72 +1,93 @@
-import { create } from "zustand";
-import { Option } from "../../components/DefaultDropdown";
-import moment from "moment";
+import moment from "moment-timezone";
+import { MONTH_NAMES } from "./constants";
 
-interface StoreState {
-  timingOption: Option;
-  setTimingOption: (option: Option) => void;
+export interface DropdownOption {
+  label: string;
+  value: string;
 }
 
-export enum TimingPeriod {
-  OneWeek = "1w",
-  OneHour = "1hr",
-  OneDay = "1d",
-  TwoDays = "2d",
-  ThreeDays = "3d",
-  Custom = "custom",
-}
-
-export const timingPeriodsOptions = [
-  {
-    value: TimingPeriod.OneWeek,
-    label: "one week",
-  },
-  {
-    value: TimingPeriod.OneHour,
-    label: "one hour",
-  },
-  {
-    value: TimingPeriod.OneDay,
-    label: "one day",
-  },
-  {
-    value: TimingPeriod.TwoDays,
-    label: "two days",
-  },
-  {
-    value: TimingPeriod.ThreeDays,
-    label: "three days",
-  },
-  {
-    value: TimingPeriod.Custom,
-    label: "custom",
-  },
-];
-
-export const useTimingOptionForSubmissionPeriod = create<StoreState>(set => ({
-  timingOption: timingPeriodsOptions[0], // one week
-  setTimingOption: timingOption => set({ timingOption }),
-}));
-
-export const useTimingOptionForVotingPeriod = create<StoreState>(set => ({
-  timingOption: timingPeriodsOptions[4], // three days
-  setTimingOption: timingOption => set({ timingOption }),
-}));
-
-export const addTimeBasedOnPeriod = (startDate: Date, period: TimingPeriod): Date => {
-  switch (period) {
-    case TimingPeriod.OneWeek:
-      return moment(startDate).add(1, "weeks").toDate();
-    case TimingPeriod.OneHour:
-      return moment(startDate).add(1, "hours").toDate();
-    case TimingPeriod.OneDay:
-      return moment(startDate).add(1, "days").toDate();
-    case TimingPeriod.TwoDays:
-      return moment(startDate).add(2, "days").toDate();
-    case TimingPeriod.ThreeDays:
-      return moment(startDate).add(3, "days").toDate();
-
-    default:
-      return startDate;
+/**
+ * Convert 12-hour format to 24-hour format
+ */
+export const convertTo24Hour = (hour: number, period: "AM" | "PM"): number => {
+  if (period === "AM") {
+    return hour === 12 ? 0 : hour;
   }
+  return hour === 12 ? 12 : hour + 12;
+};
+
+/**
+ * Convert 24-hour format to 12-hour format
+ */
+export const convertTo12Hour = (hour: number): { hour: number; period: "AM" | "PM" } => {
+  if (hour === 0) return { hour: 12, period: "AM" };
+  if (hour < 12) return { hour, period: "AM" };
+  if (hour === 12) return { hour: 12, period: "PM" };
+  return { hour: hour - 12, period: "PM" };
+};
+
+/**
+ * Create a date from selections in local timezone
+ */
+export const createDateFromSelections = (month: number, day: number, hour12: number, period: "AM" | "PM"): Date => {
+  const now = moment();
+  const year = month < now.month() ? now.year() + 1 : now.year();
+  const hour24 = convertTo24Hour(hour12, period);
+
+  return moment().year(year).month(month).date(day).hour(hour24).minute(0).second(0).millisecond(0).toDate();
+};
+
+/**
+ * Get available months from now up to 1 month ahead
+ */
+export const getAvailableMonths = (): DropdownOption[] => {
+  const now = moment();
+  const oneMonthAhead = moment().add(1, "month");
+
+  const months: DropdownOption[] = [
+    {
+      label: MONTH_NAMES[now.month()],
+      value: String(now.month()),
+    },
+  ];
+
+  if (now.month() !== oneMonthAhead.month()) {
+    months.push({
+      label: MONTH_NAMES[oneMonthAhead.month()],
+      value: String(oneMonthAhead.month()),
+    });
+  }
+
+  return months;
+};
+
+/**
+ * Get available days for a given month/year within the 1-month window
+ */
+export const getAvailableDays = (month: number, year: number): DropdownOption[] => {
+  const now = moment();
+  const oneMonthAhead = moment().add(1, "month");
+  const daysInMonth = moment().month(month).year(year).daysInMonth();
+
+  const days: DropdownOption[] = [];
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = moment().year(year).month(month).date(day);
+
+    if (date.isSameOrAfter(now, "day") && date.isSameOrBefore(oneMonthAhead, "day")) {
+      days.push({ label: String(day), value: String(day) });
+    }
+  }
+
+  return days;
+};
+
+/**
+ * Get hours in 12-hour format (1-12)
+ */
+export const getAvailableHours = (): DropdownOption[] => {
+  return Array.from({ length: 12 }, (_, i) => ({
+    label: String(i + 1),
+    value: String(i + 1),
+  }));
 };
