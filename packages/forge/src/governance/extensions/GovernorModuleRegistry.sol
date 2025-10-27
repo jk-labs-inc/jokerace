@@ -19,7 +19,7 @@ abstract contract GovernorModuleRegistry is Governor {
     /**
      * @dev Returns the official rewards module.
      */
-    function getOfficialRewardsModule() public view override returns (address) {
+    function _getOfficialRewardsModule() internal view override returns (address) {
         return officialRewardsModule;
     }
 

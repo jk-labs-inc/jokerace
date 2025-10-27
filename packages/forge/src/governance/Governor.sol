@@ -320,7 +320,7 @@ abstract contract Governor is GovernorSorting {
     /**
      * @dev Returns the official rewards module.
      */
-    function getOfficialRewardsModule() public view virtual returns (address officialRewardsModule);
+    function _getOfficialRewardsModule() internal view virtual returns (address officialRewardsModule);
 
     /**
      * @dev Register a vote with a given support and voting weight.
@@ -415,8 +415,8 @@ abstract contract Governor is GovernorSorting {
 
             uint256 sendingToCreator = msg.value - sendingToJkLabs;
             if (sendingToCreator > 0) {
-                Address.sendValue(payable(getOfficialRewardsModule()), sendingToCreator); // creator gets the extra wei in the case of rounding
-                emit CreatorPaymentReleased(getOfficialRewardsModule(), sendingToCreator);
+                Address.sendValue(payable(_getOfficialRewardsModule()), sendingToCreator); // creator gets the extra wei in the case of rounding
+                emit CreatorPaymentReleased(_getOfficialRewardsModule(), sendingToCreator);
             }
         }
     }
@@ -427,7 +427,7 @@ abstract contract Governor is GovernorSorting {
     function propose(ProposalCore calldata proposal) public payable returns (uint256) {
         uint256 actionCost = _determineCorrectAmountSent(Actions.Submit, 0);
 
-        if (getOfficialRewardsModule() == address(0)) revert OfficialModuleMustBeSetToEnter();
+        if (_getOfficialRewardsModule() == address(0)) revert OfficialModuleMustBeSetToEnter();
         verifyProposer();
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
