@@ -4,10 +4,11 @@ import { FC } from "react";
 interface PeriodSelectorButtonProps {
   children: React.ReactNode;
   isSelected: boolean;
+  layoutId: string;
   onClick: () => void;
 }
 
-const PeriodSelectorButton: FC<PeriodSelectorButtonProps> = ({ children, isSelected, onClick }) => {
+const PeriodSelectorButton: FC<PeriodSelectorButtonProps> = ({ children, isSelected, onClick, layoutId }) => {
   return (
     <button onClick={onClick} className="relative w-14 h-8 rounded-4xl flex items-center justify-center" type="button">
       <motion.span
@@ -22,7 +23,7 @@ const PeriodSelectorButton: FC<PeriodSelectorButtonProps> = ({ children, isSelec
       </motion.span>
       {isSelected && (
         <motion.div
-          layoutId="selected-period"
+          layoutId={layoutId}
           className="absolute inset-0 rounded-4xl bg-neutral-11 shadow-period-selector"
           style={{
             zIndex: 1,

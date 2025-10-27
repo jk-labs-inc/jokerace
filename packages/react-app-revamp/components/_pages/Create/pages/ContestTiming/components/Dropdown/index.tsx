@@ -26,9 +26,9 @@ const CreateContestTimingDropdown: FC<CreateContestTimingDropdownProps> = ({
     setSelectedOption(defaultValue);
   }, [defaultValue]);
 
-  const handleOptionChange = (option: string) => {
-    setSelectedOption(option);
-    onChange?.(option);
+  const handleOptionChange = (value: string, label: string) => {
+    setSelectedOption(label);
+    onChange?.(value);
   };
 
   return (
@@ -43,13 +43,13 @@ const CreateContestTimingDropdown: FC<CreateContestTimingDropdownProps> = ({
       <MenuItems
         transition
         anchor="bottom end"
-        className={`${width} origin-top-right rounded-lg border border-neutral-17 bg-secondary-1 p-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0`}
+        className={`${width} origin-top-right max-h-60! rounded-lg border border-neutral-17 bg-secondary-1 p-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0`}
       >
         {options.map(option => (
           <MenuItem key={option.value}>
             <button
               className="group flex w-full items-center gap-2 rounded-lg px-4 py-1.5 data-focus:bg-white/10"
-              onClick={() => handleOptionChange(option.value)}
+              onClick={() => handleOptionChange(option.value, option.label)}
             >
               {option.label}
             </button>

@@ -1,8 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
 import moment from "moment-timezone";
+import { useEffect } from "react";
 import CreateNextButton from "../../components/Buttons/Next";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
@@ -13,27 +12,20 @@ import CreateContestTimingVotingOpens from "./components/VotingOpens";
 
 const CreateContestTiming = () => {
   const { steps } = useContestSteps();
-  const { step, setVotingOpen, setVotingClose } = useDeployContestStore(state => state);
+  const { step, errors, votingOpen, votingClose, validateTiming, setError } = useDeployContestStore(state => state);
   const onNextStep = useNextStep();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const contestTitle = isMobile ? "how long is voting?" : "how long does voting run?";
+  const currentError = errors.find(error => error.step === 2);
 
   useEffect(() => {
-    // Default voting opens to 1 week from now at 12:00pm ET
-    const defaultVotingOpen = moment
-      .tz("America/New_York")
-      .add(7, "days")
-      .hour(12)
-      .minute(0)
-      .second(0)
-      .millisecond(0)
-      .toDate();
-    // Default voting closes to 2 hours after voting opens
-    const defaultVotingClose = moment(defaultVotingOpen).add(2, "hours").toDate();
-
-    setVotingOpen(defaultVotingOpen);
-    setVotingClose(defaultVotingClose);
-  }, []);
+    const validation = validateTiming();
+    if (!validation.isValid) {
+      setError(2, { step: 2, message: validation.error || "Invalid timing" });
+    } else {
+      setError(2, { step: 2, message: "" });
+    }
+  }, [votingOpen, votingClose, validateTiming, setError]);
 
   return (
     <div className="flex flex-col">
@@ -53,13 +45,20 @@ const CreateContestTiming = () => {
                 <b>we recommend two hours to vote</b> so anyone can participate actively, as in a sports game.
               </p>
             </div>
-            <CreateContestTimingVotingOpens />
-            <CreateContestTimingVotingCloses />
-            <div className="pl-6 text-[16px] text-neutral-9">
-              <p>time zone: {moment.tz.guess()}</p>
+            <div className="flex flex-col gap-8">
+              <CreateContestTimingVotingOpens />
+              <CreateContestTimingVotingCloses />
+              {currentError && currentError.message && (
+                <div className="pl-6">
+                  <p className="text-[20px] text-negative-11 font-medium">{currentError.message}</p>
+                </div>
+              )}
+              <div className="pl-6 text-[16px] text-neutral-9">
+                <p>time zone: {moment.tz.guess()}</p>
+              </div>
             </div>
             <div className="mt-4 pl-6">
-              <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
+              <CreateNextButton step={step + 1} onClick={() => onNextStep()} isDisabled={!!currentError} />
             </div>
           </div>
         </div>
