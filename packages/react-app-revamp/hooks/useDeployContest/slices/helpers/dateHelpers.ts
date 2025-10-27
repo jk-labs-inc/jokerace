@@ -18,7 +18,7 @@ export const createDateFromTiming = (timing: TimingDetails): Date => {
     hour24 = 0;
   }
 
-  let date = moment()
+  const date = moment()
     .year(now.year())
     .month(timing.month)
     .date(timing.day)
@@ -26,11 +26,6 @@ export const createDateFromTiming = (timing: TimingDetails): Date => {
     .minute(0)
     .second(0)
     .millisecond(0);
-
-  // If the date is in the past, move to next year
-  if (date.isBefore(now)) {
-    date = date.add(1, "year");
-  }
 
   return date.toDate();
 };

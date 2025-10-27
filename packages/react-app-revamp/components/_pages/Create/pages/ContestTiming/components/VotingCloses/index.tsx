@@ -1,11 +1,11 @@
+import { Period } from "@hooks/useDeployContest/slices/contestTimingSlice";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import moment from "moment";
+import { useShallow } from "zustand/shallow";
 import PeriodSelector from "../PeriodSelector";
+import CreateContestTimingDaySelector from "../Selectors/DaySelector";
 import CreateContestTimingHourSelector from "../Selectors/HourSelector";
 import CreateContestTimingMonthSelector from "../Selectors/MonthSelector";
-import CreateContestTimingDaySelector from "../Selectors/DaySelector";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { Period } from "@hooks/useDeployContest/slices/contestTimingSlice";
-import { useShallow } from "zustand/shallow";
 
 const CreateContestTimingVotingCloses = () => {
   const {
@@ -50,7 +50,7 @@ const CreateContestTimingVotingCloses = () => {
   return (
     <div className="flex flex-col gap-4 pl-6">
       <p className="text-base font-bold text-neutral-9 uppercase">voting closes</p>
-      <div className="flex items-center gap-4">
+      <div className="grid grid-cols-2 items-center gap-4 md:flex">
         <CreateContestTimingMonthSelector
           months={monthOptions}
           defaultValue={monthLabel}

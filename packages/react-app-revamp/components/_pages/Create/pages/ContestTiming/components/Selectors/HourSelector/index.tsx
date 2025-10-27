@@ -1,5 +1,7 @@
 import { FC } from "react";
 import CreateContestTimingDropdown, { CreateContestTimingDropdownOption } from "../../Dropdown";
+import MobileHourSelector from "./Mobile";
+import { useMediaQuery } from "react-responsive";
 
 interface CreateContestTimingHourSelectorProps {
   hours: CreateContestTimingDropdownOption[];
@@ -12,6 +14,12 @@ const CreateContestTimingHourSelector: FC<CreateContestTimingHourSelectorProps> 
   onChange,
   defaultValue,
 }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+
+  if (isMobile) {
+    return <MobileHourSelector hours={hours} defaultValue={defaultValue} onChange={onChange} />;
+  }
+
   return (
     <div className="flex items-center gap-4">
       <CreateContestTimingDropdown options={hours} width="w-[120px]" onChange={onChange} defaultValue={defaultValue} />

@@ -39,7 +39,7 @@ const CreateContestTiming = () => {
         </div>
         <div className="grid col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-6">
           <div className="flex flex-col gap-12">
-            <div className="flex flex-col gap-4 w-[448px] rounded-4xl p-6 bg-primary-1 text-[16px] text-neutral-11">
+            <div className="flex flex-col gap-4 w-full md:w-[448px] rounded-4xl p-6 bg-primary-1 text-[16px] text-neutral-11">
               <p>entries can be submitted anytime before voting opens.</p>
               <p>
                 <b>we recommend two hours to vote</b> so anyone can participate actively, as in a sports game.
