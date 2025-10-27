@@ -16486,12 +16486,12 @@ w3c-keyname@^2.2.0:
   resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.8.tgz#7b17c8c6883d4e8b86ac8aba79d39e880f8869c5"
   integrity sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==
 
-wagmi@2.18.1:
-  version "2.18.1"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.18.1.tgz#bc21ecc0c091a3d6b7880e338e78553a91dbc7e3"
-  integrity sha512-u+lzv7K7R5Gvw5P8vtmwQ96+tR2UGSJ/wNRrDAZH+2ikLqc6Dt8Lj8L8MaqI0v7+gnHOGh63cgeXAEjOWydsMg==
+wagmi@2.18.2:
+  version "2.18.2"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.18.2.tgz#c6ced24dea4129c53f7d04dffb827f9a12088f7a"
+  integrity sha512-9jFip+0ZfjMBxT72m02MZD2+VmQQ/UmqZhHl+98N9HEqXLn765fIu45QPV85DAnQqIHD81gvY3vTvfWt16A5yQ==
   dependencies:
-    "@wagmi/connectors" "6.0.1"
+    "@wagmi/connectors" "6.1.0"
     "@wagmi/core" "2.22.1"
     use-sync-external-store "1.4.0"
 
