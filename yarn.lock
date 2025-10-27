@@ -14580,10 +14580,15 @@ react-use@17.6.0:
     ts-easing "^0.2.0"
     tslib "^2.1.0"
 
-react-window@*, react-window@2.2.1:
+react-window@*:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.2.1.tgz#3adbafffba43ed045895adec2d050883670953ff"
   integrity sha512-jrUMKDLW1B4yX4OU0QjdytGgWIg6wqWfiTe86lUhFsCUltkNNB/zYxFU0DTKAzBOMRbkpLVWS1IkLvQeO4L7nw==
+
+react-window@2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.2.2.tgz#09a7a8b2b1d3ab68e45c757c28f22a015f117adc"
+  integrity sha512-kvHKwFImKBWNbx2S87NZOhQhAVkBthjmnOfHlhQI45p3A+D+V53E+CqQMsyHrxNe3ke+YtWXuKDa1eoHAaIWJg==
 
 react@19.2.0:
   version "19.2.0"
