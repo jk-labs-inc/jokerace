@@ -73,7 +73,7 @@ export const createContestTimingSlice = (set: any, get: any): ContestTimingSlice
       const state = get();
       const newVotingOpen = { ...state.votingOpen, ...updates };
 
-      // If month changed, validate the day is still available
+      // If month changed, validate the day is still available and sync VotingClose
       if (updates.month !== undefined && updates.month !== state.votingOpen.month) {
         const availableDays = generateVotingOpenDayOptions(updates.month);
         const currentDayIsValid = availableDays.some(d => parseInt(d.value) === newVotingOpen.day);
@@ -82,8 +82,18 @@ export const createContestTimingSlice = (set: any, get: any): ContestTimingSlice
         if (!currentDayIsValid && availableDays.length > 0) {
           newVotingOpen.day = parseInt(availableDays[0].value);
         }
+
+        // Calculate new close date by adding 2 hours to the new voting open date
+        const newVotingOpenDate = moment(createDateFromTiming(newVotingOpen));
+        const newVotingCloseDate = newVotingOpenDate.clone().add(2, "hours");
+        const updatedVotingClose = convertDateToTimingDetails(newVotingCloseDate.toDate());
+
+        set({ votingOpen: newVotingOpen, votingClose: updatedVotingClose });
+        return;
       }
 
+      // For other changes (day, hour, period), just update VotingOpen
+      // Let validation errors show if VotingClose becomes invalid
       set({ votingOpen: newVotingOpen });
     },
 
@@ -99,6 +109,21 @@ export const createContestTimingSlice = (set: any, get: any): ContestTimingSlice
         // If current day is not available, set to first available day
         if (!currentDayIsValid && availableDays.length > 0) {
           newVotingClose.day = parseInt(availableDays[0].value);
+        }
+      }
+
+      // Special case: If user selects 12:00 AM (midnight), check if it should resolve to next day
+      const isMidnight = newVotingClose.hour === 12 && newVotingClose.period === Period.AM;
+      if (isMidnight) {
+        const votingOpenDate = createDateFromTiming(state.votingOpen);
+        const votingCloseDate = createDateFromTiming(newVotingClose);
+
+        // If midnight would be before or equal to open date, move it to next day
+        if (votingCloseDate <= votingOpenDate) {
+          const adjustedCloseDate = moment(votingCloseDate).add(1, "day");
+          const adjustedVotingClose = convertDateToTimingDetails(adjustedCloseDate.toDate());
+          set({ votingClose: adjustedVotingClose });
+          return;
         }
       }
 

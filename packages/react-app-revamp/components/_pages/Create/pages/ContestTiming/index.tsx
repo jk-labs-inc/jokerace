@@ -9,10 +9,20 @@ import { useContestSteps } from "../../hooks/useContestSteps";
 import { useNextStep } from "../../hooks/useNextStep";
 import CreateContestTimingVotingCloses from "./components/VotingCloses";
 import CreateContestTimingVotingOpens from "./components/VotingOpens";
+import { useShallow } from "zustand/shallow";
 
 const CreateContestTiming = () => {
   const { steps } = useContestSteps();
-  const { step, errors, votingOpen, votingClose, validateTiming, setError } = useDeployContestStore(state => state);
+  const { step, errors, votingOpen, votingClose, validateTiming, setError } = useDeployContestStore(
+    useShallow(state => ({
+      step: state.step,
+      errors: state.errors,
+      votingOpen: state.votingOpen,
+      votingClose: state.votingClose,
+      validateTiming: state.validateTiming,
+      setError: state.setError,
+    })),
+  );
   const onNextStep = useNextStep();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const contestTitle = isMobile ? "how long is voting?" : "how long does voting run?";
@@ -53,7 +63,7 @@ const CreateContestTiming = () => {
                   <p className="text-[20px] text-negative-11 font-medium">{currentError.message}</p>
                 </div>
               )}
-              <div className="pl-6 text-[16px] text-neutral-9">
+              <div className="pl-6 text-[20px] text-neutral-9">
                 <p>time zone: {moment.tz.guess()}</p>
               </div>
             </div>
