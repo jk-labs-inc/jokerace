@@ -8084,21 +8084,6 @@
     loupe "^2.3.7"
     pretty-format "^29.7.0"
 
-"@wagmi/connectors@6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-6.1.0.tgz#b9e4136a7528faf29332a16c8aa5d1584db84ada"
-  integrity sha512-MnpJHEABUIsajNxLc6br0LiqJvoFZbavQ6yG+mQb7Xlb3Hmm3IRjH5NU1g2zw5PCTRd3BFQLjwniLdwDnUPYNw==
-  dependencies:
-    "@base-org/account" "1.1.1"
-    "@coinbase/wallet-sdk" "4.3.6"
-    "@gemini-wallet/core" "0.2.0"
-    "@metamask/sdk" "0.33.1"
-    "@safe-global/safe-apps-provider" "0.18.6"
-    "@safe-global/safe-apps-sdk" "9.1.0"
-    "@walletconnect/ethereum-provider" "2.21.1"
-    cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
-    porto "0.2.19"
-
 "@wagmi/connectors@6.1.1":
   version "6.1.1"
   resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-6.1.1.tgz#eceb92c8180829e47aaf9348236465042f29c9ef"
@@ -11782,11 +11767,6 @@ hono@^4.10.3:
   resolved "https://registry.yarnpkg.com/hono/-/hono-4.10.3.tgz#4e4063eebaac2b735ca4c7455b4d7a6339afc251"
   integrity sha512-2LOYWUbnhdxdL8MNbNg9XZig6k+cZXm5IjHn2Aviv7honhBMOHb+jxrKIeJRZJRmn+htUCKhaicxwXuUDlchRA==
 
-hono@^4.9.6:
-  version "4.10.2"
-  resolved "https://registry.yarnpkg.com/hono/-/hono-4.10.2.tgz#a78d322f2c5fabebb1887f7ae1632a6524513e74"
-  integrity sha512-p6fyzl+mQo6uhESLxbF5WlBOAJMDh36PljwlKtP5V1v09NxlqGru3ShK+4wKhSuhuYf8qxMmrivHOa/M7q0sMg==
-
 html-parse-stringify@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/html-parse-stringify/-/html-parse-stringify-3.0.1.tgz#dfc1017347ce9f77c8141a507f233040c59c55d2"
@@ -13903,18 +13883,6 @@ pony-cause@^2.1.10:
   version "2.1.11"
   resolved "https://registry.yarnpkg.com/pony-cause/-/pony-cause-2.1.11.tgz#d69a20aaccdb3bdb8f74dd59e5c68d8e6772e4bd"
   integrity sha512-M7LhCsdNbNgiLYiP4WjsfLUuFmCfnjdF6jKe2R9NKl4WFN+HZPGHJZ9lnLP7f9ZnKe3U9nuWD0szirmj+migUg==
-
-porto@0.2.19:
-  version "0.2.19"
-  resolved "https://registry.yarnpkg.com/porto/-/porto-0.2.19.tgz#d19cd503be7867226407110fc69bdc4ac7b470e7"
-  integrity sha512-q1vEJgdtlEOf6byWgD31GHiMwpfLuxFSfx9f7Sw4RGdvpQs2ANBGfnzzardADZegr87ZXsebSp+3vaaznEUzPQ==
-  dependencies:
-    hono "^4.9.6"
-    idb-keyval "^6.2.1"
-    mipd "^0.0.7"
-    ox "^0.9.6"
-    zod "^4.1.5"
-    zustand "^5.0.1"
 
 porto@0.2.34:
   version "0.2.34"
@@ -16473,12 +16441,12 @@ w3c-keyname@^2.2.0:
   resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.8.tgz#7b17c8c6883d4e8b86ac8aba79d39e880f8869c5"
   integrity sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==
 
-wagmi@2.18.2:
-  version "2.18.2"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.18.2.tgz#c6ced24dea4129c53f7d04dffb827f9a12088f7a"
-  integrity sha512-9jFip+0ZfjMBxT72m02MZD2+VmQQ/UmqZhHl+98N9HEqXLn765fIu45QPV85DAnQqIHD81gvY3vTvfWt16A5yQ==
+wagmi@2.19.0:
+  version "2.19.0"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.19.0.tgz#044d0ea76036cce5aa929d08c6e37ea565437cbb"
+  integrity sha512-0Ypzs5rkj1d6uBcz2PBGqAfk+r2TfsmPh4cMxoCJyFy5P1IL3FHY9lQLCu77NJZ8DlVl+dd9mdPZrQADb8sLcw==
   dependencies:
-    "@wagmi/connectors" "6.1.0"
+    "@wagmi/connectors" "6.1.1"
     "@wagmi/core" "2.22.1"
     use-sync-external-store "1.4.0"
 
