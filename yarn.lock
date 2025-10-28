@@ -8106,6 +8106,21 @@
     cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
     porto "0.2.19"
 
+"@wagmi/connectors@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-6.1.1.tgz#eceb92c8180829e47aaf9348236465042f29c9ef"
+  integrity sha512-T5orLdX6Kz+UnJxy88aRnlSohnNCkP3KqWI3Hadho2uhFUqA87VWkE6+fD0TI4XA/pDA5wjI2EjCaGTmAxqDtQ==
+  dependencies:
+    "@base-org/account" "1.1.1"
+    "@coinbase/wallet-sdk" "4.3.6"
+    "@gemini-wallet/core" "0.2.0"
+    "@metamask/sdk" "0.33.1"
+    "@safe-global/safe-apps-provider" "0.18.6"
+    "@safe-global/safe-apps-sdk" "9.1.0"
+    "@walletconnect/ethereum-provider" "2.21.1"
+    cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
+    porto "0.2.34"
+
 "@wagmi/core@2.22.1":
   version "2.22.1"
   resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.22.1.tgz#de4b5019971dcf033ea5f7484add66900da7897c"
@@ -11769,6 +11784,11 @@ hoist-non-react-statics@^3.3.1:
   dependencies:
     react-is "^16.7.0"
 
+hono@^4.10.3:
+  version "4.10.3"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-4.10.3.tgz#4e4063eebaac2b735ca4c7455b4d7a6339afc251"
+  integrity sha512-2LOYWUbnhdxdL8MNbNg9XZig6k+cZXm5IjHn2Aviv7honhBMOHb+jxrKIeJRZJRmn+htUCKhaicxwXuUDlchRA==
+
 hono@^4.9.6:
   version "4.10.2"
   resolved "https://registry.yarnpkg.com/hono/-/hono-4.10.2.tgz#a78d322f2c5fabebb1887f7ae1632a6524513e74"
@@ -13897,6 +13917,18 @@ porto@0.2.19:
   integrity sha512-q1vEJgdtlEOf6byWgD31GHiMwpfLuxFSfx9f7Sw4RGdvpQs2ANBGfnzzardADZegr87ZXsebSp+3vaaznEUzPQ==
   dependencies:
     hono "^4.9.6"
+    idb-keyval "^6.2.1"
+    mipd "^0.0.7"
+    ox "^0.9.6"
+    zod "^4.1.5"
+    zustand "^5.0.1"
+
+porto@0.2.34:
+  version "0.2.34"
+  resolved "https://registry.yarnpkg.com/porto/-/porto-0.2.34.tgz#146611cbde1cd7a98c791d915513cbd9af4d2090"
+  integrity sha512-o+hK9r6a4j3EAFOkgNXtcwYc4vAMsmbVhRJHrBXXV/tGVLb2V2sVGLcCFFH3CLevRAyyUUKoT0KIaoQaro4saA==
+  dependencies:
+    hono "^4.10.3"
     idb-keyval "^6.2.1"
     mipd "^0.0.7"
     ox "^0.9.6"
