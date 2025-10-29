@@ -1,12 +1,7 @@
 import moment from "moment-timezone";
-import { FC, useMemo } from "react";
-import {
-  TimingPeriod,
-  useTimingOptionForSubmissionPeriod,
-  useTimingOptionForVotingPeriod,
-} from "../../../ContestTiming/utils";
+import { FC } from "react";
 import CreateContestConfirmLayout from "../Layout";
-import { useShallow } from "zustand/shallow";
+
 interface CreateContestConfirmTimingProps {
   timing: {
     submissionOpen: Date;
@@ -19,53 +14,16 @@ interface CreateContestConfirmTimingProps {
 
 const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timing, step, onClick }) => {
   const { submissionOpen, votingOpen, votingClose } = timing;
-  const timingOptionForSubmissionPeriod = useTimingOptionForSubmissionPeriod(useShallow(state => state.timingOption));
-  const timingOptionForVotingPeriod = useTimingOptionForVotingPeriod(useShallow(state => state.timingOption));
+  const timezone = moment.tz.guess();
 
-  const formattedSubmissionOpen =
-    moment(submissionOpen).format("MMMM D, YYYY h:mmA") + " " + moment.tz(moment.tz.guess()).zoneAbbr();
-  const formattedVoteOpen =
-    moment(votingOpen).format("MMMM D, YYYY h:mmA") + " " + moment.tz(moment.tz.guess()).zoneAbbr();
-  const formattedVotesClose =
-    moment(votingClose).format("MMMM D, YYYY h:mmA") + " " + moment.tz(moment.tz.guess()).zoneAbbr();
+  const formattedSubmissionOpen = `${moment(submissionOpen).format("MMMM D, YYYY h:mmA")} ${moment
+    .tz(timezone)
+    .zoneAbbr()}`;
+  const formattedVoteOpen = `${moment(votingOpen).format("MMMM D, YYYY h:mmA")} ${moment.tz(timezone).zoneAbbr()}`;
+  const formattedVotesClose = `${moment(votingClose).format("MMMM D, YYYY h:mmA")} ${moment.tz(timezone).zoneAbbr()}`;
 
-  const formatSubmissionPeriod = useMemo<string>(() => {
-    const timingOption = timingOptionForSubmissionPeriod.value as TimingPeriod;
-
-    switch (timingOption) {
-      case TimingPeriod.OneDay:
-        return `open to enter for one day: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
-      case TimingPeriod.TwoDays:
-        return `open to enter for two days: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
-      case TimingPeriod.ThreeDays:
-        return `open to enter for three days: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
-      case TimingPeriod.OneHour:
-        return `open to enter for one hour: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
-      case TimingPeriod.OneWeek:
-        return `open to enter for one week: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
-      default:
-        return `open to enter: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
-    }
-  }, [formattedSubmissionOpen, formattedVoteOpen, timingOptionForSubmissionPeriod]);
-
-  const formatVotingPeriod = useMemo<string>(() => {
-    const timingOption = timingOptionForVotingPeriod.value as TimingPeriod;
-
-    switch (timingOption) {
-      case TimingPeriod.OneDay:
-        return `open to vote for one day: ${formattedVoteOpen} to ${formattedVotesClose}`;
-      case TimingPeriod.TwoDays:
-        return `open to vote for two days: ${formattedVoteOpen} to ${formattedVotesClose}`;
-      case TimingPeriod.ThreeDays:
-        return `open to vote for three days: ${formattedVoteOpen} to ${formattedVotesClose}`;
-      case TimingPeriod.OneHour:
-        return `open to vote for one hour: ${formattedVoteOpen} to ${formattedVotesClose}`;
-      case TimingPeriod.OneWeek:
-        return `open to vote for one week: ${formattedVoteOpen} to ${formattedVotesClose}`;
-      default:
-        return `open to vote: ${formattedVoteOpen} to ${formattedVotesClose}`;
-    }
-  }, [formattedVotesClose, formattedVoteOpen, timingOptionForVotingPeriod]);
+  const formatSubmissionPeriod = `open to enter: ${formattedSubmissionOpen} to ${formattedVoteOpen}`;
+  const formatVotingPeriod = `open to vote: ${formattedVoteOpen} to ${formattedVotesClose}`;
 
   return (
     <CreateContestConfirmLayout onClick={() => onClick?.(step)}>

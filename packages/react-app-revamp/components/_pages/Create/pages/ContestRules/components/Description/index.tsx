@@ -17,8 +17,8 @@ const CreateContestRulesDescription = () => {
     contestType,
     charge,
     submissionOpen,
-    votingOpen,
-    votingClose,
+    getVotingOpenDate,
+    getVotingCloseDate,
     entryPreviewConfig,
     priceCurve,
   } = useDeployContestStore(state => state);
@@ -26,6 +26,8 @@ const CreateContestRulesDescription = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const [isEditorInitialized, setIsEditorInitialized] = useState(false);
   const { symbol } = getNativeTokenInfo(chainId ?? 0);
+  const votingOpen = getVotingOpenDate();
+  const votingClose = getVotingCloseDate();
 
   const editorSummarize = useEditor({
     ...createEditorConfig({

@@ -19,8 +19,6 @@ export interface ContestDataForType {
   submissionOpen: Date;
   votingOpen: Date;
   votingClose: Date;
-  votingOpenPeriod: Option;
-  votingClosePeriod: Option;
   priceCurve: PriceCurve;
 }
 

@@ -21,8 +21,8 @@ export function useDeployContest() {
     prompt,
     contestType,
     submissionOpen,
-    votingOpen,
-    votingClose,
+    getVotingOpenDate,
+    getVotingCloseDate,
     customization,
     advancedOptions,
     setDeployContestData,
@@ -36,6 +36,9 @@ export function useDeployContest() {
   } = useDeployContestStore(state => state);
   const { handleError } = useError();
   const { address, chain } = useAccount();
+
+  const votingOpen = getVotingOpenDate();
+  const votingClose = getVotingCloseDate();
 
   async function deployContest() {
     setIsLoading(true);
