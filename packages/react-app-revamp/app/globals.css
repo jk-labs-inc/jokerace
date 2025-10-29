@@ -708,9 +708,7 @@ li {
   ::selection {
     background-color: var(--brand);
   }
-  ::marker:not(li) {
-    color: var(--brand);
-  }
+
   *::selection {
     color: var(--color-true-black);
   }
