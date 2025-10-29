@@ -1,5 +1,6 @@
 import AddFundsModal from "@components/AddFunds/components/Modal";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import { formatBalance } from "@helpers/formatBalance";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
@@ -16,7 +17,7 @@ const BalanceOrSkeleton = ({
   nativeCurrencySymbol,
 }: {
   isUserBalanceLoading: boolean;
-  userBalance?: string | number;
+  userBalance: string;
   nativeCurrencySymbol?: string;
 }) => {
   return isUserBalanceLoading ? (
@@ -33,7 +34,7 @@ const BalanceOrSkeleton = ({
     </span>
   ) : (
     <span className="text-neutral-9">
-      {userBalance} {nativeCurrencySymbol} =
+      {formatBalance(userBalance)} {nativeCurrencySymbol} =
     </span>
   );
 };
