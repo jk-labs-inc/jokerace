@@ -24,6 +24,15 @@ const CreateContestTimingVotingOpens = () => {
   const hourOptions = getVotingOpenHourOptions();
   const monthLabel = moment().month(votingOpen.month).format("MMMM");
   const hourLabel = `${votingOpen.hour}:00`;
+  const votingOpenMoment = moment()
+    .month(votingOpen.month)
+    .date(votingOpen.day)
+    .hour(votingOpen.hour)
+    .minute(0)
+    .second(0);
+
+  const daysUntilVotingOpens = votingOpenMoment.diff(moment(), "days");
+  const shouldShowWeekRecommendation = daysUntilVotingOpens < 5;
 
   const handleMonthChange = (monthValue: string) => {
     updateVotingOpen({ month: parseInt(monthValue) });
@@ -57,6 +66,12 @@ const CreateContestTimingVotingOpens = () => {
         />
         <CreateContestTimingHourSelector hours={hourOptions} defaultValue={hourLabel} onChange={handleHourChange} />
         <PeriodSelector value={votingOpen.period} onChange={handlePeriodChange} layoutId="voting-open-period" />
+        {shouldShowWeekRecommendation && (
+          <p className="text-[16px] text-neutral-9 italic animate-fade-in">
+            there might not be time to market the <br />
+            contest if voting opens &lt;1 week from now
+          </p>
+        )}
       </div>
     </div>
   );

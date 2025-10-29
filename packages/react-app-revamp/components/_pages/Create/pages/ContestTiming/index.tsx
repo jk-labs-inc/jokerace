@@ -67,7 +67,7 @@ const CreateContestTiming = () => {
                 <p>time zone: {moment.tz.guess()}</p>
               </div>
             </div>
-            <div className="mt-4 pl-6">
+            <div className="hidden md:block mt-4 pl-6">
               <CreateNextButton step={step + 1} onClick={() => onNextStep()} isDisabled={!!currentError} />
             </div>
           </div>
