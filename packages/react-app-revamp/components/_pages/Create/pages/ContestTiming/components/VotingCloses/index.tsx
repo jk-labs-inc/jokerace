@@ -50,7 +50,7 @@ const CreateContestTimingVotingCloses = () => {
   return (
     <div className="flex flex-col gap-4 pl-6">
       <p className="text-base font-bold text-neutral-9 uppercase">voting closes</p>
-      <div className="grid grid-cols-2 items-center gap-4 md:flex">
+      <div className="flex flex-wrap items-center gap-4">
         <CreateContestTimingMonthSelector
           months={monthOptions}
           defaultValue={monthLabel}

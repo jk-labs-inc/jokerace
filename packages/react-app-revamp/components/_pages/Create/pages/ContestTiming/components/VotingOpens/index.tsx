@@ -22,7 +22,6 @@ const CreateContestTimingVotingOpens = () => {
   const monthOptions = getVotingOpenMonthOptions();
   const dayOptions = getVotingOpenDayOptions();
   const hourOptions = getVotingOpenHourOptions();
-
   const monthLabel = moment().month(votingOpen.month).format("MMMM");
   const hourLabel = `${votingOpen.hour}:00`;
 
@@ -45,7 +44,7 @@ const CreateContestTimingVotingOpens = () => {
   return (
     <div className="flex flex-col gap-4 pl-6">
       <p className="text-base font-bold text-neutral-9 uppercase">voting opens</p>
-      <div className="grid grid-cols-2 items-center gap-4 md:flex">
+      <div className="flex flex-wrap items-center gap-4">
         <CreateContestTimingMonthSelector
           months={monthOptions}
           defaultValue={monthLabel}
