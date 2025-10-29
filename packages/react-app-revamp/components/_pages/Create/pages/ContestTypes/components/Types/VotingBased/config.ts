@@ -1,21 +1,29 @@
-import { TimingPeriod } from "@components/_pages/Create/pages/ContestTiming/utils";
 import { ContestTypeConfig } from "@components/_pages/Create/types";
 import { PriceCurveType } from "@hooks/useDeployContest/types";
-import moment from "moment";
+import moment from "moment-timezone";
 
 const votingBasedConfig: ContestTypeConfig = {
   data: {
-    submissionOpen: new Date(),
-    votingOpen: moment().add(1, "day").toDate(),
-    votingClose: moment().add(1, "day").add(7, "days").toDate(),
-    votingOpenPeriod: {
-      value: TimingPeriod.OneDay,
-      label: "one day",
-    },
-    votingClosePeriod: {
-      value: TimingPeriod.OneWeek,
-      label: "one week",
-    },
+    submissionOpen: moment().toDate(),
+    votingOpen: moment
+      .tz("America/New_York")
+      .add(7, "days")
+      .hour(12)
+      .minute(0)
+      .second(0)
+      .millisecond(0)
+      .local()
+      .toDate(),
+    votingClose: moment
+      .tz("America/New_York")
+      .add(7, "days")
+      .hour(12)
+      .minute(0)
+      .second(0)
+      .millisecond(0)
+      .add(2, "hours")
+      .local()
+      .toDate(),
     priceCurve: {
       type: PriceCurveType.Exponential,
       multiple: 1,

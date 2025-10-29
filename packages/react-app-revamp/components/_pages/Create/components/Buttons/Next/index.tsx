@@ -1,7 +1,6 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { FC, MouseEventHandler, useEffect, useState } from "react";
+import { FC, MouseEventHandler } from "react";
 import { useMediaQuery } from "react-responsive";
 import MobileBottomButton from "../Mobile";
 
@@ -12,32 +11,16 @@ interface CreateNextButtonProps {
 }
 
 const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled }) => {
-  const { errors } = useDeployContestStore(state => state);
-  const [shake, setShake] = useState(false);
   const onPreviousStep = usePreviousStep();
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
 
-  useEffect(() => {
-    // If there's an error for the current step, shake the button
-    if (errors.find(error => error.step === step - 1)) {
-      setShake(true);
-    } else {
-      setShake(false);
-    }
-  }, [errors, step]);
-
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // If there's an error, shake the button
-    if (errors.find(error => error.step === step - 1)) {
-      setShake(true);
-    }
-
     if (onClick) {
       onClick(e);
     }
   };
 
-  const onBackHandler = (step: number) => {
+  const onBackHandler = () => {
     onPreviousStep();
   };
 
@@ -45,7 +28,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
     return (
       <MobileBottomButton>
         <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2   px-8`}>
-          <p className="text-[20px] text-neutral-11" onClick={() => onBackHandler(step)}>
+          <p className="text-[20px] text-neutral-11" onClick={onBackHandler}>
             back
           </p>
           <ButtonV3
@@ -63,9 +46,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
     <div className="flex gap-4 items-start mb-5">
       <div className={`flex flex-col gap-4 items-center`}>
         <ButtonV3
-          colorClass={`text-[20px] bg-gradient-purple rounded-[10px] font-bold ${
-            shake ? "animate-shake-top" : ""
-          } text-true-black hover:scale-105 transition-transform duration-200 ease-in-out`}
+          colorClass="text-[20px] bg-gradient-purple rounded-[10px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           size={ButtonSize.LARGE}
           onClick={handleClick}
           isDisabled={isDisabled}
@@ -75,7 +56,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
         {step !== 0 && (
           <button
             className="hidden lg:flex items-center gap-[5px] -ml-[15px] cursor-pointer group"
-            onClick={() => onBackHandler(step)}
+            onClick={onBackHandler}
           >
             <div className="transition-transform duration-200 group-hover:-translate-x-1">
               <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-px" />

@@ -20,7 +20,7 @@ export type DeployContestStore = ContestInfoSlice &
 export const useDeployContestStore = create<DeployContestStore>((set, get) => {
   const getInitialState = () => ({
     ...createContestInfoSlice(set),
-    ...createContestTimingSlice(set),
+    ...createContestTimingSlice(set, get),
     ...createSubmissionSlice(set),
     ...createMonetizationSlice(set),
     ...createMetadataSlice(set),
