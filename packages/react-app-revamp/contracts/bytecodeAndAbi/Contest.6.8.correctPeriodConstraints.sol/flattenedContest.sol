@@ -4925,6 +4925,7 @@ abstract contract Governor is GovernorSorting {
         string name;
         string prompt;
         IntConstructorArgs intConstructorArgs;
+        address creatorSplitDestination;
         address jkLabsSplitDestination;
         string metadataFieldsSchema;
     }
@@ -4992,6 +4993,7 @@ abstract contract Governor is GovernorSorting {
     uint256 public costToVote; // Cost per vote if flat price curve, starting/minimum price if exp curve
     uint256 public priceCurveType; // Enum value of PriceCurveTypes.
     uint256 public multiple; // Exponent multiple for an exponential price curve if applicable.
+    address public creatorSplitDestination; // Where the creator split of revenue goes.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
     string public metadataFieldsSchema; // JSON Schema of what the metadata fields are.
 
@@ -5017,7 +5019,6 @@ abstract contract Governor is GovernorSorting {
 
     error OnlyCreatorCanSubmit();
     error ContestMustBeQueuedToPropose();
-    error OfficialModuleMustBeSetToEnter();
     error ContestMustBeActiveToVote();
     error ContestMustBeActiveToGetCurrentVotePrice();
     error SenderSubmissionLimitReached(uint256 numAllowedProposalSubmissions);
@@ -5058,6 +5059,7 @@ abstract contract Governor is GovernorSorting {
         costToVote = constructorArgs_.intConstructorArgs.costToVote;
         priceCurveType = constructorArgs_.intConstructorArgs.priceCurveType;
         multiple = constructorArgs_.intConstructorArgs.multiple;
+        creatorSplitDestination = constructorArgs_.creatorSplitDestination;
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
         metadataFieldsSchema = constructorArgs_.metadataFieldsSchema;
 
@@ -5186,11 +5188,6 @@ abstract contract Governor is GovernorSorting {
     function totalVotesCastIsZero() public virtual returns (bool totalVotesCastZero);
 
     /**
-     * @dev Returns the official rewards module.
-     */
-    function _getOfficialRewardsModule() internal view virtual returns (address officialRewardsModule);
-
-    /**
      * @dev Register a vote with a given support and voting weight.
      */
     function _countVote(uint256 proposalId, address account, uint256 numVotes) internal virtual;
@@ -5283,8 +5280,8 @@ abstract contract Governor is GovernorSorting {
 
             uint256 sendingToCreator = msg.value - sendingToJkLabs;
             if (sendingToCreator > 0) {
-                Address.sendValue(payable(_getOfficialRewardsModule()), sendingToCreator); // creator gets the extra wei in the case of rounding
-                emit CreatorPaymentReleased(_getOfficialRewardsModule(), sendingToCreator);
+                Address.sendValue(payable(creatorSplitDestination), sendingToCreator); // creator gets the extra wei in the case of rounding
+                emit CreatorPaymentReleased(creator, sendingToCreator);
             }
         }
     }
@@ -5295,7 +5292,6 @@ abstract contract Governor is GovernorSorting {
     function propose(ProposalCore calldata proposal) public payable returns (uint256) {
         uint256 actionCost = _determineCorrectAmountSent(Actions.Submit, 0);
 
-        if (_getOfficialRewardsModule() == address(0)) revert OfficialModuleMustBeSetToEnter();
         verifyProposer();
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
@@ -5402,6 +5398,14 @@ abstract contract Governor is GovernorSorting {
         emit VoteCast(account, proposalId, numVotes);
 
         return numVotes;
+    }
+
+    function setCreatorSplitDestination(address newCreatorSplitDestination) public {
+        if (msg.sender != creator) revert OnlyCreatorCanAmend();
+        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
+            revert CannotUpdateWhenCompletedOrCanceled();
+        }
+        creatorSplitDestination = newCreatorSplitDestination;
     }
 
     function setJkLabsSplitDestination(address newJkLabsSplitDestination) public {
@@ -6100,13 +6104,6 @@ abstract contract GovernorModuleRegistry is Governor {
     error OnlyCreatorCanSetRewardsModule();
     error OfficialRewardsModuleCanOnlyBeSetOnce();
     error OfficialRewardsModuleMustPointToThisContest();
-
-    /**
-     * @dev Returns the official rewards module.
-     */
-    function _getOfficialRewardsModule() internal view override returns (address) {
-        return officialRewardsModule;
-    }
 
     /**
      * @dev Get the official rewards module contract for this contest (effectively reverse record).

@@ -4831,7 +4831,7 @@ using {
 /// @dev The result is rounded toward zero.
 /// @param x The UD60x18 number to convert.
 /// @return result The same number in basic integer form.
-function convert_0(UD60x18 x) pure returns (uint256 result) {
+function convert_1(UD60x18 x) pure returns (uint256 result) {
     result = UD60x18.unwrap(x) / uUNIT_3;
 }
 
@@ -4842,7 +4842,7 @@ function convert_0(UD60x18 x) pure returns (uint256 result) {
 ///
 /// @param x The basic integer to convert.
 /// @param result The same number converted to UD60x18.
-function convert_1(uint256 x) pure returns (UD60x18 result) {
+function convert_0(uint256 x) pure returns (UD60x18 result) {
     if (x > uMAX_UD60x18 / uUNIT_3) {
         revert PRBMath_UD60x18_Convert_Overflow(x);
     }
@@ -4925,6 +4925,7 @@ abstract contract Governor is GovernorSorting {
         string name;
         string prompt;
         IntConstructorArgs intConstructorArgs;
+        address creatorSplitDestination;
         address jkLabsSplitDestination;
         string metadataFieldsSchema;
     }
@@ -4992,6 +4993,7 @@ abstract contract Governor is GovernorSorting {
     uint256 public costToVote; // Cost per vote if flat price curve, starting/minimum price if exp curve
     uint256 public priceCurveType; // Enum value of PriceCurveTypes.
     uint256 public multiple; // Exponent multiple for an exponential price curve if applicable.
+    address public creatorSplitDestination; // Where the creator split of revenue goes.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
     string public metadataFieldsSchema; // JSON Schema of what the metadata fields are.
 
@@ -5017,7 +5019,6 @@ abstract contract Governor is GovernorSorting {
 
     error OnlyCreatorCanSubmit();
     error ContestMustBeQueuedToPropose();
-    error OfficialModuleMustBeSetToEnter();
     error ContestMustBeActiveToVote();
     error ContestMustBeActiveToGetCurrentVotePrice();
     error SenderSubmissionLimitReached(uint256 numAllowedProposalSubmissions);
@@ -5058,6 +5059,7 @@ abstract contract Governor is GovernorSorting {
         costToVote = constructorArgs_.intConstructorArgs.costToVote;
         priceCurveType = constructorArgs_.intConstructorArgs.priceCurveType;
         multiple = constructorArgs_.intConstructorArgs.multiple;
+        creatorSplitDestination = constructorArgs_.creatorSplitDestination;
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
         metadataFieldsSchema = constructorArgs_.metadataFieldsSchema;
 
@@ -5186,11 +5188,6 @@ abstract contract Governor is GovernorSorting {
     function totalVotesCastIsZero() public virtual returns (bool totalVotesCastZero);
 
     /**
-     * @dev Returns the official rewards module.
-     */
-    function _getOfficialRewardsModule() internal view virtual returns (address officialRewardsModule);
-
-    /**
      * @dev Register a vote with a given support and voting weight.
      */
     function _countVote(uint256 proposalId, address account, uint256 numVotes) internal virtual;
@@ -5283,8 +5280,8 @@ abstract contract Governor is GovernorSorting {
 
             uint256 sendingToCreator = msg.value - sendingToJkLabs;
             if (sendingToCreator > 0) {
-                Address.sendValue(payable(_getOfficialRewardsModule()), sendingToCreator); // creator gets the extra wei in the case of rounding
-                emit CreatorPaymentReleased(_getOfficialRewardsModule(), sendingToCreator);
+                Address.sendValue(payable(creatorSplitDestination), sendingToCreator); // creator gets the extra wei in the case of rounding
+                emit CreatorPaymentReleased(creator, sendingToCreator);
             }
         }
     }
@@ -5295,7 +5292,6 @@ abstract contract Governor is GovernorSorting {
     function propose(ProposalCore calldata proposal) public payable returns (uint256) {
         uint256 actionCost = _determineCorrectAmountSent(Actions.Submit, 0);
 
-        if (_getOfficialRewardsModule() == address(0)) revert OfficialModuleMustBeSetToEnter();
         verifyProposer();
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
@@ -5402,6 +5398,14 @@ abstract contract Governor is GovernorSorting {
         emit VoteCast(account, proposalId, numVotes);
 
         return numVotes;
+    }
+
+    function setCreatorSplitDestination(address newCreatorSplitDestination) public {
+        if (msg.sender != creator) revert OnlyCreatorCanAmend();
+        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
+            revert CannotUpdateWhenCompletedOrCanceled();
+        }
+        creatorSplitDestination = newCreatorSplitDestination;
     }
 
     function setJkLabsSplitDestination(address newJkLabsSplitDestination) public {
@@ -5615,123 +5619,6 @@ abstract contract GovernorCountingSimple is Governor {
 
             _updateRanks(oldVotes, newVotes);
         }
-    }
-}
-
-// src/governance/extensions/GovernorEngagement.sol
-
-/**
- * @dev Extension of {Governor} for engagement features.
- */
-abstract contract GovernorEngagement is Governor {
-    struct CommentCore {
-        address author;
-        uint256 timestamp;
-        uint256 proposalId;
-        string commentContent;
-    }
-
-    event CommentCreated(uint256 commentId);
-    event CommentsDeleted(uint256[] commentIds);
-
-    uint256[] public commentIds;
-    uint256[] public deletedCommentIds;
-    mapping(uint256 => CommentCore) public comments;
-    mapping(uint256 => uint256[]) public proposalComments;
-    mapping(uint256 => bool) public commentIsDeleted;
-
-    error OnlyCreatorOrAuthorCanDeleteComments(uint256 failedToDeleteCommentId);
-    error CannotCommentWhenCompletedOrCanceled();
-    error CannotDeleteWhenCompletedOrCanceled();
-
-    /**
-     * @dev Hashing function used to build the comment id from the comment details.
-     */
-    function hashComment(CommentCore memory commentObj) public pure returns (uint256) {
-        return uint256(keccak256(abi.encode(commentObj)));
-    }
-
-    /**
-     * @dev Return all commentIds.
-     */
-    function getAllCommentIds() public view returns (uint256[] memory) {
-        return commentIds;
-    }
-
-    /**
-     * @dev Return all deleted commentIds.
-     */
-    function getAllDeletedCommentIds() public view returns (uint256[] memory) {
-        return deletedCommentIds;
-    }
-
-    /**
-     * @dev Return a comment object.
-     */
-    function getComment(uint256 commentId) public view returns (CommentCore memory) {
-        return comments[commentId];
-    }
-
-    /**
-     * @dev Return the array of commentIds on a given proposalId.
-     */
-    function getProposalComments(uint256 proposalId) public view returns (uint256[] memory) {
-        return proposalComments[proposalId];
-    }
-
-    /**
-     * @dev Comment on a proposal.
-     *
-     * Emits a {CommentCreated} event.
-     */
-    function comment(uint256 proposalId, string memory commentContent) public returns (uint256) {
-        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
-            revert CannotCommentWhenCompletedOrCanceled();
-        }
-
-        CommentCore memory commentObject = CommentCore({
-            author: msg.sender,
-            timestamp: block.timestamp,
-            proposalId: proposalId,
-            commentContent: commentContent
-        });
-        uint256 commentId = hashComment(commentObject);
-
-        commentIds.push(commentId);
-        comments[commentId] = commentObject;
-        proposalComments[proposalId].push(commentId);
-
-        emit CommentCreated(commentId);
-
-        return commentId;
-    }
-
-    /**
-     * @dev Delete comments.
-     *
-     * Emits a {CommentsDeleted} event.
-     */
-    function deleteComments(uint256[] memory commentIdsParam) public {
-        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
-            revert CannotDeleteWhenCompletedOrCanceled();
-        }
-
-        uint256 commentIdsParamMemVar = commentIdsParam.length;
-
-        for (uint256 index = 0; index < commentIdsParamMemVar; index++) {
-            uint256 currentCommentId = commentIdsParam[index];
-
-            if ((msg.sender != creator) && (msg.sender != comments[currentCommentId].author)) {
-                revert OnlyCreatorOrAuthorCanDeleteComments(currentCommentId);
-            }
-
-            if (!commentIsDeleted[currentCommentId]) {
-                commentIsDeleted[currentCommentId] = true;
-                deletedCommentIds.push(currentCommentId);
-            }
-        }
-
-        emit CommentsDeleted(commentIdsParam);
     }
 }
 
@@ -6084,65 +5971,6 @@ contract VoterRewardsModule {
         shares[ranking] = shares_;
         totalShares = totalShares + shares_;
         emit PayeeAdded(ranking, shares_);
-    }
-}
-
-// src/governance/extensions/GovernorModuleRegistry.sol
-
-/**
- * @dev Extension of {Governor} for module management.
- */
-abstract contract GovernorModuleRegistry is Governor {
-    event OfficialRewardsModuleSet(address oldOfficialRewardsModule, address newOfficialRewardsModule);
-
-    address public officialRewardsModule;
-
-    error OnlyCreatorCanSetRewardsModule();
-    error OfficialRewardsModuleCanOnlyBeSetOnce();
-    error OfficialRewardsModuleMustPointToThisContest();
-
-    /**
-     * @dev Returns the official rewards module.
-     */
-    function _getOfficialRewardsModule() internal view override returns (address) {
-        return officialRewardsModule;
-    }
-
-    /**
-     * @dev Get the official rewards module contract for this contest (effectively reverse record).
-     */
-    function setOfficialRewardsModule(address officialRewardsModule_) public {
-        if (msg.sender != creator) revert OnlyCreatorCanSetRewardsModule();
-        if (officialRewardsModule != address(0)) revert OfficialRewardsModuleCanOnlyBeSetOnce();
-        if (address(VoterRewardsModule(payable(officialRewardsModule_)).underlyingContest()) != address(this)) {
-            revert OfficialRewardsModuleMustPointToThisContest();
-        }
-        address oldOfficialRewardsModule = officialRewardsModule;
-        officialRewardsModule = officialRewardsModule_;
-        emit OfficialRewardsModuleSet(oldOfficialRewardsModule, officialRewardsModule_);
-    }
-}
-
-// src/Contest.sol
-
-contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEngagement {
-    uint256 public constant SECONDS_IN_DAY = 86400;
-
-    error PeriodsOutsideBounds();
-    error RankLimitCannotBeZero();
-
-    constructor(ConstructorArgs memory _constructorArgs)
-        Governor(_constructorArgs)
-        GovernorSorting(_constructorArgs.intConstructorArgs.sortingEnabled, _constructorArgs.intConstructorArgs.rankLimit)
-    {
-        if (
-            (_constructorArgs.intConstructorArgs.votingDelay > (30 * SECONDS_IN_DAY))
-                || (_constructorArgs.intConstructorArgs.votingPeriod > SECONDS_IN_DAY)
-        ) {
-            revert PeriodsOutsideBounds();
-        }
-
-        if (_constructorArgs.intConstructorArgs.rankLimit == 0) revert RankLimitCannotBeZero();
     }
 }
 
