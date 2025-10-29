@@ -56,7 +56,7 @@ import RmUnusedErrorsContract from "@contracts/bytecodeAndAbi/Contest.6.4.rmUnus
 import OnlySetOfficialModuleOnceContract from "@contracts/bytecodeAndAbi/Contest.6.5.onlySetOfficialModuleOnce.sol/Contest.json";
 import FixStateErrorsContract from "@contracts/bytecodeAndAbi/Contest.6.6.fixStateErrors.sol/Contest.json";
 import UpdatePeriodConstraintsContract from "@contracts/bytecodeAndAbi/Contest.6.7.updatePeriodConstraints.sol/Contest.json";
-import CorrectPeriodConstraintsContract from "@contracts/bytecodeAndAbi/Contest.6.8.updatePeriodConstraints.sol/Contest.json";
+import CorrectPeriodConstraintsContract from "@contracts/bytecodeAndAbi/Contest.6.8.correctPeriodConstraints.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
 import { createTransport } from "@config/wagmi/transports";
