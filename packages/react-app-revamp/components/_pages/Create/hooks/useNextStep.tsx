@@ -12,6 +12,12 @@ const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected
   },
 
   [StepTitle.Timing]: state => {
+    const validation = state.validateTiming();
+    if (!validation.isValid) {
+      state.setError(2, { step: 2, message: validation.error || "Invalid timing" });
+      return false;
+    }
+    state.setError(2, { step: 2, message: "" });
     return true;
   },
   [StepTitle.Monetization]: (state, isConnected) => {

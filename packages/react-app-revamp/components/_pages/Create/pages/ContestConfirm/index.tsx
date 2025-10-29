@@ -24,7 +24,8 @@ import { displayCoinbaseWalletWarning, isEthereumMainnet, isWalletForbidden } fr
 const CreateContestConfirm = () => {
   const { chainId, chain, connector } = useAccount();
   const { steps, stepReferences } = useContestSteps();
-  const { setEmailSubscriptionAddress, ...state } = useDeployContestStore(state => state);
+  const state = useDeployContestStore(state => state);
+  const { setEmailSubscriptionAddress, getVotingOpenDate, getVotingCloseDate } = state;
   const { deployContest } = useDeployContest();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [isEthereumDeploymentModalOpen, setIsEthereumDeploymentModalOpen] = useState(false);
@@ -101,8 +102,8 @@ const CreateContestConfirm = () => {
             onClick={step => onNavigateToStep(step)}
             timing={{
               submissionOpen: state.submissionOpen,
-              votingOpen: state.votingOpen,
-              votingClose: state.votingClose,
+              votingOpen: getVotingOpenDate(),
+              votingClose: getVotingCloseDate(),
             }}
           />
           <CreateContestConfirmMonetization

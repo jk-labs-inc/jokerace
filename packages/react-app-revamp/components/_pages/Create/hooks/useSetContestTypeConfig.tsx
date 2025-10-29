@@ -1,7 +1,3 @@
-import {
-  useTimingOptionForSubmissionPeriod,
-  useTimingOptionForVotingPeriod,
-} from "@components/_pages/Create/pages/ContestTiming/utils";
 import { ContestType, ContestTypeConfig } from "@components/_pages/Create/types";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import {
@@ -13,8 +9,6 @@ import {
 const useSetContestTypeConfig = () => {
   const { contestType, setSubmissionOpen, setVotingOpen, setVotingClose, setPriceCurve, setPrompt, setCustomization } =
     useDeployContestStore(state => state);
-  const { setTimingOption: setSubmissionTimingOption } = useTimingOptionForSubmissionPeriod(state => state);
-  const { setTimingOption: setVotingTimingOption } = useTimingOptionForVotingPeriod(state => state);
 
   const setContestTypeConfig = (type: ContestType, config: ContestTypeConfig) => {
     if (type === contestType) {
@@ -36,8 +30,6 @@ const useSetContestTypeConfig = () => {
     setSubmissionOpen(config.data.submissionOpen);
     setVotingOpen(config.data.votingOpen);
     setVotingClose(config.data.votingClose);
-    setSubmissionTimingOption(config.data.votingOpenPeriod);
-    setVotingTimingOption(config.data.votingClosePeriod);
     setPrompt({
       summarize: "",
       evaluateVoters: "Voters should evaluate based on 50% relevance to the prompt and 50% originality.",
