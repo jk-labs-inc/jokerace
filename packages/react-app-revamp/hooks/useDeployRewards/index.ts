@@ -1,66 +1,50 @@
-import { useFundPoolStore } from "@components/_pages/Contest/Rewards/components/Create/steps/FundPool/store";
-import { CreationStep, useCreateRewardsStore } from "@components/_pages/Contest/Rewards/components/Create/store";
-import { chains, config } from "@config/wagmi";
+import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import { config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import VotingModuleContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
-import { extractPathSegments } from "@helpers/extractPath";
-import { getChainId } from "@helpers/getChainId";
+import { getChainFromId } from "@helpers/getChainFromId";
 import { setupDeploymentClients } from "@helpers/viem";
-import { useCreatorSplitDestination } from "@hooks/useCreatorSplitDestination";
-import { SplitFeeDestinationType } from "@hooks/useDeployContest/types";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useQueryClient } from "@tanstack/react-query";
 import { estimateGas, sendTransaction, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { insertContestWithOfficialModule } from "lib/rewards/database";
-import { usePathname } from "next/navigation";
 import { didUserReject } from "utils/error";
 import { erc20Abi, parseUnits } from "viem";
-import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 export function useDeployRewardsPool() {
-  const { address: userAddress } = useAccount();
-  const asPath = usePathname();
-  const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
-  const chainId = getChainId(chainName);
-  const { rewardPoolData, setRewardPoolData, setStep, addEarningsToRewards, resetCreateRewardsStore } =
-    useCreateRewardsStore(
-      useShallow(state => ({
-        rewardPoolData: state.rewardPoolData,
-        setRewardPoolData: state.setRewardPoolData,
-        setStep: state.setStep,
-        addEarningsToRewards: state.addEarningsToRewards,
-        resetCreateRewardsStore: state.reset,
-      })),
-    );
+  const { rewardPoolData, setRewardPoolData, resetCreateRewardsStore } = useDeployContestStore(
+    useShallow(state => ({
+      rewardPoolData: state.rewardPoolData,
+      setRewardPoolData: state.setRewardPoolData,
+      resetCreateRewardsStore: state.resetStore,
+    })),
+  );
   const { tokenWidgets, setTokenWidgets } = useFundPoolStore(
     useShallow(state => ({
       tokenWidgets: state.tokenWidgets,
       setTokenWidgets: state.setTokenWidgets,
     })),
   );
-  const { setCreatorSplitDestination } = useCreatorSplitDestination();
   const queryClient = useQueryClient();
 
-  async function deployRewardsPool() {
+  async function deployRewardsPool(contestAddress: string, contestChainId: number, userAddress: `0x${string}`) {
     let contractRewardsModuleAddress: `0x${string}` | null | undefined;
+    const chainName = getChainFromId(contestChainId)?.name.toLowerCase();
 
     try {
-      contractRewardsModuleAddress = await deployRewardsModule();
+      contractRewardsModuleAddress = await deployRewardsModule(contestAddress, contestChainId, userAddress);
 
       if (!contractRewardsModuleAddress) {
         throw new Error("Failed to deploy rewards module");
       }
 
-      await attachRewardsModule(contractRewardsModuleAddress);
-      await fundPoolTokens(contractRewardsModuleAddress);
-
-      if (addEarningsToRewards) {
-        await setCreatorSplitDestinationToRewardsPool(contractRewardsModuleAddress);
-      }
+      await attachRewardsModule(contestAddress, contestChainId, contractRewardsModuleAddress);
+      await fundPoolTokens(contestAddress, contestChainId, contractRewardsModuleAddress);
 
       try {
-        await insertContestWithOfficialModule(contestAddress, chainName);
+        await insertContestWithOfficialModule(contestAddress, chainName ?? "");
       } catch (error) {
         console.error("Failed to insert contest with official module:", error);
       }
@@ -73,23 +57,20 @@ export function useDeployRewardsPool() {
       });
     } catch (e: any) {
       if (didUserReject(e)) {
-        setStep(CreationStep.Review);
+        // TODO: add error handling in case user rejected the transaction (return back to reveiw step)
+        throw e;
       }
     }
   }
 
-  async function deployRewardsModule() {
+  async function deployRewardsModule(contestAddress: string, contestChainId: number, userAddress: `0x${string}`) {
     setRewardPoolData(prevData => ({
       ...prevData,
       deploy: { ...prevData.deploy, loading: true, error: false, success: false },
     }));
 
     try {
-      if (!chainId || !userAddress) {
-        throw new Error("Failed to deploy rewards module");
-      }
-
-      const { walletClient, publicClient, chain } = await setupDeploymentClients(userAddress, chainId);
+      const { walletClient, publicClient, chain } = await setupDeploymentClients(userAddress, contestChainId);
       const baseParams = [rewardPoolData.rankings, rewardPoolData.shareAllocations, contestAddress];
 
       const contractRewardsModuleHash = await walletClient.deployContract({
@@ -122,7 +103,11 @@ export function useDeployRewardsPool() {
     }
   }
 
-  async function attachRewardsModule(contractRewardsModuleAddress: string) {
+  async function attachRewardsModule(
+    contestAddress: string,
+    contestChainId: number,
+    contractRewardsModuleAddress: string,
+  ) {
     setRewardPoolData(prevData => ({
       ...prevData,
       attach: { ...prevData.attach, loading: true, error: false, success: false },
@@ -131,7 +116,7 @@ export function useDeployRewardsPool() {
     try {
       const contractConfig = {
         address: contestAddress as `0x${string}`,
-        chainId: chainId,
+        chainId: contestChainId,
         abi: DeployedContestContract.abi,
       };
 
@@ -159,7 +144,8 @@ export function useDeployRewardsPool() {
     }
   }
 
-  async function fundPoolTokens(contractRewardsModuleAddress: string) {
+  async function fundPoolTokens(contestAddress: string, contestChainId: number, contractRewardsModuleAddress: string) {
+    const chainName = getChainFromId(contestChainId)?.name.toLowerCase();
     // exit early if all token amounts are 0
     if (tokenWidgets.every(token => parseFloat(token.amount) === 0)) {
       return;
@@ -184,7 +170,7 @@ export function useDeployRewardsPool() {
 
         const fundPoolContractConfig = {
           address: token.address as `0x${string}`,
-          chainId: chainId,
+          chainId: contestChainId,
           abi: erc20Abi,
         };
 
@@ -193,17 +179,17 @@ export function useDeployRewardsPool() {
 
           await estimateGas(config, {
             to: contractRewardsModuleAddress as `0x${string}`,
-            chainId,
+            chainId: contestChainId,
             value: amountBigInt,
           });
 
           hash = await sendTransaction(config, {
             to: contractRewardsModuleAddress as `0x${string}`,
-            chainId,
+            chainId: contestChainId,
             value: amountBigInt,
           });
 
-          receipt = await waitForTransactionReceipt(config, { chainId, hash });
+          receipt = await waitForTransactionReceipt(config, { chainId: contestChainId, hash });
         } else {
           const amountBigInt = parseUnits(token.amount, token.decimals);
 
@@ -215,7 +201,7 @@ export function useDeployRewardsPool() {
 
           hash = await writeContract(config, { ...request });
 
-          receipt = await waitForTransactionReceipt(config, { chainId, hash });
+          receipt = await waitForTransactionReceipt(config, { chainId: contestChainId, hash });
         }
 
         setRewardPoolData(prevData => ({
@@ -228,7 +214,7 @@ export function useDeployRewardsPool() {
           await updateRewardAnalytics({
             contest_address: contestAddress,
             rewards_module_address: contractRewardsModuleAddress,
-            network_name: chainName,
+            network_name: chainName ?? "",
             amount: parseFloat(token.amount),
             operation: "deposit",
             token_address: token.address === "native" ? null : token.address,
@@ -246,30 +232,5 @@ export function useDeployRewardsPool() {
     }
   }
 
-  async function setCreatorSplitDestinationToRewardsPool(contractRewardsModuleAddress: string) {
-    setRewardPoolData(prevData => ({
-      ...prevData,
-      setCreatorSplitDestination: { loading: true, error: false, success: false },
-    }));
-
-    try {
-      await setCreatorSplitDestination({
-        type: SplitFeeDestinationType.RewardsPool,
-        address: contractRewardsModuleAddress,
-      });
-
-      setRewardPoolData(prevData => ({
-        ...prevData,
-        setCreatorSplitDestination: { loading: false, error: false, success: true },
-      }));
-    } catch (e) {
-      setRewardPoolData(prevData => ({
-        ...prevData,
-        setCreatorSplitDestination: { loading: false, success: false, error: true },
-      }));
-      throw e;
-    }
-  }
-
-  return { deployRewardsPool, deployRewardsModule, attachRewardsModule, fundPoolTokens };
+  return { deployRewardsPool };
 }

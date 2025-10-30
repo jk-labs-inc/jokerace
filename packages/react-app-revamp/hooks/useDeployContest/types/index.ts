@@ -12,22 +12,8 @@ export enum VoteType {
   PerTransaction = "PerTransaction",
 }
 
-export enum SplitFeeDestinationType {
-  CreatorWallet = "CreatorWallet",
-  AnotherWallet = "AnotherWallet",
-  NoSplit = "NoSplit",
-  RewardsPool = "RewardsPool",
-}
-
-export type SplitFeeDestination =
-  | { type: SplitFeeDestinationType.CreatorWallet; address: string }
-  | { type: SplitFeeDestinationType.AnotherWallet; address: string }
-  | { type: SplitFeeDestinationType.NoSplit; address: string }
-  | { type: SplitFeeDestinationType.RewardsPool; address: string };
-
 export type Charge = {
   percentageToCreator: number;
-  splitFeeDestination: SplitFeeDestination;
   voteType: VoteType;
   type: {
     costToPropose: number;

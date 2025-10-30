@@ -2,10 +2,9 @@ import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { JK_LABS_SPLIT_DESTINATION_DEFAULT } from "@hooks/useDeployContest";
-import { Charge, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
+import { Charge } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
-import ContestParamsEarningsModal from "./components/Modal";
 
 interface ContestParametersEarningsProps {
   charge: Charge;
@@ -74,12 +73,6 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge,
         {isCreatorSplit ? <li className="list-disc">{creatorEarningsDestinationMessage()}</li> : null}
         {renderEarningsSplitMessage()}
       </ul>
-
-      <ContestParamsEarningsModal
-        charge={charge}
-        isOpen={isEditEarningsModalOpen}
-        onClose={() => setIsEditEarningsModalOpen(false)}
-      />
     </div>
   );
 };

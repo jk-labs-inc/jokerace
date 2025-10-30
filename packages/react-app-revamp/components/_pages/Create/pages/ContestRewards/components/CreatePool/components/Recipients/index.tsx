@@ -1,14 +1,15 @@
-import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import ButtonV3 from "@components/UI/ButtonV3";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Recipient, ValidationError } from "@hooks/useDeployContest/slices/contestCreateRewards";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { AnimatePresence, motion } from "motion/react";
 import React, { useState } from "react";
-import { Recipient, ValidationError, useCreateRewardsStore } from "../../../../store";
-import CreateRewardsPoolRecipientsDropdown from "../Dropdown";
-import { motion, AnimatePresence } from "motion/react";
+import { useShallow } from "zustand/shallow";
+import CreateRewardsPoolDropdown, { CreateRewardsPoolDropdownOptions } from "../Dropdown";
 
 const RANK_LIMIT = 50;
 
-const generateRankOptions = (limit: number): Option[] => {
+const generateRankOptions = (limit: number): CreateRewardsPoolDropdownOptions[] => {
   return Array.from({ length: limit }, (_, i) => {
     const rank = i + 1;
     return {
@@ -20,7 +21,13 @@ const generateRankOptions = (limit: number): Option[] => {
 
 const CreateRewardsPoolRecipients: React.FC = () => {
   const [recipientsExceedLimit, setRecipientsExceedLimit] = useState("");
-  const { setRewardPoolData, rewardPoolData } = useCreateRewardsStore(state => state);
+  const { setRewardPoolData, rewardPoolData } = useDeployContestStore(
+    useShallow(state => ({
+      setRewardPoolData: state.setRewardPoolData,
+      rewardPoolData: state.rewardPoolData,
+    })),
+  );
+
   const [nextId, setNextId] = useState(rewardPoolData.recipients.length + 1);
   const rankOptions = generateRankOptions(RANK_LIMIT);
 
@@ -129,7 +136,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
       <div className="hidden justify-start md:block">
         <ButtonV3
           onClick={handleAddRecipient}
-          colorClass="bg-transparent"
+          colorClass="bg-secondary-1"
           textColorClass="text-neutral-11 border-neutral-11 border hover:bg-neutral-11 hover:border-true-black hover:text-true-black transition-colors duration-300 rounded-[40px] font-normal"
         >
           + Add rank
@@ -181,12 +188,14 @@ const CreateRewardsPoolRecipients: React.FC = () => {
                 }}
               >
                 <div className="grid grid-cols-2 justify-between items-center border-t border-primary-2 py-3">
-                  <div className="flex gap-4">
-                    <CreateRewardsPoolRecipientsDropdown
+                  <div className="flex items-center gap-4">
+                    <CreateRewardsPoolDropdown
                       options={rankOptions}
-                      defaultOption={rankOptions[recipient.place - 1]}
+                      defaultValue={rankOptions[recipient.place - 1]?.value || rankOptions[0].value}
                       onChange={value => handlePlaceChange(value, recipient.id)}
-                      excludedValues={rewardPoolData.recipients.map(r => r.place.toString())}
+                      excludedValues={rewardPoolData.recipients
+                        .filter(r => r.id !== recipient.id)
+                        .map(r => r.place.toString())}
                     />
 
                     <span className="text-[16px] text-neutral-14">place</span>
@@ -195,7 +204,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center relative">
                         <input
-                          className="w-[120px] h-8 bg-neutral-9 text-true-black rounded-[8px] font-bold text-center appearance-none focus:outline-none placeholder:text-primary-5"
+                          className="w-[120px] h-8 bg-secondary-1 text-neutral--11 border border-neutral-17 rounded-[8px] font-bold text-center appearance-none focus:outline-none placeholder:text-primary-5"
                           type="number"
                           max="100"
                           placeholder="0"

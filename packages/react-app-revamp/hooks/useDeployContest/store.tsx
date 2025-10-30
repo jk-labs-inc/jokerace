@@ -6,6 +6,7 @@ import { createMonetizationSlice, MonetizationSlice } from "./slices/contestMone
 import { createMetadataSlice, MetadataSlice } from "./slices/contestMetadataSlice";
 import { createAdvancedOptionsSlice, AdvancedOptionsSlice } from "./slices/contestAdvancedOptionsSlice";
 import { createDeploymentSlice, DeploymentSlice } from "./slices/contestDeploymentSlice";
+import { createCreateRewardsSlice, CreateRewardsSlice } from "./slices/contestCreateRewards";
 
 export type DeployContestStore = ContestInfoSlice &
   ContestTimingSlice &
@@ -13,6 +14,7 @@ export type DeployContestStore = ContestInfoSlice &
   MonetizationSlice &
   MetadataSlice &
   AdvancedOptionsSlice &
+  CreateRewardsSlice &
   DeploymentSlice & {
     resetStore: () => void;
   };
@@ -25,6 +27,7 @@ export const useDeployContestStore = create<DeployContestStore>((set, get) => {
     ...createMonetizationSlice(set),
     ...createMetadataSlice(set),
     ...createAdvancedOptionsSlice(set),
+    ...createCreateRewardsSlice(set, get),
     ...createDeploymentSlice(set, get),
   });
 

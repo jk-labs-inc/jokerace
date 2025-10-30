@@ -47,11 +47,13 @@ const ContestRewards = () => {
     return <RewardsError onRetry={isRewardsCanceledError ? refetchRewardsCanceled : refetch} />;
   }
 
+  //TODO: this shouldn't exist anymore (only maybe for pre-6.9 versions)
   if (!rewards && !creator) {
     return <NoRewardsInfo />;
   }
 
   if (!rewards && creator) {
+    //TODO: we should check here if < 6.9 version and show a warning if so
     return <CreateRewards />;
   }
 
@@ -65,7 +67,7 @@ const ContestRewards = () => {
         rewardsAbi={rewards.abi as Abi}
         rankings={rewards.payees}
         chainId={contestConfig.chainId}
-        version={contestConfig. version}
+        version={contestConfig.version}
       />
     );
   }

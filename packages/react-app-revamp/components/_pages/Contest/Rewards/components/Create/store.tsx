@@ -9,13 +9,6 @@ interface ActionState {
   success: boolean;
 }
 
-export enum CreationStep {
-  InitialStep,
-  CreatePool,
-  Review,
-  DeploymentStatus,
-}
-
 export interface Recipient {
   id: number;
   place: number;
@@ -41,14 +34,10 @@ export interface RewardPoolData {
 }
 
 interface CreateRewardsState {
-  currentStep: CreationStep;
   rewardPoolData: RewardPoolData;
   addFundsToRewards?: boolean;
-  addEarningsToRewards?: boolean;
-  setStep: (step: CreationStep) => void;
   setRewardPoolData: (data: ReactStyleStateSetter<RewardPoolData>) => void;
   setAddFundsToRewards?: (addFundsToRewards: boolean) => void;
-  setAddEarningsToRewards?: (addEarningsToRewards: boolean) => void;
   reset: () => void;
 }
 
@@ -82,23 +71,17 @@ function getInitialRewardPoolData(): RewardPoolData {
 }
 
 export const useCreateRewardsStore = create<CreateRewardsState>(set => ({
-  currentStep: CreationStep.InitialStep,
   rewardPoolData: getInitialRewardPoolData(),
-  addEarningsToRewards: true,
   addFundsToRewards: false,
-  setAddEarningsToRewards: addEarningsToRewards => set({ addEarningsToRewards }),
   setAddFundsToRewards: addFundsToRewards => set({ addFundsToRewards }),
   setRewardPoolData: data =>
     set(state => ({
       rewardPoolData: typeof data === "function" ? data(state.rewardPoolData) : data,
     })),
 
-  setStep: step => set({ currentStep: step }),
   reset: () =>
     set({
-      currentStep: CreationStep.InitialStep,
       rewardPoolData: getInitialRewardPoolData(),
-      addEarningsToRewards: true,
       addFundsToRewards: false,
     }),
 }));
