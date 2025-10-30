@@ -8335,10 +8335,10 @@
   resolved "https://registry.yarnpkg.com/@vanilla-extract/sprinkles/-/sprinkles-1.6.4.tgz#adf34734bd480bbcc835eec94f90869a81f35af5"
   integrity sha512-lW3MuIcdIeHKX81DzhTnw68YJdL1ial05exiuvTLJMdHXQLKcVB93AncLPajMM6mUhaVVx5ALZzNHMTrq/U9Hg==
 
-"@vercel/build-utils@12.2.2":
-  version "12.2.2"
-  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-12.2.2.tgz#cd2befb9b796ff4701f73f8725f49a37027163cb"
-  integrity sha512-6AQL0YT6la3/j9xh4vyYfyEKbRQ8asikAX1EWasiZqhRcFSstM4zbqkez5B+SpDK8y+Kh7yz9sz/dkBTW4Xtqg==
+"@vercel/build-utils@12.2.3":
+  version "12.2.3"
+  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-12.2.3.tgz#c025118b99606cce36a050ac4a7a616fcd4935b0"
+  integrity sha512-0g63aF8J7dLYW3PYenxig6gG4PuW3/Gy3PmLXjyX2KwTNrvfIwynKZpJf/naSVSpeN49VbROlxrvaVXVgjlC0A==
 
 "@vercel/error-utils@2.0.3":
   version "2.0.3"
@@ -8363,16 +8363,16 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@5.5.2":
-  version "5.5.2"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.5.2.tgz#889ab6f8e4356e016366365329800a8388903600"
-  integrity sha512-aayypt7xdtdncNF4Ar7/CRv4JElaa7Ch4ZABx4msvieB/Ydd2oLoErEJTS7SxsKFSyjOd6Vfd7udKWexbUSk0g==
+"@vercel/node@5.5.3":
+  version "5.5.3"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.5.3.tgz#e5be0af919572d2aae2a8b6c0621c3e0027162cc"
+  integrity sha512-6nXaW5xiPL9a05N+z4mkJvPQyRZOGWi7biZ9yZa2HRUOrJwN54G0xjg3+mUe/2MeC4yrj4g0s8a6xokCATytdg==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
     "@edge-runtime/vm" "3.2.0"
     "@types/node" "16.18.11"
-    "@vercel/build-utils" "12.2.2"
+    "@vercel/build-utils" "12.2.3"
     "@vercel/error-utils" "2.0.3"
     "@vercel/nft" "0.30.1"
     "@vercel/static-config" "3.1.2"
