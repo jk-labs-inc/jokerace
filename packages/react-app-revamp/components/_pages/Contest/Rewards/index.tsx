@@ -9,7 +9,6 @@ import { ModuleType } from "lib/rewards/types";
 import { Abi } from "viem";
 import { useAccount, useAccountEffect } from "wagmi";
 import { useShallow } from "zustand/shallow";
-import CreateRewards from "./components/Create";
 import NoRewardsInfo from "./components/NoRewards";
 import RewardsError from "./modules/shared/Error";
 import RewardsCanceled from "./modules/shared/RewardsCanceled";
@@ -54,7 +53,7 @@ const ContestRewards = () => {
 
   if (!rewards && creator) {
     //TODO: we should check here if < 6.9 version and show a warning if so
-    return <CreateRewards />;
+    return null;
   }
 
   if (!rewards) return null;

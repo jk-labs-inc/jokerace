@@ -1,4 +1,4 @@
-import { Charge, SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
+import { Charge, VoteType } from "@hooks/useDeployContest/types";
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
@@ -59,10 +59,6 @@ export const createContestStore = () =>
     charge: {
       percentageToCreator: 0,
       voteType: VoteType.PerVote,
-      splitFeeDestination: {
-        type: SplitFeeDestinationType.CreatorWallet,
-        address: "",
-      },
       type: {
         costToPropose: 0,
         costToVote: 0,

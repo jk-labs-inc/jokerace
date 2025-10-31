@@ -19,7 +19,7 @@ import { getRewardsModuleAddress } from "lib/rewards/contracts";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
-import { createResultGetter, determineSplitFeeDestination } from "./helpers";
+import { createResultGetter } from "./helpers";
 import { ErrorType, useContestStore } from "./store";
 import { getContracts } from "./v3v4/contracts";
 
@@ -144,7 +144,6 @@ export function useContest() {
       const costToPropose = Number(getResultByName("costToPropose")) || 0;
       let costToVote = 0;
       let payPerVote = 1;
-      let creatorSplitDestination = "";
 
       if (compareVersions(version, "4.23") >= 0) {
         costToVote = Number(getResultByName("costToVote")) || 0;
@@ -154,22 +153,9 @@ export function useContest() {
         payPerVote = Number(getResultByName("payPerVote"));
       }
 
-      if (compareVersions(version, "4.29") >= 0) {
-        creatorSplitDestination = (getResultByName("creatorSplitDestination") as string) || "";
-      }
-
       setCharge({
         percentageToCreator,
         voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
-        splitFeeDestination: {
-          type: determineSplitFeeDestination(
-            creatorSplitDestination,
-            percentageToCreator,
-            contestAuthor,
-            rewardsModuleAddress,
-          ),
-          address: creatorSplitDestination,
-        },
         type: {
           costToPropose,
           costToVote,

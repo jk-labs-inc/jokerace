@@ -51,3 +51,61 @@ export interface ContestValues {
   authorAddress?: string;
   featured?: boolean;
 }
+
+export type DeploymentPhase =
+  | "idle"
+  | "deploying-contest"
+  | "deploying-rewards"
+  | "attaching-rewards"
+  | "funding-pool"
+  | "completed"
+  | "failed";
+
+export type TransactionStatus = "pending" | "loading" | "success" | "error";
+
+export interface TransactionState {
+  status: TransactionStatus;
+  hash?: string;
+  error?: string;
+}
+
+export interface DeploymentProcessState {
+  phase: DeploymentPhase;
+  transactions: {
+    deployContest: TransactionState;
+    deployRewards: TransactionState;
+    attachRewards: TransactionState;
+    fundTokens: Record<string, TransactionState>;
+  };
+  contestAddress?: string;
+  rewardsModuleAddress?: string;
+  chainId?: number;
+}
+
+export const createInitialDeploymentProcessState = (): DeploymentProcessState => ({
+  phase: "idle",
+  transactions: {
+    deployContest: { status: "pending" },
+    deployRewards: { status: "pending" },
+    attachRewards: { status: "pending" },
+    fundTokens: {},
+  },
+});
+
+export const isCriticalPhaseComplete = (phase: DeploymentPhase): boolean => {
+  return phase === "completed" || phase === "funding-pool" || phase === "attaching-rewards";
+};
+
+export const canNavigateToContest = (state: DeploymentProcessState): boolean => {
+  const contestDeployed = state.transactions.deployContest.status === "success";
+  const rewardsDeployed = state.transactions.deployRewards.status === "success";
+  const rewardsAttached = state.transactions.attachRewards.status === "success";
+  const rewardsDeployFailed = state.transactions.deployRewards.status === "error";
+  const rewardsAttachFailed = state.transactions.attachRewards.status === "error";
+
+  // Navigate if all 3 succeed OR if contest succeeds but rewards phases fail
+  return (
+    (contestDeployed && rewardsDeployed && rewardsAttached) ||
+    (contestDeployed && (rewardsDeployFailed || rewardsAttachFailed))
+  );
+};

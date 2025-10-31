@@ -11,9 +11,9 @@ import { usePathname } from "next/navigation";
 import { useRef } from "react";
 import { toast } from "react-toastify";
 import { useAccount } from "wagmi";
-import TokenWidgets from "../Contest/Rewards/components/Create/steps/FundPool/components/TokenWidgets";
-import { useFundPoolStore } from "../Contest/Rewards/components/Create/steps/FundPool/store";
-
+import { useFundPoolStore } from "../Create/pages/ContestRewards/components/FundPool/store";
+import TokenWidgets from "../Create/pages/ContestRewards/components/FundPool/components/TokenWidgets";
+import { RainbowKitChain } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext";
 interface DialogAddFundsToRewardsModuleProps {
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
@@ -99,7 +99,7 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
       }}
     >
       <div className="flex flex-col gap-12 items-center mt-8 animate-appear">
-        <TokenWidgets />
+        <TokenWidgets chain={selectedChain as RainbowKitChain} />
 
         <ButtonV3
           colorClass="text-[20px] bg-gradient-distribute rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"

@@ -7,6 +7,7 @@ import { createMetadataSlice, MetadataSlice } from "./slices/contestMetadataSlic
 import { createAdvancedOptionsSlice, AdvancedOptionsSlice } from "./slices/contestAdvancedOptionsSlice";
 import { createDeploymentSlice, DeploymentSlice } from "./slices/contestDeploymentSlice";
 import { createCreateRewardsSlice, CreateRewardsSlice } from "./slices/contestCreateRewards";
+import { createDeploymentProcessSlice, DeploymentProcessSlice } from "./slices/contestDeploymentProcessSlice";
 
 export type DeployContestStore = ContestInfoSlice &
   ContestTimingSlice &
@@ -15,7 +16,8 @@ export type DeployContestStore = ContestInfoSlice &
   MetadataSlice &
   AdvancedOptionsSlice &
   CreateRewardsSlice &
-  DeploymentSlice & {
+  DeploymentSlice &
+  DeploymentProcessSlice & {
     resetStore: () => void;
   };
 
@@ -29,6 +31,7 @@ export const useDeployContestStore = create<DeployContestStore>((set, get) => {
     ...createAdvancedOptionsSlice(set),
     ...createCreateRewardsSlice(set, get),
     ...createDeploymentSlice(set, get),
+    ...createDeploymentProcessSlice(set, get),
   });
 
   const initialState = getInitialState();
