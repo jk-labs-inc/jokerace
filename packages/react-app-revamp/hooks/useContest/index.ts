@@ -108,11 +108,7 @@ export function useContest() {
     }
   }
 
-  async function fetchContestContractData(
-    contractConfig: ContractConfig,
-    version: string,
-    rewardsModuleAddress?: string,
-  ) {
+  async function fetchContestContractData(contractConfig: ContractConfig, version: string) {
     try {
       const contracts = getContracts(contractConfig, version);
       const results = await readContracts(config, { contracts });
@@ -188,12 +184,12 @@ export function useContest() {
     }
   }
 
-  async function fetchV3ContestInfo(contractConfig: ContractConfig, version: string, rewardsModuleAddress?: string) {
+  async function fetchV3ContestInfo(contractConfig: ContractConfig, version: string) {
     try {
       setIsListProposalsLoading(false);
 
       await Promise.all([
-        fetchContestContractData(contractConfig, version, rewardsModuleAddress),
+        fetchContestContractData(contractConfig, version),
         processUserQualifications(contractConfig, version),
       ]);
     } catch (e) {
@@ -228,8 +224,6 @@ export function useContest() {
 
       const { contractConfig, version } = abiResult;
 
-      const rewardsModuleAddress = await fetchRewardsModuleData(contractConfig);
-
       if (compareVersions(version, "4.0") < 0) {
         setError(ErrorType.UNSUPPORTED_VERSION);
         setIsLoading(false);
@@ -238,22 +232,10 @@ export function useContest() {
       }
 
       // Fetch contest info for v4 and above
-      await fetchV3ContestInfo(contractConfig, version, rewardsModuleAddress);
+      await fetchV3ContestInfo(contractConfig, version);
     } catch (error) {
       console.error("An error occurred while fetching data:", error);
     }
-  }
-
-  async function fetchRewardsModuleData(contractConfig: ContractConfig) {
-    const moduleAddress = await getRewardsModuleAddress(contractConfig);
-
-    if (!moduleAddress) {
-      return "";
-    }
-
-    setRewardsModuleAddress(moduleAddress);
-
-    return moduleAddress;
   }
 
   /**

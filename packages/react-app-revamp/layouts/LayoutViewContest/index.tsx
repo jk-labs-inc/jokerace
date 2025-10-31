@@ -11,7 +11,6 @@ import ContestName from "@components/_pages/Contest/components/ContestName";
 import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
 import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
-import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { populateBugReportLink } from "@helpers/githubIssue";
@@ -30,7 +29,6 @@ import { useUrl } from "nextjs-current-url";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
-import { useShallow } from "zustand/shallow";
 import LayoutViewContestError from "./components/Error";
 
 const LayoutViewContest = () => {
@@ -38,7 +36,6 @@ const LayoutViewContest = () => {
   const url = useUrl();
   const { address: accountAddress } = useAccount();
   const { contestConfig } = useContestConfigStore(state => state);
-  const { showRewards, setShowRewards } = useShowRewardsStore(useShallow(state => state));
   const { isLoading, fetchContestInfo, isSuccess, error } = useContest();
   const {
     submissionsOpen,
@@ -102,13 +99,6 @@ const LayoutViewContest = () => {
   useEffect(() => {
     fetchContestInfo();
   }, [contestConfig.chainName, contestConfig.address]);
-
-  useEffect(() => {
-    if (showRewards) {
-      setTab(Tab.Rewards);
-      setShowRewards(false);
-    }
-  }, [showRewards, setShowRewards]);
 
   const renderTabs = useMemo<ReactNode>(() => {
     switch (tab) {

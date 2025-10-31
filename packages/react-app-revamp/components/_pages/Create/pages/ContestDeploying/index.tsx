@@ -1,21 +1,10 @@
 import { toastDismiss } from "@components/UI/Toast";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { canNavigateToContest } from "@hooks/useDeployContest/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useShallow } from "zustand/shallow";
-import { create } from "zustand";
 import { DeploymentStatus } from "../../components/DeploymentStatus";
-import { canNavigateToContest } from "@hooks/useDeployContest/types";
-
-interface ShowRewardsStore {
-  showRewards: boolean;
-  setShowRewards: (show: boolean) => void;
-}
-
-export const useShowRewardsStore = create<ShowRewardsStore>(set => ({
-  showRewards: false,
-  setShowRewards: show => set({ showRewards: show }),
-}));
 
 const CreateContestDeploying = () => {
   const router = useRouter();
@@ -28,7 +17,6 @@ const CreateContestDeploying = () => {
       addFundsToRewards: state.addFundsToRewards,
     })),
   );
-  const { setShowRewards } = useShowRewardsStore(state => state);
   const hasNavigatedRef = useRef(false);
 
   useEffect(() => {
@@ -52,13 +40,9 @@ const CreateContestDeploying = () => {
 
       toastDismiss();
 
-      if (deployContestData.sortingEnabled) {
-        setShowRewards(true);
-      }
-
       router.push(contestPath);
     }
-  }, [deploymentProcess, deployContestData, router, setShowRewards]);
+  }, [deploymentProcess, deployContestData, router]);
 
   return (
     <div className="flex flex-col gap-8 mt-12 lg:mt-[100px] animate-swing-in-left">
