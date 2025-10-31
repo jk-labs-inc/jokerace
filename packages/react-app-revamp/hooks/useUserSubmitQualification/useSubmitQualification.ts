@@ -57,8 +57,6 @@ export const useSubmitQualification = (userAddress: `0x${string}` | undefined) =
   };
 
   const checkIfCurrentUserQualifyToSubmit = async (contractConfig: ContractConfig) => {
-    if (!userAddress) return;
-
     setLoadingState(true);
 
     if (!contractConfig.abi) {
