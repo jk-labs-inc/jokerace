@@ -1,13 +1,14 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useContestSteps } from "../../hooks/useContestSteps";
-import { useShallow } from "zustand/shallow";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/shallow";
+import CreateNextButton from "../../components/Buttons/Next";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
-import CreateNextButton from "../../components/Buttons/Next";
+import { useContestSteps } from "../../hooks/useContestSteps";
 import { useNextStep } from "../../hooks/useNextStep";
 import CreateRewardsPool from "./components/CreatePool";
-import { StepTitle, getStepNumber } from "../../types";
+import CreateRewardsFundPool from "./components/FundPool";
+import { useFundPoolStore } from "./components/FundPool/store";
 
 const CreateContestRewards = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
@@ -15,8 +16,14 @@ const CreateContestRewards = () => {
   const step = useDeployContestStore(useShallow(state => state.step));
   const contestTitle = isMobile ? "add voter rewards" : "add rewards for voters";
   const onNextStep = useNextStep();
-  const validateRewards = useDeployContestStore(useShallow(state => state.validateRewards));
-  const isDisabled = !validateRewards().isValid;
+  const { validateRewards } = useDeployContestStore(
+    useShallow(state => ({
+      validateRewards: state.validateRewards,
+    })),
+  );
+  //TODO: double check this validation
+  const isTokenWidgetError = useFundPoolStore(useShallow(state => state.isError));
+  const isDisabled = !validateRewards().isValid || !!isTokenWidgetError;
 
   return (
     <div className="flex flex-col">
@@ -39,7 +46,7 @@ const CreateContestRewards = () => {
             </div>
             <div className="flex flex-col gap-8 pl-6">
               <CreateRewardsPool />
-              {/* TODO: add fund pool button */}
+              <CreateRewardsFundPool />
             </div>
             <div className="hidden md:block mt-4 pl-6">
               <CreateNextButton step={step + 1} onClick={() => onNextStep()} isDisabled={isDisabled} />

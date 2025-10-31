@@ -1,20 +1,17 @@
-import { chains } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
-import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { FC, useEffect } from "react";
 import { v4 as uuidV4 } from "uuid";
+import { Chain } from "viem";
 import { useShallow } from "zustand/shallow";
 import { useFundPoolStore } from "../../store";
 import { generateNativeToken } from "../../utils";
 import TokenWidget from "./components";
+import { RainbowKitChain } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext";
 
-const TokenWidgets = () => {
-  const pathname = usePathname();
-  const { chainName } = extractPathSegments(pathname);
-  const selectedChain = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase());
-  const chainId = selectedChain?.id;
-  const nativeCurrency = selectedChain?.nativeCurrency;
-  const chainNativeCurrencySymbol = nativeCurrency?.symbol;
+interface TokenWidgetsProps {
+  chain: RainbowKitChain;
+}
+
+const TokenWidgets: FC<TokenWidgetsProps> = ({ chain }) => {
   const { tokenWidgets, setTokenWidgets } = useFundPoolStore(
     useShallow(state => ({
       tokenWidgets: state.tokenWidgets,
@@ -26,19 +23,19 @@ const TokenWidgets = () => {
     if (tokenWidgets.length === 0) {
       setTokenWidgets([
         {
-          ...generateNativeToken(nativeCurrency, chainNativeCurrencySymbol),
+          ...generateNativeToken(chain?.nativeCurrency, chain?.nativeCurrency?.symbol),
           amount: "0",
           id: uuidV4(),
         },
       ]);
     }
-  }, [chainId, tokenWidgets.length, setTokenWidgets]);
+  }, [chain, tokenWidgets.length, setTokenWidgets]);
 
   const handleAddMoreTokens = () => {
     setTokenWidgets([
       ...tokenWidgets,
       {
-        ...generateNativeToken(nativeCurrency, chainNativeCurrencySymbol),
+        ...generateNativeToken(chain?.nativeCurrency, chain?.nativeCurrency?.symbol),
         amount: "0",
         id: uuidV4(),
       },
@@ -49,7 +46,7 @@ const TokenWidgets = () => {
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-8">
         {tokenWidgets.map((widget, index) => (
-          <TokenWidget key={index} tokenWidget={widget} index={index} />
+          <TokenWidget key={index} tokenWidget={widget} index={index} chain={chain} />
         ))}
       </div>
       <button

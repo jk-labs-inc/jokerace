@@ -11,10 +11,12 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import { FundPoolToken, useFundPoolStore } from "../../../store";
 import { generateNativeToken } from "../../../utils";
+import { RainbowKitChain } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext";
 
 interface TokenWidgetProps {
   tokenWidget: FundPoolToken;
   index: number;
+  chain: RainbowKitChain;
 }
 
 const getFormattedBalance = (balance: string) => {
@@ -37,15 +39,12 @@ const getTokenSymbol = (
     : chainNativeCurrencySymbol;
 };
 
-const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index }) => {
-  const pathname = usePathname();
+const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain }) => {
   const { address: userAddress } = useAccount();
-  const { chainName } = extractPathSegments(pathname);
-  const selectedChain = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase());
-  const chainLogo = selectedChain?.iconUrl;
-  const nativeCurrency = selectedChain?.nativeCurrency;
+  const chainLogo = chain?.iconUrl;
+  const nativeCurrency = chain?.nativeCurrency;
   const chainNativeCurrencySymbol = nativeCurrency?.symbol;
-  const chainId = selectedChain?.id;
+  const chainId = chain?.id;
   const { tokenWidgets, setTokenWidgets, setIsError } = useFundPoolStore(state => state);
   const [localAmount, setLocalAmount] = useState(tokenWidget.amount !== "0" ? tokenWidget.amount : "");
   const [isMaxPressed, setIsMaxPressed] = useState<boolean>(false);
@@ -230,7 +229,7 @@ const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index }) => {
         </div>
       </div>
       <TokenSearchModal
-        chains={[{ label: chainName, value: chainName }]}
+        chains={[{ label: chain?.name ?? "", value: chain?.name ?? "" }]}
         isOpen={isTokenSearchModalOpen}
         onClose={() => setIsTokenSearchModalOpen(false)}
         onSelectToken={handleSelectedToken}

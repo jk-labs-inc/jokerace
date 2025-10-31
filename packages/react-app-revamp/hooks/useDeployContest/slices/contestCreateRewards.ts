@@ -1,4 +1,6 @@
 // https://github.com/pmndrs/zustand/discussions/821#discussioncomment-8548182
+import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
 
 interface ActionState {
@@ -88,7 +90,9 @@ export const createCreateRewardsSlice = (set: any, get: any): CreateRewardsSlice
   validateRewards: () => {
     const state = get();
     const { recipients } = state.rewardPoolData;
+    const { addFundsToRewards } = state;
 
+    // Validate recipients
     if (recipients.length === 0) {
       return {
         isValid: false,
@@ -129,6 +133,43 @@ export const createCreateRewardsSlice = (set: any, get: any): CreateRewardsSlice
         isValid: false,
         error: `Total proportion must equal 100%, currently ${totalProportion}%`,
       };
+    }
+
+    // Validate tokenWidgets if addFundsToRewards is enabled
+    if (addFundsToRewards) {
+      const { tokenWidgets, isError } = useFundPoolStore.getState();
+
+      if (isError) {
+        return {
+          isValid: false,
+          error: "There is an error with the token widgets",
+        };
+      }
+
+      if (tokenWidgets.length === 0) {
+        return {
+          isValid: false,
+          error: "At least one token widget is required when funding rewards",
+        };
+      }
+
+      // Check if all tokens are unique by address
+      const uniqueAddresses = new Set(tokenWidgets.map(token => token.address));
+      if (tokenWidgets.length !== uniqueAddresses.size) {
+        return {
+          isValid: false,
+          error: "All tokens must be unique",
+        };
+      }
+
+      // Check if any token has zero or empty amount
+      const hasZeroAmountToken = tokenWidgets.some(token => token.amount === "0" || token.amount === "");
+      if (hasZeroAmountToken) {
+        return {
+          isValid: false,
+          error: "Token amounts cannot be zero or empty",
+        };
+      }
     }
 
     return {
