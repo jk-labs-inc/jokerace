@@ -1651,33 +1651,12 @@
     viem "^2.31.7"
     zustand "5.0.3"
 
-"@bigmi/client@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.6.0.tgz#b891c9d2fe113dc03ccf92dd8c06f42e6aad02c0"
-  integrity sha512-ODWNkt5pmyoupaaX+HPA9v9VaQOdnudiSoGazvHXnSoi6B+kXgX8p+j8ixdr/p5h2IoLFr6bRQVea4X7YGOAow==
-  dependencies:
-    "@bigmi/core" "^0.6.0"
-    eventemitter3 "^5.0.1"
-    zustand "^5.0.8"
-
 "@bigmi/client@^0.6.1":
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.6.1.tgz#7bc90ca3a696dc015a11c879da0deb5954d4a966"
   integrity sha512-qwpMQAXfbiZuAshyfKlfojDO1WVeU9ErySp9f86biMIsJIAe49lklgHqLW83iYAbfujNTuG1RRpEUzkccokMoQ==
   dependencies:
     "@bigmi/core" "^0.6.1"
-    eventemitter3 "^5.0.1"
-    zustand "^5.0.8"
-
-"@bigmi/core@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@bigmi/core/-/core-0.6.0.tgz#d3d8e4872b22a1cb65d0ae3086614f35806d8bbe"
-  integrity sha512-heteOig6vKvJZcBe2etvjJk4DqZujrmHWm7n+Vh6jiAtNIMOvSqwvsyiRXhtNAXreXMw0+XREnX+Hc2Hj4cjPA==
-  dependencies:
-    "@noble/hashes" "^1.8.0"
-    bech32 "^2.0.0"
-    bitcoinjs-lib "^7.0.0"
-    bs58 "^6.0.0"
     eventemitter3 "^5.0.1"
     zustand "^5.0.8"
 
@@ -1693,13 +1672,13 @@
     eventemitter3 "^5.0.1"
     zustand "^5.0.8"
 
-"@bigmi/react@0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.6.0.tgz#dbab301718245ae7fa3d86424987fdf473250ac3"
-  integrity sha512-zXh2b3DQhsJQBm85VcIluA/YmG9nFoFjTtzKOX6FXm7S5Qsrqq7VpxLKnsr8xSzpd4B1tdwfyEkA0pUWlt8C5A==
+"@bigmi/react@0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.6.1.tgz#f65f98e8b2966cd5e9401a32a2503632af2aeab5"
+  integrity sha512-Fk+dwy8YfMi8POXA7L9O7aAtNk8LXMLB3l/UjQ3cnpGh+5YXHcRtOIYq/Gn23NapbGfKTuTpxZDGrQ9kfWm9Bg==
   dependencies:
-    "@bigmi/client" "^0.6.0"
-    "@bigmi/core" "^0.6.0"
+    "@bigmi/client" "^0.6.1"
+    "@bigmi/core" "^0.6.1"
 
 "@bitcoinerlab/secp256k1@^1.2.0":
   version "1.2.0"
