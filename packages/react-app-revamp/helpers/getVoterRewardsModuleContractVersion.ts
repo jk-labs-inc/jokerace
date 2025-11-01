@@ -16,6 +16,7 @@ import OnlySetOfficialModuleOnceVoterRewards from "@contracts/bytecodeAndAbi/mod
 import FixStateErrorsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.6.fixStateErrors.sol/VoterRewardsModule.json";
 import UpdatePeriodConstraintsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.7.updatePeriodConstraints.sol/VoterRewardsModule.json";
 import CorrectPeriodConstraintsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.8.correctPeriodConstraints.sol/VoterRewardsModule.json";
+import AlwaysSelfFundVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.9.alwaysSelfFund.sol/VoterRewardsModule.json";
 import DeployedVoterRewardsContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { createPublicClient, getContract, http } from "viem";
 import { getChainFromId } from "./getChainFromId";
@@ -37,7 +38,9 @@ export async function getVoterRewardsModuleContractVersion(address: string, chai
   try {
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
-    if (version === "6.8") {
+    if (version === "6.9") {
+      return { abi: AlwaysSelfFundVoterRewards.abi, version };
+    } else if (version === "6.8") {
       return { abi: CorrectPeriodConstraintsVoterRewards.abi, version };
     } else if (version === "6.7") {
       return { abi: UpdatePeriodConstraintsVoterRewards.abi, version };
