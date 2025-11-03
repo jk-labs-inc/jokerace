@@ -24,7 +24,7 @@ const LayoutViewContest = () => {
     isLoading,
     error,
     contestAuthorEthereumAddress,
-    rewardsModuleAddress,
+    rewardsModule,
     contestName,
     isReadOnly,
     contestPrompt,
@@ -35,11 +35,11 @@ const LayoutViewContest = () => {
 
   const excludeTabs = useMemo(() => {
     const tabsToExclude: Tab[] = [];
-    if (!rewardsModuleAddress) {
+    if (!rewardsModule) {
       tabsToExclude.push(Tab.Rewards);
     }
     return tabsToExclude;
-  }, [rewardsModuleAddress]);
+  }, [rewardsModule]);
 
   if (error && !isLoading) {
     return <LayoutViewContestError error={error} bugReportLink={bugReportLink} />;
@@ -72,7 +72,7 @@ const LayoutViewContest = () => {
           <div className="mt-4 md:mt-8 mb-4 md:mb-8 gap-3 flex flex-col">
             <ContestTabs tab={tab} excludeTabs={excludeTabs} onChange={tab => setTab(tab)} />
           </div>
-          <ContestTabsContent tab={tab} rewardsModuleAddress={rewardsModuleAddress} />
+          <ContestTabsContent tab={tab} rewardsModule={rewardsModule} />
         </div>
       </div>
     </div>

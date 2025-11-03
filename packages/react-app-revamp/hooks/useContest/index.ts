@@ -62,7 +62,6 @@ export function useContest() {
     setSubmissionsOpen,
     setCharge,
     setSortingEnabled,
-    setRewardsModuleAddress,
     setCanEditTitleAndDescription,
   } = useContestStore(state => state);
   const { setContestConfig } = useContestConfigStore(state => state);

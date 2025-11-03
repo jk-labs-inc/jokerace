@@ -1,9 +1,9 @@
-import { FundPoolToken } from "@components/_pages/Contest/Rewards/components/Create/steps/FundPool/store";
+import { FundPoolToken } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
-import { useReleasableRewards } from "@hooks/useReleasableRewards";
 import useRewardsModule from "@hooks/useRewards";
+import { useTotalRewards } from "@hooks/useTotalRewards";
 import {
   estimateGas,
   sendTransaction,
@@ -18,7 +18,6 @@ import { useEffect } from "react";
 import { erc20Abi, parseUnits } from "viem";
 import { useAccount } from "wagmi";
 import { useFundRewardsStore } from "./store";
-import { useTotalRewards } from "@hooks/useTotalRewards";
 
 export interface RewardData {
   currentUserAddress: string;

@@ -20,6 +20,7 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 import { useSubmitProposalStore } from "./store";
 
 const targetMetadata = {
@@ -56,7 +57,7 @@ export function useSubmitProposal() {
   const { contestConfig } = useContestConfigStore(state => state);
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
-  const { charge, rewardsModuleAddress } = useContestStore(state => state);
+  const charge = useContestStore(useShallow(state => state.charge));
   const { data: rewards } = useRewardsModule();
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
@@ -151,7 +152,7 @@ export function useSubmitProposal() {
           chainName: contestConfig.chainName,
           proposalId,
           charge,
-          rewardsModuleAddress,
+          rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
           amount: costToPropose ? Number(formatEther(costToPropose)) : 0,
           operation: "deposit",
           token_address: null,

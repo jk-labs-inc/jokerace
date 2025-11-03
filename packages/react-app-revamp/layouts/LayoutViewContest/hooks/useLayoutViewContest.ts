@@ -1,17 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
+import { useAccountChange } from "@hooks/useAccountChange";
 import { ContractConfig, useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useContestStatusTimer } from "@hooks/useContestStatusTimer";
-import { useAccountChange } from "@hooks/useAccountChange";
+import useRewardsModule from "@hooks/useRewards";
 import useUser from "@hooks/useUserSubmitQualification";
 import { VOTE_AND_EARN_VERSION } from "@hooks/useUserSubmitQualification/utils";
 import { compareVersions } from "compare-versions";
 import { useEffect } from "react";
 import { useAccountEffect } from "wagmi";
-import useRewardsModuleAddress from "@hooks/useRewardsModule";
 
 const OFAC_SEARCH_URL = "https://www.google.com/search?q=what+are+ofac+sanctions";
 
@@ -36,15 +36,12 @@ export const useLayoutViewContest = () => {
   const { checkIfCurrentUserQualifyToSubmit } = useUser();
   const { setContestStatus } = useContestStatusStore(state => state);
   const {
-    data: rewardsModuleAddress,
-    isLoading: isRewardsModuleAddressLoading,
-    isSuccess: isRewardsModuleAddressSuccess,
-    isError: isRewardsModuleAddressError,
-  } = useRewardsModuleAddress({
-    contestAddress: contestConfig.address as `0x${string}`,
-    contestChainId: contestConfig.chainId,
-    contestAbi: contestConfig.abi,
-  });
+    data: rewardsModule,
+    isLoading: isRewardsModuleLoading,
+    isSuccess: isRewardsModuleSuccess,
+    isError: isRewardsModuleError,
+    isRefetching: isRewardsModuleRefetching,
+  } = useRewardsModule();
   const contestStatus = useContestStatusTimer({
     submissionsOpen,
     votesOpen,
@@ -97,9 +94,9 @@ export const useLayoutViewContest = () => {
 
   return {
     contestConfig,
-    rewardsModuleAddress,
-    isLoading: isRewardsModuleAddressLoading || isLoading,
-    isSuccess: isSuccess && isRewardsModuleAddressSuccess,
+    rewardsModule,
+    isLoading: isRewardsModuleLoading || isRewardsModuleRefetching || isLoading,
+    isSuccess: isSuccess && isRewardsModuleSuccess,
     error,
     contestAuthorEthereumAddress,
     contestName,

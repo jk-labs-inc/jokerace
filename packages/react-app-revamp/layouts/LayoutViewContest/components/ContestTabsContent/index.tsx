@@ -4,18 +4,19 @@ import ContestExtensions from "@components/_pages/Contest/Extensions";
 import ContestParameters from "@components/_pages/Contest/Parameters";
 import ContestRewards from "@components/_pages/Contest/Rewards";
 import { Tab } from "@components/_pages/Contest/components/Tabs";
+import { RewardModuleInfo } from "lib/rewards/types";
 import { FC, ReactNode } from "react";
 
 interface ContestTabsContentProps {
   tab: Tab;
-  rewardsModuleAddress?: string;
+  rewardsModule?: RewardModuleInfo | null;
 }
 
-const ContestTabsContent: FC<ContestTabsContentProps> = ({ tab, rewardsModuleAddress }) => {
+const ContestTabsContent: FC<ContestTabsContentProps> = ({ tab, rewardsModule }) => {
   const renderContent = (): ReactNode => {
     switch (tab) {
       case Tab.Contest:
-        if (rewardsModuleAddress) {
+        if (rewardsModule) {
           return <ContestTab />;
         } else {
           return <ContestDeployRewards />;
