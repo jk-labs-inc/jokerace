@@ -13,6 +13,8 @@ import NoRewardsInfo from "./components/NoRewards";
 import RewardsError from "./modules/shared/Error";
 import RewardsCanceled from "./modules/shared/RewardsCanceled";
 import VotersRewardsPage from "./modules/Voters";
+import { compareVersions } from "compare-versions";
+import { SELF_FUND_VERSION } from "constants/versions";
 
 const ContestRewards = () => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
@@ -46,14 +48,12 @@ const ContestRewards = () => {
     return <RewardsError onRetry={isRewardsCanceledError ? refetchRewardsCanceled : refetch} />;
   }
 
-  //TODO: this shouldn't exist anymore (only maybe for pre-6.9 versions)
-  if (!rewards && !creator) {
+  if (!rewards && !creator && compareVersions(contestConfig.version, SELF_FUND_VERSION) < 0) {
     return <NoRewardsInfo />;
   }
 
-  if (!rewards && creator) {
-    //TODO: we should check here if < 6.9 version and show a warning if so
-    return null;
+  if (!rewards && creator && compareVersions(contestConfig.version, SELF_FUND_VERSION) < 0) {
+    return <NoRewardsInfo />;
   }
 
   if (!rewards) return null;

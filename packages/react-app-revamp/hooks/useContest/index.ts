@@ -15,7 +15,6 @@ import { VOTE_AND_EARN_VERSION } from "@hooks/useUserSubmitQualification/utils";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { checkIfContestExists } from "lib/contests";
-import { getRewardsModuleAddress } from "lib/rewards/contracts";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
