@@ -13,7 +13,7 @@
     "@aws-sdk/s3-request-presigner": "3.922.0",
     "@babel/core": "7.28.5",
     "@babel/preset-env": "7.28.5",
-    "@bigmi/react": "0.6.0",
+    "@bigmi/react": "0.6.1",
     "@clustersxyz/sdk": "1.0.2",
     "@getbrevo/brevo": "3.0.1",
     "@getpara/rainbowkit-wallet": "1.4.0",
