@@ -14,7 +14,6 @@ interface UserAnalyticsParams {
 }
 
 interface RewardsAnalyticsParams {
-  isEarningsTowardsRewards: boolean;
   address: string;
   rewardsModuleAddress: string;
   charge: Charge;
@@ -51,23 +50,22 @@ export const updateRewardAnalyticsIfNeeded = async (
   params: RewardsAnalyticsParams,
   refetchTotalRewards: () => void,
 ) => {
-  if (params.isEarningsTowardsRewards && params.costToVote) {
-    try {
-      await updateRewardAnalytics({
-        contest_address: params.address,
-        rewards_module_address: params.rewardsModuleAddress,
-        network_name: params.chainName,
-        amount:
-          formatChargeAmount(parseFloat(params.costToVote.toString())) * (params.charge.percentageToCreator / 100),
-        operation: "deposit",
-        token_address: null,
-        created_at: Math.floor(Date.now() / 1000),
-      });
-    } catch (error) {
-      console.error("Error while updating reward analytics", error);
-    }
-    refetchTotalRewards();
+  try {
+    await updateRewardAnalytics({
+      contest_address: params.address,
+      rewards_module_address: params.rewardsModuleAddress,
+      network_name: params.chainName,
+      amount:
+        formatChargeAmount(parseFloat(params.costToVote?.toString() ?? "0")) *
+        (params.charge.percentageToCreator / 100),
+      operation: "deposit",
+      token_address: null,
+      created_at: Math.floor(Date.now() / 1000),
+    });
+  } catch (error) {
+    console.error("Error while updating reward analytics", error);
   }
+  refetchTotalRewards();
 };
 
 export const performAnalytics = async (params: CombinedAnalyticsParams, refetchTotalRewards: () => void) => {

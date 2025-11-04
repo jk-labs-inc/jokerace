@@ -10,6 +10,7 @@ import { useNextStep } from "../../hooks/useNextStep";
 import CreateContestTimingVotingCloses from "./components/VotingCloses";
 import CreateContestTimingVotingOpens from "./components/VotingOpens";
 import { useShallow } from "zustand/shallow";
+import { StepTitle, getStepNumber } from "../../types";
 
 const CreateContestTiming = () => {
   const { steps } = useContestSteps();
@@ -26,14 +27,17 @@ const CreateContestTiming = () => {
   const onNextStep = useNextStep();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const contestTitle = isMobile ? "how long is voting?" : "how long does voting run?";
-  const currentError = errors.find(error => error.step === 2);
+  const currentError = errors.find(error => error.step === getStepNumber(StepTitle.Timing));
 
   useEffect(() => {
     const validation = validateTiming();
     if (!validation.isValid) {
-      setError(2, { step: 2, message: validation.error || "Invalid timing" });
+      setError(StepTitle.Timing, {
+        step: getStepNumber(StepTitle.Timing),
+        message: validation.error || "Invalid timing",
+      });
     } else {
-      setError(2, { step: 2, message: "" });
+      setError(StepTitle.Timing, { step: getStepNumber(StepTitle.Timing), message: "" });
     }
   }, [votingOpen, votingClose, validateTiming, setError]);
 

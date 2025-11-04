@@ -55,7 +55,7 @@ const CreateFlowMonetizationInput: FC<CreateFlowMonetizationInputProps> = ({
         />
         <span className="text-neutral-10 text-[40px] uppercase font-bold">{label}</span>
       </div>
-      {errorMessage && <p className="text-negative-11 text-[14px] font-bold animate-reveal">{errorMessage}</p>}
+      {errorMessage && <p className="text-negative-11 text-[14px] font-bold animate-fade-in">{errorMessage}</p>}
     </div>
   );
 };

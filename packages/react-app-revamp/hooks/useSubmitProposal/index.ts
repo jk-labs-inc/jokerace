@@ -20,6 +20,7 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 import { useSubmitProposalStore } from "./store";
 
 const targetMetadata = {
@@ -40,7 +41,6 @@ interface UserAnalyticsParams {
 }
 
 interface RewardsAnalyticsParams {
-  isEarningsTowardsRewards: boolean;
   address: string;
   rewardsModuleAddress: string;
   charge: Charge;
@@ -57,7 +57,7 @@ export function useSubmitProposal() {
   const { contestConfig } = useContestConfigStore(state => state);
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
-  const { charge, rewardsModuleAddress } = useContestStore(state => state);
+  const charge = useContestStore(useShallow(state => state.charge));
   const { data: rewards } = useRewardsModule();
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
@@ -66,7 +66,6 @@ export function useSubmitProposal() {
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
   const { fields: metadataFields, setFields: setMetadataFields } = useMetadataStore(state => state);
-  const isEarningsTowardsRewards = rewardsModuleAddress === charge.splitFeeDestination.address;
   const { refetch: refetchTotalRewards } = useTotalRewards({
     rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
     rewardsModuleAbi: rewards?.abi,
@@ -153,8 +152,7 @@ export function useSubmitProposal() {
           chainName: contestConfig.chainName,
           proposalId,
           charge,
-          isEarningsTowardsRewards,
-          rewardsModuleAddress,
+          rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
           amount: costToPropose ? Number(formatEther(costToPropose)) : 0,
           operation: "deposit",
           token_address: null,
@@ -207,24 +205,22 @@ export function useSubmitProposal() {
   }
 
   async function updateRewardAnalyticsIfNeeded(params: RewardsAnalyticsParams) {
-    if (params.isEarningsTowardsRewards) {
-      try {
-        await updateRewardAnalytics({
-          contest_address: params.address,
-          rewards_module_address: params.rewardsModuleAddress,
-          network_name: params.chainName,
-          amount: params.charge.type.costToPropose
-            ? Number(formatEther(BigInt(params.charge.type.costToPropose))) * (params.charge.percentageToCreator / 100)
-            : 0,
-          operation: "deposit",
-          token_address: null,
-          created_at: Math.floor(Date.now() / 1000),
-        });
-      } catch (error) {
-        console.error("Error while updating reward analytics", error);
-      }
-      refetchTotalRewards();
+    try {
+      await updateRewardAnalytics({
+        contest_address: params.address,
+        rewards_module_address: params.rewardsModuleAddress,
+        network_name: params.chainName,
+        amount: params.charge.type.costToPropose
+          ? Number(formatEther(BigInt(params.charge.type.costToPropose))) * (params.charge.percentageToCreator / 100)
+          : 0,
+        operation: "deposit",
+        token_address: null,
+        created_at: Math.floor(Date.now() / 1000),
+      });
+    } catch (error) {
+      console.error("Error while updating reward analytics", error);
     }
+    refetchTotalRewards();
   }
 
   async function performAnalytics(params: CombinedAnalyticsParams) {

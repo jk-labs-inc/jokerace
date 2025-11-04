@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
+import { VoteType } from "@hooks/useDeployContest/types";
+import { useQuery } from "@tanstack/react-query";
 import { PERCENTAGE_TO_CREATOR_DEFAULT } from "constants/monetization";
 import { fetchChargeDetails } from "lib/monetization";
 import { useEffect } from "react";
@@ -26,7 +26,6 @@ const useChargeDetails = (chainName: string) => {
     if (chargeDetails.isError) {
       setCharge({
         percentageToCreator: PERCENTAGE_TO_CREATOR_DEFAULT,
-        splitFeeDestination: { type: SplitFeeDestinationType.CreatorWallet, address: "" },
         voteType: VoteType.PerVote,
         type: {
           costToPropose: 0,
@@ -44,7 +43,6 @@ const useChargeDetails = (chainName: string) => {
 
       setCharge({
         percentageToCreator: PERCENTAGE_TO_CREATOR_DEFAULT,
-        splitFeeDestination: { type: SplitFeeDestinationType.CreatorWallet, address: "" },
         voteType: VoteType.PerVote,
         type: {
           costToPropose: chargeDetails.defaultCostToPropose,

@@ -5,6 +5,9 @@ import { readContracts } from "@wagmi/core";
 import { getRewardsModuleAddress, getRewardsModuleInfo } from "lib/rewards/contracts";
 import { ModuleType, RewardModuleInfo } from "lib/rewards/types";
 import { Abi } from "viem";
+import { compareVersions } from "compare-versions";
+
+const SELF_FUNDED_VERSION = "6.9";
 
 export function useRewardsModule() {
   const { contestConfig } = useContestConfigStore(state => state);
@@ -32,6 +35,9 @@ export function useRewardsModule() {
       throw new Error("Failed to get rewards module ABI");
     }
 
+    const isVersionBelowSelfFunded =
+      contestConfig.version && compareVersions(contestConfig.version, SELF_FUNDED_VERSION) < 0;
+
     const contractsRewardsModule = [
       {
         ...getRewardsConfig(rewardsModuleAddress, abi),
@@ -45,10 +51,14 @@ export function useRewardsModule() {
         ...getRewardsConfig(rewardsModuleAddress, abi),
         functionName: "totalShares",
       },
-      {
-        ...contestConfig,
-        functionName: "creatorSplitDestination",
-      },
+      ...(isVersionBelowSelfFunded
+        ? [
+            {
+              ...contestConfig,
+              functionName: "creatorSplitDestination",
+            },
+          ]
+        : []),
     ];
 
     const rewardsModule = await readContracts(config, {
@@ -58,7 +68,9 @@ export function useRewardsModule() {
     const creator = rewardsModule[0].result as string;
     const payeeRankings = rewardsModule[1].result as bigint[];
     const totalShares = rewardsModule[2].result as bigint;
-    const creatorSplitDestination = rewardsModule[3].result as string;
+    const creatorSplitDestination = isVersionBelowSelfFunded
+      ? (rewardsModule[3]?.result as string)
+      : rewardsModuleAddress;
     const shareContracts = payeeRankings.map(ranking => ({
       ...getRewardsConfig(rewardsModuleAddress, abi),
       functionName: "shares",
@@ -72,7 +84,8 @@ export function useRewardsModule() {
     const formattedPayees = payeeRankings.map(payee => Number(payee));
     const formattedPayeeShares = sharesResults.map(result => Number(result.result as bigint));
     const totalSharesFormatted = Number(totalShares);
-    const isSelfFunded = creatorSplitDestination.toLowerCase() === rewardsModuleAddress.toLowerCase();
+    const isSelfFunded =
+      !isVersionBelowSelfFunded || creatorSplitDestination.toLowerCase() === rewardsModuleAddress.toLowerCase();
 
     return {
       abi,
@@ -90,7 +103,13 @@ export function useRewardsModule() {
   };
 
   return useQuery({
-    queryKey: ["rewards-module", contestConfig.address, contestConfig.abi, contestConfig.chainId],
+    queryKey: [
+      "rewards-module",
+      contestConfig.address,
+      contestConfig.abi,
+      contestConfig.chainId,
+      contestConfig.version,
+    ],
     queryFn: fetchContestRewardsModule,
     enabled: Boolean(contestConfig.address && contestConfig.abi && contestConfig.chainId),
     staleTime: Infinity,

@@ -6,6 +6,8 @@ import { createMonetizationSlice, MonetizationSlice } from "./slices/contestMone
 import { createMetadataSlice, MetadataSlice } from "./slices/contestMetadataSlice";
 import { createAdvancedOptionsSlice, AdvancedOptionsSlice } from "./slices/contestAdvancedOptionsSlice";
 import { createDeploymentSlice, DeploymentSlice } from "./slices/contestDeploymentSlice";
+import { createCreateRewardsSlice, CreateRewardsSlice } from "./slices/contestCreateRewards";
+import { createDeploymentProcessSlice, DeploymentProcessSlice } from "./slices/contestDeploymentProcessSlice";
 
 export type DeployContestStore = ContestInfoSlice &
   ContestTimingSlice &
@@ -13,28 +15,23 @@ export type DeployContestStore = ContestInfoSlice &
   MonetizationSlice &
   MetadataSlice &
   AdvancedOptionsSlice &
-  DeploymentSlice & {
+  CreateRewardsSlice &
+  DeploymentSlice &
+  DeploymentProcessSlice & {
     resetStore: () => void;
   };
 
-export const useDeployContestStore = create<DeployContestStore>((set, get) => {
-  const getInitialState = () => ({
-    ...createContestInfoSlice(set),
-    ...createContestTimingSlice(set, get),
-    ...createSubmissionSlice(set),
-    ...createMonetizationSlice(set),
-    ...createMetadataSlice(set),
-    ...createAdvancedOptionsSlice(set),
-    ...createDeploymentSlice(set, get),
-  });
-
-  const initialState = getInitialState();
-
-  return {
-    ...initialState,
-    resetStore: () => {
-      const freshState = getInitialState();
-      set(freshState);
-    },
-  };
-});
+export const useDeployContestStore = create<DeployContestStore>((set, get, store) => ({
+  ...createContestInfoSlice(set),
+  ...createContestTimingSlice(set, get),
+  ...createSubmissionSlice(set),
+  ...createMonetizationSlice(set),
+  ...createMetadataSlice(set),
+  ...createAdvancedOptionsSlice(set),
+  ...createCreateRewardsSlice(set, get),
+  ...createDeploymentSlice(set, get),
+  ...createDeploymentProcessSlice(set, get),
+  resetStore: () => {
+    set(store.getInitialState());
+  },
+}));

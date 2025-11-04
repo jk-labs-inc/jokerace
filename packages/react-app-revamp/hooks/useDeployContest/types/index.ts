@@ -12,22 +12,8 @@ export enum VoteType {
   PerTransaction = "PerTransaction",
 }
 
-export enum SplitFeeDestinationType {
-  CreatorWallet = "CreatorWallet",
-  AnotherWallet = "AnotherWallet",
-  NoSplit = "NoSplit",
-  RewardsPool = "RewardsPool",
-}
-
-export type SplitFeeDestination =
-  | { type: SplitFeeDestinationType.CreatorWallet; address: string }
-  | { type: SplitFeeDestinationType.AnotherWallet; address: string }
-  | { type: SplitFeeDestinationType.NoSplit; address: string }
-  | { type: SplitFeeDestinationType.RewardsPool; address: string };
-
 export type Charge = {
   percentageToCreator: number;
-  splitFeeDestination: SplitFeeDestination;
   voteType: VoteType;
   type: {
     costToPropose: number;
@@ -65,3 +51,80 @@ export interface ContestValues {
   authorAddress?: string;
   featured?: boolean;
 }
+
+export type DeploymentPhase =
+  | "idle"
+  | "deploying-contest"
+  | "deploying-rewards"
+  | "attaching-rewards"
+  | "funding-pool"
+  | "completed"
+  | "failed";
+
+export type TransactionStatus = "pending" | "loading" | "success" | "error";
+
+export interface TransactionState {
+  status: TransactionStatus;
+  hash?: string;
+  error?: string;
+}
+
+export interface DeploymentProcessState {
+  phase: DeploymentPhase;
+  transactions: {
+    deployContest: TransactionState;
+    deployRewards: TransactionState;
+    attachRewards: TransactionState;
+    fundTokens: Record<string, TransactionState>;
+  };
+  contestAddress?: string;
+  rewardsModuleAddress?: string;
+  chainId?: number;
+}
+
+export const createInitialDeploymentProcessState = (): DeploymentProcessState => ({
+  phase: "idle",
+  transactions: {
+    deployContest: { status: "pending" },
+    deployRewards: { status: "pending" },
+    attachRewards: { status: "pending" },
+    fundTokens: {},
+  },
+});
+
+export const canNavigateToContest = (state: DeploymentProcessState, addFundsToRewards: boolean): boolean => {
+  const contestDeployed = state.transactions.deployContest.status === "success";
+  const rewardsDeployed = state.transactions.deployRewards.status === "success";
+  const rewardsAttached = state.transactions.attachRewards.status === "success";
+  const rewardsDeployFailed = state.transactions.deployRewards.status === "error";
+  const rewardsAttachFailed = state.transactions.attachRewards.status === "error";
+
+  if (!contestDeployed) {
+    return false;
+  }
+
+  const fundTokenEntries = Object.entries(state.transactions.fundTokens);
+  const hasFundingTransactions = fundTokenEntries.length > 0;
+  const anyFundingFailed =
+    hasFundingTransactions && fundTokenEntries.some(([_, txState]) => txState.status === "error");
+
+  // If ANY reward phase fails, navigate immediately to contest page
+  if (rewardsDeployFailed || rewardsAttachFailed || anyFundingFailed) {
+    return true;
+  }
+
+  // All core reward phases must succeed before checking funding
+  if (!rewardsDeployed || !rewardsAttached) {
+    return false;
+  }
+
+  // If funding is enabled, wait for funding transactions to appear AND all succeed
+  if (addFundsToRewards) {
+    const allFundingSucceeded =
+      hasFundingTransactions && fundTokenEntries.every(([_, txState]) => txState.status === "success");
+    return allFundingSucceeded;
+  }
+
+  // If funding is not enabled, navigate as soon as core transactions succeed
+  return true;
+};

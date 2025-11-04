@@ -43,10 +43,6 @@ export function getContracts(contractConfig: any, version: string) {
     contractFunctionNames = [...contractFunctionNames, "payPerVote"];
   }
 
-  if (compareVersions(version, VERSIONS.V4_29) >= 0) {
-    contractFunctionNames = [...contractFunctionNames, "creatorSplitDestination"];
-  }
-
   const contracts = contractFunctionNames.map(functionName => ({
     ...contractConfig,
     functionName,

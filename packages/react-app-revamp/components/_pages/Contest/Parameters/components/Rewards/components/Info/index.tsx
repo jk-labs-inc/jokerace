@@ -3,6 +3,7 @@ import { FC } from "react";
 import { RewardModuleInfo } from "lib/rewards/types";
 import RewardsParametersTokens from "../Tokens";
 import { useMediaQuery } from "react-responsive";
+import useRewardsModule from "@hooks/useRewards";
 
 interface RewardsParametersInfoProps {
   rewardsStore: RewardModuleInfo;
@@ -12,7 +13,8 @@ interface RewardsParametersInfoProps {
 
 const RewardsParametersInfo: FC<RewardsParametersInfoProps> = ({ rewardsStore, charge, chainId }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const isRewardsPoolSelfFunded = charge.splitFeeDestination.address === rewardsStore.contractAddress;
+  const { data: rewardsModule } = useRewardsModule();
+  const isRewardsPoolSelfFunded = rewardsModule?.isSelfFunded;
 
   return (
     <ul className="pl-4 text-[16px] text-neutral-9">

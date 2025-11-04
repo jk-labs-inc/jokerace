@@ -9,8 +9,6 @@ import { ModuleType } from "lib/rewards/types";
 import { Abi } from "viem";
 import { useAccount, useAccountEffect } from "wagmi";
 import { useShallow } from "zustand/shallow";
-import CreateRewards from "./components/Create";
-import NoRewardsInfo from "./components/NoRewards";
 import RewardsError from "./modules/shared/Error";
 import RewardsCanceled from "./modules/shared/RewardsCanceled";
 import VotersRewardsPage from "./modules/Voters";
@@ -43,19 +41,9 @@ const ContestRewards = () => {
 
   if (isLoading || isRefetching) return <Loader>Loading rewards</Loader>;
 
-  if (isRewardsCanceledError || isError) {
+  if (isRewardsCanceledError || isError || !rewards) {
     return <RewardsError onRetry={isRewardsCanceledError ? refetchRewardsCanceled : refetch} />;
   }
-
-  if (!rewards && !creator) {
-    return <NoRewardsInfo />;
-  }
-
-  if (!rewards && creator) {
-    return <CreateRewards />;
-  }
-
-  if (!rewards) return null;
 
   if (isCanceled) {
     return (
@@ -65,13 +53,13 @@ const ContestRewards = () => {
         rewardsAbi={rewards.abi as Abi}
         rankings={rewards.payees}
         chainId={contestConfig.chainId}
-        version={contestConfig. version}
+        version={contestConfig.version}
       />
     );
   }
 
   return (
-    <div className="animate-reveal">
+    <div className="animate-fade-in">
       {rewards.moduleType === ModuleType.VOTER_REWARDS ? (
         <VotersRewardsPage
           rewards={rewards}

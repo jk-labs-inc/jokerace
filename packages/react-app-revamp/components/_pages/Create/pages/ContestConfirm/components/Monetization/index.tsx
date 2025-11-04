@@ -1,6 +1,6 @@
 import { useChainChange } from "@hooks/useChainChange";
 import useChargeDetails from "@hooks/useChargeDetails";
-import { Charge, PriceCurve, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
+import { Charge, PriceCurve } from "@hooks/useDeployContest/types";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
@@ -8,7 +8,6 @@ import CreateContestConfirmLayout from "../Layout";
 import CostToEnterMessage from "./components/CostToEnter";
 import CostToVoteMessage from "./components/CostToVote";
 import CreatorChargesMessage from "./components/CreatorCharges";
-import SplitMessage from "./components/Split";
 
 interface CreateContestConfirmMonetizationProps {
   charge: Charge;
@@ -23,20 +22,14 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
   step,
   onClick,
 }) => {
-  const { chain, address } = useAccount();
+  const { chain } = useAccount();
   const chainChanged = useChainChange();
-  const { type, splitFeeDestination, voteType } = charge;
+  const { type, voteType } = charge;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain?.name.toLowerCase() ?? "");
   const [isHovered, setIsHovered] = useState(false);
   const nativeCurrencySymbol = chain?.nativeCurrency.symbol;
   const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
   const [highlightChainChange, setHighlightChainChange] = useState(false);
-  const blockExplorerUrl = chain?.blockExplorers?.default.url;
-  const blockExplorerAddressUrl = blockExplorerUrl
-    ? `${blockExplorerUrl}/address/${
-        splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet ? address : splitFeeDestination.address
-      }`
-    : "";
 
   useEffect(() => {
     if (chainChanged) {
@@ -82,13 +75,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
               nativeCurrencySymbol={nativeCurrencySymbol}
               voteType={voteType}
             />
-            <SplitMessage splitFeeDestinationType={splitFeeDestination.type} />
-            <CreatorChargesMessage
-              splitFeeDestinationType={splitFeeDestination.type}
-              splitFeeDestinationAddress={splitFeeDestination.address}
-              creatorAddress={address}
-              blockExplorerAddressUrl={blockExplorerAddressUrl}
-            />
+            <CreatorChargesMessage percentageToCreator={charge.percentageToCreator} />
           </ul>
         )}
       </div>

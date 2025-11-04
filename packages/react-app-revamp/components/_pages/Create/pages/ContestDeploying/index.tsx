@@ -1,23 +1,23 @@
 import { toastDismiss } from "@components/UI/Toast";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { canNavigateToContest } from "@hooks/useDeployContest/types";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { create } from "zustand";
-
-interface ShowRewardsStore {
-  showRewards: boolean;
-  setShowRewards: (show: boolean) => void;
-}
-
-export const useShowRewardsStore = create<ShowRewardsStore>(set => ({
-  showRewards: false,
-  setShowRewards: show => set({ showRewards: show }),
-}));
+import { useEffect, useRef } from "react";
+import { useShallow } from "zustand/shallow";
+import { DeploymentStatus } from "../../components/DeploymentStatus";
 
 const CreateContestDeploying = () => {
   const router = useRouter();
-  const { isSuccess, deployContestData, resetStore } = useDeployContestStore(state => state);
-  const { setShowRewards } = useShowRewardsStore(state => state);
+  const { deployContestData, deploymentProcess, addFundsToRewards, resetStore, isSuccess } = useDeployContestStore(
+    useShallow(state => ({
+      deployContestData: state.deployContestData,
+      deploymentProcess: state.deploymentProcess,
+      addFundsToRewards: state.addFundsToRewards,
+      resetStore: state.resetStore,
+      isSuccess: state.isSuccess,
+    })),
+  );
+  const hasNavigatedRef = useRef(false);
 
   useEffect(() => {
     return () => {
@@ -28,41 +28,31 @@ const CreateContestDeploying = () => {
   }, [resetStore, isSuccess]);
 
   useEffect(() => {
-    if (!isSuccess || !deployContestData) {
-      return;
+    const shouldNavigate = canNavigateToContest(deploymentProcess, addFundsToRewards);
+    const hasContestData = deployContestData && deployContestData.address;
+
+    if (shouldNavigate && hasContestData && !hasNavigatedRef.current) {
+      hasNavigatedRef.current = true;
+
+      const contestPath = `/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${
+        deployContestData.address
+      }`;
+
+      toastDismiss();
+
+      router.push(contestPath);
     }
-
-    const contestPath = `/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${
-      deployContestData.address
-    }`;
-
-    toastDismiss();
-
-    if (deployContestData.sortingEnabled) {
-      setShowRewards(true);
-    }
-
-    router.push(contestPath);
-  }, [deployContestData, isSuccess, router, setShowRewards]);
+  }, [deploymentProcess, deployContestData, router, addFundsToRewards]);
 
   return (
-    <div className="flex flex-col gap-4 mt-12 lg:mt-[100px] animate-swing-in-left">
-      <p className="text-[24px] font-bold text-neutral-11 uppercase font-sabo-filled">
-        congratulations, you created a contest 👑
-      </p>
-      <p className="text-[18px] text-neutral-11">we'll redirect you to it as soon as it deploys...</p>
-      <p className="text-[18px] text-neutral-11">while it's deploying, here's a fun gif:</p>
-
-      <div className="relative w-[400px] border-4 border-true-black rounded-[10px] overflow-hidden">
-        <div className="absolute top-0 left-0 bg-transparent py-1 px-2">
-          <span className="text-[14px] text-true-black font-sabo-filled font-bold">JOKETV</span>
-        </div>
-        <img
-          src="https://media.giphy.com/media/xT8qB8JY8car00rGLe/giphy.gif"
-          className="w-full h-full"
-          alt="Loading GIF"
-        />
+    <div className="flex flex-col gap-8 mt-12 lg:mt-[100px] animate-swing-in-left">
+      <div className="flex flex-col gap-4">
+        <p className="text-[24px] font-bold text-neutral-11 uppercase font-sabo-filled">
+          congratulations, you created a contest 👑
+        </p>
+        <p className="text-[18px] text-neutral-11">we'll redirect you to it as soon as it deploys...</p>
       </div>
+      <DeploymentStatus deploymentProcess={deploymentProcess} addFundsToRewards={addFundsToRewards} />
     </div>
   );
 };
