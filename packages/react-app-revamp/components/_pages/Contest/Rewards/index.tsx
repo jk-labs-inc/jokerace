@@ -9,12 +9,9 @@ import { ModuleType } from "lib/rewards/types";
 import { Abi } from "viem";
 import { useAccount, useAccountEffect } from "wagmi";
 import { useShallow } from "zustand/shallow";
-import NoRewardsInfo from "./components/NoRewards";
 import RewardsError from "./modules/shared/Error";
 import RewardsCanceled from "./modules/shared/RewardsCanceled";
 import VotersRewardsPage from "./modules/Voters";
-import { compareVersions } from "compare-versions";
-import { SELF_FUND_VERSION } from "constants/versions";
 
 const ContestRewards = () => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
@@ -44,19 +41,9 @@ const ContestRewards = () => {
 
   if (isLoading || isRefetching) return <Loader>Loading rewards</Loader>;
 
-  if (isRewardsCanceledError || isError) {
+  if (isRewardsCanceledError || isError || !rewards) {
     return <RewardsError onRetry={isRewardsCanceledError ? refetchRewardsCanceled : refetch} />;
   }
-
-  if (!rewards && !creator && compareVersions(contestConfig.version, SELF_FUND_VERSION) < 0) {
-    return <NoRewardsInfo />;
-  }
-
-  if (!rewards && creator && compareVersions(contestConfig.version, SELF_FUND_VERSION) < 0) {
-    return <NoRewardsInfo />;
-  }
-
-  if (!rewards) return null;
 
   if (isCanceled) {
     return (

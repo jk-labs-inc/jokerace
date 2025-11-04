@@ -4,19 +4,22 @@ import ContestExtensions from "@components/_pages/Contest/Extensions";
 import ContestParameters from "@components/_pages/Contest/Parameters";
 import ContestRewards from "@components/_pages/Contest/Rewards";
 import { Tab } from "@components/_pages/Contest/components/Tabs";
+import { compareVersions } from "compare-versions";
+import { SELF_FUND_VERSION } from "constants/versions";
 import { RewardModuleInfo } from "lib/rewards/types";
 import { FC, ReactNode } from "react";
 
 interface ContestTabsContentProps {
   tab: Tab;
+  version: string;
   rewardsModule?: RewardModuleInfo | null;
 }
 
-const ContestTabsContent: FC<ContestTabsContentProps> = ({ tab, rewardsModule }) => {
+const ContestTabsContent: FC<ContestTabsContentProps> = ({ tab, version, rewardsModule }) => {
   const renderContent = (): ReactNode => {
     switch (tab) {
       case Tab.Contest:
-        if (rewardsModule) {
+        if (rewardsModule || compareVersions(version, SELF_FUND_VERSION) <= 0) {
           return <ContestTab />;
         } else {
           return <ContestDeployRewards />;
