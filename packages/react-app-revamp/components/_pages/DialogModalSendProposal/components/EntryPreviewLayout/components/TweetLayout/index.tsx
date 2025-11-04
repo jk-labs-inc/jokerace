@@ -51,7 +51,9 @@ const DialogModalSendProposalEntryPreviewTweetLayout: FC<DialogModalSendProposal
     <div className="flex flex-col gap-4">
       <p className="text-[16px] font-bold text-neutral-11">tweet</p>
       <div
-        className={`bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"} relative`}
+        className={`bg-true-black rounded-[16px] border-true-black ${
+          isMobile ? "" : "shadow-file-upload p-2"
+        } relative`}
       >
         <input
           type="text"
@@ -60,8 +62,8 @@ const DialogModalSendProposalEntryPreviewTweetLayout: FC<DialogModalSendProposal
           placeholder="www.x.com/me/status/18431..."
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-          {isValid === true && <CheckCircleIcon className="text-positive-11 w-6 h-6 animate-reveal" />}
-          {isValid === false && <XCircleIcon className="text-negative-11 w-6 h-6 animate-reveal" />}
+          {isValid === true && <CheckCircleIcon className="text-positive-11 w-6 h-6 animate-fade-in" />}
+          {isValid === false && <XCircleIcon className="text-negative-11 w-6 h-6 animate-fade-in" />}
         </div>
       </div>
     </div>

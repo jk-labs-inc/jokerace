@@ -54,7 +54,9 @@ const LandingPageUsedBy: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col gap-4 md:gap-8 py-4 md:py-8 pr-6 pl-4 md:pl-16 3xl:pl-28 border-t border-b border-neutral-7 ${isVisible ? "animate-reveal" : "opacity-0"}`}
+      className={`flex flex-col gap-4 md:gap-8 py-4 md:py-8 pr-6 pl-4 md:pl-16 3xl:pl-28 border-t border-b border-neutral-7 ${
+        isVisible ? "animate-fade-in" : "opacity-0"
+      }`}
     >
       <p className="text-[16px] md:text-[24px] font-bold text-neutral-11">as used by</p>
       <div className="hidden xl:flex justify-between">

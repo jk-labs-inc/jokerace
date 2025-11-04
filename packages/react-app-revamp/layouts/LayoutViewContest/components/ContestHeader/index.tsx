@@ -30,7 +30,7 @@ const ContestHeader: FC<ContestHeaderProps> = ({
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
   return (
-    <div className="animate-reveal pt-3 md:pt-0">
+    <div className="animate-fade-in pt-3 md:pt-0">
       <div className="flex flex-col mt-6 md:mt-10 gap-4">
         <div className="flex flex-col gap-8">
           {contestImageUrl && (

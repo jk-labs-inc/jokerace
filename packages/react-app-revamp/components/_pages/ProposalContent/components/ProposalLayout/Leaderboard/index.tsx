@@ -146,7 +146,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
             </div>
             {!isContentHidden && (
               <>
-                <div className="animate-reveal">
+                <div className="animate-fade-in">
                   <Interweave
                     className="prose prose-invert inline-block w-full overflow-hidden [&>*:not(.not-prose)]:text-neutral-9 [&>*:not(.not-prose) *]:text-neutral-9 max-w-[560px]"
                     content={proposal.content}

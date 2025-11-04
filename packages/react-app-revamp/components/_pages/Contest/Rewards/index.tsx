@@ -72,7 +72,7 @@ const ContestRewards = () => {
   }
 
   return (
-    <div className="animate-reveal">
+    <div className="animate-fade-in">
       {rewards.moduleType === ModuleType.VOTER_REWARDS ? (
         <VotersRewardsPage
           rewards={rewards}

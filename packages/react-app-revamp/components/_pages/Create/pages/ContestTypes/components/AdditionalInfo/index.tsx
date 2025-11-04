@@ -16,7 +16,7 @@ const CreateContestTypesAdditionalInfo: FC<CreateContestTypesAdditionalInfoProps
           className={`w-6 h-6 text-positive-11 transition-transform ${isExpanded ? "rotate-180" : ""}`}
         />
       </button>
-      {isExpanded && <div className="animate-reveal">{children}</div>}
+      {isExpanded && <div className="animate-fade-in">{children}</div>}
     </div>
   );
 };

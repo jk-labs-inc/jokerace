@@ -1,6 +1,6 @@
 const NoRewardsInfo = () => {
   return (
-    <div className="flex flex-col gap-6 animate-reveal">
+    <div className="flex flex-col gap-6 animate-fade-in">
       <img src="/rewards/rewards-not-created.png" alt="no rewards" width={558} height={360} />
       <div className="flex flex-col gap-4">
         <p className="text-[20px] md:text-[24px] text-neutral-11">
