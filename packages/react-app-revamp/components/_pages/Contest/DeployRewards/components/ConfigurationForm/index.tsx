@@ -1,11 +1,12 @@
-import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import CreateRewardsPool from "@components/_pages/Create/pages/ContestRewards/components/CreatePool";
 import CreateRewardsFundPool from "@components/_pages/Create/pages/ContestRewards/components/FundPool";
 import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useShallow } from "zustand/shallow";
-import { useMediaQuery } from "react-responsive";
 import { FC } from "react";
+import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/shallow";
+import ConfigurationFormButtonSubmitDesktop from "./components/Button/Submit/desktop";
+import ConfigurationFormButtonSubmitMobile from "./components/Button/Submit/mobile";
 
 interface ConfigurationFormProps {
   onDeploy: () => void;
@@ -47,16 +48,11 @@ export const ConfigurationForm: FC<ConfigurationFormProps> = ({ onDeploy, isDepl
         <CreateRewardsPool />
         <CreateRewardsFundPool />
       </div>
-      <div>
-        <ButtonV3
-          size={ButtonSize.EXTRA_LARGE_LONG}
-          onClick={onDeploy}
-          isDisabled={isDisabled}
-          colorClass="bg-gradient-purple text-[24px] rounded-[16px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
-        >
-          add rewards pool
-        </ButtonV3>
-      </div>
+      {isMobile ? (
+        <ConfigurationFormButtonSubmitMobile isDisabled={isDisabled} onDeploy={onDeploy} />
+      ) : (
+        <ConfigurationFormButtonSubmitDesktop isDisabled={isDisabled} onDeploy={onDeploy} />
+      )}
     </div>
   );
 };

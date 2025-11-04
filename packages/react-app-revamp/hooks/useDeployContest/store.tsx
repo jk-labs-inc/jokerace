@@ -21,26 +21,17 @@ export type DeployContestStore = ContestInfoSlice &
     resetStore: () => void;
   };
 
-export const useDeployContestStore = create<DeployContestStore>((set, get) => {
-  const getInitialState = () => ({
-    ...createContestInfoSlice(set),
-    ...createContestTimingSlice(set, get),
-    ...createSubmissionSlice(set),
-    ...createMonetizationSlice(set),
-    ...createMetadataSlice(set),
-    ...createAdvancedOptionsSlice(set),
-    ...createCreateRewardsSlice(set, get),
-    ...createDeploymentSlice(set, get),
-    ...createDeploymentProcessSlice(set, get),
-  });
-
-  const initialState = getInitialState();
-
-  return {
-    ...initialState,
-    resetStore: () => {
-      const freshState = getInitialState();
-      set(freshState);
-    },
-  };
-});
+export const useDeployContestStore = create<DeployContestStore>((set, get, store) => ({
+  ...createContestInfoSlice(set),
+  ...createContestTimingSlice(set, get),
+  ...createSubmissionSlice(set),
+  ...createMonetizationSlice(set),
+  ...createMetadataSlice(set),
+  ...createAdvancedOptionsSlice(set),
+  ...createCreateRewardsSlice(set, get),
+  ...createDeploymentSlice(set, get),
+  ...createDeploymentProcessSlice(set, get),
+  resetStore: () => {
+    set(store.getInitialState());
+  },
+}));

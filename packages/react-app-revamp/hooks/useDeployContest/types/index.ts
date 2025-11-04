@@ -92,20 +92,39 @@ export const createInitialDeploymentProcessState = (): DeploymentProcessState =>
   },
 });
 
-export const isCriticalPhaseComplete = (phase: DeploymentPhase): boolean => {
-  return phase === "completed" || phase === "funding-pool" || phase === "attaching-rewards";
-};
-
-export const canNavigateToContest = (state: DeploymentProcessState): boolean => {
+export const canNavigateToContest = (state: DeploymentProcessState, addFundsToRewards: boolean): boolean => {
   const contestDeployed = state.transactions.deployContest.status === "success";
   const rewardsDeployed = state.transactions.deployRewards.status === "success";
   const rewardsAttached = state.transactions.attachRewards.status === "success";
   const rewardsDeployFailed = state.transactions.deployRewards.status === "error";
   const rewardsAttachFailed = state.transactions.attachRewards.status === "error";
 
-  // Navigate if all 3 succeed OR if contest succeeds but rewards phases fail
-  return (
-    (contestDeployed && rewardsDeployed && rewardsAttached) ||
-    (contestDeployed && (rewardsDeployFailed || rewardsAttachFailed))
-  );
+  if (!contestDeployed) {
+    return false;
+  }
+
+  const fundTokenEntries = Object.entries(state.transactions.fundTokens);
+  const hasFundingTransactions = fundTokenEntries.length > 0;
+  const anyFundingFailed =
+    hasFundingTransactions && fundTokenEntries.some(([_, txState]) => txState.status === "error");
+
+  // If ANY reward phase fails, navigate immediately to contest page
+  if (rewardsDeployFailed || rewardsAttachFailed || anyFundingFailed) {
+    return true;
+  }
+
+  // All core reward phases must succeed before checking funding
+  if (!rewardsDeployed || !rewardsAttached) {
+    return false;
+  }
+
+  // If funding is enabled, wait for funding transactions to appear AND all succeed
+  if (addFundsToRewards) {
+    const allFundingSucceeded =
+      hasFundingTransactions && fundTokenEntries.every(([_, txState]) => txState.status === "success");
+    return allFundingSucceeded;
+  }
+
+  // If funding is not enabled, navigate as soon as core transactions succeed
+  return true;
 };

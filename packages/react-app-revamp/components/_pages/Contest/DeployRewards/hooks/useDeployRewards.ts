@@ -3,6 +3,7 @@ import { config } from "@config/wagmi";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { orchestrateRewardsDeployment } from "@hooks/useDeployContest/deployment/process/orchestrator";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { useError } from "@hooks/useError";
 import useRewardsModule from "@hooks/useRewards";
 import { switchChain } from "@wagmi/core";
 import { useState } from "react";
@@ -43,6 +44,7 @@ export const useDeployRewards = () => {
   const [isDeploying, setIsDeploying] = useState(false);
   const { refetch: refetchRewardsModule } = useRewardsModule();
   const isConnectedOnCorrectChain = connectedAccountChainId === contestConfig.chainId;
+  const { handleError } = useError();
 
   const deployRewards = async () => {
     if (!connectedAccountAddress || !contestConfig.address || !contestConfig.chainId) {
@@ -76,8 +78,7 @@ export const useDeployRewards = () => {
         },
       });
     } catch (error) {
-      //TODO: handle errors?
-      console.error("Rewards deployment failed:", error);
+      handleError(error, "Rewards deployment failed");
       setIsDeploying(false);
       resetStore();
       setTokenWidgets([]);

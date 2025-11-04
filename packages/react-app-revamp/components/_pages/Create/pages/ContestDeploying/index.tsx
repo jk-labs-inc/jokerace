@@ -8,26 +8,27 @@ import { DeploymentStatus } from "../../components/DeploymentStatus";
 
 const CreateContestDeploying = () => {
   const router = useRouter();
-  const { deployContestData, resetStore, deploymentProcess, addFundsToRewards } = useDeployContestStore(
+  const { deployContestData, deploymentProcess, addFundsToRewards, resetStore, isSuccess } = useDeployContestStore(
     useShallow(state => ({
       deployContestData: state.deployContestData,
-      resetStore: state.resetStore,
       deploymentProcess: state.deploymentProcess,
       addFundsToRewards: state.addFundsToRewards,
+      resetStore: state.resetStore,
+      isSuccess: state.isSuccess,
     })),
   );
   const hasNavigatedRef = useRef(false);
 
   useEffect(() => {
     return () => {
-      if (hasNavigatedRef.current) {
+      if (isSuccess) {
         resetStore();
       }
     };
-  }, [resetStore]);
+  }, [resetStore, isSuccess]);
 
   useEffect(() => {
-    const shouldNavigate = canNavigateToContest(deploymentProcess);
+    const shouldNavigate = canNavigateToContest(deploymentProcess, addFundsToRewards);
     const hasContestData = deployContestData && deployContestData.address;
 
     if (shouldNavigate && hasContestData && !hasNavigatedRef.current) {
@@ -41,7 +42,7 @@ const CreateContestDeploying = () => {
 
       router.push(contestPath);
     }
-  }, [deploymentProcess, deployContestData, router]);
+  }, [deploymentProcess, deployContestData, router, addFundsToRewards]);
 
   return (
     <div className="flex flex-col gap-8 mt-12 lg:mt-[100px] animate-swing-in-left">
