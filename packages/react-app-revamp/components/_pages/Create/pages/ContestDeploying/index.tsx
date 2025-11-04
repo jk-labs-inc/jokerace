@@ -8,9 +8,8 @@ import { DeploymentStatus } from "../../components/DeploymentStatus";
 
 const CreateContestDeploying = () => {
   const router = useRouter();
-  const { isSuccess, deployContestData, resetStore, deploymentProcess, addFundsToRewards } = useDeployContestStore(
+  const { deployContestData, resetStore, deploymentProcess, addFundsToRewards } = useDeployContestStore(
     useShallow(state => ({
-      isSuccess: state.isSuccess,
       deployContestData: state.deployContestData,
       resetStore: state.resetStore,
       deploymentProcess: state.deploymentProcess,
@@ -21,11 +20,11 @@ const CreateContestDeploying = () => {
 
   useEffect(() => {
     return () => {
-      if (isSuccess) {
+      if (hasNavigatedRef.current) {
         resetStore();
       }
     };
-  }, [resetStore, isSuccess]);
+  }, [resetStore]);
 
   useEffect(() => {
     const shouldNavigate = canNavigateToContest(deploymentProcess);

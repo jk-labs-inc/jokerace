@@ -21,9 +21,8 @@ const CreateContestRewards = () => {
       validateRewards: state.validateRewards,
     })),
   );
-  //TODO: double check this validation
-  const isTokenWidgetError = useFundPoolStore(useShallow(state => state.isError));
-  const isDisabled = !validateRewards().isValid || !!isTokenWidgetError;
+  const { isError: isTokenWidgetError } = useFundPoolStore(useShallow(state => state));
+  const isDisabled = !validateRewards().isValid || isTokenWidgetError;
 
   return (
     <div className="flex flex-col">
@@ -39,8 +38,8 @@ const CreateContestRewards = () => {
           <div className="flex flex-col gap-12">
             <div className="flex flex-col gap-4 w-full md:w-[448px] rounded-4xl p-6 bg-primary-1 text-[16px] text-neutral-11">
               <p>
-                the rewards pool will <b>self-fund.</b> as voters buy votes, 90% <br />
-                of their funds will go into the pool.
+                the rewards pool will <b>self-fund.</b> as voters buy votes, 90% {isMobile ? "" : <br />}
+                of their funds will go into the pool.{isMobile ? "" : <br />}
               </p>
               <p>voters on winners can claim their share of rewards.</p>
             </div>

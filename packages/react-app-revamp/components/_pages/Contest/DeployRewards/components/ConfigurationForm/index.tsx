@@ -18,8 +18,13 @@ export const ConfigurationForm: FC<ConfigurationFormProps> = ({ onDeploy, isDepl
       validateRewards: state.validateRewards,
     })),
   );
-  const isTokenWidgetError = useFundPoolStore(useShallow(state => state.isError));
-  const isDisabled = !validateRewards().isValid || !!isTokenWidgetError || isDeploying;
+  const { isError: isTokenWidgetError } = useFundPoolStore(
+    useShallow(state => ({
+      isError: state.isError,
+    })),
+  );
+  const validation = validateRewards();
+  const isDisabled = !validation.isValid || isTokenWidgetError || isDeploying;
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   return (
