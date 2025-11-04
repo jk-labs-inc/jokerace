@@ -68,7 +68,6 @@ export const useDeployRewards = () => {
         onFundTokenUpdate: setFundTokenTransaction,
         onRewardsModuleAddress: setRewardsModuleAddress,
         onCriticalPhaseComplete: async () => {
-          console.log("onCriticalPhaseComplete");
           setIsDeploying(false);
           refetchRewardsModule();
           resetStore();
