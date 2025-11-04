@@ -19,7 +19,7 @@ const ContestTabsContent: FC<ContestTabsContentProps> = ({ tab, version, rewards
   const renderContent = (): ReactNode => {
     switch (tab) {
       case Tab.Contest:
-        if (rewardsModule || compareVersions(version, SELF_FUND_VERSION) <= 0) {
+        if (rewardsModule || compareVersions(version, SELF_FUND_VERSION) < 0) {
           return <ContestTab />;
         } else {
           return <ContestDeployRewards />;
