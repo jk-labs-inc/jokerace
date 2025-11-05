@@ -396,7 +396,7 @@ abstract contract Governor is GovernorSorting {
     }
 
     /**
-     * @dev Distribute the cost of an action to the creator and jk labs based on _percentageToRewards.
+     * @dev Distribute the cost of an action to the rewards pool and jk labs based on _percentageToRewards.
      */
     function _distributeCost(uint256 actionCost) internal {
         if (actionCost > 0) {
@@ -409,7 +409,7 @@ abstract contract Governor is GovernorSorting {
 
             uint256 sendingToRewards = msg.value - sendingToJkLabs;
             if (sendingToRewards > 0) {
-                Address.sendValue(payable(_getOfficialRewardsModule()), sendingToRewards); // creator gets the extra wei in the case of rounding
+                Address.sendValue(payable(_getOfficialRewardsModule()), sendingToRewards); // rewards pool gets the extra wei in the case of rounding
                 emit RewardsPaymentReleased(_getOfficialRewardsModule(), sendingToRewards);
             }
         }
