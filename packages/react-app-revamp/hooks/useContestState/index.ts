@@ -38,7 +38,7 @@ export function useContestState(): CancelContestResult {
 
       const txHash = await writeContract(config, request);
 
-      const receipt = await waitForTransactionReceipt(config, { hash: txHash });
+      const receipt = await waitForTransactionReceipt(config, { hash: txHash, confirmations: 2 });
 
       if (receipt.status === "success") {
         setIsConfirmed(true);

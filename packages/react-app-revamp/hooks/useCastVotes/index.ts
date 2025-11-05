@@ -119,7 +119,11 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
       });
 
       const hash = await writeContract(config, request);
-      const receipt = await waitForTransactionReceipt(config, { chainId: contestConfig.chainId, hash });
+      const receipt = await waitForTransactionReceipt(config, {
+        chainId: contestConfig.chainId,
+        hash,
+        confirmations: 2,
+      });
 
       const analyticsParams: CombinedAnalyticsParams = {
         contestAddress: contestConfig.address,

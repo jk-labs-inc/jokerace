@@ -103,6 +103,7 @@ export function useFundRewardsModule() {
       receipt = await waitForTransactionReceipt(config, {
         chainId: chainId,
         hash: hash,
+        confirmations: 2,
       });
     } else {
       const amountBigInt = parseUnits(tokenAmount, tokenDecimals);
@@ -121,6 +122,7 @@ export function useFundRewardsModule() {
       receipt = await waitForTransactionReceipt(config, {
         chainId: chainId,
         hash: hash,
+        confirmations: 2,
       });
     }
 
