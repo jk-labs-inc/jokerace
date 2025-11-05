@@ -24,6 +24,7 @@ contract VoterRewardsModuleTest is Test {
 
     // COST PARAMS
     uint256 public constant NINETY_PERCENT_TO_REWARDS = 90;
+    uint256 public constant CREATOR_SPLIT_ENABLED = 1;
     uint256 public constant STANDARD_COST_TO_VOTE = 100000000000000;
     uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
     uint256 public constant ZERO_EXPONENT_MULTIPLE = 0;
@@ -50,7 +51,8 @@ contract VoterRewardsModuleTest is Test {
         NINETY_PERCENT_TO_REWARDS,
         STANDARD_COST_TO_VOTE,
         FLAT_PRICE_CURVE_TYPE,
-        ZERO_EXPONENT_MULTIPLE
+        ZERO_EXPONENT_MULTIPLE,
+        CREATOR_SPLIT_ENABLED
     );
 
     Governor.ConstructorArgs public payPerVoteFlatCurveParams = Governor.ConstructorArgs(
@@ -73,7 +75,8 @@ contract VoterRewardsModuleTest is Test {
         NINETY_PERCENT_TO_REWARDS,
         STANDARD_COST_TO_VOTE,
         FLAT_PRICE_CURVE_TYPE,
-        ZERO_EXPONENT_MULTIPLE
+        ZERO_EXPONENT_MULTIPLE,
+        CREATOR_SPLIT_ENABLED
     );
 
     Governor.ConstructorArgs public payPerVoteFlatCurveRankLimitOneParams = Governor.ConstructorArgs(

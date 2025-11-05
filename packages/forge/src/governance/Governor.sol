@@ -49,6 +49,7 @@ abstract contract Governor is GovernorSorting {
         uint256 costToVote;
         uint256 priceCurveType;
         uint256 multiple;
+        uint256 creatorSplitEnabled;
     }
 
     struct ConstructorArgs {
@@ -99,6 +100,7 @@ abstract contract Governor is GovernorSorting {
     event VoteCast(address indexed voter, uint256 proposalId, uint256 numVotes);
     event RewardsPaymentReleased(address to, uint256 amount);
     event JkLabsPaymentReleased(address to, uint256 amount);
+    event CreatorPaymentReleased(address to, uint256 amount);
 
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant MAX_FIELDS_METADATA_LENGTH = 10;
@@ -121,6 +123,7 @@ abstract contract Governor is GovernorSorting {
     uint256 public costToVote; // Starting/minimum price
     uint256 public priceCurveType; // Enum value of PriceCurveTypes.
     uint256 public multiple; // Exponent multiple for an exponential price curve if applicable.
+    uint256 public creatorSplitEnabled; // If 1, half of the jk labs split is sent to the creator; if 0, none of it is.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
     string public metadataFieldsSchema; // JSON Schema of what the metadata fields are.
 
@@ -186,6 +189,7 @@ abstract contract Governor is GovernorSorting {
         costToVote = constructorArgs_.intConstructorArgs.costToVote;
         priceCurveType = constructorArgs_.intConstructorArgs.priceCurveType;
         multiple = constructorArgs_.intConstructorArgs.multiple;
+        creatorSplitEnabled = constructorArgs_.intConstructorArgs.creatorSplitEnabled;
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
         metadataFieldsSchema = constructorArgs_.metadataFieldsSchema;
 
@@ -396,15 +400,21 @@ abstract contract Governor is GovernorSorting {
     }
 
     /**
-     * @dev Distribute the cost of an action to the rewards pool and jk labs based on _percentageToRewards.
+     * @dev Distribute the cost of an action to the rewards pool, jk labs, and creator if applicable based on percentageToRewards and creatorSplitEnabled.
      */
     function _distributeCost(uint256 actionCost) internal {
         if (actionCost > 0) {
-            // Send cost to rewards pool and jk labs split destinations
+            // Send cost to rewards pool and jk labs split destinations, as well as creator if applicable
             uint256 sendingToJkLabs = (msg.value * (100 - percentageToRewards)) / 100;
             if (sendingToJkLabs > 0) {
-                Address.sendValue(payable(jkLabsSplitDestination), sendingToJkLabs);
-                emit JkLabsPaymentReleased(jkLabsSplitDestination, sendingToJkLabs);
+                uint256 sendingToCreator = (creatorSplitEnabled == 1) ? (sendingToJkLabs / 2) : 0;
+                if (creatorSplitEnabled == 0) {
+                    Address.sendValue(payable(creator), sendingToCreator);
+                    emit CreatorPaymentReleased(creator, sendingToCreator);
+                }
+
+                Address.sendValue(payable(jkLabsSplitDestination), sendingToJkLabs - sendingToCreator);
+                emit JkLabsPaymentReleased(jkLabsSplitDestination, sendingToJkLabs - sendingToCreator);
             }
 
             uint256 sendingToRewards = msg.value - sendingToJkLabs;
