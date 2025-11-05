@@ -1,5 +1,5 @@
-import { createResultGetter, determineSplitFeeDestination } from "@hooks/useContest/helpers";
-import { SplitFeeDestinationType, VoteType, type Charge } from "@hooks/useDeployContest/types";
+import { createResultGetter } from "@hooks/useContest/helpers";
+import { VoteType, type Charge } from "@hooks/useDeployContest/types";
 import { Abi } from "viem";
 import { useReadContracts } from "wagmi";
 
@@ -7,8 +7,6 @@ interface UseChargeParams {
   address: `0x${string}`;
   abi: Abi;
   chainId: number;
-  creatorAddress?: string;
-  rewardsModuleAddress?: string;
 }
 
 interface UseChargeResult {
@@ -61,10 +59,6 @@ const getContracts = (address: `0x${string}`, abi: Abi, chainId: number) => {
 const getDefaultCharge = (): Charge => ({
   percentageToCreator: 0,
   voteType: VoteType.PerVote,
-  splitFeeDestination: {
-    type: SplitFeeDestinationType.NoSplit,
-    address: "",
-  },
   type: {
     costToPropose: 0,
     costToVote: 0,
@@ -75,13 +69,7 @@ const getDefaultCharge = (): Charge => ({
 /**
  * Pure hook that fetches charge-related contract data and returns it formatted as Charge type
  **/
-export const useCharge = ({
-  address,
-  abi,
-  chainId,
-  creatorAddress,
-  rewardsModuleAddress,
-}: UseChargeParams): UseChargeResult => {
+export const useCharge = ({ address, abi, chainId }: UseChargeParams): UseChargeResult => {
   const contracts = getContracts(address, abi, chainId);
 
   const {
@@ -101,20 +89,10 @@ export const useCharge = ({
         const costToPropose = Number(getResultByName("costToPropose")) || 0;
         const costToVote = Number(getResultByName("costToVote")) || 0;
         const payPerVote = Number(getResultByName("payPerVote")) || 1;
-        const creatorSplitDestination = (getResultByName("creatorSplitDestination") as string) || "";
 
         return {
           percentageToCreator,
           voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
-          splitFeeDestination: {
-            type: determineSplitFeeDestination(
-              creatorSplitDestination,
-              percentageToCreator,
-              creatorAddress ?? "",
-              rewardsModuleAddress,
-            ),
-            address: creatorSplitDestination,
-          },
           type: {
             costToPropose,
             costToVote,

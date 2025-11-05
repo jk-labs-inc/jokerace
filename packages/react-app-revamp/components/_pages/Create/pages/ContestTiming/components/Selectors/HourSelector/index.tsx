@@ -1,10 +1,10 @@
+import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { FC } from "react";
-import CreateContestTimingDropdown, { CreateContestTimingDropdownOption } from "../../Dropdown";
-import MobileHourSelector from "./Mobile";
 import { useMediaQuery } from "react-responsive";
+import MobileHourSelector from "./Mobile";
 
 interface CreateContestTimingHourSelectorProps {
-  hours: CreateContestTimingDropdownOption[];
+  hours: Option[];
   defaultValue: string;
   onChange?: (hour: string) => void;
 }
@@ -22,7 +22,7 @@ const CreateContestTimingHourSelector: FC<CreateContestTimingHourSelectorProps> 
 
   return (
     <div className="flex items-center gap-4">
-      <CreateContestTimingDropdown options={hours} width="w-[120px]" onChange={onChange} defaultValue={defaultValue} />
+      <CreateDefaultDropdown options={hours} width="w-[120px]" onChange={onChange} defaultValue={defaultValue} />
     </div>
   );
 };

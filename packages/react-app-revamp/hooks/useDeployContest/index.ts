@@ -1,14 +1,22 @@
-import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
+import { toastLoading } from "@components/UI/Toast";
 import { isSupabaseConfigured } from "@helpers/database";
 import useEmailSignup from "@hooks/useEmailSignup";
 import { useError } from "@hooks/useError";
 import { useAccount } from "wagmi";
-import { isSortingEnabled } from "./contracts";
-import { getJkLabsSplitDestinationAddress, indexContest } from "./database";
-import { prepareConstructorArgs } from "./helpers/constructorArgs";
-import { prepareContestData } from "./helpers/contestData";
-import { prepareForDeployment } from "./helpers/deploymentPreparation";
+import { useShallow } from "zustand/shallow";
+import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import {
+  deployContractToChain,
+  finalizeContractDeployment,
+  handleDeploymentError,
+  indexContestInDatabase,
+  prepareContestDataForIndexing,
+  prepareDeploymentData,
+  preparePromptData,
+  updateDeploymentStore,
+  validateDeploymentPrerequisites,
+} from "./deployment";
+import { orchestrateRewardsDeployment } from "./deployment/process";
 import { useDeployContestStore } from "./store";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000;
@@ -33,145 +41,155 @@ export function useDeployContest() {
     priceCurve,
     setIsLoading,
     setIsSuccess,
-  } = useDeployContestStore(state => state);
+    rewardPoolData,
+    addFundsToRewards,
+    setDeploymentPhase,
+    setTransactionState,
+    setFundTokenTransaction,
+    setRewardsModuleAddress,
+    setContestAddress,
+    setChainId,
+    deploymentProcess,
+  } = useDeployContestStore(
+    useShallow(state => ({
+      title: state.title,
+      prompt: state.prompt,
+      contestType: state.contestType,
+      submissionOpen: state.submissionOpen,
+      getVotingOpenDate: state.getVotingOpenDate,
+      getVotingCloseDate: state.getVotingCloseDate,
+      customization: state.customization,
+      advancedOptions: state.advancedOptions,
+      setDeployContestData: state.setDeployContestData,
+      metadataFields: state.metadataFields,
+      entryPreviewConfig: state.entryPreviewConfig,
+      emailSubscriptionAddress: state.emailSubscriptionAddress,
+      charge: state.charge,
+      priceCurve: state.priceCurve,
+      setIsLoading: state.setIsLoading,
+      setIsSuccess: state.setIsSuccess,
+      rewardPoolData: state.rewardPoolData,
+      addFundsToRewards: state.addFundsToRewards,
+      setDeploymentPhase: state.setDeploymentPhase,
+      setTransactionState: state.setTransactionState,
+      setFundTokenTransaction: state.setFundTokenTransaction,
+      setRewardsModuleAddress: state.setRewardsModuleAddress,
+      setContestAddress: state.setContestAddress,
+      setChainId: state.setChainId,
+      deploymentProcess: state.deploymentProcess,
+    })),
+  );
   const { handleError } = useError();
   const { address, chain } = useAccount();
+  const { tokenWidgets } = useFundPoolStore(useShallow(state => ({ tokenWidgets: state.tokenWidgets })));
 
   const votingOpen = getVotingOpenDate();
   const votingClose = getVotingCloseDate();
 
   async function deployContest() {
     setIsLoading(true);
+    setDeploymentPhase("deploying-contest");
     toastLoading({
       message: "contest is deploying...",
     });
 
-    if (!address || !chain) {
-      handleError(new Error("Failed to prepare for deployment"), "Failed to prepare for deployment");
-      setIsLoading(false);
-      return;
-    }
-
-    let preparationResult;
     try {
-      preparationResult = await prepareForDeployment({
-        address: address as `0x${string}`,
-        chainId: chain.id,
-      });
-    } catch (error: any) {
-      handleError(error, error.userMessage || "Failed to prepare for deployment");
-      setIsLoading(false);
-      return;
-    }
+      const { address: validatedAddress, chain: validatedChain } = validateDeploymentPrerequisites(address, chain);
 
-    const { client, publicClient } = preparationResult;
-
-    try {
-      const combinedPrompt = new URLSearchParams({
-        type: contestType,
-        summarize: prompt.summarize,
-        evaluateVoters: prompt.evaluateVoters,
-        contactDetails: prompt.contactDetails ?? "",
-        imageUrl: prompt.imageUrl ?? "",
-      }).toString();
-
+      const combinedPrompt = preparePromptData(prompt, contestType);
       const { type: chargeType } = charge;
-      let jkLabsSplitDestination = "";
 
-      try {
-        jkLabsSplitDestination = await getJkLabsSplitDestinationAddress(chain?.id ?? 0, {
-          costToPropose: chargeType.costToPropose,
-          costToVote: chargeType.costToVote,
-        });
-      } catch (error) {
-        toastError({
-          message: "Failed to fetch JK Labs split destination. Please try again later.",
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      const constructorArgs = prepareConstructorArgs({
-        title,
+      const deploymentData = await prepareDeploymentData({
+        address: validatedAddress,
+        chain: validatedChain,
         combinedPrompt,
-        contestType,
-        submissionOpen,
-        votingOpen,
-        votingClose,
-        customization,
-        advancedOptions,
-        charge,
-        priceCurve,
-        metadataFields,
-        entryPreviewConfig,
-        clientAccountAddress: client.account?.address,
-        jkLabsSplitDestination,
+        chargeType,
+        contestData: {
+          title,
+          contestType,
+          submissionOpen,
+          votingOpen,
+          votingClose,
+          customization,
+          advancedOptions,
+          charge,
+          priceCurve,
+          metadataFields,
+          entryPreviewConfig,
+        },
       });
 
-      const contractDeploymentHash = await client.deployContract({
-        abi: DeployedContestContract.abi,
-        bytecode: DeployedContestContract.bytecode.object as `0x${string}`,
-        args: [constructorArgs],
-        account: address as `0x${string}`,
-        chain: chain,
-      });
+      setTransactionState("deployContest", { status: "loading" });
 
-      const receipt = await publicClient?.waitForTransactionReceipt({
-        hash: contractDeploymentHash,
-      });
-
-      const contractAddress = receipt?.contractAddress;
-
-      if (!contractAddress) {
-        throw new Error("Contract deployment failed - no contract address returned");
-      }
-
-      const sortingEnabled = await isSortingEnabled(contractAddress, chain?.id ?? 0);
-
-      setDeployContestData(
-        chain?.name ?? "",
-        chain?.id ?? 0,
-        contractDeploymentHash,
-        contractAddress.toLowerCase(),
-        sortingEnabled,
+      const { contractDeploymentHash, contractAddress } = await deployContractToChain(
+        deploymentData.constructorArgs,
+        validatedAddress,
       );
 
-      const contestData = prepareContestData({
-        constructorArgs,
-        title,
-        contestType,
-        combinedPrompt,
-        submissionOpen,
-        votingOpen,
-        votingClose,
+      setTransactionState("deployContest", { status: "success", hash: contractDeploymentHash });
+
+      const { sortingEnabled } = await finalizeContractDeployment(contractAddress, validatedChain.id);
+
+      updateDeploymentStore(
+        setDeployContestData,
+        contractDeploymentHash,
         contractAddress,
-        address,
-        chainName: chain?.name,
+        sortingEnabled,
+        validatedChain.name ?? "",
+        validatedChain.id,
+      );
+
+      setContestAddress(contractAddress);
+      setChainId(validatedChain.id);
+
+      const contestData = prepareContestDataForIndexing({
+        constructorArgs: deploymentData.constructorArgs,
+        combinedPrompt,
+        contractAddress,
+        address: validatedAddress,
+        chainName: validatedChain.name,
         chargeType,
-        charge,
+        contestData: {
+          title,
+          contestType,
+          submissionOpen,
+          votingOpen,
+          votingClose,
+          charge,
+        },
       });
 
-      await subscribeToEmail(emailSubscriptionAddress);
+      subscribeToEmail(emailSubscriptionAddress).catch(error => {
+        console.error("Failed to subscribe email:", error);
+      });
 
-      try {
-        await indexContest(contestData);
-      } catch (e) {
+      await indexContestInDatabase(contestData);
+
+      await orchestrateRewardsDeployment({
+        contestAddress: contractAddress,
+        chainId: validatedChain.id,
+        userAddress: validatedAddress,
+        rewardPoolData,
+        tokenWidgets,
+        addFundsToRewards,
+        onPhaseChange: setDeploymentPhase,
+        onTransactionUpdate: setTransactionState,
+        onFundTokenUpdate: setFundTokenTransaction,
+        onRewardsModuleAddress: setRewardsModuleAddress,
+        onCriticalPhaseComplete: () => {
+          setIsSuccess(true);
+          setIsLoading(false);
+        },
+      });
+    } catch (error) {
+      const contestDeployed = deploymentProcess.transactions.deployContest.status === "success";
+
+      if (contestDeployed) {
+        setIsSuccess(true);
         setIsLoading(false);
-        toastError({
-          message: "contest deployment failed to index in db",
-        });
-        throw e;
+      } else {
+        handleDeploymentError(error, handleError, setIsLoading);
       }
-
-      toastSuccess({
-        message: "contest has been deployed!",
-      });
-      setIsSuccess(true);
-      setIsLoading(false);
-    } catch (e) {
-      console.error("Failed to deploy contest:", e);
-      handleError(e, "Something went wrong and the contest couldn't be deployed.");
-      setIsLoading(false);
     }
   }
 

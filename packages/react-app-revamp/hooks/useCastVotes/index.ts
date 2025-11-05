@@ -1,11 +1,13 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
+import { useVotingStore } from "@components/Voting/store";
 import { config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useEmailSend } from "@hooks/useEmailSend";
+import useEmailSignup from "@hooks/useEmailSignup";
 import { useError } from "@hooks/useError";
 import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
 import useProposal from "@hooks/useProposal";
@@ -13,6 +15,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
+import { useVoteBalance } from "@hooks/useVoteBalance";
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import moment from "moment";
 import { checkAndMarkPriceChangeError } from "utils/error";
@@ -22,11 +25,8 @@ import { useShallow } from "zustand/shallow";
 import { useCastVotesStore } from "./store";
 import { CombinedAnalyticsParams, performAnalytics } from "./utils/analytics";
 import { createVotingEmailSender } from "./utils/email";
-import { usePriceTracking } from "./utils/priceTracking";
 import { calculateChargeAmount } from "./utils/helpers";
-import { useVoteBalance } from "@hooks/useVoteBalance";
-import useEmailSignup from "@hooks/useEmailSignup";
-import { useVotingStore } from "@components/Voting/store";
+import { usePriceTracking } from "./utils/priceTracking";
 
 interface UseCastVotesProps {
   charge: Charge;
@@ -60,7 +60,6 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
     contestConfig.address,
     pickedProposal ?? "",
   );
-  const isEarningsTowardsRewards = rewards?.contractAddress === charge.splitFeeDestination.address;
   const { refetch: refetchTotalRewards } = useTotalRewards({
     rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
     rewardsModuleAbi: rewards?.abi,
@@ -120,7 +119,11 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
       });
 
       const hash = await writeContract(config, request);
-      const receipt = await waitForTransactionReceipt(config, { chainId: contestConfig.chainId, hash });
+      const receipt = await waitForTransactionReceipt(config, {
+        chainId: contestConfig.chainId,
+        hash,
+        confirmations: 2,
+      });
 
       const analyticsParams: CombinedAnalyticsParams = {
         contestAddress: contestConfig.address,
@@ -130,7 +133,6 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         amountOfVotes,
         costToVote: estimatedCost,
         charge,
-        isEarningsTowardsRewards,
         address: contestConfig.address,
         rewardsModuleAddress: rewards?.contractAddress ?? "",
         operation: "deposit",

@@ -1,4 +1,4 @@
-import { Charge, SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
+import { Charge, VoteType } from "@hooks/useDeployContest/types";
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
@@ -25,7 +25,6 @@ export interface ContestState {
   charge: Charge;
   isReadOnly: boolean;
   canEditTitleAndDescription: boolean;
-  rewardsModuleAddress: string;
   setSortingEnabled: (isAllowed: boolean) => void;
   setContestPrompt: (prompt: string) => void;
   setContestMaxProposalCount: (amount: number) => void;
@@ -41,7 +40,6 @@ export interface ContestState {
   setCharge: (charge: Charge) => void;
   setIsReadOnly: (value: boolean) => void;
   setCanEditTitleAndDescription: (value: boolean) => void;
-  setRewardsModuleAddress: (address: string) => void;
   getTotalVotingMinutes: () => number;
   getCurrentVotingMinute: () => number;
 }
@@ -59,10 +57,6 @@ export const createContestStore = () =>
     charge: {
       percentageToCreator: 0,
       voteType: VoteType.PerVote,
-      splitFeeDestination: {
-        type: SplitFeeDestinationType.CreatorWallet,
-        address: "",
-      },
       type: {
         costToPropose: 0,
         costToVote: 0,
@@ -74,7 +68,6 @@ export const createContestStore = () =>
     isV3: false,
     isReadOnly: false,
     canEditTitleAndDescription: false,
-    rewardsModuleAddress: "",
     setSortingEnabled: isAllowed => set({ sortingEnabled: isAllowed }),
     setContestPrompt: prompt => set({ contestPrompt: prompt }),
     setContestMaxProposalCount: amount => set({ contestMaxProposalCount: amount }),
@@ -90,7 +83,6 @@ export const createContestStore = () =>
     setIsSuccess: value => set({ isSuccess: value }),
     setCharge: charge => set({ charge: charge }),
     setCanEditTitleAndDescription: value => set({ canEditTitleAndDescription: value }),
-    setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
     getTotalVotingMinutes: () => {
       const state = get();
       const diffMs = state.votesClose.getTime() - state.votesOpen.getTime();

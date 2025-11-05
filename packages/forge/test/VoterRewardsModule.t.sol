@@ -28,7 +28,6 @@ contract VoterRewardsModuleTest is Test {
     uint256 public constant STANDARD_COST_TO_VOTE = 100000000000000;
     uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
     uint256 public constant ZERO_EXPONENT_MULTIPLE = 0;
-    address public constant CREATOR_SPLIT_DESTINATION = 0x703BC62AA1CCf613ac90E53894a980d418797754; // Not the actual creator address itself so that charges don't go there and only proceeds from ties do so we can test ties easily with pay per vote
     address public constant JK_LABS_SPLIT_DESTINATION = JK_LABS_ADDRESS;
 
     // SORTING INT PARAMS
@@ -60,7 +59,6 @@ contract VoterRewardsModuleTest is Test {
         CONTEST_NAME,
         CONTEST_PROMPT,
         payPerVoteFlatCurveIntConstructorArgs,
-        CREATOR_SPLIT_DESTINATION,
         JK_LABS_SPLIT_DESTINATION,
         METADATA_FIELDS_SCHEMA
     );
@@ -85,7 +83,6 @@ contract VoterRewardsModuleTest is Test {
         CONTEST_NAME,
         CONTEST_PROMPT,
         payPerVoteFlatCurveRankLimitOneIntConstructorArgs,
-        CREATOR_SPLIT_DESTINATION,
         JK_LABS_SPLIT_DESTINATION,
         METADATA_FIELDS_SCHEMA
     );
@@ -159,6 +156,7 @@ contract VoterRewardsModuleTest is Test {
 
     // REWARDS MODULE VARS
     VoterRewardsModule public voterRewardsModule;
+    VoterRewardsModule public voterRewardsModuleAlt;
     VoterRewardsModule public voterRewardsModuleToRankLimitOneContest;
     uint256[] public payees = [1, 2, 3];
     uint256[] public shares = [3, 2, 1];
@@ -180,32 +178,18 @@ contract VoterRewardsModuleTest is Test {
         payPerVoteFlatCurveRankLimitOneContest = new Contest(payPerVoteFlatCurveRankLimitOneParams);
 
         voterRewardsModule = new VoterRewardsModule(payees, shares, Contest(payPerVoteFlatCurveContest));
+        voterRewardsModuleAlt = new VoterRewardsModule(payees, shares, Contest(payPerVoteFlatCurveAltContest));
         voterRewardsModuleToRankLimitOneContest =
             new VoterRewardsModule(payees, shares, Contest(payPerVoteFlatCurveRankLimitOneContest));
 
+        payPerVoteFlatCurveContest.setOfficialRewardsModule(address(voterRewardsModule));
+        payPerVoteFlatCurveAltContest.setOfficialRewardsModule(address(voterRewardsModuleAlt));
+        payPerVoteFlatCurveRankLimitOneContest.setOfficialRewardsModule(
+            address(voterRewardsModuleToRankLimitOneContest)
+        );
+
         testERC20 = new ERC20PresetFixedSupply("test", "TEST", INITIAL_TEST_ERC20_SUPPLY, CREATOR_ADDRESS);
 
-        vm.stopPrank();
-    }
-
-    /////////////////////////////
-
-    // OFFICIAL REWARDS MODULE REGISTRATION
-
-    // A voter rewards module being set as the official rewards module of a contest.
-    function testVoterRewardsModuleRegistration() public {
-        vm.startPrank(CREATOR_ADDRESS);
-        payPerVoteFlatCurveContest.setOfficialRewardsModule(address(voterRewardsModule));
-        vm.stopPrank();
-    }
-
-    // A voter rewards module being set as the official rewards module of a contest must have that contest as its underlyingContest.
-    function testVoterRewardsModuleMustHaveContestAsUnderlying() public {
-        vm.startPrank(CREATOR_ADDRESS);
-        vm.expectRevert(
-            abi.encodeWithSelector(GovernorModuleRegistry.OfficialRewardsModuleMustPointToThisContest.selector)
-        );
-        payPerVoteFlatCurveAltContest.setOfficialRewardsModule(address(voterRewardsModule));
         vm.stopPrank();
     }
 
@@ -318,12 +302,11 @@ contract VoterRewardsModuleTest is Test {
         );
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         voterRewardsModule.release(TEST_ADDRESS_1, 1);
 
         vm.stopPrank();
 
-        assertEq(TEST_ADDRESS_1.balance, 50);
+        assertEq(TEST_ADDRESS_1.balance, 45000000000000);
     }
 
     // 1 proposal at 1 vote; release to voter of rank 1
@@ -365,7 +348,6 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         voterRewardsModule.release(TEST_ADDRESS_1, 2);
     }
@@ -418,11 +400,10 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         voterRewardsModule.release(TEST_ADDRESS_1, 1);
         voterRewardsModule.release(TEST_ADDRESS_2, 1);
 
-        assertEq(TEST_ADDRESS_2.balance, 25);
+        assertEq(TEST_ADDRESS_2.balance, 45000000000000);
     }
 
     // 1 proposal with 2 voters; release to voters of rank 1
@@ -487,10 +468,9 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         voterRewardsModule.release(TEST_ADDRESS_2, 1);
 
-        assertEq(TEST_ADDRESS_2.balance, 50);
+        assertEq(TEST_ADDRESS_2.balance, 270000000000000);
     }
 
     // 2 proposals, at 1 and 5 votes; release to voter of rank 1
@@ -555,10 +535,9 @@ contract VoterRewardsModuleTest is Test {
         );
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         voterRewardsModule.release(TEST_ADDRESS_1, 1);
 
-        assertEq(CREATOR_ADDRESS.balance, 50);
+        assertEq(CREATOR_ADDRESS.balance, 90000000000000);
     }
 
     // 2 proposals, both at 1 vote; send back to creator
@@ -601,7 +580,6 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         voterRewardsModule.release(TEST_ADDRESS_1, 1);
     }
@@ -630,7 +608,6 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         voterRewardsModule.release(TEST_ADDRESS_1, 2);
     }
@@ -678,10 +655,9 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         voterRewardsModule.release(TEST_ADDRESS_1, 2);
 
-        assertEq(CREATOR_ADDRESS.balance, 33);
+        assertEq(CREATOR_ADDRESS.balance, 150000000000000);
     }
 
     // 3 proposals, 1 at 3 votes and 2 at 1 vote; send back to creator
@@ -747,10 +723,9 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         voterRewardsModule.release(TEST_ADDRESS_1, 3);
 
-        assertEq(CREATOR_ADDRESS.balance, 16);
+        assertEq(CREATOR_ADDRESS.balance, 120000000000000);
     }
 
     // 4 proposals from 2 different authors, 1 at 3 votes and 2 at 2 votes, and 1 at 1 vote; send back to creator
@@ -796,7 +771,6 @@ contract VoterRewardsModuleTest is Test {
     // No proposals; revert with error message
     function testFirstPlaceTieWithZeroProposalsWithNative() public {
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         voterRewardsModule.release(CREATOR_ADDRESS, 1);
     }
@@ -805,7 +779,6 @@ contract VoterRewardsModuleTest is Test {
     function testFirstPlaceTieWithZeroProposalsWithERC20() public {
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS);
-        testERC20.transfer(address(voterRewardsModule), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         voterRewardsModule.release(testERC20, CREATOR_ADDRESS, 1);
     }
@@ -843,10 +816,9 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         voterRewardsModule.release(TEST_ADDRESS_2, 1);
 
-        assertEq(TEST_ADDRESS_2.balance, 50);
+        assertEq(TEST_ADDRESS_2.balance, 360000000000000);
     }
 
     // Old value is at inserting index and is only value in array
@@ -869,10 +841,9 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         voterRewardsModule.release(TEST_ADDRESS_1, 1);
 
-        assertEq(TEST_ADDRESS_1.balance, 50);
+        assertEq(TEST_ADDRESS_1.balance, 315000000000000);
     }
 
     // Old value is after inserting index and in array
@@ -903,10 +874,9 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         voterRewardsModule.release(TEST_ADDRESS_2, 1);
 
-        assertEq(TEST_ADDRESS_2.balance, 50);
+        assertEq(TEST_ADDRESS_2.balance, 360000000000000);
     }
 
     // Old value is at inserting index and tied
@@ -938,10 +908,9 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         voterRewardsModule.release(TEST_ADDRESS_2, 1);
 
-        assertEq(TEST_ADDRESS_2.balance, 50);
+        assertEq(TEST_ADDRESS_2.balance, 315000000000000);
     }
 
     // Old value is after inserting index, in array, and tied
@@ -983,10 +952,9 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModule), 100); // give the rewards module wei to pay out
         voterRewardsModule.release(TEST_ADDRESS_2, 1);
 
-        assertEq(TEST_ADDRESS_2.balance, 50);
+        assertEq(TEST_ADDRESS_2.balance, 315000000000000);
     }
 
     /////////////////////////////
@@ -1019,10 +987,9 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModuleToRankLimitOneContest), 100); // give the rewards module wei to pay out
         voterRewardsModuleToRankLimitOneContest.release(TEST_ADDRESS_2, 1);
 
-        assertEq(TEST_ADDRESS_2.balance, 50);
+        assertEq(TEST_ADDRESS_2.balance, 270000000000000);
     }
 
     // 2 proposals, different authors, at 1 and 5 votes, on contest with rank limit of 1 - array already at limit, release to author of rank 2 - should error
@@ -1046,7 +1013,6 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModuleToRankLimitOneContest), 100); // give the rewards module wei to pay out
         vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         voterRewardsModuleToRankLimitOneContest.release(TEST_ADDRESS_2, 2);
     }
@@ -1075,10 +1041,9 @@ contract VoterRewardsModuleTest is Test {
         vm.stopPrank();
 
         vm.warp(1681670001);
-        vm.deal(address(voterRewardsModuleToRankLimitOneContest), 100); // give the rewards module wei to pay out
         voterRewardsModuleToRankLimitOneContest.release(TEST_ADDRESS_1, 1);
 
-        assertEq(TEST_ADDRESS_1.balance, 50);
+        assertEq(TEST_ADDRESS_1.balance, 360000000000000);
     }
 
     /////////////////////////////

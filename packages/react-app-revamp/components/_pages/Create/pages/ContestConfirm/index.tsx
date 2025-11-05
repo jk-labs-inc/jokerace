@@ -20,6 +20,7 @@ import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
 import CreateContestConfirmType from "./components/Type";
 import { displayCoinbaseWalletWarning, isEthereumMainnet, isWalletForbidden } from "./utils";
+import CreateContestConfirmRewards from "./components/Rewards";
 
 const CreateContestConfirm = () => {
   const { chainId, chain, connector } = useAccount();
@@ -110,6 +111,12 @@ const CreateContestConfirm = () => {
             step={stepReferences.ContestMonetization}
             charge={state.charge}
             priceCurve={state.priceCurve}
+            onClick={step => onNavigateToStep(step)}
+          />
+          <CreateContestConfirmRewards
+            step={stepReferences.ContestRewards}
+            rewardPoolData={state.rewardPoolData}
+            addFundsToRewards={state.addFundsToRewards}
             onClick={step => onNavigateToStep(step)}
           />
           <CreateContestConfirmCustomization

@@ -14,7 +14,7 @@ const CreateContestRulesAdvancedSettings = () => {
         />
       </button>
       {isExpanded && (
-        <div className="animate-reveal mt-6">
+        <div className="animate-fade-in mt-6">
           <CreateContestParams />
         </div>
       )}

@@ -58,10 +58,8 @@ const ContestParamsMetadataFieldsDropdown: FC<ContestParamsMetadataFieldsDropdow
                     {({ focus }) => (
                       <button
                         className={`text-neutral-11 text-left pt-2 pl-4 pb-2 text-[16px] cursor-pointer
-                          ${option.disabled ? "opacity-50 pointer-events-none" : ""}
                           ${focus ? "bg-neutral-3" : ""}
                           ${option.value === selectedOption.value ? "font-bold" : ""}`}
-                        disabled={option.disabled}
                         onClick={() => handleOptionChange(option)}
                       >
                         {option.label}

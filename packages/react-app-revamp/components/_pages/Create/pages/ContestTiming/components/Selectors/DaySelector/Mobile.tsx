@@ -1,9 +1,9 @@
 import { FC } from "react";
 import MobileSelector from "../MobileSelector";
-import { CreateContestTimingDropdownOption } from "../../Dropdown";
+import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 
 interface MobileDaySelectorProps {
-  days: CreateContestTimingDropdownOption[];
+  days: Option[];
   defaultValue: string;
   onChange?: (day: string) => void;
 }

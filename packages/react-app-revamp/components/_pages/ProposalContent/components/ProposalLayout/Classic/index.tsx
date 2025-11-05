@@ -61,7 +61,7 @@ const ProposalLayoutClassic = ({
     setIsContentHidden(newVisibility);
   };
   return (
-    <div className="flex flex-col gap-4 pb-4 border-b border-primary-2 animate-reveal">
+    <div className="flex flex-col gap-4 pb-4 border-b border-primary-2 animate-fade-in">
       <ProposalContentInfo
         authorAddress={proposal.authorEthereumAddress}
         rank={proposal.rank}
