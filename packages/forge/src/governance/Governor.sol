@@ -46,11 +46,12 @@ abstract contract Governor is GovernorSorting {
         uint256 maxProposalCount;
         uint256 sortingEnabled;
         uint256 rankLimit;
-        uint256 percentageToCreator;
+        uint256 percentageToRewards;
         uint256 costToPropose;
         uint256 costToVote;
         uint256 priceCurveType;
         uint256 multiple;
+        uint256 creatorSplitEnabled;
     }
 
     struct ConstructorArgs {
@@ -99,8 +100,9 @@ abstract contract Governor is GovernorSorting {
     event ProposalsDeleted(uint256[] proposalIds);
     event ContestCanceled();
     event VoteCast(address indexed voter, uint256 proposalId, uint256 numVotes);
-    event CreatorPaymentReleased(address to, uint256 amount);
+    event RewardsPaymentReleased(address to, uint256 amount);
     event JkLabsPaymentReleased(address to, uint256 amount);
+    event CreatorPaymentReleased(address to, uint256 amount);
 
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant MAX_FIELDS_METADATA_LENGTH = 10;
@@ -119,11 +121,12 @@ abstract contract Governor is GovernorSorting {
     uint256 public votingPeriod; // Number of seconds that voting is open.
     uint256 public numAllowedProposalSubmissions; // The number of proposals that an address who is qualified to propose can submit for this contest.
     uint256 public maxProposalCount; // Max number of proposals allowed in this contest.
-    uint256 public percentageToCreator;
+    uint256 public percentageToRewards;
     uint256 public costToPropose;
     uint256 public costToVote; // Cost per vote if flat price curve, starting/minimum price if exp curve
     uint256 public priceCurveType; // Enum value of PriceCurveTypes.
     uint256 public multiple; // Exponent multiple for an exponential price curve if applicable.
+    uint256 public creatorSplitEnabled; // If 1, half of the jk labs split is sent to the creator; if 0, none of it is.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
     string public metadataFieldsSchema; // JSON Schema of what the metadata fields are.
 
@@ -185,11 +188,12 @@ abstract contract Governor is GovernorSorting {
         votingPeriod = constructorArgs_.intConstructorArgs.votingPeriod;
         numAllowedProposalSubmissions = constructorArgs_.intConstructorArgs.numAllowedProposalSubmissions;
         maxProposalCount = constructorArgs_.intConstructorArgs.maxProposalCount;
-        percentageToCreator = constructorArgs_.intConstructorArgs.percentageToCreator;
+        percentageToRewards = constructorArgs_.intConstructorArgs.percentageToRewards;
         costToPropose = constructorArgs_.intConstructorArgs.costToPropose;
         costToVote = constructorArgs_.intConstructorArgs.costToVote;
         priceCurveType = constructorArgs_.intConstructorArgs.priceCurveType;
         multiple = constructorArgs_.intConstructorArgs.multiple;
+        creatorSplitEnabled = constructorArgs_.intConstructorArgs.creatorSplitEnabled;
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
         metadataFieldsSchema = constructorArgs_.metadataFieldsSchema;
 
@@ -402,21 +406,27 @@ abstract contract Governor is GovernorSorting {
     }
 
     /**
-     * @dev Distribute the cost of an action to the creator and jk labs based on _percentageToCreator.
+     * @dev Distribute the cost of an action to the rewards pool, jk labs, and creator if applicable based on percentageToRewards and creatorSplitEnabled.
      */
     function _distributeCost(uint256 actionCost) internal {
         if (actionCost > 0) {
-            // Send cost to creator and jk labs split destinations
-            uint256 sendingToJkLabs = (msg.value * (100 - percentageToCreator)) / 100;
+            // Send cost to rewards pool and jk labs split destinations, as well as creator if applicable
+            uint256 sendingToJkLabs = (msg.value * (100 - percentageToRewards)) / 100;
             if (sendingToJkLabs > 0) {
-                Address.sendValue(payable(jkLabsSplitDestination), sendingToJkLabs);
-                emit JkLabsPaymentReleased(jkLabsSplitDestination, sendingToJkLabs);
+                uint256 sendingToCreator = (creatorSplitEnabled == 1) ? (sendingToJkLabs / 2) : 0;
+                if (creatorSplitEnabled == 0) {
+                    Address.sendValue(payable(creator), sendingToCreator);
+                    emit CreatorPaymentReleased(creator, sendingToCreator);
+                }
+
+                Address.sendValue(payable(jkLabsSplitDestination), sendingToJkLabs - sendingToCreator);
+                emit JkLabsPaymentReleased(jkLabsSplitDestination, sendingToJkLabs - sendingToCreator);
             }
 
-            uint256 sendingToCreator = msg.value - sendingToJkLabs;
-            if (sendingToCreator > 0) {
-                Address.sendValue(payable(_getOfficialRewardsModule()), sendingToCreator); // creator gets the extra wei in the case of rounding
-                emit CreatorPaymentReleased(_getOfficialRewardsModule(), sendingToCreator);
+            uint256 sendingToRewards = msg.value - sendingToJkLabs;
+            if (sendingToRewards > 0) {
+                Address.sendValue(payable(_getOfficialRewardsModule()), sendingToRewards); // rewards pool gets the extra wei in the case of rounding
+                emit RewardsPaymentReleased(_getOfficialRewardsModule(), sendingToRewards);
             }
         }
     }
