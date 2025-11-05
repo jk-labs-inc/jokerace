@@ -45,7 +45,7 @@ abstract contract Governor is GovernorSorting {
         uint256 maxProposalCount;
         uint256 sortingEnabled;
         uint256 rankLimit;
-        uint256 percentageToCreator;
+        uint256 percentageToRewards;
         uint256 costToVote;
         uint256 priceCurveType;
         uint256 multiple;
@@ -97,7 +97,7 @@ abstract contract Governor is GovernorSorting {
     event ProposalsDeleted(uint256[] proposalIds);
     event ContestCanceled();
     event VoteCast(address indexed voter, uint256 proposalId, uint256 numVotes);
-    event CreatorPaymentReleased(address to, uint256 amount);
+    event RewardsPaymentReleased(address to, uint256 amount);
     event JkLabsPaymentReleased(address to, uint256 amount);
 
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
@@ -117,7 +117,7 @@ abstract contract Governor is GovernorSorting {
     uint256 public votingPeriod; // Number of seconds that voting is open.
     uint256 public numAllowedProposalSubmissions; // The number of proposals that an address who is qualified to propose can submit for this contest.
     uint256 public maxProposalCount; // Max number of proposals allowed in this contest.
-    uint256 public percentageToCreator;
+    uint256 public percentageToRewards;
     uint256 public costToVote; // Starting/minimum price
     uint256 public priceCurveType; // Enum value of PriceCurveTypes.
     uint256 public multiple; // Exponent multiple for an exponential price curve if applicable.
@@ -182,7 +182,7 @@ abstract contract Governor is GovernorSorting {
         votingPeriod = constructorArgs_.intConstructorArgs.votingPeriod;
         numAllowedProposalSubmissions = constructorArgs_.intConstructorArgs.numAllowedProposalSubmissions;
         maxProposalCount = constructorArgs_.intConstructorArgs.maxProposalCount;
-        percentageToCreator = constructorArgs_.intConstructorArgs.percentageToCreator;
+        percentageToRewards = constructorArgs_.intConstructorArgs.percentageToRewards;
         costToVote = constructorArgs_.intConstructorArgs.costToVote;
         priceCurveType = constructorArgs_.intConstructorArgs.priceCurveType;
         multiple = constructorArgs_.intConstructorArgs.multiple;
@@ -396,21 +396,21 @@ abstract contract Governor is GovernorSorting {
     }
 
     /**
-     * @dev Distribute the cost of an action to the creator and jk labs based on _percentageToCreator.
+     * @dev Distribute the cost of an action to the creator and jk labs based on _percentageToRewards.
      */
     function _distributeCost(uint256 actionCost) internal {
         if (actionCost > 0) {
-            // Send cost to creator and jk labs split destinations
-            uint256 sendingToJkLabs = (msg.value * (100 - percentageToCreator)) / 100;
+            // Send cost to rewards pool and jk labs split destinations
+            uint256 sendingToJkLabs = (msg.value * (100 - percentageToRewards)) / 100;
             if (sendingToJkLabs > 0) {
                 Address.sendValue(payable(jkLabsSplitDestination), sendingToJkLabs);
                 emit JkLabsPaymentReleased(jkLabsSplitDestination, sendingToJkLabs);
             }
 
-            uint256 sendingToCreator = msg.value - sendingToJkLabs;
-            if (sendingToCreator > 0) {
-                Address.sendValue(payable(_getOfficialRewardsModule()), sendingToCreator); // creator gets the extra wei in the case of rounding
-                emit CreatorPaymentReleased(_getOfficialRewardsModule(), sendingToCreator);
+            uint256 sendingToRewards = msg.value - sendingToJkLabs;
+            if (sendingToRewards > 0) {
+                Address.sendValue(payable(_getOfficialRewardsModule()), sendingToRewards); // creator gets the extra wei in the case of rounding
+                emit RewardsPaymentReleased(_getOfficialRewardsModule(), sendingToRewards);
             }
         }
     }
