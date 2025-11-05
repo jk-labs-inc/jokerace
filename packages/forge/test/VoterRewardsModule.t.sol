@@ -23,7 +23,7 @@ contract VoterRewardsModuleTest is Test {
     uint64 public constant MAX_PROPOSAL_COUNT = 100;
 
     // COST PARAMS
-    uint256 public constant NINETY_PERCENT_TO_CREATOR = 90;
+    uint256 public constant NINETY_PERCENT_TO_REWARDS = 90;
     uint256 public constant ZERO_COST_TO_PROPOSE = 0;
     uint256 public constant STANDARD_COST_TO_VOTE = 100000000000000;
     uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
@@ -48,7 +48,7 @@ contract VoterRewardsModuleTest is Test {
         MAX_PROPOSAL_COUNT,
         SORTING_ENABLED,
         RANK_LIMIT_250,
-        NINETY_PERCENT_TO_CREATOR,
+        NINETY_PERCENT_TO_REWARDS,
         ZERO_COST_TO_PROPOSE,
         STANDARD_COST_TO_VOTE,
         FLAT_PRICE_CURVE_TYPE,
@@ -72,7 +72,7 @@ contract VoterRewardsModuleTest is Test {
         MAX_PROPOSAL_COUNT,
         SORTING_ENABLED,
         RANK_LIMIT_1,
-        NINETY_PERCENT_TO_CREATOR,
+        NINETY_PERCENT_TO_REWARDS,
         ZERO_COST_TO_PROPOSE,
         STANDARD_COST_TO_VOTE,
         FLAT_PRICE_CURVE_TYPE,
