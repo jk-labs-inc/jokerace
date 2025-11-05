@@ -17,6 +17,7 @@ export const deployContractToChain = async (
 
   const receipt = await waitForTransactionReceipt(config, {
     hash: contractDeploymentHash,
+    confirmations: 2,
   });
 
   const contractAddress = receipt?.contractAddress;

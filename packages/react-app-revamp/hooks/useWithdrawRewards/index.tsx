@@ -41,7 +41,7 @@ export const useWithdrawReward = (
         args: tokenAddress === "native" ? [] : [tokenAddress],
       });
 
-      await waitForTransactionReceipt(config, { hash });
+      await waitForTransactionReceipt(config, { hash, confirmations: 2 });
 
       setIsLoading(false);
       onWithdrawSuccess?.();

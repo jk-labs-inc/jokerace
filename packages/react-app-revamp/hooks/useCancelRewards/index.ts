@@ -54,6 +54,7 @@ export function useCancelRewards({ rewardsAddress, abi, chainId, version }: UseC
   const { writeContract, data: hash, isPending: isWritePending, isError: isWriteError } = useWriteContract();
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash,
+    confirmations: 2,
   });
 
   const cancelRewards = async () => {

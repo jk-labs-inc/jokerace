@@ -76,6 +76,7 @@ export function useDeleteProposal() {
       const receipt = await waitForTransactionReceipt(config, {
         chainId: contestConfig.chainId,
         hash: hash,
+        confirmations: 2,
       });
 
       setTransactionData({

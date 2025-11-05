@@ -23,6 +23,26 @@ interface DeployRewardsModuleParams {
   onStatusUpdate: (status: "loading" | "success" | "error", hash?: string, error?: string) => void;
 }
 
+interface AttachRewardsModuleParams {
+  contestAddress: string;
+  chainId: number;
+  rewardsModuleAddress: string;
+  onStatusUpdate: (status: "loading" | "success" | "error", hash?: string, error?: string) => void;
+}
+
+interface FundPoolTokensParams {
+  contestAddress: string;
+  chainId: number;
+  rewardsModuleAddress: string;
+  tokenWidgets: FundPoolToken[];
+  onTokenStatusUpdate: (
+    tokenKey: string,
+    status: "loading" | "success" | "error",
+    hash?: string,
+    error?: string,
+  ) => void;
+}
+
 export const deployRewardsModule = async (params: DeployRewardsModuleParams): Promise<string> => {
   const { contestAddress, chainId, userAddress, rewardPoolData, onStatusUpdate } = params;
 
@@ -40,6 +60,7 @@ export const deployRewardsModule = async (params: DeployRewardsModuleParams): Pr
 
     const receipt = await waitForTransactionReceipt(config, {
       hash: contractRewardsModuleHash,
+      confirmations: 2,
     });
 
     const contractRewardsModuleAddress = receipt?.contractAddress;
@@ -48,19 +69,13 @@ export const deployRewardsModule = async (params: DeployRewardsModuleParams): Pr
     }
 
     onStatusUpdate("success", contractRewardsModuleHash);
+
     return contractRewardsModuleAddress.toLowerCase();
   } catch (error: any) {
     onStatusUpdate("error", undefined, error.message);
     throw error;
   }
 };
-
-interface AttachRewardsModuleParams {
-  contestAddress: string;
-  chainId: number;
-  rewardsModuleAddress: string;
-  onStatusUpdate: (status: "loading" | "success" | "error", hash?: string, error?: string) => void;
-}
 
 export const attachRewardsModule = async (params: AttachRewardsModuleParams): Promise<void> => {
   const { contestAddress, chainId, rewardsModuleAddress, onStatusUpdate } = params;
@@ -79,28 +94,16 @@ export const attachRewardsModule = async (params: AttachRewardsModuleParams): Pr
       args: [rewardsModuleAddress as `0x${string}`],
     });
 
-    const hash = await writeContract(config, request);
-    await waitForTransactionReceipt(config, { hash });
+    const hash = await writeContract(config, request!);
+    await waitForTransactionReceipt(config, { hash, confirmations: 2 });
 
     onStatusUpdate("success", hash);
   } catch (error: any) {
+    console.error("Error while attaching rewards module", error);
     onStatusUpdate("error", undefined, error.message);
     throw error;
   }
 };
-
-interface FundPoolTokensParams {
-  contestAddress: string;
-  chainId: number;
-  rewardsModuleAddress: string;
-  tokenWidgets: FundPoolToken[];
-  onTokenStatusUpdate: (
-    tokenKey: string,
-    status: "loading" | "success" | "error",
-    hash?: string,
-    error?: string,
-  ) => void;
-}
 
 export const fundPoolTokens = async (params: FundPoolTokensParams): Promise<void> => {
   const { contestAddress, chainId, rewardsModuleAddress, tokenWidgets, onTokenStatusUpdate } = params;
@@ -141,7 +144,7 @@ export const fundPoolTokens = async (params: FundPoolTokensParams): Promise<void
           value: amountBigInt,
         });
 
-        receipt = await waitForTransactionReceipt(config, { chainId, hash });
+        receipt = await waitForTransactionReceipt(config, { chainId, hash, confirmations: 2 });
       } else {
         const amountBigInt = parseUnits(token.amount, token.decimals);
 
@@ -152,7 +155,7 @@ export const fundPoolTokens = async (params: FundPoolTokensParams): Promise<void
         });
 
         hash = await writeContract(config, { ...request });
-        receipt = await waitForTransactionReceipt(config, { chainId, hash });
+        receipt = await waitForTransactionReceipt(config, { chainId, hash, confirmations: 2 });
       }
 
       onTokenStatusUpdate(transactionKey, "success", hash);
