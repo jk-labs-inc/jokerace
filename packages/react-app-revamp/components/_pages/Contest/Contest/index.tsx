@@ -75,7 +75,7 @@ const ContestTab = () => {
   };
 
   return (
-    <div className="animate-reveal">
+    <div className="animate-fade-in">
       <div className="mt-4 md:mt-6">
         <div className="flex flex-col gap-6">
           {isContestCanceled ? (
@@ -109,7 +109,7 @@ const ContestTab = () => {
           )}
 
           {!isContestLoading && !isListProposalsLoading && isContestSuccess && isListProposalsSuccess && (
-            <div className="animate-reveal">
+            <div className="animate-fade-in">
               <ListProposals />
             </div>
           )}

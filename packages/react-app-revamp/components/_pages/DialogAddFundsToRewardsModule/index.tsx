@@ -11,9 +11,10 @@ import { usePathname } from "next/navigation";
 import { useRef } from "react";
 import { toast } from "react-toastify";
 import { useAccount } from "wagmi";
-import TokenWidgets from "../Contest/Rewards/components/Create/steps/FundPool/components/TokenWidgets";
-import { useFundPoolStore } from "../Contest/Rewards/components/Create/steps/FundPool/store";
-
+import { useFundPoolStore } from "../Create/pages/ContestRewards/components/FundPool/store";
+import TokenWidgets from "../Create/pages/ContestRewards/components/FundPool/components/TokenWidgets";
+import { RainbowKitChain } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext";
+import useRewardsModule from "@hooks/useRewards";
 interface DialogAddFundsToRewardsModuleProps {
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
@@ -24,7 +25,6 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
   const pathname = usePathname();
   const { chainName } = extractPathSegments(pathname);
   const { chainId: userChainId } = useAccount();
-  const { rewardsModuleAddress } = useContestStore(state => state);
   const selectedChain = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase());
   const isConnectedOnCorrectChain = selectedChain?.id === userChainId;
   const { tokenWidgets, setTokenWidgets } = useFundPoolStore(state => state);
@@ -34,6 +34,7 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
   const isTokenWidgetError = isAllTokenWidgetsAddressesUnique && !isAnyTokenWidgetZero;
   const { sendFundsToRewardsModuleV3 } = useFundRewardsModule();
   const { isLoading: isFundRewardsLoading } = useFundRewardsStore(state => state);
+  const { data: rewardsModule } = useRewardsModule();
   const toastIdRef = useRef<string | number | null>(null);
 
   const fundPool = async () => {
@@ -44,7 +45,7 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
         return {
           ...token,
           tokenAddress: token.address,
-          rewardsContractAddress: rewardsModuleAddress,
+          rewardsContractAddress: rewardsModule?.contractAddress as `0x${string}`,
           amount: token.amount,
           decimals: token.decimals,
         };
@@ -99,7 +100,7 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
       }}
     >
       <div className="flex flex-col gap-12 items-center mt-8 animate-appear">
-        <TokenWidgets />
+        <TokenWidgets chain={selectedChain as RainbowKitChain} />
 
         <ButtonV3
           colorClass="text-[20px] bg-gradient-distribute rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"

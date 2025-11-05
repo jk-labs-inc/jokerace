@@ -118,7 +118,7 @@ export const useCommentsActions = (address: string, chainId: number, proposalId:
         ...request,
       });
 
-      await waitForTransactionReceipt(config, { hash: hash });
+      await waitForTransactionReceipt(config, { hash: hash, confirmations: 2 });
 
       try {
         if (!accountAddress) return;

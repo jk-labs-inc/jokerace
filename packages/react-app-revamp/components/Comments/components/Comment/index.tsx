@@ -56,7 +56,7 @@ const Comment: FC<CommentProps> = ({
   };
 
   return (
-    <div className="flex pt-2 gap-4 animate-reveal border-l-2 border-positive-17 pl-4">
+    <div className="flex pt-2 gap-4 animate-fade-in border-l-2 border-positive-17 pl-4">
       <Avatar
         src={profileAvatar}
         size="small"

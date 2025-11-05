@@ -1,76 +1,76 @@
-import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { FC, Fragment, useEffect, useState } from "react";
+import useScrollFade from "@hooks/useScrollFade";
+import { FC, useEffect, useRef, useState } from "react";
 
 export interface Option {
-  value: string;
   label: string;
-  disabled?: boolean;
+  value: string;
 }
 
 interface CreateDefaultDropdownProps {
   options: Option[];
-  defaultOption: Option;
-  className?: string;
+  defaultValue: string;
+  width?: string;
   onChange?: (option: string) => void;
 }
 
-const CreateDefaultDropdown: FC<CreateDefaultDropdownProps> = ({ options, defaultOption, className, onChange }) => {
-  const [selectedOption, setSelectedOption] = useState<Option>(defaultOption);
+const CreateDefaultDropdown: FC<CreateDefaultDropdownProps> = ({ options, defaultValue, width = "w-52", onChange }) => {
+  const [selectedOption, setSelectedOption] = useState<string>(defaultValue);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { maskImageStyle } = useScrollFade(scrollContainerRef, options.length, [options, isMenuOpen]);
 
   useEffect(() => {
-    setSelectedOption(defaultOption);
-  }, [defaultOption]);
+    setSelectedOption(defaultValue);
+  }, [defaultValue]);
 
-  const handleOptionChange = (option: Option) => {
-    setSelectedOption(option);
-    onChange?.(option.value);
+  const handleOptionChange = (value: string, label: string) => {
+    setSelectedOption(label);
+    onChange?.(value);
   };
 
   return (
-    <Menu as="div" className="relative inline-block">
+    <Menu>
       {({ open }) => {
+        useEffect(() => {
+          setIsMenuOpen(open);
+        }, [open]);
+
         return (
           <>
-            <MenuButton className="flex items-center bg-neutral-14 cursor-pointer w-48 md:w-[216px] h-10 rounded-[5px] px-4 py-2">
-              <p className="text-[20px] text-true-black">{selectedOption.label}</p>
-              <ChevronDownIcon
-                className={`w-6 cursor-pointer text-true-black ml-auto transition-transform duration-200 ${
-                  open ? "rotate-180" : "rotate-0"
-                }`}
-              />
+            <MenuButton
+              className={`${width} flex items-center justify-between rounded-lg bg-secondary-1 p-4 h-10 text-[20px] text-neutral-11 font-bold border border-neutral-17 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:border-neutral-9 transition-all duration-200 ease-in-out`}
+            >
+              {selectedOption}
+              <ChevronDownIcon className="text-neutral-11 w-6 h-5 mt-1" />
             </MenuButton>
 
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
+            <MenuItems
+              transition
+              anchor="bottom end"
+              className={`${width} origin-top-right rounded-lg border border-neutral-17 bg-secondary-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0`}
             >
-              <MenuItems
-                className={`${className} flex flex-col absolute z-10 mt-4 bg-true-black border border-neutral-11 rounded-[10px] overflow-clip animate-appear`}
+              <div
+                ref={scrollContainerRef}
+                style={{
+                  maskImage: maskImageStyle,
+                  WebkitMaskImage: maskImageStyle,
+                }}
+                className="max-h-60 overflow-y-auto p-1"
               >
                 {options.map(option => (
                   <MenuItem key={option.value}>
-                    {({ focus }) => (
-                      <button
-                        className={`text-neutral-11 text-left pt-2 pl-4 pb-2 text-[16px] cursor-pointer
-                        ${option.disabled ? "opacity-50 pointer-events-none" : ""}
-                        ${focus ? "bg-neutral-3" : ""}
-                        ${option.value === selectedOption.value ? "font-bold" : ""}`}
-                        disabled={option.disabled}
-                        onClick={() => handleOptionChange(option)}
-                      >
-                        {option.label}
-                      </button>
-                    )}
+                    <button
+                      className="group flex w-full items-center gap-2 rounded-lg px-4 py-1.5 data-focus:bg-white/10"
+                      onClick={() => handleOptionChange(option.value, option.label)}
+                    >
+                      {option.label}
+                    </button>
                   </MenuItem>
                 ))}
-              </MenuItems>
-            </Transition>
+              </div>
+            </MenuItems>
           </>
         );
       }}

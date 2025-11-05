@@ -43,7 +43,6 @@ const TotalRewardsTableSkeleton = ({ payeesCount }: { payeesCount: number }) => 
 
 const RewardsCreatorView = ({ rewards, chainId, version }: RewardsCreatorViewProps) => {
   const { contestAuthorEthereumAddress, charge } = useContestStore(useShallow(state => state));
-  const isEarningsToRewards = charge.splitFeeDestination.address === rewards.contractAddress;
   const { address: userAddress } = useAccount();
   const isCreator = contestAuthorEthereumAddress === userAddress;
   const {
@@ -95,11 +94,9 @@ const RewardsCreatorView = ({ rewards, chainId, version }: RewardsCreatorViewPro
         ) : totalRewards && rankShares ? (
           <TotalRewardsTable totalRewards={totalRewards} shares={rankShares} />
         ) : null}
-        {isEarningsToRewards ? (
-          <GradientText textSizeClassName="text-[16px] font-bold" isFontSabo={false}>
-            rewards go up as players enter and vote
-          </GradientText>
-        ) : null}
+        <GradientText textSizeClassName="text-[16px] font-bold" isFontSabo={false}>
+          rewards go up as players enter and vote
+        </GradientText>
       </div>
     </div>
   );

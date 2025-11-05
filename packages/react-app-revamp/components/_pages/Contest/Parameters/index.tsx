@@ -25,7 +25,7 @@ const ContestParameters = () => {
   const formattedVotesClosing = moment(votesClose).format("MMMM Do, h:mm a");
 
   return (
-    <div className="flex flex-col gap-12 animate-reveal">
+    <div className="flex flex-col gap-12 animate-fade-in">
       <ContestParametersTimeline
         submissionsOpen={formattedSubmissionsOpen}
         votesOpen={formattedVotesOpen}

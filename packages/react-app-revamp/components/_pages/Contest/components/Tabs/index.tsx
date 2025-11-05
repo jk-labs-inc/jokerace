@@ -1,5 +1,5 @@
 import Tabs from "@components/UI/Tabs";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 
 export enum Tab {
   Contest = "Contest",
@@ -10,11 +10,19 @@ export enum Tab {
 
 interface ContestTabsProps {
   tab: Tab;
+  excludeTabs?: Tab[];
   onChange?: (tab: Tab) => void;
 }
 
-const ContestTabs: FC<ContestTabsProps> = ({ tab, onChange }) => {
-  const tabs = Object.values(Tab);
+const ContestTabs: FC<ContestTabsProps> = ({ tab, excludeTabs = [], onChange }) => {
+  const allTabs = Object.values(Tab);
+  const tabs = allTabs.filter(t => !excludeTabs.includes(t));
+
+  useEffect(() => {
+    if (excludeTabs.includes(tab) && onChange) {
+      onChange(Tab.Contest);
+    }
+  }, [excludeTabs, tab, onChange]);
 
   const handleChange = (selectedTab: string) => {
     onChange?.(selectedTab as Tab);

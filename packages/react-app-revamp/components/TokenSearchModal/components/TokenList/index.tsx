@@ -36,7 +36,7 @@ const TokenSearchList: FC<TokenSearchTokenListProps> = ({
   }
 
   return (
-    <div className="h-72 animate-reveal">
+    <div className="h-72 animate-fade-in">
       <SimpleBar style={{ maxHeight: "100%", height: "100%" }} className="h-full" autoHide={false}>
         <div className="flex flex-col gap-6 h-full">
           {tokens.map(token => (

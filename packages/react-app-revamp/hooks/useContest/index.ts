@@ -15,11 +15,10 @@ import { VOTE_AND_EARN_VERSION } from "@hooks/useUserSubmitQualification/utils";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { checkIfContestExists } from "lib/contests";
-import { getRewardsModuleAddress } from "lib/rewards/contracts";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
-import { createResultGetter, determineSplitFeeDestination } from "./helpers";
+import { createResultGetter } from "./helpers";
 import { ErrorType, useContestStore } from "./store";
 import { getContracts } from "./v3v4/contracts";
 
@@ -63,7 +62,6 @@ export function useContest() {
     setSubmissionsOpen,
     setCharge,
     setSortingEnabled,
-    setRewardsModuleAddress,
     setCanEditTitleAndDescription,
   } = useContestStore(state => state);
   const { setContestConfig } = useContestConfigStore(state => state);
@@ -108,11 +106,7 @@ export function useContest() {
     }
   }
 
-  async function fetchContestContractData(
-    contractConfig: ContractConfig,
-    version: string,
-    rewardsModuleAddress?: string,
-  ) {
+  async function fetchContestContractData(contractConfig: ContractConfig, version: string) {
     try {
       const contracts = getContracts(contractConfig, version);
       const results = await readContracts(config, { contracts });
@@ -144,7 +138,6 @@ export function useContest() {
       const costToPropose = Number(getResultByName("costToPropose")) || 0;
       let costToVote = 0;
       let payPerVote = 1;
-      let creatorSplitDestination = "";
 
       if (compareVersions(version, "4.23") >= 0) {
         costToVote = Number(getResultByName("costToVote")) || 0;
@@ -154,22 +147,9 @@ export function useContest() {
         payPerVote = Number(getResultByName("payPerVote"));
       }
 
-      if (compareVersions(version, "4.29") >= 0) {
-        creatorSplitDestination = (getResultByName("creatorSplitDestination") as string) || "";
-      }
-
       setCharge({
         percentageToCreator,
         voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
-        splitFeeDestination: {
-          type: determineSplitFeeDestination(
-            creatorSplitDestination,
-            percentageToCreator,
-            contestAuthor,
-            rewardsModuleAddress,
-          ),
-          address: creatorSplitDestination,
-        },
         type: {
           costToPropose,
           costToVote,
@@ -202,12 +182,12 @@ export function useContest() {
     }
   }
 
-  async function fetchV3ContestInfo(contractConfig: ContractConfig, version: string, rewardsModuleAddress?: string) {
+  async function fetchV3ContestInfo(contractConfig: ContractConfig, version: string) {
     try {
       setIsListProposalsLoading(false);
 
       await Promise.all([
-        fetchContestContractData(contractConfig, version, rewardsModuleAddress),
+        fetchContestContractData(contractConfig, version),
         processUserQualifications(contractConfig, version),
       ]);
     } catch (e) {
@@ -242,8 +222,6 @@ export function useContest() {
 
       const { contractConfig, version } = abiResult;
 
-      const rewardsModuleAddress = await fetchRewardsModuleData(contractConfig);
-
       if (compareVersions(version, "4.0") < 0) {
         setError(ErrorType.UNSUPPORTED_VERSION);
         setIsLoading(false);
@@ -252,22 +230,10 @@ export function useContest() {
       }
 
       // Fetch contest info for v4 and above
-      await fetchV3ContestInfo(contractConfig, version, rewardsModuleAddress);
+      await fetchV3ContestInfo(contractConfig, version);
     } catch (error) {
       console.error("An error occurred while fetching data:", error);
     }
-  }
-
-  async function fetchRewardsModuleData(contractConfig: ContractConfig) {
-    const moduleAddress = await getRewardsModuleAddress(contractConfig);
-
-    if (!moduleAddress) {
-      return "";
-    }
-
-    setRewardsModuleAddress(moduleAddress);
-
-    return moduleAddress;
   }
 
   /**

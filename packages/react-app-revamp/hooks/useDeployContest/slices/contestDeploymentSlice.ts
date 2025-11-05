@@ -1,3 +1,5 @@
+import { StepTitle, getStepNumber } from "@components/_pages/Create/types";
+
 type ContestDeployError = {
   step: number;
   message: string;
@@ -27,7 +29,7 @@ export interface DeploymentSliceActions {
   ) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
-  setError: (step: number, error: ContestDeployError) => void;
+  setError: (step: StepTitle | number, error: ContestDeployError) => void;
   setStep: (step: number) => void;
 }
 
@@ -55,11 +57,12 @@ export const createDeploymentSlice = (set: any, get: any): DeploymentSlice => {
       set({ deployContestData: { chain, chainId, hash, address, sortingEnabled } }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),
     setIsSuccess: (isSuccess: boolean) => set({ isSuccess }),
-    setError: (step: number, error: ContestDeployError) => {
+    setError: (step: StepTitle | number, error: ContestDeployError) => {
+      const stepNumber = typeof step === "number" ? step : getStepNumber(step);
       let errorsCopy = [...get().errors];
-      errorsCopy = errorsCopy.filter((e: ContestDeployError) => e.step !== step);
+      errorsCopy = errorsCopy.filter((e: ContestDeployError) => e.step !== stepNumber);
       if (error.message) {
-        errorsCopy.push(error);
+        errorsCopy.push({ ...error, step: stepNumber });
       }
       set({ errors: errorsCopy });
     },

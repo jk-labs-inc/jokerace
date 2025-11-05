@@ -1,9 +1,9 @@
+import { ContestType } from "@components/_pages/Create/types";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { parseEther } from "viem";
+import { JK_LABS_SPLIT_DESTINATION_DEFAULT, MAX_SUBMISSIONS_LIMIT } from "../index";
+import { Charge, PriceCurveType } from "../types";
 import { createMetadataFieldsSchema } from "./index";
-import { Charge, PriceCurveType, SplitFeeDestinationType } from "../types";
-import { ContestType } from "@components/_pages/Create/types";
-import { MAX_SUBMISSIONS_LIMIT, JK_LABS_SPLIT_DESTINATION_DEFAULT } from "../index";
 
 export interface ConstructorArgsParams {
   title: string;
@@ -81,12 +81,6 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     name: title,
     prompt: combinedPrompt,
     intConstructorArgs,
-    creatorSplitDestination:
-      charge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet
-        ? clientAccountAddress
-        : charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit
-        ? jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT
-        : charge.splitFeeDestination.address,
     jkLabsSplitDestination: jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT,
     metadataFieldsSchema: createMetadataFieldsSchema(metadataFields, entryPreviewConfig),
   };

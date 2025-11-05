@@ -1,9 +1,9 @@
 import { FC } from "react";
 import MobileSelector from "../MobileSelector";
-import { CreateContestTimingDropdownOption } from "../../Dropdown";
+import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 
 interface MobileMonthSelectorProps {
-  months: CreateContestTimingDropdownOption[];
+  months: Option[];
   defaultValue: string;
   onChange?: (month: string) => void;
 }

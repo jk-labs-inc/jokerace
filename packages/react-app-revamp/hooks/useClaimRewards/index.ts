@@ -75,7 +75,7 @@ export const useClaimRewards = ({
         chainId,
       });
 
-      await waitForTransactionReceipt(config, { hash });
+      await waitForTransactionReceipt(config, { hash, confirmations: 2 });
 
       setLoading(payee, tokenAddress, false);
       setSuccess(payee, tokenAddress, true);
