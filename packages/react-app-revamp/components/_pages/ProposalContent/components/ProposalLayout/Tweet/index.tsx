@@ -2,10 +2,10 @@ import { Proposal } from "@components/_pages/ProposalContent";
 import CustomLink from "@components/UI/Link";
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { useRouter } from "next/navigation";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
-import ProposalContentVoteSecondary from "../../Buttons/Vote/Secondary";
 import ProposalContentProfile from "../../Profile";
 import { Tweet } from "./components/CustomTweet";
 import ProposalLayoutTweetRankOrPlaceholder from "./components/RankOrPlacehoder";
@@ -26,6 +26,7 @@ interface ProposalLayoutTweetProps {
   commentLink: string;
   allowDelete: boolean;
   selectedProposalIds: string[];
+  enabledPreview: EntryPreview | null;
   isHighlighted: boolean;
   handleVotingDrawerOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
@@ -47,13 +48,34 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
   commentLink,
   allowDelete,
   selectedProposalIds,
+  enabledPreview,
   isHighlighted,
   handleVotingDrawerOpen,
   toggleProposalSelection,
 }) => {
-  const tweetUrl = proposal.metadataFields.stringArray[0];
-  const tweetId = extractTweetId(tweetUrl);
+  const [tweetUrl, setTweetUrl] = useState<string>("");
+  const [tweetTitle, setTweetTitle] = useState<string>("");
   const router = useRouter();
+
+  const updateTweetData = () => {
+    if (enabledPreview === EntryPreview.TWEET_AND_TITLE) {
+      const params = new URLSearchParams(proposal.metadataFields.stringArray[0]);
+      const tweet = params.get("JOKERACE_TWEET") || "";
+      const title = params.get("JOKERACE_TWEET_TITLE") || "";
+
+      setTweetUrl(tweet);
+      setTweetTitle(title);
+    } else {
+      setTweetUrl(proposal.metadataFields.stringArray[0]);
+      setTweetTitle("");
+    }
+  };
+
+  const tweetId = extractTweetId(tweetUrl);
+
+  useEffect(() => {
+    updateTweetData();
+  }, [enabledPreview, proposal.metadataFields.stringArray]);
 
   const onVotingDrawerOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -84,27 +106,26 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
         isHighlighted ? "border-secondary-14" : "border-transparent hover:border-primary-3"
       }`}
     >
-      <div className="pl-2 items-center flex justify-between w-full">
-        <div className="flex items-center gap-6">
-          <ProposalLayoutTweetRankOrPlaceholder proposal={proposal} />
+      <div className="pl-2 items-center flex w-full">
+        <ProposalLayoutTweetRankOrPlaceholder proposal={proposal} />
+        <div className="flex flex-col gap-1 items-end ml-auto">
+          {tweetTitle ? <p className="text-[12px] font-bold text-neutral-11">{tweetTitle}</p> : null}
           <ProposalContentProfile
             name={proposalAuthorData.name}
-            avatar={proposalAuthorData.avatar}
+            avatar=""
             isLoading={proposalAuthorData.isLoading}
             isError={proposalAuthorData.isError}
-            size="small"
-            textColor="text-neutral-9"
+            textColor="text-neutral-15"
+            size="extraSmall"
+            dropShadow
           />
         </div>
-        {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-          <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} />
-        ) : null}
       </div>
       <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />
       <div className="mt-auto pl-2">
         <div className="flex gap-2 items-center">
           {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-            <ProposalContentVoteSecondary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} />
+            <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} />
           ) : (
             <p className="text-neutral-10 text-[14px] font-bold">
               voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}

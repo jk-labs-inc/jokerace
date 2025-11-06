@@ -54,6 +54,16 @@ const ContestEntriesPreview = () => {
       mobileLabel: "a tweet",
       value: EntryPreview.TWEET,
     },
+    {
+      label: (
+        <>
+          a tweet + title{" "}
+          <span className="text-[16px]">{isMobile ? "" : "(recommended for contests on x.com posts)"}</span>
+        </>
+      ),
+      mobileLabel: "a tweet + title",
+      value: EntryPreview.TWEET_AND_TITLE,
+    },
   ];
 
   return (

@@ -92,6 +92,17 @@ export function generateEntryPreviewHTML(fieldInputs: MetadataFieldWithInput[]):
     case EntryPreview.TWEET:
       previewHTML = `<a href="${firstFieldInput.inputValue}" target="_blank" rel="noopener noreferrer">${firstFieldInput.inputValue}</a>`;
       break;
+    case EntryPreview.TWEET_AND_TITLE:
+      const params = new URLSearchParams(firstFieldInput.inputValue);
+      const tweet = params.get("JOKERACE_TWEET") || "";
+      const title = params.get("JOKERACE_TWEET_TITLE") || "";
+
+      previewHTML = `
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <p style="font-size: 24px; color: #E5E5E5; font-weight: 600;" id="entry-preview-title">${title}</p>
+            <a href="${tweet}" target="_blank" rel="noopener noreferrer">${tweet}</a>
+          </div>`;
+      break;
     default:
       previewHTML = "";
   }
