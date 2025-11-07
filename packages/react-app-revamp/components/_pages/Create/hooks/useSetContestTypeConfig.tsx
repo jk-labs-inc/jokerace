@@ -1,30 +1,13 @@
 import { ContestType, ContestTypeConfig } from "@components/_pages/Create/types";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import {
-  DEFAULT_ALLOWED_SUBMISSIONS_PER_USER,
-  MAX_ALLOWED_SUBMISSIONS_PER_USER,
-  MAX_SUBMISSIONS_PER_CONTEST,
-} from "@hooks/useDeployContest/types";
 
 const useSetContestTypeConfig = () => {
-  const { contestType, setSubmissionOpen, setVotingOpen, setVotingClose, setPriceCurve, setPrompt, setCustomization } =
+  const { contestType, setSubmissionOpen, setVotingOpen, setVotingClose, setPriceCurve, setPrompt } =
     useDeployContestStore(state => state);
 
   const setContestTypeConfig = (type: ContestType, config: ContestTypeConfig) => {
     if (type === contestType) {
       return;
-    }
-
-    if (type === ContestType.VotingContest) {
-      setCustomization({
-        maxSubmissions: MAX_SUBMISSIONS_PER_CONTEST,
-        allowedSubmissionsPerUser: MAX_ALLOWED_SUBMISSIONS_PER_USER,
-      });
-    } else {
-      setCustomization({
-        maxSubmissions: MAX_SUBMISSIONS_PER_CONTEST,
-        allowedSubmissionsPerUser: DEFAULT_ALLOWED_SUBMISSIONS_PER_USER,
-      });
     }
 
     setSubmissionOpen(config.data.submissionOpen);

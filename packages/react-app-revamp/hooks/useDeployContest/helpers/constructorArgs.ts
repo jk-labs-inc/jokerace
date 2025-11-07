@@ -12,10 +12,7 @@ export interface ConstructorArgsParams {
   submissionOpen: Date;
   votingOpen: Date;
   votingClose: Date;
-  customization: {
-    allowedSubmissionsPerUser: number;
-    maxSubmissions: number;
-  };
+
   advancedOptions: {
     rankLimit: number;
   };
@@ -38,7 +35,6 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     submissionOpen,
     votingOpen,
     votingClose,
-    customization,
     advancedOptions,
     charge,
     priceCurve,
@@ -50,14 +46,7 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
 
   const isAnyoneCanSubmit = contestType === ContestType.AnyoneCanPlay ? 1 : 0;
   const { type: chargeType, percentageToCreator } = charge;
-  const { allowedSubmissionsPerUser, maxSubmissions } = customization;
 
-  // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
-  const finalAllowedSubmissionsPerUser =
-    !isNaN(allowedSubmissionsPerUser) && allowedSubmissionsPerUser > 0
-      ? allowedSubmissionsPerUser
-      : MAX_SUBMISSIONS_LIMIT;
-  const finalMaxSubmissions = !isNaN(maxSubmissions) && maxSubmissions > 0 ? maxSubmissions : MAX_SUBMISSIONS_LIMIT;
   const costToVote =
     priceCurve.type === PriceCurveType.Flat ? chargeType.costToVote : chargeType.costToVoteStartPrice ?? 0;
 
@@ -66,8 +55,8 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     contestStart: getUnixTime(submissionOpen),
     votingDelay: differenceInSeconds(votingOpen, submissionOpen),
     votingPeriod: differenceInSeconds(votingClose, votingOpen),
-    numAllowedProposalSubmissions: finalAllowedSubmissionsPerUser,
-    maxProposalCount: finalMaxSubmissions,
+    numAllowedProposalSubmissions: MAX_SUBMISSIONS_LIMIT,
+    maxProposalCount: MAX_SUBMISSIONS_LIMIT,
     sortingEnabled: 1,
     rankLimit: advancedOptions.rankLimit,
     percentageToCreator: percentageToCreator,
