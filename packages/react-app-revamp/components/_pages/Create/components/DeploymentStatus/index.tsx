@@ -1,18 +1,13 @@
-import React from "react";
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
-import { formatBalance } from "@helpers/formatBalance";
-import { useShallow } from "zustand/shallow";
-import MotionSpinner from "@components/UI/MotionSpinner";
-import { motion } from "motion/react";
-import { DeploymentProcessState, TransactionState } from "@hooks/useDeployContest/types";
 import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
-
-type TransactionKey = "deployContest" | "deployRewards" | "attachRewards" | `fund_${string}`;
-
-interface Transaction {
-  key: TransactionKey;
-  label: string | React.ReactNode;
-}
+import { formatBalance } from "@helpers/formatBalance";
+import { DeploymentProcessState } from "@hooks/useDeployContest/types";
+import { motion } from "motion/react";
+import React from "react";
+import { useShallow } from "zustand/shallow";
+import BaseTransactions from "./components/BaseTransactions";
+import TransactionStatusIcons from "./components/TransactionStatusIcons";
+import { getTransactionStatus } from "./helpers";
+import { Transaction, TransactionKey } from "./types";
 
 interface DeploymentStatusProps {
   deploymentProcess: DeploymentProcessState;
@@ -20,45 +15,12 @@ interface DeploymentStatusProps {
   onGoBack?: () => void;
 }
 
-const getTransactionStatus = (
-  transactionKey: TransactionKey,
-  deploymentProcess: DeploymentProcessState,
-): TransactionState | null => {
-  if (transactionKey === "deployContest") {
-    return deploymentProcess.transactions.deployContest;
-  }
-  if (transactionKey === "deployRewards") {
-    return deploymentProcess.transactions.deployRewards;
-  }
-  if (transactionKey === "attachRewards") {
-    return deploymentProcess.transactions.attachRewards;
-  }
-  if (transactionKey.startsWith("fund_")) {
-    return deploymentProcess.transactions.fundTokens[transactionKey] || null;
-  }
-  return null;
-};
-
-const renderTransactionStatus = (state: TransactionState | null) => {
-  if (!state) return null;
-  if (state.status === "loading") return <MotionSpinner size={24} theme="light" />;
-  if (state.status === "success") return <CheckCircleIcon className="text-positive-11 w-6 h-6" />;
-  if (state.status === "error") return <XCircleIcon className="text-negative-11 w-6 h-6" />;
-  return null;
-};
-
 export const DeploymentStatus: React.FC<DeploymentStatusProps> = ({
   deploymentProcess,
   addFundsToRewards,
   onGoBack,
 }) => {
   const { tokenWidgets } = useFundPoolStore(useShallow(state => ({ tokenWidgets: state.tokenWidgets })));
-
-  const baseTransactions: Transaction[] = [
-    { key: "deployContest", label: "Deploying contest..." },
-    { key: "deployRewards", label: "Deploying rewards pool..." },
-    { key: "attachRewards", label: "Attaching rewards pool to the contest..." },
-  ];
 
   const tokenTransactions: Transaction[] = tokenWidgets
     .filter(token => parseFloat(token.amount) > 0)
@@ -71,54 +33,75 @@ export const DeploymentStatus: React.FC<DeploymentStatusProps> = ({
       ),
     }));
 
-  const transactions: Transaction[] = [...baseTransactions, ...(addFundsToRewards ? tokenTransactions : [])];
+  const baseTransactionCount = 3;
 
   const shouldBeActive = (index: number): boolean => {
-    const prevTransaction = transactions[index - 1];
-    if (!prevTransaction) return true;
+    if (index === 0) return true;
 
-    const prevState = getTransactionStatus(prevTransaction.key, deploymentProcess);
-    return prevState?.status === "success";
+    // For base transactions (0-2)
+    if (index < baseTransactionCount) {
+      const prevKey = index === 1 ? "deployContest" : "deployRewards";
+      const prevState = getTransactionStatus(prevKey, deploymentProcess);
+      return prevState?.status === "success";
+    }
+
+    // For token transactions (3+)
+    if (index === baseTransactionCount) {
+      const prevState = getTransactionStatus("attachRewards", deploymentProcess);
+      return prevState?.status === "success";
+    }
+
+    const tokenIndex = index - baseTransactionCount;
+    const prevToken = tokenTransactions[tokenIndex - 1];
+    if (prevToken) {
+      const prevState = getTransactionStatus(prevToken.key, deploymentProcess);
+      return prevState?.status === "success";
+    }
+
+    return false;
   };
 
-  const hasError = transactions.some(tx => {
-    const state = getTransactionStatus(tx.key, deploymentProcess);
-    return state?.status === "error";
-  });
+  const hasError =
+    getTransactionStatus("deployContest", deploymentProcess)?.status === "error" ||
+    getTransactionStatus("deployRewards", deploymentProcess)?.status === "error" ||
+    getTransactionStatus("attachRewards", deploymentProcess)?.status === "error" ||
+    tokenTransactions.some(tx => getTransactionStatus(tx.key, deploymentProcess)?.status === "error");
 
   return (
     <div className="flex flex-col gap-11 max-w-[600px]">
       <div className="flex flex-col gap-4 w-full md:w-2/3">
-        {transactions.map((transaction, index) => {
-          const state = getTransactionStatus(transaction.key, deploymentProcess);
-          const isActive = shouldBeActive(index);
+        <BaseTransactions deploymentProcess={deploymentProcess} shouldBeActive={shouldBeActive} />
+        {addFundsToRewards &&
+          tokenTransactions.map((transaction, index) => {
+            const state = getTransactionStatus(transaction.key, deploymentProcess);
+            const isActive = shouldBeActive(baseTransactionCount + index);
 
-          return (
-            <motion.div
-              key={transaction.key}
-              className="flex items-center justify-between border-b pb-2"
-              initial={false}
-              animate={{
-                opacity: isActive ? 1 : 0.4,
-                borderColor:
-                  state?.status === "loading"
-                    ? "#3A3E44" // border-primary-2
-                    : state?.status === "success"
-                    ? "#78FFC6" // border-positive-11
-                    : state?.status === "error"
-                    ? "#E04D65" // border-negative-11
-                    : "#3A3E44", // border-primary-2
-              }}
-              transition={{
-                duration: 0.3,
-                ease: "easeInOut",
-              }}
-            >
-              <p className="text-[16px] text-neutral-11">{transaction.label}</p>
-              {renderTransactionStatus(state)}
-            </motion.div>
-          );
-        })}
+            return (
+              <motion.div
+                key={transaction.key}
+                className="flex items-center justify-between border-b pb-2"
+                initial={false}
+                animate={{
+                  opacity: isActive ? 1 : 0.4,
+                  borderColor:
+                    state?.status === "loading"
+                      ? "#3A3E44"
+                      : state?.status === "success"
+                      ? "#78FFC6"
+                      : state?.status === "error"
+                      ? "#E04D65"
+                      : "#3A3E44",
+                }}
+                transition={{
+                  duration: 0.3,
+                  ease: "easeInOut",
+                }}
+              >
+                <p className="text-[16px] text-neutral-11">{transaction.label}</p>
+                <TransactionStatusIcons state={state || { status: "pending" }} />
+              </motion.div>
+            );
+          })}
         {hasError && onGoBack && (
           <button className="flex items-center gap-[5px] cursor-pointer group" onClick={onGoBack}>
             <div className="transition-transform duration-200 group-hover:-translate-x-1">
