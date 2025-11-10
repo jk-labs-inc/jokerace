@@ -128,7 +128,6 @@ export const DeploymentStatus: React.FC<DeploymentStatusProps> = ({
           </button>
         )}
       </div>
-      <p className="text-[16px] text-neutral-14">note: please do not refresh the page during the deployment process.</p>
     </div>
   );
 };
