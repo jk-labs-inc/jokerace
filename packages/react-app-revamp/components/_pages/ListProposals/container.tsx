@@ -61,6 +61,7 @@ const ListProposalsContainer = ({ enabledPreview, children, recalculateKey }: Li
     case EntryPreview.IMAGE:
     case EntryPreview.IMAGE_AND_TITLE:
     case EntryPreview.TWEET:
+    case EntryPreview.TWEET_AND_TITLE:
       return <MasonicContainer children={children} columnCount={isMobile ? 1 : 2} recalculateKey={recalculateKey} />;
 
     default:

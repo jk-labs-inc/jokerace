@@ -26,7 +26,10 @@ export const useEntryPreview = (): UseEntryPreviewReturn => {
   const { enabledPreview } =
     metadataFields.length > 0 ? verifyEntryPreviewPrompt(metadataFields[0].prompt) : { enabledPreview: null };
 
-  const isEntryPreviewTitle = enabledPreview === EntryPreview.TITLE || enabledPreview === EntryPreview.IMAGE_AND_TITLE;
+  const isEntryPreviewTitle =
+    enabledPreview === EntryPreview.TITLE ||
+    enabledPreview === EntryPreview.IMAGE_AND_TITLE ||
+    enabledPreview === EntryPreview.TWEET_AND_TITLE;
 
   return {
     isLoading,
