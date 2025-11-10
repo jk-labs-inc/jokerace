@@ -1,4 +1,3 @@
-import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
 import ListProposals from "@components/_pages/ListProposals";
 import useContest from "@hooks/useContest";
@@ -7,72 +6,36 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { useUserStore } from "@hooks/useUserSubmitQualification/store";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useMediaQuery } from "react-responsive";
-import { useAccount } from "wagmi";
 import ContestPrompt from "../components/Prompt";
 import ProposalStatistics from "../components/ProposalStatistics";
 import ContestStickyCards from "../components/StickyCards";
 import EntryPreviewTitleToggle from "../components/EntryPreviewTitleToggle";
+import { useContestSubmitButton } from "./useContestSubmitButton";
+import { useShallow } from "zustand/shallow";
 
 const ContestTab = () => {
-  const { contestPrompt } = useContestStore(state => state);
-  const { isConnected } = useAccount();
-  const { openConnectModal } = useConnectModal();
-  const { contestStatus } = useContestStatusStore(state => state);
-  const {
-    contestMaxNumberSubmissionsPerUser,
-    currentUserQualifiedToSubmit,
-    currentUserProposalCount,
-    isCurrentUserSubmitQualificationLoading,
-  } = useUserStore(state => state);
-  const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(state => state);
+  const contestPrompt = useContestStore(useShallow(state => state.contestPrompt));
+  const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
+  const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(
+    useShallow(state => ({
+      isListProposalsLoading: state.isListProposalsLoading,
+      isListProposalsSuccess: state.isListProposalsSuccess,
+    })),
+  );
   const { isLoading: isContestLoading, isSuccess: isContestSuccess } = useContest();
-  const {
-    isModalOpen: isSubmitProposalModalOpen,
-    setIsModalOpen: setIsSubmitProposalModalOpen,
-    setIsSuccess: setIsSubmitProposalSuccess,
-  } = useSubmitProposalStore(state => state);
-  const qualifiedToSubmit =
-    currentUserQualifiedToSubmit && currentUserProposalCount < contestMaxNumberSubmissionsPerUser;
+  const { isModalOpen: isSubmitProposalModalOpen, setIsModalOpen: setIsSubmitProposalModalOpen } =
+    useSubmitProposalStore(
+      useShallow(state => ({
+        isModalOpen: state.isModalOpen,
+        setIsModalOpen: state.setIsModalOpen,
+      })),
+    );
+  const contestState = useContestStateStore(useShallow(state => state.contestState));
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
-  const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
-
-  const renderSubmitButton = () => {
-    if (isContestCanceled) return null;
-
-    if (!isConnected) {
-      return (
-        <ButtonV3
-          colorClass="bg-gradient-vote rounded-[40px]"
-          size={isMobile ? ButtonSize.EXTRA_LARGE_LONG_MOBILE : ButtonSize.EXTRA_LARGE_LONG}
-          onClick={openConnectModal}
-        >
-          connect wallet to enter contest
-        </ButtonV3>
-      );
-    }
-
-    if (isCurrentUserSubmitQualificationLoading) return null;
-
-    if (qualifiedToSubmit)
-      return (
-        <ButtonV3
-          colorClass="bg-gradient-purple rounded-[40px]"
-          textColorClass="text-[16px] md:text-[20px] font-bold text-true-black"
-          size={isMobile ? ButtonSize.EXTRA_LARGE_LONG_MOBILE : ButtonSize.EXTRA_LARGE_LONG}
-          onClick={() => {
-            setIsSubmitProposalSuccess(false);
-            setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen);
-          }}
-        >
-          enter contest
-        </ButtonV3>
-      );
-  };
+  const { renderSubmitButton } = useContestSubmitButton();
 
   return (
     <div className="animate-fade-in">

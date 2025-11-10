@@ -74,7 +74,7 @@ const ContestCountdown: FC<ContestCountdownProps> = ({ votingTimeLeft }) => {
       case "start":
         return "Contest opens in";
       case "submit":
-        return "Deadline to enter";
+        return "voting opens in";
       case "vote":
         return "Deadline to vote";
       case "ended":

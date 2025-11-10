@@ -1,12 +1,11 @@
 import ImageUpload from "@components/UI/ImageUpload";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { MAX_IMAGE_TITLE_LENGTH } from "../../constants";
 
 interface DialogModalSendProposalImageAndTitleLayoutProps {
   onChange?: (value: string) => void;
 }
-
-const MAX_IMAGE_TITLE_LENGTH = 32;
 
 const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSendProposalImageAndTitleLayoutProps> = ({
   onChange,

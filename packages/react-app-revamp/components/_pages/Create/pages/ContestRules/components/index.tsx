@@ -7,7 +7,6 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useMediaQuery } from "react-responsive";
 import CreateContestRulesDescription from "./Description";
 import CreateContestRulesTitleAndImage from "./TitleAndImage";
-import CreateContestRulesAdvancedSettings from "./AdvancedSettings";
 
 export const VOTING_STEP = 6;
 
@@ -32,7 +31,6 @@ const CreateContestRules = () => {
         <div className="grid gap-8 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-6">
           <CreateContestRulesTitleAndImage />
           <CreateContestRulesDescription />
-          <CreateContestRulesAdvancedSettings />
           <div className="mt-8">
             <CreateNextButton step={step + 1} onClick={() => onNextStep()} isDisabled={isDisabled} />
           </div>

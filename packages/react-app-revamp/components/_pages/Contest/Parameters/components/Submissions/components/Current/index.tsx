@@ -1,7 +1,7 @@
 import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import { MAX_SUBMISSIONS_PER_CONTEST } from "@hooks/useDeployContest/types";
+import { MAX_SUBMISSIONS_LIMIT } from "@hooks/useDeployContest";
 import { AnyoneCanSubmit, useUserStore } from "@hooks/useUserSubmitQualification/store";
 import { formatEther } from "viem";
 import { useShallow } from "zustand/shallow";
@@ -28,7 +28,7 @@ const ContestParametersSubmissionsCurrent = () => {
     })),
   );
 
-  const maxProposalsPerUserCapped = contestMaxNumberSubmissionsPerUser == MAX_SUBMISSIONS_PER_CONTEST;
+  const maxProposalsPerUserCapped = contestMaxNumberSubmissionsPerUser == MAX_SUBMISSIONS_LIMIT;
 
   return (
     <div className="flex flex-col gap-8">

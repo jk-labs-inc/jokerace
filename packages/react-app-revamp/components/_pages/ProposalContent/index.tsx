@@ -148,6 +148,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
       case EntryPreview.IMAGE_AND_TITLE:
         return <ProposalLayoutGallery {...props} />;
       case EntryPreview.TWEET:
+      case EntryPreview.TWEET_AND_TITLE:
         return <ProposalLayoutTweet {...props} />;
       default:
         return <ProposalLayoutClassic {...props} />;
@@ -161,7 +162,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
           shouldReduceOpacity
             ? "opacity-30 scale-[0.98]"
             : isHighlighted
-            ? "opacity-100 scale-[1.02] -translate-y-1 z-[45] relative"
+            ? "opacity-100 scale-[1.02] -translate-y-1 z-45 relative"
             : "opacity-100 scale-100"
         }`}
       >

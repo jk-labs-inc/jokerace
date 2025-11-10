@@ -8,6 +8,7 @@ import ImageLayout from "./components/ImageLayout";
 import TitleLayout from "./components/TitleLayout";
 import TweetLayout from "./components/TweetLayout";
 import ImageAndTitleLayout from "./components/ImageAndTitleLayout";
+import TweetAndTitleLayout from "./components/TweetAndTitleLayout";
 
 interface DialogModalSendProposalEntryPreviewLayoutsProps {
   entryPreviewLayout: string;
@@ -44,6 +45,8 @@ const DialogModalSendProposalEntryPreviewLayout: FC<DialogModalSendProposalEntry
         return <ImageAndTitleLayout onChange={handleMetadataFieldChange} />;
       case EntryPreview.TWEET:
         return <TweetLayout onChange={handleMetadataFieldChange} />;
+      case EntryPreview.TWEET_AND_TITLE:
+        return <TweetAndTitleLayout onChange={handleMetadataFieldChange} />;
       default:
         return null;
     }
