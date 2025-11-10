@@ -106,7 +106,6 @@ export const RewardsDeploymentStatus: FC<RewardsDeploymentStatusProps> = ({ depl
           );
         })}
       </div>
-      <p className="text-[16px] text-neutral-14">note: please do not refresh the page during the deployment process.</p>
     </div>
   );
 };
