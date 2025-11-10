@@ -13,7 +13,6 @@ interface PrepareDeploymentDataParams {
     submissionOpen: Date;
     votingOpen: Date;
     votingClose: Date;
-    customization: any;
     advancedOptions: any;
     charge: any;
     priceCurve: any;
@@ -69,7 +68,6 @@ export const prepareDeploymentData = async (params: PrepareDeploymentDataParams)
     submissionOpen: contestData.submissionOpen,
     votingOpen: contestData.votingOpen,
     votingClose: contestData.votingClose,
-    customization: contestData.customization,
     advancedOptions: contestData.advancedOptions,
     charge: contestData.charge,
     priceCurve: contestData.priceCurve,

@@ -11,16 +11,15 @@ import { useAccount } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import MobileStepper from "../../components/MobileStepper";
 import { useContestSteps } from "../../hooks/useContestSteps";
-import CreateContestConfirmCustomization from "./components/Customization";
 import CreateContestConfirmDescription from "./components/Description";
 import CreateContestConfirmEmailSubscription from "./components/EmailSubscription";
 import CreateContestConfirmMonetization from "./components/Monetization";
 import CreateContestConfirmPreview from "./components/Preview";
+import CreateContestConfirmRewards from "./components/Rewards";
 import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
 import CreateContestConfirmType from "./components/Type";
 import { displayCoinbaseWalletWarning, isEthereumMainnet, isWalletForbidden } from "./utils";
-import CreateContestConfirmRewards from "./components/Rewards";
 
 const CreateContestConfirm = () => {
   const { chainId, chain, connector } = useAccount();
@@ -119,14 +118,7 @@ const CreateContestConfirm = () => {
             addFundsToRewards={state.addFundsToRewards}
             onClick={step => onNavigateToStep(step)}
           />
-          <CreateContestConfirmCustomization
-            customization={{
-              customization: state.customization,
-              advancedOptions: state.advancedOptions,
-            }}
-            step={stepReferences.ContestRules}
-            onClick={step => onNavigateToStep(step)}
-          />
+
           <div className="flex flex-col gap-8 mt-6">
             <CreateContestConfirmEmailSubscription
               emailError={emailError}
