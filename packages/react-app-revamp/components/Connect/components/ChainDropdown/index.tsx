@@ -3,21 +3,25 @@ import { chains } from "@config/wagmi";
 import { switchChain } from "@wagmi/core";
 import { config } from "@config/wagmi";
 import { useAccount } from "wagmi";
-import { FC, useState } from "react";
+import { FC, useState, useMemo } from "react";
 import { Chain } from "@rainbow-me/rainbowkit";
-
-const chainOptions: Option[] = chains.map(chain => {
-  const chainWithIcon = chain as Chain & { iconUrl?: string };
-  return {
-    label: chain.name,
-    value: chain.id.toString(),
-    image: chainWithIcon.iconUrl,
-  };
-});
 
 const ChainDropdown: FC = () => {
   const { chain: currentChain } = useAccount();
   const [resetKey, setResetKey] = useState(0);
+
+  const chainOptions = useMemo<Option[]>(
+    () =>
+      chains.map(chain => {
+        const chainWithIcon = chain as Chain & { iconUrl?: string };
+        return {
+          label: chain.name,
+          value: chain.id.toString(),
+          image: chainWithIcon.iconUrl,
+        };
+      }),
+    [],
+  );
 
   const handleChainSwitch = async (chainId: string) => {
     const targetChain = chains.find(chain => chain.id.toString() === chainId) as Chain & { iconUrl?: string };
@@ -30,11 +34,8 @@ const ChainDropdown: FC = () => {
       await switchChain(config, {
         chainId: targetChain.id,
         addEthereumChainParameter: {
-          chainName: targetChain.name,
-          nativeCurrency: targetChain.nativeCurrency,
+          ...targetChain,
           rpcUrls: publicRpcUrls,
-          blockExplorerUrls: targetChain.blockExplorers ? [targetChain.blockExplorers.default.url] : undefined,
-          iconUrls: targetChain.iconUrl ? [targetChain.iconUrl] : undefined,
         },
       });
     } catch (error) {
