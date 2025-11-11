@@ -21,6 +21,7 @@ import {
   walletConnectWallet,
   zerionWallet,
 } from "@rainbow-me/rainbowkit/wallets";
+import { abstractWallet } from "@abstract-foundation/agw-react/connectors";
 import { cookieStorage, createConfig, createStorage } from "wagmi";
 import { abstract } from "./custom-chains/abstract";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
@@ -110,6 +111,7 @@ export const connectors = () => {
           walletConnectWallet,
           coinbaseWallet,
           rainbowWallet,
+          abstractWallet,
           okxWallet,
           uniswapWallet,
           safeWallet,
