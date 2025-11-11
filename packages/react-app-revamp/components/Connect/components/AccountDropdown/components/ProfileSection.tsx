@@ -1,5 +1,5 @@
 import { Avatar } from "@components/UI/Avatar";
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { FC, useState } from "react";
 import { formatUnits } from "viem";
 import { formatBalance } from "@helpers/formatBalance";
@@ -39,7 +39,7 @@ const ProfileSection: FC<ProfileSectionProps> = ({ address, ensAvatar, ensName, 
             <p className="text-[16px] font-bold text-neutral-11">{ensName || displayName}</p>
             <button
               onClick={handleCopyAddress}
-              className="flex items-center gap-2 text-[12px] text-neutral-9 hover:text-neutral-11 transition-colors text-left"
+              className="flex items-center gap-1 text-[12px] text-neutral-9 hover:text-neutral-11 transition-colors text-left"
             >
               <span>
                 {address.slice(0, 6)}...{address.slice(-4)}
@@ -47,7 +47,7 @@ const ProfileSection: FC<ProfileSectionProps> = ({ address, ensAvatar, ensName, 
               {isAddressCopied ? (
                 <CheckCircleIcon className="w-3 h-3 text-positive-11" />
               ) : (
-                <img src="/icons/copy.svg" alt="copy" className="w-3 h-3" />
+                <DocumentDuplicateIcon className="w-3 h-3 text-neutral-9" />
               )}
             </button>
           </div>

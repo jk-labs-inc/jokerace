@@ -47,6 +47,7 @@ const ChainDropdown: FC = () => {
       onChange={handleChainSwitch}
       menuButtonWidth="w-auto"
       menuItemsWidth="w-52"
+      menuItemsMaxHeight="max-h-90"
     />
   );
 };

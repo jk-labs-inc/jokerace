@@ -14,6 +14,7 @@ interface DropdownProps {
   defaultValue: string;
   menuButtonWidth?: string;
   menuItemsWidth?: string;
+  menuItemsMaxHeight?: string;
   onChange?: (option: string) => void;
 }
 
@@ -22,6 +23,7 @@ const Dropdown: FC<DropdownProps> = ({
   defaultValue,
   menuButtonWidth = "w-52",
   menuItemsWidth = "w-52",
+  menuItemsMaxHeight = "max-h-60",
   onChange,
 }) => {
   const [selectedOption, setSelectedOption] = useState<string>(defaultValue);
@@ -76,7 +78,7 @@ const Dropdown: FC<DropdownProps> = ({
                   maskImage: maskImageStyle,
                   WebkitMaskImage: maskImageStyle,
                 }}
-                className="max-h-60 overflow-y-auto p-1"
+                className={`${menuItemsMaxHeight} overflow-y-auto p-1`}
               >
                 {options.map(option => (
                   <MenuItem key={option.value}>
