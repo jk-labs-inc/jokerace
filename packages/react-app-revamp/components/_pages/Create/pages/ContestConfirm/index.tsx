@@ -19,7 +19,7 @@ import CreateContestConfirmRewards from "./components/Rewards";
 import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
 import CreateContestConfirmType from "./components/Type";
-import { displayCoinbaseWalletWarning, isEthereumMainnet, isWalletForbidden } from "./utils";
+import { displayWalletWarning, isEthereumMainnet, isWalletForbidden } from "./utils";
 
 const CreateContestConfirm = () => {
   const { chainId, chain, connector } = useAccount();
@@ -39,7 +39,7 @@ const CreateContestConfirm = () => {
     }
 
     if (connector && isWalletForbidden(connector?.id)) {
-      displayCoinbaseWalletWarning();
+      displayWalletWarning(connector?.id);
     } else if (isEthereumMainnet(chainId)) {
       setIsEthereumDeploymentModalOpen(true);
     } else if (chain?.testnet) {
