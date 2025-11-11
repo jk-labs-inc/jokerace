@@ -85,7 +85,13 @@ export const SearchBar: FC<SearchBarProps> = ({ isInline, onSearch }) => {
             className="w-[250px] sm:w-[500px] bg-transparent text-[14px] sm:text-[16px] outline-none placeholder-neutral-9 pr-2"
             placeholder={currentPlaceholder}
           />
-          <Dropdown menuItems={filterOptions} onSelectionChange={handleFilterTypeChange} />
+          <Dropdown
+            options={filterOptions}
+            defaultValue={filterOptions[0].value}
+            onChange={handleFilterTypeChange}
+            menuButtonWidth="w-32"
+            menuItemsWidth="w-32"
+          />
         </div>
         {error && <div className="text-negative-11 mt-1 text-[14px]">{error}</div>}
       </FormField>

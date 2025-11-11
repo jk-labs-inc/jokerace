@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC } from "react";
+import { UserCircleIcon } from "@heroicons/react/24/solid";
 import { SIZES, SizeType } from "../UserProfileDisplay/constants/sizes";
 
 export interface AvatarProps {
@@ -22,8 +23,14 @@ export const Avatar: FC<AvatarProps> = ({
   const { avatarSizeClass } = SIZES[size];
 
   const avatarElement = (
-    <div className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden ${className}`}>
-      <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={src} alt={alt} />
+    <div
+      className={`flex items-center justify-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden ${className}`}
+    >
+      {src ? (
+        <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={src} alt={alt} />
+      ) : (
+        <UserCircleIcon className="w-full h-full text-neutral-9" />
+      )}
     </div>
   );
 

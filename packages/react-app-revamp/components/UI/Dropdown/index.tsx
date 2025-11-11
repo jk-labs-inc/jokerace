@@ -1,62 +1,114 @@
-import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { FC, Fragment, useState } from "react";
+import useScrollFade from "@hooks/useScrollFade";
+import { FC, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
+export interface Option {
+  label: string;
+  value: string;
+  image?: string;
 }
 
 interface DropdownProps {
-  menuItems: { value: string; label: string }[];
-  onSelectionChange?: (selectedValue: string) => void;
+  options: Option[];
+  defaultValue: string;
+  menuButtonWidth?: string;
+  menuItemsWidth?: string;
+  onChange?: (option: string) => void;
 }
 
-const Dropdown: FC<DropdownProps> = ({ menuItems, onSelectionChange }) => {
-  const [selectedValue, setSelectedValue] = useState(menuItems[0]?.value || "");
+const Dropdown: FC<DropdownProps> = ({
+  options,
+  defaultValue,
+  menuButtonWidth = "w-52",
+  menuItemsWidth = "w-52",
+  onChange,
+}) => {
+  const [selectedOption, setSelectedOption] = useState<string>(defaultValue);
+  const [selectedImage, setSelectedImage] = useState<string | undefined>(
+    options.find(opt => opt.label === defaultValue)?.image,
+  );
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { maskImageStyle } = useScrollFade(scrollContainerRef, options.length, [options, isMenuOpen]);
 
-  const handleSelection = (value: string) => {
-    setSelectedValue(value);
-    onSelectionChange?.(value);
+  useEffect(() => {
+    setSelectedOption(defaultValue);
+    const option = options.find(opt => opt.label === defaultValue);
+    setSelectedImage(option?.image);
+  }, [defaultValue, options]);
+
+  const handleOptionChange = (value: string, label: string, image?: string) => {
+    setSelectedOption(label);
+    setSelectedImage(image);
+    onChange?.(value);
   };
-  return (
-    <Menu as="div" className="relative inline-block text-left w-[100px]">
-      <div>
-        <MenuButton className="inline-flex w-full items-center justify-center gap-x-1.5 rounded-[5px] border border-neutral-11 bg-transparent px-1 py-1 text-[14px] sm:text-[16px] font-semibold text-neutral-11 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none">
-          {selectedValue}
-          <ChevronDownIcon className="-mr-1 h-4 w-4 text-gray-400" aria-hidden="true" />
-        </MenuButton>
-      </div>
 
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
-        <MenuItems className="absolute right-0 z-10 mt-5 w-40 overflow-x-clip rounded-[5px] bg-true-black border border-neutral-11 focus:outline-none">
-          <div className="py-1">
-            {menuItems.map(item => (
-              <MenuItem key={item.value}>
-                {({ focus }) => (
-                  <a
-                    href="#"
-                    onClick={() => handleSelection(item.value)}
-                    className={classNames(
-                      focus ? "bg-primary-10 text-neutral-11" : "text-neutral-11",
-                      "block px-4 py-2 text-[14px] sm:text-[16px] hover:bg-neutral-3 transition-colors duration-300 ease-in-out ",
-                    )}
-                  >
-                    {item.label}
-                  </a>
+  return (
+    <Menu>
+      {({ open }) => {
+        useEffect(() => {
+          setIsMenuOpen(open);
+        }, [open]);
+
+        return (
+          <>
+            <MenuButton
+              className={`${menuButtonWidth} flex items-center gap-2 justify-between rounded-lg bg-secondary-1 p-4 h-10 text-[20px] text-neutral-11 font-bold border border-neutral-17 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:border-neutral-9 transition-all duration-200 ease-in-out`}
+            >
+              <div className="flex items-center gap-2">
+                {selectedImage && (
+                  <Image
+                    src={selectedImage}
+                    alt={selectedOption}
+                    width={20}
+                    height={20}
+                    className="rounded-full mt-1"
+                  />
                 )}
-              </MenuItem>
-            ))}
-          </div>
-        </MenuItems>
-      </Transition>
+                <span>{selectedOption}</span>
+              </div>
+              <ChevronDownIcon className="text-neutral-11 w-6 h-5 mt-1" />
+            </MenuButton>
+
+            <MenuItems
+              transition
+              anchor="bottom end"
+              className={`${menuItemsWidth} origin-top-right rounded-lg border border-neutral-17 bg-secondary-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0`}
+            >
+              <div
+                ref={scrollContainerRef}
+                style={{
+                  maskImage: maskImageStyle,
+                  WebkitMaskImage: maskImageStyle,
+                }}
+                className="max-h-60 overflow-y-auto p-1"
+              >
+                {options.map(option => (
+                  <MenuItem key={option.value}>
+                    <button
+                      className="group flex w-full items-center gap-4 rounded-lg px-4 py-1.5 data-focus:bg-white/10"
+                      onClick={() => handleOptionChange(option.value, option.label, option.image)}
+                    >
+                      {option.image && (
+                        <Image
+                          src={option.image}
+                          alt={option.label}
+                          width={20}
+                          height={20}
+                          className="rounded-full mt-1"
+                        />
+                      )}
+                      <span>{option.label}</span>
+                    </button>
+                  </MenuItem>
+                ))}
+              </div>
+            </MenuItems>
+          </>
+        );
+      }}
     </Menu>
   );
 };

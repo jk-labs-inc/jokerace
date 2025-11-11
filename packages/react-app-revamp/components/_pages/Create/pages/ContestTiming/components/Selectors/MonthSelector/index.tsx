@@ -1,4 +1,4 @@
-import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
+import Dropdown, { Option } from "@components/UI/Dropdown";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 import MobileMonthSelector from "./Mobile";
@@ -19,7 +19,15 @@ const CreateContestTimingMonthSelector: FC<CreateContestTimingMonthSelectorProps
   if (isMobile) {
     return <MobileMonthSelector months={months} defaultValue={defaultValue} onChange={onChange} />;
   }
-  return <CreateDefaultDropdown options={months} width="w-[168px]" onChange={onChange} defaultValue={defaultValue} />;
+  return (
+    <Dropdown
+      options={months}
+      menuButtonWidth="w-[168px]"
+      menuItemsWidth="w-[168px]"
+      onChange={onChange}
+      defaultValue={defaultValue}
+    />
+  );
 };
 
 export default CreateContestTimingMonthSelector;

@@ -1,6 +1,5 @@
-import { ConnectButtonCustom } from "@components/UI/ConnectButton";
+import { ConnectButtonCustom } from "@components/Connect";
 import CustomLink from "@components/UI/Link";
-import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
 import { useRouter } from "next/navigation";
@@ -59,12 +58,7 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
         </div>
       )}
 
-      {!isLoading && !isSuccess && (
-        <div className="flex items-center gap-3">
-          {isClient && address && <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />}
-          <ConnectButtonCustom />
-        </div>
-      )}
+      {!isLoading && !isSuccess && <ConnectButtonCustom />}
     </header>
   );
 };
