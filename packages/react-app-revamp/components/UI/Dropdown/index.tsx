@@ -2,7 +2,6 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import useScrollFade from "@hooks/useScrollFade";
 import { FC, useEffect, useRef, useState } from "react";
-import Image from "next/image";
 
 export interface Option {
   label: string;
@@ -59,13 +58,7 @@ const Dropdown: FC<DropdownProps> = ({
             >
               <div className="flex items-center gap-2">
                 {selectedImage && (
-                  <Image
-                    src={selectedImage}
-                    alt={selectedOption}
-                    width={20}
-                    height={20}
-                    className="rounded-full mt-1"
-                  />
+                  <img src={selectedImage} alt={selectedOption} width={20} height={20} className="rounded-full mt-1" />
                 )}
                 <span>{selectedOption}</span>
               </div>
@@ -92,7 +85,7 @@ const Dropdown: FC<DropdownProps> = ({
                       onClick={() => handleOptionChange(option.value, option.label, option.image)}
                     >
                       {option.image && (
-                        <Image
+                        <img
                           src={option.image}
                           alt={option.label}
                           width={20}
