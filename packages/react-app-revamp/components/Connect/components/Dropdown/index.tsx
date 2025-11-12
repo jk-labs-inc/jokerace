@@ -51,7 +51,7 @@ const ConnectDropdown: FC<ConnectDropdownProps> = ({
         return (
           <>
             <MenuButton
-              className={`${menuButtonWidth} flex items-center gap-4 justify-between rounded-2xl bg-secondary-1 p-4 h-10 text-[16px] text-neutral-11 font-bold focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white border border-transparent hover:border-neutral-17 transition-all duration-200 ease-in-out`}
+              className={`${menuButtonWidth} flex items-center gap-4 justify-between rounded-2xl bg-primary-1 p-4 h-10 text-[16px] text-neutral-11 font-bold focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white border border-transparent hover:border-neutral-17 transition-all duration-200 ease-in-out`}
             >
               {selectedImage && (
                 <img src={selectedImage} alt={selectedOption} width={20} height={20} className="rounded-full mt-1" />
@@ -63,7 +63,7 @@ const ConnectDropdown: FC<ConnectDropdownProps> = ({
             <MenuItems
               transition
               anchor="bottom end"
-              className={`${menuItemsWidth} origin-top-right rounded-2xl  bg-secondary-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0`}
+              className={`${menuItemsWidth} origin-top-right rounded-2xl  bg-primary-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0`}
             >
               <div
                 ref={scrollContainerRef}
