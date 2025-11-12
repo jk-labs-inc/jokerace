@@ -1,8 +1,7 @@
-import { ConnectButtonCustom } from "@components/UI/ConnectButton";
-import { IconMagnifyingGlassSolid, IconTrophy } from "@components/UI/Icons";
+import { ConnectButtonCustom } from "@components/Connect";
+import { IconMagnifyingGlassSolid } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
 import { MobileProfileDrawer } from "@components/UI/MobileWalletPortal";
-import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { FOOTER_LINKS } from "@config/links";
 import {
   ROUTE_CREATE_CONTEST,
@@ -16,15 +15,14 @@ import {
   HomeIcon,
   MagnifyingGlassIcon,
   PencilSquareIcon,
-  UserCircleIcon,
   TrophyIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import {
   HomeIcon as HomeIconSolid,
-  MagnifyingGlassIcon as MagnifyingGlassIconSolid,
   PencilSquareIcon as PencilSquareIconSolid,
-  UserCircleIcon as UserCircleIconSolid,
   TrophyIcon as TrophyIconSolid,
+  UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/24/solid";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { disconnect } from "@wagmi/core";
@@ -214,7 +212,6 @@ const LandingHeader = () => {
       </CustomLink>
 
       <div className="flex gap-3 items-center ml-auto">
-        {isClient && address ? <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion /> : null}
         <ConnectButtonCustom />
       </div>
     </header>
