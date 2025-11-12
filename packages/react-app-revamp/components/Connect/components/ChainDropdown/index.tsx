@@ -4,6 +4,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 import { switchChain } from "@wagmi/core";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
+import ConnectDropdown from "../Dropdown";
 
 const chainOptions: Option[] = chains.map(chain => {
   const chainWithIcon = chain as Chain & { iconUrl?: string };
@@ -40,7 +41,7 @@ const ChainDropdown: FC = () => {
   };
 
   return (
-    <Dropdown
+    <ConnectDropdown
       key={`${currentChain?.id ?? "no-chain"}-${resetKey}`}
       options={chainOptions}
       defaultValue={currentChain?.name ?? chainOptions[0].label}

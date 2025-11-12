@@ -11,7 +11,7 @@ interface AccountButtonProps {
 const AccountButton: FC<AccountButtonProps> = ({ ensAvatar, ensName, displayName }) => {
   return (
     <MenuButton
-      className={`w-auto flex items-center gap-2 justify-between rounded-lg bg-secondary-1 p-4 h-10 text-[20px] text-neutral-11 font-bold border border-neutral-17 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:border-neutral-9 transition-all duration-200 ease-in-out`}
+      className={`w-auto flex items-center gap-4 justify-between rounded-2xl bg-secondary-1 p-4 h-10 text-[16px] text-neutral-11 font-bold focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white border border-transparent hover:border-neutral-17 transition-all duration-200 ease-in-out`}
     >
       {ensAvatar && (
         <img
