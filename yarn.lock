@@ -14958,10 +14958,10 @@ react-aria@3.44.0:
     "@react-aria/visually-hidden" "^3.8.28"
     "@react-types/shared" "^3.32.1"
 
-react-datepicker@8.8.0:
-  version "8.8.0"
-  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-8.8.0.tgz#de2bb3329508661f43caa5c47e488a68ed615428"
-  integrity sha512-rIJLhww1B5cQY7GYEfSEXvldlGp+GIVU5oE7lxqeK4fmdv5F9bVndplDmblMCvfSMazXmeJ6OHBvRs/PkEhwUQ==
+react-datepicker@8.9.0:
+  version "8.9.0"
+  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-8.9.0.tgz#4cae5ca4e4fc14d806a4a5610b4d24db6de90810"
+  integrity sha512-yoRsGxjqVRjk8iUBssrW9jcinTeyP9mAfTpuzdKvlESOUjdrY0sfDTzIZWJAn38jvNcxW1dnDmW1CinjiFdxYQ==
   dependencies:
     "@floating-ui/react" "^0.27.15"
     clsx "^2.1.1"
