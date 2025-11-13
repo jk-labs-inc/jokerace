@@ -1,15 +1,10 @@
+import { Option } from "@components/UI/Dropdown";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import useScrollFade from "@hooks/useScrollFade";
 import { FC, useEffect, useRef, useState } from "react";
 
-export interface Option {
-  label: string;
-  value: string;
-  image?: string;
-}
-
-interface DropdownProps {
+interface ConnectDropdownProps {
   options: Option[];
   defaultValue: string;
   menuButtonWidth?: string;
@@ -18,7 +13,7 @@ interface DropdownProps {
   onChange?: (option: string) => void;
 }
 
-const Dropdown: FC<DropdownProps> = ({
+const ConnectDropdown: FC<ConnectDropdownProps> = ({
   options,
   defaultValue,
   menuButtonWidth = "w-52",
@@ -56,21 +51,19 @@ const Dropdown: FC<DropdownProps> = ({
         return (
           <>
             <MenuButton
-              className={`${menuButtonWidth} flex items-center gap-2 justify-between rounded-lg bg-secondary-1 p-4 h-10 text-[20px] text-neutral-11 font-bold border border-neutral-17 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:border-neutral-9 transition-all duration-200 ease-in-out`}
+              className={`${menuButtonWidth} flex items-center gap-4 justify-between rounded-2xl bg-primary-1 p-4 h-10 text-[16px] text-neutral-11 font-bold focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white border border-transparent hover:border-neutral-17 transition-all duration-200 ease-in-out`}
             >
-              <div className="flex items-center gap-2">
-                {selectedImage && (
-                  <img src={selectedImage} alt={selectedOption} width={20} height={20} className="rounded-full mt-1" />
-                )}
-                <span>{selectedOption}</span>
-              </div>
+              {selectedImage && (
+                <img src={selectedImage} alt={selectedOption} width={20} height={20} className="rounded-full mt-1" />
+              )}
+              <span>{selectedOption}</span>
               <ChevronDownIcon className="text-neutral-11 w-6 h-5 mt-1" />
             </MenuButton>
 
             <MenuItems
               transition
               anchor="bottom end"
-              className={`${menuItemsWidth} origin-top-right rounded-lg border border-neutral-17 bg-secondary-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0`}
+              className={`${menuItemsWidth} origin-top-right rounded-2xl  bg-primary-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0`}
             >
               <div
                 ref={scrollContainerRef}
@@ -108,4 +101,4 @@ const Dropdown: FC<DropdownProps> = ({
   );
 };
 
-export default Dropdown;
+export default ConnectDropdown;

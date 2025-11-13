@@ -10,8 +10,12 @@ export const base: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.base-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
-    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.base-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
+    public: { http: [`https://base.llamarpc.com`] },
+    default: {
+      http: [
+        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.base-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+      ],
+    },
   },
   blockExplorers: {
     etherscan: { name: "Base Mainnet Scan", url: "https://basescan.org/" },

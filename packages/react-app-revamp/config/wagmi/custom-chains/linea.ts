@@ -10,8 +10,12 @@ export const linea: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.linea-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
-    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.linea-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
+    public: { http: [`https://rpc.linea.build`] },
+    default: {
+      http: [
+        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.linea-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+      ],
+    },
   },
   blockExplorers: {
     etherscan: { name: "Lineascan", url: "https://lineascan.build/" },

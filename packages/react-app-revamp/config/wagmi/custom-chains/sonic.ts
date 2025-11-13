@@ -10,8 +10,12 @@ export const sonic: Chain = {
     symbol: "S",
   },
   rpcUrls: {
-    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.sonic-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
-    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.sonic-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
+    public: { http: [`https://rpc.soniclabs.com`] },
+    default: {
+      http: [
+        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.sonic-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+      ],
+    },
   },
   blockExplorers: {
     etherscan: { name: "Sonic Mainnet Scan", url: "https://sonicscan.org/" },

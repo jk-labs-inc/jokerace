@@ -1,4 +1,4 @@
-import { Option } from "@components/_pages/Create/components/DefaultDropdown";
+import { Option } from "@components/UI/Dropdown";
 
 export type TokenConfig = {
   name: string;

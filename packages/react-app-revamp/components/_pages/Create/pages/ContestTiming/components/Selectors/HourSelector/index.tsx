@@ -1,7 +1,8 @@
-import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
+import { Option } from "@components/UI/Dropdown";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 import MobileHourSelector from "./Mobile";
+import Dropdown from "@components/UI/Dropdown";
 
 interface CreateContestTimingHourSelectorProps {
   hours: Option[];
@@ -22,7 +23,13 @@ const CreateContestTimingHourSelector: FC<CreateContestTimingHourSelectorProps> 
 
   return (
     <div className="flex items-center gap-4">
-      <CreateDefaultDropdown options={hours} width="w-[120px]" onChange={onChange} defaultValue={defaultValue} />
+      <Dropdown
+        options={hours}
+        menuButtonWidth="w-[120px]"
+        menuItemsWidth="w-[120px]"
+        onChange={onChange}
+        defaultValue={defaultValue}
+      />
     </div>
   );
 };

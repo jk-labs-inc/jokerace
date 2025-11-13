@@ -1,7 +1,8 @@
 import { FC } from "react";
 import MobileDaySelector from "./Mobile";
 import { useMediaQuery } from "react-responsive";
-import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
+import { Option } from "@components/UI/Dropdown";
+import Dropdown from "@components/UI/Dropdown";
 
 interface CreateContestTimingDaySelectorProps {
   days: Option[];
@@ -15,7 +16,15 @@ const CreateContestTimingDaySelector: FC<CreateContestTimingDaySelectorProps> = 
   if (isMobile) {
     return <MobileDaySelector days={days} defaultValue={defaultValue} onChange={onChange} />;
   }
-  return <CreateDefaultDropdown options={days} width="w-24" onChange={onChange} defaultValue={defaultValue} />;
+  return (
+    <Dropdown
+      options={days}
+      menuButtonWidth="w-24"
+      menuItemsWidth="w-24"
+      onChange={onChange}
+      defaultValue={defaultValue}
+    />
+  );
 };
 
 export default CreateContestTimingDaySelector;

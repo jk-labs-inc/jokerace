@@ -11,10 +11,12 @@ export const polygon: Chain = {
   },
   rpcUrls: {
     public: {
-      http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.matic.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
+      http: [`https://1rpc.io/matic`],
     },
     default: {
-      http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.matic.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
+      http: [
+        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.matic.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+      ],
     },
   },
   blockExplorers: {
