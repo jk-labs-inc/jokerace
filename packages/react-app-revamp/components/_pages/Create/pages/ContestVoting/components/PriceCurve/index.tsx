@@ -2,6 +2,7 @@ import { chains } from "@config/wagmi";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { FC } from "react";
 import PriceCurveMultiplerPreview from "./components/PriceCurveMultiplerPreview";
+import { useMediaQuery } from "react-responsive";
 
 interface CreateContestPriceCurveProps {
   chain: string;
@@ -9,6 +10,7 @@ interface CreateContestPriceCurveProps {
 }
 
 const CreateContestPriceCurve: FC<CreateContestPriceCurveProps> = ({ chain, onError }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const chainUnitLabel = chains.find(c => c.name.toLowerCase() === chain.toLowerCase())?.nativeCurrency.symbol;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain);
 
@@ -32,12 +34,12 @@ const CreateContestPriceCurve: FC<CreateContestPriceCurveProps> = ({ chain, onEr
     <div className="flex flex-col gap-12">
       <div className="flex flex-col gap-4 w-full md:w-[448px] rounded-4xl p-6 bg-primary-1 text-[16px] text-neutral-11">
         <p>
-          players pay per vote on a price curve. 90% of their funds <br />
-          go into the rewards pool. players claim their share of the <br />
+          players pay per vote on a price curve. 90% of their funds {isMobile ? "" : <br />}
+          go into the rewards pool. players claim their share of the {isMobile ? "" : <br />}
           rewards by voting on the winner(s).
         </p>
         <p>
-          the price curve incentivizes players to vote early with <br />
+          the price curve incentivizes players to vote early with {isMobile ? "" : <br />}
           conviction to earn more.
         </p>
       </div>
