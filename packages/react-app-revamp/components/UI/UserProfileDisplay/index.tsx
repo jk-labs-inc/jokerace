@@ -92,7 +92,7 @@ const UserProfileDisplay = ({
       {isLoading ? (
         <p className={`${textSizeClass} animate-flicker-infinite`}>Loading profile data</p>
       ) : (
-        <div className="animate-fade-in flex flex-col gap-1">
+        <div className="animate-fade-in flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <UserProfileName
               ethereumAddress={ethereumAddress}

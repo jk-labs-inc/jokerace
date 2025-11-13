@@ -10,8 +10,12 @@ export const world: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.worldchain-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
-    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.worldchain-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
+    public: { http: [`https://worldchain-mainnet.g.alchemy.com/public`] },
+    default: {
+      http: [
+        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.worldchain-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+      ],
+    },
   },
   blockExplorers: {
     etherscan: { name: "World Mainnet Scan", url: "https://worldscan.org/" },

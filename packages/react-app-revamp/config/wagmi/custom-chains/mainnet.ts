@@ -11,7 +11,7 @@ export const mainnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],
+      http: [`https://eth.llamarpc.com`],
     },
     default: {
       http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`],

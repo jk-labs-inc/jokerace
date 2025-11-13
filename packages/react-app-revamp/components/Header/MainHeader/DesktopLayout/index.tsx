@@ -1,4 +1,4 @@
-import { ConnectButtonCustom } from "@components/UI/ConnectButton";
+import { ConnectButtonCustom } from "@components/Connect";
 import CustomLink from "@components/UI/Link";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
@@ -36,10 +36,7 @@ const MainHeaderDesktopLayout: FC<MainHeaderDesktopLayoutProps> = ({ isConnected
         </div>
       </div>
 
-      <div className="flex gap-3 items-center">
-        {isClient && address ? <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion /> : null}
-        <ConnectButtonCustom />
-      </div>
+      <ConnectButtonCustom />
     </header>
   );
 };

@@ -1,4 +1,4 @@
-import { Option } from "@components/_pages/Create/components/DefaultDropdown";
+import { Option } from "@components/UI/Dropdown";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { FC, Fragment, useEffect, useState } from "react";

@@ -10,10 +10,14 @@ export const soneium: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.soneium-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
-    default: { http: [`https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.soneium-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`] },
+    public: { http: [`https://soneium.drpc.org`] },
+    default: {
+      http: [
+        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.soneium-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+      ],
+    },
   },
- blockExplorers: {
+  blockExplorers: {
     etherscan: { name: "Soneium Mainnet Scan", url: "https://soneium.blockscout.com/" },
     default: { name: "Soneium Mainnet Scan", url: "https://soneium.blockscout.com/" },
   },

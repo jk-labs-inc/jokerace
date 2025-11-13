@@ -11,9 +11,7 @@ export const ink: Chain = {
   },
   rpcUrls: {
     public: {
-      http: [
-        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.ink-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
-      ],
+      http: [`https://ink.drpc.org`],
     },
     default: {
       http: [

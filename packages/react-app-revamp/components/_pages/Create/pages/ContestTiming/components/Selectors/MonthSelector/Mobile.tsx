@@ -1,6 +1,6 @@
 import { FC } from "react";
 import MobileSelector from "../MobileSelector";
-import { Option } from "@components/_pages/Create/components/DefaultDropdown";
+import { Option } from "@components/UI/Dropdown";
 
 interface MobileMonthSelectorProps {
   months: Option[];
