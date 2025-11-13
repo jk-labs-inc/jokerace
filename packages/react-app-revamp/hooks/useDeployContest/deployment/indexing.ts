@@ -1,6 +1,6 @@
 import { toastError } from "@components/UI/Toast";
 import { indexContest } from "../database";
-import { prepareContestData } from "../helpers/contestData";
+import { ContestData, prepareContestData } from "../helpers/contestData";
 import { prepareConstructorArgs } from "../helpers/constructorArgs";
 
 interface PrepareContestDataParams {
@@ -21,8 +21,8 @@ interface PrepareContestDataParams {
 
 export const prepareContestDataForIndexing = (params: PrepareContestDataParams) => {
   return prepareContestData({
-    constructorArgs: params.constructorArgs,
     title: params.contestData.title,
+    isAnyoneCanSubmit: params.constructorArgs.intConstructorArgs.anyoneCanSubmit === 1,
     combinedPrompt: params.combinedPrompt,
     submissionOpen: params.contestData.submissionOpen,
     votingOpen: params.contestData.votingOpen,
@@ -35,7 +35,7 @@ export const prepareContestDataForIndexing = (params: PrepareContestDataParams) 
   });
 };
 
-export const indexContestInDatabase = async (contestData: ReturnType<typeof prepareContestData>) => {
+export const indexContestInDatabase = async (contestData: ContestData) => {
   try {
     await indexContest(contestData);
   } catch (error) {

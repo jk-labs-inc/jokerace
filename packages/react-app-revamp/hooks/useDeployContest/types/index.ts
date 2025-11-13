@@ -37,7 +37,6 @@ export interface ContestValues {
   datetimeOpeningVoting: Date;
   datetimeClosingVoting: Date;
   title: string;
-  type: string;
   prompt: string;
   contractAddress: string;
   networkName: string;

@@ -20,7 +20,7 @@ const calculatePricesAndMultiple = (
   setCharge: (updater: Charge | ((prev: Charge) => Charge)) => void,
   setPriceCurve: (updater: PriceCurve | ((prev: PriceCurve) => PriceCurve)) => void,
 ) => {
-  if (!startPrice || startPrice <= 0 || !multipler || multipler <= 0) return;
+  if (!startPrice || startPrice <= 0) return;
 
   const endPrice = startPrice * multipler;
 
@@ -86,8 +86,7 @@ export const useMultiplierCalculations = (onError?: (hasError: boolean) => void)
     setErrorMessage(error);
     onError?.(!!error);
 
-    if (error) return;
-
+    // Calculate regardless of error to show UI feedback
     if (costToVoteStartPrice && costToVoteStartPrice > 0) {
       calculatePricesAndMultiple(costToVoteStartPrice, value, setCharge, setPriceCurve);
     }

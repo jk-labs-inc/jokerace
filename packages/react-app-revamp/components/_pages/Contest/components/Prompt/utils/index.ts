@@ -1,4 +1,5 @@
 interface ParsedPrompt {
+  contestType: string;
   contestTitle: string;
   contestSummary: string;
   contestEvaluate: string;
@@ -8,6 +9,7 @@ interface ParsedPrompt {
 
 export const parsePrompt = (prompt: string): ParsedPrompt => {
   const defaultPrompt: ParsedPrompt = {
+    contestType: "",
     contestTitle: "",
     contestSummary: "",
     contestEvaluate: "",
@@ -18,9 +20,12 @@ export const parsePrompt = (prompt: string): ParsedPrompt => {
 
   try {
     const params = new URLSearchParams(prompt);
-    if (params.has("type") && params.has("summarize") && params.has("evaluateVoters")) {
+    // Check for URLSearchParams format by looking for new format fields
+    // Don't require 'type' since new contests don't have it
+    if (params.has("summarize") && params.has("evaluateVoters")) {
       return {
         ...defaultPrompt,
+        contestType: params.get("type") || "", // Optional - only old contests have this
         contestSummary: params.get("summarize") || "",
         contestEvaluate: params.get("evaluateVoters") || "",
         contestContactDetails: params.get("contactDetails") || "",
@@ -34,18 +39,20 @@ export const parsePrompt = (prompt: string): ParsedPrompt => {
   const segments = prompt.split("|");
 
   if (segments.length === 2) {
-    return { ...defaultPrompt, contestSummary: segments[1] };
+    return { ...defaultPrompt, contestType: segments[0], contestSummary: segments[1] };
   } else if (segments.length === 3) {
-    return { ...defaultPrompt, contestSummary: segments[1], contestEvaluate: segments[2] };
+    return { ...defaultPrompt, contestType: segments[0], contestSummary: segments[1], contestEvaluate: segments[2] };
   } else if (segments.length === 4) {
     return {
       ...defaultPrompt,
+      contestType: segments[0],
       contestSummary: segments[1],
       contestEvaluate: segments[2],
       contestContactDetails: segments[3],
     };
   } else if (segments.length === 5) {
     return {
+      contestType: segments[0],
       contestTitle: segments[1],
       contestSummary: segments[2],
       contestEvaluate: segments[3],

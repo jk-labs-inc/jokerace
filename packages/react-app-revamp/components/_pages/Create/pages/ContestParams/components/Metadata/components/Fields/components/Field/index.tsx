@@ -1,12 +1,11 @@
+import CreateTextInput from "@components/_pages/Create/components/TextInput";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { MetadataField } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
-import ContestParamsMetadataFieldsDropdown from "../../../Dropdown";
 import { fieldsDropdownOptions, metadataFields } from "../../utils";
-import CreateTextInput from "@components/_pages/Create/components/TextInput";
-import { MetadataField } from "@hooks/useDeployContest/slices/contestMetadataSlice";
-import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultDropdown";
+import Dropdown from "@components/UI/Dropdown";
 
 interface ContestParamsMetadataFieldProps {
   index: number;
@@ -55,7 +54,7 @@ const ContestParamsMetadataField: FC<ContestParamsMetadataFieldProps> = ({ index
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <p className="text-[16px] text-neutral-11 font-bold uppercase">field type</p>
-          <CreateDefaultDropdown
+          <Dropdown
             options={fieldsDropdownOptions}
             defaultValue={fieldsDropdownOptions.find(o => o.value === field.metadataType)!.label}
             onChange={handleDropdownChange}

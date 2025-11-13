@@ -101,7 +101,7 @@ const CreateContestConfirm = () => {
             }}
           />
           <CreateContestConfirmMonetization
-            step={stepReferences.ContestMonetization}
+            step={stepReferences.ContestVoting}
             charge={state.charge}
             priceCurve={state.priceCurve}
             onClick={step => onNavigateToStep(step)}

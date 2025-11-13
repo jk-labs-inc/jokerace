@@ -21,7 +21,7 @@ const PriceCurveRangeDisplay: FC<PriceCurveRangeDisplayProps> = ({ chainUnitLabe
     <div className="flex items-end gap-4 md:gap-6">
       <PriceDisplay price={costToVoteStartPrice?.toString() ?? ""} label="start" chainUnitLabel={chainUnitLabel} />
 
-      <div className="pb-2 md:pb-1">
+      <div className="pb-2">
         <img
           src={isMobile ? "/create-flow/arrow-mobile.svg" : "/create-flow/arrow.svg"}
           alt="arrow right"

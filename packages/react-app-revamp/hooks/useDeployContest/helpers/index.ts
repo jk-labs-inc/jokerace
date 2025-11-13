@@ -1,4 +1,4 @@
-import { EntryPreviewConfig, MetadataField } from "../slices/contestMetadataSlice";
+import { EntryPreview, EntryPreviewConfig, MetadataField } from "../slices/contestMetadataSlice";
 
 export function createMetadataFieldsSchema(
   metadataFields: MetadataField[],
@@ -39,9 +39,18 @@ export function createMetadataFieldsSchema(
 export function getEntryPreviewPrompt(config: EntryPreviewConfig): string {
   const { preview } = config;
   const descriptionSuffix = "_DESCRIPTION_ENABLED";
-  const fullPrompt = config.isTitleRequired
-    ? `${preview + "AND_TITLE_PREVIEW"}${descriptionSuffix}`
-    : `${preview}${descriptionSuffix}`;
+
+  let basePreview = preview;
+
+  if (config.isTitleRequired) {
+    if (preview === EntryPreview.IMAGE) {
+      basePreview = EntryPreview.IMAGE_AND_TITLE;
+    } else if (preview === EntryPreview.TWEET) {
+      basePreview = EntryPreview.TWEET_AND_TITLE;
+    }
+  }
+
+  const fullPrompt = `${basePreview}${descriptionSuffix}`;
 
   return fullPrompt;
 }

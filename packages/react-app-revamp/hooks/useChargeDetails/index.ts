@@ -4,9 +4,18 @@ import { useQuery } from "@tanstack/react-query";
 import { PERCENTAGE_TO_CREATOR_DEFAULT } from "constants/monetization";
 import { fetchChargeDetails } from "lib/monetization";
 import { useEffect } from "react";
+import { useShallow } from "zustand/shallow";
 
 const useChargeDetails = (chainName: string) => {
-  const { setCharge, setPrevChainRefInCharge, prevChainRefInCharge, setMinCharge } = useDeployContestStore();
+  const { setCharge, setPrevChainRefInCharge, prevChainRefInCharge, setMinCharge, priceCurve } = useDeployContestStore(
+    useShallow(state => ({
+      setCharge: state.setCharge,
+      setPrevChainRefInCharge: state.setPrevChainRefInCharge,
+      prevChainRefInCharge: state.prevChainRefInCharge,
+      setMinCharge: state.setMinCharge,
+      priceCurve: state.priceCurve,
+    })),
+  );
   const {
     data: chargeDetails,
     isLoading,
@@ -48,7 +57,7 @@ const useChargeDetails = (chainName: string) => {
           costToPropose: chargeDetails.defaultCostToPropose,
           costToVote: chargeDetails.defaultCostToVote,
           costToVoteStartPrice: chargeDetails.defaultCostToVoteStartPrice,
-          costToVoteEndPrice: chargeDetails.defaultCostToVoteEndPrice,
+          costToVoteEndPrice: chargeDetails.defaultCostToVoteStartPrice * priceCurve.multipler,
         },
         error: false,
       });
