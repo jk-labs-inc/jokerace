@@ -41,6 +41,7 @@ export const createMonetizationSlice = (set: any): MonetizationSlice => ({
   priceCurve: {
     type: PriceCurveType.Exponential,
     multiple: 1,
+    multipler: 8,
   },
 
   setCharge: (charge: ReactStyleStateSetter<Charge>) =>

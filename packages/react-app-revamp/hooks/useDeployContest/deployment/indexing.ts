@@ -12,7 +12,6 @@ interface PrepareContestDataParams {
   chargeType: { costToPropose: number; costToVote: number };
   contestData: {
     title: string;
-    contestType: any;
     submissionOpen: Date;
     votingOpen: Date;
     votingClose: Date;
@@ -24,7 +23,6 @@ export const prepareContestDataForIndexing = (params: PrepareContestDataParams) 
   return prepareContestData({
     constructorArgs: params.constructorArgs,
     title: params.contestData.title,
-    contestType: params.contestData.contestType,
     combinedPrompt: params.combinedPrompt,
     submissionOpen: params.contestData.submissionOpen,
     votingOpen: params.contestData.votingOpen,

@@ -18,7 +18,6 @@ import CreateContestConfirmPreview from "./components/Preview";
 import CreateContestConfirmRewards from "./components/Rewards";
 import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
-import CreateContestConfirmType from "./components/Type";
 import { displayWalletWarning, isEthereumMainnet, isWalletForbidden } from "./utils";
 
 const CreateContestConfirm = () => {
@@ -84,11 +83,6 @@ const CreateContestConfirm = () => {
             step={stepReferences.ContestRules}
             prompt={state.prompt}
             imageUrl={state.prompt.imageUrl}
-            onClick={step => onNavigateToStep(step)}
-          />
-          <CreateContestConfirmType
-            step={stepReferences.ContestType}
-            type={state.contestType}
             onClick={step => onNavigateToStep(step)}
           />
           <CreateContestConfirmPreview

@@ -37,8 +37,11 @@ export function createMetadataFieldsSchema(
 }
 
 export function getEntryPreviewPrompt(config: EntryPreviewConfig): string {
-  const { preview, isAdditionalDescriptionEnabled } = config;
-  const descriptionSuffix = isAdditionalDescriptionEnabled ? "_DESCRIPTION_ENABLED" : "_DESCRIPTION_NOT_ENABLED";
+  const { preview } = config;
+  const descriptionSuffix = "_DESCRIPTION_ENABLED";
+  const fullPrompt = config.isTitleRequired
+    ? `${preview + "AND_TITLE_PREVIEW"}${descriptionSuffix}`
+    : `${preview}${descriptionSuffix}`;
 
-  return `${preview}${descriptionSuffix}`;
+  return fullPrompt;
 }

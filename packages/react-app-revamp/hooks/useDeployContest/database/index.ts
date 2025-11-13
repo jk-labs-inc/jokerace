@@ -55,7 +55,6 @@ export async function indexContest(contestData: ContestValues) {
       vote_start_at: contestData.datetimeOpeningVoting.toISOString(),
       end_at: contestData.datetimeClosingVoting.toISOString(),
       title: contestData.title,
-      type: contestData.type,
       prompt: contestData.prompt,
       address: contestData.contractAddress,
       anyone_can_submit: contestData.anyoneCanSubmit,

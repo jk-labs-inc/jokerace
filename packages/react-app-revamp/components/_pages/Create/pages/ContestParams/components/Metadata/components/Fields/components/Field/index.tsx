@@ -6,6 +6,7 @@ import ContestParamsMetadataFieldsDropdown from "../../../Dropdown";
 import { fieldsDropdownOptions, metadataFields } from "../../utils";
 import CreateTextInput from "@components/_pages/Create/components/TextInput";
 import { MetadataField } from "@hooks/useDeployContest/slices/contestMetadataSlice";
+import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultDropdown";
 
 interface ContestParamsMetadataFieldProps {
   index: number;
@@ -54,9 +55,9 @@ const ContestParamsMetadataField: FC<ContestParamsMetadataFieldProps> = ({ index
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <p className="text-[16px] text-neutral-11 font-bold uppercase">field type</p>
-          <ContestParamsMetadataFieldsDropdown
+          <CreateDefaultDropdown
             options={fieldsDropdownOptions}
-            defaultOption={fieldsDropdownOptions.find(o => o.value === field.metadataType)!}
+            defaultValue={fieldsDropdownOptions.find(o => o.value === field.metadataType)!.label}
             onChange={handleDropdownChange}
           />
         </div>
@@ -64,12 +65,7 @@ const ContestParamsMetadataField: FC<ContestParamsMetadataFieldProps> = ({ index
       </div>
       <div className="flex flex-col gap-2">
         <p className="text-[16px] text-neutral-11 font-bold uppercase">field prompt</p>
-        <CreateTextInput
-          value={field.prompt}
-          onChange={handlePromptChange}
-          className="text-[16px] md:text-[20px] w-full md:w-[502px] border-b border-neutral-11 placeholder-neutral-10 placeholder-bold bg-transparent focus:outline-none"
-          placeholder={field.promptLabel}
-        />
+        <CreateTextInput value={field.prompt} onChange={handlePromptChange} placeholder={field.promptLabel} />
       </div>
     </div>
   );

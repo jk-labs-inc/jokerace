@@ -28,6 +28,7 @@ export enum PriceCurveType {
 export interface PriceCurve {
   type: PriceCurveType;
   multiple: number;
+  multipler: number;
 }
 
 export interface ContestValues {
