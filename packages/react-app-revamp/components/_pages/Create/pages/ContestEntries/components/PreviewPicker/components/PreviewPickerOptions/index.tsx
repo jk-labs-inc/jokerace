@@ -32,7 +32,7 @@ const CreateContestEntriesPreviewPickerOptions = () => {
         key="tweets"
         title="tweets"
         isActive={entryPreviewConfig.preview === EntryPreview.TWEET}
-        imageSrc="/create-flow/tweet-preview.svg"
+        imageSrc="/create-flow/tweet-preview.png"
         onClick={handleTweetsOptionClick}
       />
     </div>
