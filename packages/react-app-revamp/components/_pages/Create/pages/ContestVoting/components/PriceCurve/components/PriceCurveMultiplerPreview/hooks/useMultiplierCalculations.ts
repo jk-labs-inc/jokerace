@@ -5,8 +5,12 @@ import { useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
 const validateMultiplier = (value: number): string => {
-  if (value <= 1.0) {
-    return "finish price must be higher than start price";
+  if (value < 8.0) {
+    return "multiplier must be at least 8x";
+  }
+
+  if (value > 20.0) {
+    return "multiplier cannot exceed 20x";
   }
 
   return "";

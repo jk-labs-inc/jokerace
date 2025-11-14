@@ -3,7 +3,6 @@ import { motion } from "motion/react";
 
 interface CreateContestEntriesPreviewPickerOptionsContainerProps {
   title: string;
-  key: string;
   isActive: boolean;
   imageSrc: string;
   onClick?: () => void;
@@ -11,20 +10,18 @@ interface CreateContestEntriesPreviewPickerOptionsContainerProps {
 
 const CreateContestEntriesPreviewPickerOptionsContainer: FC<CreateContestEntriesPreviewPickerOptionsContainerProps> = ({
   title,
-  key,
   isActive,
   imageSrc,
   onClick,
 }) => {
   return (
     <motion.button
-      key={key}
       onClick={onClick}
       animate={{
         borderColor: isActive ? "rgb(250, 250, 250)" : "rgb(64, 64, 64)", // neutral-11 : neutral-10
       }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
-      className={`flex flex-col w-40 h-38 md:h-[280px] md:w-80 gap-1.5 md:gap-6 p-2 md:p-6 rounded-xl md:rounded-2xl bg-true-black border ${
+      className={`flex flex-col w-40 h-38 md:h-[360px] md:w-96 gap-1.5 md:gap-6 p-2 md:p-6 rounded-xl md:rounded-2xl bg-true-black border ${
         isActive ? "border-neutral-11" : "border-neutral-10"
       }`}
     >
@@ -38,9 +35,8 @@ const CreateContestEntriesPreviewPickerOptionsContainer: FC<CreateContestEntries
       >
         {title}
       </motion.p>
-      {/* TODO: fix for mobile */}
-      <div className="py-2 md:py-6 flex justify-center items-center rounded-lg border border-primary-5 overflow-hidden">
-        <img src={imageSrc} alt={title} className="w-full h-full object-contain md:h-[168px]" />
+      <div className="py-2 md:py-4 flex justify-center items-center rounded-lg border border-primary-5 overflow-hidden">
+        <img src={imageSrc} alt={title} className="w-full h-full object-contain" />
       </div>
     </motion.button>
   );

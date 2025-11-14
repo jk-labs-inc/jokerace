@@ -12,8 +12,8 @@ const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected
       isConnected &&
       !!state.charge.type.costToVote &&
       state.charge.type.costToVote > 0 &&
-      state.priceCurve.multipler > 1.0 &&
-      state.priceCurve.multiple > 0
+      state.priceCurve.multipler >= 8.0 &&
+      state.priceCurve.multipler <= 20.0
     );
   },
 
