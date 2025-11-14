@@ -46,28 +46,8 @@ const LandingPageExplainer = () => {
 
   const sectionContent = [
     {
-      title: "why launch contests with JokeRace?",
-      titleFontSize: "text-[20px] md:text-[24px]",
       content: (
         <>
-          <ul className="flex flex-col pl-4 gap-2">
-            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-              make a contest, make money: we split all charges {PERCENTAGE_TO_CREATOR_DEFAULT} (you)/
-              {PERCENTAGE_TO_JKLABS_DEFAULT} (us)
-            </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-              let anyone vote—or allowlist. the choice is yours, and it’s anti-bot.
-            </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-              incentivize voting: players buy votes to fund rewards they can win
-            </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-              keep the money you earn, or put it back into rewards pool
-            </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-              give players rewards, points, credentials—all data is onchain
-            </li>
-          </ul>
           <Subscribe />
         </>
       ),
@@ -78,63 +58,61 @@ const LandingPageExplainer = () => {
       content: (
         <>
           <div className="flex flex-col gap-4 mdgap-6">
-            <p className="text-neutral-11 text-[16px] md:text-[20px] font-bold">to create a contest:</p>
+            <p className="text-neutral-11 text-[16px] md:text-[20px] font-bold">to play in a contest:</p>
             <ul className="flex flex-col pl-4 gap-2">
               <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-                pick your contest type: who can enter? who can vote?
+                buy as many votes as you like on entries (on a price curve)
               </li>
               <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-                pick a gallery view or text view
+                90% of funds go into a rewards pool
               </li>
               <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-                set duration for entry and voting periods
+                vote on winning entries to earn your share of rewards
               </li>
               <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-                set charges for entering and voting
-              </li>
-              <li className="text-[16px] md:text-[20px] mt-4 md:mt-6 text-neutral-11 arrow-list-item">
-                <i>bonus: add a rewards pool. fund it yourself—or with money you earn from the contest.</i>
+                vote earlier with conviction to earn more
               </li>
             </ul>
           </div>
-          <p className="text-neutral-11 text-[16px] md:text-[20px]">
-            <b>and it’s free.</b> you just pay the cost to deploy (often just cents).
-          </p>
-          <CustomLink
-            prefetch={true}
-            href={ROUTE_CREATE_CONTEST}
-            className="w-[218px] h-10 bg-gradient-purple-white rounded-[40px] normal-case text-[20px] font-bold text-true-black flex items-center justify-center relative transition-all duration-300 hover:opacity-90"
-          >
-            <span className="mr-4 normal-case">Create a Contest</span>
-            <ChevronRightIcon className="w-6 h-6 text-true-black font-bold absolute right-2" />
-          </CustomLink>
-        </>
-      ),
-    },
-    {
-      title: "to play in a contest:",
-      titleFontSize: "text-[16px] md:text-[20px]",
-      content: (
-        <>
-          <ul className="flex flex-col pl-4 gap-2">
-            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-              submit entries during the entry period
-            </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-              vote on entries during the voting period
-            </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-              {isMobile
-                ? "earn rewards, attestations, points, credentials"
-                : "earn rewards, attestations, points, credentials, and more."}
-            </li>
-          </ul>
           <CustomLink
             prefetch={true}
             href={ROUTE_VIEW_LIVE_CONTESTS}
             className="w-[218px] h-10 bg-gradient-purple-white rounded-[40px] normal-case text-[20px] font-bold text-true-black flex items-center justify-center relative transition-all duration-300 hover:opacity-90"
           >
             <span className="mr-4 normal-case">View Contests</span>
+            <ChevronRightIcon className="w-6 h-6 text-true-black font-bold absolute right-2" />
+          </CustomLink>
+        </>
+      ),
+    },
+    {
+      title: "to create a contest for free:",
+      titleFontSize: "text-[16px] md:text-[20px]",
+      content: (
+        <>
+          <ul className="flex flex-col pl-4 gap-2">
+            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
+              pick who can submit entries and what they should look like
+            </li>
+            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
+              decide what the price curve looks like
+            </li>
+            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
+              set the voting period
+            </li>
+            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
+              add rewards and descriptions
+            </li>
+            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
+              that's it!
+            </li>
+          </ul>
+          <CustomLink
+            prefetch={true}
+            href={ROUTE_CREATE_CONTEST}
+            className="w-[218px] h-10 bg-gradient-purple-white rounded-[40px] normal-case text-[20px] font-bold text-true-black flex items-center justify-center relative transition-all duration-300 hover:opacity-90"
+          >
+            <span className="mr-4 normal-case">Create a Contest</span>
             <ChevronRightIcon className="w-6 h-6 text-true-black font-bold absolute right-2" />
           </CustomLink>
         </>
