@@ -8408,10 +8408,10 @@
   resolved "https://registry.yarnpkg.com/@vanilla-extract/sprinkles/-/sprinkles-1.6.4.tgz#adf34734bd480bbcc835eec94f90869a81f35af5"
   integrity sha512-lW3MuIcdIeHKX81DzhTnw68YJdL1ial05exiuvTLJMdHXQLKcVB93AncLPajMM6mUhaVVx5ALZzNHMTrq/U9Hg==
 
-"@vercel/build-utils@13.0.0":
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-13.0.0.tgz#efca27611143f2a6ffbf709a9bfd10f58ec982bf"
-  integrity sha512-rtO2PJy4mzZCIdXz9EUbo5ehl2u7kt6CEXvcHKTPwDa9/3tTpTf43tN61OxE1hNf/8fLA/o/goX9TwwWIJGAHw==
+"@vercel/build-utils@13.0.1":
+  version "13.0.1"
+  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-13.0.1.tgz#92b4c7d37f897e13876ae224792676eb2dae6cb6"
+  integrity sha512-RVWYBhVAwoJsuRRq/93OnKVaYEdPlceYnz5f3daRQvrhmjoYRup3y/uy+/SQ5W9I+c0kWdsbogkJ5oBkaWWMOQ==
 
 "@vercel/error-utils@2.0.3":
   version "2.0.3"
@@ -8436,16 +8436,16 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@5.5.5":
-  version "5.5.5"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.5.5.tgz#34f6fb1b3f703ce75b2a11a17c043b64e51dbc7e"
-  integrity sha512-g08FoUe2YbrwDRlws88kGgFINMXFvzJSMRUcgjpFQFLIfuiG58jVEqbRhCEt5Fa/goAyHQEzBVrEHttKbi3/sg==
+"@vercel/node@5.5.6":
+  version "5.5.6"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.5.6.tgz#c0696f7f83c2078fb72ede52f53f38fb387d437b"
+  integrity sha512-U8x9Bh70vX74fAE+3G6+M3QdWyTe1gLUzDxG3s2P2SvYRkvtpCkCO2K8UCeceyA7uGH9+XB9nU6PZy08UK+17w==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
     "@edge-runtime/vm" "3.2.0"
     "@types/node" "16.18.11"
-    "@vercel/build-utils" "13.0.0"
+    "@vercel/build-utils" "13.0.1"
     "@vercel/error-utils" "2.0.3"
     "@vercel/nft" "0.30.1"
     "@vercel/static-config" "3.1.2"
@@ -8462,6 +8462,7 @@
     ts-morph "12.0.0"
     ts-node "10.9.1"
     typescript "4.9.5"
+    typescript5 "npm:typescript@5.9.3"
     undici "5.28.4"
 
 "@vercel/static-config@3.1.2":
@@ -16651,6 +16652,11 @@ typed-array-length@^1.0.7:
     is-typed-array "^1.1.13"
     possible-typed-array-names "^1.0.0"
     reflect.getprototypeof "^1.0.6"
+
+"typescript5@npm:typescript@5.9.3":
+  version "5.9.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.9.3.tgz#5b4f59e15310ab17a216f5d6cf53ee476ede670f"
+  integrity sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==
 
 typescript@4.9.5:
   version "4.9.5"
