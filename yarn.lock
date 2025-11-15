@@ -17130,10 +17130,10 @@ w3c-keyname@^2.2.0:
   resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.8.tgz#7b17c8c6883d4e8b86ac8aba79d39e880f8869c5"
   integrity sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==
 
-wagmi@2.19.3:
-  version "2.19.3"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.19.3.tgz#54e433108015ea50b445be06e466036128d70f3f"
-  integrity sha512-KWeXrU+bKhqdNTqN4nGx2PZW0hKBGZN0LOAsfZtuGItdlvRNxk6WQvF1WpQL06oiD8C9hccnwk1whDGgkPvQpA==
+wagmi@2.19.4:
+  version "2.19.4"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.19.4.tgz#eb7acd4643235fe683d160a40ec8fe3eb15c6d59"
+  integrity sha512-jjGwxoISGlEkuxE80u+cHRr4IeZNjoVgVItUo8PRyT3gbL8FYIsGdb+qUuTAOOb08lr/NaySRjty5zJDaZcn8w==
   dependencies:
     "@wagmi/connectors" "6.1.4"
     "@wagmi/core" "2.22.1"
