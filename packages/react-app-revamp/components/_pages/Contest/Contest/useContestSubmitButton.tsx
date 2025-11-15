@@ -58,7 +58,7 @@ export const useContestSubmitButton = () => {
           size={isMobile ? ButtonSize.EXTRA_LARGE_LONG_MOBILE : ButtonSize.EXTRA_LARGE_LONG}
           onClick={openConnectModal}
         >
-          connect wallet to enter contest
+          connect wallet to submit entry
         </ButtonV3>
       );
     }
@@ -73,7 +73,7 @@ export const useContestSubmitButton = () => {
           size={isMobile ? ButtonSize.EXTRA_LARGE_LONG_MOBILE : ButtonSize.EXTRA_LARGE_LONG}
           onClick={handleEnterContest}
         >
-          enter contest
+          submit entry
         </ButtonV3>
       );
     }
