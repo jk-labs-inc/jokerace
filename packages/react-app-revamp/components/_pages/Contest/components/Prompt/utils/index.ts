@@ -20,10 +20,12 @@ export const parsePrompt = (prompt: string): ParsedPrompt => {
 
   try {
     const params = new URLSearchParams(prompt);
-    if (params.has("type") && params.has("summarize") && params.has("evaluateVoters")) {
+    // Check for URLSearchParams format by looking for new format fields
+    // Don't require 'type' since new contests don't have it
+    if (params.has("summarize") && params.has("evaluateVoters")) {
       return {
         ...defaultPrompt,
-        contestType: params.get("type") || "",
+        contestType: params.get("type") || "", // Optional - only old contests have this
         contestSummary: params.get("summarize") || "",
         contestEvaluate: params.get("evaluateVoters") || "",
         contestContactDetails: params.get("contactDetails") || "",

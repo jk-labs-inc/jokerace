@@ -1,4 +1,3 @@
-import { ContestType } from "@components/_pages/Create/types";
 import { Avatar } from "@components/UI/Avatar";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
@@ -150,19 +149,6 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
     return ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", network_name).replace("[address]", address);
   };
 
-  const formatContestType = (type: string | null) => {
-    if (!type) return "";
-
-    switch (type) {
-      case ContestType.AnyoneCanPlay:
-        return "anyone can enter & vote";
-      case ContestType.VotingContest:
-        return "anyone can vote";
-      default:
-        return type;
-    }
-  };
-
   return (
     <CustomLink
       prefetch={true}
@@ -197,9 +183,8 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
               </AnimatePresence>
             </div>
           ) : null}
-
           <div className="flex items-center h-6 bg-neutral-7 px-2 border-true-black border rounded-[8px]">
-            <p className="text-neutral-11 font-bold text-[12px]">{formatContestType(contestData.type)}</p>
+            <p className="text-neutral-11 font-bold text-[12px]">vote & earn</p>
           </div>
         </div>
         <div className="flex flex-col gap-2">

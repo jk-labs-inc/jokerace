@@ -1,5 +1,5 @@
 import { Switch } from "@headlessui/react";
-import { FC, useState } from "react";
+import { FC } from "react";
 
 interface CreateSwitchProps {
   checked: boolean;
@@ -11,7 +11,7 @@ const CreateSwitch: FC<CreateSwitchProps> = ({ checked, onChange }) => {
     <Switch
       checked={checked}
       onChange={onChange}
-      className="group relative flex h-6 w-12 cursor-pointer rounded-full bg-neutral-10 ease-in-out focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white"
+      className="group relative flex h-6 w-12 cursor-pointer rounded-full bg-neutral-10 transition-colors duration-200 ease-in-out focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-checked:bg-secondary-11"
     >
       <span
         aria-hidden="true"

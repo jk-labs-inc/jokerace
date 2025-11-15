@@ -1,14 +1,13 @@
-import { ContestType } from "@components/_pages/Create/types";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { parseEther } from "viem";
 import { JK_LABS_SPLIT_DESTINATION_DEFAULT, MAX_SUBMISSIONS_LIMIT } from "../index";
 import { Charge, PriceCurveType } from "../types";
 import { createMetadataFieldsSchema } from "./index";
+import { EntryPreviewConfig, MetadataField } from "../slices/contestMetadataSlice";
 
 export interface ConstructorArgsParams {
   title: string;
   combinedPrompt: string;
-  contestType: ContestType;
   submissionOpen: Date;
   votingOpen: Date;
   votingClose: Date;
@@ -21,8 +20,8 @@ export interface ConstructorArgsParams {
     type: PriceCurveType;
     multiple: number;
   };
-  metadataFields: any;
-  entryPreviewConfig: any;
+  metadataFields: MetadataField[];
+  entryPreviewConfig: EntryPreviewConfig;
   clientAccountAddress?: string;
   jkLabsSplitDestination: string;
 }
@@ -31,7 +30,6 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
   const {
     title,
     combinedPrompt,
-    contestType,
     submissionOpen,
     votingOpen,
     votingClose,
@@ -40,18 +38,16 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     priceCurve,
     metadataFields,
     entryPreviewConfig,
-    clientAccountAddress,
     jkLabsSplitDestination,
   } = params;
 
-  const isAnyoneCanSubmit = contestType === ContestType.AnyoneCanPlay ? 1 : 0;
   const { type: chargeType, percentageToCreator } = charge;
 
   const costToVote =
     priceCurve.type === PriceCurveType.Flat ? chargeType.costToVote : chargeType.costToVoteStartPrice ?? 0;
 
   const intConstructorArgs = {
-    anyoneCanSubmit: isAnyoneCanSubmit,
+    anyoneCanSubmit: entryPreviewConfig.isAnyoneCanSubmit ? 1 : 0,
     contestStart: getUnixTime(submissionOpen),
     votingDelay: differenceInSeconds(votingOpen, submissionOpen),
     votingPeriod: differenceInSeconds(votingClose, votingOpen),
@@ -62,8 +58,8 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     percentageToCreator: percentageToCreator,
     costToPropose: parseEther(chargeType.costToPropose.toString()),
     costToVote: parseEther(costToVote.toString()),
-    priceCurveType: priceCurve.type === PriceCurveType.Flat ? 0 : 1,
-    multiple: priceCurve.type === PriceCurveType.Flat ? 1 : parseEther(priceCurve.multiple.toString()),
+    priceCurveType: 1, // Exponential
+    multiple: parseEther(priceCurve.multiple.toString()),
   };
 
   const constructorArgs = {

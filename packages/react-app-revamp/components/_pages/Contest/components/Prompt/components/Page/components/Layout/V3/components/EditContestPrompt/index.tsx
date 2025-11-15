@@ -17,7 +17,7 @@ interface EditContestPromptProps {
 }
 
 const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }) => {
-  const { contestType, contestSummary, contestEvaluate, contestContactDetails, contestImageUrl } = parsePrompt(prompt);
+  const { contestSummary, contestEvaluate, contestContactDetails, contestImageUrl } = parsePrompt(prompt);
   const { address, chain: accountChain } = useAccount();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const isOnCorrectChain = accountChain?.name.toLowerCase() === contestConfig.chainName.toLowerCase();
@@ -52,7 +52,6 @@ const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }
     if (!isOnCorrectChain) await switchChain(config, { chainId: contestConfig.chainId });
 
     const formattedPrompt = new URLSearchParams({
-      type: contestType,
       imageUrl: contestImageUrl ?? "",
       summarize: newPrompt.contestSummary,
       evaluateVoters: newPrompt.contestEvaluate,

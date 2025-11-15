@@ -4,9 +4,17 @@ import { useQuery } from "@tanstack/react-query";
 import { PERCENTAGE_TO_CREATOR_DEFAULT } from "constants/monetization";
 import { fetchChargeDetails } from "lib/monetization";
 import { useEffect } from "react";
+import { useShallow } from "zustand/shallow";
 
 const useChargeDetails = (chainName: string) => {
-  const { setCharge, setPrevChainRefInCharge, prevChainRefInCharge, setMinCharge } = useDeployContestStore();
+  const { setCharge, setPrevChainRefInCharge, prevChainRefInCharge, priceCurve } = useDeployContestStore(
+    useShallow(state => ({
+      setCharge: state.setCharge,
+      setPrevChainRefInCharge: state.setPrevChainRefInCharge,
+      prevChainRefInCharge: state.prevChainRefInCharge,
+      priceCurve: state.priceCurve,
+    })),
+  );
   const {
     data: chargeDetails,
     isLoading,
@@ -36,26 +44,21 @@ const useChargeDetails = (chainName: string) => {
         error: true,
       });
     } else {
-      setMinCharge({
-        minCostToPropose: chargeDetails.minCostToPropose,
-        minCostToVote: chargeDetails.minCostToVote,
-      });
-
       setCharge({
         percentageToCreator: PERCENTAGE_TO_CREATOR_DEFAULT,
         voteType: VoteType.PerVote,
         type: {
-          costToPropose: chargeDetails.defaultCostToPropose,
-          costToVote: chargeDetails.defaultCostToVote,
-          costToVoteStartPrice: chargeDetails.defaultCostToVoteStartPrice,
-          costToVoteEndPrice: chargeDetails.defaultCostToVoteEndPrice,
+          costToPropose: 0,
+          costToVote: chargeDetails.costToVote,
+          costToVoteStartPrice: chargeDetails.costToVote,
+          costToVoteEndPrice: chargeDetails.costToVote * priceCurve.multipler,
         },
         error: false,
       });
     }
 
     setPrevChainRefInCharge(chainName);
-  }, [chargeDetails, chainName, prevChainRefInCharge, setCharge, setMinCharge, setPrevChainRefInCharge]);
+  }, [chargeDetails, chainName, prevChainRefInCharge, setCharge, setPrevChainRefInCharge]);
 
   return {
     isLoading,

@@ -5,7 +5,6 @@ import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import CreateContestConfirmLayout from "../Layout";
-import CostToEnterMessage from "./components/CostToEnter";
 import CostToVoteMessage from "./components/CostToVote";
 import CreatorChargesMessage from "./components/CreatorCharges";
 
@@ -61,19 +60,15 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
           highlightChainChange && !isLoading ? "text-negative-11 animate-pulse" : "text-neutral-11"
         } transition-all duration-300`}
       >
-        <p className="text-neutral-9 text-[12px] font-bold uppercase">monetization</p>
+        <p className="text-neutral-9 text-[12px] font-bold uppercase">voting</p>
         {isLoading ? (
           <p className="loadingDots font-sabo-filled text-[14px] text-neutral-14">loading charge fees</p>
         ) : (
           <ul className="flex flex-col pl-6 list-disc">
-            <CostToEnterMessage costToPropose={type.costToPropose} nativeCurrencySymbol={nativeCurrencySymbol} />
             <CostToVoteMessage
-              costToVote={type.costToVote}
               costToVoteStartPrice={type.costToVoteStartPrice}
               costToVoteEndPrice={type.costToVoteEndPrice}
-              priceCurve={priceCurve}
               nativeCurrencySymbol={nativeCurrencySymbol}
-              voteType={voteType}
             />
             <CreatorChargesMessage percentageToCreator={charge.percentageToCreator} />
           </ul>

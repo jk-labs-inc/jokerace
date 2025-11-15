@@ -42,7 +42,7 @@ const ContestParamsMetadataFields = () => {
   };
 
   return (
-    <div className="flex flex-col gap-16">
+    <div className="flex flex-col gap-8">
       {storeFields.map((field, index) => (
         <ContestParamsMetadataField key={index} index={index} field={field} />
       ))}

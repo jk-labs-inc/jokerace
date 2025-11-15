@@ -15,7 +15,7 @@ export const metadataFields: MetadataField[] = [
     prompt: "",
     description: {
       desktop: (
-        <p className="text-[20px] text-neutral-11">
+        <p className="text-[16px] text-neutral-11">
           a string lets players write whatever they want in <br />
           response to your prompt, with unlimited characters.
         </p>
@@ -34,7 +34,7 @@ export const metadataFields: MetadataField[] = [
     prompt: "",
     description: {
       desktop: (
-        <p className="text-[20px] text-neutral-11">
+        <p className="text-[16px] text-neutral-11">
           an integer lets players write a series of numbers in <br />
           response to your prompt, with unlimited characters.
         </p>
@@ -53,7 +53,7 @@ export const metadataFields: MetadataField[] = [
     prompt: "",
     description: {
       desktop: (
-        <p className="text-[20px] text-neutral-11">
+        <p className="text-[16px] text-neutral-11">
           players will need to give a 42 character address starting <br />
           with 0x—useful for funding other addresses.
         </p>

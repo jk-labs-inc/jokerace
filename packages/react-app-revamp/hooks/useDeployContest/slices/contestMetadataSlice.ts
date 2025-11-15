@@ -3,6 +3,11 @@ import { metadataFields } from "@components/_pages/Create/pages/ContestParams/co
 
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
 
+export enum EntryPermission {
+  ANYONE_CAN_SUBMIT = 1,
+  ONLY_CREATOR = 0,
+}
+
 export interface MetadataField {
   elementType: "string" | "number";
   metadataType: "string" | "uint256" | "address";
@@ -24,7 +29,8 @@ export enum EntryPreview {
 
 export interface EntryPreviewConfig {
   preview: EntryPreview;
-  isAdditionalDescriptionEnabled: boolean;
+  isTitleRequired: boolean;
+  isAnyoneCanSubmit: EntryPermission;
 }
 
 export interface MetadataSliceState {
@@ -45,8 +51,9 @@ export const createMetadataSlice = (set: any): MetadataSlice => ({
   metadataToggle: false,
   metadataFields: metadataFields.slice(0, 1),
   entryPreviewConfig: {
-    preview: EntryPreview.TITLE,
-    isAdditionalDescriptionEnabled: true,
+    preview: EntryPreview.IMAGE,
+    isTitleRequired: false,
+    isAnyoneCanSubmit: EntryPermission.ANYONE_CAN_SUBMIT,
   },
 
   setMetadataToggle: (toggle: boolean) => set({ metadataToggle: toggle }),

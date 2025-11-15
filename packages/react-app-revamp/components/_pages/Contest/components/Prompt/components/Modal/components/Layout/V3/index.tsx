@@ -6,7 +6,6 @@ import { FC } from "react";
 
 interface ContestPromptModalV3LayoutProps {
   contestName: string;
-  contestType: string;
   contestSummary: string;
   isPromptOpen: boolean;
   contestEvaluate?: string;
@@ -16,7 +15,6 @@ interface ContestPromptModalV3LayoutProps {
 
 const ContestPromptModalV3Layout: FC<ContestPromptModalV3LayoutProps> = ({
   contestName,
-  contestType,
   contestSummary,
   isPromptOpen,
   contestEvaluate,

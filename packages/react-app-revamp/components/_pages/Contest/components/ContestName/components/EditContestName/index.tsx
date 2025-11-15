@@ -20,8 +20,7 @@ interface EditContestNameProps {
 
 const EditContestName: FC<EditContestNameProps> = ({ contestName, contestPrompt, canEditTitle }) => {
   const { address, chain: accountChain } = useAccount();
-  const { contestType, contestSummary, contestEvaluate, contestContactDetails, contestImageUrl } =
-    parsePrompt(contestPrompt);
+  const { contestSummary, contestEvaluate, contestContactDetails, contestImageUrl } = parsePrompt(contestPrompt);
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const isOnCorrectChain = accountChain?.name.toLowerCase() === contestConfig.chainName.toLowerCase();
   const { contestAuthorEthereumAddress } = useContestStore(state => state);
@@ -60,7 +59,6 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, contestPrompt,
     // create formatted prompt if image is being updated
     const getFormattedPrompt = (newImageUrl: string) => {
       return new URLSearchParams({
-        type: contestType,
         imageUrl: newImageUrl,
         summarize: contestSummary,
         evaluateVoters: contestEvaluate,

@@ -1,13 +1,5 @@
-import { ContestType } from "@components/_pages/Create/types";
-
 export interface ContestDataParams {
-  constructorArgs: {
-    intConstructorArgs: {
-      anyoneCanSubmit: number;
-    };
-  };
   title: string;
-  contestType: ContestType;
   combinedPrompt: string;
   submissionOpen: Date;
   votingOpen: Date;
@@ -22,12 +14,12 @@ export interface ContestDataParams {
   charge: {
     percentageToCreator: number;
   };
+  isAnyoneCanSubmit: boolean;
 }
 
 export interface ContestData {
   anyoneCanSubmit: number;
   title: string;
-  type: ContestType;
   prompt: string;
   datetimeOpeningSubmissions: Date;
   datetimeOpeningVoting: Date;
@@ -45,9 +37,8 @@ export interface ContestData {
 
 export const prepareContestData = (params: ContestDataParams): ContestData => {
   const {
-    constructorArgs,
     title,
-    contestType,
+    isAnyoneCanSubmit,
     combinedPrompt,
     submissionOpen,
     votingOpen,
@@ -60,9 +51,8 @@ export const prepareContestData = (params: ContestDataParams): ContestData => {
   } = params;
 
   return {
-    anyoneCanSubmit: constructorArgs.intConstructorArgs.anyoneCanSubmit,
+    anyoneCanSubmit: isAnyoneCanSubmit ? 1 : 0,
     title: title,
-    type: contestType,
     prompt: combinedPrompt,
     datetimeOpeningSubmissions: submissionOpen,
     datetimeOpeningVoting: votingOpen,

@@ -28,6 +28,7 @@ export enum PriceCurveType {
 export interface PriceCurve {
   type: PriceCurveType;
   multiple: number;
+  multipler: number;
 }
 
 export interface ContestValues {
@@ -36,7 +37,6 @@ export interface ContestValues {
   datetimeOpeningVoting: Date;
   datetimeClosingVoting: Date;
   title: string;
-  type: string;
   prompt: string;
   contractAddress: string;
   networkName: string;

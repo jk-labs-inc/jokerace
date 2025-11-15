@@ -28,13 +28,6 @@ const CreateContestConfirmPreview: FC<CreateContestConfirmPreviewProps> = ({
     }
   }, [entryPreviewConfig.preview]);
 
-  const determineAdditionalDescriptionText = useMemo(() => {
-    if (entryPreviewConfig.isAdditionalDescriptionEnabled) {
-      return "contestants can include additional description";
-    }
-    return "contestants can't include additional description";
-  }, [entryPreviewConfig.isAdditionalDescriptionEnabled]);
-
   const determineMetadataFieldsText = useMemo(() => {
     if (!metadataFields?.length) {
       return "0 additional fields required";
@@ -50,7 +43,6 @@ const CreateContestConfirmPreview: FC<CreateContestConfirmPreviewProps> = ({
         <p className="text-neutral-9 text-[12px] font-bold uppercase">format</p>
         <ul className="flex flex-col list-disc pl-6">
           <li className="text-[16px] text-neutral-11">{determinePreviewText}</li>
-          <li className="text-[16px] text-neutral-11">{determineAdditionalDescriptionText}</li>
           <li className="text-[16px] text-neutral-11">{determineMetadataFieldsText}</li>
         </ul>
       </div>

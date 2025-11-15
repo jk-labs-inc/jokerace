@@ -4,11 +4,17 @@ import { useAccount } from "wagmi";
 import { StepTitle, getStepNumber } from "../types";
 
 const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected: boolean) => boolean> = {
-  [StepTitle.Type]: state => {
-    return true;
-  },
   [StepTitle.Entries]: state => {
     return true;
+  },
+  [StepTitle.Voting]: (state, isConnected) => {
+    return (
+      isConnected &&
+      !!state.charge.type.costToVote &&
+      state.charge.type.costToVote > 0 &&
+      state.priceCurve.multipler >= 8.0 &&
+      state.priceCurve.multipler <= 20.0
+    );
   },
 
   [StepTitle.Timing]: state => {
@@ -24,9 +30,6 @@ const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected
     return true;
   },
 
-  [StepTitle.Monetization]: (state, isConnected) => {
-    return isConnected && !!state.charge.type.costToVote && state.charge.type.costToVote > 0;
-  },
   [StepTitle.Rewards]: state => {
     const validation = state.validateRewards();
     if (!validation.isValid) {
