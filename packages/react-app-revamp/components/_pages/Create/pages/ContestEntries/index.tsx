@@ -1,4 +1,3 @@
-import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useMediaQuery } from "react-responsive";
 import CreateNextButton from "../../components/Buttons/Next";
@@ -6,20 +5,15 @@ import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
 import { useContestSteps } from "../../hooks/useContestSteps";
 import { useNextStep } from "../../hooks/useNextStep";
-import ContestParamsMetadata from "../ContestParams/components/Metadata";
-import ContestEntriesAdditionalDescription from "./components/AdditionalDescription";
-import ContestEntriesPreview from "./components/Preview";
+import CreateContestEntriesEntrySettings from "./components/EntrySettings";
+import CreateContestEntriesPreviewPicker from "./components/PreviewPicker";
 
 const CreateContestEntries = () => {
   const { steps } = useContestSteps();
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const { step, metadataToggle, setMetadataToggle } = useDeployContestStore(state => state);
+  const { step } = useDeployContestStore(state => state);
   const onNextStep = useNextStep();
-  const stepTitle = "format";
-
-  const toggleMetadata = () => {
-    setMetadataToggle(!metadataToggle);
-  };
+  const stepTitle = "entries";
 
   return (
     <div className="flex flex-col">
@@ -29,24 +23,21 @@ const CreateContestEntries = () => {
           <StepCircle step={step + 1} />
         </div>
         <div className="col-span-2 ml-10">
-          <p className="text-[24px] text-neutral-11 font-bold">{stepTitle}</p>
+          <p className="text-[24px] text-neutral-11 font-bold pl-6">{stepTitle}</p>
         </div>
 
-        <div className="grid gap-12 col-start-1 md:col-start-2 col-span-3 md:col-span-2 md:ml-10 mt-8 md:mt-14">
-          <ContestEntriesPreview />
-          <ContestEntriesAdditionalDescription />
+        <div className="grid gap-12 col-start-1 md:col-start-2 col-span-3 md:col-span-2 md:ml-10 mt-8 md:mt-10">
+          <div className="flex flex-col gap-4 w-full md:w-[448px] rounded-4xl p-6 bg-primary-1 text-[16px] text-neutral-11">
+            <p>entries are what voters buy votes on. you can</p>
+            <ul className="list-disc pl-6">
+              <li>submit entries to contest anytime before voting opens</li>
+              <li>add additional info to an entry if you like</li>
+            </ul>
+          </div>
+          <CreateContestEntriesPreviewPicker />
+          <CreateContestEntriesEntrySettings />
 
-          <button className="flex gap-4 items-center" onClick={toggleMetadata}>
-            <p className="text-[20px] text-positive-11">add additional fields</p>
-            <ChevronUpIcon
-              className={`w-6 h-6 text-positive-11 transition-transform duration-300 ${
-                metadataToggle ? "rotate-180" : ""
-              }`}
-            />
-          </button>
-          {metadataToggle ? <ContestParamsMetadata /> : null}
-
-          <div className="mt-4">
+          <div className="mt-4 pl-6">
             <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
           </div>
         </div>

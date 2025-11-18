@@ -1,21 +1,12 @@
-import { ContestType } from "@components/_pages/Create/types";
-import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
-import { Charge, PriceCurve, PriceCurveType } from "@hooks/useDeployContest/types";
+import { EntryPermission, EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
+import { Charge, PriceCurve } from "@hooks/useDeployContest/types";
 import moment from "moment";
 
 const SUMMARY_TEMPLATES = {
-  [ContestType.AnyoneCanPlay]:
-    "This is an open contest where anyone can submit an entry[entry price] and vote by paying [voting price] per vote. Contestants should enter a [entry preview] representing their entry below, along with any relevant information about why voters should vote for them.\n\nContestants can enter between [entry open date] and [entry closing date], and voters can vote between [voting open date] and [voting closing date].",
-
-  [ContestType.VotingContest]:
-    "This contest is open for anyone to vote by paying [voting price] per vote. Pick your favorite entry—or entries!—and you can buy as many votes as you like.\n\nVote between [voting open date] and [voting closing date].",
-};
-
-const EXPONENTIAL_SUMMARY_TEMPLATES = {
-  [ContestType.AnyoneCanPlay]:
+  [EntryPermission.ANYONE_CAN_SUBMIT]:
     "This is an open contest where anyone can submit an entry[entry price]. Contestants should enter a [entry preview] representing their entry below, along with any relevant information about why voters should vote for them.\n\nContestants can enter between [entry open date] and [entry closing date].\n\nVotes start at [voting start price] at [voting open date] and end at [voting end price] at [voting closing date].",
 
-  [ContestType.VotingContest]:
+  [EntryPermission.ONLY_CREATOR]:
     "This contest is open for anyone to vote. Pick your favorite entry—or entries!—and you can buy as many votes as you like.\n\nVotes start at [voting start price] at [voting open date] and end at [voting end price] at [voting closing date].",
 };
 
@@ -38,7 +29,6 @@ const getEntryPreviewLabel = (entryPreview: EntryPreview): string => {
 };
 
 export const generateDynamicSummary = (
-  type: ContestType,
   charge: Charge,
   priceCurve: PriceCurve,
   submissionOpen: Date,
@@ -46,16 +36,9 @@ export const generateDynamicSummary = (
   votingClose: Date,
   entryPreview: EntryPreview,
   nativeCurrency: string,
+  isAnyoneCanSubmit: EntryPermission,
 ) => {
-  const isExponential = priceCurve.type === PriceCurveType.Exponential;
-  const shouldUseExponentialTemplate =
-    isExponential && (type === ContestType.AnyoneCanPlay || type === ContestType.VotingContest);
-
-  const template = shouldUseExponentialTemplate
-    ? EXPONENTIAL_SUMMARY_TEMPLATES[type] || ""
-    : SUMMARY_TEMPLATES[type] || "";
-
-  let result = template;
+  let result = SUMMARY_TEMPLATES[isAnyoneCanSubmit];
 
   const entryPriceText =
     charge.type.costToPropose === 0 ? "" : " for " + charge.type.costToPropose + " " + nativeCurrency;
