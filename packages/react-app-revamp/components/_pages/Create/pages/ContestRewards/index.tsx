@@ -34,7 +34,7 @@ const CreateContestRewards = () => {
         <div className="col-span-2 ml-10 md:pl-6">
           <p className="text-[24px] font-bold text-neutral-11">{contestTitle}</p>
         </div>
-        <div className="grid col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-6">
+        <div className="grid col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-10">
           <div className="flex flex-col gap-12">
             <div className="flex flex-col gap-4 w-full md:w-[448px] rounded-4xl p-6 bg-primary-1 text-[16px] text-neutral-11">
               <p>

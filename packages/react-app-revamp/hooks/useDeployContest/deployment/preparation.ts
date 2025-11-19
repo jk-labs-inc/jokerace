@@ -1,6 +1,9 @@
 import { toastError } from "@components/UI/Toast";
 import { getJkLabsSplitDestinationAddress } from "../database";
 import { prepareConstructorArgs } from "../helpers/constructorArgs";
+import { AdvancedOptions } from "../slices/contestAdvancedOptionsSlice";
+import { EntryPreviewConfig, MetadataField } from "../slices/contestMetadataSlice";
+import { Charge, PriceCurve } from "../types";
 
 interface PrepareDeploymentDataParams {
   address: `0x${string}`;
@@ -9,29 +12,24 @@ interface PrepareDeploymentDataParams {
   chargeType: { costToPropose: number; costToVote: number };
   contestData: {
     title: string;
-    contestType: any;
     submissionOpen: Date;
     votingOpen: Date;
     votingClose: Date;
-    advancedOptions: any;
-    charge: any;
-    priceCurve: any;
-    metadataFields: any;
-    entryPreviewConfig: any;
+    advancedOptions: AdvancedOptions;
+    charge: Charge;
+    priceCurve: PriceCurve;
+    metadataFields: MetadataField[];
+    entryPreviewConfig: EntryPreviewConfig;
   };
 }
 
-export const preparePromptData = (
-  prompt: {
-    summarize: string;
-    evaluateVoters: string;
-    contactDetails?: string;
-    imageUrl?: string;
-  },
-  contestType: string,
-) => {
+export const preparePromptData = (prompt: {
+  summarize: string;
+  evaluateVoters: string;
+  contactDetails?: string;
+  imageUrl?: string;
+}) => {
   return new URLSearchParams({
-    type: contestType,
     summarize: prompt.summarize,
     evaluateVoters: prompt.evaluateVoters,
     contactDetails: prompt.contactDetails ?? "",
@@ -64,7 +62,6 @@ export const prepareDeploymentData = async (params: PrepareDeploymentDataParams)
   const constructorArgs = prepareConstructorArgs({
     title: contestData.title,
     combinedPrompt,
-    contestType: contestData.contestType,
     submissionOpen: contestData.submissionOpen,
     votingOpen: contestData.votingOpen,
     votingClose: contestData.votingClose,

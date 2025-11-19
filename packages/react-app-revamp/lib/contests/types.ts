@@ -20,7 +20,6 @@ export interface BaseContestData {
   network_name: string;
   vote_start_at: string;
   featured: boolean;
-  type: string;
 }
 
 export interface ProcessedContest extends BaseContestData {

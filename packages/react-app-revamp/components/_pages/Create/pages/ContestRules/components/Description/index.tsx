@@ -14,7 +14,6 @@ const CreateContestRulesDescription = () => {
   const {
     prompt,
     setPrompt,
-    contestType,
     charge,
     submissionOpen,
     getVotingOpenDate,
@@ -104,7 +103,6 @@ const CreateContestRulesDescription = () => {
     if (editorSummarize && !isEditorInitialized) {
       if (!prompt.summarize) {
         const defaultContent = generateDynamicSummary(
-          contestType,
           charge,
           priceCurve,
           submissionOpen,
@@ -112,6 +110,7 @@ const CreateContestRulesDescription = () => {
           votingClose,
           entryPreviewConfig.preview,
           symbol,
+          entryPreviewConfig.isAnyoneCanSubmit,
         );
         editorSummarize.commands.setContent(defaultContent);
         setPrompt({

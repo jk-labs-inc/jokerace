@@ -27,7 +27,6 @@ export function useDeployContest() {
   const {
     title,
     prompt,
-    contestType,
     submissionOpen,
     getVotingOpenDate,
     getVotingCloseDate,
@@ -53,7 +52,6 @@ export function useDeployContest() {
     useShallow(state => ({
       title: state.title,
       prompt: state.prompt,
-      contestType: state.contestType,
       submissionOpen: state.submissionOpen,
       getVotingOpenDate: state.getVotingOpenDate,
       getVotingCloseDate: state.getVotingCloseDate,
@@ -94,7 +92,7 @@ export function useDeployContest() {
     try {
       const { address: validatedAddress, chain: validatedChain } = validateDeploymentPrerequisites(address, chain);
 
-      const combinedPrompt = preparePromptData(prompt, contestType);
+      const combinedPrompt = preparePromptData(prompt);
       const { type: chargeType } = charge;
 
       const deploymentData = await prepareDeploymentData({
@@ -104,7 +102,6 @@ export function useDeployContest() {
         chargeType,
         contestData: {
           title,
-          contestType,
           submissionOpen,
           votingOpen,
           votingClose,
@@ -148,7 +145,6 @@ export function useDeployContest() {
         chargeType,
         contestData: {
           title,
-          contestType,
           submissionOpen,
           votingOpen,
           votingClose,
