@@ -59,16 +59,45 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     console.error("failed to retrieve title or description for metatags:", error);
   }
 
+  const contestUrl = `https://jokerace.io/contest/${chain}/${address}`;
+  const frameImage = `https://jokerace.io/api/og/contest/${chain}/${address}`;
+
   return {
     title: contestTitle,
     description: contestDescription,
     openGraph: {
       title: contestTitle,
       description: contestDescription,
+      url: contestUrl,
+      images: [
+        {
+          url: frameImage,
+          width: 1200,
+          height: 630,
+          alt: contestTitle,
+        },
+      ],
     },
     twitter: {
       title: contestTitle,
       description: contestDescription,
+      card: "summary_large_image",
+      images: [frameImage],
+    },
+    other: {
+      // Farcaster Frame metadata
+      "fc:frame": "vNext",
+      "fc:frame:image": frameImage,
+      "fc:frame:image:aspect_ratio": "1.91:1",
+      "fc:frame:button:1": "View Contest",
+      "fc:frame:button:1:action": "link",
+      "fc:frame:button:1:target": contestUrl,
+      "fc:frame:button:2": "Submit Entry",
+      "fc:frame:button:2:action": "link",
+      "fc:frame:button:2:target": contestUrl,
+      "fc:frame:button:3": "Vote",
+      "fc:frame:button:3:action": "link",
+      "fc:frame:button:3:target": contestUrl,
     },
   };
 }

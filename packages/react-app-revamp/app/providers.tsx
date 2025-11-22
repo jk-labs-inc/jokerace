@@ -3,8 +3,10 @@ import { jokeraceTheme } from "@config/rainbowkit";
 import { config } from "@config/wagmi";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import FarcasterProvider from "@components/FarcasterProvider";
 import { FC, ReactNode } from "react";
 import { WagmiProvider, cookieToInitialState } from "wagmi";
+import "@neynar/react/dist/style.css";
 
 type ProvidersProps = {
   cookie: string;
@@ -19,7 +21,9 @@ const Providers: FC<ProvidersProps> = ({ cookie, children }) => {
     <WagmiProvider config={config} {...(initialState ? { initialState } : {})}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider theme={jokeraceTheme} modalSize="wide">
-          {children}
+          <FarcasterProvider>
+            {children}
+          </FarcasterProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

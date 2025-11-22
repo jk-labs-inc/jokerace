@@ -173,10 +173,15 @@ Modular governance system with specialized components:
 - Type-safe API integration
 
 **Social Integration:**
-- Farcaster integration
-- Lens Protocol support
-- Contest Frames (submit, view, vote)
-- Submission Frames (vote, visit)
+- **Farcaster Integration** ✅ **NEWLY IMPLEMENTED** (see [FARCASTER_INTEGRATION.md](./FARCASTER_INTEGRATION.md))
+  - @farcaster/miniapp-sdk for Mini App context
+  - @neynar/react for React components
+  - Farcaster user authentication and profiles
+  - Share contests and submissions to Warpcast
+  - Interactive Frames with buttons on contest and submission pages
+- Lens Protocol support ✅
+- Contest Frames (submit, view, vote) ✅
+- Submission Frames (vote for/against, visit) ✅
 
 ### Custom Hooks (47+)
 

@@ -1,6 +1,7 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import {
   generateFacebookShareUrlForSubmission,
+  generateFarcasterShareUrlForSubmission,
   generateLensShareUrlForSubmission,
   generateLinkedInShareUrlForSubmission,
   generateTwitterShareUrlForSubmission,
@@ -41,6 +42,13 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
     <>
       <p className="text-[20px] text-neutral-11 font-bold">share it:</p>
       <div className="flex gap-4">
+        <a
+          href={generateFarcasterShareUrlForSubmission(contestId, chainName, proposalId)}
+          className="cursor-pointer"
+          target="_blank"
+        >
+          <Image src="/socials/share-submission/farcaster.svg" width={32} height={32} alt="farcaster" />
+        </a>
         <a
           href={generateLensShareUrlForSubmission(contestId, chainName, proposalId)}
           className="cursor-pointer"

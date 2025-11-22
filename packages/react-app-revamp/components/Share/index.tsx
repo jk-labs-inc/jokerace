@@ -1,6 +1,6 @@
 import { Menu, Transition } from "@headlessui/react";
 import { MediaQuery } from "@helpers/mediaQuery";
-import { generateLensShareUrlForContest, generateTwitterShareUrlForContest, generateUrlToCopy } from "@helpers/share";
+import { generateLensShareUrlForContest, generateTwitterShareUrlForContest, generateFarcasterShareUrlForContest, generateUrlToCopy } from "@helpers/share";
 import { DuplicateIcon } from "@heroicons/react/outline";
 import { Reward } from "@hooks/useContest/store";
 import Image from "next/image";
@@ -41,6 +41,22 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
         leaveTo="transform opacity-0 scale-95"
       >
         <Menu.Items className="absolute right-0 z-10  mt-2 w-48 origin-top-right rounded-md bg-true-black shadow-lg ring-1 ring-inset ring-primary-9 ring-opacity-10 focus:outline-none">
+          <Menu.Item>
+            {({ active }) => (
+              <a
+                target="_blank"
+                href={generateFarcasterShareUrlForContest(contestName, contestAddress, chain, rewards)}
+                className={classNames(
+                  active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
+                  "flex items-center text-[16px] gap-1 px-4 py-2 hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
+                )}
+                rel="noreferrer"
+              >
+                <Image src="/socials/farcaster.svg" alt="Farcaster" width={32} height={32} className="object-fit-cover mr-2" />
+                <span className="text-left">share on Farcaster</span>
+              </a>
+            )}
+          </Menu.Item>
           <Menu.Item>
             {({ active }) => (
               <a

@@ -10,6 +10,7 @@ const BASE_JOKERACE_URL = "https://jokerace.io/contest/";
 const BASE_TWITTER_URL = "https://twitter.com/intent/tweet?";
 const BASE_LINKEDIN_URL = "https://www.linkedin.com/sharing/share-offsite/?";
 const BASE_FACEBOOK_URL = "https://www.facebook.com/sharer/sharer.php?";
+const BASE_WARPCAST_URL = "https://warpcast.com/~/compose?";
 
 const buildUrl = (baseUrl: string, params: UrlParams): string => {
   const query = Object.entries(params)
@@ -53,6 +54,19 @@ export const generateTwitterShareUrlForContest = (
   return buildUrl(BASE_TWITTER_URL, params);
 };
 
+export const generateFarcasterShareUrlForContest = (
+  contestName: string,
+  contestAddress: string,
+  chain: string,
+  rewards?: Reward | null,
+) => {
+  const params = {
+    text: contestShareText(contestName, rewards),
+    embeds: [`${BASE_JOKERACE_URL}${chain}/${contestAddress}`],
+  };
+  return buildUrl(BASE_WARPCAST_URL, params);
+};
+
 export const generateLensShareUrlForSubmission = (contestAddress: string, chain: string, submissionId: string) => {
   const params = {
     url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${submissionId}`,
@@ -66,6 +80,13 @@ export const generateTwitterShareUrlForSubmission = (contestAddress: string, cha
     via: "jokerace_io",
   };
   return buildUrl(BASE_TWITTER_URL, params);
+};
+
+export const generateFarcasterShareUrlForSubmission = (contestAddress: string, chain: string, submissionId: string) => {
+  const params = {
+    embeds: [`${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${submissionId}`],
+  };
+  return buildUrl(BASE_WARPCAST_URL, params);
 };
 
 export const generateLinkedInShareUrlForSubmission = (contestAddress: string, chain: string, submissionId: string) => {

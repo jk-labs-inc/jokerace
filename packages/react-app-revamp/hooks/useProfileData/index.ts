@@ -1,6 +1,7 @@
 import { lensClient } from "@config/lens";
 import { config } from "@config/wagmi";
 import { getEnsAvatar, getEnsName } from "@wagmi/core";
+import useFarcasterProfile from "@hooks/useFarcasterProfile";
 import { useEffect, useState } from "react";
 
 const DEFAULT_AVATAR_URL = "/contest/user.svg";
@@ -10,6 +11,7 @@ interface ProfileData {
   profileAvatar: string;
   isLoading: boolean;
   isLens: boolean;
+  isFarcaster: boolean;
 }
 
 const checkImageUrl = (url: string, timeout = 10000) => {
@@ -35,6 +37,7 @@ const checkImageUrl = (url: string, timeout = 10000) => {
 };
 
 const useProfileData = (ethereumAddress: string, shortenOnFallback: boolean): ProfileData => {
+  const farcasterProfile = useFarcasterProfile();
   const [data, setData] = useState<ProfileData>({
     profileName: shortenOnFallback
       ? `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}`
@@ -42,6 +45,7 @@ const useProfileData = (ethereumAddress: string, shortenOnFallback: boolean): Pr
     profileAvatar: DEFAULT_AVATAR_URL,
     isLoading: true,
     isLens: false,
+    isFarcaster: false,
   });
 
   useEffect(() => {
@@ -51,8 +55,19 @@ const useProfileData = (ethereumAddress: string, shortenOnFallback: boolean): Pr
         : ethereumAddress;
       let profileAvatar = DEFAULT_AVATAR_URL;
       let isLens = false;
+      let isFarcaster = false;
 
       try {
+        // Priority 1: Check if user has Farcaster profile from MiniApp context
+        if (farcasterProfile) {
+          profileName = farcasterProfile.username;
+          profileAvatar = farcasterProfile.pfpUrl || DEFAULT_AVATAR_URL;
+          isFarcaster = true;
+          setData({ profileName, profileAvatar, isLoading: false, isLens, isFarcaster });
+          return;
+        }
+
+        // Priority 2: Try Lens Protocol
         const lensProfile = await lensClient.profile.fetchDefault({ for: ethereumAddress });
         if (lensProfile?.handle) {
           const avatarFragment = lensProfile.metadata?.picture;
@@ -71,6 +86,7 @@ const useProfileData = (ethereumAddress: string, shortenOnFallback: boolean): Pr
           profileName = lensProfile.handle?.localName ? lensProfile.handle.localName + ".lens" : profileName;
           isLens = true;
         } else {
+          // Priority 3: Try ENS
           const ensName = await getEnsName(config, { chainId: 1, address: ethereumAddress as `0x${string}` });
           if (ensName) {
             const ensAvatar = await getEnsAvatar(config, { name: ensName, chainId: 1 });
@@ -89,11 +105,11 @@ const useProfileData = (ethereumAddress: string, shortenOnFallback: boolean): Pr
         console.error(error);
       }
 
-      setData({ profileName, profileAvatar, isLoading: false, isLens });
+      setData({ profileName, profileAvatar, isLoading: false, isLens, isFarcaster });
     };
 
     fetchProfileData();
-  }, [ethereumAddress, shortenOnFallback]);
+  }, [ethereumAddress, shortenOnFallback, farcasterProfile]);
 
   return data;
 };
