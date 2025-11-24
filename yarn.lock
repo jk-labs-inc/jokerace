@@ -8623,21 +8623,6 @@
     loupe "^2.3.7"
     pretty-format "^29.7.0"
 
-"@wagmi/connectors@6.1.4":
-  version "6.1.4"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-6.1.4.tgz#ff49c2a07c0dc2977d04ff3e573ebe89c269c26a"
-  integrity sha512-phfBOBBfkH1huSoyyTcHn1Brsm/YN9Vad4Z1ZYJ7iCE05CDUvipXI0TD9Idzgq+CkAJAxdAv3LBTIwTb3tysZw==
-  dependencies:
-    "@base-org/account" "2.4.0"
-    "@coinbase/wallet-sdk" "4.3.6"
-    "@gemini-wallet/core" "0.3.2"
-    "@metamask/sdk" "0.33.1"
-    "@safe-global/safe-apps-provider" "0.18.6"
-    "@safe-global/safe-apps-sdk" "9.1.0"
-    "@walletconnect/ethereum-provider" "2.21.1"
-    cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
-    porto "0.2.35"
-
 "@wagmi/connectors@6.2.0":
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-6.2.0.tgz#b90bb85c59305d36f4ca3247fe31c148db5d110b"
@@ -17153,12 +17138,12 @@ w3c-keyname@^2.2.0:
   resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.8.tgz#7b17c8c6883d4e8b86ac8aba79d39e880f8869c5"
   integrity sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==
 
-wagmi@2.19.4:
-  version "2.19.4"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.19.4.tgz#eb7acd4643235fe683d160a40ec8fe3eb15c6d59"
-  integrity sha512-jjGwxoISGlEkuxE80u+cHRr4IeZNjoVgVItUo8PRyT3gbL8FYIsGdb+qUuTAOOb08lr/NaySRjty5zJDaZcn8w==
+wagmi@2.19.5:
+  version "2.19.5"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.19.5.tgz#72d1561f95be6cb50e13283397b4768eb6ffb9ac"
+  integrity sha512-RQUfKMv6U+EcSNNGiPbdkDtJwtuFxZWLmvDiQmjjBgkuPulUwDJsKhi7gjynzJdsx2yDqhHCXkKsbbfbIsHfcQ==
   dependencies:
-    "@wagmi/connectors" "6.1.4"
+    "@wagmi/connectors" "6.2.0"
     "@wagmi/core" "2.22.1"
     use-sync-external-store "1.4.0"
 
