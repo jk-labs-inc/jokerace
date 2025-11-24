@@ -8638,6 +8638,11 @@
     cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
     porto "0.2.35"
 
+"@wagmi/connectors@7.0.1":
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-7.0.1.tgz#f04b212139486500abe502ee6d2d261500fc42b1"
+  integrity sha512-R5awgB0bYw/HwpyjJf/Fj1U2ZUwUWsdylnl+HpxXPjtm9hlpE72fzW5tKrlcVyJ3NQ6ljpTNnPsDhYj+1SIdVA==
+
 "@wagmi/core@2.22.1":
   version "2.22.1"
   resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.22.1.tgz#de4b5019971dcf033ea5f7484add66900da7897c"
