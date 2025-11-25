@@ -16,6 +16,7 @@ import { mainnet } from "./custom-chains/mainnet";
 import { manta } from "./custom-chains/manta";
 import { metis } from "./custom-chains/metis";
 import { mode } from "./custom-chains/mode";
+import { monad } from "./custom-chains/monad";
 import { polygon } from "./custom-chains/polygon";
 import { sepolia } from "./custom-chains/sepolia";
 import { soneium } from "./custom-chains/soneium";
@@ -47,6 +48,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   world,
   abstract,
   hyperliquid,
+  monad,
   sepolia,
   baseTestnet,
   mainnet,
