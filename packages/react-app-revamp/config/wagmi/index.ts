@@ -77,6 +77,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   world,
   abstract,
   hyperliquid,
+  monad,
   sepolia,
   baseTestnet,
   mainnet,
