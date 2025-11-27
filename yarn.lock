@@ -8621,10 +8621,10 @@
     cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
     porto "0.2.35"
 
-"@wagmi/connectors@7.0.1":
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-7.0.1.tgz#f04b212139486500abe502ee6d2d261500fc42b1"
-  integrity sha512-R5awgB0bYw/HwpyjJf/Fj1U2ZUwUWsdylnl+HpxXPjtm9hlpE72fzW5tKrlcVyJ3NQ6ljpTNnPsDhYj+1SIdVA==
+"@wagmi/connectors@7.0.2":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-7.0.2.tgz#e29b67bf64b2f7bae50919bd7955fd787a7012b6"
+  integrity sha512-JQmFNZR/EmeAkIWgEfAsS8lrnqMjVHFEpnPgVl6wIDU58LhrWe0D1/lHxzdCyFiX3gu/rkIERrHu0BXRxkuB1A==
 
 "@wagmi/core@2.22.1":
   version "2.22.1"
