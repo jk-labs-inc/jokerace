@@ -11,6 +11,7 @@ import { cyber } from "./custom-chains/cyber";
 import { forma } from "./custom-chains/forma";
 import { hyperliquid } from "./custom-chains/hyperliquid";
 import { ink } from "./custom-chains/ink";
+import { kub } from "./custom-chains/kub";
 import { linea } from "./custom-chains/linea";
 import { mainnet } from "./custom-chains/mainnet";
 import { manta } from "./custom-chains/manta";
@@ -49,6 +50,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   abstract,
   hyperliquid,
   monad,
+  kub,
   sepolia,
   baseTestnet,
   mainnet,
