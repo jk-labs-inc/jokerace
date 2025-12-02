@@ -15,8 +15,8 @@ const ContestImage: FC<ContestImageProps> = ({ imageUrl }) => {
         }}
       />
 
-      {/* centered main image container using full width */}
-      <div className="relative h-full w-full flex items-center justify-center">
+      {/* centered main image container using absolute positioning */}
+      <div className="absolute inset-0 flex items-center justify-center">
         <img src={imageUrl} alt="contest" className="max-w-[760px] max-h-[294px] w-auto h-auto object-contain" />
       </div>
     </div>
