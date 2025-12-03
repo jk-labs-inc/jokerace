@@ -2,23 +2,21 @@ import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useCancelRewards } from "@hooks/useCancelRewards";
 import useRewardsModule from "@hooks/useRewards";
-import { usePathname } from "next/navigation";
 import { FC } from "react";
 import { Abi } from "viem";
 import RewardsDisplay from "./components/RewardsDisplay";
 import RewardsLoader from "./components/RewardsLoader";
 import RewardsMarquee from "./components/RewardsMarquee";
 import RewardsSelfFundedMarquee from "./components/RewardsSelfFundedMarquee";
-import { useContestStore } from "@hooks/useContest/store";
-import { useShallow } from "zustand/shallow";
+import { useLocation } from "@tanstack/react-router";
 
 interface ContestRewardsInfoProps {
   version: string;
 }
 
 const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
-  const pathname = usePathname();
-  const { chainName } = extractPathSegments(pathname);
+  const location = useLocation();
+  const { chainName } = extractPathSegments(location.pathname);
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;

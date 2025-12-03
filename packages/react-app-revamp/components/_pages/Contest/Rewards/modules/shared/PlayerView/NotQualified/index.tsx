@@ -1,7 +1,7 @@
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
-import Link from "next/link";
 import { FC } from "react";
 import InfoPanel from "../../InfoPanel";
+import Link from "@components/UI/Link";
 
 interface RewardsPlayerNotQualifiedProps {
   phase: "active" | "closed";
@@ -25,7 +25,7 @@ const RewardsPlayerNotQualified: FC<RewardsPlayerNotQualifiedProps> = ({ phase }
       description: (
         <p className="text-[16px] text-neutral-11">
           you didn't play in this one, but play in <br />
-          <Link className="text-positive-11" href={ROUTE_VIEW_LIVE_CONTESTS}>
+          <Link className="text-positive-11" to={ROUTE_VIEW_LIVE_CONTESTS}>
             more contests
           </Link>{" "}
           for more chances to earn!

@@ -26,7 +26,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { disconnect } from "@wagmi/core";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
@@ -34,7 +34,8 @@ import { useAccount } from "wagmi";
 const LandingHeader = () => {
   const { isConnected, address } = useAccount();
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
   const [isInPwaMode, setIsInPwaMode] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const isActive = (route: string) => (pathname === route ? "font-bold" : "");
@@ -92,7 +93,7 @@ const LandingHeader = () => {
   if (isMobile) {
     return (
       <>
-        <CustomLink href="/">
+        <CustomLink to="/">
           <div className="pl-4 md:pl-16 md:pr-16 3xl:pl-28">
             <h1 className="font-sabo-filled text-neutral-11 normal-case text-[45px] relative">
               <span className="joke-3d" data-text="J">
@@ -130,12 +131,12 @@ const LandingHeader = () => {
               <div className="absolute right-0 top-0 bottom-0 w-12 bg-linear-to-l from-true-black to-transparent pointer-events-none"></div>
             </div>
             <div className="flex flex-row items-center justify-between pt-2 px-8">
-              <CustomLink href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
+              <CustomLink to={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
                 {pathname === ROUTE_LANDING ? <HomeIconSolid width={24} /> : <HomeIcon width={24} />}
                 <p className="text-[12px]">home</p>
               </CustomLink>
 
-              <CustomLink href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
+              <CustomLink to={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
                 {pathname === ROUTE_VIEW_CONTESTS ? (
                   <IconMagnifyingGlassSolid width={24} />
                 ) : (
@@ -145,7 +146,7 @@ const LandingHeader = () => {
               </CustomLink>
 
               <CustomLink
-                href={ROUTE_VIEW_LIVE_CONTESTS}
+                to={ROUTE_VIEW_LIVE_CONTESTS}
                 className={`flex flex-col text-neutral-11 ${isOneOfActive([
                   ROUTE_VIEW_LIVE_CONTESTS,
                   ROUTE_VIEW_CONTEST,
@@ -160,7 +161,7 @@ const LandingHeader = () => {
               </CustomLink>
 
               <CustomLink
-                href={ROUTE_CREATE_CONTEST}
+                to={ROUTE_CREATE_CONTEST}
                 className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}
               >
                 {pathname === ROUTE_CREATE_CONTEST ? (
@@ -198,7 +199,7 @@ const LandingHeader = () => {
 
   return (
     <header className="flex items-center pl-16 3xl:pl-28 pr-[60px] mt-4 max-w-[1850px]">
-      <CustomLink href="/">
+      <CustomLink to="/">
         <div>
           <h1 className="font-sabo-filled text-neutral-11 normal-case text-[60px]">
             <span className="joke-3d" data-text="J">

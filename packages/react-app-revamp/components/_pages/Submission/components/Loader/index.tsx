@@ -1,4 +1,3 @@
-"use client";
 import Loader from "@components/UI/Loader";
 import { motion } from "motion/react";
 import { useMediaQuery } from "react-responsive";

@@ -5,7 +5,7 @@ import CustomLink from "@components/UI/Link";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { FC } from "react";
 import ProposalLayoutLeaderboardRankOrPlaceholder from "../RankOrPlaceholder";
 
@@ -41,14 +41,14 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
   contestAddress,
   isHighlighted,
 }) => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const entryTitle = proposal.metadataFields.stringArray[0];
 
   const navigateToCommentLink = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
-    router.push(commentLink);
+    navigate({ to: commentLink });
   };
 
   const navigateToVotingDrawer = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -62,12 +62,12 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
     e.preventDefault();
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
-    router.push(`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`);
+    navigate({ to: `/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}` });
   };
 
   return (
     <CustomLink
-      href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
+      to={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
       className={`w-full flex flex-col min-h-20 gap-4 bg-true-black shadow-entry-card p-4 rounded-2xl border transition-colors duration-300 ease-in-out ${
         isHighlighted ? "border-secondary-14" : "border-transparent"
       }`}

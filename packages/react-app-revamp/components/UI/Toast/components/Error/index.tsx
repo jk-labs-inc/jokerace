@@ -1,5 +1,4 @@
 import { populateBugReportLink } from "@helpers/githubIssue";
-import { useUrl } from "nextjs-current-url";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
 import ErrorToastClassic from "./components/ErrorClassic";
@@ -27,10 +26,10 @@ const ErrorToast: FC<ErrorToastProps> = ({
   type = ErrorToastType.ADVANCED,
   codeFound,
 }) => {
-  const url = useUrl();
+  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
   const { address } = useAccount();
   const [copySuccess, setCopySuccess] = useState(false);
-  const bugReportLink = populateBugReportLink(url?.href ?? "", address ?? "", messageToCopy ?? "");
+  const bugReportLink = populateBugReportLink(currentUrl, address ?? "", messageToCopy ?? "");
 
   const copyToClipboard = async (event: React.MouseEvent) => {
     event.stopPropagation();

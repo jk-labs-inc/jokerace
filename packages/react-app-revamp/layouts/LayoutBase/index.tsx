@@ -1,14 +1,14 @@
-"use client";
 import Header from "@components/Header";
 import { FOOTER_LINKS } from "@config/links";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 
 interface LayoutBaseProps {
   children: React.ReactNode;
 }
 
 const LayoutBase = (props: LayoutBaseProps) => {
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
   const { children } = props;
   const allowedLinks = [
     "Github",

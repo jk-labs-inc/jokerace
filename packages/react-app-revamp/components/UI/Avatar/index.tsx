@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { FC } from "react";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import { SIZES, SizeType } from "../UserProfileDisplay/constants/sizes";

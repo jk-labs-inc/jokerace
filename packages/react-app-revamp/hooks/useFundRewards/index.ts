@@ -13,7 +13,7 @@ import {
   type WaitForTransactionReceiptReturnType,
 } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { erc20Abi, parseUnits } from "viem";
 import { useAccount } from "wagmi";
@@ -28,7 +28,8 @@ export interface RewardData {
 }
 
 export function useFundRewardsModule() {
-  const asPath = usePathname();
+  const location = useLocation();
+  const asPath = location.pathname;
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,

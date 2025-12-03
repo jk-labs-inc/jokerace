@@ -1,11 +1,12 @@
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import React from "react";
 import CreateFlowHeader from "./CreateFlowHeader";
 import LandingHeader from "./LandingHeader";
 import MainHeader from "./MainHeader";
 
 const Header: React.FC = () => {
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
 
   if (pathname === "/") {
     return <LandingHeader />;

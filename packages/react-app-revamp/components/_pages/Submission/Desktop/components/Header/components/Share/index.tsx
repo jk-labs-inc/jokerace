@@ -1,7 +1,6 @@
 import { generateUrlSubmissions } from "@helpers/share";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useProposalIdStore from "@hooks/useProposalId/store";
-import Image from "next/image";
 import { useShallow } from "zustand/shallow";
 import { motion } from "motion/react";
 
@@ -23,7 +22,7 @@ const SubmissionPageDesktopHeaderShare = () => {
       onClick={handleShare}
     >
       <p className="text-[16px] text-true-black font-bold">share</p>
-      <Image src="/entry/share.svg" alt="share" width={16} height={16} />
+      <img src="/entry/share.svg" alt="share" />
     </motion.button>
   );
 };

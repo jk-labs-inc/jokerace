@@ -5,7 +5,7 @@ import {
   ROUTE_VIEW_PAST_CONTESTS,
   ROUTE_VIEW_UPCOMING_CONTESTS,
 } from "@config/routes";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -34,7 +34,8 @@ const navLinks = [
 
 const LayoutContests = (props: LayoutContestsProps) => {
   const { children } = props;
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -55,7 +56,7 @@ const LayoutContests = (props: LayoutContestsProps) => {
       <div className="relative mt-10 flex-col gap-2">
         <div className="flex gap-4 justify-center mb-4 px-2 sm:gap-8 sm:px-0">
           {navLinks.map((link, index) => (
-            <CustomLink href={link.href} key={link.href}>
+            <CustomLink to={link.href} key={link.href}>
               <div
                 ref={(el: HTMLDivElement | null) => {
                   tabRefs.current[index] = el;

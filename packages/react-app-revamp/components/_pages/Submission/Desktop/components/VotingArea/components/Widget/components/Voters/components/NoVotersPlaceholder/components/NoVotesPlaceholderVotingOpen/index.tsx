@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 const NoVotesPlaceholderVotingOpen = () => {
   return (
     <div className="flex-1 flex flex-col justify-center items-center">
@@ -12,7 +10,7 @@ const NoVotesPlaceholderVotingOpen = () => {
           </p>
           <p className="text-[16px] text-neutral-11">but you can add some above...</p>
         </div>
-        <Image src="/entry/no-votes-bubbles.png" alt="no votes" width={144} height={144} />
+        <img src="/entry/no-votes-bubbles.png" alt="no votes" />
       </div>
     </div>
   );

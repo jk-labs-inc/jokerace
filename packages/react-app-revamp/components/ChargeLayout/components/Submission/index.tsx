@@ -3,7 +3,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
 import { Charge } from "@hooks/useDeployContest/types";
 import { GetBalanceReturnType } from "@wagmi/core";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { FC } from "react";
 import { formatEther } from "viem";
 
@@ -13,8 +13,8 @@ interface ChargeLayoutSubmissionProps {
 }
 
 const ChargeLayoutSubmission: FC<ChargeLayoutSubmissionProps> = ({ charge, accountData }) => {
-  const asPath = usePathname();
-  const { chainName } = extractPathSegments(asPath ?? "");
+  const location = useLocation();
+  const { chainName } = extractPathSegments(location.pathname);
   const chainUnitLabel = chains.find((c: { name: string }) => c.name.toLowerCase() === chainName.toLowerCase())
     ?.nativeCurrency.symbol;
   const chargeAmount = charge.type.costToPropose;

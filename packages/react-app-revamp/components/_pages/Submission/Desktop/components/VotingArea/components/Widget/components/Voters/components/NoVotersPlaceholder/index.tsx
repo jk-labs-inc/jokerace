@@ -1,9 +1,8 @@
 import useContestVoteTimer, { VotingStatus } from "@components/_pages/Submission/hooks/useContestVoteTimer";
 import { useSubmissionPageStore } from "@components/_pages/Submission/store";
-import Image from "next/image";
 import { useShallow } from "zustand/shallow";
-import NoVotesPlaceholderVotingOpen from "./components/NoVotesPlaceholderVotingOpen";
 import NoVotesPlaceholderVotingClosed from "./components/NoVotesPlaceholderVotingClosed";
+import NoVotesPlaceholderVotingOpen from "./components/NoVotesPlaceholderVotingOpen";
 
 const NoVotersPlaceholder = () => {
   const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));

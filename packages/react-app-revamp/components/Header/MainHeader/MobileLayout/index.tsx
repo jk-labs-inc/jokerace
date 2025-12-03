@@ -24,7 +24,7 @@ import {
   UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/24/solid";
 import { disconnect } from "@wagmi/core";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { FC, useCallback, useEffect, useState } from "react";
 
 interface MainHeaderMobileLayoutProps {
@@ -34,7 +34,8 @@ interface MainHeaderMobileLayoutProps {
 }
 
 const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, address, openConnectModal }) => {
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
   const [isClient, setIsClient] = useState(false);
   const [isInPwaMode, setIsInPwaMode] = useState(false);
   const [showWalletPortal, setShowWalletPortal] = useState(false);
@@ -83,12 +84,12 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
           isClient && isInPwaMode ? "pb-8" : "pb-2"
         } px-8 mt-4 bg-true-black z-50`}
       >
-        <CustomLink href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
+        <CustomLink to={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
           {pathname === ROUTE_LANDING ? <HomeIconSolid width={24} /> : <HomeIcon width={24} />}
           <p className="text-[12px]">home</p>
         </CustomLink>
 
-        <CustomLink href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
+        <CustomLink to={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
           {pathname === ROUTE_VIEW_CONTESTS ? (
             <IconMagnifyingGlassSolid width={24} />
           ) : (
@@ -98,7 +99,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
         </CustomLink>
 
         <CustomLink
-          href={ROUTE_VIEW_LIVE_CONTESTS}
+          to={ROUTE_VIEW_LIVE_CONTESTS}
           className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
         >
           {pathname === ROUTE_VIEW_LIVE_CONTESTS ? <TrophyIconSolid width={24} /> : <TrophyIcon width={24} />}
@@ -106,7 +107,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
         </CustomLink>
 
         <CustomLink
-          href={ROUTE_CREATE_CONTEST}
+          to={ROUTE_CREATE_CONTEST}
           className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}
         >
           {pathname === ROUTE_CREATE_CONTEST ? <PencilSquareIconSolid width={24} /> : <PencilSquareIcon width={24} />}

@@ -3,7 +3,6 @@ import GradientText from "@components/UI/GradientText";
 import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useProposalIdStore from "@hooks/useProposalId/store";
-import Image from "next/image";
 import { useShallow } from "zustand/shallow";
 import useNumberOfComments from "./hooks/useNumberOfComments";
 import SubmissionPageDesktopBodyCommentsLoadingSkeleton from "./components/LoadingSkeleton";
@@ -44,7 +43,7 @@ const SubmissionPageDesktopBodyComments = () => {
         }`}
       >
         <div className="flex items-baseline gap-2">
-          <Image src="/entry/comment.svg" alt="comments" width={24} height={24} className="self-center mt-1" />
+          <img src="/entry/comment.svg" alt="comments" className="self-center mt-1" />
           <GradientText isFontSabo={false} textSizeClassName="text-[24px] font-bold">
             comments
           </GradientText>

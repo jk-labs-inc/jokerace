@@ -1,5 +1,3 @@
-"use client";
-
 import { type TweetProps, TweetSkeleton, useTweet } from "react-tweet";
 import CustomTweetNotFound from "./custom-not-found";
 import { MyTweet } from "./custom-tweet";

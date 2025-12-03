@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useMediaQuery } from "react-responsive";
 
 const ContestDeployRewardsUnderConstruction = () => {
@@ -10,12 +9,10 @@ const ContestDeployRewardsUnderConstruction = () => {
           <h1 className="px-4 pt-6 font-sabo-filled text-[40px] md:text-[56px] text-center md:text-left [text-shadow:4px_4px_4px_rgba(0,0,0,1)]">
             Under Construction
           </h1>
-          <Image
+          <img
             className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-3/4 md:translate-y-1/3"
             src="/contest/bubbles-under-construction.png"
             alt="Under Construction"
-            width={isMobile ? 208 : 312}
-            height={isMobile ? 208 : 312}
           />
         </div>
       </div>

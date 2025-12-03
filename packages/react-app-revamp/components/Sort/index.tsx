@@ -1,7 +1,7 @@
 import { ROUTE_VIEW_PAST_CONTESTS } from "@config/routes";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useLocation, useNavigate } from "@tanstack/react-router";
 import { FC, Fragment, useEffect, useState } from "react";
 
 function classNames(...classes: string[]) {
@@ -21,10 +21,10 @@ export interface SortProps {
 const Sort: FC<SortProps> = ({ sortOptions, onSortChange }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [label, setLabel] = useState<string | null>(null);
-  const query = useSearchParams();
-  const pathname = usePathname();
-  const router = useRouter();
-  const sortByFromQuery = query?.get("sortBy");
+  const location = useLocation();
+  const pathname = location.pathname;
+  const navigate = useNavigate();
+  const sortByFromQuery = search.sortBy;
 
   useEffect(() => {
     if (sortByFromQuery) {
@@ -70,7 +70,7 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange }) => {
     const queryString = params.toString();
     const url = `${pathname}?${queryString}`;
 
-    router.replace(url);
+    navigate.to(url);
   };
 
   if (pathname?.includes(ROUTE_VIEW_PAST_CONTESTS)) return null;

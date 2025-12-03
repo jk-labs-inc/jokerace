@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-
 const SendProposalMobileLayoutConfirmLoadingContent = () => {
   return (
     <div className="mb-16">

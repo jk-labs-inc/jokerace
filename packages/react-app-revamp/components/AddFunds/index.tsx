@@ -1,5 +1,4 @@
 import { getChainLogo } from "@helpers/getChainLogo";
-import Image from "next/image";
 import { FC } from "react";
 import AddFundsProviders, { AddFundsProviderType } from "./providers";
 
@@ -23,7 +22,7 @@ const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = 
               add funds <span className="text-[12px]">on </span>
             </p>
             <div className="flex items-center gap-3">
-              <Image src={chainLogo} alt={chain} width={32} height={32} />
+              <img src={chainLogo} alt={chain} />
               <p className="text-[24px] font-normal">{chain}</p>
             </div>
           </div>

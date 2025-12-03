@@ -3,7 +3,7 @@ import CustomLink from "@components/UI/Link";
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { FC, useEffect, useState } from "react";
 import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
 import ProposalContentProfile from "../../Profile";
@@ -55,7 +55,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
 }) => {
   const [tweetUrl, setTweetUrl] = useState<string>("");
   const [tweetTitle, setTweetTitle] = useState<string>("");
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const updateTweetData = () => {
     if (enabledPreview === EntryPreview.TWEET_AND_TITLE) {
@@ -88,7 +88,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
     e.preventDefault();
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
-    router.push(commentLink);
+    navigate({ to: commentLink });
   };
 
   const onDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -100,8 +100,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
 
   return (
     <CustomLink
-      scroll={false}
-      href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
+      to={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
       className={`flex flex-col gap-4 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border transition-colors duration-300 ease-in-out ${
         isHighlighted ? "border-secondary-14" : "border-transparent hover:border-primary-3"
       }`}

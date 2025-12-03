@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import TokenSearchModal from "@components/TokenSearchModal";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
@@ -6,7 +5,6 @@ import { formatBalance } from "@helpers/formatBalance";
 import { ArrowPathIcon, ChevronDownIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useTokenOrNativeBalance } from "@hooks/useBalance";
 import { FilteredToken } from "@hooks/useTokenList";
-import { usePathname } from "next/navigation";
 import { FC, useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import { FundPoolToken, useFundPoolStore } from "../../../store";

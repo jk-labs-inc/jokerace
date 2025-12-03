@@ -1,7 +1,6 @@
 import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
 import CustomLink from "@components/UI/Link";
 import { motion } from "motion/react";
-import Link from "next/link";
 
 const SubmissionPageDesktopEntryNavigation = () => {
   const { previousEntryUrl, nextEntryUrl } = useNavigateProposals();
@@ -11,8 +10,7 @@ const SubmissionPageDesktopEntryNavigation = () => {
       {previousEntryUrl && (
         <motion.div whileTap={{ scale: 0.97 }} style={{ willChange: "transform" }}>
           <CustomLink
-            href={previousEntryUrl}
-            scroll={false}
+            to={previousEntryUrl}
             className="flex items-center justify-center gap-2 bg-primary-2 text-neutral-11 text-[16px] font-bold rounded-[40px] w-[144px] h-8 group transform transition-transform duration-200 active:scale-95"
           >
             <div className="transition-transform duration-200 group-hover:-translate-x-1">
@@ -25,8 +23,7 @@ const SubmissionPageDesktopEntryNavigation = () => {
       {nextEntryUrl && (
         <motion.div whileTap={{ scale: 0.97 }} style={{ willChange: "transform" }}>
           <CustomLink
-            href={nextEntryUrl}
-            scroll={false}
+            to={nextEntryUrl}
             className="flex items-center justify-center gap-2 bg-primary-2 text-neutral-11 text-[16px] font-bold rounded-[40px] w-[144px] h-8 group transform transition-transform duration-200 active:scale-95"
           >
             next entry

@@ -1,9 +1,9 @@
-import { MediaQuery } from "@helpers/mediaQuery";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { FC } from "react";
 import { useAccount } from "wagmi";
 import MainHeaderDesktopLayout from "./DesktopLayout";
 import MainHeaderMobileLayout from "./MobileLayout";
+import MediaQuery from "react-responsive";
 
 interface MainHeaderProps {
   showProfile?: boolean;

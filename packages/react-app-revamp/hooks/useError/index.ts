@@ -1,13 +1,14 @@
 import { toastDismiss, toastError, toastWarning } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { didUserReject, handleError as handleUtilityError } from "utils/error";
 import { useAccount } from "wagmi";
 
 export function useError() {
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
   const { chainName: chainNameFromPath } = extractPathSegments(pathname);
   const { chain: chainFromAccount } = useAccount();
   const [error, setError] = useState<string>("");

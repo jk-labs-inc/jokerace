@@ -1,10 +1,8 @@
-"use client";
 import Loader from "@components/UI/Loader";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { populateBugReportLink } from "@helpers/githubIssue";
-import { usePathname } from "next/navigation";
-import { useUrl } from "nextjs-current-url";
+import { useLocation } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { useAccount } from "wagmi";
 import ContestHeader from "./components/ContestHeader";
@@ -15,8 +13,9 @@ import { getContestImageUrl } from "./helpers/getContestImageUrl";
 import { useLayoutViewContest } from "./hooks/useLayoutViewContest";
 
 const LayoutViewContest = () => {
-  const pathname = usePathname();
-  const url = useUrl();
+  const location = useLocation();
+  const pathname = location.pathname;
+  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
   const { address: accountAddress } = useAccount();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const {
@@ -30,7 +29,7 @@ const LayoutViewContest = () => {
     contestPrompt,
     canEditTitleAndDescription,
   } = useLayoutViewContest();
-  const bugReportLink = populateBugReportLink(url?.href ?? "", accountAddress ?? "", error ?? "");
+  const bugReportLink = populateBugReportLink(currentUrl, accountAddress ?? "", error ?? "");
   const contestImageUrl = getContestImageUrl(contestPrompt);
 
   const excludeTabs = useMemo(() => {

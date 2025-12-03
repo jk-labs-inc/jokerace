@@ -1,68 +1,43 @@
 {
   "compilerOptions": {
-    "target": "es2022",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
-    "downlevelIteration": true,
-    "resolveJsonModule": true,
+    "target": "esnext",
+    "types": ["node", "vite/client", "vitest/importMeta"],
+    "sourceMap": false,
+    "lib": ["ESNext", "DOM"],
+    "declaration": false,
+    "declarationMap": false,
+    "exactOptionalPropertyTypes": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": false, // this makes defining workers a bit of a PITA
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "noUncheckedIndexedAccess": false,
+    "noUnusedLocals": false, // ESLint handles this
+    "noUnusedParameters": false,
+    "useUnknownInCatchVariables": true,
+    "strict": true,
+    "jsx": "react-jsx",
     "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "allowSyntheticDefaultImports": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "auto",
+    "moduleResolution": "bundler",
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "baseUrl": ".",
     "paths": {
-      "@components/*": [
-        "components/*",
-        "components/_pages/*"
-      ],
-      "@contracts/*": [
-        "contracts/*"
-      ],
-      "@config/*": [
-        "config/*"
-      ],
-      "@helpers/*": [
-        "helpers/*"
-      ],
-      "@hooks/*": [
-        "hooks/*"
-      ],
-      "@layouts/*": [
-        "layouts/*"
-      ],
-      "@styles/*": [
-        "styles/*"
-      ],
-      "@services/*": [
-        "services/*"
-      ]
-    },
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+      "@components/*": ["components/*", "components/_pages/*"],
+      "@contracts/*": ["contracts/*"],
+      "@config/*": ["config/*"],
+      "@helpers/*": ["helpers/*"],
+      "@hooks/*": ["hooks/*"],
+      "@layouts/*": ["layouts/*"],
+      "@styles/*": ["src/styles/*"],
+      "@lib/*": ["lib/*"]
+    }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "components/_pages/Submission/Mobile/index.tsx",
-    "pages/_document.tsx",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["./**/*"],
+  "exclude": ["node_modules", "dist", "build"]
 }

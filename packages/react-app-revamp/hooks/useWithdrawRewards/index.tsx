@@ -6,7 +6,7 @@ import { transform } from "@helpers/transform";
 import { useError } from "@hooks/useError";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { Abi } from "viem";
 
@@ -21,7 +21,8 @@ export const useWithdrawReward = (
   onWithdrawError?: () => void,
 ) => {
   const [isLoading, setIsLoading] = useState(false);
-  const asPath = usePathname();
+  const location = useLocation();
+  const asPath = location.pathname;
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { handleError } = useError();
 

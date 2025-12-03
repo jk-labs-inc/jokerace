@@ -2,7 +2,6 @@ import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import moment from "moment";
-import { usePathname } from "next/navigation";
 import ContestParametersEarnings from "./components/Earnings";
 import ContestParametersRewards from "./components/Rewards";
 import ContestParametersSubmissions from "./components/Submissions";
@@ -10,14 +9,15 @@ import ContestParametersTimeline from "./components/Timeline";
 import ContestParametersVoting from "./components/Voting";
 import { useShallow } from "zustand/shallow";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useLocation } from "@tanstack/react-router";
 
 const ContestParameters = () => {
   const version = useContestConfigStore(useShallow(state => state.contestConfig.version));
   const { submissionsOpen, votesClose, votesOpen, contestAuthorEthereumAddress, charge } = useContestStore(
     state => state,
   );
-  const asPath = usePathname();
-  const { chainName } = extractPathSegments(asPath ?? "");
+  const location = useLocation();
+  const { chainName } = extractPathSegments(location.pathname);
   const blockExplorerUrl = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.blockExplorers
     ?.default.url;
   const formattedSubmissionsOpen = moment(submissionsOpen).format("MMMM Do, h:mm a");

@@ -4,7 +4,7 @@ import { getTokenDecimalsBatch, getTokenSymbolBatch } from "@helpers/getTokenDec
 import { TokenInfo } from "@hooks/useReleasableRewards";
 import { useRewardTokens } from "@hooks/useRewardsTokens";
 import { useQuery } from "@tanstack/react-query";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { Abi } from "viem";
 import { useReadContracts } from "wagmi";
@@ -43,7 +43,8 @@ export function useReleasedRewards({
   abi,
   rankings,
 }: ReleasedRewardsParams): ReleasedRewardsResult {
-  const asPath = usePathname();
+  const location = useLocation();
+  const asPath = location.pathname;
   const { chainName: contestChainName } = extractPathSegments(asPath ?? "");
   const { data: erc20Addresses, isError: isErc20AddressesError } = useRewardTokens(contractAddress, contestChainName);
   const nativeTokenInfo = getNativeTokenInfo(chainId);

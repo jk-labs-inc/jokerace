@@ -5,10 +5,10 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { useCancelRewards } from "@hooks/useCancelRewards";
 import { Charge } from "@hooks/useDeployContest/types";
 import useRewardsModule from "@hooks/useRewards";
-import { usePathname } from "next/navigation";
 import { FC } from "react";
 import { Abi } from "viem";
 import RewardsParametersDisplay from "./components/Display";
+import { useLocation } from "@tanstack/react-router";
 
 interface ContestParametersRewardsProps {
   version: string;
@@ -16,8 +16,8 @@ interface ContestParametersRewardsProps {
 }
 
 const ContestParametersRewards: FC<ContestParametersRewardsProps> = ({ version, charge }) => {
-  const pathname = usePathname();
-  const { chainName } = extractPathSegments(pathname);
+  const location = useLocation();
+  const { chainName } = extractPathSegments(location.pathname);
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;

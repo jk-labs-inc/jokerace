@@ -90,7 +90,7 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
       </div>
       <CustomLink
         prefetch={true}
-        href={`/contest/${chainName}/${contestId}/submission/${proposalId}`}
+        to={`/contest/${chainName}/${contestId}/submission/${proposalId}`}
         shallow
         scroll={false}
         onClick={() => setIsModalOpen(false)}

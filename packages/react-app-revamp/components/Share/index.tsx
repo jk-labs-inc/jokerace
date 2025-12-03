@@ -1,5 +1,4 @@
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
-import { MediaQuery } from "@helpers/mediaQuery";
 import {
   generateFarcasterShareUrlForContest,
   generateLensShareUrlForContest,
@@ -8,6 +7,7 @@ import {
 } from "@helpers/share";
 import { CheckIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { FC, Fragment, useEffect, useState } from "react";
+import MediaQuery from "react-responsive";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");

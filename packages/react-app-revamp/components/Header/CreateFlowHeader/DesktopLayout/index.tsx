@@ -2,7 +2,7 @@ import { ConnectButtonCustom } from "@components/Connect";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { FC, useEffect, useState } from "react";
 
 interface CreateFlowHeaderDesktopLayoutProps {
@@ -19,7 +19,7 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
   pageAction,
 }) => {
   const [isClient, setIsClient] = useState(false);
-  const router = useRouter();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsClient(true);
@@ -27,15 +27,15 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
 
   const handleNavigation = (action: "play" | "create") => {
     if (action === "play") {
-      router.push(ROUTE_VIEW_LIVE_CONTESTS);
+      navigate({ to: ROUTE_VIEW_LIVE_CONTESTS });
     } else {
-      router.push(ROUTE_CREATE_CONTEST);
+      navigate({ to: ROUTE_CREATE_CONTEST });
     }
   };
 
   return (
     <header className="flex flex-row items-center justify-between pl-[120px] pr-[60px] mt-8">
-      <CustomLink href="/">
+      <CustomLink to="/">
         <h1 className="font-sabo-filled text-neutral-11 normal-case text-[40px]">
           J<span className="text-[30px]">oke</span>R<span className="text-[30px]">ace</span>
         </h1>

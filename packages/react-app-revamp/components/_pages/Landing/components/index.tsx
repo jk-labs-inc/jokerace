@@ -1,5 +1,3 @@
-"use client";
-
 import FeaturedContests from "@components/_pages/FeaturedContests";
 import CustomLink from "@components/UI/Link";
 import TypewriterCycler from "@components/UI/TypewriterCycler";
@@ -136,8 +134,7 @@ const LandingPage = () => {
       <div className="flex flex-col gap-8 bg-gradient-fade-black-purple">
         <div className="pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-28 2xl:pr-0 ">
           <CustomLink
-            prefetch={true}
-            href={ROUTE_CREATE_CONTEST}
+            to={ROUTE_CREATE_CONTEST}
             className="bg-gradient-green w-[300px] md:w-[320px] h-10 md:h-12 rounded-[40px] text-[20px] font-bold text-true-black text-center flex items-center justify-center transition-all duration-300 hover:opacity-90"
           >
             <span className="flex items-center normal-case">
@@ -157,7 +154,7 @@ const LandingPage = () => {
                 isContestDataFetching={isContestDataFetching}
                 isRewardsFetching={isRewardsFetching}
               />
-              <CustomLink prefetch={true} href={ROUTE_VIEW_LIVE_CONTESTS} className="flex gap-1 items-center">
+              <CustomLink to={ROUTE_VIEW_LIVE_CONTESTS} className="flex gap-1 items-center">
                 <p className="text-[16px] md:text-[18px] text-positive-11 font-bold hover:text-positive-10 transition-colors duration-300 ease-in-out">
                   view all contests
                 </p>

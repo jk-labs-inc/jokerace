@@ -1,6 +1,6 @@
-import { usePathname } from "next/navigation";
 import { Extension } from "../../../types";
 import ExtensionCard from "../../Card";
+import { useLocation } from "@tanstack/react-router";
 import { extractPathSegments } from "@helpers/extractPath";
 
 const DUNE_EXTENSIONS: Extension = {
@@ -52,8 +52,8 @@ const DUNE_CONTRACT_ADDRESS_PARAM = "contract_address";
 const DUNE_CHAIN_NAME_PARAM = "chain_name";
 
 const DuneExtension = () => {
-  const asPath = usePathname();
-  const { chainName, address } = extractPathSegments(asPath ?? "");
+  const location = useLocation();
+  const { chainName, address } = extractPathSegments(location.pathname);
 
   if (!DUNE_SUPPORTED_CHAIN_NAMES.includes(chainName.toLowerCase())) return null;
 

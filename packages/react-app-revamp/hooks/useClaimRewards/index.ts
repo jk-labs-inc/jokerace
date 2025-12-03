@@ -6,7 +6,7 @@ import { transform } from "@helpers/transform";
 import { useError } from "@hooks/useError";
 import { switchChain, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
@@ -30,7 +30,8 @@ export const useClaimRewards = ({
   userAddress,
 }: UseClaimRewardsProps) => {
   const { chainId: userChainId } = useAccount();
-  const asPath = usePathname();
+  const location = useLocation();
+  const asPath = location.pathname;
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { handleError } = useError();
   const [loadingStates, setLoadingStates] = useState<ClaimState>({});

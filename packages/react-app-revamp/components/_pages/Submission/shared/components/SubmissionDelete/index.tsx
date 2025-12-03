@@ -5,14 +5,14 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import useProposalIdStore from "@hooks/useProposalId/store";
+import { useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 const SubmissionDelete = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const { contestDetails, voteTimings } = useSubmissionPageStore(useShallow(state => state));
   const { votingStatus } = useContestVoteTimer({
@@ -31,9 +31,9 @@ const SubmissionDelete = () => {
   useEffect(() => {
     if (isSuccess) {
       const contestRoute = `/contest/${contestConfig.chainName.toLowerCase()}/${contestConfig.address}`;
-      router.push(contestRoute);
+      navigate({ to: contestRoute });
     }
-  }, [isSuccess, contestConfig.chainName, contestConfig.address, router]);
+  }, [isSuccess, contestConfig.chainName, contestConfig.address]);
 
   if (
     (address !== contestDetails.author && address !== proposalId) ||

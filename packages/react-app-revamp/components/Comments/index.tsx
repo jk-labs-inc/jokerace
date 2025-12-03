@@ -1,7 +1,7 @@
 import useComments from "@hooks/useComments";
 import { useCommentsStore } from "@hooks/useComments/store";
 import { ContestStateEnum } from "@hooks/useContestState/store";
-import { useSearchParams } from "next/navigation";
+import { useSearch } from "@tanstack/react-router";
 import { FC, useEffect, useRef } from "react";
 import CommentsForm from "./components/Form";
 import CommentsList from "./components/List";
@@ -25,7 +25,9 @@ const Comments: FC<CommentsProps> = ({
   numberOfComments,
   className,
 }) => {
-  const query = useSearchParams();
+  const search = useSearch({
+    from: "/contest/$chain/$address/submission/$submission",
+  });
   const commentsRef = useRef<HTMLDivElement>(null);
   const isCompletedOrCanceled =
     contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
@@ -45,14 +47,14 @@ const Comments: FC<CommentsProps> = ({
   } = useCommentsStore(state => state);
 
   useEffect(() => {
-    if (query?.has("commentId")) {
-      getCommentsWithSpecificFirst(query.get("commentId") ?? "");
+    if (search.commentId) {
+      getCommentsWithSpecificFirst(search.commentId);
       setTimeout(() => commentsRef.current?.scrollIntoView({ behavior: "smooth" }), 0);
       return;
     }
 
     getAllCommentsIdsPerProposal();
-  }, [proposalId, query]);
+  }, [proposalId, search.commentId]);
 
   const handleLoadMoreComments = () => {
     const nextPage = currentPage + 1;
@@ -70,7 +72,7 @@ const Comments: FC<CommentsProps> = ({
   return (
     <div className="flex flex-col gap-2 w-full h-full min-h-0" id="comments" ref={commentsRef}>
       {!isCompletedOrCanceled && (
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <CommentsForm
             contestChainId={contestChainId}
             onSend={handleAddComment}

@@ -15,7 +15,7 @@ import { VOTE_AND_EARN_VERSION } from "@hooks/useUserSubmitQualification/utils";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { checkIfContestExists } from "lib/contests";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { Abi } from "viem";
 import { createResultGetter } from "./helpers";
@@ -38,7 +38,8 @@ export interface ContractConfig {
 }
 
 export function useContest() {
-  const asPath = usePathname();
+  const location = useLocation();
+  const asPath = location.pathname;
   const { chainName: chainFromUrl, address: addressFromUrl } = extractPathSegments(asPath ?? "");
   const [chainName, setChainName] = useState(chainFromUrl);
   const [address, setAddress] = useState(addressFromUrl);

@@ -2,7 +2,7 @@ import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { getChainFromId } from "@helpers/getChainFromId";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useProposalIdStore from "@hooks/useProposalId/store";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { useShallow } from "zustand/shallow";
 import { useSubmissionPageStore } from "../../store";
 
@@ -18,7 +18,7 @@ interface UseNavigateProposalsReturn {
 }
 
 const useNavigateProposals = (): UseNavigateProposalsReturn => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const proposalIds = useSubmissionPageStore(useShallow(state => state.allProposalIds));
@@ -44,7 +44,7 @@ const useNavigateProposals = (): UseNavigateProposalsReturn => {
 
   const goToProposal = (targetProposalId: string) => {
     const path = buildProposalUrl(targetProposalId);
-    router.push(path, { scroll: false });
+    navigate({ to: path });
   };
 
   return {

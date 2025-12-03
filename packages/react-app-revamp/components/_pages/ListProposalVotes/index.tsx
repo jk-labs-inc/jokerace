@@ -2,12 +2,12 @@ import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { VOTES_PER_PAGE, useProposalVoters } from "@hooks/useProposalVoters";
-import { usePathname } from "next/navigation";
 import { FC, useEffect, useRef } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import VoterRow from "./components/VoterRow";
 import MotionSpinner from "@components/UI/MotionSpinner";
 import useScrollFade from "@hooks/useScrollFade";
+import { useLocation } from "@tanstack/react-router";
 
 interface ListProposalVotesProps {
   proposalId: string;
@@ -30,8 +30,8 @@ const LoadingSkeleton: FC<{ count: number }> = ({ count }) => (
 );
 
 export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, votedAddresses, className }) => {
-  const asPath = usePathname();
-  const { chainName, address } = extractPathSegments(asPath ?? "");
+  const location = useLocation();
+  const { chainName, address } = extractPathSegments(location.pathname);
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;

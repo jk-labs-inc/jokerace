@@ -4,7 +4,7 @@ import { getChainId } from "@helpers/getChainId";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewardsForRank } from "@hooks/useTotalRewardsForRank";
 import { useVoterRewardsStatistics } from "@hooks/useVoterRewardsStatistics";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { FC } from "react";
 import { formatUnits } from "viem";
 import RewardsError from "../../../../shared/Error";
@@ -24,8 +24,8 @@ interface VoterStatisticsProps {
 }
 
 const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward, isActive }) => {
-  const asPath = usePathname();
-  const { address: contestAddress, chainName } = extractPathSegments(asPath);
+  const location = useLocation();
+  const { address: contestAddress, chainName } = extractPathSegments(location.pathname);
   const chainId = getChainId(chainName);
   const { data: rewards } = useRewardsModule();
   const {

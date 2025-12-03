@@ -4,7 +4,7 @@ import { getNativeTokenInfo } from "@helpers/getNativeTokenInfo";
 import { useQuery } from "@tanstack/react-query";
 import { fetchClaimableRewards, fetchClaimedRewards } from "lib/rewards";
 import { calculateTotalRewards } from "lib/rewards/utils";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { useCallback, useMemo } from "react";
 import { Abi } from "viem";
 
@@ -56,7 +56,8 @@ const useUserRewards = ({
   claimableEnabled = true,
   claimedEnabled = true,
 }: RewardsParams): RewardsResult => {
-  const asPath = usePathname();
+  const location = useLocation();
+  const asPath = location.pathname;
   const { chainName: contestChainName } = extractPathSegments(asPath ?? "");
   const nativeTokenInfo = getNativeTokenInfo(chainId);
 

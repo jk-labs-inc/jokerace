@@ -5,11 +5,11 @@ import { useCancelRewards } from "@hooks/useCancelRewards";
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { switchChain } from "@wagmi/core";
-import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import CancelRewardsModal from "./components/Modal";
+import { useLocation } from "@tanstack/react-router";
 
 interface CancelRewardsProps {
   rewardsAddress: `0x${string}`;
@@ -19,8 +19,8 @@ interface CancelRewardsProps {
 }
 
 const CancelRewards: FC<CancelRewardsProps> = ({ rewardsAddress, abi, chainId, version }) => {
-  const pathname = usePathname();
-  const { address: contestAddress, chainName } = extractPathSegments(pathname);
+  const location = useLocation();
+  const { address: contestAddress, chainName } = extractPathSegments(location.pathname);
   const contestChainId = getChainId(chainName);
   const { cancelRewards, isLoading } = useCancelRewards({ rewardsAddress, abi, chainId, version });
   const { contestStatus } = useContestStatusStore(state => state);

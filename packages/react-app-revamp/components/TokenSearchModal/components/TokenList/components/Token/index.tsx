@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { formatNumber } from "@helpers/formatNumber";
 import { FilteredToken } from "@hooks/useTokenList";
 import { FC, useEffect, useState } from "react";

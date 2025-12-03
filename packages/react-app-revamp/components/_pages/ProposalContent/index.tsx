@@ -11,7 +11,6 @@ import useProfileData from "@hooks/useProfileData";
 import { RawMetadataFields } from "@hooks/useProposal/utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import moment from "moment";
-import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
@@ -21,6 +20,7 @@ import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
 import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
 import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
 import ProposalLayoutTweet from "./components/ProposalLayout/Tweet";
+import { useLocation } from "@tanstack/react-router";
 
 export interface Proposal {
   id: string;
@@ -62,8 +62,8 @@ const ProposalContent: FC<ProposalContentProps> = ({
   );
   const { openConnectModal } = useConnectModal();
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const asPath = usePathname();
-  const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
+  const location = useLocation();
+  const { chainName, address: contestAddress } = extractPathSegments(location.pathname);
   const [isVotingDrawerOpen, setIsVotingDrawerOpen] = useState(false);
   const { votesOpen } = useContestStore(state => state);
   const { contestState } = useContestStateStore(state => state);
@@ -162,8 +162,8 @@ const ProposalContent: FC<ProposalContentProps> = ({
           shouldReduceOpacity
             ? "opacity-30 scale-[0.98]"
             : isHighlighted
-            ? "opacity-100 scale-[1.02] -translate-y-1 z-45 relative"
-            : "opacity-100 scale-100"
+              ? "opacity-100 scale-[1.02] -translate-y-1 z-45 relative"
+              : "opacity-100 scale-100"
         }`}
       >
         {renderLayout()}

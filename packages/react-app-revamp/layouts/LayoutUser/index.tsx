@@ -1,4 +1,3 @@
-"use client";
 import SendFunds from "@components/SendFunds";
 import CustomLink from "@components/UI/Link";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
@@ -8,7 +7,7 @@ import {
   ROUTE_VIEW_USER_SUBMISSIONS,
   ROUTE_VIEW_USER_VOTING,
 } from "@config/routes";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
@@ -46,7 +45,8 @@ function isActiveLink(pathname: string, hrefTemplate: string, address: string) {
 
 const LayoutUser = (props: LayoutUserProps) => {
   const { children, address } = props;
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
   const isMobile = useMediaQuery({ maxWidth: "768px" });
@@ -90,7 +90,7 @@ const LayoutUser = (props: LayoutUserProps) => {
           <div className="relative mt-12 flex-col gap-2">
             <div className="flex justify-between gap-4 lg:justify-start mb-4 sm:gap-8 sm:px-0">
               {navLinks.map((link, index) => (
-                <CustomLink href={link.href.replace("[address]", address)} key={link.href}>
+                <CustomLink to={link.href.replace("[address]", address)} key={link.href}>
                   <div
                     ref={(el: HTMLDivElement | null) => {
                       tabRefs.current[index] = el;

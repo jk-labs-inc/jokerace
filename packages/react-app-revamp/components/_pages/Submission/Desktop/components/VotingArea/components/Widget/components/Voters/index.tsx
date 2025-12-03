@@ -1,7 +1,6 @@
 import { ListProposalVotes } from "@components/_pages/ListProposalVotes";
 import GradientText from "@components/UI/GradientText";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import Image from "next/image";
 import { FC, useRef, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import SubmissionPageDesktopVotingAreaWidgetVotersLoadingSkeleton from "./components/LoadingSkeleton";
@@ -65,7 +64,7 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
       <div className="bg-gradient-voting-area-purple rounded-4xl pl-8 pr-12 py-4 w-full h-full flex flex-col">
         <div className="flex flex-col gap-6 min-h-0 flex-1">
           <div className="flex items-baseline gap-2 pr-6">
-            <Image src="/entry/vote-ballot.svg" alt="voters" width={24} height={24} className="self-center" />
+            <img src="/entry/vote-ballot.svg" alt="voters" className="self-center" />
             <GradientText isFontSabo={false} textSizeClassName="text-[24px] font-bold">
               voters
             </GradientText>

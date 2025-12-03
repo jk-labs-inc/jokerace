@@ -1,6 +1,6 @@
 import { COMMENTS_PER_PAGE } from "@hooks/useComments";
 import { Comment as CommentType } from "@hooks/useComments/store";
-import { useSearchParams } from "next/navigation";
+import { useSearch } from "@tanstack/react-router";
 import { FC, useEffect, useRef, useState } from "react";
 import Comment from "../Comment";
 import CommentsSkeleton from "./components/CommentsSkeleton";
@@ -38,7 +38,9 @@ const CommentsList: FC<CommentsListProps> = ({
   totalPages,
   className,
 }) => {
-  const query = useSearchParams();
+  const search = useSearch({
+    from: "/contest/$chain/$address/submission/$submission",
+  });
   const [selectedCommentIds, setSelectedCommentIds] = useState<string[]>([]);
   const commentsRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -49,10 +51,10 @@ const CommentsList: FC<CommentsListProps> = ({
   const { shouldApplyFade, maskImageStyle } = useScrollFade(scrollContainerRef, comments.length, [comments]);
 
   useEffect(() => {
-    if (query.has("comments")) {
+    if (search.comments) {
       commentsRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [query]);
+  }, [search.comments]);
 
   useEffect(() => {
     if (isDeletingSuccess) {

@@ -1,5 +1,6 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import { Tweet } from "@components/_pages/ProposalContent/components/ProposalLayout/Tweet/components/CustomTweet";
+import { ProposalState } from "@components/_pages/Submission/types";
 import { extractPathSegments } from "@helpers/extractPath";
 import { twitterRegex } from "@helpers/regex";
 import {
@@ -12,11 +13,10 @@ import {
 } from "@helpers/share";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
+import { useLocation } from "@tanstack/react-router";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
-import { usePathname } from "next/navigation";
 import { FC, ReactNode } from "react";
-import { ProposalState } from "@components/_pages/Submission/types";
 
 interface ContestProposalProps {
   proposal: Proposal;
@@ -70,8 +70,8 @@ const ContestProposal: FC<ContestProposalProps> = ({
   displaySocials,
   className,
 }) => {
-  const asPath = usePathname();
-  const { chainName, address } = extractPathSegments(asPath ?? "");
+  const location = useLocation();
+  const { chainName, address } = extractPathSegments(location.pathname);
   const { contestName } = useContestStore(state => state);
 
   return (

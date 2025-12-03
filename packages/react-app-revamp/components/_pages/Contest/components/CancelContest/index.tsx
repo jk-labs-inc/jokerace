@@ -6,17 +6,17 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useContestState } from "@hooks/useContestState";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
+import { useLocation } from "@tanstack/react-router";
 import { switchChain } from "@wagmi/core";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import CancelContestModal from "./components/Modal";
 
 const CancelContest = () => {
-  const pathname = usePathname();
-  const { address: contestAddress, chainName } = extractPathSegments(pathname);
-  const contestChainId = getChainId(chainName);
+  const location = useLocation();
+  const { address: contestAddress } = extractPathSegments(location.pathname);
+  const contestChainId = getChainId(location.pathname);
   const { address, chainId } = useAccount();
   const contestAuthorEthereumAddress = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
   const { cancelContest, isLoading, isConfirmed } = useContestState();

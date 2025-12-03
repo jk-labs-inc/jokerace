@@ -1,7 +1,7 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { FC } from "react";
 import { Abi } from "viem";
 import { useReadContract } from "wagmi";
@@ -17,8 +17,8 @@ interface RewardsTableShareProps {
 
 export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
   const { payee, contractRewardsModuleAddress, abiRewardsModule, totalShares, totalPayees } = props;
-  const pathname = usePathname();
-  const { chainName } = extractPathSegments(pathname ?? "");
+  const location = useLocation();
+  const { chainName } = extractPathSegments(location.pathname);
   const { data, isError, isLoading } = useReadContract({
     address: contractRewardsModuleAddress as `0x${string}`,
     abi: abiRewardsModule,

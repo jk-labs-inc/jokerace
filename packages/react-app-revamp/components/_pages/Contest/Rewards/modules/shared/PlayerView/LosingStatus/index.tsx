@@ -1,5 +1,5 @@
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
-import Link from "next/link";
+import Link from "@components/UI/Link";
 import { FC } from "react";
 import InfoPanel from "../../InfoPanel";
 
@@ -24,7 +24,7 @@ const RewardsPlayerLosingStatus: FC<RewardsPlayerLosingStatusProps> = ({ phase }
       description: (
         <p className="text-[16px] text-neutral-11">
           play in{" "}
-          <Link className="text-positive-11" href={ROUTE_VIEW_LIVE_CONTESTS}>
+          <Link className="text-positive-11" to={ROUTE_VIEW_LIVE_CONTESTS}>
             more contests
           </Link>{" "}
           for more chances <br />

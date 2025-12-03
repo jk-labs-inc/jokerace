@@ -1,13 +1,13 @@
 import { toastDismiss } from "@components/UI/Toast";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { canNavigateToContest } from "@hooks/useDeployContest/types";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { useShallow } from "zustand/shallow";
 import { DeploymentStatus } from "../../components/DeploymentStatus";
 
 const CreateContestDeploying = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { deployContestData, deploymentProcess, addFundsToRewards, resetStore, isSuccess } = useDeployContestStore(
     useShallow(state => ({
       deployContestData: state.deployContestData,
@@ -40,9 +40,9 @@ const CreateContestDeploying = () => {
 
       toastDismiss();
 
-      router.push(contestPath);
+      navigate({ to: contestPath });
     }
-  }, [deploymentProcess, deployContestData, router, addFundsToRewards]);
+  }, [deploymentProcess, deployContestData, addFundsToRewards]);
 
   return (
     <div className="flex flex-col gap-8 mt-12 lg:mt-[100px] animate-swing-in-left">

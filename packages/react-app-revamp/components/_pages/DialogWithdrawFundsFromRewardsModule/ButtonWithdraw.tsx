@@ -6,7 +6,7 @@ import { transform } from "@helpers/transform";
 import { TokenInfo } from "@hooks/useReleasableRewards";
 import { useWithdrawReward } from "@hooks/useWithdrawRewards";
 import { switchChain } from "@wagmi/core";
-import { usePathname } from "next/navigation";
+import { useLocation } from "@tanstack/react-router";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 
@@ -29,9 +29,9 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
     onWithdrawError,
   } = props;
 
-  const pathname = usePathname();
+  const location = useLocation();
   const { chainId: userChainId } = useAccount();
-  const { chainName } = extractPathSegments(pathname);
+  const { chainName } = extractPathSegments(location.pathname);
   const chainId = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.id;
   const isConnectedOnCorrectChain = chainId === userChainId;
   const { handleWithdraw, isLoading } = useWithdrawReward(

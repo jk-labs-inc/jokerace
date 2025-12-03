@@ -1,4 +1,3 @@
-import { MediaQuery } from "@helpers/mediaQuery";
 import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
@@ -6,6 +5,7 @@ import { useEffect } from "react";
 import { useAccount } from "wagmi";
 import MainHeaderMobileLayout from "../MainHeader/MobileLayout";
 import CreateFlowHeaderDesktopLayout from "./DesktopLayout";
+import MediaQuery from "react-responsive";
 
 const CreateFlowHeader = () => {
   const { isConnected, address } = useAccount();

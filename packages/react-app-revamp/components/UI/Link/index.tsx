@@ -1,14 +1,14 @@
-import Link, { LinkProps } from "next/link";
-interface CustomLinkProps extends LinkProps {
+import { Link } from "@tanstack/react-router";
+interface CustomLinkProps {
+  to: string;
   children: React.ReactNode;
-  prefetch?: boolean;
   target?: string;
   className?: string;
 }
 
-const CustomLink = ({ href, children, prefetch = true, className, target, ...props }: CustomLinkProps) => {
+const CustomLink = ({ to, children, className, target, ...props }: CustomLinkProps) => {
   return (
-    <Link href={href} prefetch={prefetch} className={className} target={target} {...props}>
+    <Link to={to} className={className} target={target} {...props}>
       {children}
     </Link>
   );

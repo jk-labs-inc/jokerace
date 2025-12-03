@@ -1,3 +1,4 @@
+// import { abstractWallet } from "@abstract-foundation/agw-react/connectors";
 import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
@@ -21,8 +22,7 @@ import {
   walletConnectWallet,
   zerionWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-import { abstractWallet } from "@abstract-foundation/agw-react/connectors";
-import { cookieStorage, createConfig, createStorage } from "wagmi";
+import { createConfig } from "wagmi";
 import { abstract } from "./custom-chains/abstract";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avalanche } from "./custom-chains/avalanche";
@@ -98,14 +98,14 @@ export const connectors = () => {
 
   return connectorsForWallets(
     [
-      ...(isParaWalletConfigured
-        ? [
-            {
-              groupName: "Standard Login (Recommended For New Users)",
-              wallets: [paraWallet],
-            },
-          ]
-        : []),
+      // ...(isParaWalletConfigured
+      //   ? [
+      //       {
+      //         groupName: "Standard Login (Recommended For New Users)",
+      //         wallets: [paraWallet],
+      //       },
+      //     ]
+      //   : []),
       {
         groupName: "Other Wallets",
         wallets: [
@@ -113,7 +113,7 @@ export const connectors = () => {
           walletConnectWallet,
           coinbaseWallet,
           rainbowWallet,
-          abstractWallet,
+          // abstractWallet,
           okxWallet,
           uniswapWallet,
           safeWallet,
@@ -146,10 +146,6 @@ export const config = createConfig({
   connectors: connectors(),
   chains,
   transports,
-  ssr: true,
-  storage: createStorage({
-    storage: cookieStorage,
-  }),
 });
 
 export const chainsImages: ChainImages = chains.reduce((acc: any, chain: any) => {
