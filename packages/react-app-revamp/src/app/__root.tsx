@@ -1,5 +1,5 @@
 import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
-import appCss from "../styles/globals.css?url";
+import appCss from "./globals.css?url";
 import LayoutBase from "@layouts/LayoutBase";
 import Providers from "../providers";
 import Portal from "../portal";
@@ -45,12 +45,7 @@ export const Route = createRootRoute({
       },
       { name: "twitter:image", content: "https://jokerace.io/twitter-image.jpg" },
     ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
+    links: [{ rel: "stylesheet", href: appCss }],
   }),
   component: RootLayout,
 });
