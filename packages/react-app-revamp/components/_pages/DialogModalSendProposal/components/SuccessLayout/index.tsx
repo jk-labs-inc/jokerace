@@ -9,6 +9,7 @@ import {
 } from "@helpers/share";
 import { useContestStore } from "@hooks/useContest/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
+import { Link } from "@tanstack/react-router";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -88,20 +89,15 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
         <p className="text-[16px] text-neutral-11 font-bold">https://jokerace.io...{proposalId.slice(0, 6)}</p>
         <p className="text-positive-11 font-bold text-[16px]">{copyText}</p>
       </div>
-      <CustomLink
-        prefetch={true}
+      {/* //TODO: resolve this issue */}
+      {/* <Link
         to={`/contest/${chainName}/${contestId}/submission/${proposalId}`}
-        shallow
-        scroll={false}
         onClick={() => setIsModalOpen(false)}
       >
-        <ButtonV3
-          colorClass="bg-gradient-share-submission rounded-[40px] mt-8"
-          size={isMobile ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG}
-        >
+        <ButtonV3 colorClass="bg-gradient-share-submission rounded-[40px] mt-8" size={isMobile ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG}>
           let’s see it
         </ButtonV3>
-      </CustomLink>
+      </Link> */}
     </>
   );
 };

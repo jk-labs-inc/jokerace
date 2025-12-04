@@ -1,10 +1,9 @@
-import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
-import appCss from "./globals.css?url";
 import LayoutBase from "@layouts/LayoutBase";
-import Providers from "../providers";
+import { createRootRoute, HeadContent, Outlet } from "@tanstack/react-router";
 import Portal from "../portal";
+import Providers from "../providers";
+import globalsCss from "./styles/globals.css?url";
 //rm this
-import { GA_TRACKING_ID } from "lib/gtag";
 import "@getpara/react-sdk/styles.css";
 import "@rainbow-me/rainbowkit/styles.css";
 import "react-datepicker/dist/react-datepicker.css";
@@ -45,7 +44,7 @@ export const Route = createRootRoute({
       },
       { name: "twitter:image", content: "https://jokerace.io/twitter-image.jpg" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [{ rel: "stylesheet", href: globalsCss }],
   }),
   component: RootLayout,
 });
@@ -53,16 +52,17 @@ export const Route = createRootRoute({
 function RootLayout() {
   return (
     <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
       <body>
-        <div id="__next">
-          <Providers>
-            <LayoutBase>
-              <Outlet />
-            </LayoutBase>
-            <Portal />
-            {/* TODO: add Google Analytics back */}
-          </Providers>
-        </div>
+        <Providers>
+          <LayoutBase>
+            <Outlet />
+          </LayoutBase>
+          <Portal />
+          {/* TODO: add Google Analytics back */}
+        </Providers>
       </body>
     </html>
   );

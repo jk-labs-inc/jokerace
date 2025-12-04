@@ -7478,6 +7478,13 @@
   dependencies:
     "@tanstack/query-core" "5.90.5"
 
+"@tanstack/react-router-ssr-query@1.139.14":
+  version "1.139.14"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-router-ssr-query/-/react-router-ssr-query-1.139.14.tgz#21ec872e217dd04b9b4c3efa21cab4b7fc18032c"
+  integrity sha512-o1AkjZe9MhqRv+NychKEDHZDj3uDtdhylEv6AKmCUq0It/dvCCXuM48LRn1fVlV9Qs6a1E79G/lxg9c+gmMLLQ==
+  dependencies:
+    "@tanstack/router-ssr-query-core" "1.139.14"
+
 "@tanstack/react-router@1.139.14":
   version "1.139.14"
   resolved "https://registry.yarnpkg.com/@tanstack/react-router/-/react-router-1.139.14.tgz#863437735e9e8b7cbeaee1c6b1d92dd79ffd651f"
@@ -7587,6 +7594,11 @@
     chokidar "^3.6.0"
     unplugin "^2.1.2"
     zod "^3.24.2"
+
+"@tanstack/router-ssr-query-core@1.139.14":
+  version "1.139.14"
+  resolved "https://registry.yarnpkg.com/@tanstack/router-ssr-query-core/-/router-ssr-query-core-1.139.14.tgz#4c0a3c030d17fa91244b42a9982ebd0455f87950"
+  integrity sha512-1Cd9fu7L4g60Bj2UP72eoSP3yO9DQT3LmwNxjY/CfB+cUTalIxcc2p226AAGvDTKeHH7SBV+yIdZokb9VGA4FA==
 
 "@tanstack/router-utils@1.139.0", "@tanstack/router-utils@^1.139.0":
   version "1.139.0"

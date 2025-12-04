@@ -34,7 +34,7 @@
       "@helpers/*": ["helpers/*"],
       "@hooks/*": ["hooks/*"],
       "@layouts/*": ["layouts/*"],
-      "@styles/*": ["src/styles/*"],
+      "@styles/*": ["app/styles/*"],
       "@lib/*": ["lib/*"]
     }
   },

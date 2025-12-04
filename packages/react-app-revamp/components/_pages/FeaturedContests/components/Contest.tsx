@@ -151,8 +151,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
 
   return (
     <CustomLink
-      prefetch={true}
-      href={getContestUrl(contestData.network_name ?? "", contestData.address ?? "")}
+      to={getContestUrl(contestData.network_name ?? "", contestData.address ?? "")}
       className="animate-appear flex flex-col justify-between w-[320px] h-[216px] pt-4 pb-3 px-6 bg-gradient-radial rounded-[16px] border border-neutral-0 hover:border-neutral-10 transition-all duration-300 ease-in-out"
     >
       <div className="flex flex-col gap-8">

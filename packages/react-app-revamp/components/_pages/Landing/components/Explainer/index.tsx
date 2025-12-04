@@ -75,8 +75,7 @@ const LandingPageExplainer = () => {
             </ul>
           </div>
           <CustomLink
-            prefetch={true}
-            href={ROUTE_VIEW_LIVE_CONTESTS}
+            to={ROUTE_VIEW_LIVE_CONTESTS}
             className="w-[218px] h-10 bg-gradient-purple-white rounded-[40px] normal-case text-[20px] font-bold text-true-black flex items-center justify-center relative transition-all duration-300 hover:opacity-90"
           >
             <span className="mr-4 normal-case">View Contests</span>
@@ -97,19 +96,12 @@ const LandingPageExplainer = () => {
             <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
               decide what the price curve looks like
             </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-              set the voting period
-            </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-              add rewards and descriptions
-            </li>
-            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">
-              that's it!
-            </li>
+            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">set the voting period</li>
+            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">add rewards and descriptions</li>
+            <li className="text-[16px] md:text-[20px] text-neutral-11 arrow-list-item">that's it!</li>
           </ul>
           <CustomLink
-            prefetch={true}
-            href={ROUTE_CREATE_CONTEST}
+            to={ROUTE_CREATE_CONTEST}
             className="w-[218px] h-10 bg-gradient-purple-white rounded-[40px] normal-case text-[20px] font-bold text-true-black flex items-center justify-center relative transition-all duration-300 hover:opacity-90"
           >
             <span className="mr-4 normal-case">Create a Contest</span>
