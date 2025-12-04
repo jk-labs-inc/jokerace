@@ -1,6 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
-import { chains, serverConfig } from "@config/wagmi/server";
 import { getChainId } from "@helpers/getChainId";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContracts } from "@wagmi/core";
@@ -14,6 +13,7 @@ import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
 import { UserWrapper } from "@hooks/useUserSubmitQualification/store";
 import LayoutViewContest from "@layouts/LayoutViewContest";
+import { config, chains } from "@config/wagmi";
 
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
@@ -46,7 +46,7 @@ async function getContestDetails(address: string, chainName: string) {
       },
     ];
 
-    const results = (await readContracts(serverConfig, { contracts })) as any;
+    const results = (await readContracts(config, { contracts })) as any;
     return results;
   } catch (error) {
     console.error("failed to fetch contest details:", error);

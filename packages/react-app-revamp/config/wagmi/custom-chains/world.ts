@@ -13,7 +13,7 @@ export const world: Chain = {
     public: { http: [`https://worldchain-mainnet.g.alchemy.com/public`] },
     default: {
       http: [
-        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.worldchain-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+        `https://${import.meta.env.VITE_QUICKNODE_SLUG}.worldchain-mainnet.quiknode.pro/${import.meta.env.VITE_QUICKNODE_KEY}`,
       ],
     },
   },

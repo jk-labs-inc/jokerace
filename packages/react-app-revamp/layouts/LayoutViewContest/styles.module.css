@@ -1,4 +1,4 @@
-@reference "../../app/globals.css";
+@reference "../../app/styles/globals.css";
 
 .navbar {
   @apply space-i-8 2xs:space-i-10 xs:space-i-20 flex md:flex-col md:space-i-0;

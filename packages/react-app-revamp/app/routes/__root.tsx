@@ -1,15 +1,13 @@
-import LayoutBase from "@layouts/LayoutBase";
-import { createRootRoute, HeadContent, Outlet } from "@tanstack/react-router";
-import Portal from "../portal";
-import Providers from "../providers";
-import globalsCss from "./styles/globals.css?url";
-//rm this
 import "@getpara/react-sdk/styles.css";
+import LayoutBase from "@layouts/LayoutBase";
 import "@rainbow-me/rainbowkit/styles.css";
+import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "react-tooltip/dist/react-tooltip.css";
 import "simplebar-react/dist/simplebar.min.css";
+import Providers from "../providers";
+import globalsCss from "../styles/globals.css?url";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -60,9 +58,9 @@ function RootLayout() {
           <LayoutBase>
             <Outlet />
           </LayoutBase>
-          <Portal />
           {/* TODO: add Google Analytics back */}
         </Providers>
+        <Scripts />
       </body>
     </html>
   );

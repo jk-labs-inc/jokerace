@@ -737,8 +737,8 @@ li {
     caret-color: #bb65ff !important;
   }
 
-  #__next,
-  #__next > [data-rk=""] {
+  #root,
+  #root > [data-rk=""] {
     flex-grow: 1;
     display: flex;
     flex-direction: column;

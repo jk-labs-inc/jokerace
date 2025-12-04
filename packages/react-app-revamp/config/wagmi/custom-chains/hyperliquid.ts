@@ -13,7 +13,7 @@ export const hyperliquid: Chain = {
     public: { http: [`https://rpc.hypurrscan.io`] },
     default: {
       http: [
-        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.hype-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}/evm`,
+        `https://${import.meta.env.VITE_QUICKNODE_SLUG}.hype-mainnet.quiknode.pro/${import.meta.env.VITE_QUICKNODE_KEY}/evm`,
       ],
     },
   },

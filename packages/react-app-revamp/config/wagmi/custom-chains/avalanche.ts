@@ -13,7 +13,7 @@ export const avalanche: Chain = {
     public: { http: [`https://api.avax.network/ext/bc/C/rpc`] },
     default: {
       http: [
-        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.avalanche-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}/ext/bc/C/rpc`,
+        `https://${import.meta.env.VITE_QUICKNODE_SLUG}.avalanche-mainnet.quiknode.pro/${import.meta.env.VITE_QUICKNODE_KEY}/ext/bc/C/rpc`,
       ],
     },
   },

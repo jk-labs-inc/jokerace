@@ -1,9 +1,9 @@
 import { GetParaOpts, getParaWallet, OAuthMethod } from "@getpara/rainbowkit-wallet";
 import { Environment } from "@getpara/web-sdk";
 
-const PARA_API_KEY = process.env.NEXT_PUBLIC_PARA_API_KEY as string;
+const PARA_API_KEY = import.meta.env.VITE_PARA_API_KEY as string;
 const PARA_ENVIRONMENT =
-  process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "development" ? Environment.BETA : Environment.PRODUCTION;
+  import.meta.env.VITE_APP_ENVIRONMENT === "development" ? Environment.BETA : Environment.PRODUCTION;
 
 export const isParaWalletConfigured = !!PARA_API_KEY && !!PARA_ENVIRONMENT;
 

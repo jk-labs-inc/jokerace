@@ -16,7 +16,7 @@ const chainToAlchemySubdomain = {
   base: "base-mainnet",
 };
 
-const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
+const alchemyApiKey = import.meta.env.VITE_ALCHEMY_KEY;
 
 const getAlchemyBaseUrl = (chain: string) => {
   const subdomain = chainToAlchemySubdomain[chain as keyof typeof chainToAlchemySubdomain] || "eth-mainnet";
@@ -113,7 +113,7 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
       const filteredTokens: FilteredToken[] = (await Promise.all(metadataPromises)).filter(Boolean) as FilteredToken[];
       return filteredTokens;
     },
-    enabled: !!userAddress && !!chainName && !!process.env.NEXT_PUBLIC_ALCHEMY_KEY,
+    enabled: !!userAddress && !!chainName && !!import.meta.env.VITE_ALCHEMY_KEY,
   });
 
   const tokens = React.useMemo(() => {

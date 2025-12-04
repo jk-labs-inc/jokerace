@@ -13,7 +13,7 @@ export const story: Chain = {
     public: { http: [`https://evm-rpc.story.mainnet.dteam.tech`] },
     default: {
       http: [
-        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.story-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+        `https://${import.meta.env.VITE_QUICKNODE_SLUG}.story-mainnet.quiknode.pro/${import.meta.env.VITE_QUICKNODE_KEY}`,
       ],
     },
   },

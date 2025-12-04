@@ -13,7 +13,7 @@ export const base: Chain = {
     public: { http: [`https://base.llamarpc.com`] },
     default: {
       http: [
-        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.base-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+        `https://${import.meta.env.VITE_QUICKNODE_SLUG}.base-mainnet.quiknode.pro/${import.meta.env.VITE_QUICKNODE_KEY}`,
       ],
     },
   },

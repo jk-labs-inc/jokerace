@@ -1,5 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { chains, serverConfig } from "@config/wagmi/server";
+import { chains, config } from "@config/wagmi";
 import { getChainId } from "@helpers/getChainId";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContract } from "@wagmi/core";
@@ -21,7 +21,7 @@ async function getContestName(address: string, chainName: string) {
 
     const { abi } = await getContestContractVersion(address, chainId ?? 1);
 
-    const result = await readContract(serverConfig, {
+    const result = await readContract(config, {
       address: address as `0x${string}`,
       abi: abi as Abi,
       chainId,

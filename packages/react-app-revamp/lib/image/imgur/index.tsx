@@ -1,10 +1,10 @@
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 
 const IMGUR_API_ENDPOINT = "https://api.imgur.com/3/image";
-const IMGUR_CLIENT_ID = process.env.NEXT_PUBLIC_IMGUR_CLIENT_ID;
+const IMGUR_CLIENT_ID = import.meta.env.VITE_IMGUR_CLIENT_ID;
 
 if (!IMGUR_CLIENT_ID) {
-  console.error("Please set the NEXT_PUBLIC_IMGUR_CLIENT_ID environment variable.");
+  console.error("Please set the VITE_IMGUR_CLIENT_ID environment variable.");
 }
 
 export async function uploadToImgur(base64Image: string): Promise<string> {

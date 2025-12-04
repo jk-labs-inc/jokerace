@@ -13,7 +13,7 @@ export const celo: Chain = {
     public: { http: [`https://forno.celo.org`] },
     default: {
       http: [
-        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.celo-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+        `https://${import.meta.env.VITE_QUICKNODE_SLUG}.celo-mainnet.quiknode.pro/${import.meta.env.VITE_QUICKNODE_KEY}`,
       ],
     },
   },

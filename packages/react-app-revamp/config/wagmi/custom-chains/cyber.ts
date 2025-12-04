@@ -13,7 +13,7 @@ export const cyber: Chain = {
     public: { http: [`https://rpc.cyber.co`] },
     default: {
       http: [
-        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.cyber-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+        `https://${import.meta.env.VITE_QUICKNODE_SLUG}.cyber-mainnet.quiknode.pro/${import.meta.env.VITE_QUICKNODE_KEY}`,
       ],
     },
   },

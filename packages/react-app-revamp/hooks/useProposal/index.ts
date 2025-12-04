@@ -1,4 +1,4 @@
-import { serverConfig } from "@config/wagmi/server";
+import { config } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
 import { ContractConfig } from "@hooks/useContest";
 import { useError } from "@hooks/useError";
@@ -96,7 +96,7 @@ export function useProposal() {
         });
       }
 
-      const results = await readContracts(serverConfig, { contracts });
+      const results = await readContracts(config, { contracts });
 
       structureAndRankProposals(results, slice, pageMappedProposals, version, sorting);
 
@@ -232,7 +232,7 @@ export function useProposal() {
       ];
 
       //@ts-ignore
-      const results = await readContracts(serverConfig, { contracts });
+      const results = await readContracts(config, { contracts });
 
       // check if this proposal ID is already in our mapped IDs
       const proposalExists = initialMappedProposalIds.some(p => p.id === proposalId);

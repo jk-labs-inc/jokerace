@@ -83,19 +83,13 @@ export const chains: readonly [Chain, ...Chain[]] = [
   mainnet,
 ];
 
-const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
+const WALLETCONECT_PROJECT_ID = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID as string;
 const appName = "jokerace";
 const projectId = WALLETCONECT_PROJECT_ID;
 
 coinbaseWallet.preference = "smartWalletOnly";
 
 export const connectors = () => {
-  // Only create connectors on client-side to avoid SSR issues
-  // TODO: update when https://github.com/rainbow-me/rainbowkit/issues/2476 is resolved
-  if (typeof window === "undefined") {
-    return [];
-  }
-
   return connectorsForWallets(
     [
       // ...(isParaWalletConfigured

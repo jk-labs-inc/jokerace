@@ -2,7 +2,7 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { s3 } from "@config/s3";
 
-const IMAGE_UPLOAD_BUCKET = process.env.NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET as string;
+const IMAGE_UPLOAD_BUCKET = import.meta.env.VITE_IMAGE_UPLOAD_BUCKET as string;
 
 const IMAGE_PUBLIC_URL = IMAGE_UPLOAD_BUCKET.includes("dev")
   ? "https://dev.images.jokerace.io"

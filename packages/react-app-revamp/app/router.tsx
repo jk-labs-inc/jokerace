@@ -5,7 +5,7 @@ export function getRouter() {
   const router = createRouter({
     routeTree,
     scrollRestoration: true,
-
+    // TODO: add a not found component
     defaultNotFoundComponent: () => <div>Not Found</div>,
   });
 
