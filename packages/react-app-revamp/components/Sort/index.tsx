@@ -1,7 +1,7 @@
 import { ROUTE_VIEW_PAST_CONTESTS } from "@config/routes";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useLocation, useNavigate, useSearch } from "@tanstack/react-router";
 import { FC, Fragment, useEffect, useState } from "react";
 
 function classNames(...classes: string[]) {
@@ -24,7 +24,8 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange }) => {
   const location = useLocation();
   const pathname = location.pathname;
   const navigate = useNavigate();
-  const sortByFromQuery = search.sortBy;
+  const search = useSearch({ strict: false }) as Record<string, string | undefined>;
+  const sortByFromQuery = search?.sortBy;
 
   useEffect(() => {
     if (sortByFromQuery) {
@@ -56,21 +57,13 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange }) => {
   };
 
   const removeQueryParam = (param: string) => {
-    const params = new URLSearchParams();
-    Object.entries(query).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach(v => params.append(key, v));
-      } else {
-        params.set(key, value || "");
-      }
+    const newSearch = { ...search };
+    delete newSearch[param];
+
+    navigate({
+      to: pathname,
+      search: Object.keys(newSearch).length > 0 ? newSearch : undefined,
     });
-
-    params.delete(param);
-
-    const queryString = params.toString();
-    const url = `${pathname}?${queryString}`;
-
-    navigate.to(url);
   };
 
   if (pathname?.includes(ROUTE_VIEW_PAST_CONTESTS)) return null;

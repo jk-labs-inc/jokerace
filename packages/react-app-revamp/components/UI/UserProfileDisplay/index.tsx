@@ -75,7 +75,7 @@ const UserProfileDisplay = ({
         src={profileAvatar}
         size={size}
         asLink={true}
-        href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
+        href={`${ROUTE_VIEW_USER.replace("$address", ethereumAddress)}`}
       />
     );
   }

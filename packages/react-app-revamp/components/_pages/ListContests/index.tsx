@@ -59,6 +59,7 @@ export const ListContests: FC<ListContestsProps> = ({
   const placeholders = new Array(placeholderCount).fill(null);
 
   if (status === "error") {
+    console.log("error", error, status);
     return (
       <div className={`animate-appear bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4`}>
         <p className="text-sm font-bold text-negative-10 text-center">Something went wrong: {error?.message}</p>

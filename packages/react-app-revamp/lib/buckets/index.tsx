@@ -15,7 +15,6 @@ interface SaveImageOptions {
 }
 
 export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions): Promise<string> => {
-  console.log("Saving image to bucket", { fileId, type, file });
   toastLoading({
     message: "Uploading image...",
   });
@@ -39,7 +38,6 @@ export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions
     });
     return originalUrl;
   } catch (error: any) {
-    console.log("Upload error:", error);
     toastError({
       message: "Failed to upload an image, please try again.",
       messageToCopy: error.message,

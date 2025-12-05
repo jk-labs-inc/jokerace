@@ -29,9 +29,9 @@ const useNavigateProposals = (): UseNavigateProposalsReturn => {
   const canGoPrevious = currentIndex > 0;
 
   const buildProposalUrl = (targetProposalId: string): string => {
-    return ROUTE_CONTEST_PROPOSAL.replace("[chain]", chain?.name.toLowerCase() ?? "")
-      .replace("[address]", contestConfig.address)
-      .replace("[submission]", targetProposalId);
+    return ROUTE_CONTEST_PROPOSAL.replace("$chain", chain?.name.toLowerCase() ?? "")
+      .replace("$address", contestConfig.address)
+      .replace("$submission", targetProposalId);
   };
 
   const buildCloseUrl = (): string => {
@@ -45,7 +45,6 @@ const useNavigateProposals = (): UseNavigateProposalsReturn => {
   const goToProposal = (targetProposalId: string) => {
     const path = buildProposalUrl(targetProposalId);
 
-    console.log("path", path);
     navigate({ to: path });
   };
 

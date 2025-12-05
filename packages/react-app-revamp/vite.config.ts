@@ -3,6 +3,7 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export default defineConfig({
   server: {
@@ -10,6 +11,9 @@ export default defineConfig({
   },
   plugins: [
     tailwindcss(),
+    nodePolyfills({
+      exclude: ["constants"], // exclude to avoid conflict with local constants/ folder
+    }),
     tsconfigPaths({
       projects: ["./tsconfig.json"],
     }),

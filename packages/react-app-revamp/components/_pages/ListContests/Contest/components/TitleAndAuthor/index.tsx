@@ -20,7 +20,7 @@ const ContesTitleAndAuthor: FC<ContesTitleAndAuthorProps> = ({ contestName, cont
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
 
-    window.open(`${ROUTE_VIEW_USER.replace("[address]", contestAuthor)}`, "_blank");
+    window.open(`${ROUTE_VIEW_USER.replace("$address", contestAuthor)}`, "_blank");
   };
 
   return (

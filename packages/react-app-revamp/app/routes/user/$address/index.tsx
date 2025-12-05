@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ListContests from "@components/_pages/ListContests";
-import { isSupabaseConfigured } from "@helpers/database";
 import useContestSortOptions from "@hooks/useSortOptions";
 import { useQuery } from "@tanstack/react-query";
 import { getUserContests } from "lib/contests";
 import { ITEMS_PER_PAGE } from "lib/contests/constants";
 import { fetchTotalRewardsForContests } from "lib/contests/contracts";
 import { useState } from "react";
+import { isSupabaseConfigured } from "@helpers/database";
 
 function useContests(profileAddress: string, sortBy?: string) {
   const [page, setPage] = useState(0);
@@ -79,7 +79,7 @@ function UserContestsPage() {
           This site&apos;s current deployment does not have access to jokerace&apos;s reference database of contests,
           but you can check out our Supabase backups{" "}
           <a
-            className="link px-1ex"
+            className="text-positive-11 underline font-bold"
             href="https://github.com/jk-labs-inc/jokerace/tree/staging/packages/supabase"
             target="_blank"
             rel="noreferrer"

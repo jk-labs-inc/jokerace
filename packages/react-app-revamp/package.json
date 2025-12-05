@@ -118,6 +118,7 @@
     "@vitejs/plugin-react": "5.1.1",
     "tailwindcss": "4.1.17",
     "vite": "7.2.6",
+    "vite-plugin-node-polyfills": "0.24.0",
     "vite-tsconfig-paths": "5.1.4"
   }
 }

@@ -57,12 +57,7 @@ const Comment: FC<CommentProps> = ({
 
   return (
     <div className="flex pt-2 gap-4 animate-fade-in border-l-2 border-positive-17 pl-4">
-      <Avatar
-        src={profileAvatar}
-        size="small"
-        asLink
-        href={`${ROUTE_VIEW_USER.replace("[address]", comment.author)}`}
-      />
+      <Avatar src={profileAvatar} size="small" asLink href={`${ROUTE_VIEW_USER.replace("$address", comment.author)}`} />
       <div className="flex flex-col items-start gap-2">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">

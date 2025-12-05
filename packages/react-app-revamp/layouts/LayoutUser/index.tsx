@@ -38,7 +38,7 @@ const navLinks = [
 ];
 
 function isActiveLink(pathname: string, hrefTemplate: string, address: string) {
-  const actualHref = hrefTemplate.replace("[address]", address);
+  const actualHref = hrefTemplate.replace("$address", address);
 
   return pathname === actualHref;
 }
@@ -90,7 +90,7 @@ const LayoutUser = (props: LayoutUserProps) => {
           <div className="relative mt-12 flex-col gap-2">
             <div className="flex justify-between gap-4 lg:justify-start mb-4 sm:gap-8 sm:px-0">
               {navLinks.map((link, index) => (
-                <CustomLink to={link.href.replace("[address]", address)} key={link.href}>
+                <CustomLink to={link.href.replace("$address", address)} key={link.href}>
                   <div
                     ref={(el: HTMLDivElement | null) => {
                       tabRefs.current[index] = el;

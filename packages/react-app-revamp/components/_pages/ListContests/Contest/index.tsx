@@ -22,7 +22,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
   const getContestUrl = (contestAddress: string, contestNetworkName: string) => {
     if (!contestNetworkName || !contestAddress) return "";
 
-    return ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", contestNetworkName).replace("[address]", contestAddress);
+    return ROUTE_VIEW_CONTEST_BASE_PATH.replace("$chain", contestNetworkName).replace("$address", contestAddress);
   };
 
   return (

@@ -14,7 +14,7 @@ const NavigationLinks: FC<NavigationLinksProps> = ({ address }) => {
       {NAV_LINKS.map(link => (
         <MenuItem key={link.href}>
           <CustomLink
-            to={link.href.replace("[address]", address)}
+            to={link.href.replace("$address", address)}
             target="_blank"
             className="flex gap-2 items-center justify-between text-[16px] font-bold text-neutral-11 uppercase px-4 py-3 rounded-lg data-focus:bg-white/10 hover:bg-white/10 transition-colors"
           >

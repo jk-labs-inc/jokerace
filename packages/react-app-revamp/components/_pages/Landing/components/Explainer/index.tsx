@@ -1,10 +1,9 @@
 import Subscribe from "@components/Subscribe";
+import CustomLink from "@components/UI/Link";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
-import CustomLink from "@components/UI/Link";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { PERCENTAGE_TO_CREATOR_DEFAULT, PERCENTAGE_TO_JKLABS_DEFAULT } from "constants/monetization";
 
 const LandingPageExplainer = () => {
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);

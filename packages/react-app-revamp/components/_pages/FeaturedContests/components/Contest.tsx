@@ -146,7 +146,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
   }, [contestData, getUpdateInterval]);
 
   const getContestUrl = (network_name: string, address: string) => {
-    return ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", network_name).replace("[address]", address);
+    return ROUTE_VIEW_CONTEST_BASE_PATH.replace("$chain", network_name).replace("$address", address);
   };
 
   return (
