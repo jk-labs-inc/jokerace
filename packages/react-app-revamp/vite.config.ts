@@ -4,6 +4,7 @@ import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
+import netlify from "@netlify/vite-plugin-tanstack-start";
 
 export default defineConfig({
   server: {
@@ -28,5 +29,6 @@ export default defineConfig({
       },
     }),
     viteReact(),
+    netlify(),
   ],
 });

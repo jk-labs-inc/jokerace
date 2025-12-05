@@ -45,3 +45,6 @@ yarn-error.log*
 **/public/worker-*.js.map
 
 
+
+# Local Netlify folder
+.netlify
