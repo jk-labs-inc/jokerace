@@ -23,7 +23,6 @@ import { Route as UserAddressVotesRouteImport } from './routes/user/$address/vot
 import { Route as UserAddressSubmissionsRouteImport } from './routes/user/$address/submissions'
 import { Route as UserAddressCommentsRouteImport } from './routes/user/$address/comments'
 import { Route as ApiTweetIdRouteImport } from './routes/api/tweet/$id'
-import { Route as ApiBrevoSendRouteImport } from './routes/api/brevo/send'
 import { Route as ContestChainAddressIndexRouteImport } from './routes/contest/$chain/$address/index'
 import { Route as ContestChainAddressSubmissionSubmissionIndexRouteImport } from './routes/contest/$chain/$address/submission/$submission/index'
 
@@ -97,11 +96,6 @@ const ApiTweetIdRoute = ApiTweetIdRouteImport.update({
   path: '/api/tweet/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiBrevoSendRoute = ApiBrevoSendRouteImport.update({
-  id: '/api/brevo/send',
-  path: '/api/brevo/send',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ContestChainAddressIndexRoute =
   ContestChainAddressIndexRouteImport.update({
     id: '/contest/$chain/$address/',
@@ -124,7 +118,6 @@ export interface FileRoutesByFullPath {
   '/contests/upcoming': typeof ContestsUpcomingRoute
   '/user/$address': typeof UserAddressRouteWithChildren
   '/contests/': typeof ContestsIndexRoute
-  '/api/brevo/send': typeof ApiBrevoSendRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
   '/user/$address/comments': typeof UserAddressCommentsRoute
   '/user/$address/submissions': typeof UserAddressSubmissionsRoute
@@ -141,7 +134,6 @@ export interface FileRoutesByTo {
   '/contests/past': typeof ContestsPastRoute
   '/contests/upcoming': typeof ContestsUpcomingRoute
   '/contests': typeof ContestsIndexRoute
-  '/api/brevo/send': typeof ApiBrevoSendRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
   '/user/$address/comments': typeof UserAddressCommentsRoute
   '/user/$address/submissions': typeof UserAddressSubmissionsRoute
@@ -161,7 +153,6 @@ export interface FileRoutesById {
   '/contests/upcoming': typeof ContestsUpcomingRoute
   '/user/$address': typeof UserAddressRouteWithChildren
   '/contests/': typeof ContestsIndexRoute
-  '/api/brevo/send': typeof ApiBrevoSendRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
   '/user/$address/comments': typeof UserAddressCommentsRoute
   '/user/$address/submissions': typeof UserAddressSubmissionsRoute
@@ -182,7 +173,6 @@ export interface FileRouteTypes {
     | '/contests/upcoming'
     | '/user/$address'
     | '/contests/'
-    | '/api/brevo/send'
     | '/api/tweet/$id'
     | '/user/$address/comments'
     | '/user/$address/submissions'
@@ -199,7 +189,6 @@ export interface FileRouteTypes {
     | '/contests/past'
     | '/contests/upcoming'
     | '/contests'
-    | '/api/brevo/send'
     | '/api/tweet/$id'
     | '/user/$address/comments'
     | '/user/$address/submissions'
@@ -218,7 +207,6 @@ export interface FileRouteTypes {
     | '/contests/upcoming'
     | '/user/$address'
     | '/contests/'
-    | '/api/brevo/send'
     | '/api/tweet/$id'
     | '/user/$address/comments'
     | '/user/$address/submissions'
@@ -234,7 +222,6 @@ export interface RootRouteChildren {
   ContestsRoute: typeof ContestsRouteWithChildren
   ApiTokenRoute: typeof ApiTokenRoute
   UserAddressRoute: typeof UserAddressRouteWithChildren
-  ApiBrevoSendRoute: typeof ApiBrevoSendRoute
   ApiTweetIdRoute: typeof ApiTweetIdRoute
   ContestNewIndexRoute: typeof ContestNewIndexRoute
   ContestChainAddressIndexRoute: typeof ContestChainAddressIndexRoute
@@ -341,13 +328,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTweetIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/brevo/send': {
-      id: '/api/brevo/send'
-      path: '/api/brevo/send'
-      fullPath: '/api/brevo/send'
-      preLoaderRoute: typeof ApiBrevoSendRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/contest/$chain/$address/': {
       id: '/contest/$chain/$address/'
       path: '/contest/$chain/$address'
@@ -406,7 +386,6 @@ const rootRouteChildren: RootRouteChildren = {
   ContestsRoute: ContestsRouteWithChildren,
   ApiTokenRoute: ApiTokenRoute,
   UserAddressRoute: UserAddressRouteWithChildren,
-  ApiBrevoSendRoute: ApiBrevoSendRoute,
   ApiTweetIdRoute: ApiTweetIdRoute,
   ContestNewIndexRoute: ContestNewIndexRoute,
   ContestChainAddressIndexRoute: ContestChainAddressIndexRoute,
