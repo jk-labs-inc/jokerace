@@ -4,6 +4,7 @@ import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import netlify from "@netlify/vite-plugin-tanstack-start";
+import { nitro } from "nitro/vite";
 
 export default defineConfig({
   server: {
@@ -28,6 +29,7 @@ export default defineConfig({
       },
     }),
     viteReact(),
-    netlify(),
+    nitro(),
   ],
+  nitro: {},
 });

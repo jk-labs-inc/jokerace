@@ -12,7 +12,6 @@
 .tanstack
 app/routeTree.gen.ts
 
-
 # production
 /build
 /dist
@@ -44,7 +43,8 @@ yarn-error.log*
 **/public/workbox-*.js.map
 **/public/worker-*.js.map
 
-
-
 # Local Netlify folder
 .netlify
+
+# Local Nitro output folder
+.output
