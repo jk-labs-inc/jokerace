@@ -9,6 +9,10 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  define: {
+    // This helps modules determine the execution environment
+    "process.browser": true,
+  },
   plugins: [
     tailwindcss(),
     nodePolyfills({

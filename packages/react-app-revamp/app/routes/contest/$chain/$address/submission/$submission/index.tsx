@@ -41,6 +41,7 @@ function SubmissionPage() {
 
   return (
     <SubmissionWrapper
+      key={submission}
       address={address}
       chain={chain}
       submission={submission}
