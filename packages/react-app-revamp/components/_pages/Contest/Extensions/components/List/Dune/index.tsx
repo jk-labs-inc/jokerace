@@ -1,7 +1,7 @@
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Extension } from "../../../types";
 import ExtensionCard from "../../Card";
-import { useLocation } from "@tanstack/react-router";
-import { extractPathSegments } from "@helpers/extractPath";
+import { useShallow } from "zustand/shallow";
 
 const DUNE_EXTENSIONS: Extension = {
   name: "dune",
@@ -52,8 +52,7 @@ const DUNE_CONTRACT_ADDRESS_PARAM = "contract_address";
 const DUNE_CHAIN_NAME_PARAM = "chain_name";
 
 const DuneExtension = () => {
-  const location = useLocation();
-  const { chainName, address } = extractPathSegments(location.pathname);
+  const { chainName, address } = useContestConfigStore(useShallow(state => state.contestConfig));
 
   if (!DUNE_SUPPORTED_CHAIN_NAMES.includes(chainName.toLowerCase())) return null;
 

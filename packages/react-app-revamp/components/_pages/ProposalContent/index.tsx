@@ -1,8 +1,8 @@
 import { toastInfo } from "@components/UI/Toast";
-import { extractPathSegments } from "@helpers/extractPath";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
@@ -20,7 +20,6 @@ import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
 import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
 import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
 import ProposalLayoutTweet from "./components/ProposalLayout/Tweet";
-import { useLocation } from "@tanstack/react-router";
 
 export interface Proposal {
   id: string;
@@ -62,9 +61,8 @@ const ProposalContent: FC<ProposalContentProps> = ({
   );
   const { openConnectModal } = useConnectModal();
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const location = useLocation();
-  const { chainName, address: contestAddress } = extractPathSegments(location.pathname);
   const [isVotingDrawerOpen, setIsVotingDrawerOpen] = useState(false);
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { votesOpen } = useContestStore(state => state);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
@@ -79,7 +77,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const isHighlighted = isAnyDrawerOpen && pickedProposal === proposal.id;
   const shouldReduceOpacity = isAnyDrawerOpen && !isHighlighted;
   const commentLink = {
-    pathname: `/contest/${chainName}/${contestAddress}/submission/${proposal.id}`,
+    pathname: `/contest/${contestConfig.chainName}/${contestConfig.address}/submission/${proposal.id}`,
     query: { comments: "comments" },
   };
   const {
@@ -127,8 +125,8 @@ const ProposalContent: FC<ProposalContentProps> = ({
       isError: isUserProfileError,
     },
     isMobile,
-    chainName,
-    contestAddress,
+    chainName: contestConfig.chainName,
+    contestAddress: contestConfig.address,
     contestStatus,
     allowDelete,
     selectedProposalIds,

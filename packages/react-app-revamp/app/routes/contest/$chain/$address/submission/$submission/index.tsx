@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getSubmissionData, type SubmissionMetadata } from "lib/submission";
 import type { Abi } from "viem";
-import SubmissionWrapper from "../../../../../../wrapper";
+import SubmissionWrapper from "@components/_pages/Submission/Wrapper";
 
 const DEFAULT_METADATA: SubmissionMetadata = {
   title: "Contest Entry on JokeRace",

@@ -17,7 +17,6 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
           <RainbowKitProvider theme={darkTheme()} modalSize="wide">
-            {/* // TODO: toast container should actually be a portal, since it doesn't render over modal */}
             {children}
           </RainbowKitProvider>
         </QueryClientProvider>

@@ -1,6 +1,6 @@
 import LayoutBase from "@layouts/LayoutBase";
 import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
-import Providers from "../providers";
+import Providers from "@providers/index";
 import globalsCss from "../styles/globals.css?url";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-loading-skeleton/dist/skeleton.css";

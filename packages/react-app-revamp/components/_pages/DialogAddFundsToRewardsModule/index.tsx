@@ -2,19 +2,17 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
 import { chains, config } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
-import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useFundRewardsModule from "@hooks/useFundRewards";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
+import useRewardsModule from "@hooks/useRewards";
+import { RainbowKitChain } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext";
 import { switchChain } from "@wagmi/core";
 import { useRef } from "react";
 import { toast } from "react-toastify";
-import { useAccount } from "wagmi";
-import { useFundPoolStore } from "../Create/pages/ContestRewards/components/FundPool/store";
+import { useShallow } from "zustand/shallow";
 import TokenWidgets from "../Create/pages/ContestRewards/components/FundPool/components/TokenWidgets";
-import { RainbowKitChain } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext";
-import useRewardsModule from "@hooks/useRewards";
-import { useLocation } from "@tanstack/react-router";
+import { useFundPoolStore } from "../Create/pages/ContestRewards/components/FundPool/store";
 interface DialogAddFundsToRewardsModuleProps {
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
@@ -22,10 +20,10 @@ interface DialogAddFundsToRewardsModuleProps {
 
 export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModuleProps) => {
   const { ...dialogProps } = props;
-  const location = useLocation();
-  const { chainName } = extractPathSegments(location.pathname);
-  const { chainId: userChainId } = useAccount();
-  const selectedChain = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase());
+  const { chainId: userChainId, chainName: userChainName } = useContestConfigStore(
+    useShallow(state => state.contestConfig),
+  );
+  const selectedChain = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === userChainName.toLowerCase());
   const isConnectedOnCorrectChain = selectedChain?.id === userChainId;
   const { tokenWidgets, setTokenWidgets } = useFundPoolStore(state => state);
   const isAllTokenWidgetsAddressesUnique =

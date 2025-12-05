@@ -1,6 +1,7 @@
 import { extractPathSegments } from "@helpers/extractPath";
 import { getNativeTokenInfo } from "@helpers/getNativeTokenInfo";
 import { getTokenDecimalsBatch, getTokenSymbolBatch } from "@helpers/getTokenDecimals";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { TokenInfo } from "@hooks/useReleasableRewards";
 import { useRewardTokens } from "@hooks/useRewardsTokens";
 import { useQuery } from "@tanstack/react-query";
@@ -8,6 +9,7 @@ import { useLocation } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { Abi } from "viem";
 import { useReadContracts } from "wagmi";
+import { useShallow } from "zustand/shallow";
 
 export interface ReleasedRewardsParams {
   contractAddress: string;
@@ -43,9 +45,7 @@ export function useReleasedRewards({
   abi,
   rankings,
 }: ReleasedRewardsParams): ReleasedRewardsResult {
-  const location = useLocation();
-  const asPath = location.pathname;
-  const { chainName: contestChainName } = extractPathSegments(asPath ?? "");
+  const contestChainName = useContestConfigStore(useShallow(state => state.contestConfig.chainName));
   const { data: erc20Addresses, isError: isErc20AddressesError } = useRewardTokens(contractAddress, contestChainName);
   const nativeTokenInfo = getNativeTokenInfo(chainId);
   const {

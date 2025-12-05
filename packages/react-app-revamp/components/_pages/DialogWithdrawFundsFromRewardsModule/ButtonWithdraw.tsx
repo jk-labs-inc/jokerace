@@ -1,14 +1,13 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { chains, config } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
 import { transform } from "@helpers/transform";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { TokenInfo } from "@hooks/useReleasableRewards";
 import { useWithdrawReward } from "@hooks/useWithdrawRewards";
 import { switchChain } from "@wagmi/core";
-import { useLocation } from "@tanstack/react-router";
 import { Abi } from "viem";
-import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 
 interface ButtonWithdrawErc20RewardProps {
   token: TokenInfo;
@@ -29,10 +28,10 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
     onWithdrawError,
   } = props;
 
-  const location = useLocation();
-  const { chainId: userChainId } = useAccount();
-  const { chainName } = extractPathSegments(location.pathname);
-  const chainId = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.id;
+  const { chainId: userChainId, chainName: userChainName } = useContestConfigStore(
+    useShallow(state => state.contestConfig),
+  );
+  const chainId = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === userChainName.toLowerCase())?.id;
   const isConnectedOnCorrectChain = chainId === userChainId;
   const { handleWithdraw, isLoading } = useWithdrawReward(
     contractRewardsModuleAddress,

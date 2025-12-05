@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Iframe from "@components/tiptap/Iframe";
 import { chains, config } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
 import { emailRegex } from "@helpers/regex";
 import {
   SubmissionCache,
@@ -10,6 +9,7 @@ import {
   saveSubmissionToLocalStorage,
 } from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useEditorStore } from "@hooks/useEditor/store";
 import useEmailSignup from "@hooks/useEmailSignup";
 import useSubmitProposal from "@hooks/useSubmitProposal";
@@ -28,9 +28,9 @@ import { switchChain } from "@wagmi/core";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useBalance } from "wagmi";
+import { useShallow } from "zustand/shallow";
 import DialogModalSendProposalDesktopLayout from "./Desktop";
 import DialogModalSendProposalMobileLayout from "./Mobile";
-import { useLocation } from "@tanstack/react-router";
 
 interface DialogModalSendProposalProps {
   isOpen: boolean;
@@ -39,10 +39,9 @@ interface DialogModalSendProposalProps {
 
 export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOpen, setIsOpen }) => {
   const { address, chain } = useAccount();
-  const location = useLocation();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { subscribeUser, checkIfEmailExists } = useEmailSignup();
-  const { chainName, address: contestId } = extractPathSegments(location.pathname);
+  const { chainName, address: contestId } = useContestConfigStore(useShallow(state => state.contestConfig));
   const { sendProposal } = useSubmitProposal();
   const {
     setProposalId,

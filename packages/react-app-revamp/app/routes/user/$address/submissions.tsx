@@ -33,6 +33,9 @@ function useUserSubmissions(userAddress: string) {
 
 export const Route = createFileRoute("/user/$address/submissions")({
   component: UserSubmissionsPage,
+  validateSearch: (search: Record<string, unknown>) => ({
+    commentId: search.commentId as string | undefined,
+  }),
 });
 
 function UserSubmissionsPage() {

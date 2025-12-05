@@ -1,15 +1,15 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 import { config } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
 import { transform } from "@helpers/transform";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useError } from "@hooks/useError";
 import { switchChain, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
-import { useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
+import { useShallow } from "zustand/shallow";
 
 interface UseClaimRewardsProps {
   contractRewardsModuleAddress: `0x${string}`;
@@ -30,9 +30,7 @@ export const useClaimRewards = ({
   userAddress,
 }: UseClaimRewardsProps) => {
   const { chainId: userChainId } = useAccount();
-  const location = useLocation();
-  const asPath = location.pathname;
-  const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
+  const { address: contestAddress, chainName } = useContestConfigStore(useShallow(state => state.contestConfig));
   const { handleError } = useError();
   const [loadingStates, setLoadingStates] = useState<ClaimState>({});
   const [successStates, setSuccessStates] = useState<ClaimState>({});

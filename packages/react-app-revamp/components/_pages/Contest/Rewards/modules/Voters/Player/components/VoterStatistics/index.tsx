@@ -1,12 +1,11 @@
-import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
-import { getChainId } from "@helpers/getChainId";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewardsForRank } from "@hooks/useTotalRewardsForRank";
 import { useVoterRewardsStatistics } from "@hooks/useVoterRewardsStatistics";
-import { useLocation } from "@tanstack/react-router";
 import { FC } from "react";
 import { formatUnits } from "viem";
+import { useShallow } from "zustand/shallow";
 import RewardsError from "../../../../shared/Error";
 import RankingSuffix from "./components/RankingSuffix";
 import StatisticsRow from "./components/StatisticsRow";
@@ -24,9 +23,7 @@ interface VoterStatisticsProps {
 }
 
 const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward, isActive }) => {
-  const location = useLocation();
-  const { address: contestAddress, chainName } = extractPathSegments(location.pathname);
-  const chainId = getChainId(chainName);
+  const { address: contestAddress, chainId } = useContestConfigStore(useShallow(state => state.contestConfig));
   const { data: rewards } = useRewardsModule();
   const {
     statistics,

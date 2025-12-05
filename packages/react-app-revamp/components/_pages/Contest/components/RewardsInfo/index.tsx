@@ -1,6 +1,5 @@
-import { chains } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
 import { useCancelRewards } from "@hooks/useCancelRewards";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import useRewardsModule from "@hooks/useRewards";
 import { FC } from "react";
 import { Abi } from "viem";
@@ -8,18 +7,13 @@ import RewardsDisplay from "./components/RewardsDisplay";
 import RewardsLoader from "./components/RewardsLoader";
 import RewardsMarquee from "./components/RewardsMarquee";
 import RewardsSelfFundedMarquee from "./components/RewardsSelfFundedMarquee";
-import { useLocation } from "@tanstack/react-router";
 
 interface ContestRewardsInfoProps {
   version: string;
 }
 
 const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
-  const location = useLocation();
-  const { chainName } = extractPathSegments(location.pathname);
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
-  )?.[0]?.id;
+  const { contestConfig } = useContestConfigStore(state => state);
   const { data: rewards, isLoading, isSuccess, isError } = useRewardsModule();
   const {
     isCanceled,
@@ -28,7 +22,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
   } = useCancelRewards({
     rewardsAddress: rewards?.contractAddress as `0x${string}`,
     abi: rewards?.abi as Abi,
-    chainId,
+    chainId: contestConfig.chainId,
     version,
   });
 
@@ -46,7 +40,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
       <RewardsDisplay
         rewardsModuleAddress={rewards.contractAddress as `0x${string}`}
         rewardsAbi={rewards.abi as Abi}
-        chainId={chainId}
+        chainId={contestConfig.chainId}
         rewards={rewards}
         isRewardsModuleLoading={isLoading}
         isRewardsModuleError={isError}

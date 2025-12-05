@@ -1,10 +1,9 @@
-import { chains } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
-import { useLocation } from "@tanstack/react-router";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { FC } from "react";
 import { Abi } from "viem";
 import { useReadContract } from "wagmi";
+import { useShallow } from "zustand/shallow";
 
 interface RewardsTableShareProps {
   payee: number;
@@ -17,13 +16,11 @@ interface RewardsTableShareProps {
 
 export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
   const { payee, contractRewardsModuleAddress, abiRewardsModule, totalShares, totalPayees } = props;
-  const location = useLocation();
-  const { chainName } = extractPathSegments(location.pathname);
+  const chainId = useContestConfigStore(useShallow(state => state.contestConfig.chainId));
   const { data, isError, isLoading } = useReadContract({
     address: contractRewardsModuleAddress as `0x${string}`,
     abi: abiRewardsModule,
-    chainId: chains.filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]
-      ?.id,
+    chainId,
     functionName: "shares",
     args: [BigInt(payee)],
   }) as any;

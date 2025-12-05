@@ -1,13 +1,9 @@
-import { chains } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
-import { useContestStore } from "@hooks/useContest/store";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { compareVersions } from "compare-versions";
 import { FC } from "react";
-import ProposalStatisticsTotalVotesCast from "./components/TotalVotesCast";
-import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { useShallow } from "zustand/shallow";
-import useContestConfigStore from "@hooks/useContestConfig/store";
-import { useLocation } from "@tanstack/react-router";
+import ProposalStatisticsTotalVotesCast from "./components/TotalVotesCast";
 
 interface ProposalStatisticsPanelVotingOpenOrClosedProps {
   submissionsCount: number;
@@ -16,12 +12,7 @@ interface ProposalStatisticsPanelVotingOpenOrClosedProps {
 const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotingOpenOrClosedProps> = ({
   submissionsCount,
 }) => {
-  const location = useLocation();
-  const version = useContestConfigStore(useShallow(state => state.contestConfig.version));
-  const { address, chainName } = extractPathSegments(location.pathname);
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
-  )?.[0]?.id;
+  const { version, address, chainId } = useContestConfigStore(useShallow(state => state.contestConfig));
   const isV3OrHigher = compareVersions(version, "3.0") >= 0;
 
   return (

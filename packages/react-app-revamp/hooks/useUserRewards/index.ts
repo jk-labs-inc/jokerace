@@ -1,12 +1,12 @@
 import { Distribution, Reward } from "@components/_pages/Contest/Rewards/types";
-import { extractPathSegments } from "@helpers/extractPath";
 import { getNativeTokenInfo } from "@helpers/getNativeTokenInfo";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useQuery } from "@tanstack/react-query";
 import { fetchClaimableRewards, fetchClaimedRewards } from "lib/rewards";
 import { calculateTotalRewards } from "lib/rewards/utils";
-import { useLocation } from "@tanstack/react-router";
 import { useCallback, useMemo } from "react";
 import { Abi } from "viem";
+import { useShallow } from "zustand/shallow";
 
 export interface RewardsParams {
   contractAddress: `0x${string}`;
@@ -56,9 +56,7 @@ const useUserRewards = ({
   claimableEnabled = true,
   claimedEnabled = true,
 }: RewardsParams): RewardsResult => {
-  const location = useLocation();
-  const asPath = location.pathname;
-  const { chainName: contestChainName } = extractPathSegments(asPath ?? "");
+  const contestChainName = useContestConfigStore(useShallow(state => state.contestConfig.chainName));
   const nativeTokenInfo = getNativeTokenInfo(chainId);
 
   const commonQueryParams = {

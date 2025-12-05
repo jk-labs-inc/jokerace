@@ -1,7 +1,6 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import { Tweet } from "@components/_pages/ProposalContent/components/ProposalLayout/Tweet/components/CustomTweet";
 import { ProposalState } from "@components/_pages/Submission/types";
-import { extractPathSegments } from "@helpers/extractPath";
 import { twitterRegex } from "@helpers/regex";
 import {
   generateFacebookShareUrlForSubmission,
@@ -12,11 +11,12 @@ import {
   generateUrlSubmissions,
 } from "@helpers/share";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import { useLocation } from "@tanstack/react-router";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import { FC, ReactNode } from "react";
+import { useShallow } from "zustand/shallow";
 
 interface ContestProposalProps {
   proposal: Proposal;
@@ -70,8 +70,7 @@ const ContestProposal: FC<ContestProposalProps> = ({
   displaySocials,
   className,
 }) => {
-  const location = useLocation();
-  const { chainName, address } = extractPathSegments(location.pathname);
+  const { address, chainName } = useContestConfigStore(useShallow(state => state.contestConfig));
   const { contestName } = useContestStore(state => state);
 
   return (

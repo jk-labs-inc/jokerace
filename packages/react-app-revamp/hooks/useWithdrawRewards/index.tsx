@@ -9,6 +9,8 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { Abi } from "viem";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useShallow } from "zustand/shallow";
 
 export const useWithdrawReward = (
   contractRewardsModuleAddress: string,
@@ -21,9 +23,7 @@ export const useWithdrawReward = (
   onWithdrawError?: () => void,
 ) => {
   const [isLoading, setIsLoading] = useState(false);
-  const location = useLocation();
-  const asPath = location.pathname;
-  const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
+  const { chainName, address: contestAddress } = useContestConfigStore(useShallow(state => state.contestConfig));
   const { handleError } = useError();
 
   const handleWithdraw = async () => {

@@ -193,7 +193,6 @@
   --animate-fade-out: fadeOut 2s ease-out both;
   --animate-blink-shadow: blink 1s ease-in-out infinite;
   --animate-shake-top: shakeTop 0.8s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
-  --animate-swing-in-left: swingInLeft 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
   --animate-flicker: flicker 1s linear;
   --animate-flicker-infinite: flicker 1s linear infinite;
   --animate-reveal: reveal 1s ease-in-out;

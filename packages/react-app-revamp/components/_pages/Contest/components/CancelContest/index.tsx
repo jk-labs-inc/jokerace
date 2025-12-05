@@ -1,12 +1,10 @@
 import { config } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
-import { getChainId } from "@helpers/getChainId";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useContestState } from "@hooks/useContestState";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
-import { useLocation } from "@tanstack/react-router";
 import { switchChain } from "@wagmi/core";
 import { useState } from "react";
 import { useAccount } from "wagmi";
@@ -14,10 +12,8 @@ import { useShallow } from "zustand/shallow";
 import CancelContestModal from "./components/Modal";
 
 const CancelContest = () => {
-  const location = useLocation();
-  const { address: contestAddress } = extractPathSegments(location.pathname);
-  const contestChainId = getChainId(location.pathname);
   const { address, chainId } = useAccount();
+  const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const contestAuthorEthereumAddress = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
   const { cancelContest, isLoading, isConfirmed } = useContestState();
   const { contestState } = useContestStateStore(state => state);
@@ -25,7 +21,7 @@ const CancelContest = () => {
     totalVotesCast,
     isLoading: isLoadingTotalVotesCast,
     isError: isErrorTotalVotesCast,
-  } = useTotalVotesCastOnContest(contestAddress, contestChainId);
+  } = useTotalVotesCastOnContest(contestConfig.address, contestConfig.chainId);
   const [isCloseContestModalOpen, setIsCloseContestModalOpen] = useState(false);
 
   if (address !== contestAuthorEthereumAddress) return null;
@@ -39,10 +35,10 @@ const CancelContest = () => {
   const handleOpenModal = () => setIsCloseContestModalOpen(true);
 
   const handleCancelContest = async () => {
-    if (!contestChainId) return;
+    if (!contestConfig.chainId) return;
 
-    if (contestChainId !== chainId) {
-      await switchChain(config, { chainId: contestChainId });
+    if (contestConfig.chainId !== chainId) {
+      await switchChain(config, { chainId: contestConfig.chainId });
     }
 
     cancelContest();

@@ -1,11 +1,10 @@
-import { chains } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import { GetBalanceReturnType } from "@wagmi/core";
-import { useLocation } from "@tanstack/react-router";
 import { FC } from "react";
 import { formatEther } from "viem";
+import { useShallow } from "zustand/shallow";
 
 interface ChargeLayoutSubmissionProps {
   charge: Charge;
@@ -13,10 +12,7 @@ interface ChargeLayoutSubmissionProps {
 }
 
 const ChargeLayoutSubmission: FC<ChargeLayoutSubmissionProps> = ({ charge, accountData }) => {
-  const location = useLocation();
-  const { chainName } = extractPathSegments(location.pathname);
-  const chainUnitLabel = chains.find((c: { name: string }) => c.name.toLowerCase() === chainName.toLowerCase())
-    ?.nativeCurrency.symbol;
+  const chainUnitLabel = useContestConfigStore(useShallow(state => state.contestConfig.chainNativeCurrencySymbol));
   const chargeAmount = charge.type.costToPropose;
   const insufficientBalance = accountData.value < chargeAmount;
   const entryChargeFormatted = formatEther(BigInt(chargeAmount));
