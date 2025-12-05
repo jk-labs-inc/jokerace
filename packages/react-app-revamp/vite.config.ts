@@ -14,6 +14,9 @@ export default defineConfig({
     // This helps modules determine the execution environment
     "process.browser": true,
   },
+  ssr: {
+    noExternal: ["react-tweet"],
+  },
   plugins: [
     tailwindcss(),
     nodePolyfills({
