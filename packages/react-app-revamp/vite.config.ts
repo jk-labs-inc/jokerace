@@ -15,7 +15,7 @@ export default defineConfig({
     "process.browser": true,
   },
   ssr: {
-    noExternal: ["react-tweet"],
+    noExternal: ["react-tweet", "@rainbow-me/rainbowkit"],
   },
   plugins: [
     tailwindcss(),
