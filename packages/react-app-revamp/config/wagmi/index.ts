@@ -83,7 +83,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   mainnet,
 ];
 
-// Fallback for SSR where import.meta.env might not be fully available
 const WALLETCONECT_PROJECT_ID = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID ?? "";
 const appName = "jokerace";
 const projectId = WALLETCONECT_PROJECT_ID;
@@ -93,14 +92,14 @@ coinbaseWallet.preference = "smartWalletOnly";
 export const connectors = () => {
   return connectorsForWallets(
     [
-      // ...(isParaWalletConfigured
-      //   ? [
-      //       {
-      //         groupName: "Standard Login (Recommended For New Users)",
-      //         wallets: [paraWallet],
-      //       },
-      //     ]
-      //   : []),
+      ...(isParaWalletConfigured
+        ? [
+            {
+              groupName: "Standard Login (Recommended For New Users)",
+              wallets: [paraWallet],
+            },
+          ]
+        : []),
       {
         groupName: "Other Wallets",
         wallets: [
