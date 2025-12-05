@@ -1,13 +1,14 @@
-import "@getpara/react-sdk/styles.css";
 import LayoutBase from "@layouts/LayoutBase";
-import "@rainbow-me/rainbowkit/styles.css";
 import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import Providers from "../providers";
+import globalsCss from "../styles/globals.css?url";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "react-tooltip/dist/react-tooltip.css";
 import "simplebar-react/dist/simplebar.min.css";
-import Providers from "../providers";
-import globalsCss from "../styles/globals.css?url";
+import "@rainbow-me/rainbowkit/styles.css";
+import "@getpara/react-sdk/styles.css";
+import Portal from "@components/ToastPortal";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -54,13 +55,16 @@ function RootLayout() {
         <HeadContent />
       </head>
       <body>
-        <Providers>
-          <LayoutBase>
-            <Outlet />
-          </LayoutBase>
-          {/* TODO: add Google Analytics back */}
-        </Providers>
-        <Scripts />
+        <div id="_tanstack">
+          <Providers>
+            <LayoutBase>
+              <Outlet />
+            </LayoutBase>
+            {/* TODO: add Google Analytics back */}
+            <Portal />
+          </Providers>
+          <Scripts />
+        </div>
       </body>
     </html>
   );

@@ -15,7 +15,7 @@ const UserVotesList: FC<UserVotesListProps> = ({ submission, isLoading }) => {
 
   return (
     <CustomLink
-      href={getProposalPagePath(submission.network_name, submission.contest_address, submission.proposal_id)}
+      to={getProposalPagePath(submission.network_name, submission.contest_address, submission.proposal_id)}
       target="_blank"
     >
       <div

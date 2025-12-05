@@ -27,7 +27,7 @@ const Contest: FC<ContestProps> = ({ contest, loading, rewards, rewardsLoading }
 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
-      <CustomLink href={getContestUrl(contest.address, contest.network_name)}>
+      <CustomLink to={getContestUrl(contest.address, contest.network_name)}>
         <motion.div
           className="flex flex-col items-start md:grid md:grid-cols-[60px_300px_auto_1fr] md:items-center gap-4 md:gap-8 py-4 md:py-6 px-2 md:px-4 border-t-primary-2 border-t"
           style={{ willChange: "transform" }}

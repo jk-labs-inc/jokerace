@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { serverConfig } from "@config/wagmi/server";
 import { getEnsAddress, getEnsName } from "@wagmi/core";
 import { mainnet } from "wagmi/chains";
 
@@ -11,7 +11,7 @@ export async function getAddressProps(pathAddress: string) {
   if (!REGEX_ETHEREUM_ADDRESS.test(pathAddress)) {
     actualAddress = pathAddress.endsWith(".eth") ? pathAddress : `${pathAddress}.eth`;
     try {
-      const resolvedAddress = await getEnsAddress(config, {
+      const resolvedAddress = await getEnsAddress(serverConfig, {
         name: actualAddress,
         chainId: 1,
       });
@@ -29,7 +29,7 @@ export async function getAddressProps(pathAddress: string) {
 
   if (REGEX_ETHEREUM_ADDRESS.test(actualAddress)) {
     try {
-      const fetchedEnsName = await getEnsName(config, {
+      const fetchedEnsName = await getEnsName(serverConfig, {
         address: actualAddress as `0x${string}`,
         chainId: mainnet.id,
       });

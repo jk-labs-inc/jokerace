@@ -12,10 +12,8 @@ interface UserCommentsListProps {
 const UserCommentsList: FC<UserCommentsListProps> = ({ comment }) => {
   return (
     <CustomLink
-      href={{
-        pathname: getProposalPagePath(comment.network_name.toLowerCase(), comment.contest_address, comment.proposal_id),
-        query: { commentId: comment.comment_id },
-      }}
+      to={getProposalPagePath(comment.network_name.toLowerCase(), comment.contest_address, comment.proposal_id)}
+      search={{ commentId: comment.comment_id }}
       target="_blank"
     >
       <div

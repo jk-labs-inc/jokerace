@@ -83,7 +83,8 @@ export const chains: readonly [Chain, ...Chain[]] = [
   mainnet,
 ];
 
-const WALLETCONECT_PROJECT_ID = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID as string;
+// Fallback for SSR where import.meta.env might not be fully available
+const WALLETCONECT_PROJECT_ID = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID ?? "";
 const appName = "jokerace";
 const projectId = WALLETCONECT_PROJECT_ID;
 

@@ -36,7 +36,7 @@ export const UserProfileName: FC<UserProfileNameProps> = ({
     <CustomLink
       className={`${textSizeClass} font-bold ${textColorClass} no-underline ${className}`}
       target={target}
-      href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
+      to={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
     >
       {displayText}
     </CustomLink>

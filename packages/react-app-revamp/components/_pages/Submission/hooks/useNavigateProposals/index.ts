@@ -44,6 +44,8 @@ const useNavigateProposals = (): UseNavigateProposalsReturn => {
 
   const goToProposal = (targetProposalId: string) => {
     const path = buildProposalUrl(targetProposalId);
+
+    console.log("path", path);
     navigate({ to: path });
   };
 

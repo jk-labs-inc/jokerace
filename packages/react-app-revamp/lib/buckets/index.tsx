@@ -15,17 +15,18 @@ interface SaveImageOptions {
 }
 
 export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions): Promise<string> => {
+  console.log("Saving image to bucket", { fileId, type, file });
   toastLoading({
     message: "Uploading image...",
   });
   try {
     const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    const uint8Array = new Uint8Array(arrayBuffer);
 
     const input = {
       Bucket: IMAGE_UPLOAD_BUCKET,
       Key: fileId,
-      Body: buffer,
+      Body: uint8Array,
       ContentType: type,
     };
 
@@ -38,6 +39,7 @@ export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions
     });
     return originalUrl;
   } catch (error: any) {
+    console.log("Upload error:", error);
     toastError({
       message: "Failed to upload an image, please try again.",
       messageToCopy: error.message,

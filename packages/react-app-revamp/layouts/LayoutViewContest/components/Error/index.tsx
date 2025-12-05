@@ -32,7 +32,7 @@ const LayoutViewContestError: FC<LayoutViewContestErrorProps> = ({ error, bugRep
         <p className="text-[16px] font-bold text-neutral-11 text-center">
           we were unable to fetch this contest — please check url to make sure it’s accurate <i>or</i> search for
           contests{" "}
-          <CustomLink href={ROUTE_VIEW_CONTESTS} className="text-positive-11">
+          <CustomLink to={ROUTE_VIEW_CONTESTS} className="text-positive-11">
             here
           </CustomLink>
         </p>

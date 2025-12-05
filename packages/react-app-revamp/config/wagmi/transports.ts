@@ -2,7 +2,7 @@ import { Chain, Transport, fallback, http } from "viem";
 
 type Transports = Record<Chain["id"], Transport>;
 
-const isProduction = import.meta.env.VITE_APP_ENVIRONMENT === "production";
+const isProduction = import.meta.env?.VITE_APP_ENVIRONMENT === "production";
 
 const getHeaders = () => (isProduction ? { Referer: "https://jokerace.io/" } : { Referer: "" });
 

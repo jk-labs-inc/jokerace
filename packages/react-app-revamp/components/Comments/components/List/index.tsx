@@ -38,8 +38,9 @@ const CommentsList: FC<CommentsListProps> = ({
   totalPages,
   className,
 }) => {
-  const search = useSearch({
-    from: "/contest/$chain/$address/submission/$submission",
+  const hasCommentsParam = useSearch({
+    from: "/contest/$chain/$address/submission/$submission/",
+    select: (search: Record<string, unknown>) => "comments" in search,
   });
   const [selectedCommentIds, setSelectedCommentIds] = useState<string[]>([]);
   const commentsRef = useRef<HTMLDivElement>(null);
@@ -51,10 +52,10 @@ const CommentsList: FC<CommentsListProps> = ({
   const { shouldApplyFade, maskImageStyle } = useScrollFade(scrollContainerRef, comments.length, [comments]);
 
   useEffect(() => {
-    if (search.comments) {
+    if (hasCommentsParam) {
       commentsRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [search.comments]);
+  }, [hasCommentsParam]);
 
   useEffect(() => {
     if (isDeletingSuccess) {

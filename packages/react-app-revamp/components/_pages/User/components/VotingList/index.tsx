@@ -36,7 +36,7 @@ const UserVotes: FC<UserVotesProps> = ({ submissions, page, itemsPerPage, setPag
         <p className="text-[16px] font-bold text-neutral-11">
           we were unable to fetch voting activity for this user — please check url to make sure it's accurate <i>or</i>{" "}
           search for contests{" "}
-          <CustomLink href={ROUTE_VIEW_CONTESTS} className="text-primary-10">
+          <CustomLink to={ROUTE_VIEW_CONTESTS} className="text-primary-10">
             here
           </CustomLink>
         </p>

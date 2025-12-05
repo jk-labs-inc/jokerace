@@ -57,7 +57,7 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
               {navLinks.map(link => (
                 <CustomLink
                   key={link.href}
-                  href={link.href.replace("[address]", address)}
+                  to={link.href.replace("[address]", address)}
                   className="flex gap-2 items-center text-[16px] font-bold text-neutral-11 uppercase"
                 >
                   my {link.label}

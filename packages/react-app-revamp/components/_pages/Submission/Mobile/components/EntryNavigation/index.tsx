@@ -28,8 +28,7 @@ const SubmissionPageMobileEntryNavigation: FC<SubmissionPageMobileEntryNavigatio
         >
           {previousEntryUrl && currentIndex !== 0 && (
             <CustomLink
-              href={previousEntryUrl}
-              scroll={false}
+              to={previousEntryUrl}
               className="flex items-center justify-center gap-2 text-positive-11 text-[16px] font-bold transform transition-transform duration-200 active:scale-95"
             >
               <img src="/contest/previous-entry-mobile.svg" alt="prev-entry" width={16} height={16} className="mt-1" />
@@ -38,8 +37,7 @@ const SubmissionPageMobileEntryNavigation: FC<SubmissionPageMobileEntryNavigatio
           )}
           {nextEntryUrl && currentIndex !== totalProposals - 1 && (
             <CustomLink
-              href={nextEntryUrl}
-              scroll={false}
+              to={nextEntryUrl}
               className="flex items-center justify-center gap-2 text-positive-11 text-[16px] font-bold transform transition-transform duration-200 active:scale-95"
             >
               next entry

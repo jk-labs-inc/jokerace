@@ -77,9 +77,7 @@ const ProposalLayoutClassic = ({
               className={`inline-block p-4 rounded-[8px] bg-primary-1 border transition-colors duration-300 ease-in-out overflow-hidden ${
                 isHighlighted ? "border-secondary-14" : "border-transparent hover:border-neutral-9"
               }`}
-              href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
-              shallow
-              scroll={false}
+              to={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
             >
               <div className="max-w-full overflow-hidden interweave-container">
                 <Interweave
@@ -109,10 +107,8 @@ const ProposalLayoutClassic = ({
                 </p>
               )}
               <CustomLink
-                href={commentLink}
+                to={commentLink}
                 className="min-w-16 shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-primary-1 rounded-[16px] cursor-pointer border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out"
-                shallow
-                scroll={false}
               >
                 <ChatBubbleLeftEllipsisIcon className="w-6 h-6 text-neutral-9 shrink-0" />
                 <p className="text-[16px] text-neutral-9 font-bold grow text-center">{proposal.commentsCount}</p>

@@ -36,7 +36,7 @@ const UserComments: FC<UserCommentsProps> = ({ comments, page, itemsPerPage, set
         <p className="text-[16px] font-bold text-neutral-11">
           we were unable to fetch comments for this user — please check url to make sure it's accurate <i>or</i> search
           for contests{" "}
-          <CustomLink href={ROUTE_VIEW_CONTESTS} className="text-secondary-11">
+          <CustomLink to={ROUTE_VIEW_CONTESTS} className="text-secondary-11">
             here
           </CustomLink>
         </p>

@@ -25,8 +25,9 @@ const Comments: FC<CommentsProps> = ({
   numberOfComments,
   className,
 }) => {
-  const search = useSearch({
-    from: "/contest/$chain/$address/submission/$submission",
+  const commentId = useSearch({
+    from: "/contest/$chain/$address/submission/$submission/",
+    select: (search: Record<string, unknown>) => search.commentId as string,
   });
   const commentsRef = useRef<HTMLDivElement>(null);
   const isCompletedOrCanceled =
@@ -47,14 +48,14 @@ const Comments: FC<CommentsProps> = ({
   } = useCommentsStore(state => state);
 
   useEffect(() => {
-    if (search.commentId) {
-      getCommentsWithSpecificFirst(search.commentId);
+    if (commentId) {
+      getCommentsWithSpecificFirst(commentId);
       setTimeout(() => commentsRef.current?.scrollIntoView({ behavior: "smooth" }), 0);
       return;
     }
 
     getAllCommentsIdsPerProposal();
-  }, [proposalId, search.commentId]);
+  }, [proposalId, commentId]);
 
   const handleLoadMoreComments = () => {
     const nextPage = currentPage + 1;

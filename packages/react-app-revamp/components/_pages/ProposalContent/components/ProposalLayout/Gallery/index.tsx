@@ -81,8 +81,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 
   return (
     <CustomLink
-      scroll={false}
-      href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
+      to={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
       className={`flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full max-h-[70vh] border transition-colors duration-300 ease-in-out ${
         isHighlighted ? "border-secondary-14" : "border-transparent hover:border-primary-3"
       }`}
