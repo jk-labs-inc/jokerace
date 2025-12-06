@@ -47,7 +47,6 @@ abstract contract Governor is GovernorSorting {
         uint256 sortingEnabled;
         uint256 rankLimit;
         uint256 percentageToCreator;
-        uint256 costToPropose;
         uint256 costToVote;
         uint256 priceCurveType;
         uint256 multiple;
@@ -108,7 +107,7 @@ abstract contract Governor is GovernorSorting {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.9"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.10"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -120,7 +119,6 @@ abstract contract Governor is GovernorSorting {
     uint256 public numAllowedProposalSubmissions; // The number of proposals that an address who is qualified to propose can submit for this contest.
     uint256 public maxProposalCount; // Max number of proposals allowed in this contest.
     uint256 public percentageToCreator;
-    uint256 public costToPropose;
     uint256 public costToVote; // Cost per vote if flat price curve, starting/minimum price if exp curve
     uint256 public priceCurveType; // Enum value of PriceCurveTypes.
     uint256 public multiple; // Exponent multiple for an exponential price curve if applicable.
@@ -186,7 +184,6 @@ abstract contract Governor is GovernorSorting {
         numAllowedProposalSubmissions = constructorArgs_.intConstructorArgs.numAllowedProposalSubmissions;
         maxProposalCount = constructorArgs_.intConstructorArgs.maxProposalCount;
         percentageToCreator = constructorArgs_.intConstructorArgs.percentageToCreator;
-        costToPropose = constructorArgs_.intConstructorArgs.costToPropose;
         costToVote = constructorArgs_.intConstructorArgs.costToVote;
         priceCurveType = constructorArgs_.intConstructorArgs.priceCurveType;
         multiple = constructorArgs_.intConstructorArgs.multiple;
@@ -388,9 +385,7 @@ abstract contract Governor is GovernorSorting {
      */
     function _determineCorrectAmountSent(Actions currentAction, uint256 numVotes) internal returns (uint256) {
         uint256 actionCost;
-        if (currentAction == Actions.Submit) {
-            actionCost = costToPropose;
-        } else if (currentAction == Actions.Vote) {
+        if (currentAction == Actions.Vote) {
             if (numVotes < 1 ether) revert CannotVoteLessThanOneVoteInPayPerVote();
             actionCost = currentPricePerVote() * (numVotes / 1 ether); // we don't allow <1 vote to be cast bc this would underflow
         } else {

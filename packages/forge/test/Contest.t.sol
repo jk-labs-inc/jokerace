@@ -21,7 +21,6 @@ contract ContestTest is Test {
 
     // COST PARAMS
     uint256 public constant NINETY_PERCENT_TO_CREATOR = 90;
-    uint256 public constant ZERO_COST_TO_PROPOSE = 0;
     uint256 public constant ZERO_COST_TO_VOTE = 0;
     uint256 public constant STANDARD_COST_TO_VOTE = 100000000000000;
     uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
@@ -48,7 +47,6 @@ contract ContestTest is Test {
         SORTING_ENABLED,
         RANK_LIMIT_250,
         NINETY_PERCENT_TO_CREATOR,
-        ZERO_COST_TO_PROPOSE,
         STANDARD_COST_TO_VOTE,
         EXPONENTIAL_PRICE_CURVE_TYPE,
         STANDARD_EXPONENT_MULTIPLE
