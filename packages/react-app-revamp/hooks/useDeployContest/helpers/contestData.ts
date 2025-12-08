@@ -24,11 +24,8 @@ export interface ContestData {
   datetimeOpeningVoting: Date;
   datetimeClosingVoting: Date;
   contractAddress: string;
-  votingMerkleRoot: null;
-  submissionMerkleRoot: null;
   authorAddress: string;
   networkName: string;
-  voting_requirements: null;
   cost_to_vote: number;
   percentage_to_creator: number;
 }
@@ -56,11 +53,8 @@ export const prepareContestData = (params: ContestDataParams): ContestData => {
     datetimeOpeningVoting: votingOpen,
     datetimeClosingVoting: votingClose,
     contractAddress: contractAddress.toLowerCase(),
-    votingMerkleRoot: null,
-    submissionMerkleRoot: null,
     authorAddress: address,
     networkName: chainName?.toLowerCase().replace(" ", "") ?? "",
-    voting_requirements: null,
     cost_to_vote: chargeType.costToVote,
     percentage_to_creator: charge.percentageToCreator,
   };
