@@ -135,7 +135,6 @@ export function useContest() {
       }
 
       const percentageToCreator = Number(getResultByName("percentageToCreator")) || 0;
-      const costToPropose = Number(getResultByName("costToPropose")) || 0;
       let costToVote = 0;
       let payPerVote = 1;
 
@@ -151,7 +150,6 @@ export function useContest() {
         percentageToCreator,
         voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
         type: {
-          costToPropose,
           costToVote,
         },
       });

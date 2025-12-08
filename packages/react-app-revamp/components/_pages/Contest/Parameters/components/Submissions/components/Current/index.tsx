@@ -36,9 +36,6 @@ const ContestParametersSubmissionsCurrent = () => {
       <ul className="pl-4 text-[16px] text-neutral-9">
         <li className="list-disc">{generateUserQualifiedMessage(anyoneCanSubmit)}</li>
         <li className="list-disc">
-          {formatEther(BigInt(charge.type.costToPropose))} {chainNativeCurrencySymbol} to enter
-        </li>
-        <li className="list-disc">
           {anyoneCanSubmit === AnyoneCanSubmit.ANYONE_CAN_SUBMIT ? "players" : "creator"} can enter{" "}
           <span>
             {maxProposalsPerUserCapped

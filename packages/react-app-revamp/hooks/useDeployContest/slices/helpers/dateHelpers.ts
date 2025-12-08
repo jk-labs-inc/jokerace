@@ -27,6 +27,10 @@ export const createDateFromTiming = (timing: TimingDetails): Date => {
     .second(0)
     .millisecond(0);
 
+  if (date.isBefore(now)) {
+    date.add(1, "year");
+  }
+
   return date.toDate();
 };
 
