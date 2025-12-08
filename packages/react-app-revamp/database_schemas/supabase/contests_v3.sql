@@ -16,7 +16,6 @@ create table
     "submissionMerkleRoot" character varying null,
     voting_requirements json null,
     submission_requirements json null,
-    cost_to_propose numeric null,
     percentage_to_creator numeric null,
     cost_to_vote numeric null,
     has_been_featured boolean null default false,

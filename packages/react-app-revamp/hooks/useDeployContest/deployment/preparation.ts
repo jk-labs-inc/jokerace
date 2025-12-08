@@ -9,7 +9,7 @@ interface PrepareDeploymentDataParams {
   address: `0x${string}`;
   chain: { id: number; name?: string };
   combinedPrompt: string;
-  chargeType: { costToPropose: number; costToVote: number };
+  chargeType: { costToVote: number };
   contestData: {
     title: string;
     submissionOpen: Date;
@@ -37,13 +37,9 @@ export const preparePromptData = (prompt: {
   }).toString();
 };
 
-export const fetchJkLabsSplitDestination = async (
-  chainId: number,
-  chargeType: { costToPropose: number; costToVote: number },
-) => {
+export const fetchJkLabsSplitDestination = async (chainId: number, chargeType: { costToVote: number }) => {
   try {
     return await getJkLabsSplitDestinationAddress(chainId, {
-      costToPropose: chargeType.costToPropose,
       costToVote: chargeType.costToVote,
     });
   } catch (error) {
