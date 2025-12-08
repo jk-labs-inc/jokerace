@@ -8,30 +8,30 @@ import CreateContestTimingHourSelector from "../Selectors/HourSelector";
 import CreateContestTimingMonthSelector from "../Selectors/MonthSelector";
 
 const CreateContestTimingVotingOpens = () => {
-  const { votingOpen, updateVotingOpen, getVotingOpenMonthOptions, getVotingOpenDayOptions, getVotingOpenHourOptions } =
-    useDeployContestStore(
-      useShallow(state => ({
-        votingOpen: state.votingOpen,
-        updateVotingOpen: state.updateVotingOpen,
-        getVotingOpenMonthOptions: state.getVotingOpenMonthOptions,
-        getVotingOpenDayOptions: state.getVotingOpenDayOptions,
-        getVotingOpenHourOptions: state.getVotingOpenHourOptions,
-      })),
-    );
+  const {
+    votingOpen,
+    updateVotingOpen,
+    getVotingOpenDate,
+    getVotingOpenMonthOptions,
+    getVotingOpenDayOptions,
+    getVotingOpenHourOptions,
+  } = useDeployContestStore(
+    useShallow(state => ({
+      votingOpen: state.votingOpen,
+      updateVotingOpen: state.updateVotingOpen,
+      getVotingOpenDate: state.getVotingOpenDate,
+      getVotingOpenMonthOptions: state.getVotingOpenMonthOptions,
+      getVotingOpenDayOptions: state.getVotingOpenDayOptions,
+      getVotingOpenHourOptions: state.getVotingOpenHourOptions,
+    })),
+  );
 
   const monthOptions = getVotingOpenMonthOptions();
   const dayOptions = getVotingOpenDayOptions();
   const hourOptions = getVotingOpenHourOptions();
   const monthLabel = moment().month(votingOpen.month).format("MMMM");
   const hourLabel = `${votingOpen.hour}:00`;
-  const votingOpenMoment = moment()
-    .month(votingOpen.month)
-    .date(votingOpen.day)
-    .hour(votingOpen.hour)
-    .minute(0)
-    .second(0);
-
-  const daysUntilVotingOpens = votingOpenMoment.diff(moment(), "days");
+  const daysUntilVotingOpens = moment(getVotingOpenDate()).diff(moment(), "days");
   const shouldShowWeekRecommendation = daysUntilVotingOpens < 5;
 
   const handleMonthChange = (monthValue: string) => {

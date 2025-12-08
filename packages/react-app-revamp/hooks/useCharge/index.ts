@@ -25,13 +25,7 @@ const getContracts = (address: `0x${string}`, abi: Abi, chainId: number) => {
       functionName: "percentageToCreator",
       args: [],
     },
-    {
-      address,
-      abi,
-      chainId,
-      functionName: "costToPropose",
-      args: [],
-    },
+
     {
       address,
       abi,
@@ -60,7 +54,6 @@ const getDefaultCharge = (): Charge => ({
   percentageToCreator: 0,
   voteType: VoteType.PerVote,
   type: {
-    costToPropose: 0,
     costToVote: 0,
   },
   error: false,
@@ -86,7 +79,6 @@ export const useCharge = ({ address, abi, chainId }: UseChargeParams): UseCharge
         const getResultByName = createResultGetter(contracts, [...data]);
 
         const percentageToCreator = Number(getResultByName("percentageToCreator")) || 0;
-        const costToPropose = Number(getResultByName("costToPropose")) || 0;
         const costToVote = Number(getResultByName("costToVote")) || 0;
         const payPerVote = Number(getResultByName("payPerVote")) || 1;
 
@@ -94,7 +86,6 @@ export const useCharge = ({ address, abi, chainId }: UseChargeParams): UseCharge
           percentageToCreator,
           voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
           type: {
-            costToPropose,
             costToVote,
           },
           error: false,

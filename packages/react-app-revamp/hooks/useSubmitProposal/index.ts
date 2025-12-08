@@ -18,7 +18,6 @@ import { simulateContract, waitForTransactionReceipt, writeContract } from "@wag
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useMediaQuery } from "react-responsive";
-import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import { useSubmitProposalStore } from "./store";
@@ -72,10 +71,6 @@ export function useSubmitProposal() {
     chainId: contestConfig.chainId,
   });
 
-  const calculateChargeAmount = () => {
-    return BigInt(charge.type.costToPropose);
-  };
-
   const getContractConfig = () => {
     return {
       address: contestConfig.address as `0x${string}`,
@@ -105,8 +100,6 @@ export function useSubmitProposal() {
     const fullProposalContent = `${entryPreviewHTML}\n\n${proposalContent}\n\n${fieldInputsHTML}`;
 
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
-      const costToPropose = calculateChargeAmount();
-
       try {
         const contractConfig = getContractConfig();
         const fieldsMetadata = processFieldInputs(metadataFields);
@@ -125,7 +118,6 @@ export function useSubmitProposal() {
           ...contractConfig,
           functionName: "propose",
           args: [proposalCore],
-          value: costToPropose,
         });
         hash = await writeContract(config, request);
 
@@ -154,7 +146,7 @@ export function useSubmitProposal() {
           proposalId,
           charge,
           rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
-          amount: costToPropose ? Number(formatEther(costToPropose)) : 0,
+          amount: 0,
           operation: "deposit",
           token_address: null,
         });
@@ -195,9 +187,6 @@ export function useSubmitProposal() {
         network_name: params.chainName,
         proposal_id: params.proposalId,
         created_at: Math.floor(Date.now() / 1000),
-        amount_sent: params.charge.type.costToPropose
-          ? Number(formatEther(BigInt(params.charge.type.costToPropose)))
-          : null,
         percentage_to_creator: params.charge.percentageToCreator,
       });
     } catch (error) {
@@ -211,9 +200,7 @@ export function useSubmitProposal() {
         contest_address: params.address,
         rewards_module_address: params.rewardsModuleAddress,
         network_name: params.chainName,
-        amount: params.charge.type.costToPropose
-          ? Number(formatEther(BigInt(params.charge.type.costToPropose))) * (params.charge.percentageToCreator / 100)
-          : 0,
+        amount: 0,
         operation: "deposit",
         token_address: null,
         created_at: Math.floor(Date.now() / 1000),

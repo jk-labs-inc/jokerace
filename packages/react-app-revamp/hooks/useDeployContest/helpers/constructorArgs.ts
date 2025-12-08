@@ -11,7 +11,6 @@ export interface ConstructorArgsParams {
   submissionOpen: Date;
   votingOpen: Date;
   votingClose: Date;
-
   advancedOptions: {
     rankLimit: number;
   };
@@ -56,7 +55,6 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     sortingEnabled: 1,
     rankLimit: advancedOptions.rankLimit,
     percentageToCreator: percentageToCreator,
-    costToPropose: parseEther(chargeType.costToPropose.toString()),
     costToVote: parseEther(costToVote.toString()),
     priceCurveType: 1, // Exponential
     multiple: parseEther(priceCurve.multiple.toString()),
