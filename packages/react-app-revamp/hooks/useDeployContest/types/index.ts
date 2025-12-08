@@ -40,7 +40,6 @@ export interface ContestValues {
   prompt: string;
   contractAddress: string;
   networkName: string;
-  voting_requirements: any;
   cost_to_propose: number;
   cost_to_vote: number;
   percentage_to_creator: number;
