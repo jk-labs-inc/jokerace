@@ -22,7 +22,7 @@ export function getContracts(contractConfig: any, version: string) {
     "state",
   ];
 
-  const v4FunctionNames = ["percentageToCreator", "costToPropose"];
+  const v4FunctionNames = ["percentageToCreator"];
 
   const v4_2FunctionNames = ["sortingEnabled"];
 
