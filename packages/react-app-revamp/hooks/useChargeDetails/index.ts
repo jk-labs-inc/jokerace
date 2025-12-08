@@ -36,7 +36,6 @@ const useChargeDetails = (chainName: string) => {
         percentageToCreator: PERCENTAGE_TO_CREATOR_DEFAULT,
         voteType: VoteType.PerVote,
         type: {
-          costToPropose: 0,
           costToVote: 0,
           costToVoteStartPrice: 0,
           costToVoteEndPrice: 0,
@@ -48,7 +47,6 @@ const useChargeDetails = (chainName: string) => {
         percentageToCreator: PERCENTAGE_TO_CREATOR_DEFAULT,
         voteType: VoteType.PerVote,
         type: {
-          costToPropose: 0,
           costToVote: chargeDetails.costToVote,
           costToVoteStartPrice: chargeDetails.costToVote,
           costToVoteEndPrice: chargeDetails.costToVote * priceCurve.multipler,

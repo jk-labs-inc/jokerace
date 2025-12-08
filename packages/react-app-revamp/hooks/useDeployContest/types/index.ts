@@ -12,7 +12,6 @@ export type Charge = {
   percentageToCreator: number;
   voteType: VoteType;
   type: {
-    costToPropose: number;
     costToVote: number;
     costToVoteStartPrice?: number;
     costToVoteEndPrice?: number;
@@ -40,7 +39,6 @@ export interface ContestValues {
   prompt: string;
   contractAddress: string;
   networkName: string;
-  cost_to_propose: number;
   cost_to_vote: number;
   percentage_to_creator: number;
   authorAddress?: string;

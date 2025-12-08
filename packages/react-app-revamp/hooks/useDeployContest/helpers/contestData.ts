@@ -8,7 +8,6 @@ export interface ContestDataParams {
   address: string;
   chainName?: string;
   chargeType: {
-    costToPropose: number;
     costToVote: number;
   };
   charge: {
@@ -27,7 +26,6 @@ export interface ContestData {
   contractAddress: string;
   authorAddress: string;
   networkName: string;
-  cost_to_propose: number;
   cost_to_vote: number;
   percentage_to_creator: number;
 }
@@ -57,7 +55,6 @@ export const prepareContestData = (params: ContestDataParams): ContestData => {
     contractAddress: contractAddress.toLowerCase(),
     authorAddress: address,
     networkName: chainName?.toLowerCase().replace(" ", "") ?? "",
-    cost_to_propose: chargeType.costToPropose,
     cost_to_vote: chargeType.costToVote,
     percentage_to_creator: charge.percentageToCreator,
   };

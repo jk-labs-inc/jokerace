@@ -5,7 +5,7 @@ import { ContestValues } from "../types";
 
 export async function getJkLabsSplitDestinationAddress(
   chainId: number,
-  chargeType: { costToPropose: number; costToVote: number },
+  chargeType: { costToVote: number },
 ): Promise<string> {
   const chain = chains.find(c => c.id === chainId);
 
@@ -61,7 +61,6 @@ export async function indexContest(contestData: ContestValues) {
       author_address: contestData?.authorAddress ?? address,
       network_name: contestData.networkName,
       featured: contestData.featured ?? false,
-      cost_to_propose: contestData.cost_to_propose,
       cost_to_vote: contestData.cost_to_vote,
       percentage_to_creator: contestData.percentage_to_creator,
     },

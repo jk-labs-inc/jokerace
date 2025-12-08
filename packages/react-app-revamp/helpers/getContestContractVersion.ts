@@ -58,6 +58,7 @@ import FixStateErrorsContract from "@contracts/bytecodeAndAbi/Contest.6.6.fixSta
 import UpdatePeriodConstraintsContract from "@contracts/bytecodeAndAbi/Contest.6.7.updatePeriodConstraints.sol/Contest.json";
 import CorrectPeriodConstraintsContract from "@contracts/bytecodeAndAbi/Contest.6.8.correctPeriodConstraints.sol/Contest.json";
 import AlwaysSelfFundContract from "@contracts/bytecodeAndAbi/Contest.6.9.alwaysSelfFund.sol/Contest.json";
+import DeprecateCostToEnterContract from "@contracts/bytecodeAndAbi/Contest.6.10.deprecateCostToEnter.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
 import { createTransport } from "@config/wagmi/transports";
@@ -83,7 +84,9 @@ export async function getContestContractVersion(address: string, chainId: number
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
     const defaultReturn = { abi: null, version: "unknown" };
-    if (version === "6.9") {
+    if (version === "6.10") {
+      return { abi: DeprecateCostToEnterContract.abi, version };
+    } else if (version === "6.9") {
       return { abi: AlwaysSelfFundContract.abi, version };
     } else if (version === "6.8") {
       return { abi: CorrectPeriodConstraintsContract.abi, version };

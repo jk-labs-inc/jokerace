@@ -58,7 +58,6 @@ export const createContestStore = () =>
       percentageToCreator: 0,
       voteType: VoteType.PerVote,
       type: {
-        costToPropose: 0,
         costToVote: 0,
       },
     },

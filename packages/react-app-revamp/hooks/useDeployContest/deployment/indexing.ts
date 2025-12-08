@@ -9,7 +9,7 @@ interface PrepareContestDataParams {
   contractAddress: string;
   address: string;
   chainName?: string;
-  chargeType: { costToPropose: number; costToVote: number };
+  chargeType: { costToVote: number };
   contestData: {
     title: string;
     submissionOpen: Date;

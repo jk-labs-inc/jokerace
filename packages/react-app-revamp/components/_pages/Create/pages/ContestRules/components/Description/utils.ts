@@ -4,7 +4,7 @@ import moment from "moment";
 
 const SUMMARY_TEMPLATES = {
   [EntryPermission.ANYONE_CAN_SUBMIT]:
-    "This is an open contest where anyone can submit an entry[entry price]. Contestants should enter a [entry preview] representing their entry below, along with any relevant information about why voters should vote for them.\n\nContestants can enter between [entry open date] and [entry closing date].\n\nVotes start at [voting start price] at [voting open date] and end at [voting end price] at [voting closing date].",
+    "This is an open contest where anyone can submit an entry. Contestants should enter a [entry preview] representing their entry below, along with any relevant information about why voters should vote for them.\n\nContestants can enter between [entry open date] and [entry closing date].\n\nVotes start at [voting start price] at [voting open date] and end at [voting end price] at [voting closing date].",
 
   [EntryPermission.ONLY_CREATOR]:
     "This contest is open for anyone to vote. Pick your favorite entry—or entries!—and you can buy as many votes as you like.\n\nVotes start at [voting start price] at [voting open date] and end at [voting end price] at [voting closing date].",
@@ -40,11 +40,7 @@ export const generateDynamicSummary = (
 ) => {
   let result = SUMMARY_TEMPLATES[isAnyoneCanSubmit];
 
-  const entryPriceText =
-    charge.type.costToPropose === 0 ? "" : " for " + charge.type.costToPropose + " " + nativeCurrency;
-
   const placeholders = {
-    "[entry price]": entryPriceText,
     "[voting price]": charge.type.costToVote + " " + nativeCurrency,
     "[voting start price]": charge.type.costToVoteStartPrice + " " + nativeCurrency,
     "[voting end price]": charge.type.costToVoteEndPrice + " " + nativeCurrency,
