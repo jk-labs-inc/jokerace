@@ -8,7 +8,7 @@ import { emailRegex } from "@helpers/regex";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { type GetBalanceReturnType } from "@wagmi/core";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 interface SendProposalMobileLayoutConfirmInitialContentProps {
   charge: Charge;
@@ -16,6 +16,11 @@ interface SendProposalMobileLayoutConfirmInitialContentProps {
   chainName: string;
   onConfirm?: () => void;
   onShowAddFunds?: (value: boolean) => void;
+}
+
+enum ButtonText {
+  SUBMIT = "submit",
+  ADD_FUNDS = "add funds",
 }
 
 const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayoutConfirmInitialContentProps> = ({
@@ -31,6 +36,12 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
   const [showAddFunds, setShowAddFunds] = useState(false);
+  const [buttonText, setButtonText] = useState(ButtonText.SUBMIT);
+  const insufficientBalance = accountData && accountData.value === BigInt(0);
+
+  useEffect(() => {
+    setButtonText(insufficientBalance ? ButtonText.ADD_FUNDS : ButtonText.SUBMIT);
+  }, [insufficientBalance]);
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -74,8 +85,12 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
           </div>
 
           <div className="flex flex-col gap-2 mt-12">
-            <ButtonV3 colorClass="bg-gradient-vote rounded-[40px]" size={ButtonSize.FULL} onClick={handleConfirm}>
-              submit
+            <ButtonV3
+              colorClass="bg-gradient-vote rounded-[40px]"
+              size={ButtonSize.FULL}
+              onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowAddFunds(true)}
+            >
+              {buttonText}
             </ButtonV3>
           </div>
         </>
