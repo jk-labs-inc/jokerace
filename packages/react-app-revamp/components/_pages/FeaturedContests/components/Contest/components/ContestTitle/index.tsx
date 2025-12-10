@@ -1,23 +1,32 @@
 import { FC } from "react";
-
-export enum ContestTitleState {
-  ACTIVE = "active",
-  FINISHED = "finished",
-  CANCELED = "canceled",
-}
+import { ContestTitleStateType } from "../../types";
 
 interface ContestTitleProps {
   title: string;
-  state: ContestTitleState;
+  state: ContestTitleStateType;
 }
 
+//TODO: make this reusable
+const textShadowStyle = {
+  textShadow: `
+    1px 1px 0 black,
+    -1px -1px 0 black,
+    1px -1px 0 black,
+    -1px 1px 0 black,
+    0 1px 0 black,
+    1px 0 0 black,
+    0 -1px 0 black,
+    -1px 0 0 black
+  `,
+};
+
 const ContestTitle: FC<ContestTitleProps> = ({ title, state }) => {
+  const isActive = state === "active";
+
   return (
     <p
-      className={`${
-        state === ContestTitleState.ACTIVE ? "text-neutral-11" : "text-neutral-10"
-      } font-bold text-2xl normal-case`}
-      style={{ WebkitTextStroke: "1px black" }}
+      className={`${isActive ? "text-neutral-11" : "text-neutral-10"} font-bold text-2xl normal-case`}
+      style={textShadowStyle}
     >
       {title}
     </p>

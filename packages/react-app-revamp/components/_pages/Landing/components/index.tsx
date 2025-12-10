@@ -4,17 +4,15 @@ import FeaturedContests from "@components/_pages/FeaturedContests";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
 import { streamFeaturedContests } from "lib/contests";
 import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
 import { fetchTotalRewardsForContests } from "lib/contests/contracts";
 import { ProcessedContest } from "lib/contests/types";
 import moment from "moment";
+import { motion } from "motion/react";
 import { useState } from "react";
-import { useMediaQuery } from "react-responsive";
 import LandingPageExplainer from "./Explainer";
-import LandingPageTicker from "./Ticker";
 import LandingPageUsedBy from "./UsedBy";
 
 function useFeaturedContests() {
@@ -94,14 +92,11 @@ const LandingPage = () => {
   const { status, contestData, rewardsData, isRewardsFetching, isContestDataFetching } = useFeaturedContests();
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-8 pl-4 pr-4 md:pl-16 md:pr-16 lg:mt-4 3xl:pl-28 2xl:pr-0 ">
-        <p className="text-neutral-11 text-2xl font-sabo-filled">vote. rally. earn.</p>
-      </div>
+    <div className="flex flex-col gap-8 pb-6">
       <div className="flex flex-col gap-8">
-        <div className="pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-28 2xl:pr-0 mt-4">
+        <div className="pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-20 2xl:pr-0 mt-6 lx:mt-12">
           {isSupabaseConfigured ? (
-            <div className="flex flex-col gap-8 w-full">
+            <div className="flex flex-col gap-8 w-full lx:w-fit">
               <FeaturedContests
                 status={status}
                 contestData={contestData}
@@ -109,12 +104,15 @@ const LandingPage = () => {
                 isContestDataFetching={isContestDataFetching}
                 isRewardsFetching={isRewardsFetching}
               />
-              <CustomLink prefetch={true} href={ROUTE_VIEW_LIVE_CONTESTS} className="flex gap-1 items-center">
-                <p className="text-[16px] md:text-[18px] text-positive-11 font-bold hover:text-positive-10 transition-colors duration-300 ease-in-out">
+              <motion.div className="ml-auto" whileTap={{ scale: 0.97 }} style={{ willChange: "transform" }}>
+                <CustomLink
+                  prefetch={true}
+                  href={ROUTE_VIEW_LIVE_CONTESTS}
+                  className="bg-positive-18 text-base 2xl:text-2xl text-true-black font-bold px-4 h-10 flex items-center justify-center rounded-2xl"
+                >
                   view all contests
-                </p>
-                <ChevronRightIcon className="w-4 h-4 text-positive-11 font-bold" />
-              </CustomLink>
+                </CustomLink>
+              </motion.div>
             </div>
           ) : (
             <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">

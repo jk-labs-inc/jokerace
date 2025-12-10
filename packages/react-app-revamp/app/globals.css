@@ -50,6 +50,7 @@
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
+  --breakpoint-lx: 1150px;
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1350px;
   --breakpoint-3xl: 1500px;
@@ -674,7 +675,17 @@ li {
 
   :root {
     /* Grid templates */
+    /* 1430px+: 4 columns | 1200px-1430px: 3 columns | 768px-1200px: 2 columns */
     --grid-featured-contests: repeat(4, minmax(0, 320px));
+
+    @media (max-width: 1430px) {
+      --grid-featured-contests: repeat(3, minmax(0, 320px));
+    }
+
+    @media (max-width: 1200px) {
+      --grid-featured-contests: repeat(2, minmax(0, 320px));
+    }
+
     --grid-list-contests: repeat(3, minmax(auto, 1fr)) 0.4fr;
     --grid-rewards-funding: 0.1fr 0.8fr 1.5fr 1fr 0.5fr;
     --grid-full-width-create-flow: auto auto 1fr;

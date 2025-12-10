@@ -3,8 +3,10 @@ import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import { ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
 import { FC, useEffect, useMemo, useState } from "react";
 import ContestCardContainer from "./Contest/components/Container";
-import ContestTitle, { ContestTitleState } from "./Contest/components/ContestTitle";
-import { getContestStatus, getUpdateInterval } from "./Contest/helpers";
+import ContestState from "./Contest/components/ContestState";
+import ContestTiming from "./Contest/components/ContestTiming";
+import ContestTitle from "./Contest/components/ContestTitle";
+import { getContestState, getContestTitleState, getUpdateInterval } from "./Contest/helpers";
 
 interface FeaturedContestCardProps {
   isRewardsFetching: boolean;
@@ -13,7 +15,8 @@ interface FeaturedContestCardProps {
 }
 
 const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, rewardsData, isRewardsFetching }) => {
-  const [contestStatus, setContestStatus] = useState(getContestStatus(contestData));
+  const [contestState, setContestState] = useState(getContestState(contestData));
+  const [titleState, setTitleState] = useState(getContestTitleState(contestData));
   const [currentRewardIndex, setCurrentRewardIndex] = useState(0);
 
   const rewardsToDisplay = useMemo(() => {
@@ -62,12 +65,10 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
     }
   }, [rewardsToDisplay]);
 
-  const { status, timeLeft } = contestStatus;
-  const isContestActive = status === "voting opens in" || status === "Voting closes in";
-
   useEffect(() => {
     const updateStatus = () => {
-      setContestStatus(getContestStatus(contestData));
+      setContestState(getContestState(contestData));
+      setTitleState(getContestTitleState(contestData));
     };
 
     updateStatus();
@@ -91,8 +92,12 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
       href={getContestUrl(contestData.network_name ?? "", contestData.address ?? "")}
     >
       <ContestCardContainer prompt={contestData.prompt}>
-        <ContestTitle title={contestData.title} state={ContestTitleState.ACTIVE} />
+        <ContestState state={contestState} />
+        <ContestTitle title={contestData.title} state={titleState} />
       </ContestCardContainer>
+      <div className="pl-4">
+        <ContestTiming contest={contestData} />
+      </div>
     </CustomLink>
   );
 };

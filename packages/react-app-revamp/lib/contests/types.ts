@@ -14,12 +14,14 @@ export interface ContestReward {
 
 export interface BaseContestData {
   created_at: string;
+  start_at: string;
   end_at: string;
   address: string;
   author_address: string;
   network_name: string;
   vote_start_at: string;
   featured: boolean;
+  anyone_can_submit: number;
 }
 
 export interface ProcessedContest extends BaseContestData {

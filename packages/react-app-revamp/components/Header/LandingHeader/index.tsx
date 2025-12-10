@@ -27,10 +27,24 @@ import {
 } from "@heroicons/react/24/solid";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { disconnect } from "@wagmi/core";
+import { motion } from "motion/react";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
+
+const textShadowStyle = {
+  textShadow: `
+    1px 1px 0 black,
+    -1px -1px 0 black,
+    1px -1px 0 black,
+    -1px 1px 0 black,
+    0 1px 0 black,
+    1px 0 0 black,
+    0 -1px 0 black,
+    -1px 0 0 black
+  `,
+};
 
 const LandingHeader = () => {
   const { isConnected, address } = useAccount();
@@ -94,106 +108,109 @@ const LandingHeader = () => {
     return (
       <>
         <LandingPageTicker />
-        <CustomLink href="/">
-          <div className="pl-4 md:pl-16 md:pr-16 3xl:pl-28">
-            <h1 className="font-sabo-filled text-neutral-11 normal-case text-[45px] relative">
-              <span className="joke-3d" data-text="J">
-                J
-              </span>
-              <span className="text-[35px] joke-3d">oke</span>
-              <span className="joke-3d">R</span>
-              <span className="text-[35px] joke-3d">ace</span>
-            </h1>
-          </div>
-        </CustomLink>
-        <header className="bg-true-black">
-          <div
-            className={`fixed bottom-0 left-0 right-0 flex flex-col border-t-2 border-neutral-2 bg-true-black z-50 ${
-              isClient && isInPwaMode ? "pb-8" : "pb-2"
-            }`}
-          >
-            <div className="text-neutral-10 border-b text-[14px] border-neutral-2 py-3 overflow-hidden relative">
-              <div className="flex items-center w-full overflow-x-auto no-scrollbar px-4 pb-1">
-                <div className="flex gap-4 items-center min-w-max">
-                  {filteredLinks.map((link, key) => (
-                    <a
-                      className="font-bold whitespace-nowrap py-1"
-                      key={`footer-link-${key}`}
-                      href={link.href}
-                      rel="nofollow noreferrer"
-                      target="_blank"
-                      aria-label={`Visit ${link.label}`}
-                    >
-                      {link.label}
-                    </a>
-                  ))}
+        <div className="mt-12">
+          <CustomLink href="/">
+            <div className="flex flex-col gap-2 pl-4">
+              <h1 className="font-sabo-filled text-neutral-11 normal-case text-[45px] relative">
+                <span className="joke-3d" data-text="J">
+                  J
+                </span>
+                <span className="text-[35px] joke-3d">oke</span>
+                <span className="joke-3d">R</span>
+                <span className="text-[35px] joke-3d">ace</span>
+              </h1>
+              <p className="text-neutral-11 text-[16px] font-sabo-filled">vote. rally. earn.</p>
+            </div>
+          </CustomLink>
+          <header className="bg-true-black">
+            <div
+              className={`fixed bottom-0 left-0 right-0 flex flex-col border-t-2 border-neutral-2 bg-true-black z-50 ${
+                isClient && isInPwaMode ? "pb-8" : "pb-2"
+              }`}
+            >
+              <div className="text-neutral-10 border-b text-[14px] border-neutral-2 py-3 overflow-hidden relative">
+                <div className="flex items-center w-full overflow-x-auto no-scrollbar px-4 pb-1">
+                  <div className="flex gap-4 items-center min-w-max">
+                    {filteredLinks.map((link, key) => (
+                      <a
+                        className="font-bold whitespace-nowrap py-1"
+                        key={`footer-link-${key}`}
+                        href={link.href}
+                        rel="nofollow noreferrer"
+                        target="_blank"
+                        aria-label={`Visit ${link.label}`}
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+                <div className="absolute right-0 top-0 bottom-0 w-12 bg-linear-to-l from-true-black to-transparent pointer-events-none"></div>
+              </div>
+              <div className="flex flex-row items-center justify-between pt-2 px-8">
+                <CustomLink href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
+                  {pathname === ROUTE_LANDING ? <HomeIconSolid width={24} /> : <HomeIcon width={24} />}
+                  <p className="text-[12px]">home</p>
+                </CustomLink>
+
+                <CustomLink href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
+                  {pathname === ROUTE_VIEW_CONTESTS ? (
+                    <IconMagnifyingGlassSolid width={24} />
+                  ) : (
+                    <MagnifyingGlassIcon width={24} />
+                  )}
+                  <p className="text-[12px]">search</p>
+                </CustomLink>
+
+                <CustomLink
+                  href={ROUTE_VIEW_LIVE_CONTESTS}
+                  className={`flex flex-col text-neutral-11 ${isOneOfActive([
+                    ROUTE_VIEW_LIVE_CONTESTS,
+                    ROUTE_VIEW_CONTEST,
+                  ])}`}
+                >
+                  {isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST]) ? (
+                    <TrophyIconSolid width={24} />
+                  ) : (
+                    <TrophyIcon width={24} />
+                  )}
+                  <p className="text-[12px] text-center">play</p>
+                </CustomLink>
+
+                <CustomLink
+                  href={ROUTE_CREATE_CONTEST}
+                  className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}
+                >
+                  {pathname === ROUTE_CREATE_CONTEST ? (
+                    <PencilSquareIconSolid width={24} />
+                  ) : (
+                    <PencilSquareIcon width={24} />
+                  )}
+                  <p className="text-[12px]">create</p>
+                </CustomLink>
+
+                <div className="transition-all duration-500">
+                  {isConnected ? (
+                    <div className="flex flex-col items-center" onClick={handleWalletClick}>
+                      {showWalletPortal ? (
+                        <UserCircleIconSolid width={24} height={24} className="text-neutral-11" />
+                      ) : (
+                        <UserCircleIcon width={24} height={24} className="text-neutral-11" />
+                      )}
+                      <p className="text-[12px]">profile</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center" onClick={openConnectModal}>
+                      <img width={24} height={24} src="/header/wallet.svg" alt="wallet" />
+                      <p className="text-[12px]">wallet</p>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="absolute right-0 top-0 bottom-0 w-12 bg-linear-to-l from-true-black to-transparent pointer-events-none"></div>
             </div>
-            <div className="flex flex-row items-center justify-between pt-2 px-8">
-              <CustomLink href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
-                {pathname === ROUTE_LANDING ? <HomeIconSolid width={24} /> : <HomeIcon width={24} />}
-                <p className="text-[12px]">home</p>
-              </CustomLink>
-
-              <CustomLink href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
-                {pathname === ROUTE_VIEW_CONTESTS ? (
-                  <IconMagnifyingGlassSolid width={24} />
-                ) : (
-                  <MagnifyingGlassIcon width={24} />
-                )}
-                <p className="text-[12px]">search</p>
-              </CustomLink>
-
-              <CustomLink
-                href={ROUTE_VIEW_LIVE_CONTESTS}
-                className={`flex flex-col text-neutral-11 ${isOneOfActive([
-                  ROUTE_VIEW_LIVE_CONTESTS,
-                  ROUTE_VIEW_CONTEST,
-                ])}`}
-              >
-                {isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST]) ? (
-                  <TrophyIconSolid width={24} />
-                ) : (
-                  <TrophyIcon width={24} />
-                )}
-                <p className="text-[12px] text-center">play</p>
-              </CustomLink>
-
-              <CustomLink
-                href={ROUTE_CREATE_CONTEST}
-                className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}
-              >
-                {pathname === ROUTE_CREATE_CONTEST ? (
-                  <PencilSquareIconSolid width={24} />
-                ) : (
-                  <PencilSquareIcon width={24} />
-                )}
-                <p className="text-[12px]">create</p>
-              </CustomLink>
-
-              <div className="transition-all duration-500">
-                {isConnected ? (
-                  <div className="flex flex-col items-center" onClick={handleWalletClick}>
-                    {showWalletPortal ? (
-                      <UserCircleIconSolid width={24} height={24} className="text-neutral-11" />
-                    ) : (
-                      <UserCircleIcon width={24} height={24} className="text-neutral-11" />
-                    )}
-                    <p className="text-[12px]">profile</p>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center" onClick={openConnectModal}>
-                    <img width={24} height={24} src="/header/wallet.svg" alt="wallet" />
-                    <p className="text-[12px]">wallet</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          <WalletDrawer />
-        </header>
+            <WalletDrawer />
+          </header>
+        </div>
       </>
     );
   }
@@ -201,9 +218,9 @@ const LandingHeader = () => {
   return (
     <>
       <LandingPageTicker />
-      <header className="flex items-center pl-16 3xl:pl-28 pr-[60px] mt-4 max-w-[1850px]">
-        <CustomLink href="/">
-          <div>
+      <header className="pl-16 3xl:pl-20 pr-20 mt-12 max-w-[1512px]">
+        <div className="grid grid-cols-[auto_1fr] items-center gap-x-6">
+          <CustomLink href="/">
             <h1 className="font-sabo-filled text-neutral-11 normal-case text-[60px]">
               <span className="joke-3d" data-text="J">
                 J
@@ -212,11 +229,28 @@ const LandingHeader = () => {
               <span className="joke-3d">R</span>
               <span className="text-[45px] joke-3d">ace</span>
             </h1>
-          </div>
-        </CustomLink>
+          </CustomLink>
 
-        <div className="flex gap-3 items-center ml-auto">
-          <ConnectButtonCustom />
+          <div className="flex items-center gap-4 mt-4">
+            <p className="hidden min-[1440px]:block text-2xl text-neutral-11 font-bold">how it works</p>
+            <p className="hidden min-[1440px]:block text-2xl text-neutral-11 font-bold">docs</p>
+            <p className="hidden min-[1440px]:block text-2xl text-neutral-11 font-bold">linktree</p>
+            <motion.div whileTap={{ scale: 0.97 }} style={{ willChange: "transform" }}>
+              <CustomLink
+                prefetch={true}
+                href={ROUTE_VIEW_LIVE_CONTESTS}
+                className="bg-secondary-11 text-base min-[1440px]:text-2xl text-neutral-11 font-bold px-4 h-10 flex items-center justify-center rounded-2xl"
+                style={textShadowStyle}
+              >
+                create a contest
+              </CustomLink>
+            </motion.div>
+            <div className="flex gap-3 items-center ml-auto">
+              <ConnectButtonCustom />
+            </div>
+          </div>
+
+          <p className="text-neutral-11 text-2xl font-sabo-filled">vote. rally. earn.</p>
         </div>
       </header>
     </>
