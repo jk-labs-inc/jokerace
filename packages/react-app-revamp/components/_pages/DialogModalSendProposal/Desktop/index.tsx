@@ -17,7 +17,7 @@ import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import DialogModalSendProposalEditor from "../components/Editor";
 import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
@@ -42,6 +42,11 @@ interface DialogModalSendProposalDesktopLayoutProps {
   handleDragLeave?: (event: React.DragEvent<HTMLDivElement>) => void;
   onSwitchNetwork?: () => void;
   onSubmitProposal?: () => void;
+}
+
+enum ButtonText {
+  SUBMIT = "submit",
+  ADD_FUNDS = "add funds",
 }
 
 const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLayoutProps> = ({
@@ -86,6 +91,12 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
   const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
+  const insufficientBalance = accountData && accountData.value === BigInt(0);
+  const [buttonText, setButtonText] = useState(ButtonText.SUBMIT);
+
+  useEffect(() => {
+    setButtonText(insufficientBalance ? ButtonText.ADD_FUNDS : ButtonText.SUBMIT);
+  }, [insufficientBalance]);
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -208,10 +219,10 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                   <ButtonV3
                     colorClass="bg-gradient-purple rounded-[40px]"
                     size={ButtonSize.EXTRA_LARGE_LONG}
-                    onClick={handleConfirm}
+                    onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowAddFundsModal(true)}
                     isDisabled={isLoading}
                   >
-                    submit
+                    {buttonText}
                   </ButtonV3>
                   {error && <>{error}</>}
                 </div>

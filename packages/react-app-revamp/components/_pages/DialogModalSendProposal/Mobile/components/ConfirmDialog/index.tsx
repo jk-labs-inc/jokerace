@@ -27,6 +27,7 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
 }) => {
   const { isLoading, isSuccess, proposalId } = useSubmitProposalStore(state => state);
   const [showAddFunds, setShowAddFunds] = useState(false);
+
   const title = isLoading
     ? "approving transaction..."
     : isSuccess && proposalId
