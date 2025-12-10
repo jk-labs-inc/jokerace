@@ -1,3 +1,4 @@
+import LandingPageTicker from "@components/_pages/Landing/components/Ticker";
 import { ConnectButtonCustom } from "@components/Connect";
 import { IconMagnifyingGlassSolid } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
@@ -92,6 +93,7 @@ const LandingHeader = () => {
   if (isMobile) {
     return (
       <>
+        <LandingPageTicker />
         <CustomLink href="/">
           <div className="pl-4 md:pl-16 md:pr-16 3xl:pl-28">
             <h1 className="font-sabo-filled text-neutral-11 normal-case text-[45px] relative">
@@ -197,24 +199,27 @@ const LandingHeader = () => {
   }
 
   return (
-    <header className="flex items-center pl-16 3xl:pl-28 pr-[60px] mt-4 max-w-[1850px]">
-      <CustomLink href="/">
-        <div>
-          <h1 className="font-sabo-filled text-neutral-11 normal-case text-[60px]">
-            <span className="joke-3d" data-text="J">
-              J
-            </span>
-            <span className="text-[45px] joke-3d">oke</span>
-            <span className="joke-3d">R</span>
-            <span className="text-[45px] joke-3d">ace</span>
-          </h1>
-        </div>
-      </CustomLink>
+    <>
+      <LandingPageTicker />
+      <header className="flex items-center pl-16 3xl:pl-28 pr-[60px] mt-4 max-w-[1850px]">
+        <CustomLink href="/">
+          <div>
+            <h1 className="font-sabo-filled text-neutral-11 normal-case text-[60px]">
+              <span className="joke-3d" data-text="J">
+                J
+              </span>
+              <span className="text-[45px] joke-3d">oke</span>
+              <span className="joke-3d">R</span>
+              <span className="text-[45px] joke-3d">ace</span>
+            </h1>
+          </div>
+        </CustomLink>
 
-      <div className="flex gap-3 items-center ml-auto">
-        <ConnectButtonCustom />
-      </div>
-    </header>
+        <div className="flex gap-3 items-center ml-auto">
+          <ConnectButtonCustom />
+        </div>
+      </header>
+    </>
   );
 };
 

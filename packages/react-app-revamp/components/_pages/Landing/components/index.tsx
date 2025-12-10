@@ -2,8 +2,7 @@
 
 import FeaturedContests from "@components/_pages/FeaturedContests";
 import CustomLink from "@components/UI/Link";
-import TypewriterCycler from "@components/UI/TypewriterCycler";
-import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
+import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
@@ -15,32 +14,8 @@ import moment from "moment";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import LandingPageExplainer from "./Explainer";
+import LandingPageTicker from "./Ticker";
 import LandingPageUsedBy from "./UsedBy";
-
-const wordConfig = {
-  desktop: [
-    "hackathons",
-    "grants rounds",
-    "awards",
-    "applications",
-    "demo days",
-    "talent communities",
-    "art contests",
-    "debates",
-    "reality tv shows",
-  ],
-  mobile: [
-    "hackathons",
-    "grants",
-    "awards",
-    "applications",
-    "demo days",
-    "leaderboards",
-    "art contests",
-    "debates",
-    "game shows",
-  ],
-};
 
 function useFeaturedContests() {
   const [page] = useState(0);
@@ -116,37 +91,14 @@ function useFeaturedContests() {
 }
 
 const LandingPage = () => {
-  const isMobile = useMediaQuery({ maxWidth: 768 });
-  const words = isMobile ? wordConfig.mobile : wordConfig.desktop;
   const { status, contestData, rewardsData, isRewardsFetching, isContestDataFetching } = useFeaturedContests();
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-8 pl-4 pr-4 md:pl-16 md:pr-16 lg:mt-6 3xl:pl-28 2xl:pr-0 ">
-        <div className="flex flex-col">
-          <p className="text-[28px] md:text-[48px] font-bold">
-            contests for{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-purple inline-block">
-              <TypewriterCycler words={words} delayBetweenWords={1} />
-            </span>
-          </p>
-          <p className="text-[16px] md:text-[24px] font-bold">for communities to grow, run, and monetize</p>
-        </div>
+      <div className="flex flex-col gap-8 pl-4 pr-4 md:pl-16 md:pr-16 lg:mt-4 3xl:pl-28 2xl:pr-0 ">
+        <p className="text-neutral-11 text-2xl font-sabo-filled">vote. rally. earn.</p>
       </div>
-      <div className="flex flex-col gap-8 bg-gradient-fade-black-purple">
-        <div className="pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-28 2xl:pr-0 ">
-          <CustomLink
-            prefetch={true}
-            href={ROUTE_CREATE_CONTEST}
-            className="bg-gradient-green w-[300px] md:w-[320px] h-10 md:h-12 rounded-[40px] text-[20px] font-bold text-true-black text-center flex items-center justify-center transition-all duration-300 hover:opacity-90"
-          >
-            <span className="flex items-center normal-case">
-              create a contest in seconds
-              <ChevronRightIcon className="w-6 h-6 ml-2 text-true-black font-bold" />
-            </span>
-          </CustomLink>
-        </div>
-
+      <div className="flex flex-col gap-8">
         <div className="pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-28 2xl:pr-0 mt-4">
           {isSupabaseConfigured ? (
             <div className="flex flex-col gap-8 w-full">

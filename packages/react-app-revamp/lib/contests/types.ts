@@ -25,6 +25,7 @@ export interface BaseContestData {
 export interface ProcessedContest extends BaseContestData {
   title: string;
   isCanceled: boolean;
+  prompt: string | null;
 }
 
 export interface ContestsResponse {
