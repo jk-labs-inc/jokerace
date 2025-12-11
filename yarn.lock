@@ -3455,10 +3455,10 @@
     viem "^2.41.2"
     zustand "^5.0.9"
 
-"@lifi/widget@3.36.1":
-  version "3.36.1"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.36.1.tgz#01e80f4586e94bbf83d85e095611cfd7971176d8"
-  integrity sha512-IS5iMKlQcu9+AsQLRRJPQSMQGobJyZ9YHGHnPyJYUdZhqat+/2M9io/t6xVLNkf6sP2nZ5OKXiRwxTUsTM+m5A==
+"@lifi/widget@3.37.0":
+  version "3.37.0"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.37.0.tgz#9b28834e8c5dbd2da6f8e63b8dfd89dd8d26fe5c"
+  integrity sha512-0UZP8+8mkhss0EskcsCkeIjixMOV06keWXzUdDhRsZQDhBSe7PLT5DHmU3W7A6pqsk/F7UP6ErCdYGs9ZcMvug==
   dependencies:
     "@bigmi/client" "^0.6.3"
     "@bigmi/core" "^0.6.3"
