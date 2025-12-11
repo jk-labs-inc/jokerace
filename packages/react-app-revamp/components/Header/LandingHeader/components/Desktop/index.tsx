@@ -1,7 +1,7 @@
 import LandingPageTicker from "@components/_pages/Landing/components/Ticker";
 import { ConnectButtonCustom } from "@components/Connect";
 import CustomLink from "@components/UI/Link";
-import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
+import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { motion } from "motion/react";
 
 const textShadowStyle = {
@@ -42,7 +42,7 @@ const LandingHeaderDesktop = () => {
             <motion.div whileTap={{ scale: 0.97 }} style={{ willChange: "transform" }}>
               <CustomLink
                 prefetch={true}
-                href={ROUTE_VIEW_LIVE_CONTESTS}
+                href={ROUTE_CREATE_CONTEST}
                 className="hidden bg-secondary-11 text-base min-[1440px]:text-2xl text-neutral-11 font-bold px-4 h-10 md:flex items-center justify-center rounded-2xl"
                 style={textShadowStyle}
               >

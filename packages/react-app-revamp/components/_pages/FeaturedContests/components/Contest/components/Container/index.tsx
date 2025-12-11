@@ -1,6 +1,6 @@
 import { getContestImageUrl } from "@layouts/LayoutViewContest/helpers/getContestImageUrl";
 import { motion } from "motion/react";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useState, useEffect } from "react";
 
 interface ContestCardContainerProps {
   prompt: string | null;
@@ -9,6 +9,19 @@ interface ContestCardContainerProps {
 
 const ContestCardContainer: FC<ContestCardContainerProps> = ({ prompt, children }) => {
   const contestImageUrl = getContestImageUrl(prompt);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+  // TODO: i'm just experimenting with this, i'm using this on submission page where i blur the image until it's loaded. i might not use it here but just wanna check how it feels
+  useEffect(() => {
+    if (!contestImageUrl) return;
+
+    setIsImageLoaded(false);
+    const img = new Image();
+    img.src = contestImageUrl;
+    img.onload = () => {
+      setIsImageLoaded(true);
+    };
+  }, [contestImageUrl]);
 
   return (
     <motion.div
@@ -23,6 +36,10 @@ const ContestCardContainer: FC<ContestCardContainerProps> = ({ prompt, children 
             ? `url(${contestImageUrl})`
             : "linear-gradient(155deg, #381D4C -2.14%, #000 33.85%)",
           willChange: "transform",
+          ...(contestImageUrl && {
+            filter: isImageLoaded ? "blur(0px)" : "blur(10px)",
+            transition: isImageLoaded ? "filter 0.5s linear" : "none",
+          }),
         }}
         variants={{
           idle: { scale: 1 },
