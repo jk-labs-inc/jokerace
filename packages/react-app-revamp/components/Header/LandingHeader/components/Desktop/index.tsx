@@ -35,6 +35,7 @@ const LandingHeaderDesktop = () => {
           </CustomLink>
 
           <div className="flex items-center gap-4 mt-4">
+            {/* TODO: add links to all of these */}
             <p className="hidden min-[1440px]:block text-2xl text-neutral-11 font-bold">how it works</p>
             <p className="hidden min-[1440px]:block text-2xl text-neutral-11 font-bold">docs</p>
             <p className="hidden min-[1440px]:block text-2xl text-neutral-11 font-bold">linktree</p>
