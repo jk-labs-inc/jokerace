@@ -16,8 +16,8 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
   status,
   contestData,
   rewardsData,
-  isContestDataFetching,
   isRewardsFetching,
+  isContestDataFetching,
 }) => {
   return (
     <>
@@ -26,7 +26,8 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
           <p className="text-sm font-bold text-negative-10 text-center">Something went wrong</p>
         </div>
       ) : (
-        <div>
+        <div className="flex flex-col gap-4">
+          <p className="text-neutral-9 font-sabo-filled text-xs block md:hidden">featured contests</p>
           <div className="flex flex-col md:grid md:grid-cols-(--grid-featured-contests) gap-6 pb-4">
             {contestData?.map((contest, index) => (
               <div key={`contest-${index}`}>

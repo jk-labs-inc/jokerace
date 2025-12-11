@@ -13,3 +13,11 @@ export interface ContestTimingData {
   format: ContestTimingFormat;
   display: string;
 }
+
+export interface RewardDisplayData {
+  amount: bigint;
+  decimals: number;
+  symbol: string;
+  formatted: string;
+  isNative: boolean;
+}

@@ -674,16 +674,18 @@ li {
   }
 
   :root {
-    /* Grid templates */
-    /* 1430px+: 4 columns | 1200px-1430px: 3 columns | 768px-1200px: 2 columns */
     --grid-featured-contests: repeat(4, minmax(0, 320px));
+    /* Landing content max-width: matches grid width (cols × 320px + gaps × 24px) */
+    --landing-content-max-width: 1352px; /* 4 × 320 + 3 × 24 */
 
     @media (max-width: 1430px) {
       --grid-featured-contests: repeat(3, minmax(0, 320px));
+      --landing-content-max-width: 1008px; /* 3 × 320 + 2 × 24 */
     }
 
     @media (max-width: 1200px) {
       --grid-featured-contests: repeat(2, minmax(0, 320px));
+      --landing-content-max-width: 664px; /* 2 × 320 + 1 × 24 */
     }
 
     --grid-list-contests: repeat(3, minmax(auto, 1fr)) 0.4fr;

@@ -12,7 +12,7 @@ const ContestCardContainer: FC<ContestCardContainerProps> = ({ prompt, children 
 
   return (
     <motion.div
-      className="w-full md:w-80 h-64 rounded-lg border border-primary-2 overflow-hidden relative"
+      className="w-full md:w-80 h-64 rounded-lg border border-primary-2 overflow-hidden relative hover:border-primary-3 transition-all duration-300"
       initial="idle"
       whileHover="hover"
     >

@@ -5,7 +5,7 @@ const SkeletonCard = () => {
     <div className="flex flex-col gap-2">
       {/* Card Container */}
       <div
-        className="w-80 h-64 rounded-lg border border-primary-2 overflow-hidden relative"
+        className="w-full md:w-80 h-64 rounded-lg border border-primary-2 overflow-hidden relative"
         style={{ background: "linear-gradient(155deg, #381D4C -2.14%, #000 33.85%)" }}
       >
         <div className="relative h-full px-4 pb-2 flex flex-col justify-end gap-2">

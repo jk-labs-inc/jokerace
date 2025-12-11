@@ -164,3 +164,12 @@ export const getUpdateInterval = (contestData: ProcessedContest): number => {
   }
   return 1000; // Update every second
 };
+
+export const isContestActive = (contest: ProcessedContest): boolean => {
+  if (contest.isCanceled) return false;
+
+  const now = moment();
+  const end = moment(contest.end_at);
+
+  return now.isBefore(end);
+};
