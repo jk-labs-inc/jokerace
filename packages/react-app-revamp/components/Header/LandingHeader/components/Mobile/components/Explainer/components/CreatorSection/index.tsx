@@ -11,7 +11,7 @@ const LandingHeaderMobileExplainerCreatorSection = () => {
           <p className="text-neutral-11 font-sabo-filled text-xs">or create a contest...</p>
           <CustomLink
             href={ROUTE_CREATE_CONTEST}
-            className="bg-secondary-11 rounded-2xl text-base font-bold text-true-black px-4 py-2 h-10 w-fit"
+            className="bg-secondary-11 rounded-2xl text-base text-true-black px-4 py-2 h-10 w-fit"
           >
             create a contest and earn
           </CustomLink>

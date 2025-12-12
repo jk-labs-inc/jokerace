@@ -17,7 +17,7 @@ const LandingHeaderMobileExplainerPlayerSection = () => {
       </div>
       <CustomLink
         href={ROUTE_VIEW_LIVE_CONTESTS}
-        className="bg-positive-18 rounded-2xl text-base font-bold text-true-black px-4 py-2 h-10 w-fit"
+        className="bg-positive-18 rounded-2xl text-base text-true-black px-4 py-2 h-10 w-fit"
       >
         play in contests and earn
       </CustomLink>

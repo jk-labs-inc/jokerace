@@ -20,8 +20,8 @@ const textShadowStyle = {
 const LandingHeaderDesktop = () => {
   return (
     <>
-      <LandingPageTicker isFixed />
-      <header className="pl-16 3xl:pl-20 mt-12">
+      <LandingPageTicker />
+      <header className="pl-16 3xl:pl-20 mt-6">
         <div className="grid grid-cols-[auto_1fr] items-center gap-x-6 max-w-(--landing-content-max-width)">
           <CustomLink href="/">
             <h1 className="font-sabo-filled text-neutral-11 normal-case text-[60px]">

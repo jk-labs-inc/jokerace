@@ -52,7 +52,7 @@ const ContestCardContainer: FC<ContestCardContainerProps> = ({ prompt, children 
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg, rgba(0, 0, 0, 0.60) 0%, rgba(0, 0, 0, 0.70) 39.64%, rgba(0, 0, 0, 0.80) 69.09%, rgba(0, 0, 0, 0.80) 100%)",
+              "linear-gradient(180deg, rgba(26, 26, 26, 0.60) 0%, rgba(26, 26, 26, 0.70) 39.64%, rgba(26, 26, 26, 0.80) 69.09%, rgba(26, 26, 26, 0.80) 100%)",
           }}
         />
       )}

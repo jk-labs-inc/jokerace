@@ -1,6 +1,6 @@
 "use client";
+import Footer from "@components/Footer";
 import Header from "@components/Header";
-import StickyFooter from "@components/StickyFooter";
 import { usePathname } from "next/navigation";
 
 interface LayoutBaseProps {
@@ -16,7 +16,7 @@ const LayoutBase = (props: LayoutBaseProps) => {
     <>
       <Header />
       <main className={`flex flex-col grow ${isCreateFlow ? "pb-72" : "pb-40"} md:pb-0`}>{children}</main>
-      <StickyFooter />
+      <Footer />
     </>
   );
 };

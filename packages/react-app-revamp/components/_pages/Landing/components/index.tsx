@@ -99,9 +99,9 @@ const LandingPage = () => {
                 <CustomLink
                   prefetch={true}
                   href={ROUTE_VIEW_LIVE_CONTESTS}
-                  className="bg-positive-18 text-base 2xl:text-2xl text-true-black font-bold px-4 h-10 hidden md:flex items-center justify-center rounded-2xl"
+                  className="bg-positive-18 text-base text-true-black font-bold px-4 h-10 hidden md:flex items-center justify-center rounded-2xl"
                 >
-                  view all contests
+                  play in contests and earn
                 </CustomLink>
               </motion.div>
             </div>
