@@ -7,6 +7,10 @@ interface ContestCardContainerProps {
   children?: ReactNode;
 }
 
+export const contestImageGradient = {
+  fade: "linear-gradient(180deg, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.70) 80%)",
+};
+
 const ContestCardContainer: FC<ContestCardContainerProps> = ({ prompt, children }) => {
   const contestImageUrl = getContestImageUrl(prompt);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -51,8 +55,7 @@ const ContestCardContainer: FC<ContestCardContainerProps> = ({ prompt, children 
         <div
           className="absolute inset-0"
           style={{
-            background:
-              "linear-gradient(180deg, rgba(26, 26, 26, 0.60) 0%, rgba(26, 26, 26, 0.70) 39.64%, rgba(26, 26, 26, 0.80) 69.09%, rgba(26, 26, 26, 0.80) 100%)",
+            background: contestImageGradient.fade,
           }}
         />
       )}
