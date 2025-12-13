@@ -54,7 +54,7 @@ const LandingPageUsedBy: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col gap-4 md:gap-8 py-4 md:py-8 pr-6 pl-4 md:pl-16 3xl:pl-28 border-t border-b border-neutral-7 ${
+      className={`flex flex-col gap-4 md:gap-8 py-4 md:py-8 pr-6 pl-4 md:pl-16 3xl:pl-20 border-t border-b border-neutral-7 ${
         isVisible ? "animate-fade-in" : "opacity-0"
       }`}
     >

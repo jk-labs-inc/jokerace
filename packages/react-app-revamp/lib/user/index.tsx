@@ -1,7 +1,7 @@
 import { supabase } from "@config/supabase";
 import getPagination from "@helpers/getPagination";
+import { getContestContractData } from "lib/contests/contracts";
 import { Comment, CommentsResult, Contest, Submission, SubmissionCriteria, SubmissionsResult } from "./types";
-import { getContestTitleAndState } from "lib/contests/contracts";
 
 function mergeSubmissionsWithContests(submissions: Submission[], contests: Contest[]): SubmissionsResult["data"] {
   const validsubmissions = submissions.filter(submission =>
@@ -167,7 +167,7 @@ async function getContestDetailsByAddresses(contests: { address: string; network
   try {
     const contestDetails = await Promise.all(
       contests.map(async contest => {
-        const { title } = await getContestTitleAndState(contest.address, contest.network_name);
+        const { title } = await getContestContractData(contest.address, contest.network_name);
         return {
           address: contest.address,
           title: title ?? "",
