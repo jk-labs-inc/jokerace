@@ -1,15 +1,17 @@
-import { useMediaQuery } from "react-responsive";
 import LandingHeaderDesktop from "./components/Desktop";
 import LandingHeaderMobile from "./components/Mobile";
 
 const LandingHeader = () => {
-  const isMobile = useMediaQuery({ maxWidth: 768 });
-
-  if (isMobile) {
-    return <LandingHeaderMobile />;
-  }
-
-  return <LandingHeaderDesktop />;
+  return (
+    <>
+      <div className="md:hidden">
+        <LandingHeaderMobile />
+      </div>
+      <div className="hidden md:block">
+        <LandingHeaderDesktop />
+      </div>
+    </>
+  );
 };
 
 export default LandingHeader;
