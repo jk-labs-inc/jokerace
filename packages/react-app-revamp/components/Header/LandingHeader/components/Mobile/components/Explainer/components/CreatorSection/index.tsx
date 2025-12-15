@@ -13,7 +13,7 @@ const LandingHeaderMobileExplainerCreatorSection = () => {
             href={ROUTE_CREATE_CONTEST}
             className="bg-secondary-11 rounded-2xl text-base text-true-black px-4 py-2 h-10 w-fit"
           >
-            create a contest and earn
+            create a contest
           </CustomLink>
         </div>
       </div>
