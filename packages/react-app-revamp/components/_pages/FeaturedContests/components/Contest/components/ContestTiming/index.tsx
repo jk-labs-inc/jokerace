@@ -32,7 +32,6 @@ const ContestTiming: FC<ContestTimingProps> = ({ contest }) => {
 
   const textColorClass = getTextColorClass(timing.format);
 
-  //TODO: update when voting opens within 24 hours to for example (tues 5pm - wed 5pm) instead of (tues, 5pm) as it is now
   return (
     <div className="flex items-center gap-1">
       ⏱️

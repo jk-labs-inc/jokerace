@@ -8,7 +8,7 @@ interface ContestCardContainerProps {
 }
 
 export const contestImageGradient = {
-  fade: "linear-gradient(180deg, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.70) 80%)",
+  fade: "linear-gradient(180deg, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.70) 85%)",
 };
 
 const ContestCardContainer: FC<ContestCardContainerProps> = ({ prompt, children }) => {
