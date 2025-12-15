@@ -1,4 +1,3 @@
-import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
 import { ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
 import { AnimatePresence, motion } from "motion/react";
 import { FC } from "react";
@@ -52,21 +51,10 @@ const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isR
             className={`text-xs font-bold whitespace-nowrap ${contestIsActive ? "text-neutral-11" : "text-neutral-9"}`}
             style={{ willChange: "transform" }}
           >
-            {currentReward.formatted} <span className="uppercase">{currentReward.symbol}</span>
-            {showTrendingIcon && (
-              <motion.span
-                animate={{ y: [0, -3, 0] }}
-                transition={{
-                  duration: 1.2,
-                  repeat: Infinity,
-                  ease: [0.45, 0, 0.55, 1],
-                  times: [0, 0.4, 1],
-                }}
-                className="text-positive-11 inline-flex ml-1"
-              >
-                <ArrowTrendingUpIcon className="w-3 h-3" />
-              </motion.span>
-            )}
+            {currentReward.formatted}
+            {showTrendingIcon && <span className="text-neutral-11">+</span>}
+            {"  "}
+            <span className="uppercase">{currentReward.symbol}</span>
           </motion.p>
         </AnimatePresence>
       </div>

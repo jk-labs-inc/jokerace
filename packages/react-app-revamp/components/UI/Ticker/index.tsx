@@ -10,7 +10,7 @@ interface TickerProps {
   pauseOnHover?: boolean;
 }
 
-const Ticker = ({ items, className = "", velocity = 50, axis = "x", gap = 16, pauseOnHover = true }: TickerProps) => {
+const Ticker = ({ items, className = "", velocity = 100, axis = "x", gap = 16, pauseOnHover = true }: TickerProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const gapStyle = axis === "x" ? { marginRight: `${gap}px` } : { marginBottom: `${gap}px` };
   const currentVelocity = pauseOnHover && isHovered ? 0 : velocity;
