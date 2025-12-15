@@ -13,6 +13,8 @@ const LINK_SUBSTACK = "https://jokestack.substack.com/";
 const LINK_PRIVACY_POLICY = "https://github.com/jk-labs-inc/jokerace/blob/staging/PrivacyPolicy.md";
 
 export const LINK_BRIDGE_DOCS = "https://docs.jokerace.io/user-how-tos/bridging";
+export const LINK_DOCS = "https://docs.jokerace.io/";
+export const LINK_LINKTREE = "https://linktr.ee/jokerace_io";
 
 export const FOOTER_LINKS = [
   {

@@ -7,7 +7,9 @@ import SectionTitle from "../../components/SectionTitle";
 const HowItWorksSection = () => {
   return (
     <AnimatedSection>
-      <SectionTitle size="lg">how it works</SectionTitle>
+      <SectionTitle size="lg" id="how-it-works">
+        how it works
+      </SectionTitle>
       <div className="flex flex-col gap-4 md:gap-6">
         <p className="text-neutral-11 text-[16px] md:text-[20px] font-bold">to play in a contest:</p>
         <ul className="flex flex-col pl-4 gap-2">

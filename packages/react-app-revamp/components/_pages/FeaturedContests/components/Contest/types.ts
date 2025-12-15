@@ -21,3 +21,8 @@ export interface RewardDisplayData {
   formatted: string;
   isNative: boolean;
 }
+
+export interface TimeWindowResult {
+  display: string;
+  spansMultipleDays: boolean;
+}

@@ -1,8 +1,9 @@
+import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
 import { ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
 import { AnimatePresence, motion } from "motion/react";
-import { FC, useEffect, useMemo, useState } from "react";
-import { isContestActive } from "../../helpers";
-import { RewardDisplayData } from "../../types";
+import { FC } from "react";
+import { getContestState, isContestActive } from "../../helpers";
+import { useRewardsCycle } from "./hooks/useRewardsCycle";
 
 interface ContestRewardsProps {
   contestData: ProcessedContest;
@@ -11,56 +12,7 @@ interface ContestRewardsProps {
 }
 
 const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isRewardsFetching }) => {
-  const [currentRewardIndex, setCurrentRewardIndex] = useState(0);
-
-  const rewardsToDisplay = useMemo((): RewardDisplayData[] => {
-    if (!rewardsData?.hasRewards || !rewardsData.rewardsData) return [];
-
-    const rewards: RewardDisplayData[] = [];
-    const { native, tokens } = rewardsData.rewardsData;
-
-    if (native && native.value > 0n) {
-      rewards.push({
-        amount: native.value,
-        decimals: native.decimals,
-        symbol: native.symbol,
-        formatted: native.formatted,
-        isNative: true,
-      });
-    }
-
-    if (tokens) {
-      Object.entries(tokens).forEach(([, tokenData]) => {
-        if (tokenData.value > 0n) {
-          rewards.push({
-            amount: tokenData.value,
-            decimals: tokenData.decimals,
-            symbol: tokenData.symbol,
-            formatted: tokenData.formatted,
-            isNative: false,
-          });
-        }
-      });
-    }
-
-    return rewards;
-  }, [rewardsData]);
-
-  const currentReward = rewardsToDisplay[currentRewardIndex];
-
-  // Cycle through rewards if there are multiple
-  useEffect(() => {
-    if (rewardsToDisplay.length <= 1) {
-      setCurrentRewardIndex(0);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setCurrentRewardIndex(prevIndex => (prevIndex + 1) % rewardsToDisplay.length);
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [rewardsToDisplay.length]);
+  const { currentReward, currentRewardIndex } = useRewardsCycle(rewardsData);
 
   if (isRewardsFetching) {
     return (
@@ -76,6 +28,8 @@ const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isR
   if (!currentReward) return null;
 
   const contestIsActive = isContestActive(contestData);
+  const isVotingLive = getContestState(contestData) === "live";
+  const showTrendingIcon = currentReward.isNative && isVotingLive;
 
   return (
     <div className="flex items-center gap-1">
@@ -99,6 +53,20 @@ const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isR
             style={{ willChange: "transform" }}
           >
             {currentReward.formatted} <span className="uppercase">{currentReward.symbol}</span>
+            {showTrendingIcon && (
+              <motion.span
+                animate={{ y: [0, -3, 0] }}
+                transition={{
+                  duration: 1.2,
+                  repeat: Infinity,
+                  ease: [0.45, 0, 0.55, 1],
+                  times: [0, 0.4, 1],
+                }}
+                className="text-positive-11 inline-flex ml-1"
+              >
+                <ArrowTrendingUpIcon className="w-3 h-3" />
+              </motion.span>
+            )}
           </motion.p>
         </AnimatePresence>
       </div>

@@ -1,6 +1,6 @@
 import { ProcessedContest } from "lib/contests/types";
 import moment from "moment";
-import { ContestStateType, ContestTimingData, ContestTimingFormat, ContestTitleStateType } from "./types";
+import { ContestStateType, ContestTimingData, ContestTitleStateType, TimeWindowResult } from "./types";
 
 export const getContestTitleState = (contest: ProcessedContest): ContestTitleStateType => {
   if (contest.isCanceled) return "canceled";
@@ -44,11 +44,32 @@ export const formatDuration = (duration: moment.Duration): string => {
   return `${minutes}m`;
 };
 
-const formatTimeWindow = (voteStart: moment.Moment, end: moment.Moment): string => {
+const formatTimeWindow = (
+  voteStart: moment.Moment,
+  end: moment.Moment,
+  useWeekdayFormat: boolean,
+): TimeWindowResult => {
   const isSameDay = voteStart.isSame(end, "day");
 
   if (!isSameDay) {
-    return `${voteStart.format("h")}${voteStart.format("a")}`;
+    const startTime = `${voteStart.format("h")}${voteStart.format("a")}`;
+    const endTime = `${end.format("h")}${end.format("a")}`;
+
+    if (useWeekdayFormat) {
+      // "5pm - sat 1am"
+      const endDay = end.format("ddd").toLowerCase();
+      return {
+        display: `${startTime} - ${endDay} ${endTime}`,
+        spansMultipleDays: true,
+      };
+    }
+
+    // "5pm - jan 11 1am"
+    const endDate = end.format("MMM D").toLowerCase();
+    return {
+      display: `${startTime} - ${endDate} ${endTime}`,
+      spansMultipleDays: true,
+    };
   }
 
   // Same day - show time range
@@ -60,10 +81,10 @@ const formatTimeWindow = (voteStart: moment.Moment, end: moment.Moment): string 
   const isSamePeriod = startPeriod === endPeriod;
 
   if (isSamePeriod) {
-    return `${startHour}-${endHour}${endPeriod}`;
+    return { display: `${startHour}-${endHour}${endPeriod}`, spansMultipleDays: false };
   }
 
-  return `${startHour}${startPeriod}-${endHour}${endPeriod}`;
+  return { display: `${startHour}${startPeriod}-${endHour}${endPeriod}`, spansMultipleDays: false };
 };
 
 const formatCountdown = (duration: moment.Duration): string => {
@@ -95,7 +116,6 @@ export const getContestTiming = (contest: ProcessedContest): ContestTimingData |
   const isContestEnded = now.isSameOrAfter(end);
   const isVotingOpen = now.isSameOrAfter(voteStart) && now.isBefore(end);
 
-  // Contest has ended
   if (isContestEnded) {
     return { format: "ended", display: "ended" };
   }
@@ -110,24 +130,26 @@ export const getContestTiming = (contest: ProcessedContest): ContestTimingData |
   }
 
   // Voting not yet open - show fixed date/time (no countdown)
-  const timeWindow = formatTimeWindow(voteStart, end);
-
-  // Within same week: show weekday (e.g., "fri, 5-7pm")
+  // Within same week: show weekday (e.g., "fri, 5-7pm" or "fri 5pm - sat 1am")
   const isThisWeek = voteStart.isSame(now, "week");
+  const timeWindow = formatTimeWindow(voteStart, end, isThisWeek);
+
+  // Use comma separator for same-day, space for multi-day spans
+  const separator = timeWindow.spansMultipleDays ? " " : ", ";
 
   if (isThisWeek) {
     const dayName = voteStart.format("ddd").toLowerCase();
     return {
       format: "weekday",
-      display: `${dayName}, ${timeWindow}`,
+      display: `${dayName}${separator}${timeWindow.display}`,
     };
   }
 
-  // Beyond current week: show date (e.g., "jan 10, 5-7pm")
+  // Beyond current week: show date (e.g., "jan 10, 5-7pm" or "jan 10 5pm - jan 11 1am")
   const monthDay = voteStart.format("MMM D").toLowerCase();
   return {
     format: "date",
-    display: `${monthDay}, ${timeWindow}`,
+    display: `${monthDay}${separator}${timeWindow.display}`,
   };
 };
 

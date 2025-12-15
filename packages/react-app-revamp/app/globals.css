@@ -671,6 +671,7 @@ li {
     color: white;
     overflow-x: hidden;
     overflow-y: scroll;
+    scroll-behavior: smooth;
   }
 
   :root {
