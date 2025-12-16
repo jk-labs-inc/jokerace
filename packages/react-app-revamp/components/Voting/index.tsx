@@ -82,7 +82,8 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     reset();
   }, [userAddress, reset]);
 
-  const voteDisabled = isBalanceLoading || isLoading || isInvalid || !inputValue || inputValue === "0";
+  const isZeroValue = !inputValue || parseFloat(inputValue) === 0;
+  const voteDisabled = isBalanceLoading || isLoading || isInvalid || isZeroValue;
 
   const handleKeyDownSlider = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
