@@ -65,7 +65,85 @@ import { createTransport } from "@config/wagmi/transports";
 import { Chain, createPublicClient, getContract } from "viem";
 import { getChainFromId } from "./getChainFromId";
 
-export async function getContestContractVersion(address: string, chainId: number) {
+type ContractData = {
+  abi: any;
+  deployedBytecode?: { object: string };
+};
+
+const VERSION_TO_CONTRACT: Record<string, ContractData> = {
+  "6.10": DeprecateCostToEnterContract,
+  "6.9": AlwaysSelfFundContract,
+  "6.8": CorrectPeriodConstraintsContract,
+  "6.7": UpdatePeriodConstraintsContract,
+  "6.6": FixStateErrorsContract,
+  "6.5": OnlySetOfficialModuleOnceContract,
+  "6.4": RmUnusedErrorsContract,
+  "6.3": DocsDeleteOnlyInEntryContract,
+  "6.2": RmDeleteVotesUpdateContract,
+  "6.1": VoteAndEarnOnlyContract,
+  "5.14": RmEntryRewardsContract,
+  "5.13": RankLimitCheckContract,
+  "5.12": CorrectDelayVarContract,
+  "5.11": AntiRugContract,
+  "5.10": OnlyDeleteInEntryContract,
+  "5.9": CalcCorrectMinuteContract,
+  "5.8": AddModuleTrackingContract,
+  "5.7": VotingPriceCurvesContract,
+  "5.6": SetPeriodLimitsContract,
+  "5.5": VoterRewardsContract,
+  "5.4": OfficialModulePointsToContestContract,
+  "5.3": EntrantsCanDeleteContract,
+  "5.2": AddErc20CancelledCheckContract,
+  "5.1": RmDownvotingContract,
+  "4.37": EditTitleDescContract,
+  "4.36": NoCommentAfterCloseContract,
+  "4.35": OnlyCreatorChangeMerkleContract,
+  "4.34": AllowJkLabsDestUpdateContract,
+  "4.33": MustCancelToWithdrawContract,
+  "4.32": CheckCanceledContract,
+  "4.31": AddMetadataFieldsContract,
+  "4.30": MakeJkLabsSplitConfigurableContract,
+  "4.29": SetSplitDestinationContract,
+  "4.28": UpdateForgeLibsContract,
+  "4.27": AnyoneCanVoteContract,
+  "4.26": CleanUpConstructorsContract,
+  "4.25": PayPerVoteContract,
+  "4.24": RefactorCostDistroContract,
+  "4.23": AddCostToVoteContract,
+  "4.22": RefactorDistributionFuncContract,
+  "4.21": AddContentToEventsContract,
+  "4.20": AddGetDeletedAuthorsContract,
+  "4.19": AddMoreAttributionContract,
+  "4.18": AddEmergencyFuncsContract,
+  "4.17": MitToAGPLContract,
+  "4.16": PinAllToSameContract,
+  "4.15": RmUnusedViewFuncContract,
+  "4.14": RmShadowingPropIdsContract,
+  "4.13": AddCommentsContract,
+  "4.12": AllowCancelCompletedContract,
+  "4.11": GasOptimizeGettersContract,
+  "4.10": RmImmutableKeywordContract,
+  "4.9": AddGetPropIdsWithForVotesContract,
+  "4.8": DeleteInMapAfterForLoopContract,
+  "4.7": RmUnnecessaryVirtualsContract,
+  "4.6": RestructureExtensionsAndUtilsContract,
+  "4.5": CleanUpSortingContract,
+  "4.4": UseCustomErrorsContract,
+  "4.3": NewValueAlreadyInArrayContract,
+  "4.2": UpdateSortingAlgoContract,
+  "4.1": AddEntryChargeContract,
+};
+
+export interface ContestContractVersionResult {
+  abi: any | null;
+  version: string;
+  deployedBytecode?: string;
+}
+
+export async function getContestContractVersion(
+  address: string,
+  chainId: number,
+): Promise<ContestContractVersionResult> {
   try {
     const chain = getChainFromId(chainId);
     const client = createPublicClient({
@@ -83,135 +161,16 @@ export async function getContestContractVersion(address: string, chainId: number
     // Here we check if all RPC calls are successful, otherwise we throw an error and return empty ABI
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
-    const defaultReturn = { abi: null, version: "unknown" };
-    if (version === "6.10") {
-      return { abi: DeprecateCostToEnterContract.abi, version };
-    } else if (version === "6.9") {
-      return { abi: AlwaysSelfFundContract.abi, version };
-    } else if (version === "6.8") {
-      return { abi: CorrectPeriodConstraintsContract.abi, version };
-    } else if (version === "6.7") {
-      return { abi: UpdatePeriodConstraintsContract.abi, version };
-    } else if (version === "6.6") {
-      return { abi: FixStateErrorsContract.abi, version };
-    } else if (version === "6.5") {
-      return { abi: OnlySetOfficialModuleOnceContract.abi, version };
-    } else if (version === "6.4") {
-      return { abi: RmUnusedErrorsContract.abi, version };
-    } else if (version === "6.3") {
-      return { abi: DocsDeleteOnlyInEntryContract.abi, version };
-    } else if (version === "6.2") {
-      return { abi: RmDeleteVotesUpdateContract.abi, version };
-    } else if (version === "6.1") {
-      return { abi: VoteAndEarnOnlyContract.abi, version };
-    } else if (version === "5.14") {
-      return { abi: RmEntryRewardsContract.abi, version };
-    } else if (version === "5.13") {
-      return { abi: RankLimitCheckContract.abi, version };
-    } else if (version === "5.12") {
-      return { abi: CorrectDelayVarContract.abi, version };
-    } else if (version === "5.11") {
-      return { abi: AntiRugContract.abi, version };
-    } else if (version === "5.10") {
-      return { abi: OnlyDeleteInEntryContract.abi, version };
-    } else if (version === "5.9") {
-      return { abi: CalcCorrectMinuteContract.abi, version };
-    } else if (version === "5.8") {
-      return { abi: AddModuleTrackingContract.abi, version };
-    } else if (version === "5.7") {
-      return { abi: VotingPriceCurvesContract.abi, version };
-    } else if (version === "5.6") {
-      return { abi: SetPeriodLimitsContract.abi, version };
-    } else if (version === "5.5") {
-      return { abi: VoterRewardsContract.abi, version };
-    } else if (version === "5.4") {
-      return { abi: OfficialModulePointsToContestContract.abi, version };
-    } else if (version === "5.3") {
-      return { abi: EntrantsCanDeleteContract.abi, version };
-    } else if (version === "5.2") {
-      return { abi: AddErc20CancelledCheckContract.abi, version };
-    } else if (version === "5.1") {
-      return { abi: RmDownvotingContract.abi, version };
-    } else if (version === "4.37") {
-      return { abi: EditTitleDescContract.abi, version };
-    } else if (version === "4.36") {
-      return { abi: NoCommentAfterCloseContract.abi, version };
-    } else if (version === "4.35") {
-      return { abi: OnlyCreatorChangeMerkleContract.abi, version };
-    } else if (version === "4.34") {
-      return { abi: AllowJkLabsDestUpdateContract.abi, version };
-    } else if (version === "4.33") {
-      return { abi: MustCancelToWithdrawContract.abi, version };
-    } else if (version === "4.32") {
-      return { abi: CheckCanceledContract.abi, version };
-    } else if (version === "4.31") {
-      return { abi: AddMetadataFieldsContract.abi, version };
-    } else if (version === "4.30") {
-      return { abi: MakeJkLabsSplitConfigurableContract.abi, version };
-    } else if (version === "4.29") {
-      return { abi: SetSplitDestinationContract.abi, version };
-    } else if (version === "4.28") {
-      return { abi: UpdateForgeLibsContract.abi, version };
-    } else if (version === "4.27") {
-      return { abi: AnyoneCanVoteContract.abi, version };
-    } else if (version === "4.26") {
-      return { abi: CleanUpConstructorsContract.abi, version };
-    } else if (version === "4.25") {
-      return { abi: PayPerVoteContract.abi, version };
-    } else if (version === "4.24") {
-      return { abi: RefactorCostDistroContract.abi, version };
-    } else if (version === "4.23") {
-      return { abi: AddCostToVoteContract.abi, version };
-    } else if (version === "4.22") {
-      return { abi: RefactorDistributionFuncContract.abi, version };
-    } else if (version === "4.21") {
-      return { abi: AddContentToEventsContract.abi, version };
-    } else if (version === "4.20") {
-      return { abi: AddGetDeletedAuthorsContract.abi, version };
-    } else if (version === "4.19") {
-      return { abi: AddMoreAttributionContract.abi, version };
-    } else if (version === "4.18") {
-      return { abi: AddEmergencyFuncsContract.abi, version };
-    } else if (version === "4.17") {
-      return { abi: MitToAGPLContract.abi, version };
-    } else if (version === "4.16") {
-      return { abi: PinAllToSameContract.abi, version };
-    } else if (version === "4.15") {
-      return { abi: RmUnusedViewFuncContract.abi, version };
-    } else if (version === "4.14") {
-      return { abi: RmShadowingPropIdsContract.abi, version };
-    } else if (version === "4.13") {
-      return { abi: AddCommentsContract.abi, version };
-    } else if (version === "4.12") {
-      return { abi: AllowCancelCompletedContract.abi, version };
-    } else if (version === "4.11") {
-      return { abi: GasOptimizeGettersContract.abi, version };
-    } else if (version === "4.10") {
-      return { abi: RmImmutableKeywordContract.abi, version };
-    } else if (version === "4.9") {
-      return { abi: AddGetPropIdsWithForVotesContract.abi, version };
-    } else if (version === "4.8") {
-      return { abi: DeleteInMapAfterForLoopContract.abi, version };
-    } else if (version === "4.7") {
-      return { abi: RmUnnecessaryVirtualsContract.abi, version };
-    } else if (version === "4.6") {
-      return { abi: RestructureExtensionsAndUtilsContract.abi, version };
-    } else if (version === "4.5") {
-      return { abi: CleanUpSortingContract.abi, version };
-    } else if (version === "4.4") {
-      return { abi: UseCustomErrorsContract.abi, version };
-    } else if (version === "4.3") {
-      return { abi: NewValueAlreadyInArrayContract.abi, version };
-    } else if (version === "4.2") {
-      return { abi: UpdateSortingAlgoContract.abi, version };
-    } else if (version === "4.1") {
-      return { abi: AddEntryChargeContract.abi, version };
-    } else {
-      return { abi: DeployedContestContract.abi, version };
-    }
+    const contractData = VERSION_TO_CONTRACT[version] ?? DeployedContestContract;
+
+    return {
+      abi: contractData.abi,
+      version,
+      deployedBytecode: contractData.deployedBytecode?.object,
+    };
   } catch (error: unknown) {
     console.error(`Error while fetching the contract version for address ${address} on chainId ${chainId}:`, error);
-    return { abi: null, version: "error" };
+    return { abi: null, version: "error", deployedBytecode: undefined };
   }
 }
 
