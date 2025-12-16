@@ -27,8 +27,7 @@ const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isR
   if (!currentReward) return null;
 
   const contestIsActive = isContestActive(contestData);
-  const isVotingLive = getContestState(contestData) === "live";
-  const showTrendingIcon = currentReward.isNative && isVotingLive;
+  const showTrendingIcon = currentReward.isNative && contestIsActive;
 
   return (
     <div className="flex items-center gap-1">
@@ -52,9 +51,10 @@ const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isR
             style={{ willChange: "transform" }}
           >
             {currentReward.formatted}
-            {showTrendingIcon && <span className="text-neutral-11">+</span>}
+            {showTrendingIcon && <sup className="text-neutral-11">+</sup>}
             {"  "}
             <span className="uppercase">{currentReward.symbol}</span>
+            {showTrendingIcon && <span className="inline-block -translate-y-0.5 ml-1">🚀</span>}
           </motion.p>
         </AnimatePresence>
       </div>
