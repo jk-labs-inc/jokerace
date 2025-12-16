@@ -7,9 +7,11 @@ const LandingPageExplainer = () => {
   return (
     <div className="flex flex-col gap-8 md:gap-12 pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-20 2xl:pr-0">
       <SubscribeSection />
-      <HowItWorksSection />
-      <CreateContestSection />
-      <BuildProtocolSection />
+      <div className="hidden md:flex flex-col gap-12">
+        <HowItWorksSection />
+        <CreateContestSection />
+        <BuildProtocolSection />
+      </div>
     </div>
   );
 };

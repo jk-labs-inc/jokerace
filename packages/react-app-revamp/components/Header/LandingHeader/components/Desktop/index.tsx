@@ -47,7 +47,7 @@ const LandingHeaderDesktop = () => {
               <CustomLink
                 prefetch={true}
                 href={ROUTE_CREATE_CONTEST}
-                className="hidden bg-secondary-11 text-base text-true-black font-bold px-4 h-10 md:flex items-center justify-center rounded-2xl"
+                className="hidden bg-secondary-11 text-base text-true-black font-bold px-4 h-10 xl:flex items-center justify-center rounded-2xl"
               >
                 create a contest
               </CustomLink>
