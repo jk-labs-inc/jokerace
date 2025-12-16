@@ -1,14 +1,15 @@
-import InitialVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.5.voterRewards.sol/VoterRewardsModule.json";
-import SetPeriodLimitsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.6.setPeriodLimits.sol/VoterRewardsModule.json";
-import VotingPriceCurvesVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.7.votingPriceCurves.sol/VoterRewardsModule.json";
-import AddModuleTrackingVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.8.addModuleTracking.sol/VoterRewardsModule.json";
-import CalcCorrectMinuteVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.9.calcCorrectMinute.sol/VoterRewardsModule.json";
 import OnlyDeleteInEntryVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.10.onlyDeleteInEntry.sol/VoterRewardsModule.json";
 import AntiRugVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.11.antiRug.sol/VoterRewardsModule.json";
 import CorrectDelayVarVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.12.correctDelayVar.sol/VoterRewardsModule.json";
 import RankLimitCheckVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.13.rankLimitCheck.sol/VoterRewardsModule.json";
 import RmEntryRewardsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.14.rmEntryRewards.sol/VoterRewardsModule.json";
+import InitialVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.5.voterRewards.sol/VoterRewardsModule.json";
+import SetPeriodLimitsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.6.setPeriodLimits.sol/VoterRewardsModule.json";
+import VotingPriceCurvesVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.7.votingPriceCurves.sol/VoterRewardsModule.json";
+import AddModuleTrackingVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.8.addModuleTracking.sol/VoterRewardsModule.json";
+import CalcCorrectMinuteVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.9.calcCorrectMinute.sol/VoterRewardsModule.json";
 import VoteAndEarnOnlyVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.1.voteAndEarnOnly.sol/VoterRewardsModule.json";
+import DeprecateCostToEnterVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.10.deprecateCostToEnter.sol/VoterRewardsModule.json";
 import RmDeleteVotesUpdateVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.2.rmDeleteVotesUpdate.sol/VoterRewardsModule.json";
 import DocsDeleteOnlyInEntryVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.3.docsDeleteOnlyInEntry.sol/VoterRewardsModule.json";
 import RmUnusedErrorsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.4.rmUnusedErrors.sol/VoterRewardsModule.json";
@@ -17,11 +18,37 @@ import FixStateErrorsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterR
 import UpdatePeriodConstraintsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.7.updatePeriodConstraints.sol/VoterRewardsModule.json";
 import CorrectPeriodConstraintsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.8.correctPeriodConstraints.sol/VoterRewardsModule.json";
 import AlwaysSelfFundVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.9.alwaysSelfFund.sol/VoterRewardsModule.json";
-import DeprecateCostToEnterVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.10.deprecateCostToEnter.sol/VoterRewardsModule.json";
 import DeployedVoterRewardsContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { createPublicClient, getContract, http } from "viem";
 import { getChainFromId } from "./getChainFromId";
 import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
+
+type ContractData = {
+  abi: any;
+};
+
+const VERSION_TO_CONTRACT: Record<string, ContractData> = {
+  "6.10": DeprecateCostToEnterVoterRewards,
+  "6.9": AlwaysSelfFundVoterRewards,
+  "6.8": CorrectPeriodConstraintsVoterRewards,
+  "6.7": UpdatePeriodConstraintsVoterRewards,
+  "6.6": FixStateErrorsVoterRewards,
+  "6.5": OnlySetOfficialModuleOnceVoterRewards,
+  "6.4": RmUnusedErrorsVoterRewards,
+  "6.3": DocsDeleteOnlyInEntryVoterRewards,
+  "6.2": RmDeleteVotesUpdateVoterRewards,
+  "6.1": VoteAndEarnOnlyVoterRewards,
+  "5.14": RmEntryRewardsVoterRewards,
+  "5.13": RankLimitCheckVoterRewards,
+  "5.12": CorrectDelayVarVoterRewards,
+  "5.11": AntiRugVoterRewards,
+  "5.10": OnlyDeleteInEntryVoterRewards,
+  "5.9": CalcCorrectMinuteVoterRewards,
+  "5.8": AddModuleTrackingVoterRewards,
+  "5.7": VotingPriceCurvesVoterRewards,
+  "5.6": SetPeriodLimitsVoterRewards,
+  "5.5": InitialVoterRewards,
+};
 
 export async function getVoterRewardsModuleContractVersion(address: string, chainId: number) {
   const chain = getChainFromId(chainId);
@@ -39,49 +66,12 @@ export async function getVoterRewardsModuleContractVersion(address: string, chai
   try {
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
-    if (version === "6.10") {
-      return { abi: DeprecateCostToEnterVoterRewards.abi, version };
-    } else if (version === "6.9") {
-      return { abi: AlwaysSelfFundVoterRewards.abi, version };
-    } else if (version === "6.8") {
-      return { abi: CorrectPeriodConstraintsVoterRewards.abi, version };
-    } else if (version === "6.7") {
-      return { abi: UpdatePeriodConstraintsVoterRewards.abi, version };
-    } else if (version === "6.6") {
-      return { abi: FixStateErrorsVoterRewards.abi, version };
-    } else if (version === "6.5") {
-      return { abi: OnlySetOfficialModuleOnceVoterRewards.abi, version };
-    } else if (version === "6.4") {
-      return { abi: RmUnusedErrorsVoterRewards.abi, version };
-    } else if (version === "6.3") {
-      return { abi: DocsDeleteOnlyInEntryVoterRewards.abi, version };
-    } else if (version === "6.2") {
-      return { abi: RmDeleteVotesUpdateVoterRewards.abi, version };
-    } else if (version === "6.1") {
-      return { abi: VoteAndEarnOnlyVoterRewards.abi, version };
-    } else if (version === "5.14") {
-      return { abi: RmEntryRewardsVoterRewards.abi, version };
-    } else if (version === "5.13") {
-      return { abi: RankLimitCheckVoterRewards.abi, version };
-    } else if (version === "5.12") {
-      return { abi: CorrectDelayVarVoterRewards.abi, version };
-    } else if (version === "5.11") {
-      return { abi: AntiRugVoterRewards.abi, version };
-    } else if (version === "5.10") {
-      return { abi: OnlyDeleteInEntryVoterRewards.abi, version };
-    } else if (version === "5.9") {
-      return { abi: CalcCorrectMinuteVoterRewards.abi, version };
-    } else if (version === "5.8") {
-      return { abi: AddModuleTrackingVoterRewards.abi, version };
-    } else if (version === "5.7") {
-      return { abi: VotingPriceCurvesVoterRewards.abi, version };
-    } else if (version === "5.6") {
-      return { abi: SetPeriodLimitsVoterRewards.abi, version };
-    } else if (version === "5.5") {
-      return { abi: InitialVoterRewards.abi, version };
-    } else {
-      return { abi: DeployedVoterRewardsContract.abi, version };
-    }
+    const contractData = VERSION_TO_CONTRACT[version] ?? DeployedVoterRewardsContract;
+
+    return {
+      abi: contractData.abi,
+      version,
+    };
   } catch (error) {
     // If the version method does not exist or is failing, use the first version
     return { abi: InitialVoterRewards.abi, version: "unknown" };
