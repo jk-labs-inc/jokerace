@@ -49,8 +49,10 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
         <ContestState state={contestState} />
         <ContestTitle title={contestData.title} state={titleState} />
       </ContestCardContainer>
-      <div className="px-4 flex items-center justify-between">
-        <ContestTiming contest={contestData} />
+      <div className="px-4 flex items-center gap-24 md:gap-4">
+        <div className="min-w-28 max-w-36 shrink-0">
+          <ContestTiming contest={contestData} />
+        </div>
         <ContestRewards contestData={contestData} rewardsData={rewardsData} isRewardsFetching={isRewardsFetching} />
       </div>
     </CustomLink>
