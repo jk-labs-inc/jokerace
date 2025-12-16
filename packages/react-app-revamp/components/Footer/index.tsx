@@ -1,16 +1,6 @@
 import { FOOTER_LINKS } from "@config/links";
 
-const ALLOWED_LINKS = [
-  "Github",
-  "Twitter",
-  "Report a bug",
-  "Terms",
-  "Privacy Policy",
-  "Telegram",
-  "Media Kit",
-  "FAQ",
-  "Substack",
-];
+const ALLOWED_LINKS = ["Github", "Linktree", "Report a bug", "Terms", "Privacy Policy", "Docs", "Media Kit", "FAQ"];
 
 const Footer = () => {
   const filteredLinks = FOOTER_LINKS.filter(link => ALLOWED_LINKS.includes(link.label));

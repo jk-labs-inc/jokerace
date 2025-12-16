@@ -37,17 +37,7 @@ const LandingHeaderMobileFooter = () => {
   const isActive = (route: string) => (pathname === route ? "font-bold" : "");
   const isOneOfActive = (routes: string[]) => (routes.includes(pathname ?? "") ? "font-bold" : "");
   const { openConnectModal } = useConnectModal();
-  const allowedLinks = [
-    "Github",
-    "Twitter",
-    "Report a bug",
-    "Terms",
-    "Privacy Policy",
-    "Telegram",
-    "Media Kit",
-    "FAQ",
-    "Substack",
-  ];
+  const allowedLinks = ["Github", "Linktree", "Report a bug", "Terms", "Privacy Policy", "Docs", "Media Kit", "FAQ"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const [showWalletPortal, setShowWalletPortal] = useState(false);
 
