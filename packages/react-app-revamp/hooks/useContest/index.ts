@@ -3,6 +3,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { getChainId } from "@helpers/getChainId";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { getNativeTokenSymbol } from "@helpers/nativeToken";
+import { verifyContractBytecode } from "@helpers/verifyContractBytecode";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { VoteType } from "@hooks/useDeployContest/types";
@@ -29,6 +30,7 @@ interface ContractConfigResult {
     chainId: number;
   };
   version: string;
+  deployedBytecode?: string;
 }
 
 export interface ContractConfig {
@@ -77,7 +79,7 @@ export function useContest() {
   // Generate config for the contract
   async function getContractConfig(): Promise<ContractConfigResult | undefined> {
     try {
-      const { abi, version } = await getContestContractVersion(address, chainId);
+      const { abi, version, deployedBytecode } = await getContestContractVersion(address, chainId);
 
       if (abi === null) {
         setError(ErrorType.RPC);
@@ -96,7 +98,7 @@ export function useContest() {
 
       setContestConfigData(addressFromUrl, chainFromUrl, abi as Abi, version);
 
-      return { contractConfig, version };
+      return { contractConfig, version, deployedBytecode };
     } catch (e) {
       setError(ErrorType.CONTRACT);
       setIsSuccess(false);
@@ -202,7 +204,7 @@ export function useContest() {
   async function fetchContestInfo() {
     setIsLoading(true);
     try {
-      const [abiResult, isContestFromJokerace] = await Promise.all([
+      const [abiResult, isContestInDatabase] = await Promise.all([
         getContractConfig(),
         checkIfContestExists(addressFromUrl, chainFromUrl),
       ]);
@@ -212,13 +214,19 @@ export function useContest() {
         return;
       }
 
+      const { contractConfig, version, deployedBytecode } = abiResult;
+
+      const isBytecodeValid = deployedBytecode
+        ? await verifyContractBytecode(addressFromUrl, chainId, deployedBytecode)
+        : false;
+
+      const isContestFromJokerace = isContestInDatabase && isBytecodeValid;
+
       if (!isContestFromJokerace) {
         setError(ErrorType.IS_NOT_JOKERACE_CONTRACT);
         setIsLoading(false);
         return;
       }
-
-      const { contractConfig, version } = abiResult;
 
       if (compareVersions(version, "4.0") < 0) {
         setError(ErrorType.UNSUPPORTED_VERSION);
