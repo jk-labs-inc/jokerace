@@ -1,21 +1,22 @@
 import { isSupabaseConfigured } from "@helpers/database";
 import getPagination from "@helpers/getPagination";
 import { SearchOptions } from "types/search";
-import { getContestTitleAndState } from "./contracts";
+import { CONTEST_COLUMNS, ITEMS_PER_PAGE } from "./constants";
+import { getContestContractData } from "./contracts";
 import { BaseContestData, ContestsResponse, ProcessedContest } from "./types";
 import { sortContests } from "./utils/sortContests";
 import { streamProcessItems } from "./utils/streamItems";
-import { CONTEST_COLUMNS, ITEMS_PER_PAGE } from "./constants";
 
 /**
  * Process contest data by fetching title and cancellation status from contracts
  */
 async function processContestData(contest: BaseContestData): Promise<ProcessedContest> {
-  const { title, isCanceled } = await getContestTitleAndState(contest.address, contest.network_name);
+  const { title, isCanceled, prompt } = await getContestContractData(contest.address, contest.network_name);
   return {
     ...contest,
     title: title ?? "",
     isCanceled,
+    prompt: prompt,
   };
 }
 

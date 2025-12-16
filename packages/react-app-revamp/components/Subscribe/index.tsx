@@ -68,7 +68,11 @@ const Subscribe = () => {
             onClick={address ? handleSubscribe : openConnectModal}
           >
             <p className="text-[16px] md:text-[18px] font-bold text-true-black whitespace-nowrap px-2">
-              {!address && !isMounted ? "connect wallet" : isMobile ? "get updates" : "get contest updates"}
+              {!address && !isMounted
+                ? "connect wallet"
+                : isMounted && isMobile
+                ? "get updates"
+                : "get contest updates"}
             </p>
           </button>
         </div>

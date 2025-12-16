@@ -37,17 +37,17 @@ async function getContractConfig(address: string, chainId: number) {
  * @param networkName Network name
  * @returns Object containing title and isCanceled status
  */
-export async function getContestTitleAndState(
+export async function getContestContractData(
   contestAddress: string,
   networkName: string,
-): Promise<{ title: string | null; isCanceled: boolean }> {
+): Promise<{ title: string | null; isCanceled: boolean; prompt: string | null }> {
   const chainId = chains.find(c => c.name.toLowerCase() === networkName.toLowerCase())?.id;
-  if (!chainId) return { title: null, isCanceled: false };
+  if (!chainId) return { title: null, isCanceled: false, prompt: null };
 
   try {
     const contractConfig = await getContractConfig(contestAddress, chainId);
     if (!contractConfig) {
-      return { title: null, isCanceled: false };
+      return { title: null, isCanceled: false, prompt: null };
     }
 
     const results = await readContracts(config, {
@@ -62,17 +62,23 @@ export async function getContestTitleAndState(
           functionName: "state",
           args: [],
         },
+        {
+          ...contractConfig,
+          functionName: "prompt",
+          args: [],
+        },
       ],
     });
 
     const title = results[0].result as string;
     const state = results[1].result;
+    const prompt = results[2].result as string;
     const isCanceled = state === ContestStateEnum.Canceled;
 
-    return { title, isCanceled };
+    return { title, isCanceled, prompt };
   } catch (error) {
     console.error("Error fetching contest data:", error);
-    return { title: null, isCanceled: false };
+    return { title: null, isCanceled: false, prompt: null };
   }
 }
 

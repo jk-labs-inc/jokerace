@@ -4,11 +4,12 @@ interface CustomLinkProps extends LinkProps {
   prefetch?: boolean;
   target?: string;
   className?: string;
+  style?: React.CSSProperties;
 }
 
-const CustomLink = ({ href, children, prefetch = true, className, target, ...props }: CustomLinkProps) => {
+const CustomLink = ({ href, children, prefetch = true, className, target, style, ...props }: CustomLinkProps) => {
   return (
-    <Link href={href} prefetch={prefetch} className={className} target={target} {...props}>
+    <Link href={href} prefetch={prefetch} className={className} target={target} style={style} {...props}>
       {children}
     </Link>
   );
