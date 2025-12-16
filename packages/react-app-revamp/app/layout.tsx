@@ -9,7 +9,6 @@ import { Metadata, Viewport } from "next";
 import dynamic from "next/dynamic";
 import { headers } from "next/headers";
 import NextTopLoader from "nextjs-toploader";
-import "react-datepicker/dist/react-datepicker.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "react-tooltip/dist/react-tooltip.css";
 import "simplebar-react/dist/simplebar.min.css";
