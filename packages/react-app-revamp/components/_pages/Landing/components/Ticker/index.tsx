@@ -10,7 +10,7 @@ const LandingPageTicker = () => {
         <img src="/landing/confetti.svg" alt="confetti" className="w-12 h-12" />,
         <TickerText>
           <span
-            className="text-2xl font-lato font-black"
+            className="text-[14px] font-lato font-black"
             style={{
               WebkitTextStroke: "3px #BB65FF",
               WebkitTextFillColor: "#78ffc6",
