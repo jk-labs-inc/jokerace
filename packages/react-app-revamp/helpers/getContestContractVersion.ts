@@ -59,6 +59,7 @@ import UpdatePeriodConstraintsContract from "@contracts/bytecodeAndAbi/Contest.6
 import CorrectPeriodConstraintsContract from "@contracts/bytecodeAndAbi/Contest.6.8.correctPeriodConstraints.sol/Contest.json";
 import AlwaysSelfFundContract from "@contracts/bytecodeAndAbi/Contest.6.9.alwaysSelfFund.sol/Contest.json";
 import DeprecateCostToEnterContract from "@contracts/bytecodeAndAbi/Contest.6.10.deprecateCostToEnter.sol/Contest.json";
+import DeprecateFlatCurvesContract from "@contracts/bytecodeAndAbi/Contest.6.11.deprecateFlatCurves.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
 import { createTransport } from "@config/wagmi/transports";
@@ -71,6 +72,7 @@ type ContractData = {
 };
 
 const VERSION_TO_CONTRACT: Record<string, ContractData> = {
+  "6.11": DeprecateFlatCurvesContract,
   "6.10": DeprecateCostToEnterContract,
   "6.9": AlwaysSelfFundContract,
   "6.8": CorrectPeriodConstraintsContract,
