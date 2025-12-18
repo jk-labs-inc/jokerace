@@ -10,7 +10,6 @@ import { ModuleType, RewardsModuleInfo, VOTER_REWARDS_VERSION } from "../types";
 const EMPTY_REWARDS_MODULE_INFO: RewardsModuleInfo = {
   abi: null,
   moduleType: null,
-  deployedBytecode: null,
 };
 
 /**
@@ -36,7 +35,6 @@ export async function getRewardsModuleInfo(rewardsModuleAddress: string, chainId
     return {
       abi: abi as Abi,
       moduleType: moduleType as ModuleType,
-      deployedBytecode,
     };
   } catch (error) {
     console.error("Error in getRewardsModuleInfo:", error);
