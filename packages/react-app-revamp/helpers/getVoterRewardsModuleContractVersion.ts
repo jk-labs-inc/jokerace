@@ -9,7 +9,6 @@ import VotingPriceCurvesVoterRewards from "@contracts/bytecodeAndAbi/modules/Vot
 import AddModuleTrackingVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.8.addModuleTracking.sol/VoterRewardsModule.json";
 import CalcCorrectMinuteVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.5.9.calcCorrectMinute.sol/VoterRewardsModule.json";
 import VoteAndEarnOnlyVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.1.voteAndEarnOnly.sol/VoterRewardsModule.json";
-import DeprecateCostToEnterVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.10.deprecateCostToEnter.sol/VoterRewardsModule.json";
 import RmDeleteVotesUpdateVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.2.rmDeleteVotesUpdate.sol/VoterRewardsModule.json";
 import DocsDeleteOnlyInEntryVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.3.docsDeleteOnlyInEntry.sol/VoterRewardsModule.json";
 import RmUnusedErrorsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.4.rmUnusedErrors.sol/VoterRewardsModule.json";
@@ -18,6 +17,8 @@ import FixStateErrorsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterR
 import UpdatePeriodConstraintsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.7.updatePeriodConstraints.sol/VoterRewardsModule.json";
 import CorrectPeriodConstraintsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.8.correctPeriodConstraints.sol/VoterRewardsModule.json";
 import AlwaysSelfFundVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.9.alwaysSelfFund.sol/VoterRewardsModule.json";
+import DeprecateCostToEnterVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.10.deprecateCostToEnter.sol/VoterRewardsModule.json";
+import DeprecateFlatCurvesVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.11.deprecateFlatCurves.sol/VoterRewardsModule.json";
 import DeployedVoterRewardsContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { createPublicClient, getContract, http } from "viem";
 import { getChainFromId } from "./getChainFromId";
@@ -29,6 +30,7 @@ type ContractData = {
 };
 
 const VERSION_TO_CONTRACT: Record<string, ContractData> = {
+  "6.11": DeprecateFlatCurvesVoterRewards,
   "6.10": DeprecateCostToEnterVoterRewards,
   "6.9": AlwaysSelfFundVoterRewards,
   "6.8": CorrectPeriodConstraintsVoterRewards,
