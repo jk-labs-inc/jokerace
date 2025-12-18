@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const story: Chain = {
   id: 1514,
   name: "story",
-  iconUrl: "/story.png",
+  iconUrl: "/story.svg",
   nativeCurrency: {
     decimals: 18,
     name: "IP",

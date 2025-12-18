@@ -10,7 +10,6 @@ import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
 import { fetchTotalRewardsForContests } from "lib/contests/contracts";
 import { ProcessedContest } from "lib/contests/types";
 import moment from "moment";
-import { motion } from "motion/react";
 import { useCallback, useState } from "react";
 import LandingPageExplainer from "./Explainer";
 import LandingPageUsedBy from "./UsedBy";
@@ -95,15 +94,13 @@ const LandingPage = () => {
                 isRewardsFetching={isRewardsFetching}
                 isContestDataFetching={isContestDataFetching}
               />
-              <motion.div className="ml-auto" whileTap={{ scale: 0.97 }} style={{ willChange: "transform" }}>
-                <CustomLink
-                  prefetch={true}
-                  href={ROUTE_VIEW_LIVE_CONTESTS}
-                  className="bg-positive-18 text-base text-true-black font-bold px-4 h-10 hidden md:flex items-center justify-center rounded-2xl"
-                >
-                  play in contests and earn
-                </CustomLink>
-              </motion.div>
+              <CustomLink
+                prefetch={true}
+                href={ROUTE_VIEW_LIVE_CONTESTS}
+                className="ml-auto bg-positive-18 text-base text-true-black font-bold px-4 h-10 hidden md:flex items-center justify-center rounded-2xl transition-all duration-200 ease-out hover:brightness-110 hover:shadow-[0_0_12px_rgba(255,255,255,0.15)]"
+              >
+                play in contests and earn
+              </CustomLink>
             </div>
           ) : (
             <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">

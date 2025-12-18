@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const avalanche: Chain = {
   id: 43114,
   name: "avalanche",
-  iconUrl: "/avalanche.png",
+  iconUrl: "/avalanche.svg",
   nativeCurrency: {
     decimals: 18,
     name: "AVAX",

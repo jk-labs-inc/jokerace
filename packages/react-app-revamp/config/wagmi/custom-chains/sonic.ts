@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const sonic: Chain = {
   id: 146,
   name: "sonic",
-  iconUrl: "/sonic.png",
+  iconUrl: "/sonic.svg",
   nativeCurrency: {
     decimals: 18,
     name: "S",
