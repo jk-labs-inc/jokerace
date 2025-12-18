@@ -1,9 +1,8 @@
 import LandingPageTicker from "@components/_pages/Landing/components/Ticker";
 import { ConnectButtonCustom } from "@components/Connect";
 import CustomLink from "@components/UI/Link";
-import { LINK_BRIDGE_DOCS, LINK_DOCS, LINK_LINKTREE } from "@config/links";
+import { LINK_DOCS, LINK_LINKTREE } from "@config/links";
 import { ROUTE_CREATE_CONTEST } from "@config/routes";
-import { motion } from "motion/react";
 
 const LandingHeaderDesktop = () => {
   return (
@@ -43,15 +42,13 @@ const LandingHeaderDesktop = () => {
             >
               linktree
             </a>
-            <motion.div whileTap={{ scale: 0.97 }} style={{ willChange: "transform" }}>
-              <CustomLink
-                prefetch={true}
-                href={ROUTE_CREATE_CONTEST}
-                className="hidden bg-secondary-11 text-base text-true-black font-bold px-4 h-10 xl:flex items-center justify-center rounded-2xl"
-              >
-                create a contest
-              </CustomLink>
-            </motion.div>
+            <CustomLink
+              prefetch={true}
+              href={ROUTE_CREATE_CONTEST}
+              className="hidden bg-secondary-11 text-base text-true-black font-bold px-4 h-10 xl:flex items-center justify-center rounded-2xl transition-all duration-200 ease-out hover:brightness-110 hover:shadow-[0_0_12px_rgba(255,255,255,0.15)]"
+            >
+              create a contest
+            </CustomLink>
             <div className="flex gap-3 items-center ml-auto">
               <ConnectButtonCustom />
             </div>

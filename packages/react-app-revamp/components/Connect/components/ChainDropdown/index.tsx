@@ -1,4 +1,4 @@
-import Dropdown, { Option } from "@components/UI/Dropdown";
+import { Option } from "@components/UI/Dropdown";
 import { chains, config } from "@config/wagmi";
 import { Chain } from "@rainbow-me/rainbowkit";
 import { switchChain } from "@wagmi/core";
