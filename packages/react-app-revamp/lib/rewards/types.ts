@@ -16,6 +16,7 @@ export interface RewardToken {
 export interface RewardsModuleInfo {
   abi: Abi | null;
   moduleType: ModuleType | null;
+  deployedBytecode: string | null;
 }
 
 export enum ModuleType {

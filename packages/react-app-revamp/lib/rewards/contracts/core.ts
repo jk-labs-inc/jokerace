@@ -1,10 +1,17 @@
 import { config } from "@config/wagmi";
 import getVoterRewardsModuleContractVersion from "@helpers/getVoterRewardsModuleContractVersion";
+import { verifyContractBytecode } from "@helpers/verifyContractBytecode";
 import { ContractConfig } from "@hooks/useContest";
 import { readContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { Abi } from "viem";
 import { ModuleType, RewardsModuleInfo, VOTER_REWARDS_VERSION } from "../types";
+
+const EMPTY_REWARDS_MODULE_INFO: RewardsModuleInfo = {
+  abi: null,
+  moduleType: null,
+  deployedBytecode: null,
+};
 
 /**
  * Gets information about the rewards module
@@ -14,23 +21,26 @@ import { ModuleType, RewardsModuleInfo, VOTER_REWARDS_VERSION } from "../types";
  */
 export async function getRewardsModuleInfo(rewardsModuleAddress: string, chainId: number): Promise<RewardsModuleInfo> {
   try {
-    const { abi, version } = await getVoterRewardsModuleContractVersion(rewardsModuleAddress, chainId);
+    const { abi, version, deployedBytecode } = await getVoterRewardsModuleContractVersion(rewardsModuleAddress, chainId);
 
-    if (!abi) return { abi: null, moduleType: null };
+    if (!abi || !deployedBytecode) return EMPTY_REWARDS_MODULE_INFO;
 
-    if (compareVersions(version, VOTER_REWARDS_VERSION) < 0) {
-      return { abi: abi as Abi, moduleType: ModuleType.AUTHOR_REWARDS };
-    }
+    const isBytecodeValid = await verifyContractBytecode(rewardsModuleAddress, chainId, deployedBytecode);
+    if (!isBytecodeValid) return EMPTY_REWARDS_MODULE_INFO;
 
-    const moduleType = await getModuleType(rewardsModuleAddress, abi as Abi, chainId);
+    const isLegacyVersion = compareVersions(version, VOTER_REWARDS_VERSION) < 0;
+    const moduleType = isLegacyVersion
+      ? ModuleType.AUTHOR_REWARDS
+      : await getModuleType(rewardsModuleAddress, abi as Abi, chainId);
 
     return {
       abi: abi as Abi,
       moduleType: moduleType as ModuleType,
+      deployedBytecode,
     };
   } catch (error) {
     console.error("Error in getRewardsModuleInfo:", error);
-    return { abi: null, moduleType: null };
+    return EMPTY_REWARDS_MODULE_INFO;
   }
 }
 

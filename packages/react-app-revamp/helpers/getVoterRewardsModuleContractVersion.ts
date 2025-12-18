@@ -25,6 +25,7 @@ import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
 
 type ContractData = {
   abi: any;
+  deployedBytecode?: { object: string };
 };
 
 const VERSION_TO_CONTRACT: Record<string, ContractData> = {
@@ -71,10 +72,15 @@ export async function getVoterRewardsModuleContractVersion(address: string, chai
     return {
       abi: contractData.abi,
       version,
+      deployedBytecode: contractData.deployedBytecode?.object,
     };
   } catch (error) {
     // If the version method does not exist or is failing, use the first version
-    return { abi: InitialVoterRewards.abi, version: "unknown" };
+    return {
+      abi: InitialVoterRewards.abi,
+      version: "unknown",
+      deployedBytecode: InitialVoterRewards.deployedBytecode?.object,
+    };
   }
 }
 
