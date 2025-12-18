@@ -1,47 +1,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* Font Face Declarations */
-@font-face {
-  font-family: "Lato";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/Lato-Regular.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Lato";
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("/fonts/Lato-Bold.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Lato";
-  font-style: normal;
-  font-weight: 900;
-  font-display: swap;
-  src: url("/fonts/Lato-Black.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Sabo-Regular";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/Sabo-Regular.otf") format("opentype");
-}
-
-@font-face {
-  font-family: "Sabo-Filled";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/Sabo-Filled.otf") format("opentype");
-}
-
 @theme {
   /* Breakpoints */
   --breakpoint-min: 320px;
@@ -56,10 +15,9 @@
   --breakpoint-3xl: 1500px;
   --breakpoint-4xl: 1660px;
 
-  /* Font Families */
-  --font-sabo-regular: "Sabo-Regular", sans-serif;
-  --font-sabo-filled: "Sabo-Filled", sans-serif;
-  --font-sans: "Lato", sans-serif;
+  --font-sabo-regular: var(--font-family-sabo-regular), sans-serif;
+  --font-sabo-filled: var(--font-family-sabo-filled), sans-serif;
+  --font-sans: var(--font-family-lato), sans-serif;
   --font-mono: monospace;
 
   /* Font Sizes */

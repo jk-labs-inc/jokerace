@@ -1,6 +1,5 @@
 import Ticker from "@components/UI/Ticker";
 import TickerText from "./components/TickerText";
-import { FC } from "react";
 
 const LandingPageTicker = () => {
   return (
@@ -9,7 +8,20 @@ const LandingPageTicker = () => {
       items={[
         <TickerText>THE EARLIER YOU VOTE THE MORE YOU CAN EARN</TickerText>,
         <img src="/landing/confetti.svg" alt="confetti" className="w-12 h-12" />,
-        <TickerText>$1,500,000 GENERATED FOR VOTERS</TickerText>,
+        <TickerText>
+          <span
+            className="text-[14px] font-lato font-black"
+            style={{
+              WebkitTextStroke: "3px #BB65FF",
+              WebkitTextFillColor: "#78ffc6",
+              paintOrder: "stroke fill",
+              textShadow: "-3px 3px 8px #BB65FF",
+            }}
+          >
+            $
+          </span>
+          1,500,000 GENERATED FOR VOTERS
+        </TickerText>,
         <img src="/landing/snake.svg" alt="" className="h-8" />,
       ]}
     />
