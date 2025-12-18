@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const soneium: Chain = {
   id: 1868,
   name: "soneium",
-  iconUrl: "/soneium.png",
+  iconUrl: "/soneium.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",

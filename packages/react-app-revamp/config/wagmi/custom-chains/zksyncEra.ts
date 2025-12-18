@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const zksyncEra: Chain = {
   id: 324,
   name: "zksyncEra",
-  iconUrl: "/zksyncEra.png",
+  iconUrl: "/zksyncEra.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",

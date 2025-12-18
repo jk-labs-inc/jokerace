@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const ink: Chain = {
   id: 57073,
   name: "ink",
-  iconUrl: "/ink.png",
+  iconUrl: "/ink.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",

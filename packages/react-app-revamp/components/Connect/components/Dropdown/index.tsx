@@ -2,6 +2,7 @@ import { Option } from "@components/UI/Dropdown";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import useScrollFade from "@hooks/useScrollFade";
+import Image from "next/image";
 import { FC, useEffect, useRef, useState } from "react";
 
 interface ConnectDropdownProps {
@@ -54,10 +55,14 @@ const ConnectDropdown: FC<ConnectDropdownProps> = ({
               className={`${menuButtonWidth} flex items-center gap-4 justify-between rounded-2xl bg-primary-1 p-4 h-10 text-[16px] text-neutral-11 font-bold focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white border border-transparent hover:border-neutral-17 transition-all duration-200 ease-in-out`}
             >
               {selectedImage && (
-                <img src={selectedImage} alt={selectedOption} width={20} height={20} className="rounded-full mt-1" />
+                <Image src={selectedImage} alt={selectedOption} width={20} height={20} className="rounded-full mt-1" />
               )}
               <span>{selectedOption}</span>
-              <ChevronDownIcon className="text-neutral-11 w-6 h-5 mt-1" />
+              <ChevronDownIcon
+                className={`text-neutral-11 w-6 h-5 mt-1 transition-transform duration-200 ease-out ${
+                  open ? "rotate-180" : "rotate-0"
+                }`}
+              />
             </MenuButton>
 
             <MenuItems
@@ -80,7 +85,7 @@ const ConnectDropdown: FC<ConnectDropdownProps> = ({
                       onClick={() => handleOptionChange(option.value, option.label, option.image)}
                     >
                       {option.image && (
-                        <img
+                        <Image
                           src={option.image}
                           alt={option.label}
                           width={20}

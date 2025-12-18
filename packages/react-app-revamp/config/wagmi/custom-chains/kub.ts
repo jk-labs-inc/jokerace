@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const kub: Chain = {
   id: 96,
   name: "kub",
-  iconUrl: "/kub.png",
+  iconUrl: "/kub.svg",
   nativeCurrency: {
     decimals: 18,
     name: "KUB",
