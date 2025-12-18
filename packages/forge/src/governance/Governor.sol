@@ -33,7 +33,6 @@ abstract contract Governor is GovernorSorting {
     }
 
     enum PriceCurveTypes {
-        Flat,
         Exponential
     }
 
@@ -119,7 +118,7 @@ abstract contract Governor is GovernorSorting {
     uint256 public numAllowedProposalSubmissions; // The number of proposals that an address who is qualified to propose can submit for this contest.
     uint256 public maxProposalCount; // Max number of proposals allowed in this contest.
     uint256 public percentageToCreator;
-    uint256 public costToVote; // Cost per vote if flat price curve, starting/minimum price if exp curve
+    uint256 public costToVote; // Starting/minimum price
     uint256 public priceCurveType; // Enum value of PriceCurveTypes.
     uint256 public multiple; // Exponent multiple for an exponential price curve if applicable.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
