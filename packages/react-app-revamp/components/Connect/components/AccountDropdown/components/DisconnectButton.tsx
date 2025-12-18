@@ -12,9 +12,10 @@ const DisconnectButton: FC<DisconnectButtonProps> = ({ onDisconnect }) => {
       <MenuItem>
         <button
           onClick={onDisconnect}
-          className="flex w-full items-center justify-center gap-2 text-[16px] font-bold text-negative-11 uppercase px-4 py-3 rounded-lg data-focus:bg-white/10 hover:bg-white/10 transition-colors"
+          className="flex flex-col gap-2 w-full items-center justify-center text-[16px] font-bold uppercase px-4 py-3 rounded-lg data-focus:bg-white/10 hover:bg-white/10 transition-colors"
         >
           <PowerIcon width={32} height={32} className="text-negative-11" />
+          <p className="text-base font-bold text-neutral-11">disconnect wallet</p>
         </button>
       </MenuItem>
     </div>

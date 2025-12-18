@@ -66,8 +66,12 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
               ))}
             </div>
           </div>
-          <div className="flex border-t border-primary-2 items-center justify-center py-4" onClick={onDisconnect}>
+          <div
+            className="flex flex-col gap-2 border-t border-primary-2 items-center justify-center py-4"
+            onClick={onDisconnect}
+          >
             <PowerIcon width={32} height={32} className="text-negative-11" />
+            <p className="text-base font-bold text-neutral-11">disconnect wallet</p>
           </div>
         </div>
       </Drawer>
