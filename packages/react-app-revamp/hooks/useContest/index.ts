@@ -6,7 +6,6 @@ import { getNativeTokenSymbol } from "@helpers/nativeToken";
 import { verifyContractBytecode } from "@helpers/verifyContractBytecode";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
-import { VoteType } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -138,22 +137,14 @@ export function useContest() {
 
       const percentageToCreator = Number(getResultByName("percentageToCreator")) || 0;
       let costToVote = 0;
-      let payPerVote = 1;
 
       if (compareVersions(version, "4.23") >= 0) {
         costToVote = Number(getResultByName("costToVote")) || 0;
       }
 
-      if (compareVersions(version, "4.25") >= 0 && compareVersions(version, "6.1") < 0) {
-        payPerVote = Number(getResultByName("payPerVote"));
-      }
-
       setCharge({
         percentageToCreator,
-        voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
-        type: {
-          costToVote,
-        },
+        costToVote,
       });
 
       setContestName(contestName);

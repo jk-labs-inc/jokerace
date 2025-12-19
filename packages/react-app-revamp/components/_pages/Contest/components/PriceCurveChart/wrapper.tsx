@@ -15,7 +15,7 @@ const PriceCurveWrapper = () => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { startPrice, startTime, endTime } = useContestStore(
     useShallow(state => ({
-      startPrice: state.charge.type.costToVote,
+      startPrice: state.charge.costToVote,
       startTime: state.votesOpen,
       endTime: state.votesClose,
     })),

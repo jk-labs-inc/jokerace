@@ -41,9 +41,8 @@ export const generateDynamicSummary = (
   let result = SUMMARY_TEMPLATES[isAnyoneCanSubmit];
 
   const placeholders = {
-    "[voting price]": charge.type.costToVote + " " + nativeCurrency,
-    "[voting start price]": charge.type.costToVoteStartPrice + " " + nativeCurrency,
-    "[voting end price]": charge.type.costToVoteEndPrice + " " + nativeCurrency,
+    "[voting start price]": charge.costToVote + " " + nativeCurrency,
+    "[voting end price]": charge.costToVoteEndPrice + " " + nativeCurrency,
     "[entry open date]": formatDate(submissionOpen),
     "[entry closing date]": formatDate(votingOpen),
     "[voting open date]": formatDate(votingOpen),

@@ -34,11 +34,7 @@ const usePriceCurveType = ({ address, abi, chainId, enabled = true }: PriceCurve
     query: {
       staleTime: Infinity,
       select: data => {
-        if (data === 0n || data === 0) {
-          return PriceCurveType.Flat;
-        } else if (data === 1n || data === 1) {
-          return PriceCurveType.Exponential;
-        }
+        return PriceCurveType.Exponential;
       },
       enabled: !!address && !!abi && enabled,
     },

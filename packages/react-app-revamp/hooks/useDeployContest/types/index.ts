@@ -3,31 +3,21 @@ export type Recipient = {
   numVotes: string;
 };
 
-export enum VoteType {
-  PerVote = "PerVote",
-  PerTransaction = "PerTransaction",
-}
-
 export type Charge = {
   percentageToCreator: number;
-  voteType: VoteType;
-  type: {
-    costToVote: number;
-    costToVoteStartPrice?: number;
-    costToVoteEndPrice?: number;
-  };
+  costToVote: number;
+  costToVoteEndPrice?: number;
   error?: boolean;
 };
 
-export enum PriceCurveType {
-  Flat = "Flat",
-  Exponential = "Exponential",
-}
-
 export interface PriceCurve {
-  type: PriceCurveType;
   multiple: number;
   multipler: number;
+  type: PriceCurveType;
+}
+
+export enum PriceCurveType {
+  Exponential = 0,
 }
 
 export interface ContestValues {
