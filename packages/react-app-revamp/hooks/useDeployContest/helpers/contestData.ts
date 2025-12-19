@@ -1,3 +1,5 @@
+import { Charge } from "../types";
+
 export interface ContestDataParams {
   title: string;
   combinedPrompt: string;
@@ -7,12 +9,7 @@ export interface ContestDataParams {
   contractAddress: string;
   address: string;
   chainName?: string;
-  chargeType: {
-    costToVote: number;
-  };
-  charge: {
-    percentageToCreator: number;
-  };
+  charge: Charge;
   isAnyoneCanSubmit: boolean;
 }
 
@@ -41,7 +38,6 @@ export const prepareContestData = (params: ContestDataParams): ContestData => {
     contractAddress,
     address,
     chainName,
-    chargeType,
     charge,
   } = params;
 
@@ -55,7 +51,7 @@ export const prepareContestData = (params: ContestDataParams): ContestData => {
     contractAddress: contractAddress.toLowerCase(),
     authorAddress: address,
     networkName: chainName?.toLowerCase().replace(" ", "") ?? "",
-    cost_to_vote: chargeType.costToVote,
+    cost_to_vote: charge.costToVote,
     percentage_to_creator: charge.percentageToCreator,
   };
 };
