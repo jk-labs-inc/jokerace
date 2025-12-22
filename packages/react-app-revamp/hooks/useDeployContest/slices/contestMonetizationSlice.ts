@@ -1,5 +1,5 @@
 import { PERCENTAGE_TO_CREATOR_DEFAULT } from "constants/monetization";
-import { Charge, PriceCurve, PriceCurveType, VoteType } from "../types";
+import { Charge, PriceCurve, PriceCurveType } from "../types";
 
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
 
@@ -22,20 +22,15 @@ export type MonetizationSlice = MonetizationSliceState & MonetizationSliceAction
 export const createMonetizationSlice = (set: any): MonetizationSlice => ({
   charge: {
     percentageToCreator: PERCENTAGE_TO_CREATOR_DEFAULT,
-    voteType: VoteType.PerVote,
-    type: {
-      costToVote: 0,
-      costToVoteStartPrice: 0,
-      costToVoteEndPrice: 0,
-    },
+    costToVote: 0,
+    costToVoteEndPrice: 0,
     error: false,
   },
-
   prevChainRefInCharge: "",
   priceCurve: {
-    type: PriceCurveType.Exponential,
     multiple: 1,
     multipler: DEFAULT_MULTIPLER,
+    type: PriceCurveType.Exponential,
   },
 
   setCharge: (charge: ReactStyleStateSetter<Charge>) =>

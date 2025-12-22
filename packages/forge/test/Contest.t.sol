@@ -23,8 +23,7 @@ contract ContestTest is Test {
     uint256 public constant NINETY_PERCENT_TO_CREATOR = 90;
     uint256 public constant ZERO_COST_TO_VOTE = 0;
     uint256 public constant STANDARD_COST_TO_VOTE = 100000000000000;
-    uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
-    uint256 public constant EXPONENTIAL_PRICE_CURVE_TYPE = 1;
+    uint256 public constant EXPONENTIAL_PRICE_CURVE_TYPE = 0;
     uint256 public constant ZERO_EXPONENT_MULTIPLE = 0;
     uint256 public constant STANDARD_EXPONENT_MULTIPLE = 33000000000000000; // for a terminal value 10x from min
     address public constant JK_LABS_SPLIT_DESTINATION = JK_LABS_ADDRESS;

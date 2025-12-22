@@ -1,4 +1,4 @@
-import { Charge, VoteType } from "@hooks/useDeployContest/types";
+import { Charge } from "@hooks/useDeployContest/types";
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
@@ -56,10 +56,7 @@ export const createContestStore = () =>
     error: null,
     charge: {
       percentageToCreator: 0,
-      voteType: VoteType.PerVote,
-      type: {
-        costToVote: 0,
-      },
+      costToVote: 0,
     },
     isSuccess: false,
     contestMaxProposalCount: 0,

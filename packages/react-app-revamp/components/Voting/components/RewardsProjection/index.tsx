@@ -1,14 +1,11 @@
 import GradientText from "@components/UI/GradientText";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import { useShallow } from "zustand/shallow";
-import { useVotingRewardsProjection } from "./hooks";
-import usePriceCurveType from "@hooks/usePriceCurveType";
-import { PriceCurveType } from "@hooks/useDeployContest/types";
 import { FC } from "react";
-import VotingWidgetRewardsProjectionTooltip from "./components/Tooltip";
+import { useShallow } from "zustand/shallow";
 import VotingWidgetRewardsProjectionContainer from "./components/Container";
-import VotingWidgetRewardProjectionLoader from "./components/Loader";
+import VotingWidgetRewardsProjectionTooltip from "./components/Tooltip";
+import { useVotingRewardsProjection } from "./hooks";
 
 interface VotingWidgetRewardsProjectionProps {
   currentPricePerVote: bigint;
@@ -24,20 +21,14 @@ const VotingWidgetRewardsProjection: FC<VotingWidgetRewardsProjectionProps> = ({
   submissionsCount,
 }) => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
-  const { priceCurveType, isLoading, isError } = usePriceCurveType({
-    address: contestConfig.address,
-    abi: contestConfig.abi,
-    chainId: contestConfig.chainId,
-  });
+
   const { winUpToFormatted, shouldShow } = useVotingRewardsProjection({
     currentPricePerVote,
     inputValue,
     submissionsCount,
   });
 
-  if (isLoading) return <VotingWidgetRewardProjectionLoader />;
-
-  if (!shouldShow || priceCurveType === PriceCurveType.Flat || isError) return null;
+  if (!shouldShow) return null;
 
   return (
     <VotingWidgetRewardsProjectionContainer>

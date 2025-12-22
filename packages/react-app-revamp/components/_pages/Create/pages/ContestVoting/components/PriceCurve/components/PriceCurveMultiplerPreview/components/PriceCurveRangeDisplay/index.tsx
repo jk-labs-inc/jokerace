@@ -10,16 +10,16 @@ interface PriceCurveRangeDisplayProps {
 
 const PriceCurveRangeDisplay: FC<PriceCurveRangeDisplayProps> = ({ chainUnitLabel }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const { costToVoteStartPrice, costToVoteEndPrice } = useDeployContestStore(
+  const { costToVote, costToVoteEndPrice } = useDeployContestStore(
     useShallow(state => ({
-      costToVoteStartPrice: state.charge.type.costToVoteStartPrice,
-      costToVoteEndPrice: state.charge.type.costToVoteEndPrice,
+      costToVote: state.charge.costToVote,
+      costToVoteEndPrice: state.charge.costToVoteEndPrice,
     })),
   );
 
   return (
     <div className="flex items-end gap-4 md:gap-6">
-      <PriceDisplay price={costToVoteStartPrice?.toString() ?? ""} label="start" chainUnitLabel={chainUnitLabel} />
+      <PriceDisplay price={costToVote.toString()} label="start" chainUnitLabel={chainUnitLabel} />
 
       <div className="pb-2">
         <img

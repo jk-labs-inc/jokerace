@@ -23,7 +23,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
 }) => {
   const { chain } = useAccount();
   const chainChanged = useChainChange();
-  const { type, voteType } = charge;
+  const { costToVote, costToVoteEndPrice } = charge;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain?.name.toLowerCase() ?? "");
   const [isHovered, setIsHovered] = useState(false);
   const nativeCurrencySymbol = chain?.nativeCurrency.symbol;
@@ -66,8 +66,8 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
         ) : (
           <ul className="flex flex-col pl-6 list-disc">
             <CostToVoteMessage
-              costToVoteStartPrice={type.costToVoteStartPrice}
-              costToVoteEndPrice={type.costToVoteEndPrice}
+              costToVote={costToVote}
+              costToVoteEndPrice={costToVoteEndPrice}
               nativeCurrencySymbol={nativeCurrencySymbol}
             />
             <CreatorChargesMessage percentageToCreator={charge.percentageToCreator} />

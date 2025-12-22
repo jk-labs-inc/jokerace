@@ -13,7 +13,7 @@ const VotingQualifierAnyoneCanVoteExponentialEndPrice: FC = () => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { costToVote } = useContestStore(
     useShallow(state => ({
-      costToVote: state.charge.type.costToVote,
+      costToVote: state.charge.costToVote,
     })),
   );
   const { priceCurveMultiple, isLoading, isError, refetch } = usePriceCurveMultiple({

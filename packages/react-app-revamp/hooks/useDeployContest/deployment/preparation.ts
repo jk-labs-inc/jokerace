@@ -9,7 +9,6 @@ interface PrepareDeploymentDataParams {
   address: `0x${string}`;
   chain: { id: number; name?: string };
   combinedPrompt: string;
-  chargeType: { costToVote: number };
   contestData: {
     title: string;
     submissionOpen: Date;
@@ -51,9 +50,9 @@ export const fetchJkLabsSplitDestination = async (chainId: number, chargeType: {
 };
 
 export const prepareDeploymentData = async (params: PrepareDeploymentDataParams) => {
-  const { address, chain, combinedPrompt, chargeType, contestData } = params;
+  const { address, chain, combinedPrompt, contestData } = params;
 
-  const jkLabsSplitDestination = await fetchJkLabsSplitDestination(chain.id, chargeType);
+  const jkLabsSplitDestination = await fetchJkLabsSplitDestination(chain.id, contestData.charge);
 
   const constructorArgs = prepareConstructorArgs({
     title: contestData.title,
@@ -74,7 +73,6 @@ export const prepareDeploymentData = async (params: PrepareDeploymentDataParams)
     address,
     chain,
     combinedPrompt,
-    chargeType,
     jkLabsSplitDestination,
     constructorArgs,
   };

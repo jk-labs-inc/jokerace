@@ -1,5 +1,5 @@
 import { createResultGetter } from "@hooks/useContest/helpers";
-import { VoteType, type Charge } from "@hooks/useDeployContest/types";
+import { type Charge } from "@hooks/useDeployContest/types";
 import { Abi } from "viem";
 import { useReadContracts } from "wagmi";
 
@@ -52,10 +52,7 @@ const getContracts = (address: `0x${string}`, abi: Abi, chainId: number) => {
 
 const getDefaultCharge = (): Charge => ({
   percentageToCreator: 0,
-  voteType: VoteType.PerVote,
-  type: {
-    costToVote: 0,
-  },
+  costToVote: 0,
   error: false,
 });
 
@@ -84,10 +81,7 @@ export const useCharge = ({ address, abi, chainId }: UseChargeParams): UseCharge
 
         return {
           percentageToCreator,
-          voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
-          type: {
-            costToVote,
-          },
+          costToVote,
           error: false,
         } as Charge;
       },

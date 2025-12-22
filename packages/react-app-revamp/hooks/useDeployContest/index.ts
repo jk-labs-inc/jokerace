@@ -93,13 +93,11 @@ export function useDeployContest() {
       const { address: validatedAddress, chain: validatedChain } = validateDeploymentPrerequisites(address, chain);
 
       const combinedPrompt = preparePromptData(prompt);
-      const { type: chargeType } = charge;
 
       const deploymentData = await prepareDeploymentData({
         address: validatedAddress,
         chain: validatedChain,
         combinedPrompt,
-        chargeType,
         contestData: {
           title,
           submissionOpen,
@@ -142,7 +140,6 @@ export function useDeployContest() {
         contractAddress,
         address: validatedAddress,
         chainName: validatedChain.name,
-        chargeType,
         contestData: {
           title,
           submissionOpen,

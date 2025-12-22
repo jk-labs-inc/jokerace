@@ -1,11 +1,13 @@
 import { EMPTY_MERKLE_ROOT } from "@components/_pages/Contest/Parameters/constants";
+import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import Skeleton from "react-loading-skeleton";
+import { formatEther } from "viem";
 import { useReadContract } from "wagmi";
 import { useShallow } from "zustand/shallow";
-import ContestParametersVotingPrice from "../../../VotingPrice";
 
 const ContestParametersVotingLegacy = () => {
+  const charge = useContestStore(useShallow(state => state.charge));
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const {
     data: votingMerkleRoot,
@@ -42,7 +44,9 @@ const ContestParametersVotingLegacy = () => {
           <li className="list-disc">
             {votingMerkleRoot === EMPTY_MERKLE_ROOT ? "anyone can vote" : "voting was allowlisted"}
           </li>
-          <ContestParametersVotingPrice />
+          <li className="list-disc">
+            {formatEther(BigInt(charge.costToVote))} {contestConfig.chainNativeCurrencySymbol} to vote
+          </li>
         </>
       </ul>
     </div>
