@@ -2,6 +2,7 @@ import { toastError } from "@components/UI/Toast";
 import { indexContest } from "../database";
 import { ContestData, prepareContestData } from "../helpers/contestData";
 import { prepareConstructorArgs } from "../helpers/constructorArgs";
+import { Charge } from "../types";
 
 interface PrepareContestDataParams {
   constructorArgs: ReturnType<typeof prepareConstructorArgs>;
@@ -9,13 +10,12 @@ interface PrepareContestDataParams {
   contractAddress: string;
   address: string;
   chainName?: string;
-  chargeType: { costToVote: number };
   contestData: {
     title: string;
     submissionOpen: Date;
     votingOpen: Date;
     votingClose: Date;
-    charge: any;
+    charge: Charge;
   };
 }
 
@@ -30,7 +30,6 @@ export const prepareContestDataForIndexing = (params: PrepareContestDataParams) 
     contractAddress: params.contractAddress,
     address: params.address,
     chainName: params.chainName,
-    chargeType: params.chargeType,
     charge: params.contestData.charge,
   });
 };

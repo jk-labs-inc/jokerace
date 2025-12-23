@@ -23,7 +23,7 @@ const VotingQualifierAnyoneCanVoteExponentialTimer: FC<VotingQualifierAnyoneCanV
   const { address, abi, chainId } = useContestConfigStore(useShallow(state => state.contestConfig));
   const { costToVote, getTotalVotingMinutes } = useContestStore(
     useShallow(state => ({
-      costToVote: state.charge.type.costToVote,
+      costToVote: state.charge.costToVote,
       getTotalVotingMinutes: state.getTotalVotingMinutes,
     })),
   );

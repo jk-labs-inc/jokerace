@@ -33,7 +33,6 @@ abstract contract Governor is GovernorSorting {
     }
 
     enum PriceCurveTypes {
-        Flat,
         Exponential
     }
 
@@ -107,7 +106,7 @@ abstract contract Governor is GovernorSorting {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.10"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.11"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -119,7 +118,7 @@ abstract contract Governor is GovernorSorting {
     uint256 public numAllowedProposalSubmissions; // The number of proposals that an address who is qualified to propose can submit for this contest.
     uint256 public maxProposalCount; // Max number of proposals allowed in this contest.
     uint256 public percentageToCreator;
-    uint256 public costToVote; // Cost per vote if flat price curve, starting/minimum price if exp curve
+    uint256 public costToVote; // Starting/minimum price
     uint256 public priceCurveType; // Enum value of PriceCurveTypes.
     uint256 public multiple; // Exponent multiple for an exponential price curve if applicable.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.

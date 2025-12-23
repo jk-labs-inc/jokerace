@@ -1,5 +1,4 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { VoteType } from "@hooks/useDeployContest/types";
 import { useQuery } from "@tanstack/react-query";
 import { PERCENTAGE_TO_CREATOR_DEFAULT } from "constants/monetization";
 import { fetchChargeDetails } from "lib/monetization";
@@ -34,23 +33,15 @@ const useChargeDetails = (chainName: string) => {
     if (chargeDetails.isError) {
       setCharge({
         percentageToCreator: PERCENTAGE_TO_CREATOR_DEFAULT,
-        voteType: VoteType.PerVote,
-        type: {
-          costToVote: 0,
-          costToVoteStartPrice: 0,
-          costToVoteEndPrice: 0,
-        },
+        costToVote: 0,
+        costToVoteEndPrice: 0,
         error: true,
       });
     } else {
       setCharge({
         percentageToCreator: PERCENTAGE_TO_CREATOR_DEFAULT,
-        voteType: VoteType.PerVote,
-        type: {
-          costToVote: chargeDetails.costToVote,
-          costToVoteStartPrice: chargeDetails.costToVote,
-          costToVoteEndPrice: chargeDetails.costToVote * priceCurve.multipler,
-        },
+        costToVote: chargeDetails.costToVote,
+        costToVoteEndPrice: chargeDetails.costToVote * priceCurve.multipler,
         error: false,
       });
     }

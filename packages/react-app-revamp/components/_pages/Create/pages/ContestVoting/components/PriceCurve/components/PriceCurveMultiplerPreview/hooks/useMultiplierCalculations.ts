@@ -28,11 +28,8 @@ const calculatePricesAndMultiple = (
 
   setCharge((prev: Charge) => ({
     ...prev,
-    type: {
-      ...prev.type,
-      costToVoteStartPrice: startPrice,
-      costToVoteEndPrice: endPrice,
-    },
+    costToVote: startPrice,
+    costToVoteEndPrice: endPrice,
   }));
 
   try {
@@ -51,10 +48,10 @@ const calculatePricesAndMultiple = (
 };
 
 export const useMultiplierCalculations = (onError?: (hasError: boolean) => void) => {
-  const { multipler, costToVoteStartPrice, setCharge, setPriceCurve } = useDeployContestStore(
+  const { multipler, costToVote, setCharge, setPriceCurve } = useDeployContestStore(
     useShallow(state => ({
       multipler: state.priceCurve.multipler,
-      costToVoteStartPrice: state.charge.type.costToVoteStartPrice,
+      costToVote: state.charge.costToVote,
       setCharge: state.setCharge,
       setPriceCurve: state.setPriceCurve,
     })),
@@ -64,7 +61,7 @@ export const useMultiplierCalculations = (onError?: (hasError: boolean) => void)
   const hasInitialized = useRef(false);
 
   useEffect(() => {
-    if (hasInitialized.current || !costToVoteStartPrice || costToVoteStartPrice <= 0) return;
+    if (hasInitialized.current || !costToVote || costToVote <= 0) return;
 
     hasInitialized.current = true;
 
@@ -75,8 +72,8 @@ export const useMultiplierCalculations = (onError?: (hasError: boolean) => void)
       return;
     }
 
-    calculatePricesAndMultiple(costToVoteStartPrice, multipler, setCharge, setPriceCurve);
-  }, [costToVoteStartPrice, multipler, setCharge, setPriceCurve, onError]);
+    calculatePricesAndMultiple(costToVote, multipler, setCharge, setPriceCurve);
+  }, [costToVote, multipler, setCharge, setPriceCurve, onError]);
 
   const handleMultiplierChange = (value: number) => {
     setPriceCurve(prev => ({
@@ -89,8 +86,8 @@ export const useMultiplierCalculations = (onError?: (hasError: boolean) => void)
     onError?.(!!error);
 
     // Calculate regardless of error to show UI feedback
-    if (costToVoteStartPrice && costToVoteStartPrice > 0) {
-      calculatePricesAndMultiple(costToVoteStartPrice, value, setCharge, setPriceCurve);
+    if (costToVote > 0) {
+      calculatePricesAndMultiple(costToVote, value, setCharge, setPriceCurve);
     }
   };
 
