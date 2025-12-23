@@ -7,6 +7,7 @@ import { useContestSteps } from "../../hooks/useContestSteps";
 import { useNextStep } from "../../hooks/useNextStep";
 import CreateContestEntriesEntrySettings from "./components/EntrySettings";
 import CreateContestEntriesPreviewPicker from "./components/PreviewPicker";
+import CreateTextContainer from "../../components/TextContainer";
 
 const CreateContestEntries = () => {
   const { steps } = useContestSteps();
@@ -27,17 +28,17 @@ const CreateContestEntries = () => {
         </div>
 
         <div className="grid gap-12 col-start-1 md:col-start-2 col-span-3 md:col-span-2 md:ml-10 mt-8 md:mt-10">
-          <div className="flex flex-col gap-4 w-full md:w-[448px] rounded-4xl p-6 bg-primary-1 text-[16px] text-neutral-11">
+          <CreateTextContainer>
             <p>entries are what voters buy votes on. you can</p>
             <ul className="list-disc pl-6">
               <li>submit entries to contest anytime before voting opens</li>
               <li>add additional info to an entry if you like</li>
             </ul>
-          </div>
+          </CreateTextContainer>
           <CreateContestEntriesPreviewPicker />
           <CreateContestEntriesEntrySettings />
 
-          <div className="mt-4 pl-6">
+          <div className="hidden md:block mt-4 pl-6">
             <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
           </div>
         </div>

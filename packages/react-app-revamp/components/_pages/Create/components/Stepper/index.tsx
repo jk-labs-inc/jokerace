@@ -74,7 +74,7 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
             ))}
           </div>
 
-          <div className="lg:pl-16 2xl:pl-[100px]">{steps[currentStep].content}</div>
+          {steps[currentStep].content}
         </div>
       )}
     </div>

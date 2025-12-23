@@ -1,30 +1,20 @@
 import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
+import ResizableEditor from "@components/UI/ResizableEditor";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import { createEditorConfig } from "@helpers/createEditorConfig";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { Editor, EditorContent, useEditor } from "@tiptap/react";
+import { Editor, useEditor } from "@tiptap/react";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { generateDynamicSummary } from "./utils";
-import { getNativeTokenInfo } from "@helpers/getNativeTokenInfo";
-import { useAccount } from "wagmi";
 
 const CreateContestRulesDescription = () => {
-  const { chainId } = useAccount();
-  const {
-    prompt,
-    setPrompt,
-    charge,
-    submissionOpen,
-    getVotingOpenDate,
-    getVotingCloseDate,
-    entryPreviewConfig,
-    priceCurve,
-  } = useDeployContestStore(state => state);
+  const { prompt, setPrompt, getVotingOpenDate, getVotingCloseDate, priceCurve } = useDeployContestStore(
+    state => state,
+  );
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const [isEditorInitialized, setIsEditorInitialized] = useState(false);
-  const { symbol } = getNativeTokenInfo(chainId ?? 0);
   const votingOpen = getVotingOpenDate();
   const votingClose = getVotingCloseDate();
 
@@ -102,16 +92,7 @@ const CreateContestRulesDescription = () => {
   useEffect(() => {
     if (editorSummarize && !isEditorInitialized) {
       if (!prompt.summarize) {
-        const defaultContent = generateDynamicSummary(
-          charge,
-          priceCurve,
-          submissionOpen,
-          votingOpen,
-          votingClose,
-          entryPreviewConfig.preview,
-          symbol,
-          entryPreviewConfig.isAnyoneCanSubmit,
-        );
+        const defaultContent = generateDynamicSummary(priceCurve.type, votingOpen, votingClose);
         editorSummarize.commands.setContent(defaultContent);
         setPrompt({
           ...prompt,
@@ -124,7 +105,7 @@ const CreateContestRulesDescription = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex bg-true-black z-10 justify-start w-full md:w-[650px] p-1 border-y border-neutral-2">
+      <div className="flex bg-true-black z-10 justify-start w-full md:w-[640px] p-1 border-y border-neutral-2">
         <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
       </div>
       <div className="flex flex-col gap-4">
@@ -133,50 +114,24 @@ const CreateContestRulesDescription = () => {
             <CreateGradientTitle additionalInfo="required">
               summarize the contest, rewards, and voters
             </CreateGradientTitle>
-            <div className="flex flex-col gap-2">
-              <div
-                className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${
-                  isMobile ? "" : "shadow-file-upload p-2"
-                }`}
-              >
-                <EditorContent
-                  editor={editorSummarize}
-                  className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-52 md:h-36"
-                />
-              </div>
+            <div className="flex flex-col gap-2 w-full md:w-[640px]">
+              <ResizableEditor editor={editorSummarize} minHeight={80} />
             </div>
           </div>
           <div className="flex flex-col gap-4">
             <CreateGradientTitle additionalInfo="required">
               how should voters evaluate if an entry is <i>good</i> ?
             </CreateGradientTitle>
-
-            <div className="flex flex-col gap-2">
-              <div
-                className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${
-                  isMobile ? "" : "shadow-file-upload p-2"
-                }`}
-              >
-                <EditorContent
-                  editor={editorEvaluateVoters}
-                  className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-52 md:h-36"
-                />
-              </div>
+            <div className="w-full md:w-[640px]">
+              <ResizableEditor editor={editorEvaluateVoters} minHeight={80} />
             </div>
           </div>
           <div className="flex flex-col gap-4">
             <CreateGradientTitle additionalInfo="recommended">
               what's the best way for players to reach you?
             </CreateGradientTitle>
-            <div
-              className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${
-                isMobile ? "" : "shadow-file-upload p-2"
-              }`}
-            >
-              <EditorContent
-                editor={editorContactDetails}
-                className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-20"
-              />
+            <div className="w-full md:w-[640px]">
+              <ResizableEditor editor={editorContactDetails} minHeight={80} />
             </div>
           </div>
         </div>

@@ -31,7 +31,7 @@ const CreateContestRules = () => {
         <div className="grid gap-8 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-6">
           <CreateContestRulesTitleAndImage />
           <CreateContestRulesDescription />
-          <div className="mt-8">
+          <div className="hidden md:block mt-8">
             <CreateNextButton step={step + 1} onClick={() => onNextStep()} isDisabled={isDisabled} />
           </div>
         </div>

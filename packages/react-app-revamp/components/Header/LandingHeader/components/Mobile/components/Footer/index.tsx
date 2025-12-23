@@ -83,7 +83,7 @@ const LandingHeaderMobileFooter = () => {
           isClient && isInPwaMode ? "pb-8" : "pb-2"
         }`}
       >
-        <div className="text-neutral-10 border-b text-[14px] border-neutral-2 py-3 overflow-hidden relative">
+        <div className="text-neutral-10 border-b text-[14px] border-neutral-2 py-2 overflow-hidden relative">
           <div className="flex items-center w-full overflow-x-auto no-scrollbar px-4 pb-1">
             <div className="flex gap-4 items-center min-w-max">
               {filteredLinks.map((link, key) => (

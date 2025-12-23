@@ -35,9 +35,7 @@ const CreateContestEntriesPreviewPickerOptionsContainer: FC<CreateContestEntries
       >
         {title}
       </motion.p>
-      <div className="py-2 md:py-4 flex justify-center items-center rounded-lg border border-primary-5 overflow-hidden">
-        <img src={imageSrc} alt={title} className="w-full h-full object-contain" />
-      </div>
+      <img src={imageSrc} alt={title} className="w-full h-full object-contain rounded-lg overflow-hidden" />
     </motion.button>
   );
 };

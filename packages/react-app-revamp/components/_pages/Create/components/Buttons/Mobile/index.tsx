@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
 type MobileBottomButtonProps = React.PropsWithChildren<{}>;
 
 const MobileBottomButton: React.FC<MobileBottomButtonProps> = ({ children }) => {
-  return ReactDOM.createPortal(
-    <div className="h-12 fixed bottom-12 left-0 right-0 z-50 bg-true-black">{children}</div>,
-    document.body,
-  );
+  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const slot = document.getElementById("mobile-create-nav-slot");
+    setPortalTarget(slot);
+  }, []);
+
+  if (!portalTarget) return null;
+
+  return ReactDOM.createPortal(<>{children}</>, portalTarget);
 };
 
 export default MobileBottomButton;
