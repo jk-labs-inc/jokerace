@@ -3964,10 +3964,10 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
-"@privy-io/cross-app-connect@0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@privy-io/cross-app-connect/-/cross-app-connect-0.3.3.tgz#d0bb0f295b9ad54a5169b8b6ec26b73091ebf6ac"
-  integrity sha512-C8tb9JERp62P2qejiEdyNwRhR/MJWVv0sgTMN4NAOYeVKMman67x9DIx/mBT70C+4MN8Y/R0R9WAzakEz/IxzA==
+"@privy-io/cross-app-connect@0.3.5":
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/@privy-io/cross-app-connect/-/cross-app-connect-0.3.5.tgz#7e1d09360e1c59bbc1d4ce7a8acfe5551f4c4b70"
+  integrity sha512-08UPRlB2bD85VYBxKBR0qk9vHGY8WQiIfP5kBHyPNb4llfZGJb0suOlJ9XXxqB4ehDdsiZg23lup3Pmd5fFyMQ==
   dependencies:
     "@noble/curves" "^1.5.0"
     "@noble/hashes" "1.3.2"
