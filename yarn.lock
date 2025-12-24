@@ -3243,10 +3243,10 @@
     viem "^2.42.1"
     zustand "^5.0.9"
 
-"@lifi/widget@3.38.0":
-  version "3.38.0"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.38.0.tgz#a789276d2f00d78509b239f15f41b61181571d52"
-  integrity sha512-bMiIAMR266ejRjOYHpNnf3oZQkRkN3UwVMLO9csgmIhmj04/zNGOWQOViqi/Rbmym458qfRgkoTIFYwJt5puMw==
+"@lifi/widget@3.38.1":
+  version "3.38.1"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.38.1.tgz#8f2c05f0d6cb508f5b3da980fe57e156fd8caef5"
+  integrity sha512-R92BkV7wJiOaMTETqmGKn4F3zbQseTmMqpicd1t5K5TxSI+Uwrdrp1I2s37ENl8wfHiPcn+OetjYGzgmvi8wFA==
   dependencies:
     "@bigmi/client" "^0.6.3"
     "@bigmi/core" "^0.6.3"
