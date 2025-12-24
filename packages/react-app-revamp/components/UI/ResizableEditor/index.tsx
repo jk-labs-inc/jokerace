@@ -70,7 +70,7 @@ const ResizableEditor: FC<ResizableEditorProps> = ({ editor, minHeight = 144, ma
       />
       <div
         onMouseDown={handleMouseDown}
-        className="absolute bottom-0 right-0 cursor-ns-resize p-px group"
+        className="hidden md:block absolute bottom-0 right-0 cursor-ns-resize p-px group"
         aria-label="Resize editor"
         role="slider"
         tabIndex={0}

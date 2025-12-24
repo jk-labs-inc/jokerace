@@ -95,7 +95,6 @@ const CreateContestConfirm = () => {
             step={stepReferences.ContestTiming}
             onClick={step => onNavigateToStep(step)}
             timing={{
-              submissionOpen: state.submissionOpen,
               votingOpen: getVotingOpenDate(),
               votingClose: getVotingCloseDate(),
             }}
