@@ -40,6 +40,15 @@ const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected
       return false;
     }
 
+    const filledRecipients = state.rewardPoolData.recipients.filter(
+      recipient => recipient.proportion !== null && recipient.proportion > 0,
+    );
+
+    state.setRewardPoolData({
+      ...state.rewardPoolData,
+      recipients: filledRecipients,
+    });
+
     state.setError(StepTitle.Rewards, { step: getStepNumber(StepTitle.Rewards), message: "" });
     return true;
   },

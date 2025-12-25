@@ -92,7 +92,6 @@ export const createCreateRewardsSlice = (set: any, get: any): CreateRewardsSlice
     const { recipients } = state.rewardPoolData;
     const { addFundsToRewards } = state;
 
-    // Validate recipients
     if (recipients.length === 0) {
       return {
         isValid: false,
@@ -100,29 +99,6 @@ export const createCreateRewardsSlice = (set: any, get: any): CreateRewardsSlice
       };
     }
 
-    // Check if each recipient has a proportion attached
-    const hasMissingProportions = recipients.some(
-      (recipient: Recipient) => recipient.proportion === null || recipient.proportion === undefined,
-    );
-
-    if (hasMissingProportions) {
-      return {
-        isValid: false,
-        error: "All ranks must have a proportion assigned",
-      };
-    }
-
-    // Check if any recipient has 0% proportion
-    const hasZeroProportions = recipients.some((recipient: Recipient) => recipient.proportion === 0);
-
-    if (hasZeroProportions) {
-      return {
-        isValid: false,
-        error: "Recipients with 0% proportion are not allowed",
-      };
-    }
-
-    // Check if total proportion equals 100
     const totalProportion = recipients.reduce(
       (sum: number, recipient: Recipient) => sum + (recipient.proportion ?? 0),
       0,
@@ -135,7 +111,6 @@ export const createCreateRewardsSlice = (set: any, get: any): CreateRewardsSlice
       };
     }
 
-    // Validate tokenWidgets if addFundsToRewards is enabled
     if (addFundsToRewards) {
       const { tokenWidgets, isError } = useFundPoolStore.getState();
 
@@ -153,7 +128,6 @@ export const createCreateRewardsSlice = (set: any, get: any): CreateRewardsSlice
         };
       }
 
-      // Check if all tokens are unique by address
       const uniqueAddresses = new Set(tokenWidgets.map(token => token.address));
       if (tokenWidgets.length !== uniqueAddresses.size) {
         return {
@@ -162,7 +136,6 @@ export const createCreateRewardsSlice = (set: any, get: any): CreateRewardsSlice
         };
       }
 
-      // Check if any token has zero or empty amount
       const hasZeroAmountToken = tokenWidgets.some(token => token.amount === "0" || token.amount === "");
       if (hasZeroAmountToken) {
         return {

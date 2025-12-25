@@ -17,13 +17,28 @@ const CreateContestRewards = () => {
   const step = useDeployContestStore(useShallow(state => state.step));
   const contestTitle = isMobile ? "add voter rewards" : "add rewards for voters";
   const onNextStep = useNextStep();
-  const { validateRewards } = useDeployContestStore(
+  const { validateRewards, rewardPoolData, setRewardPoolData } = useDeployContestStore(
     useShallow(state => ({
       validateRewards: state.validateRewards,
+      rewardPoolData: state.rewardPoolData,
+      setRewardPoolData: state.setRewardPoolData,
     })),
   );
   const { isError: isTokenWidgetError } = useFundPoolStore(useShallow(state => state));
   const isDisabled = !validateRewards().isValid || isTokenWidgetError;
+
+  const handleNextStep = () => {
+    const validRecipients = rewardPoolData.recipients.filter(
+      recipient => recipient.proportion !== null && recipient.proportion > 0,
+    );
+
+    setRewardPoolData(prev => ({
+      ...prev,
+      recipients: validRecipients,
+    }));
+
+    onNextStep();
+  };
 
   return (
     <div className="flex flex-col">
@@ -49,7 +64,7 @@ const CreateContestRewards = () => {
               <CreateRewardsFundPool />
             </div>
             <div className="hidden md:block mt-4 pl-6">
-              <CreateNextButton step={step + 1} onClick={() => onNextStep()} isDisabled={isDisabled} />
+              <CreateNextButton step={step + 1} onClick={handleNextStep} isDisabled={isDisabled} />
             </div>
           </div>
         </div>
