@@ -21,11 +21,11 @@ const CreateRewardsFundPool = () => {
         i’ll seed rewards (recommended: ~$100)
       </div>
 
-      {addFundsToRewards && (
+      {addFundsToRewards ? (
         <div className="flex flex-col gap-8">
           <TokenWidgets chain={chain as RainbowKitChain} />
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

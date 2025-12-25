@@ -17,7 +17,7 @@ const LayoutBase = (props: LayoutBaseProps) => {
       <Header />
       <main
         className={`flex flex-col grow min-h-0 ${
-          isCreateFlow ? "pb-[calc(9rem+env(safe-area-inset-bottom))]" : "pb-[calc(5rem+env(safe-area-inset-bottom))]"
+          isCreateFlow ? "pb-[calc(9rem+env(safe-area-inset-bottom))]" : "pb-[calc(6rem+env(safe-area-inset-bottom))]"
         } md:pb-4`}
       >
         {children}

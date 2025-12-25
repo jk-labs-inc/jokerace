@@ -64,7 +64,7 @@ export const DrawerVoteForProposal: FC<DrawerVoteForProposalProps> = ({ isOpen, 
     >
       <div className="flex flex-col gap-4 p-6 md:p-8">
         {showAddFunds ? (
-          <div className="animate-swing-in-left">
+          <div className="animate-appear">
             <AddFunds
               chain={contestConfig.chainName}
               asset={contestConfig.chainNativeCurrencySymbol ?? ""}

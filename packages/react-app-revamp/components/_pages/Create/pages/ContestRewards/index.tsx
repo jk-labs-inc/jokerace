@@ -28,7 +28,7 @@ const CreateContestRewards = () => {
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
-      <div className="grid grid-cols-(--grid-full-width-create-flow) mt-12 lg:mt-[70px] animate-swing-in-left">
+      <div className="grid grid-cols-(--grid-full-width-create-flow) mt-12 lg:mt-[70px] animate-appear">
         <div className="col-span-1">
           <StepCircle step={step + 1} />
         </div>
@@ -44,7 +44,7 @@ const CreateContestRewards = () => {
               </p>
               <p>voters on winners can claim their share of rewards.</p>
             </CreateTextContainer>
-            <div className="flex flex-col gap-8 pl-6">
+            <div className="flex flex-col gap-8 md:pl-6">
               <CreateRewardsPool />
               <CreateRewardsFundPool />
             </div>
