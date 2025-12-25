@@ -1,6 +1,6 @@
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { useUrl } from "nextjs-current-url";
-import { FC, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 import { useAccount } from "wagmi";
 import ErrorToastClassic from "./components/ErrorClassic";
 import ErrorToastSimple from "./components/ErrorSimple";
@@ -15,7 +15,7 @@ export enum ErrorToastType {
 interface ErrorToastProps {
   messageToShow: string;
   messageToCopy?: string;
-  additionalMessage?: string;
+  additionalMessage?: ReactNode;
   type?: ErrorToastType;
   codeFound?: boolean;
 }

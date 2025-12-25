@@ -1,8 +1,8 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 interface WarningToastProps {
   message: string;
-  additionalMessage?: string;
+  additionalMessage?: ReactNode;
 }
 
 const WarningToast: FC<WarningToastProps> = ({ message, additionalMessage }) => (

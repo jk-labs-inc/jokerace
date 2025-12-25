@@ -3,7 +3,7 @@ import { FC, ReactNode } from "react";
 
 interface InfoToastProps {
   message: ReactNode;
-  additionalMessage?: string;
+  additionalMessage?: ReactNode;
 }
 
 const InfoToast: FC<InfoToastProps> = ({ message, additionalMessage }) => (
