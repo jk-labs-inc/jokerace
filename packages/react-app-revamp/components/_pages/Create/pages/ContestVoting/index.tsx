@@ -39,7 +39,7 @@ const CreateContestVoting = () => {
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
-      <div className="grid grid-cols-(--grid-full-width-create-flow) mt-12 lg:mt-[70px] animate-swing-in-left">
+      <div className="grid grid-cols-(--grid-full-width-create-flow) mt-12 lg:mt-[70px] animate-appear">
         <div className="col-span-1">
           <StepCircle step={step + 1} />
         </div>
@@ -49,7 +49,7 @@ const CreateContestVoting = () => {
         <div className="grid col-start-1 md:col-start-2 col-span-2  md:ml-10 mt-8 md:mt-10">
           {switchLayout}
           {isConnected && (
-            <div className="mt-16">
+            <div className="hidden md:block mt-16 pl-6">
               <CreateNextButton step={step + 1} isDisabled={disableNextStep} onClick={() => onNextStep()} />
             </div>
           )}

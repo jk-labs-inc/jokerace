@@ -1,53 +1,40 @@
-import { EntryPermission, EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
-import { Charge, PriceCurve } from "@hooks/useDeployContest/types";
+import { PriceCurveType } from "@hooks/useDeployContest/types";
 import moment from "moment";
 
-const SUMMARY_TEMPLATES = {
-  [EntryPermission.ANYONE_CAN_SUBMIT]:
-    "This is an open contest where anyone can submit an entry. Contestants should enter a [entry preview] representing their entry below, along with any relevant information about why voters should vote for them.\n\nContestants can enter between [entry open date] and [entry closing date].\n\nVotes start at [voting start price] at [voting open date] and end at [voting end price] at [voting closing date].",
-
-  [EntryPermission.ONLY_CREATOR]:
-    "This contest is open for anyone to vote. Pick your favorite entry—or entries!—and you can buy as many votes as you like.\n\nVotes start at [voting start price] at [voting open date] and end at [voting end price] at [voting closing date].",
-};
+const SUMMARY_TEMPLATE =
+  "Vote and earn. Voting runs from [voting open date] to [voting close date]. Buy as many votes as you like on [article] [price curve] price curve, 90% of your funds go into the rewards pool, and you can earn by voting on the winner. You can earn <em>even more</em> by voting early with conviction to get cheaper votes and a bigger share of the rewards pool. But be careful. If you wait too long, you might lose money... even if you vote on a winner. You can always calculate your earnings here: https://docs.jokerace.io/calculating-roi.";
 
 const formatDate = (date: Date) =>
-  date ? moment(date).format("MMMM D, YYYY h:mmA") + " " + moment.tz(moment.tz.guess()).zoneAbbr() : "";
+  date
+    ? moment(date).format("h:mmA") +
+      " " +
+      moment.tz(moment.tz.guess()).zoneAbbr() +
+      " on " +
+      moment(date).format("MMMM D")
+    : "";
 
-const getEntryPreviewLabel = (entryPreview: EntryPreview): string => {
-  switch (entryPreview) {
-    case EntryPreview.TITLE:
-      return "title";
-    case EntryPreview.IMAGE:
-      return "image";
-    case EntryPreview.IMAGE_AND_TITLE:
-      return "image and title";
-    case EntryPreview.TWEET:
-      return "tweet";
+const getPriceCurveLabel = (priceCurveType: PriceCurveType): string => {
+  switch (priceCurveType) {
+    case PriceCurveType.Exponential:
+      return "exponential";
     default:
-      return "entry";
+      return "price curve";
   }
 };
 
-export const generateDynamicSummary = (
-  charge: Charge,
-  priceCurve: PriceCurve,
-  submissionOpen: Date,
-  votingOpen: Date,
-  votingClose: Date,
-  entryPreview: EntryPreview,
-  nativeCurrency: string,
-  isAnyoneCanSubmit: EntryPermission,
-) => {
-  let result = SUMMARY_TEMPLATES[isAnyoneCanSubmit];
+const getArticle = (priceCurveType: PriceCurveType): string => {
+  const label = getPriceCurveLabel(priceCurveType);
+  return ["a", "e", "i", "o", "u"].includes(label[0].toLowerCase()) ? "an" : "a";
+};
+
+export const generateDynamicSummary = (priceCurveType: PriceCurveType, votingOpen: Date, votingClose: Date) => {
+  let result = SUMMARY_TEMPLATE;
 
   const placeholders = {
-    "[voting start price]": charge.costToVote + " " + nativeCurrency,
-    "[voting end price]": charge.costToVoteEndPrice + " " + nativeCurrency,
-    "[entry open date]": formatDate(submissionOpen),
-    "[entry closing date]": formatDate(votingOpen),
     "[voting open date]": formatDate(votingOpen),
-    "[voting closing date]": formatDate(votingClose),
-    "[entry preview]": getEntryPreviewLabel(entryPreview),
+    "[voting close date]": formatDate(votingClose),
+    "[price curve]": getPriceCurveLabel(priceCurveType),
+    "[article]": getArticle(priceCurveType),
   };
 
   for (const [placeholder, value] of Object.entries(placeholders)) {

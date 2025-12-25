@@ -9,6 +9,7 @@ import { useNextStep } from "../../hooks/useNextStep";
 import CreateRewardsPool from "./components/CreatePool";
 import CreateRewardsFundPool from "./components/FundPool";
 import { useFundPoolStore } from "./components/FundPool/store";
+import CreateTextContainer from "../../components/TextContainer";
 
 const CreateContestRewards = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
@@ -27,7 +28,7 @@ const CreateContestRewards = () => {
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
-      <div className="grid grid-cols-(--grid-full-width-create-flow) mt-12 lg:mt-[70px] animate-swing-in-left">
+      <div className="grid grid-cols-(--grid-full-width-create-flow) mt-12 lg:mt-[70px] animate-appear">
         <div className="col-span-1">
           <StepCircle step={step + 1} />
         </div>
@@ -36,14 +37,14 @@ const CreateContestRewards = () => {
         </div>
         <div className="grid col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-10">
           <div className="flex flex-col gap-12">
-            <div className="flex flex-col gap-4 w-full md:w-[448px] rounded-4xl p-6 bg-primary-1 text-[16px] text-neutral-11">
+            <CreateTextContainer>
               <p>
                 the rewards pool will <b>self-fund.</b> as voters buy votes, 90% {isMobile ? "" : <br />}
                 of their funds will go into the pool.{isMobile ? "" : <br />}
               </p>
               <p>voters on winners can claim their share of rewards.</p>
-            </div>
-            <div className="flex flex-col gap-8 pl-6">
+            </CreateTextContainer>
+            <div className="flex flex-col gap-8 md:pl-6">
               <CreateRewardsPool />
               <CreateRewardsFundPool />
             </div>

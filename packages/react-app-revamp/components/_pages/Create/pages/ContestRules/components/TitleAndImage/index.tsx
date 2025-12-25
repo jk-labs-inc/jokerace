@@ -18,7 +18,7 @@ const CreateContestRulesTitleAndImage = () => {
       <div className="flex flex-col gap-2">
         <CreateGradientTitle additionalInfo="required">contest title</CreateGradientTitle>
         <CreateTextInput
-          className="w-full md:w-[656px]"
+          className="w-full md:w-[640px]"
           value={title}
           placeholder="eg. gitcoin bounty for devs"
           minLength={CONTEST_TITLE_MIN_LENGTH}

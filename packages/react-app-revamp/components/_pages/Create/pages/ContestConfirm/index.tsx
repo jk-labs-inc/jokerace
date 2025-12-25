@@ -69,7 +69,7 @@ const CreateContestConfirm = () => {
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={state.step} totalSteps={steps.length} /> : null}
-      <div className="grid grid-cols-(--grid-full-width-create-flow) mt-12 lg:mt-[70px] animate-swing-in-left">
+      <div className="grid grid-cols-(--grid-full-width-create-flow) mt-12 lg:mt-[70px] animate-appear">
         <div className="flex flex-col gap-8 md:ml-10">
           <GradientText textSizeClassName="text-[24px] font-bold" isFontSabo={false}>
             let's confirm
@@ -95,7 +95,6 @@ const CreateContestConfirm = () => {
             step={stepReferences.ContestTiming}
             onClick={step => onNavigateToStep(step)}
             timing={{
-              submissionOpen: state.submissionOpen,
               votingOpen: getVotingOpenDate(),
               votingClose: getVotingCloseDate(),
             }}

@@ -8,14 +8,17 @@ interface CreateFlowMonetizationInputProps {
 
 const CreateFlowMonetizationInput: FC<CreateFlowMonetizationInputProps> = ({ value, errorMessage, onChange }) => {
   const [inputValue, setInputValue] = useState(value > 0 ? value.toString() : "");
-  const [width, setWidth] = useState(1);
+  const [width, setWidth] = useState(2);
 
   useEffect(() => {
-    // Only update width, not the input value (let user control input)
-    const displayValue = inputValue || "0";
-    const dotCount = (displayValue.match(/\./g) || []).length;
-    const adjustedWidth = displayValue.length - dotCount * 0.5;
-    setWidth(adjustedWidth || 1);
+    if (!inputValue) {
+      setWidth(2);
+      return;
+    }
+
+    const dotCount = (inputValue.match(/\./g) || []).length;
+    const adjustedWidth = inputValue.length - dotCount * 0.5;
+    setWidth(adjustedWidth || 2);
   }, [inputValue]);
 
   const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
@@ -36,7 +39,7 @@ const CreateFlowMonetizationInput: FC<CreateFlowMonetizationInputProps> = ({ val
           inputMode="decimal"
           value={inputValue}
           onInput={handleInput}
-          placeholder="8"
+          placeholder="10"
           style={{ width: `${width}ch` }}
           className="bg-transparent box-content font-bold border-b outline-none text-neutral-11 placeholder:text-neutral-9 text-[40px]"
         />

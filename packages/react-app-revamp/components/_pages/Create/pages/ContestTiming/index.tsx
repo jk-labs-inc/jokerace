@@ -11,6 +11,7 @@ import CreateContestTimingVotingCloses from "./components/VotingCloses";
 import CreateContestTimingVotingOpens from "./components/VotingOpens";
 import { useShallow } from "zustand/shallow";
 import { StepTitle, getStepNumber } from "../../types";
+import CreateTextContainer from "../../components/TextContainer";
 
 const CreateContestTiming = () => {
   const { steps } = useContestSteps();
@@ -44,7 +45,7 @@ const CreateContestTiming = () => {
   return (
     <div className="flex flex-col">
       {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
-      <div className="grid grid-cols-(--grid-full-width-create-flow) mt-12 lg:mt-[70px] animate-swing-in-left">
+      <div className="grid grid-cols-(--grid-full-width-create-flow) mt-12 lg:mt-[70px] animate-appear">
         <div className="col-span-1">
           <StepCircle step={step + 1} />
         </div>
@@ -53,12 +54,12 @@ const CreateContestTiming = () => {
         </div>
         <div className="grid col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-10">
           <div className="flex flex-col gap-12">
-            <div className="flex flex-col gap-4 w-full md:w-[448px] rounded-4xl p-6 bg-primary-1 text-[16px] text-neutral-11">
+            <CreateTextContainer>
               <p>entries can be submitted anytime before voting opens.</p>
               <p>
                 <b>we recommend two hours to vote</b> so anyone can participate actively, as in a sports game.
               </p>
-            </div>
+            </CreateTextContainer>
             <div className="flex flex-col gap-8">
               <CreateContestTimingVotingOpens />
               <CreateContestTimingVotingCloses />

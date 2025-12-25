@@ -3,6 +3,7 @@ import useChargeDetails from "@hooks/useChargeDetails";
 import { FC } from "react";
 import PriceCurveMultiplerPreview from "./components/PriceCurveMultiplerPreview";
 import { useMediaQuery } from "react-responsive";
+import CreateTextContainer from "@components/_pages/Create/components/TextContainer";
 
 interface CreateContestPriceCurveProps {
   chain: string;
@@ -32,7 +33,7 @@ const CreateContestPriceCurve: FC<CreateContestPriceCurveProps> = ({ chain, onEr
 
   return (
     <div className="flex flex-col gap-12">
-      <div className="flex flex-col gap-4 w-full md:w-[448px] rounded-4xl p-6 bg-primary-1 text-[16px] text-neutral-11">
+      <CreateTextContainer>
         <p>
           players pay per vote on a price curve. 90% of their funds {isMobile ? "" : <br />}
           go into the rewards pool. players claim their share of the {isMobile ? "" : <br />}
@@ -42,7 +43,7 @@ const CreateContestPriceCurve: FC<CreateContestPriceCurveProps> = ({ chain, onEr
           the price curve incentivizes players to vote early with {isMobile ? "" : <br />}
           conviction to earn more.
         </p>
-      </div>
+      </CreateTextContainer>
       <PriceCurveMultiplerPreview chainUnitLabel={chainUnitLabel} onError={onError} />
     </div>
   );

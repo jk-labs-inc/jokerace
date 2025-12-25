@@ -64,7 +64,11 @@ const Dropdown: FC<DropdownProps> = ({
                 )}
                 <span>{selectedOption}</span>
               </div>
-              <ChevronDownIcon className="text-neutral-11 w-6 h-5 mt-1" />
+              <ChevronDownIcon
+                className={`text-neutral-11 w-6 h-5 mt-1 transition-transform duration-200 ease-out ${
+                  open ? "rotate-180" : "rotate-0"
+                }`}
+              />
             </MenuButton>
 
             <MenuItems
