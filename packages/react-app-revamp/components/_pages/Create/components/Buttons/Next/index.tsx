@@ -27,10 +27,16 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
   if (isMobileOrTablet)
     return (
       <MobileBottomButton>
-        <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2   px-8`}>
-          <p className="text-[20px] text-neutral-11" onClick={onBackHandler}>
-            back
-          </p>
+        <div
+          className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2   px-8 ${
+            step === 1 ? "justify-end" : ""
+          }`}
+        >
+          {step !== 1 && (
+            <p className="text-[20px] text-neutral-11" onClick={onBackHandler}>
+              back
+            </p>
+          )}
           <ButtonV3
             isDisabled={isDisabled}
             onClick={handleClick}
@@ -53,7 +59,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
         >
           next
         </ButtonV3>
-        {step !== 0 && (
+        {step !== 1 && (
           <button
             className="hidden lg:flex items-center gap-[5px] -ml-[15px] cursor-pointer group"
             onClick={onBackHandler}

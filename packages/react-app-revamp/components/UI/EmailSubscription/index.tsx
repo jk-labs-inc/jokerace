@@ -18,15 +18,13 @@ const EmailSubscription: FC<EmailSubscriptionProps> = ({
   return (
     <div className="flex flex-col gap-4 animate-appear">
       <div className="flex flex-col gap-1">
-        <div className="w-[328px] h-16 bg-true-black rounded-[16px] border-true-black shadow-file-upload p-2">
-          <input
-            value={emailForSubscription}
-            type="text"
-            className="text-[16px] w-[312px] h-12 bg-secondary-1 rounded-[16px] indent-4 placeholder-neutral-10 focus:outline-none"
-            placeholder="myemail@email.com"
-            onChange={handleEmailChange}
-          />
-        </div>
+        <input
+          value={emailForSubscription}
+          type="text"
+          className="w-full md:w-[328px] text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 placeholder-neutral-10 h-12 indent-4 focus:outline-none"
+          placeholder="myemail@email.com"
+          onChange={handleEmailChange}
+        />
 
         {emailError ? (
           <p className="text-[14px] text-negative-11 font-bold pl-2 mt-2">{emailError}</p>

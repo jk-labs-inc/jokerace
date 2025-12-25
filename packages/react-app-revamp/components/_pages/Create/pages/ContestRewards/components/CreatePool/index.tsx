@@ -21,31 +21,26 @@ const CreateRewardsPool = () => {
   const rankOptions = generateRankOptions(RANK_LIMIT);
 
   const validateRecipients = (recipients: Recipient[]) => {
-    const totalProportion = recipients.reduce((sum, recipient) => sum + (recipient.proportion ?? 0), 0);
-
     const error: ValidationError = {};
+
+    const totalProportion = recipients.reduce((sum, recipient) => sum + (recipient.proportion ?? 0), 0);
 
     if (totalProportion !== 100) {
       error.invalidTotal = `Total percentage should be exactly 100%, currently it's ${totalProportion}%`;
     }
 
-    const uniqueRanks = [...new Set(recipients.map(recipient => recipient.place))];
-    if (uniqueRanks.length < recipients.length) {
-      error.duplicateRank = "There can't be duplicate ranks";
-    }
+    const filledRecipients = recipients.filter(recipient => recipient.proportion !== null && recipient.proportion > 0);
 
-    const zeroProportionRecipients = recipients.filter(
-      recipient => recipient.proportion === 0 || recipient.proportion === null,
-    );
-    if (zeroProportionRecipients.length > 0) {
-      error.zeroProportion = "Recipients with 0% proportion are not allowed";
+    const uniqueRanks = [...new Set(filledRecipients.map(recipient => recipient.place))];
+    if (uniqueRanks.length < filledRecipients.length) {
+      error.duplicateRank = "There can't be duplicate ranks";
     }
 
     setRewardPoolData(prevData => ({
       ...prevData,
       recipients,
-      rankings: recipients.map(recipient => recipient.place),
-      shareAllocations: recipients.map(recipient => recipient.proportion ?? 0),
+      rankings: filledRecipients.map(recipient => recipient.place),
+      shareAllocations: filledRecipients.map(recipient => recipient.proportion ?? 0),
       validationError: error,
     }));
   };

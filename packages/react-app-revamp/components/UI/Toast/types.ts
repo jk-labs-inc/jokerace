@@ -11,7 +11,7 @@ export interface BaseToastConfig {
 
 export interface InfoToastConfig extends BaseToastConfig {
   message: ReactNode;
-  additionalMessage?: string;
+  additionalMessage?: ReactNode;
 }
 
 export interface SuccessToastConfig extends BaseToastConfig {
@@ -20,7 +20,7 @@ export interface SuccessToastConfig extends BaseToastConfig {
 
 export interface ErrorToastConfig extends BaseToastConfig {
   message: string;
-  additionalMessage?: string;
+  additionalMessage?: ReactNode;
   messageToCopy?: string;
   type?: ErrorToastType;
   codeFound?: boolean;
@@ -28,7 +28,7 @@ export interface ErrorToastConfig extends BaseToastConfig {
 
 export interface WarningToastConfig extends BaseToastConfig {
   message: string;
-  additionalMessage?: string;
+  additionalMessage?: ReactNode;
 }
 
 export interface LoadingToastConfig extends BaseToastConfig {

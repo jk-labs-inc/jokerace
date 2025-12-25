@@ -1,8 +1,8 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 interface ErrorToastWithAdditionalMessageProps {
   message: string;
-  additionalMessage: string;
+  additionalMessage: ReactNode;
 }
 
 const ErrorToastWithAdditionalMessage: FC<ErrorToastWithAdditionalMessageProps> = ({ message, additionalMessage }) => {

@@ -22,7 +22,7 @@ const CreateContestEntriesPreviewPickerOptions = () => {
   return (
     <div className="flex items-center gap-4 md:gap-14">
       <CreateContestEntriesPreviewPickerOptionsContainer
-        title="image"
+        title="images"
         isActive={entryPreviewConfig.preview === EntryPreview.IMAGE}
         imageSrc="/create-flow/image-preview.png"
         onClick={handleImageOptionClick}

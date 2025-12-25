@@ -78,59 +78,64 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
 
   return (
     <>
-      <header
-        className={`flex flex-row bottom-0 right-0 left-0 fixed items-center justify-between border-t-neutral-2 border-t-2 py-3 ${
-          isClient && isInPwaMode ? "pb-8" : "pb-2"
-        } px-8 mt-4 bg-true-black z-50`}
-      >
-        <CustomLink href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
-          {pathname === ROUTE_LANDING ? <HomeIconSolid width={24} /> : <HomeIcon width={24} />}
-          <p className="text-[12px]">home</p>
-        </CustomLink>
+      <nav className="fixed bottom-0 left-0 right-0 z-50 flex flex-col bg-true-black">
+        {/* Portal target for create flow buttons */}
+        <div id="mobile-create-nav-slot" />
 
-        <CustomLink href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
-          {pathname === ROUTE_VIEW_CONTESTS ? (
-            <IconMagnifyingGlassSolid width={24} />
-          ) : (
-            <MagnifyingGlassIcon width={24} />
-          )}
-          <p className="text-[12px]">search</p>
-        </CustomLink>
-
-        <CustomLink
-          href={ROUTE_VIEW_LIVE_CONTESTS}
-          className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
+        <div
+          className={`flex flex-row items-center justify-between border-t-2 border-neutral-2 py-3 ${
+            isClient && isInPwaMode ? "pb-8" : "pb-2"
+          } px-8`}
         >
-          {pathname === ROUTE_VIEW_LIVE_CONTESTS ? <TrophyIconSolid width={24} /> : <TrophyIcon width={24} />}
-          <p className="text-[12px] text-center">play</p>
-        </CustomLink>
+          <CustomLink href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
+            {pathname === ROUTE_LANDING ? <HomeIconSolid width={24} /> : <HomeIcon width={24} />}
+            <p className="text-[12px]">home</p>
+          </CustomLink>
 
-        <CustomLink
-          href={ROUTE_CREATE_CONTEST}
-          className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}
-        >
-          {pathname === ROUTE_CREATE_CONTEST ? <PencilSquareIconSolid width={24} /> : <PencilSquareIcon width={24} />}
-          <p className="text-[12px]">create</p>
-        </CustomLink>
+          <CustomLink href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
+            {pathname === ROUTE_VIEW_CONTESTS ? (
+              <IconMagnifyingGlassSolid width={24} />
+            ) : (
+              <MagnifyingGlassIcon width={24} />
+            )}
+            <p className="text-[12px]">search</p>
+          </CustomLink>
 
-        <div className="transition-all duration-500">
-          {isConnected ? (
-            <div className="flex flex-col items-center" onClick={handleWalletClick}>
-              {showWalletPortal ? (
-                <UserCircleIconSolid width={24} height={24} className="text-neutral-11" />
-              ) : (
-                <UserCircleIcon width={24} height={24} className="text-neutral-11" />
-              )}
-              <p className="text-[12px]">profile</p>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center" onClick={openConnectModal}>
-              <img width={24} height={24} src="/header/wallet.svg" alt="wallet" />
-              <p className="text-[12px]">wallet</p>
-            </div>
-          )}
+          <CustomLink
+            href={ROUTE_VIEW_LIVE_CONTESTS}
+            className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
+          >
+            {pathname === ROUTE_VIEW_LIVE_CONTESTS ? <TrophyIconSolid width={24} /> : <TrophyIcon width={24} />}
+            <p className="text-[12px] text-center">play</p>
+          </CustomLink>
+
+          <CustomLink
+            href={ROUTE_CREATE_CONTEST}
+            className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}
+          >
+            {pathname === ROUTE_CREATE_CONTEST ? <PencilSquareIconSolid width={24} /> : <PencilSquareIcon width={24} />}
+            <p className="text-[12px]">create</p>
+          </CustomLink>
+
+          <div className="transition-all duration-500">
+            {isConnected ? (
+              <div className="flex flex-col items-center" onClick={handleWalletClick}>
+                {showWalletPortal ? (
+                  <UserCircleIconSolid width={24} height={24} className="text-neutral-11" />
+                ) : (
+                  <UserCircleIcon width={24} height={24} className="text-neutral-11" />
+                )}
+                <p className="text-[12px]">profile</p>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center" onClick={openConnectModal}>
+                <img width={24} height={24} src="/header/wallet.svg" alt="wallet" />
+                <p className="text-[12px]">wallet</p>
+              </div>
+            )}
+          </div>
         </div>
-      </header>
+      </nav>
 
       <WalletDrawer />
     </>
