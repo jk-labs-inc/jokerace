@@ -6,7 +6,6 @@ import { emailRegex } from "@helpers/regex";
 import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useCallback, useState } from "react";
-import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import MobileStepper from "../../components/MobileStepper";
@@ -26,7 +25,6 @@ const CreateContestConfirm = () => {
   const state = useDeployContestStore(state => state);
   const { setEmailSubscriptionAddress, getVotingOpenDate, getVotingCloseDate } = state;
   const { deployContest } = useDeployContest();
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [isEthereumDeploymentModalOpen, setIsEthereumDeploymentModalOpen] = useState(false);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -68,7 +66,7 @@ const CreateContestConfirm = () => {
 
   return (
     <div className="flex flex-col">
-      {isMobile ? <MobileStepper currentStep={state.step} totalSteps={steps.length} /> : null}
+      <MobileStepper currentStep={state.step} totalSteps={steps.length} />
       <div className="grid grid-cols-(--grid-full-width-create-flow) mt-12 lg:mt-[70px] animate-appear">
         <div className="flex flex-col gap-8 md:ml-10">
           <GradientText textSizeClassName="text-[24px] font-bold" isFontSabo={false}>

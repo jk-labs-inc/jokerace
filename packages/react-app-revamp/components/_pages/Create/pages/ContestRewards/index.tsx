@@ -4,12 +4,12 @@ import { useShallow } from "zustand/shallow";
 import CreateNextButton from "../../components/Buttons/Next";
 import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
+import CreateTextContainer from "../../components/TextContainer";
 import { useContestSteps } from "../../hooks/useContestSteps";
 import { useNextStep } from "../../hooks/useNextStep";
 import CreateRewardsPool from "./components/CreatePool";
 import CreateRewardsFundPool from "./components/FundPool";
 import { useFundPoolStore } from "./components/FundPool/store";
-import CreateTextContainer from "../../components/TextContainer";
 
 const CreateContestRewards = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
@@ -42,7 +42,7 @@ const CreateContestRewards = () => {
 
   return (
     <div className="flex flex-col">
-      {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
+      <MobileStepper currentStep={step} totalSteps={steps.length} />
       <div className="grid grid-cols-(--grid-full-width-create-flow) mt-12 lg:mt-[70px] animate-appear">
         <div className="col-span-1">
           <StepCircle step={step + 1} />

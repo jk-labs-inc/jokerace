@@ -20,7 +20,7 @@ const CreateContestRules = () => {
 
   return (
     <div className="flex flex-col">
-      {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
+      <MobileStepper currentStep={step} totalSteps={steps.length} />
       <div className="grid grid-cols-(--grid-full-width-create-flow) mt-12 lg:mt-[70px] animate-appear">
         <div className="col-span-1">
           <StepCircle step={step + 1} />
