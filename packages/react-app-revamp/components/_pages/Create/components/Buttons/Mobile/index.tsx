@@ -8,7 +8,22 @@ const MobileBottomButton: React.FC<MobileBottomButtonProps> = ({ children }) => 
 
   useEffect(() => {
     const slot = document.getElementById("mobile-create-nav-slot");
-    setPortalTarget(slot);
+    if (slot) {
+      setPortalTarget(slot);
+      return;
+    }
+
+    const observer = new MutationObserver(() => {
+      const slot = document.getElementById("mobile-create-nav-slot");
+      if (slot) {
+        setPortalTarget(slot);
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
   }, []);
 
   if (!portalTarget) return null;

@@ -1,6 +1,5 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useMemo, useState } from "react";
-import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import CreateNextButton from "../../components/Buttons/Next";
 import CreateConnectPrompt from "../../components/ConnectPrompt";
@@ -16,7 +15,6 @@ const CreateContestVoting = () => {
   const { isConnected, chain } = useAccount();
   const [disableNextStep, setDisableNextStep] = useState(false);
   const onNextStep = useNextStep();
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   const switchLayout = useMemo<React.JSX.Element>(() => {
     if (!isConnected) {
@@ -38,7 +36,7 @@ const CreateContestVoting = () => {
 
   return (
     <div className="flex flex-col">
-      {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
+      <MobileStepper currentStep={step} totalSteps={steps.length} />
       <div className="grid grid-cols-(--grid-full-width-create-flow) mt-12 lg:mt-[70px] animate-appear">
         <div className="col-span-1">
           <StepCircle step={step + 1} />
