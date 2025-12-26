@@ -7,7 +7,7 @@ interface MobileStepperProps {
 
 const MobileStepper: FC<MobileStepperProps> = ({ totalSteps, currentStep }) => {
   return (
-    <div className="flex justify-center items-center space-x-2 mt-6">
+    <div className="flex justify-center items-center space-x-2 mt-6 md:hidden">
       {Array.from({ length: totalSteps }, (_, index) => (
         <div
           key={index}
