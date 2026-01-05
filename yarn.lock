@@ -14652,10 +14652,10 @@ react-dom@19.2.3:
   dependencies:
     scheduler "^0.27.0"
 
-react-error-boundary@6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-6.0.1.tgz#4f6c05ef27a05401b7b4f1422f36022f295085a2"
-  integrity sha512-zArgQpjJUN1ZLMEKWtifxQweW3yfvwL5j2nh3Pesze1qG6r5oCDMy/TA97bUF01wy4xCeeL4/pd8GHmvEsP3Bg==
+react-error-boundary@6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-6.0.2.tgz#c4f5a18510cbe54874c23d759f19c99471816c9e"
+  integrity sha512-yvWErn55ag/ywZEFqYpXYX9rxIDPIabXIX25F184KY3F5Szk2x/cVieOflw5R47ltN3KzWOw82Lmlb4vNjyn9A==
 
 react-headless-pagination@1.1.6:
   version "1.1.6"
