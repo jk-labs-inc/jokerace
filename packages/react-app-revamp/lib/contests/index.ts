@@ -54,8 +54,7 @@ export async function searchContests(options: SearchOptions = {}, sortBy?: strin
         .textSearch(searchColumn, `${searchString}`, {
           type: "websearch",
           config: language,
-        })
-        .eq("hidden", false);
+        });
 
       if (sortBy) {
         query = sortContests(query, sortBy);
@@ -174,7 +173,6 @@ export async function getLiveContests(
         .select(CONTEST_COLUMNS, {
           count: "exact",
         })
-        .eq("hidden", false)
         .lte("start_at", new Date().toISOString())
         .gte("end_at", new Date().toISOString());
 
@@ -213,7 +211,6 @@ export async function getPastContests(currentPage: number, itemsPerPage: number)
         .select(CONTEST_COLUMNS, {
           count: "exact",
         })
-        .eq("hidden", false)
         .lt("end_at", new Date().toISOString())
         .order("end_at", { ascending: false })
         .range(from, to);
@@ -249,7 +246,6 @@ export async function getUpcomingContests(
         .select(CONTEST_COLUMNS, {
           count: "exact",
         })
-        .eq("hidden", false)
         .gt("start_at", new Date().toISOString());
 
       if (sortBy) {
