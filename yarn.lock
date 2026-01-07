@@ -8383,10 +8383,10 @@
     cbw-sdk "npm:@coinbase/wallet-sdk@3.9.3"
     porto "0.2.35"
 
-"@wagmi/connectors@7.0.6":
-  version "7.0.6"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-7.0.6.tgz#cd3159356d9e58533174d7adebb753e5106945cf"
-  integrity sha512-iVno/MLORNd4eHAMCrxKsjqrU38Ccm7vwcZpWAMzQB4J+JOIlZHFALIoV9OruDF6sEGEECWQeaNpqkED0XTPYw==
+"@wagmi/connectors@7.0.7":
+  version "7.0.7"
+  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-7.0.7.tgz#bb22459f062a3da859d3b075ce3319f10cf2fba1"
+  integrity sha512-aJ+Ktjm31htgeIUXWjsomn0KyZUNF3MUT1WSaNKE6h0GZA3zwhiFwk3IbhuYi4qaBnaqEuHkWw6TgRtVqSfCfw==
 
 "@wagmi/core@2.22.1":
   version "2.22.1"
