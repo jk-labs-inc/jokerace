@@ -2534,10 +2534,10 @@
     bluebird "^3.5.0"
     rewire "^7.0.0"
 
-"@getpara/core-components@1.15.0":
-  version "1.15.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-components/-/core-components-1.15.0.tgz#883192b535c89ce91b75e6c7976840853d7bc7f3"
-  integrity sha512-RBvtN8qbSOwf1+MKJ/Ho0z2fx7SeLyE4xi6QkuP7COqCpw8X6OAbh6451ypzjfEy2wKaAdGJNklOKRS0g1YTpQ==
+"@getpara/core-components@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@getpara/core-components/-/core-components-2.4.0.tgz#8732ed97717855b99fcf5524ce1388a2e281ae90"
+  integrity sha512-vKRBN0Zh98EkzsIr7RxYLzHhds1nixrjkR9jQA8ItT/fYyqs3iKFTFNbF984M8h/DU3t/5fil2AQdvWFekLRng==
   dependencies:
     "@stencil/core" "^4.7.0"
     color-blend "^4.0.0"
@@ -2546,98 +2546,111 @@
     inputmask "5.0.9"
     qrcode-with-logos "1.1.1"
 
-"@getpara/core-sdk@1.15.0":
-  version "1.15.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-1.15.0.tgz#9d0491562bfdc0ed618cdf8ad6fd331711e39eef"
-  integrity sha512-aS5ZHLuw8LJSuiKexHcLfgm69dCReSRv+cVUszA4F/91IpU4Eyl6LMPTskDFX5XBfnrFy7Mg5zKz++lCgHkP2A==
+"@getpara/core-sdk@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-2.4.0.tgz#d8d4049c9c46737df02470b2de0b417cfe8898d1"
+  integrity sha512-amDj4SRnSGCHt62daubw4RQa6RNHpixo8HTFL7+JA3pVMdj6d4E5z2jIat7sYHWqERHbDIcpurT3jK3C6W/77A==
   dependencies:
     "@celo/utils" "^8.0.2"
     "@cosmjs/encoding" "^0.32.4"
     "@ethereumjs/util" "^9.1.0"
-    "@getpara/user-management-client" "1.15.0"
+    "@getpara/user-management-client" "2.4.0"
     "@noble/hashes" "^1.5.0"
     base64url "^3.0.1"
-    libphonenumber-js "1.11.2"
+    libphonenumber-js "^1.11.7"
     node-forge "^1.3.1"
     uuid "^11.1.0"
 
-"@getpara/rainbowkit-wallet@1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@getpara/rainbowkit-wallet/-/rainbowkit-wallet-1.4.0.tgz#a473a19953c8c7972dce302b0c2a343c32fc5d90"
-  integrity sha512-pGMSFYvP1ew6TZt6w0M4b4k9IiyLxQFhLK9C8mX4W0gGlgOSzl5jWtYlrXPk6FNzdIMs/LOIr1euZrm3KEWhpQ==
+"@getpara/rainbowkit-wallet@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@getpara/rainbowkit-wallet/-/rainbowkit-wallet-2.4.0.tgz#fe037d5377751ff141b2ab1664aa864b288c98c4"
+  integrity sha512-VX4vQyTQgQ46c6zMXWAc5443PthiCD1zoKtGSSBHUxhJAg9ayDjtlsIneC5G8+j6nJrn08emvW1NqTjAOA9eJQ==
   dependencies:
-    "@getpara/react-sdk" "1.15.0"
-    "@getpara/wagmi-v2-integration" "1.15.0"
+    "@getpara/react-sdk-lite" "2.4.0"
+    "@getpara/wagmi-v2-integration" "2.4.0"
 
-"@getpara/react-common@1.15.0":
-  version "1.15.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-1.15.0.tgz#d69161aa99e068fe98f27e665efb4b71041dcb93"
-  integrity sha512-y3Rlk/7I788MZkVSckc0xG6MRabwDhXe88TiV92wvw56e6KP73H85Fl4yT9v5h9llDN+VIuLMVEDHa1YCFXx4g==
+"@getpara/react-common@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-2.4.0.tgz#c2cfc98cf9f2ab131ac94cbca05cbcbbae4a1903"
+  integrity sha512-HihusNjQFuMxMyXPndSNaZiGMmn5XC1xf0F27/9mrVUdOS7iQQB+e5RD26Jx2Ciz100J7QyqHiHYdT/GW6Uiag==
   dependencies:
-    "@getpara/react-components" "1.15.0"
-    "@getpara/web-sdk" "1.15.0"
-    "@moonpay/moonpay-react" "^1.8.3"
+    "@getpara/react-components" "2.4.0"
+    "@getpara/web-sdk" "2.4.0"
+    "@moonpay/moonpay-react" "^1.10.6"
     "@ramp-network/ramp-instant-sdk" "^4.0.5"
-    libphonenumber-js "^1.11.1"
+    libphonenumber-js "^1.11.7"
     styled-components "^6.1.8"
     ua-parser-js "^2.0.2"
 
-"@getpara/react-components@1.15.0":
-  version "1.15.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-components/-/react-components-1.15.0.tgz#843991aaed9fcd2c5b88e7f24ffa565f89cc9613"
-  integrity sha512-m9csPyYOUvUh/mYBUoxCspupsh+/9wrgMpNnCyrjDVGqBwqTgKFS91HXAgdQZTnLD9OhKt2Sqf9ZKq1uxWsHsw==
+"@getpara/react-components@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-components/-/react-components-2.4.0.tgz#7e39907ef107de8e83964b8a7f6e7709ac6c8301"
+  integrity sha512-sMeJa26IfBmw6Ip/TOlHgfGmI9vrwMyuqm2m8ccYU5MEVqcrGGNrmTIdpNm/aRTtBKKMnAqN2NrCchjoVv4baA==
   dependencies:
-    "@getpara/core-components" "1.15.0"
+    "@getpara/core-components" "2.4.0"
 
-"@getpara/react-sdk@1.15.0":
-  version "1.15.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-sdk/-/react-sdk-1.15.0.tgz#b27d4878cb172790917c653a1df34815488d22e0"
-  integrity sha512-8K0PDDKigTG8gqAPjYY2JF1EWf9NN5lJFR9g/YlDCeRlm8WvBtvNUykJrmPi20BvUhCqowttX49oDONZO2llBw==
+"@getpara/react-sdk-lite@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-sdk-lite/-/react-sdk-lite-2.4.0.tgz#94e747b7fb8b9115a667c772dbffcc5266481dda"
+  integrity sha512-97vauyRsykXjHsnIpVaHXivdvtoYmkT3uG7v0IqxauoSjhbXyhLMjLx+ZkupE53YcjGz0vnRlMmuk0Z5lSEB0w==
   dependencies:
-    "@getpara/react-common" "1.15.0"
-    "@getpara/react-components" "1.15.0"
-    "@getpara/web-sdk" "1.15.0"
-    "@tanstack/react-query" "^5.0.0"
+    "@getpara/react-common" "2.4.0"
+    "@getpara/react-components" "2.4.0"
+    "@getpara/web-sdk" "2.4.0"
     date-fns "^3.6.0"
-    framer-motion "11.3.28"
-    libphonenumber-js "^1.11.1"
+    framer-motion "^11.3.31"
+    libphonenumber-js "^1.11.7"
     styled-components "^6.1.8"
     zustand "^4.5.2"
     zustand-sync-tabs "^0.2.2"
 
-"@getpara/user-management-client@1.15.0":
-  version "1.15.0"
-  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-1.15.0.tgz#f412e4850a82ba11b6df68c97200295a8f7ded38"
-  integrity sha512-X18YzkeKKG8DzNxu6ncgF/Elh2F0FG6m/t5+AHiPo3XCGb0TNTZdkPxaMtc/QtNsBX7s2dYsb2TMXKYpa5DdPQ==
+"@getpara/shared@1.9.0":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@getpara/shared/-/shared-1.9.0.tgz#a3e8bb65b682013e154b933b1ed1207396934e8a"
+  integrity sha512-HiW+4tpACqhZeg2VjR428uGm9YMV1/CBh+NFemabKj+3B+fdOcI3y+7/MAhZMT7sa/7PemBdUNOJnc+Tbcxifg==
+
+"@getpara/user-management-client@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-2.4.0.tgz#d3793c9becf6487f07556f0e5c3d350319aa9a58"
+  integrity sha512-ic2iTqFfWR30bHeBqlaInKsYaqzM7Dy6+8nbdxT3K/Z3riFzFtw1RTFsSt69FnO0tmvG2cYzPu7/yCYrnySnPw==
   dependencies:
+    "@getpara/shared" "1.9.0"
     axios "^1.8.4"
-    libphonenumber-js "1.11.2"
+    libphonenumber-js "^1.11.7"
 
-"@getpara/viem-v2-integration@1.15.0":
-  version "1.15.0"
-  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-1.15.0.tgz#fc497cc75557544f920122079ebb3d1a4e4e486f"
-  integrity sha512-6dY0Da9y8cKbuCec2a0pqF7JdefYMJSB1opujlsXpqcskqsCkc2hjPCih27TM3QMUlW8EHUaYjpLolzEIDE9PQ==
+"@getpara/viem-v2-integration@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-2.4.0.tgz#04fff1f1a0ec6d78d6754484e49f5de9b5aabcd6"
+  integrity sha512-cofKTlNfhAL7PqNTVb9OAYk+3n3TTh6a6ldbmlAd7BCb+cE5i9yMH2Y4PROz8wuyE3UX86rmTpI4Do2MJUrFbg==
   dependencies:
-    "@getpara/core-sdk" "1.15.0"
+    "@getpara/core-sdk" "2.4.0"
 
-"@getpara/wagmi-v2-integration@1.15.0":
-  version "1.15.0"
-  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-integration/-/wagmi-v2-integration-1.15.0.tgz#c76676d4740bbbc5c33171f8992647ef6205cb18"
-  integrity sha512-pbMs+0jO3IICAGqGxJT9meYvFm7L4sJT9o+DvVTKa6WK9vnAOjvDydWusWslS22/fP+yGc1MaFG1GfxOXaJtRQ==
+"@getpara/wagmi-v2-connector@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-2.4.0.tgz#90feb5b7fc6e61a342b84e397decb6a7d17f0fa0"
+  integrity sha512-ZI29FT4GFwUl+TseZseEIMJqjjVPxnMXEqCQKaS4u8e28lsRtPMw9Ml/1+UwZa0wZT4nvHCoQ31A8Yrnrq+4oQ==
   dependencies:
-    "@getpara/react-sdk" "1.15.0"
-    "@getpara/viem-v2-integration" "1.15.0"
+    "@getpara/viem-v2-integration" "2.4.0"
+    "@getpara/web-sdk" "2.4.0"
 
-"@getpara/web-sdk@1.15.0":
-  version "1.15.0"
-  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-1.15.0.tgz#d3420388e6ccc71987d8eeee6170f0112db89f6b"
-  integrity sha512-fYCVb2AyJI42zrt9M9m0AhAkO7ngQtrWQVvBiUn6ipfsiMJb8F0LiYULD7FwRTELgs/dTW8MxTy1F7rXK7+sUw==
+"@getpara/wagmi-v2-integration@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-integration/-/wagmi-v2-integration-2.4.0.tgz#352bd84ed1e661373c528987ef83ccbee25c3cae"
+  integrity sha512-crHt/1PL2mhvkVZqe9vswh+6Sjro+v2KU5psjGB32m71wbz7Fo4AB2NtnsJWoES4q/676O6rtwNpi8dOZhQ8PQ==
   dependencies:
-    "@getpara/core-sdk" "1.15.0"
-    "@getpara/user-management-client" "1.15.0"
-    base64url "3.0.1"
+    "@getpara/react-sdk-lite" "2.4.0"
+    "@getpara/wagmi-v2-connector" "2.4.0"
+
+"@getpara/web-sdk@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-2.4.0.tgz#557bf457277b7c00e72f596bb30d589a8b0fd769"
+  integrity sha512-GB6Ek8nuUeRbEUo1ayu1HMd8BFRtlf2P7ruRkLP/bUTFTNzQkF0/w3kpa0KEpd1WHRU70kph1+UaYbB9sP3cNQ==
+  dependencies:
+    "@getpara/core-sdk" "2.4.0"
+    "@getpara/user-management-client" "2.4.0"
+    base64url "^3.0.1"
     buffer "6.0.3"
-    cbor-web "8.1.0"
+    cbor-web "^9.0.2"
     node-forge "1.3.1"
     ua-parser-js "^2.0.2"
 
@@ -3537,7 +3550,7 @@
     semver "^7.5.4"
     uuid "^9.0.1"
 
-"@moonpay/moonpay-react@^1.8.3":
+"@moonpay/moonpay-react@^1.10.6":
   version "1.10.6"
   resolved "https://registry.yarnpkg.com/@moonpay/moonpay-react/-/moonpay-react-1.10.6.tgz#235163aba3d432b502346393edb646f96e0877af"
   integrity sha512-o+fa3FDKITbOTlkKToT49865ZGKkoGT1/eI0XJnYh9KSNMz3oo2PuwDKJHqLLZ5qE642ZAebksWdEElRySD43Q==
@@ -7226,11 +7239,6 @@
   dependencies:
     postcss-selector-parser "6.0.10"
 
-"@tanstack/query-core@5.90.12":
-  version "5.90.12"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.90.12.tgz#e1f5f47e72ef7d0fc794325936921c700352515e"
-  integrity sha512-T1/8t5DhV/SisWjDnaiU2drl6ySvsHj1bHBCWNXd+/T+Hh1cf6JodyEYMd5sgwm+b/mETT4EV3H+zCVczCU5hg==
-
 "@tanstack/query-core@5.90.16":
   version "5.90.16"
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.90.16.tgz#19a972c2ffbc47727ab6649028af1bee70e28cdf"
@@ -7242,13 +7250,6 @@
   integrity sha512-bpMGOmV4OPmif7TNMteU/Ehf/hoC0Kf98PDc0F4BZkFrEapRMEqI/V6YS0lyzwSV6PQpY1y4xxArUIfBW5LVxQ==
   dependencies:
     "@tanstack/query-core" "5.90.16"
-
-"@tanstack/react-query@^5.0.0":
-  version "5.90.12"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.90.12.tgz#49536842eff6487a9e645a453fea2642d8f4f209"
-  integrity sha512-graRZspg7EoEaw0a8faiUASCyJrqjKPdqJ9EwuDRUF9mEYJ1YPczI9H+/agJ0mOJkPCJDk0lsz5QTrLZ/jQ2rg==
-  dependencies:
-    "@tanstack/query-core" "5.90.12"
 
 "@tanstack/react-virtual@^3.13.18":
   version "3.13.18"
@@ -9410,7 +9411,7 @@ base64-js@^1.3.0, base64-js@^1.3.1:
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
-base64url@3.0.1, base64url@^3.0.1:
+base64url@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/base64url/-/base64url-3.0.1.tgz#6399d572e2bc3f90a9a8b22d5dbb0a32d33f788d"
   integrity sha512-ir1UPr3dkwexU7FdV8qBBbNDRUhMmIekYMFZfi+C/sLNnRESKPl23nB9b2pltqfOQNnGzsDdId90AEtG5tCx4A==
@@ -9726,10 +9727,10 @@ case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cbor-web@8.1.0:
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/cbor-web/-/cbor-web-8.1.0.tgz#c1148e91ca6bfc0f5c07c1df164854596e2e33d6"
-  integrity sha512-2hWHHMVrfffgoEmsAUh8vCxHoLa1vgodtC73+C5cSarkJlwTapnqAzcHINlP6Ej0DXuP4OmmJ9LF+JaNM5Lj/g==
+cbor-web@^9.0.2:
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/cbor-web/-/cbor-web-9.0.2.tgz#1915f1ef1a72ea905db07480f71cf12ff601c661"
+  integrity sha512-N6gU2GsJS8RR5gy1d9wQcSPgn9FGJFY7KNvdDRlwHfz6kCxrQr2TDnrjXHmr6TFSl6Fd0FC4zRnityEldjRGvQ==
 
 "cbw-sdk@npm:@coinbase/wallet-sdk@3.9.3":
   version "3.9.3"
@@ -11741,11 +11742,13 @@ fraction.js@^5.3.4:
   resolved "https://registry.yarnpkg.com/fraction.js/-/fraction.js-5.3.4.tgz#8c0fcc6a9908262df4ed197427bdeef563e0699a"
   integrity sha512-1X1NTtiJphryn/uLQz3whtY6jK3fTqoE3ohKs0tT+Ujr1W59oopxmoEh7Lu5p6vBaPbgoM0bzveAW4Qi5RyWDQ==
 
-framer-motion@11.3.28:
-  version "11.3.28"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-11.3.28.tgz#dbc5d51d9525a67b8030ba645323458364a94729"
-  integrity sha512-dqhoawipEAjqdv32zbv72sOMJZjol7dROWn7t/FOq23WXJ40O4OUybgnO2ldnuS+3YquSn8xO/KKRavZ+TBVOQ==
+framer-motion@^11.3.31:
+  version "11.18.2"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-11.18.2.tgz#0c6bd05677f4cfd3b3bdead4eb5ecdd5ed245718"
+  integrity sha512-5F5Och7wrvtLVElIpclDT0CBzMVg3dL22B64aZwHtsIY8RB4mXICLrkajK4G9R+ieSAGcgrLeae2SeUTg2pr6w==
   dependencies:
+    motion-dom "^11.18.1"
+    motion-utils "^11.18.1"
     tslib "^2.4.0"
 
 framer-motion@^12.23.26:
@@ -12911,12 +12914,7 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-libphonenumber-js@1.11.2:
-  version "1.11.2"
-  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.11.2.tgz#9ddd7d1a1e1be0e7c596c7e09487c362b4f1210c"
-  integrity sha512-V9mGLlaXN1WETzqQvSu6qf6XVAr3nFuJvWsHcuzCCCo6xUKawwSxOPTpan5CGOSKTn5w/bQuCZcLPJkyysgC3w==
-
-libphonenumber-js@^1.11.1:
+libphonenumber-js@^1.11.7:
   version "1.12.33"
   resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.12.33.tgz#c92ca21e5fe081ed978e8a3331511842f08fd5df"
   integrity sha512-r9kw4OA6oDO4dPXkOrXTkArQAafIKAU71hChInV4FxZ69dxCfbwQGDPzqR5/vea94wU705/3AZroEbSoeVWrQw==
@@ -13430,6 +13428,13 @@ moment@2.30.1, moment@^2.29.4:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.30.1.tgz#f8c91c07b7a786e30c59926df530b4eac96974ae"
   integrity sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==
 
+motion-dom@^11.18.1:
+  version "11.18.1"
+  resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-11.18.1.tgz#e7fed7b7dc6ae1223ef1cce29ee54bec826dc3f2"
+  integrity sha512-g76KvA001z+atjfxczdRtw/RXOM3OMSdd1f4DL77qCTF/+avrRJiawSG4yDibEQ215sr9kpinSlX2pCTJ9zbhw==
+  dependencies:
+    motion-utils "^11.18.1"
+
 motion-dom@^12.19.0, motion-dom@^12.23.23:
   version "12.23.23"
   resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-12.23.23.tgz#8f874333ea1a04ee3a89eb928f518b463d589e0e"
@@ -13470,6 +13475,11 @@ motion-plus@1.5.1:
   dependencies:
     motion-plus-dom "^1.5.1"
     motion-plus-react "^1.5.1"
+
+motion-utils@^11.18.1:
+  version "11.18.1"
+  resolved "https://registry.yarnpkg.com/motion-utils/-/motion-utils-11.18.1.tgz#671227669833e991c55813cf337899f41327db5b"
+  integrity sha512-49Kt+HKjtbJKLtgO/LKj9Ld+6vw9BjH5d9sc40R/kVyH8GLAXgT42M2NnuPcJNuA3s9ZfZBUcwIgpmZWGEE+hA==
 
 motion-utils@^12.19.0, motion-utils@^12.23.6:
   version "12.23.6"
