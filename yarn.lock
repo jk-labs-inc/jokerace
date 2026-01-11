@@ -14951,10 +14951,10 @@ react-window@*:
   resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.2.3.tgz#f8ffdddbb612ccd3e1314b59fce79af85d3f15e3"
   integrity sha512-gTRqQYC8ojbiXyd9duYFiSn2TJw0ROXCgYjenOvNKITWzK0m0eCvkUsEUM08xvydkMh7ncp+LE0uS3DeNGZxnQ==
 
-react-window@2.2.4:
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.2.4.tgz#add661da4e0ebc4c1129c41a92d1891d44da565f"
-  integrity sha512-FiZsQHvt2qbnTz6cN+/FXvX62v2xukQ+AajUivkm/Ivdp9rnU3bp0B1eDcCNpQXNaDBdqkEVGNYHlvIUGU9yBw==
+react-window@2.2.5:
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.2.5.tgz#425a29609980083aafd5a48a1711a2af9319c1d2"
+  integrity sha512-6viWvPSZvVuMIe9hrl4IIZoVfO/npiqOb03m4Z9w+VihmVzBbiudUrtUqDpsWdKvd/Ai31TCR25CBcFFAUm28w==
 
 react@19.2.3:
   version "19.2.3"
