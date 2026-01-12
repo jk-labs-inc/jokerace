@@ -1,7 +1,7 @@
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { useUrl } from "nextjs-current-url";
 import { FC, ReactNode, useState } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import ErrorToastClassic from "./components/ErrorClassic";
 import ErrorToastSimple from "./components/ErrorSimple";
 import ErrorToastWithAdditionalMessage from "./components/ErrorWithAdditionalMessage";
@@ -28,7 +28,7 @@ const ErrorToast: FC<ErrorToastProps> = ({
   codeFound,
 }) => {
   const url = useUrl();
-  const { address } = useAccount();
+  const { address } = useConnection();
   const [copySuccess, setCopySuccess] = useState(false);
   const bugReportLink = populateBugReportLink(url?.href ?? "", address ?? "", messageToCopy ?? "");
 

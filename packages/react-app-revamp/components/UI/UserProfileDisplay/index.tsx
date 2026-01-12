@@ -3,7 +3,7 @@ import { ROUTE_VIEW_USER } from "@config/routes";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import useProfileData from "@hooks/useProfileData";
 import { useMemo, useState } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { Avatar } from "../Avatar";
 import SendFundsButton from "./components/SendFundsButton";
 import { erc20ChainDropdownOptions } from "@helpers/tokens";
@@ -36,7 +36,7 @@ const UserProfileDisplay = ({
   includeSendFunds,
   onSendFundsClick,
 }: UserProfileDisplayProps) => {
-  const { chain, isConnected, address: userConnectedAddress } = useAccount();
+  const { chain, isConnected, address: userConnectedAddress } = useConnection();
   const { profileName, profileAvatar, socials, isLoading } = useProfileData(
     ethereumAddress,
     shortenOnFallback,

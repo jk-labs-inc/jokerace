@@ -28,7 +28,7 @@ import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useAccount, useBalance } from "wagmi";
+import { useConnection, useBalance } from "wagmi";
 import DialogModalSendProposalDesktopLayout from "./Desktop";
 import DialogModalSendProposalMobileLayout from "./Mobile";
 
@@ -38,7 +38,7 @@ interface DialogModalSendProposalProps {
 }
 
 export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOpen, setIsOpen }) => {
-  const { address, chain } = useAccount();
+  const { address, chain } = useConnection();
   const asPath = usePathname();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { subscribeUser, checkIfEmailExists } = useEmailSignup();

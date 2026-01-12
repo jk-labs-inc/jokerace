@@ -4,11 +4,11 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { AnyoneCanSubmit, useUserStore } from "@hooks/useUserSubmitQualification/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useMediaQuery } from "react-responsive";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 export const useContestSubmitButton = () => {
-  const { isConnected } = useAccount();
+  const { isConnected } = useConnection();
   const { openConnectModal } = useConnectModal();
   const {
     contestMaxNumberSubmissionsPerUser,

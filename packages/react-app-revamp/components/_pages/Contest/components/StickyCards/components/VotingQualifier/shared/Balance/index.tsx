@@ -1,9 +1,9 @@
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import VotingQualifierAnyoneCanVoteBalance from "./components/AnyoneCanVoteBalance";
 
 const VotingQualifierBalance = () => {
-  const { address: userAddress } = useAccount();
+  const { address: userAddress } = useConnection();
   const { openConnectModal } = useConnectModal();
 
   if (!userAddress)

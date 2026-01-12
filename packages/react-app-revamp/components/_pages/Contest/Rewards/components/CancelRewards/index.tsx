@@ -8,7 +8,7 @@ import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { Abi } from "viem";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import CancelRewardsModal from "./components/Modal";
 
 interface CancelRewardsProps {
@@ -30,7 +30,7 @@ const CancelRewards: FC<CancelRewardsProps> = ({ rewardsAddress, abi, chainId, v
     isError: isErrorTotalVotesCast,
   } = useTotalVotesCastOnContest(contestAddress, contestChainId);
   const [isCancelRewardsModalOpen, setIsCancelRewardsModalOpen] = useState(false);
-  const { chainId: accountChainId } = useAccount();
+  const { chainId: accountChainId } = useConnection();
   const isUserOnCorrectChain = accountChainId === chainId;
   const cannotCancelRewards = Number(totalVotesCast) > 0 && !isLoadingTotalVotesCast && !isErrorTotalVotesCast;
 

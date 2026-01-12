@@ -12,7 +12,7 @@ import { compareVersions } from "compare-versions";
 import { saveUpdatedProposalsStatusToAnalyticsV3 } from "lib/analytics/participants";
 import { useEffect } from "react";
 import { Abi } from "viem";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import { useDeleteProposalStore } from "./store";
 
@@ -26,7 +26,7 @@ export function useDeleteProposal() {
       version: state.contestConfig.version,
     })),
   );
-  const { address: userAddress } = useAccount();
+  const { address: userAddress } = useConnection();
   const chain = getChainFromId(contestConfig.chainId);
   const contestChainBlockExplorer = chain?.blockExplorers?.default?.url;
   const { removeProposal } = useProposal();

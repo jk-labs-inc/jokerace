@@ -5,7 +5,7 @@ import { RewardModuleInfo } from "lib/rewards/types";
 import { useSharesByRankings } from "@hooks/useShares";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import RewardsError from "../Error";
 import RewardsCreatorOptions from "./CreatorOptions";
@@ -43,7 +43,7 @@ const TotalRewardsTableSkeleton = ({ payeesCount }: { payeesCount: number }) => 
 
 const RewardsCreatorView = ({ rewards, chainId, version }: RewardsCreatorViewProps) => {
   const { contestAuthorEthereumAddress, charge } = useContestStore(useShallow(state => state));
-  const { address: userAddress } = useAccount();
+  const { address: userAddress } = useConnection();
   const isCreator = contestAuthorEthereumAddress === userAddress;
   const {
     data: totalRewards,

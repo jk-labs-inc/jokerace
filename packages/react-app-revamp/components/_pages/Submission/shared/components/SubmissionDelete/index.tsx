@@ -8,7 +8,7 @@ import useProposalIdStore from "@hooks/useProposalId/store";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 const SubmissionDelete = () => {
@@ -22,7 +22,7 @@ const SubmissionDelete = () => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const { deleteProposal, isLoading, isSuccess, canDeleteProposal } = useDeleteProposal();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { address } = useAccount();
+  const { address } = useConnection();
 
   const handleDeleteProposal = async (proposalId: string) => {
     await deleteProposal([proposalId]);

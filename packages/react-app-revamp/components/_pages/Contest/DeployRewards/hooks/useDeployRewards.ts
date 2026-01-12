@@ -7,11 +7,11 @@ import { useError } from "@hooks/useError";
 import useRewardsModule from "@hooks/useRewards";
 import { switchChain } from "@wagmi/core";
 import { useState } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 export const useDeployRewards = () => {
-  const { address: connectedAccountAddress, chainId: connectedAccountChainId } = useAccount();
+  const { address: connectedAccountAddress, chainId: connectedAccountChainId } = useConnection();
   const contestConfig = useContestConfigStore(state => state.contestConfig);
   const {
     rewardPoolData,
