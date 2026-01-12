@@ -1,5 +1,5 @@
 import { useReadContract } from "wagmi";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 
 interface UseHasSubmittedProposalProps {
   contractAddress: `0x${string}`;
@@ -9,7 +9,7 @@ interface UseHasSubmittedProposalProps {
 }
 
 const useHasSubmittedProposal = ({ contractAddress, chainId, abi, address }: UseHasSubmittedProposalProps) => {
-  const { address: accountAddress } = useAccount();
+  const { address: accountAddress } = useConnection();
   const addressToCheck = address || accountAddress;
 
   const submissionCount = useReadContract({

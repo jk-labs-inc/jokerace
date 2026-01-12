@@ -20,7 +20,7 @@ import { readContract, simulateContract, waitForTransactionReceipt, writeContrac
 import moment from "moment";
 import { checkAndMarkPriceChangeError } from "utils/error";
 import { formatEther, parseUnits } from "viem";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import { useCastVotesStore } from "./store";
 import { CombinedAnalyticsParams, performAnalytics } from "./utils/analytics";
@@ -50,7 +50,7 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
     setTransactionData,
     resetStore,
   } = useCastVotesStore(state => state);
-  const { address: userAddress } = useAccount();
+  const { address: userAddress } = useConnection();
   const { error: errorMessage, handleError } = useError();
   const { refetch: refetchTotalVotesCastOnContest } = useTotalVotesCastOnContest(
     contestConfig.address,

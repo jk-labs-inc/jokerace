@@ -1,6 +1,6 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { compareVersions } from "compare-versions";
-import { useAccount, useReadContract } from "wagmi";
+import { useConnection, useReadContract } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 export const useFetchUserVotesOnProposal = (contestAddress: string, proposalId: string) => {
@@ -10,7 +10,7 @@ export const useFetchUserVotesOnProposal = (contestAddress: string, proposalId: 
       version: state.contestConfig.version,
     })),
   );
-  const { address, chainId } = useAccount();
+  const { address, chainId } = useConnection();
   const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
 
   const currentUserVotesOnProposal = useReadContract({

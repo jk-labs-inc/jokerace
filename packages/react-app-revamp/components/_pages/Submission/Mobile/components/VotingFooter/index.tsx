@@ -9,11 +9,11 @@ import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useState } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 const SubmissionPageMobileVotingFooter = () => {
-  const { isConnected, address } = useAccount();
+  const { isConnected, address } = useConnection();
   const { openConnectModal } = useConnectModal();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));

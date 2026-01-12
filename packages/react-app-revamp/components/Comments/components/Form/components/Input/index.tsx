@@ -9,7 +9,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { switchChain } from "@wagmi/core";
 import { FC, useEffect, useRef, useState } from "react";
 import { useMedia } from "react-use";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import CommentFormInputSubmitButton from "./components/SubmitButton";
 
 interface CommentsFormInputProps {
@@ -54,7 +54,7 @@ const commentEditorConfig = ({ content, placeholderText, onUpdate, isMobile }: C
 
 const CommentsFormInput: FC<CommentsFormInputProps> = ({ onSend, contestChainId, isAddingSuccess, isAdding }) => {
   const { openConnectModal } = useConnectModal();
-  const { address, isConnected, chainId } = useAccount();
+  const { address, isConnected, chainId } = useConnection();
   const [commentContent, setCommentContent] = useState("");
   const [allowSend, setAllowSend] = useState(false);
   const [containerHeight, setContainerHeight] = useState(0);

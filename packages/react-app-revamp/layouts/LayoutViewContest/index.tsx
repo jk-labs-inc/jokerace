@@ -6,7 +6,7 @@ import { populateBugReportLink } from "@helpers/githubIssue";
 import { usePathname } from "next/navigation";
 import { useUrl } from "nextjs-current-url";
 import { useState, useMemo } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import ContestHeader from "./components/ContestHeader";
 import ContestTabsContent from "./components/ContestTabsContent";
 import LayoutViewContestError from "./components/Error";
@@ -17,7 +17,7 @@ import { useLayoutViewContest } from "./hooks/useLayoutViewContest";
 const LayoutViewContest = () => {
   const pathname = usePathname();
   const url = useUrl();
-  const { address: accountAddress } = useAccount();
+  const { address: accountAddress } = useConnection();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const {
     contestConfig,

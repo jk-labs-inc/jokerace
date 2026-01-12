@@ -2,7 +2,7 @@ import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { FC, RefObject, useEffect, useRef } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import VotingWidgetEmailSignup from "./components/EmailSignup";
 import VotingWidgetRewardsProjection from "./components/RewardsProjection";
@@ -42,7 +42,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   onAddFunds,
 }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const { address: userAddress, isConnected } = useAccount();
+  const { address: userAddress, isConnected } = useConnection();
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const inputRef = useRef<HTMLInputElement>(null);
   const { inputValue, sliderValue, setSliderValue, isInvalid, reset } = useVotingStore(

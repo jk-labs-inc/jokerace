@@ -14,7 +14,7 @@ import moment from "moment";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import DrawerVoteForProposal from "../DrawerVoteForProposal";
 import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
@@ -51,7 +51,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   toggleProposalSelection,
   enabledPreview,
 }) => {
-  const { isConnected, address: userAddress } = useAccount();
+  const { isConnected, address: userAddress } = useConnection();
   const { canDeleteProposal } = useDeleteProposal();
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const allowDelete = canDeleteProposal(

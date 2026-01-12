@@ -6,7 +6,7 @@ import VotingWidget, { VotingWidgetStyle } from "@components/Voting";
 import { ContestStateEnum } from "@hooks/useContestState/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 interface SubmissionPageDesktopVotingAreaWidgetHandlerProps {
@@ -18,7 +18,7 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
   charge,
   votesClose,
 }) => {
-  const { address } = useAccount();
+  const { address } = useConnection();
   const submissionsCount = useSubmissionPageStore(useShallow(state => state.allProposalIds.length));
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
   const { contestConfig, contestDetails, currentPricePerVote, currentPricePerVoteRaw, isVotingOpen } = useVotingSetup(

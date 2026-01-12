@@ -1,7 +1,7 @@
 import { MediaQuery } from "@helpers/mediaQuery";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { FC } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import MainHeaderDesktopLayout from "./DesktopLayout";
 import MainHeaderMobileLayout from "./MobileLayout";
 
@@ -10,7 +10,7 @@ interface MainHeaderProps {
 }
 
 const MainHeader: FC<MainHeaderProps> = ({ showProfile }) => {
-  const { isConnected, address } = useAccount();
+  const { isConnected, address } = useConnection();
   const { openConnectModal } = useConnectModal();
 
   return (

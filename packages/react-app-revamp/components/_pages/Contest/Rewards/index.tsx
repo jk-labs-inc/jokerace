@@ -7,7 +7,7 @@ import useContestConfigStore from "@hooks/useContestConfig/store";
 import useRewardsModule from "@hooks/useRewards";
 import { ModuleType } from "lib/rewards/types";
 import { Abi } from "viem";
-import { useAccount, useAccountEffect } from "wagmi";
+import { useConnection, useConnectionEffect } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import RewardsError from "./modules/shared/Error";
 import RewardsCanceled from "./modules/shared/RewardsCanceled";
@@ -18,7 +18,7 @@ const ContestRewards = () => {
   const chainExplorer = getChainExplorer(contestConfig.chainId);
   const { contestAuthorEthereumAddress } = useContestStore(state => state);
   const { data: rewards, isLoading, isError, refetch, isRefetching } = useRewardsModule();
-  const { address: accountAddress } = useAccount();
+  const { address: accountAddress } = useConnection();
   const creator = contestAuthorEthereumAddress === accountAddress;
   const {
     isCanceled,
@@ -31,7 +31,7 @@ const ContestRewards = () => {
     version: contestConfig.version,
   });
 
-  useAccountEffect({
+  useConnectionEffect({
     onConnect(data) {
       if (ofacAddresses.includes(data.address)) {
         window.location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";

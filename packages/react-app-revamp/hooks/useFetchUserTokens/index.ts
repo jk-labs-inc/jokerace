@@ -129,7 +129,7 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
         symbol: chain.nativeCurrency.symbol,
         decimals: chain.nativeCurrency.decimals,
         logoURI: isEth ? "/mainnet.svg" : chainsImages[normalizedChainName] || "/contest/mona-lisa-moustache.png",
-        balance: parseFloat(nativeBalance.formatted),
+        balance: parseFloat(formatUnits(nativeBalance.value, nativeBalance.decimals)),
       };
 
       allTokens.unshift(nativeToken);

@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { readContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { formatEther } from "viem";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 
 export interface VoterRewardsStatistics {
   userVotes: bigint;
@@ -21,7 +21,7 @@ export const useVoterRewardsStatistics = (
   ranking: number,
   chainId: number,
 ) => {
-  const { address } = useAccount();
+  const { address } = useConnection();
   const { contestConfig } = useContestConfigStore(state => state);
   const { data: rewards } = useRewardsModule();
 

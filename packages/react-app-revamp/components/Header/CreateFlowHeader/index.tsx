@@ -3,12 +3,12 @@ import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import MainHeaderMobileLayout from "../MainHeader/MobileLayout";
 import CreateFlowHeaderDesktopLayout from "./DesktopLayout";
 
 const CreateFlowHeader = () => {
-  const { isConnected, address } = useAccount();
+  const { isConnected, address } = useConnection();
   const { isLoading, isSuccess } = useDeployContestStore(state => state);
   const { pageAction, setPageAction } = usePageActionStore(state => state);
   const { openConnectModal } = useConnectModal();

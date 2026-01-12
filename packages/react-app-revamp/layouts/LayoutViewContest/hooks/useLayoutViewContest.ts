@@ -11,7 +11,7 @@ import useUser from "@hooks/useUserSubmitQualification";
 import { VOTE_AND_EARN_VERSION } from "@hooks/useUserSubmitQualification/utils";
 import { compareVersions } from "compare-versions";
 import { useEffect } from "react";
-import { useAccountEffect } from "wagmi";
+import { useConnectionEffect } from "wagmi";
 
 const OFAC_SEARCH_URL = "https://www.google.com/search?q=what+are+ofac+sanctions";
 
@@ -50,7 +50,7 @@ export const useLayoutViewContest = () => {
   });
 
   // OFAC address check
-  useAccountEffect({
+  useConnectionEffect({
     onConnect(data) {
       if (ofacAddresses.includes(data.address)) {
         window.location.href = OFAC_SEARCH_URL;

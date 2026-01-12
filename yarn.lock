@@ -7515,24 +7515,10 @@
     loupe "^2.3.7"
     pretty-format "^29.7.0"
 
-"@wagmi/connectors@7.1.1":
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-7.1.1.tgz#c9e0cba8ab3a66da5b8c74e4b318a231e4ebf0c2"
-  integrity sha512-rkYapSMFeBzZTs7nul1O7UCFMZ/pWIwBTYDJnTGTX2vG0pe3FGZ+SNPgSFL7enLQzZdcif3+9pt7pUJAzJogVw==
-
 "@wagmi/connectors@7.1.2":
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-7.1.2.tgz#8df95a2d6d4478b2cc04a46ecdd84b4d8a4d3a41"
   integrity sha512-L5ATHwEjJCWOm/tRWAyQ42hFpe4UrrReqQT8pMEsM+A29CkJxEm0n7/C2Ki7O1hiZ2D/n5emp0s4MfCFe9pdwQ==
-
-"@wagmi/core@2.22.1":
-  version "2.22.1"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.22.1.tgz#de4b5019971dcf033ea5f7484add66900da7897c"
-  integrity sha512-cG/xwQWsBEcKgRTkQVhH29cbpbs/TdcUJVFXCyri3ZknxhMyGv0YEjTcrNpRgt2SaswL1KrvslSNYKKo+5YEAg==
-  dependencies:
-    eventemitter3 "5.0.1"
-    mipd "0.0.7"
-    zustand "5.0.0"
 
 "@wagmi/core@3.2.2":
   version "3.2.2"
