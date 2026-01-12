@@ -268,7 +268,13 @@ contract ContestTest is Test {
         );
         vm.stopPrank();
 
-        assertEq(CREATOR_ADDRESS.balance, (10 * payPerVoteExpCurveContest.currentPricePerVote() * (100 - payPerVoteExpCurveContest.percentageToRewards()) / (2 * 100))); // the 2 is the denominator is because of split with creator, the 100 is because we're using a percent.
+        assertEq(
+            CREATOR_ADDRESS.balance,
+            (
+                10 * payPerVoteExpCurveContest.currentPricePerVote()
+                    * (100 - payPerVoteExpCurveContest.percentageToRewards()) / (2 * 100)
+            )
+        ); // the 2 is the denominator is because of split with creator, the 100 is because we're using a percent.
     }
 
     /////////////////////////////
