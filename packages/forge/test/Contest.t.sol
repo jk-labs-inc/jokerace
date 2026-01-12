@@ -262,13 +262,13 @@ contract ContestTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = payPerVoteExpCurveContest.propose(testAddress1AuthorProposal);
         vm.warp(1681660001);
-        vm.deal(address(TEST_ADDRESS_1), payPerVoteExpCurveContest.currentPricePerVote());
-        payPerVoteExpCurveContest.castVote{value: payPerVoteExpCurveContest.currentPricePerVote()}(
-            proposalId, 1 ether
+        vm.deal(address(TEST_ADDRESS_1), 10 * payPerVoteExpCurveContest.currentPricePerVote());
+        payPerVoteExpCurveContest.castVote{value: 10 * payPerVoteExpCurveContest.currentPricePerVote()}(
+            proposalId, 10 ether
         );
         vm.stopPrank();
 
-        assertEq(CREATOR_ADDRESS.balance, payPerVoteExpCurveContest.currentPricePerVote() / 20);
+        assertEq(CREATOR_ADDRESS.balance, (10 * payPerVoteExpCurveContest.currentPricePerVote() * (100 - payPerVoteExpCurveContest.percentageToRewards()) / (2 * 100))); // the 2 is the denominator is because of split with creator, the 100 is because we're using a percent.
     }
 
     /////////////////////////////
