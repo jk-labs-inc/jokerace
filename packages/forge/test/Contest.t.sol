@@ -257,5 +257,19 @@ contract ContestTest is Test {
         vm.stopPrank();
     }
 
+    function testCreatorSplit() public {
+        vm.startPrank(TEST_ADDRESS_1);
+        vm.warp(1681650001);
+        uint256 proposalId = payPerVoteExpCurveContest.propose(testAddress1AuthorProposal);
+        vm.warp(1681660001);
+        vm.deal(address(TEST_ADDRESS_1), payPerVoteExpCurveContest.currentPricePerVote());
+        payPerVoteExpCurveContest.castVote{value: payPerVoteExpCurveContest.currentPricePerVote()}(
+            proposalId, 1 ether
+        );
+        vm.stopPrank();
+
+        assertEq(CREATOR_ADDRESS.balance, payPerVoteExpCurveContest.currentPricePerVote() / 20);
+    }
+
     /////////////////////////////
 }
