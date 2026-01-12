@@ -16,7 +16,7 @@
     "@babel/core": "7.28.5",
     "@babel/preset-env": "7.28.5",
     "@base-org/account": "2.5.1",
-    "@bigmi/react": "0.6.4",
+    "@bigmi/react": "0.6.5",
     "@clustersxyz/sdk": "1.0.2",
     "@coinbase/wallet-sdk": "4.3.6",
     "@gemini-wallet/core": "0.3.1",

@@ -1470,33 +1470,12 @@
     viem "^2.31.7"
     zustand "5.0.3"
 
-"@bigmi/client@^0.6.4":
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.6.4.tgz#c797f24697ee03a41eb4749329c84107b18113b4"
-  integrity sha512-MuA8lIP6BgM9rU0FKqtD2In4bTGF3JUge2X8yURVCZ2pZMbZIYyPBlMiJ382fcBPZiguCiOI4GcdUVRQS9StaA==
-  dependencies:
-    "@bigmi/core" "^0.6.4"
-    eventemitter3 "^5.0.1"
-    zustand "^5.0.9"
-
 "@bigmi/client@^0.6.5":
   version "0.6.5"
   resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.6.5.tgz#4fa95bd1ee4e27dac65c9712ce9d3ecfcd839a87"
   integrity sha512-LPJmgyoZugLkvbrew3UTk6PU2Zf0Qq5RbJtSkIkSpyEHdofVK42DijOS0XRCemOtxwtS497ET2sepJtksnJsHQ==
   dependencies:
     "@bigmi/core" "^0.6.5"
-    eventemitter3 "^5.0.1"
-    zustand "^5.0.9"
-
-"@bigmi/core@^0.6.4":
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/@bigmi/core/-/core-0.6.4.tgz#a21c3b00f1d14eaf2e034a9f5a4f4530b625c911"
-  integrity sha512-aLGDX0aF29bq5PWSB/m23RVw4nATNY/EtNhNTg+4KcJdyj8CKv+Fh2OWnnqcoseli/iLB9kVk7UgOUlq1/p2Xg==
-  dependencies:
-    "@noble/hashes" "^1.8.0"
-    bech32 "^2.0.0"
-    bitcoinjs-lib "^7.0.0"
-    bs58 "^6.0.0"
     eventemitter3 "^5.0.1"
     zustand "^5.0.9"
 
@@ -1512,13 +1491,13 @@
     eventemitter3 "^5.0.1"
     zustand "^5.0.9"
 
-"@bigmi/react@0.6.4":
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.6.4.tgz#a7d612c8d31df858e3f0d6e975e788e399c9cada"
-  integrity sha512-NZ4jdGnPgzBdDL8OnajjFU+1bbXafgJrZwzT9nUMNLdODpTUsfei60Dxes010pgJKCU0QBd9V2mbd9oKmQ+CUw==
+"@bigmi/react@0.6.5":
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.6.5.tgz#24b1c07e2947e0bebe40b2b02d2aea2689202613"
+  integrity sha512-6sUcRW1cdL7HRDtrurNJJnoGr6oanXd5MobPCQdulHqBsq1ycHWIyRac9/XmnfNEU05fvRPEdWRcyVrHKgv4xA==
   dependencies:
-    "@bigmi/client" "^0.6.4"
-    "@bigmi/core" "^0.6.4"
+    "@bigmi/client" "^0.6.5"
+    "@bigmi/core" "^0.6.5"
 
 "@bitcoinerlab/secp256k1@^1.2.0":
   version "1.2.0"
@@ -9451,19 +9430,6 @@ birpc@0.2.14:
   resolved "https://registry.yarnpkg.com/birpc/-/birpc-0.2.14.tgz#4a5498771e6ff24cf8ae5f47faf90e76ca2fce03"
   integrity sha512-37FHE8rqsYM5JEKCnXFyHpBCzvgHEExwVVTq+nUmloInU7l8ezD1TpOhKpS8oe1DTYFqEK27rFZVKG43oTqXRA==
 
-bitcoinjs-lib@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/bitcoinjs-lib/-/bitcoinjs-lib-7.0.0.tgz#0bea06c164b9048b4453914507514ed7ee3018c2"
-  integrity sha512-2W6dGXFd1KG3Bs90Bzb5+ViCeSKNIYkCUWZ4cvUzUgwnneiNNZ6Sk8twGNcjlesmxC0JyLc/958QycfpvXLg7A==
-  dependencies:
-    "@noble/hashes" "^1.2.0"
-    bech32 "^2.0.0"
-    bip174 "^3.0.0"
-    bs58check "^4.0.0"
-    uint8array-tools "^0.0.9"
-    valibot "^0.38.0"
-    varuint-bitcoin "^2.0.0"
-
 bitcoinjs-lib@^7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/bitcoinjs-lib/-/bitcoinjs-lib-7.0.1.tgz#55fd0a44f258669e2de9a5d50c8d8008d0a29ce0"
@@ -16571,11 +16537,6 @@ v8-compile-cache-lib@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/v8-compile-cache-lib/-/v8-compile-cache-lib-3.0.1.tgz#6336e8d71965cb3d35a1bbb7868445a7c05264bf"
   integrity sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==
-
-valibot@^0.38.0:
-  version "0.38.0"
-  resolved "https://registry.yarnpkg.com/valibot/-/valibot-0.38.0.tgz#2d035d2a5bd36e8ea8b48b56d44552ace1a7616f"
-  integrity sha512-RCJa0fetnzp+h+KN9BdgYOgtsMAG9bfoJ9JSjIhFHobKWVWyzM3jjaeNTdpFK9tQtf3q1sguXeERJ/LcmdFE7w==
 
 valibot@^1.2.0:
   version "1.2.0"
