@@ -408,7 +408,7 @@ abstract contract Governor is GovernorSorting {
             uint256 sendingToJkLabs = (msg.value * (100 - percentageToRewards)) / 100;
             if (sendingToJkLabs > 0) {
                 uint256 sendingToCreator = (creatorSplitEnabled == 1) ? (sendingToJkLabs / 2) : 0;
-                if (creatorSplitEnabled == 0) {
+                if (sendingToCreator > 0) {
                     Address.sendValue(payable(creator), sendingToCreator);
                     emit CreatorPaymentReleased(creator, sendingToCreator);
                 }
