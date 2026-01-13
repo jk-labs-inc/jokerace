@@ -32,7 +32,7 @@ export interface ContestValues {
   networkName: string;
   cost_to_vote: number;
   percentage_to_rewards: number;
-  creator_split_enabled: number;
+  creator_split_enabled?: number;
   authorAddress?: string;
   featured?: boolean;
 }

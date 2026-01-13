@@ -25,7 +25,7 @@ export interface ContestData {
   networkName: string;
   cost_to_vote: number;
   percentage_to_rewards: number;
-  creator_split_enabled: number;
+  creator_split_enabled?: number;
 }
 
 export const prepareContestData = (params: ContestDataParams): ContestData => {
