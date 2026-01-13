@@ -38,7 +38,7 @@ contract VoterRewardsModuleTest is Test {
     string public constant METADATA_FIELDS_SCHEMA =
         "{\'Test Address Field\': \'address\', \'Test String Field\': \'string\', \'Test Uint Field\': \'uint256\'}";
 
-    Governor.IntConstructorArgs public payPerVoteFlatCurveIntConstructorArgs = Governor.IntConstructorArgs(
+    Governor.IntConstructorArgs public payPerVoteExpCurveIntConstructorArgs = Governor.IntConstructorArgs(
         ANYONE_CAN_SUBMIT,
         CONTEST_START,
         VOTING_DELAY,
@@ -53,15 +53,15 @@ contract VoterRewardsModuleTest is Test {
         ZERO_EXPONENT_MULTIPLE
     );
 
-    Governor.ConstructorArgs public payPerVoteFlatCurveParams = Governor.ConstructorArgs(
+    Governor.ConstructorArgs public payPerVoteExpCurveParams = Governor.ConstructorArgs(
         CONTEST_NAME,
         CONTEST_PROMPT,
-        payPerVoteFlatCurveIntConstructorArgs,
+        payPerVoteExpCurveIntConstructorArgs,
         JK_LABS_SPLIT_DESTINATION,
         METADATA_FIELDS_SCHEMA
     );
 
-    Governor.IntConstructorArgs public payPerVoteFlatCurveRankLimitOneIntConstructorArgs = Governor.IntConstructorArgs(
+    Governor.IntConstructorArgs public payPerVoteExpCurveRankLimitOneIntConstructorArgs = Governor.IntConstructorArgs(
         ANYONE_CAN_SUBMIT,
         CONTEST_START,
         VOTING_DELAY,
@@ -76,10 +76,10 @@ contract VoterRewardsModuleTest is Test {
         ZERO_EXPONENT_MULTIPLE
     );
 
-    Governor.ConstructorArgs public payPerVoteFlatCurveRankLimitOneParams = Governor.ConstructorArgs(
+    Governor.ConstructorArgs public payPerVoteExpCurveRankLimitOneParams = Governor.ConstructorArgs(
         CONTEST_NAME,
         CONTEST_PROMPT,
-        payPerVoteFlatCurveRankLimitOneIntConstructorArgs,
+        payPerVoteExpCurveRankLimitOneIntConstructorArgs,
         JK_LABS_SPLIT_DESTINATION,
         METADATA_FIELDS_SCHEMA
     );
@@ -170,9 +170,9 @@ contract VoterRewardsModuleTest is Test {
         vm.startPrank(CREATOR_ADDRESS);
 
         // Only using flat curves bc only testing rewards module logic in this file, which is the same regardless of curve of underlying contest
-        payPerVoteExpCurveContest = new Contest(payPerVoteFlatCurveParams);
-        payPerVoteExpCurveAltContest = new Contest(payPerVoteFlatCurveParams);
-        payPerVoteExpCurveRankLimitOneContest = new Contest(payPerVoteFlatCurveRankLimitOneParams);
+        payPerVoteExpCurveContest = new Contest(payPerVoteExpCurveParams);
+        payPerVoteExpCurveAltContest = new Contest(payPerVoteExpCurveParams);
+        payPerVoteExpCurveRankLimitOneContest = new Contest(payPerVoteExpCurveRankLimitOneParams);
 
         voterRewardsModule = new VoterRewardsModule(payees, shares, Contest(payPerVoteExpCurveContest));
         voterRewardsModuleAlt = new VoterRewardsModule(payees, shares, Contest(payPerVoteExpCurveAltContest));
