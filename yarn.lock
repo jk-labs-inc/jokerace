@@ -2947,10 +2947,10 @@
   dependencies:
     tslib "^2.8.0"
 
-"@gemini-wallet/core@0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@gemini-wallet/core/-/core-0.3.1.tgz#3a990b7d35cdb42c9a27b58853c4fa60f9a3ecbd"
-  integrity sha512-XP+/NRAaRV7Adlt6aFxrF/3a0i3qpxFTSVm/dzG+mceXTSgIGOUUT65w69ttLQ/GWEcAEQL/hKoV6PFAJA/DmQ==
+"@gemini-wallet/core@0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@gemini-wallet/core/-/core-0.3.2.tgz#fd6fd2df91d50be6c1a832c46379453e933a352e"
+  integrity sha512-Z4aHi3ECFf5oWYWM3F1rW83GJfB9OvhBYPTmb5q+VyK3uvzvS48lwo+jwh2eOoCRWEuT/crpb9Vwp2QaS5JqgQ==
   dependencies:
     "@metamask/rpc-errors" "7.0.2"
     eventemitter3 "5.0.1"

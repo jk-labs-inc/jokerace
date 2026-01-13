@@ -19,7 +19,7 @@
     "@bigmi/react": "0.6.5",
     "@clustersxyz/sdk": "1.0.2",
     "@coinbase/wallet-sdk": "4.3.7",
-    "@gemini-wallet/core": "0.3.1",
+    "@gemini-wallet/core": "0.3.2",
     "@getbrevo/brevo": "3.0.1",
     "@getpara/rainbowkit-wallet": "1.4.0",
     "@headlessui/react": "2.2.9",
