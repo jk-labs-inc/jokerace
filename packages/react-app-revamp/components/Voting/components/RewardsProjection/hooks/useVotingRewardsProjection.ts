@@ -27,7 +27,7 @@ export const useVotingRewardsProjection = ({
   } = useRewardsModule();
 
   const {
-    percentageToCreator,
+    percentageToRewards,
     costToVote,
     multiple,
     isLoading: isLoadingPricing,
@@ -48,7 +48,7 @@ export const useVotingRewardsProjection = ({
   const firstPlaceShareAmount = rewards.payeeShares.length > 0 ? rewards.payeeShares[0] : 0;
   const firstPlaceSharePercentage = rewards.totalShares > 0 ? (firstPlaceShareAmount / rewards.totalShares) * 100 : 0;
 
-  if (!validateVotingRewardsProjectionData(percentageToCreator, firstPlaceSharePercentage, costToVote)) {
+  if (!validateVotingRewardsProjectionData(percentageToRewards, firstPlaceSharePercentage, costToVote)) {
     return { winUpToFormatted: "0", isLoading: false, shouldShow: false };
   }
 
@@ -59,7 +59,7 @@ export const useVotingRewardsProjection = ({
     spendingAmount,
     costToVoteAtStart: costToVote,
     multiple,
-    percentageToCreator,
+    percentageToRewards,
     firstPlaceSharePercentage,
     submissionsCount,
   });

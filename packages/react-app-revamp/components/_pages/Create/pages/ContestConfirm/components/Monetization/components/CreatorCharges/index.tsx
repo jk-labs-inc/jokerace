@@ -2,11 +2,11 @@ import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { FC } from "react";
 
 interface CreatorChargesMessageProps {
-  percentageToCreator: number;
+  percentageToRewards: number;
 }
 
-const CreatorChargesMessage: FC<CreatorChargesMessageProps> = ({ percentageToCreator }) => {
-  return <li className="text-[16px]">{percentageToCreator}% of all charges go to rewards pool</li>;
+const CreatorChargesMessage: FC<CreatorChargesMessageProps> = ({ percentageToRewards }) => {
+  return <li className="text-[16px]">{percentageToRewards}% of all charges go to rewards pool</li>;
 };
 
 export default CreatorChargesMessage;

@@ -187,7 +187,7 @@ export function useSubmitProposal() {
         network_name: params.chainName,
         proposal_id: params.proposalId,
         created_at: Math.floor(Date.now() / 1000),
-        percentage_to_creator: params.charge.percentageToCreator,
+        percentage_to_rewards: params.charge.percentageToRewards,
       });
     } catch (error) {
       console.error("Error in addUserActionForAnalytics:", error);

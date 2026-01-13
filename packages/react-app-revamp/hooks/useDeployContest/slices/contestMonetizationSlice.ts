@@ -1,4 +1,4 @@
-import { PERCENTAGE_TO_CREATOR_DEFAULT } from "constants/monetization";
+import { CREATOR_SPLIT_ENABLED_DEFAULT, PERCENTAGE_TO_REWARDS_DEFAULT } from "constants/monetization";
 import { Charge, PriceCurve, PriceCurveType } from "../types";
 
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
@@ -21,7 +21,8 @@ export type MonetizationSlice = MonetizationSliceState & MonetizationSliceAction
 
 export const createMonetizationSlice = (set: any): MonetizationSlice => ({
   charge: {
-    percentageToCreator: PERCENTAGE_TO_CREATOR_DEFAULT,
+    percentageToRewards: PERCENTAGE_TO_REWARDS_DEFAULT,
+    creatorSplitEnabled: CREATOR_SPLIT_ENABLED_DEFAULT,
     costToVote: 0,
     costToVoteEndPrice: 0,
     error: false,

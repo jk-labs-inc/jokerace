@@ -9,6 +9,8 @@ enum VERSIONS {
   V6_1 = "6.1",
 }
 
+export const CREATOR_SPLIT_VERSION = "6.12";
+
 export function getContracts(contractConfig: any, version: string) {
   const commonFunctionNames = [
     "name",
@@ -22,7 +24,9 @@ export function getContracts(contractConfig: any, version: string) {
     "state",
   ];
 
-  const v4FunctionNames = ["percentageToCreator"];
+  // Use new function names for versions >= CREATOR_SPLIT_VERSION, old names for earlier versions
+  const hasCreatorSplit = compareVersions(version, CREATOR_SPLIT_VERSION) >= 0;
+  const v4FunctionNames = hasCreatorSplit ? ["percentageToRewards"] : ["percentageToCreator"];
 
   const v4_2FunctionNames = ["sortingEnabled"];
 
