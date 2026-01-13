@@ -12,7 +12,6 @@ create table
     type character varying null,
     prompt character varying null,
     uuid uuid not null default gen_random_uuid (),
-    percentage_to_creator numeric null,
     cost_to_vote numeric null,
     has_been_featured boolean null default false,
     anyone_can_submit int2, null default null,

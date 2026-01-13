@@ -8,7 +8,6 @@ create table
     vote_amount numeric null,
     created_at integer null,
     deleted boolean null default false,
-    percentage_to_creator numeric null,
     amount_sent numeric null,
     comment_id character varying null,
     percentage_to_rewards numeric null,
