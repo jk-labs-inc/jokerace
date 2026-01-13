@@ -3,7 +3,7 @@ import useEmailSignup from "@hooks/useEmailSignup";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 
 const Subscribe = () => {
   const [email, setEmail] = useState("");
@@ -11,7 +11,7 @@ const Subscribe = () => {
   const [emailError, setEmailError] = useState("");
   const [emailAlreadyExistsMessage, setEmailAlreadyExistsMessage] = useState("");
   const { subscribeUser, checkIfEmailExists, isLoading } = useEmailSignup();
-  const { address } = useAccount();
+  const { address } = useConnection();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [isMounted, setIsMounted] = useState(false);
 

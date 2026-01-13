@@ -10,7 +10,7 @@ import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useRef } from "react";
 import { toast } from "react-toastify";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useFundPoolStore } from "../Create/pages/ContestRewards/components/FundPool/store";
 import TokenWidgets from "../Create/pages/ContestRewards/components/FundPool/components/TokenWidgets";
 import { RainbowKitChain } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext";
@@ -24,7 +24,7 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
   const { ...dialogProps } = props;
   const pathname = usePathname();
   const { chainName } = extractPathSegments(pathname);
-  const { chainId: userChainId } = useAccount();
+  const { chainId: userChainId } = useConnection();
   const selectedChain = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase());
   const isConnectedOnCorrectChain = selectedChain?.id === userChainId;
   const { tokenWidgets, setTokenWidgets } = useFundPoolStore(state => state);

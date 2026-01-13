@@ -16,7 +16,7 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { erc20Abi, parseUnits } from "viem";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useFundRewardsStore } from "./store";
 
 export interface RewardData {
@@ -33,7 +33,7 @@ export function useFundRewardsModule() {
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
-  const { chain } = useAccount();
+  const { chain } = useConnection();
   const {
     isModalOpen,
     isLoading,

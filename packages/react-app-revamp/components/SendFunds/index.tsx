@@ -6,7 +6,7 @@ import { useSendToken } from "@hooks/useSendToken";
 import { FilteredToken } from "@hooks/useTokenList";
 import { switchChain } from "@wagmi/core";
 import { FC, useMemo, useState } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 
 interface SendFundsProps {
   isOpen: boolean;
@@ -15,7 +15,7 @@ interface SendFundsProps {
 }
 
 const SendFunds: FC<SendFundsProps> = ({ isOpen, onClose, recipientAddress }) => {
-  const { chainId: currentChainId } = useAccount();
+  const { chainId: currentChainId } = useConnection();
   const [chainId, setChainId] = useState<number>(currentChainId ?? 1);
   const { sendToken } = useSendToken({
     onSuccess: () => {

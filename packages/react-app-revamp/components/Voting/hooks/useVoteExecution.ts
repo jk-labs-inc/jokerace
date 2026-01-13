@@ -3,7 +3,7 @@ import { useVotingStore } from "@components/Voting/store";
 import { config } from "@config/wagmi";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { switchChain } from "@wagmi/core";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 interface UseVoteExecutionProps {
@@ -21,7 +21,7 @@ export const useVoteExecution = ({
   isVotingClosed,
   onVote,
 }: UseVoteExecutionProps): UseVoteExecutionReturn => {
-  const { chainId } = useAccount();
+  const { chainId } = useConnection();
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const isCorrectNetwork = chainId === contestConfig.chainId;
   const inputValue = useVotingStore(useShallow(state => state.inputValue));

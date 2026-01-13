@@ -6,7 +6,7 @@ import { emailRegex } from "@helpers/regex";
 import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useCallback, useState } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import MobileStepper from "../../components/MobileStepper";
 import { useContestSteps } from "../../hooks/useContestSteps";
@@ -20,7 +20,7 @@ import CreateContestConfirmTitle from "./components/Title";
 import { displayWalletWarning, isEthereumMainnet, isWalletForbidden } from "./utils";
 
 const CreateContestConfirm = () => {
-  const { chainId, chain, connector } = useAccount();
+  const { chainId, chain, connector } = useConnection();
   const { steps, stepReferences } = useContestSteps();
   const state = useDeployContestStore(state => state);
   const { setEmailSubscriptionAddress, getVotingOpenDate, getVotingCloseDate } = state;

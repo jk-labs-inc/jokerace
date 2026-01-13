@@ -8,7 +8,7 @@ import useEditContestTitle from "@hooks/useEditContestTitle";
 import useEditContestTitleAndImage from "@hooks/useEditContestTitleAndImage";
 import { switchChain } from "@wagmi/core";
 import { FC, useState } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import { parsePrompt } from "../../../Prompt/utils";
 import EditContestNameModal from "./components/Modal";
@@ -19,7 +19,7 @@ interface EditContestNameProps {
 }
 
 const EditContestName: FC<EditContestNameProps> = ({ contestName, contestPrompt, canEditTitle }) => {
-  const { address, chain: accountChain } = useAccount();
+  const { address, chain: accountChain } = useConnection();
   const { contestSummary, contestEvaluate, contestContactDetails, contestImageUrl } = parsePrompt(contestPrompt);
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const isOnCorrectChain = accountChain?.name.toLowerCase() === contestConfig.chainName.toLowerCase();

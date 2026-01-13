@@ -27,10 +27,10 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { disconnect } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 
 const LandingHeaderMobileFooter = () => {
-  const { isConnected, address } = useAccount();
+  const { isConnected, address } = useConnection();
   const pathname = usePathname();
   const [isInPwaMode, setIsInPwaMode] = useState(false);
   const [isClient, setIsClient] = useState(false);

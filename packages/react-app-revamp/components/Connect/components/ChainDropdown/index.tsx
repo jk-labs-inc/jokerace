@@ -3,7 +3,7 @@ import { chains, config } from "@config/wagmi";
 import { Chain } from "@rainbow-me/rainbowkit";
 import { switchChain } from "@wagmi/core";
 import { FC, useState } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import ConnectDropdown from "../Dropdown";
 
 const chainOptions: Option[] = chains.map(chain => {
@@ -16,7 +16,7 @@ const chainOptions: Option[] = chains.map(chain => {
 });
 
 const ChainDropdown: FC = () => {
-  const { chain: currentChain } = useAccount();
+  const { chain: currentChain } = useConnection();
   const [resetKey, setResetKey] = useState(0);
 
   const handleChainSwitch = async (chainId: string) => {

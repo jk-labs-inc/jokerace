@@ -3,7 +3,7 @@ import { getBlockDetails } from "@helpers/getBlock";
 import { useError } from "@hooks/useError";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics, saveUpdatedProposalsCommentStatusToAnalyticsV3 } from "lib/analytics/participants";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useCommentsContract } from "./useCommentsContract";
 import { useCommentsFetch } from "./useCommentsFetch";
 import { useCommentsStore } from "./store";
@@ -15,7 +15,7 @@ import { useCommentsStore } from "./store";
  * @param proposalId - Proposal ID for the comment
  */
 export const useCommentsActions = (address: string, chainId: number, proposalId: string) => {
-  const { address: accountAddress } = useAccount();
+  const { address: accountAddress } = useConnection();
   const { getContractConfig, chainName, config } = useCommentsContract(address, chainId);
   const { getCommentId, getComment } = useCommentsFetch(address, chainId);
   const { handleError } = useError();

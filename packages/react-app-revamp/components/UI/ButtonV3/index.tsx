@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { motion } from "motion/react";
 
@@ -55,7 +55,7 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   children,
 }) => {
-  const { isConnected } = useAccount();
+  const { isConnected } = useConnection();
   const { openConnectModal } = useConnectModal();
 
   const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {

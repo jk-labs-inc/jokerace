@@ -7,7 +7,7 @@ import useUserRewards from "@hooks/useUserRewards";
 import { useUserTiedRankings } from "@hooks/useUserTiedRankings";
 import { RewardModuleInfo } from "lib/rewards/types";
 import { FC } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import RewardsError from "../../../../shared/Error";
 import RewardsPlayerViewClaimRewards from "../../../../shared/PlayerView/ClaimRewards";
@@ -29,7 +29,7 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
   contestAddress,
   tiedRankings,
 }) => {
-  const { address: userAddress } = useAccount();
+  const { address: userAddress } = useConnection();
   const contestAuthorEthereumAddress = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const isCreator = userAddress === contestAuthorEthereumAddress;

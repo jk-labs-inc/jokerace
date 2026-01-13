@@ -4,12 +4,12 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { didUserReject, handleError as handleUtilityError } from "utils/error";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 
 export function useError() {
   const pathname = usePathname();
   const { chainName: chainNameFromPath } = extractPathSegments(pathname);
-  const { chain: chainFromAccount } = useAccount();
+  const { chain: chainFromAccount } = useConnection();
   const [error, setError] = useState<string>("");
 
   const handleError = (e: any, defaultMessage: string) => {

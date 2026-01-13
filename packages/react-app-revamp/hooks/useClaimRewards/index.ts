@@ -9,7 +9,7 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 
 interface UseClaimRewardsProps {
   contractRewardsModuleAddress: `0x${string}`;
@@ -29,7 +29,7 @@ export const useClaimRewards = ({
   tokenDecimals,
   userAddress,
 }: UseClaimRewardsProps) => {
-  const { chainId: userChainId } = useAccount();
+  const { chainId: userChainId } = useConnection();
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { handleError } = useError();

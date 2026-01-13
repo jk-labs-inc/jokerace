@@ -2,7 +2,7 @@ import { toastLoading } from "@components/UI/Toast";
 import { isSupabaseConfigured } from "@helpers/database";
 import useEmailSignup from "@hooks/useEmailSignup";
 import { useError } from "@hooks/useError";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
 import {
@@ -76,7 +76,7 @@ export function useDeployContest() {
     })),
   );
   const { handleError } = useError();
-  const { address, chain } = useAccount();
+  const { address, chain } = useConnection();
   const { tokenWidgets } = useFundPoolStore(useShallow(state => ({ tokenWidgets: state.tokenWidgets })));
 
   const votingOpen = getVotingOpenDate();

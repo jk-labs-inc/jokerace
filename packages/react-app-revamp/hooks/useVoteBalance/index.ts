@@ -2,7 +2,7 @@ import { formatBalance } from "@helpers/formatBalance";
 import { getChainFromId } from "@helpers/getChainFromId";
 import { STANDARD_ANYONE_CAN_VOTE_GAS_LIMIT } from "@hooks/useUserSubmitQualification/utils";
 import { formatUnits } from "viem";
-import { useAccount, useBalance, useGasPrice } from "wagmi";
+import { useConnection, useBalance, useGasPrice } from "wagmi";
 
 interface Balance {
   decimals: number;
@@ -27,7 +27,7 @@ interface UseVoteBalanceProps {
 }
 
 export const useVoteBalance = ({ chainId, costToVote, inputValue = "" }: UseVoteBalanceProps): UseVoteBalanceReturn => {
-  const { address: userAddress } = useAccount();
+  const { address: userAddress } = useConnection();
   const chainCurrencyDecimals = getChainFromId(chainId)?.nativeCurrency?.decimals ?? 18;
 
   const {

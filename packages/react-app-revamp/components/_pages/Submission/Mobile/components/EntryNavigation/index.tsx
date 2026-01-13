@@ -2,7 +2,7 @@ import { FC } from "react";
 import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
 import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useShallow } from "zustand/shallow";
 import CustomLink from "@components/UI/Link";
@@ -12,7 +12,7 @@ interface SubmissionPageMobileEntryNavigationProps {
 }
 
 const SubmissionPageMobileEntryNavigation: FC<SubmissionPageMobileEntryNavigationProps> = ({ isInPwaMode }) => {
-  const { isConnected } = useAccount();
+  const { isConnected } = useConnection();
   const { openConnectModal } = useConnectModal();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { currentIndex, totalProposals, previousEntryUrl, nextEntryUrl } = useNavigateProposals();

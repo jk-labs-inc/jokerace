@@ -1,9 +1,8 @@
 import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
-  argentWallet,
   bitgetWallet,
   braveWallet,
-  coinbaseWallet,
+  baseAccount,
   frameWallet,
   imTokenWallet,
   ledgerWallet,
@@ -20,6 +19,7 @@ import {
   uniswapWallet,
   walletConnectWallet,
   zerionWallet,
+  readyWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { abstractWallet } from "@abstract-foundation/agw-react/connectors";
 import { cookieStorage, createConfig, createStorage } from "wagmi";
@@ -89,7 +89,9 @@ const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 const appName = "jokerace";
 const projectId = WALLETCONECT_PROJECT_ID;
 
-coinbaseWallet.preference = "smartWalletOnly";
+baseAccount.preference = {
+  options: "smartWalletOnly",
+};
 
 export const connectors = () => {
   // Only create connectors on client-side to avoid SSR issues
@@ -113,7 +115,7 @@ export const connectors = () => {
         wallets: [
           metaMaskWallet,
           walletConnectWallet,
-          coinbaseWallet,
+          baseAccount,
           rainbowWallet,
           abstractWallet,
           okxWallet,
@@ -121,7 +123,7 @@ export const connectors = () => {
           safeWallet,
           rabbyWallet,
           tahoWallet,
-          argentWallet,
+          readyWallet,
           trustWallet,
           imTokenWallet,
           omniWallet,

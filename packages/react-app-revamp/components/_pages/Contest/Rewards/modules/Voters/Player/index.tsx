@@ -4,7 +4,7 @@ import useTotalVotesPerUser from "@hooks/useTotalVotesPerUser";
 import { useValidateRankings } from "@hooks/useValidateRankings";
 import { RewardModuleInfo } from "lib/rewards/types";
 import { FC } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import RewardsError from "../../shared/Error";
 import RewardsPlayerNotQualified from "../../shared/PlayerView/NotQualified";
@@ -19,7 +19,7 @@ interface VoterRewardsPagePlayerViewProps {
 }
 
 const VoterRewardsPagePlayerView: FC<VoterRewardsPagePlayerViewProps> = ({ contestAddress, chainId, rewards }) => {
-  const { isConnected, address } = useAccount();
+  const { isConnected, address } = useConnection();
   const isCreator = address === rewards.creator;
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const {

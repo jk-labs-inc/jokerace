@@ -8,7 +8,7 @@ import { useTokenOrNativeBalance } from "@hooks/useBalance";
 import { FilteredToken } from "@hooks/useTokenList";
 import { usePathname } from "next/navigation";
 import { FC, useEffect, useMemo, useState } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { FundPoolToken, useFundPoolStore } from "../../../store";
 import { generateNativeToken } from "../../../utils";
 import { RainbowKitChain } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext";
@@ -40,7 +40,7 @@ const getTokenSymbol = (
 };
 
 const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain }) => {
-  const { address: userAddress } = useAccount();
+  const { address: userAddress } = useConnection();
   const chainLogo = chain?.iconUrl;
   const nativeCurrency = chain?.nativeCurrency;
   const chainNativeCurrencySymbol = nativeCurrency?.symbol;

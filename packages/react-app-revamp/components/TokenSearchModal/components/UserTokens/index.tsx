@@ -1,7 +1,7 @@
 import { useFetchUserTokens } from "@hooks/useFetchUserTokens";
 import { FilteredToken } from "@hooks/useTokenList";
 import { FC } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import TokenSearchListToken from "../TokenList/components/Token";
 import { isAlchemyConfigured } from "@helpers/alchemy";
 import SimpleBar from "simplebar-react";
@@ -17,7 +17,7 @@ const TokenSearchModalUserTokens: FC<TokenSearchModalUserTokensProps> = ({
   onSelectToken,
   isChainDropdownOpen,
 }) => {
-  const { address } = useAccount();
+  const { address } = useConnection();
   const { isLoading, tokens, error } = useFetchUserTokens(address ?? "", chainName);
 
   if (!address) return null;

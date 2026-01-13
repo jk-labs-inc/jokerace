@@ -4,7 +4,7 @@ import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, MouseEventHandler, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useAccount, useBalance } from "wagmi";
+import { useConnection, useBalance } from "wagmi";
 import MobileBottomButton from "../Mobile";
 
 interface CreateContestButtonProps {
@@ -21,7 +21,7 @@ enum CreateButtonText {
 
 const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDisabled }) => {
   const { errors } = useDeployContestStore(state => state);
-  const { isConnected, address, chainId, chain } = useAccount();
+  const { isConnected, address, chainId, chain } = useConnection();
   const [shake, setShake] = useState(false);
   const onPreviousStep = usePreviousStep();
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });

@@ -9,7 +9,7 @@ import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import CancelContestModal from "./components/Modal";
 
@@ -17,7 +17,7 @@ const CancelContest = () => {
   const pathname = usePathname();
   const { address: contestAddress, chainName } = extractPathSegments(pathname);
   const contestChainId = getChainId(chainName);
-  const { address, chainId } = useAccount();
+  const { address, chainId } = useConnection();
   const contestAuthorEthereumAddress = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
   const { cancelContest, isLoading, isConfirmed } = useContestState();
   const { contestState } = useContestStateStore(state => state);

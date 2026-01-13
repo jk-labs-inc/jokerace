@@ -1,4 +1,5 @@
 import { chains, config } from "@config/wagmi";
+import { getTokenBalanceValue } from "@helpers/getTokenBalance";
 import { getBalance, readContract, readContracts } from "@wagmi/core";
 import { Abi, Address, erc20Abi, formatUnits } from "viem";
 import { getTokenAddresses } from "../database";
@@ -86,9 +87,9 @@ export async function fetchTotalRewards({
       if (tokenAddresses && tokenAddresses.length > 0) {
         const tokenBalances = await Promise.all(
           tokenAddresses.map(tokenAddress =>
-            getBalance(config, {
-              address: rewardsModuleAddress,
-              token: tokenAddress,
+            getTokenBalanceValue({
+              tokenAddress,
+              userAddress: rewardsModuleAddress,
               chainId,
             }),
           ),
@@ -117,9 +118,9 @@ export async function fetchTotalRewards({
           const tokenTotalReleased = (tokenTotalReleasedResult.result as bigint) || 0n;
           const symbol = symbolResult.result as string;
           const decimals = decimalsResult.result as number;
-          const tokenBalance = tokenBalances[i];
+          const tokenBalanceValue = tokenBalances[i];
 
-          const tokenTotal = tokenBalance.value + tokenTotalReleased;
+          const tokenTotal = tokenBalanceValue + tokenTotalReleased;
 
           tokensData[tokenAddress as string] = {
             value: tokenTotal,

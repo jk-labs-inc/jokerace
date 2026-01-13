@@ -1,4 +1,4 @@
-import { useAccount, useDisconnect } from "wagmi";
+import { useConnection, useDisconnect } from "wagmi";
 import { FC } from "react";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import ChainDropdown from "./components/ChainDropdown";
@@ -15,7 +15,7 @@ interface ConnectButtonProps {
 
 export const ConnectButtonCustom: FC<ConnectButtonProps> = ({ displayOptions = {} }) => {
   const { onlyChainSwitcher = false } = displayOptions;
-  const { address, isConnected } = useAccount();
+  const { address, isConnected } = useConnection();
   const { disconnect } = useDisconnect();
   const { openConnectModal } = useConnectModal();
 

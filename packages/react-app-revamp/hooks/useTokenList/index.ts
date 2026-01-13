@@ -1,8 +1,9 @@
-import { config } from "@config/wagmi";
+import { getToken } from "@helpers/getToken";
+import { getTokenBalance } from "@helpers/getTokenBalance";
 import { addressRegex } from "@helpers/regex";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getToken, getBalance } from "@wagmi/core";
-import { useAccount } from "wagmi";
+import { formatUnits } from "viem";
+import { useConnection } from "wagmi";
 
 export interface FilteredToken {
   address: string;
@@ -67,17 +68,17 @@ async function fetchTokenListOrMetadata({
 
     if (userAddress) {
       const tokensWithBalances = await Promise.all(
-        tokens.map(async (token: { address: string }) => {
+        tokens.map(async (token: { address: string; decimals: number }) => {
           try {
-            const balance = await getBalance(config, {
-              address: userAddress as `0x${string}`,
-              token: token.address as `0x${string}`,
+            const balance = await getTokenBalance({
+              tokenAddress: token.address as `0x${string}`,
+              userAddress: userAddress as `0x${string}`,
               chainId,
             });
 
             return {
               ...token,
-              balance: Number(balance.formatted),
+              balance: Number(formatUnits(balance.value, token.decimals)),
             };
           } catch (error) {
             console.error(`error fetching balance for token ${token.address}:`, error);
@@ -119,7 +120,7 @@ async function fetchTokenByAddress({
   userAddress?: string;
 }): Promise<{ tokens: FilteredToken[]; pagination: PaginationInfo }> {
   if (addressRegex.test(tokenIdentifier)) {
-    const token = await getToken(config, {
+    const token = await getToken({
       address: tokenIdentifier as `0x${string}`,
       chainId,
     });
@@ -141,13 +142,13 @@ async function fetchTokenByAddress({
 
     if (userAddress) {
       try {
-        const balance = await getBalance(config, {
-          address: userAddress as `0x${string}`,
-          token: tokenData.address as `0x${string}`,
+        const balance = await getTokenBalance({
+          tokenAddress: tokenData.address as `0x${string}`,
+          userAddress: userAddress as `0x${string}`,
           chainId,
         });
 
-        tokenData.balance = Number(balance.formatted);
+        tokenData.balance = Number(formatUnits(balance.value, tokenData.decimals));
       } catch (error) {
         console.error(`error fetching balance for token ${tokenData.address}:`, error);
       }
@@ -167,7 +168,7 @@ async function fetchTokenByAddress({
 }
 
 export function useTokenList(chainId: number, tokenIdentifier: string) {
-  const { address } = useAccount();
+  const { address } = useConnection();
 
   const { data, isLoading, isError, error, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ["searchTokens", chainId, tokenIdentifier, address],

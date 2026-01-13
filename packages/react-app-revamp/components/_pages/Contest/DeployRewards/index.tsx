@@ -1,5 +1,5 @@
 import { useContestStore } from "@hooks/useContest/store";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import ContestDeployRewardsUnderConstruction from "./components/UnderConstruction";
 import { useDeployRewards } from "./hooks/useDeployRewards";
@@ -7,7 +7,7 @@ import { RewardsDeploymentStatus } from "./components/DeploymentStatus";
 import { ConfigurationForm } from "./components/ConfigurationForm";
 
 const ContestDeployRewards = () => {
-  const { address: connectedAccountAddress } = useAccount();
+  const { address: connectedAccountAddress } = useConnection();
   const contestAuthorEthereumAddress = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
   const isCreator = connectedAccountAddress === contestAuthorEthereumAddress;
   const { deployRewards, isDeploying, deploymentProcess, addFundsToRewards } = useDeployRewards();

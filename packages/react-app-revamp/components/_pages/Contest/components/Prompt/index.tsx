@@ -3,7 +3,7 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { useUserStore } from "@hooks/useUserSubmitQualification/store";
 import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import ContestPromptModal from "./components/Modal";
 import ContestPromptPage from "./components/Page";
 import { useShallow } from "zustand/shallow";
@@ -15,7 +15,7 @@ interface ContestPromptProps {
 }
 
 const ContestPrompt: FC<ContestPromptProps> = ({ prompt, type, hidePrompt = false }) => {
-  const { isConnected } = useAccount();
+  const { isConnected } = useConnection();
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const isVotingOpenOrClosed =
     contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;

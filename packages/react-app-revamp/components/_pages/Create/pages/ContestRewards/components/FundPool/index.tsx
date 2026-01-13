@@ -1,12 +1,12 @@
 import CreateSwitch from "@components/_pages/Create/components/Switch";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { RainbowKitChain } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext";
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import TokenWidgets from "./components/TokenWidgets";
 
 const CreateRewardsFundPool = () => {
-  const { chain } = useAccount();
+  const { chain } = useConnection();
   const { addFundsToRewards, setAddFundsToRewards } = useDeployContestStore(
     useShallow(state => ({
       addFundsToRewards: state.addFundsToRewards,

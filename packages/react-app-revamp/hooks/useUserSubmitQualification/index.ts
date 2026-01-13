@@ -1,9 +1,9 @@
-import { useAccount } from "wagmi";
+import { useConnection } from "wagmi";
 import { useSubmitQualification } from "./useSubmitQualification";
 export { EMPTY_ROOT } from "./utils";
 
 export function useUser() {
-  const { address: userAddress } = useAccount();
+  const { address: userAddress } = useConnection();
   const { checkIfCurrentUserQualifyToSubmit } = useSubmitQualification(userAddress);
 
   return {
