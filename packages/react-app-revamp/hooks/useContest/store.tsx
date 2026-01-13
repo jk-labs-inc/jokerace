@@ -55,7 +55,7 @@ export const createContestStore = () =>
     isLoading: true,
     error: null,
     charge: {
-      percentageToCreator: 0,
+      percentageToRewards: 0,
       costToVote: 0,
     },
     isSuccess: false,

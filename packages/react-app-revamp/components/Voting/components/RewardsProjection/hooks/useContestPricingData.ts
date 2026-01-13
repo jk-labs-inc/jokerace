@@ -1,9 +1,11 @@
+import { CREATOR_SPLIT_VERSION } from "@hooks/useContest/v3v4/contracts";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
+import { compareVersions } from "compare-versions";
 import { useReadContract } from "wagmi";
 
 interface ContestPricingData {
-  percentageToCreator: number;
+  percentageToRewards: number;
   costToVote: bigint;
   multiple: number;
   isLoading: boolean;
@@ -12,15 +14,19 @@ interface ContestPricingData {
 
 export const useContestPricingData = (): ContestPricingData => {
   const { contestConfig } = useContestConfigStore(state => state);
+  const hasCreatorSplit = contestConfig.version
+    ? compareVersions(contestConfig.version, CREATOR_SPLIT_VERSION) >= 0
+    : false;
+  const percentageFunctionName = hasCreatorSplit ? "percentageToRewards" : "percentageToCreator";
 
   const {
-    data: percentageToCreatorRaw,
+    data: percentageToRewardsRaw,
     isLoading: isLoadingPercentage,
     isError: isErrorPercentage,
   } = useReadContract({
     address: contestConfig.address as `0x${string}`,
     abi: contestConfig.abi,
-    functionName: "percentageToCreator",
+    functionName: percentageFunctionName,
     chainId: contestConfig.chainId,
     query: {
       enabled: Boolean(contestConfig.address && contestConfig.abi && contestConfig.chainId),
@@ -55,7 +61,7 @@ export const useContestPricingData = (): ContestPricingData => {
   });
 
   return {
-    percentageToCreator: percentageToCreatorRaw ? Number(percentageToCreatorRaw) : 0,
+    percentageToRewards: percentageToRewardsRaw ? Number(percentageToRewardsRaw) : 0,
     costToVote: (costToVoteRaw as bigint) || 0n,
     multiple: priceCurveMultiple ? Number(priceCurveMultiple) : 0,
     isLoading: isLoadingPercentage || isLoadingCost || isLoadingMultiple,

@@ -24,7 +24,8 @@ export interface ContestData {
   authorAddress: string;
   networkName: string;
   cost_to_vote: number;
-  percentage_to_creator: number;
+  percentage_to_rewards: number;
+  creator_split_enabled: number;
 }
 
 export const prepareContestData = (params: ContestDataParams): ContestData => {
@@ -52,6 +53,7 @@ export const prepareContestData = (params: ContestDataParams): ContestData => {
     authorAddress: address,
     networkName: chainName?.toLowerCase().replace(" ", "") ?? "",
     cost_to_vote: charge.costToVote,
-    percentage_to_creator: charge.percentageToCreator,
+    percentage_to_rewards: charge.percentageToRewards,
+    creator_split_enabled: charge.creatorSplitEnabled,
   };
 };

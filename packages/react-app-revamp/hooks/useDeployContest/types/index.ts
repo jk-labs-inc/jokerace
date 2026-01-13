@@ -4,7 +4,8 @@ export type Recipient = {
 };
 
 export type Charge = {
-  percentageToCreator: number;
+  percentageToRewards: number;
+  creatorSplitEnabled?: number;
   costToVote: number;
   costToVoteEndPrice?: number;
   error?: boolean;
@@ -30,7 +31,8 @@ export interface ContestValues {
   contractAddress: string;
   networkName: string;
   cost_to_vote: number;
-  percentage_to_creator: number;
+  percentage_to_rewards: number;
+  creator_split_enabled: number;
   authorAddress?: string;
   featured?: boolean;
 }

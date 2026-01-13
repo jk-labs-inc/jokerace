@@ -11,6 +11,7 @@ create table
     percentage_to_creator numeric null,
     amount_sent numeric null,
     comment_id character varying null,
+    percentage_to_rewards numeric null,
     constraint analytics_contest_participants_v3_pkey primary key (uuid)
   ) tablespace pg_default;
 

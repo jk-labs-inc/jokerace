@@ -62,7 +62,8 @@ export async function indexContest(contestData: ContestValues) {
       network_name: contestData.networkName,
       featured: contestData.featured ?? false,
       cost_to_vote: contestData.cost_to_vote,
-      percentage_to_creator: contestData.percentage_to_creator,
+      percentage_to_rewards: contestData.percentage_to_rewards,
+      creator_split_enabled: contestData.creator_split_enabled,
     },
   ]);
 

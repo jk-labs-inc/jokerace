@@ -20,7 +20,7 @@ const RewardsParametersInfo: FC<RewardsParametersInfoProps> = ({ rewardsStore, c
     <ul className="pl-4 text-[16px] text-neutral-9">
       {isRewardsPoolSelfFunded ? (
         <li className="list-disc">
-          <b>rewards go up as players enter and vote,</b> with {charge.percentageToCreator}% of {isMobile ? "" : <br />}
+          <b>rewards go up as players enter and vote,</b> with {charge.percentageToRewards}% of {isMobile ? "" : <br />}
           their charges going into pool
         </li>
       ) : null}
