@@ -18,7 +18,7 @@
     "@base-org/account": "2.5.1",
     "@bigmi/react": "0.6.4",
     "@clustersxyz/sdk": "1.0.2",
-    "@coinbase/wallet-sdk": "4.3.6",
+    "@coinbase/wallet-sdk": "4.3.7",
     "@gemini-wallet/core": "0.3.1",
     "@getbrevo/brevo": "3.0.1",
     "@getpara/rainbowkit-wallet": "1.4.0",
