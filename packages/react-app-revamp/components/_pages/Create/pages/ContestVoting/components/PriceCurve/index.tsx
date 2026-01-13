@@ -4,6 +4,7 @@ import { FC } from "react";
 import PriceCurveMultiplerPreview from "./components/PriceCurveMultiplerPreview";
 import { useMediaQuery } from "react-responsive";
 import CreateTextContainer from "@components/_pages/Create/components/TextContainer";
+import CreateContestCreatorSplitToggle from "../CreatorSplitToggle";
 
 interface CreateContestPriceCurveProps {
   chain: string;
@@ -45,6 +46,7 @@ const CreateContestPriceCurve: FC<CreateContestPriceCurveProps> = ({ chain, onEr
         </p>
       </CreateTextContainer>
       <PriceCurveMultiplerPreview chainUnitLabel={chainUnitLabel} onError={onError} />
+      <CreateContestCreatorSplitToggle />
     </div>
   );
 };

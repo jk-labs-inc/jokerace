@@ -9,7 +9,7 @@ interface SaveToAnalyticsContestParticipantsOptions {
   vote_amount?: number;
   deleted?: boolean;
   amount_sent?: number | null;
-  percentage_to_creator?: number | null;
+  percentage_to_rewards?: number | null;
   comment_id?: string;
 }
 

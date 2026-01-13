@@ -20,7 +20,7 @@ import { useState } from "react";
 import { Abi } from "viem";
 import { createResultGetter } from "./helpers";
 import { ErrorType, useContestStore } from "./store";
-import { getContracts } from "./v3v4/contracts";
+import { getContracts, CREATOR_SPLIT_VERSION } from "./v3v4/contracts";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -135,7 +135,10 @@ export function useContest() {
         setCanEditTitleAndDescription(true);
       }
 
-      const percentageToCreator = Number(getResultByName("percentageToCreator")) || 0;
+      const hasCreatorSplit = compareVersions(version, CREATOR_SPLIT_VERSION) >= 0;
+      const percentageToRewards = hasCreatorSplit
+        ? Number(getResultByName("percentageToRewards")) || 0
+        : Number(getResultByName("percentageToCreator")) || 0;
       let costToVote = 0;
 
       if (compareVersions(version, "4.23") >= 0) {
@@ -143,7 +146,7 @@ export function useContest() {
       }
 
       setCharge({
-        percentageToCreator,
+        percentageToRewards,
         costToVote,
       });
 
