@@ -70,7 +70,10 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
               costToVoteEndPrice={costToVoteEndPrice}
               nativeCurrencySymbol={nativeCurrencySymbol}
             />
-            <CreatorChargesMessage percentageToRewards={charge.percentageToRewards} />
+            <CreatorChargesMessage
+              percentageToRewards={charge.percentageToRewards}
+              creatorSplitEnabled={charge.creatorSplitEnabled ?? 0}
+            />
           </ul>
         )}
       </div>
