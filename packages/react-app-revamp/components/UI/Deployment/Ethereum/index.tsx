@@ -1,20 +1,18 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { Dialog, DialogPanel } from "@headlessui/react";
-import { useChainModal } from "@rainbow-me/rainbowkit";
 import { FC } from "react";
 
 interface EthereumDeploymentModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   onDeploy?: () => void;
+  onChangeChain?: () => void;
 }
 
-const EthereumDeploymentModal: FC<EthereumDeploymentModalProps> = ({ isOpen, setIsOpen, onDeploy }) => {
-  const { openChainModal } = useChainModal();
-
+const EthereumDeploymentModal: FC<EthereumDeploymentModalProps> = ({ isOpen, setIsOpen, onDeploy, onChangeChain }) => {
   const onChangeChainHandler = () => {
     setIsOpen(false);
-    openChainModal?.();
+    onChangeChain?.();
   };
 
   return (
@@ -29,7 +27,7 @@ const EthereumDeploymentModal: FC<EthereumDeploymentModalProps> = ({ isOpen, set
               <div className="flex flex-col gap-12">
                 <div className="flex flex-col gap-8">
                   <p className="text-[24px] text-neutral-11 font-bold">🚨 ethereum mainnet alert 🚨 </p>
-                  <p className="text-[20px] text-neutral-11">it looks like you’re deploying to ethereum mainnet 😰</p>
+                  <p className="text-[20px] text-neutral-11">it looks like you're deploying to ethereum mainnet 😰</p>
                   <p className="text-[20px] text-neutral-11">
                     mainnet fees can cost <b></b>~100x as much as fees on other <br /> chains. so players could end up
                     paying tens or hundreds of <br />
@@ -45,7 +43,7 @@ const EthereumDeploymentModal: FC<EthereumDeploymentModalProps> = ({ isOpen, set
                     size={ButtonSize.DEFAULT_LONG}
                     onClick={onChangeChainHandler}
                   >
-                    i’ll change chains
+                    i'll change chains
                   </ButtonV3>
                   <p className="text-[16px] text-neutral-11 cursor-pointer" onClick={onDeploy}>
                     let me use mainnet

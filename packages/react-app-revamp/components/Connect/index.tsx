@@ -1,8 +1,7 @@
-import { useConnection, useDisconnect } from "wagmi";
+import { useAccount, useLogout, useModal, useWallet } from "@getpara/react-sdk";
 import { FC } from "react";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
-import ChainDropdown from "./components/ChainDropdown";
 import AccountDropdown from "./components/AccountDropdown";
+import ChainDropdown from "./components/ChainDropdown";
 
 interface DisplayOptions {
   showChainName?: boolean;
@@ -15,18 +14,26 @@ interface ConnectButtonProps {
 
 export const ConnectButtonCustom: FC<ConnectButtonProps> = ({ displayOptions = {} }) => {
   const { onlyChainSwitcher = false } = displayOptions;
-  const { address, isConnected } = useConnection();
-  const { disconnect } = useDisconnect();
-  const { openConnectModal } = useConnectModal();
+  const { isConnected } = useAccount();
+  const { data } = useWallet();
+  const { logoutAsync } = useLogout();
+  const { openModal } = useModal();
 
-  const handleDisconnect = () => {
-    disconnect();
+  const handleDisconnect = async () => {
+    try {
+      await logoutAsync({
+        clearPregenWallets: false, // Keep pregenerated wallets
+      });
+      console.log("Successfully logged out");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
   };
 
-  if (!isConnected || !address) {
+  if (!isConnected || !data?.address) {
     return (
       <button
-        onClick={openConnectModal}
+        onClick={() => openModal()}
         type="button"
         className="w-48 h-10 text-center bg-gradient-create rounded-[40px] text-true-black font-bold text-[16px]"
       >
@@ -40,8 +47,8 @@ export const ConnectButtonCustom: FC<ConnectButtonProps> = ({ displayOptions = {
       <ChainDropdown />
       {!onlyChainSwitcher && (
         <AccountDropdown
-          address={address}
-          displayName={`${address.slice(0, 6)}...${address.slice(-4)}`}
+          address={data.address}
+          displayName={`${data.address.slice(0, 6)}...${data.address.slice(-4)}`}
           onDisconnect={handleDisconnect}
         />
       )}

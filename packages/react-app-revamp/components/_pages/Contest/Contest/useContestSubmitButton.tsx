@@ -2,14 +2,14 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { AnyoneCanSubmit, useUserStore } from "@hooks/useUserSubmitQualification/store";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useModal } from "@getpara/react-sdk";
 import { useMediaQuery } from "react-responsive";
 import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 export const useContestSubmitButton = () => {
   const { isConnected } = useConnection();
-  const { openConnectModal } = useConnectModal();
+  const { openModal } = useModal();
   const {
     contestMaxNumberSubmissionsPerUser,
     currentUserQualifiedToSubmit,
@@ -56,7 +56,7 @@ export const useContestSubmitButton = () => {
         <ButtonV3
           colorClass="bg-gradient-vote rounded-[40px]"
           size={isMobile ? ButtonSize.EXTRA_LARGE_LONG_MOBILE : ButtonSize.EXTRA_LARGE_LONG}
-          onClick={openConnectModal}
+          onClick={() => openModal()}
         >
           connect wallet to submit entry
         </ButtonV3>

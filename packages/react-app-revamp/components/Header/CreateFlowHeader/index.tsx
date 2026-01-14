@@ -1,7 +1,7 @@
 import { MediaQuery } from "@helpers/mediaQuery";
 import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useModal } from "@getpara/react-sdk";
 import { useEffect } from "react";
 import { useConnection } from "wagmi";
 import MainHeaderMobileLayout from "../MainHeader/MobileLayout";
@@ -11,7 +11,7 @@ const CreateFlowHeader = () => {
   const { isConnected, address } = useConnection();
   const { isLoading, isSuccess } = useDeployContestStore(state => state);
   const { pageAction, setPageAction } = usePageActionStore(state => state);
-  const { openConnectModal } = useConnectModal();
+  const { openModal } = useModal();
 
   useEffect(() => {
     return () => {
@@ -22,7 +22,7 @@ const CreateFlowHeader = () => {
   return (
     <div>
       <MediaQuery maxWidth={1024}>
-        <MainHeaderMobileLayout isConnected={isConnected} address={address ?? ""} openConnectModal={openConnectModal} />
+        <MainHeaderMobileLayout isConnected={isConnected} address={address ?? ""} openConnectModal={() => openModal()} />
       </MediaQuery>
       <MediaQuery minWidth={1025}>
         <CreateFlowHeaderDesktopLayout

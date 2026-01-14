@@ -1,20 +1,18 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { Dialog, DialogPanel } from "@headlessui/react";
-import { useChainModal } from "@rainbow-me/rainbowkit";
 import { FC } from "react";
 
 interface TestnetDeploymentModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   onDeploy?: () => void;
+  onChangeChain?: () => void;
 }
 
-const TestnetDeploymentModal: FC<TestnetDeploymentModalProps> = ({ isOpen, setIsOpen, onDeploy }) => {
-  const { openChainModal } = useChainModal();
-
+const TestnetDeploymentModal: FC<TestnetDeploymentModalProps> = ({ isOpen, setIsOpen, onDeploy, onChangeChain }) => {
   const onChangeChainHandler = () => {
     setIsOpen(false);
-    openChainModal?.();
+    onChangeChain?.();
   };
 
   return (
@@ -29,10 +27,10 @@ const TestnetDeploymentModal: FC<TestnetDeploymentModalProps> = ({ isOpen, setIs
               <div className="flex flex-col gap-12">
                 <div className="flex flex-col gap-8">
                   <p className="text-[24px] text-neutral-11 font-bold">🚨 testnet alert 🚨 </p>
-                  <p className="text-[20px] text-neutral-11">it looks like you’re connected to a testnet chain 😰</p>
+                  <p className="text-[20px] text-neutral-11">it looks like you're connected to a testnet chain 😰</p>
                   <p className="text-[20px] text-neutral-11">
-                    testnet chains don’t have real money. users will have to find <br /> a way to get testnet currencies
-                    and you won’t be able to monetize.
+                    testnet chains don't have real money. users will have to find <br /> a way to get testnet currencies
+                    and you won't be able to monetize.
                   </p>
                   <p className="text-[20px] text-neutral-11">
                     would you like to cancel so you can change chains in your <br /> wallet (on the upper right)?
@@ -44,7 +42,7 @@ const TestnetDeploymentModal: FC<TestnetDeploymentModalProps> = ({ isOpen, setIs
                     size={ButtonSize.DEFAULT_LONG}
                     onClick={onChangeChainHandler}
                   >
-                    i’ll change chains
+                    i'll change chains
                   </ButtonV3>
                   <p className="text-[16px] text-neutral-11 cursor-pointer" onClick={onDeploy}>
                     let me use testnet

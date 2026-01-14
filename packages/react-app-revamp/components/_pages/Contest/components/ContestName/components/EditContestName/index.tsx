@@ -1,4 +1,3 @@
-import { config } from "@config/wagmi";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
@@ -12,6 +11,7 @@ import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import { parsePrompt } from "../../../Prompt/utils";
 import EditContestNameModal from "./components/Modal";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 interface EditContestNameProps {
   contestName: string;
   contestPrompt: string;
@@ -53,7 +53,7 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, contestPrompt,
 
     // ensure correct chain
     if (!isOnCorrectChain) {
-      await switchChain(config, { chainId: contestConfig.chainId });
+      await switchChain(getWagmiConfig(), { chainId: contestConfig.chainId });
     }
 
     // create formatted prompt if image is being updated

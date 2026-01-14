@@ -7,14 +7,14 @@ import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { useVoteBalance } from "@hooks/useVoteBalance";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useModal } from "@getpara/react-sdk";
 import { useState } from "react";
 import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 const SubmissionPageMobileVotingFooter = () => {
   const { isConnected, address } = useConnection();
-  const { openConnectModal } = useConnectModal();
+  const { openModal } = useModal();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));
   const { totalProposals } = useNavigateProposals();
@@ -37,9 +37,7 @@ const SubmissionPageMobileVotingFooter = () => {
   });
 
   const handleConnectWallet = () => {
-    if (openConnectModal) {
-      openConnectModal();
-    }
+    openModal();
   };
 
   if (!isVotingOpen) return null;

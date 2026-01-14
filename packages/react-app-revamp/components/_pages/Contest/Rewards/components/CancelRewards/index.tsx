@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { getChainId } from "@helpers/getChainId";
 import { useCancelRewards } from "@hooks/useCancelRewards";
@@ -38,7 +38,7 @@ const CancelRewards: FC<CancelRewardsProps> = ({ rewardsAddress, abi, chainId, v
 
   const handleCancelRewards = async () => {
     if (!isUserOnCorrectChain) {
-      await switchChain(config, { chainId });
+      await switchChain(getWagmiConfig(), { chainId });
     }
 
     cancelRewards();

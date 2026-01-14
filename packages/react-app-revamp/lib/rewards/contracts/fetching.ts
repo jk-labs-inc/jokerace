@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { getTokenDecimalsBatch, getTokenSymbolBatch } from "@helpers/getTokenDecimals";
 import { RewardsParams } from "@hooks/useUserRewards";
 import { readContracts } from "@wagmi/core";
@@ -48,7 +48,7 @@ export async function fetchReleasableRewards(
   if (queries.length === 0) return [];
 
   try {
-    return await readContracts(config, {
+    return await readContracts(getWagmiConfig(), {
       contracts: queries,
     });
   } catch (error) {

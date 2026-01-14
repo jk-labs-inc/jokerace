@@ -1,5 +1,5 @@
 import { MediaQuery } from "@helpers/mediaQuery";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useModal } from "@getpara/react-sdk";
 import { FC } from "react";
 import { useConnection } from "wagmi";
 import MainHeaderDesktopLayout from "./DesktopLayout";
@@ -11,12 +11,12 @@ interface MainHeaderProps {
 
 const MainHeader: FC<MainHeaderProps> = ({ showProfile }) => {
   const { isConnected, address } = useConnection();
-  const { openConnectModal } = useConnectModal();
+  const { openModal } = useModal();
 
   return (
     <div>
       <MediaQuery maxWidth={1024}>
-        <MainHeaderMobileLayout isConnected={isConnected} address={address ?? ""} openConnectModal={openConnectModal} />
+        <MainHeaderMobileLayout isConnected={isConnected} address={address ?? ""} openConnectModal={() => openModal()} />
       </MediaQuery>
       <MediaQuery minWidth={1025}>
         <MainHeaderDesktopLayout isConnected={isConnected} address={address ?? ""} />

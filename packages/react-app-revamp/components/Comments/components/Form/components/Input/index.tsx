@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useModal } from "@getpara/react-sdk";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -53,7 +53,7 @@ const commentEditorConfig = ({ content, placeholderText, onUpdate, isMobile }: C
 };
 
 const CommentsFormInput: FC<CommentsFormInputProps> = ({ onSend, contestChainId, isAddingSuccess, isAdding }) => {
-  const { openConnectModal } = useConnectModal();
+  const { openModal } = useModal();
   const { address, isConnected, chainId } = useConnection();
   const [commentContent, setCommentContent] = useState("");
   const [allowSend, setAllowSend] = useState(false);
@@ -98,12 +98,12 @@ const CommentsFormInput: FC<CommentsFormInputProps> = ({ onSend, contestChainId,
     if (!allowSend || isAdding) return;
 
     if (!isConnected) {
-      openConnectModal?.();
+      openModal();
       return;
     }
 
     if (!isUserOnCorrectNetwork) {
-      await switchChain(config, { chainId: contestChainId });
+      await switchChain(getWagmiConfig(), { chainId: contestChainId });
       return;
     }
 
@@ -138,7 +138,7 @@ const CommentsFormInput: FC<CommentsFormInputProps> = ({ onSend, contestChainId,
         isMobile={isMobile}
         isConnected={isConnected}
         onSend={handleSendComment}
-        onConnect={openConnectModal}
+        onConnect={() => openModal()}
       />
     </div>
   );

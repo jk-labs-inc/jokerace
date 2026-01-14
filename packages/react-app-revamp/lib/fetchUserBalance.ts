@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { getTokenBalance } from "@helpers/getTokenBalance";
 import { getBalance } from "@wagmi/core";
 
@@ -15,7 +15,7 @@ export async function fetchUserBalance(address: string, chainId: number, token?:
   }
 
   // For native currency, use getBalance
-  const balance = await getBalance(config, {
+  const balance = await getBalance(getWagmiConfig(), {
     address: address as `0x${string}`,
     chainId,
   });

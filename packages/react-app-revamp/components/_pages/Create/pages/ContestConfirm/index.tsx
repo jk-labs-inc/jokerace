@@ -2,9 +2,12 @@ import EthereumDeploymentModal from "@components/UI/Deployment/Ethereum";
 import TestnetDeploymentModal from "@components/UI/Deployment/Testnet";
 import GradientText from "@components/UI/GradientText";
 import { FOOTER_LINKS } from "@config/links";
+import { chains } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { emailRegex } from "@helpers/regex";
 import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { switchChain } from "@wagmi/core";
 import { useCallback, useState } from "react";
 import { useConnection } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
@@ -29,6 +32,16 @@ const CreateContestConfirm = () => {
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const [emailError, setEmailError] = useState<string | null>(null);
   const [isTestnetDeploymentModalOpen, setIsTestnetDeploymentModalOpen] = useState(false);
+
+  const handleChangeChain = useCallback(async () => {
+    // Switch to the first non-testnet, non-mainnet chain (polygon is default)
+    const defaultChain = chains.find(c => !c.testnet && c.id !== 1) ?? chains[0];
+    try {
+      await switchChain(getWagmiConfig(), { chainId: defaultChain.id });
+    } catch (error) {
+      console.error("Failed to switch chain:", error);
+    }
+  }, []);
 
   const onDeployHandler = useCallback(() => {
     if (!chainId) {
@@ -126,11 +139,13 @@ const CreateContestConfirm = () => {
           isOpen={isEthereumDeploymentModalOpen}
           setIsOpen={value => setIsEthereumDeploymentModalOpen(value)}
           onDeploy={deployContest}
+          onChangeChain={handleChangeChain}
         />
         <TestnetDeploymentModal
           isOpen={isTestnetDeploymentModalOpen}
           setIsOpen={value => setIsTestnetDeploymentModalOpen(value)}
           onDeploy={deployContest}
+          onChangeChain={handleChangeChain}
         />
       </div>
     </div>

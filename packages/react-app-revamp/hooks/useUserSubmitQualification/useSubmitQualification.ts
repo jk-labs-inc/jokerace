@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { ContractConfig } from "@hooks/useContest";
 import { readContract, readContracts } from "@wagmi/core";
 import { AnyoneCanSubmit, useUserStore } from "./store";
@@ -31,7 +31,7 @@ export const useSubmitQualification = (userAddress: `0x${string}` | undefined) =
     }
 
     try {
-      const numOfSubmittedProposalsRaw = (await readContract(config, {
+      const numOfSubmittedProposalsRaw = (await readContract(getWagmiConfig(), {
         ...contractConfig,
         functionName: "numSubmissions",
         args: [userAddress as `0x${string}`],
@@ -64,7 +64,7 @@ export const useSubmitQualification = (userAddress: `0x${string}` | undefined) =
       return;
     }
 
-    const results = await readContracts(config, {
+    const results = await readContracts(getWagmiConfig(), {
       contracts: [
         {
           ...contractConfig,

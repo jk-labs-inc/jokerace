@@ -1,5 +1,5 @@
 import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
@@ -49,7 +49,7 @@ const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }
   const handleSavePrompt = async () => {
     if (!contestConfig.chainId) return;
 
-    if (!isOnCorrectChain) await switchChain(config, { chainId: contestConfig.chainId });
+    if (!isOnCorrectChain) await switchChain(getWagmiConfig(), { chainId: contestConfig.chainId });
 
     const formattedPrompt = new URLSearchParams({
       imageUrl: contestImageUrl ?? "",

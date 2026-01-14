@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import TokenSearchModal from "@components/TokenSearchModal";
-import { chains } from "@config/wagmi";
+import { chains, ChainWithIcon } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
 import { ArrowPathIcon, ChevronDownIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -11,12 +11,11 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { useConnection } from "wagmi";
 import { FundPoolToken, useFundPoolStore } from "../../../store";
 import { generateNativeToken } from "../../../utils";
-import { RainbowKitChain } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext";
 
 interface TokenWidgetProps {
   tokenWidget: FundPoolToken;
   index: number;
-  chain: RainbowKitChain;
+  chain: ChainWithIcon;
 }
 
 const getFormattedBalance = (balance: string) => {

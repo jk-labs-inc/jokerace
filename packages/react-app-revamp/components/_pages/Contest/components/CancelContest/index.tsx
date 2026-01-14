@@ -1,4 +1,3 @@
-import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { getChainId } from "@helpers/getChainId";
 import { TrashIcon } from "@heroicons/react/24/outline";
@@ -6,6 +5,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useContestState } from "@hooks/useContestState";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -42,7 +42,7 @@ const CancelContest = () => {
     if (!contestChainId) return;
 
     if (contestChainId !== chainId) {
-      await switchChain(config, { chainId: contestChainId });
+      await switchChain(getWagmiConfig(), { chainId: contestChainId });
     }
 
     cancelContest();

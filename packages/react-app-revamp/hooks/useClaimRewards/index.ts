@@ -1,6 +1,6 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { transform } from "@helpers/transform";
 import { useError } from "@hooks/useError";
@@ -61,13 +61,13 @@ export const useClaimRewards = ({
     const amountReleasableFormatted = transform(tokenBalance, tokenAddress, tokenDecimals);
 
     if (userChainId && userChainId !== chainId) {
-      await switchChain(config, { chainId });
+      await switchChain(getWagmiConfig(), { chainId });
     }
 
     try {
       const args = tokenAddress === "native" ? [voterAddress, payee] : [tokenAddress, voterAddress, payee];
 
-      const hash = await writeContract(config, {
+      const hash = await writeContract(getWagmiConfig(), {
         address: contractRewardsModuleAddress,
         abi: abiRewardsModule,
         functionName: "release",
@@ -75,7 +75,7 @@ export const useClaimRewards = ({
         chainId,
       });
 
-      await waitForTransactionReceipt(config, { hash, confirmations: 2 });
+      await waitForTransactionReceipt(getWagmiConfig(), { hash, confirmations: 2 });
 
       setLoading(payee, tokenAddress, false);
       setSuccess(payee, tokenAddress, true);

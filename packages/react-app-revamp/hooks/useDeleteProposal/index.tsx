@@ -1,5 +1,5 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { getChainFromId } from "@helpers/getChainFromId";
 import useContestConfigStore from "@hooks/useContestConfig/store";
@@ -63,17 +63,17 @@ export function useDeleteProposal() {
     if (!contractConfig.abi) return;
 
     try {
-      const { request } = await simulateContract(config, {
+      const { request } = await simulateContract(getWagmiConfig(), {
         ...contractConfig,
         functionName: "deleteProposals",
         args: [proposalIds],
       });
 
-      const hash = await writeContract(config, {
+      const hash = await writeContract(getWagmiConfig(), {
         ...request,
       });
 
-      const receipt = await waitForTransactionReceipt(config, {
+      const receipt = await waitForTransactionReceipt(getWagmiConfig(), {
         chainId: contestConfig.chainId,
         hash: hash,
         confirmations: 2,

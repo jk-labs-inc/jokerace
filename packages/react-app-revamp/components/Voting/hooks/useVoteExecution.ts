@@ -1,6 +1,6 @@
 import { toastInfo } from "@components/UI/Toast";
 import { useVotingStore } from "@components/Voting/store";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { switchChain } from "@wagmi/core";
 import { useConnection } from "wagmi";
@@ -27,7 +27,7 @@ export const useVoteExecution = ({
   const inputValue = useVotingStore(useShallow(state => state.inputValue));
 
   const onSwitchNetwork = async (chainId: number) => {
-    await switchChain(config, { chainId });
+    await switchChain(getWagmiConfig(), { chainId });
   };
 
   const getVotesFromBalance = (): number => {

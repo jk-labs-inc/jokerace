@@ -1,7 +1,7 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 import { useVotingStore } from "@components/Voting/store";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
@@ -108,7 +108,7 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
 
       const estimatedCost = calculateChargeAmount(amountOfVotes, currentPricePerVoteRaw);
 
-      const { request } = await simulateContract(config, {
+      const { request } = await simulateContract(getWagmiConfig(), {
         address: contestConfig.address as `0x${string}`,
         abi: contestConfig.abi ? contestConfig.abi : DeployedContestContract.abi,
         chainId: contestConfig.chainId,
@@ -118,8 +118,8 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         value: estimatedCost,
       });
 
-      const hash = await writeContract(config, request);
-      const receipt = await waitForTransactionReceipt(config, {
+      const hash = await writeContract(getWagmiConfig(), request);
+      const receipt = await waitForTransactionReceipt(getWagmiConfig(), {
         chainId: contestConfig.chainId,
         hash,
         confirmations: 2,
@@ -145,7 +145,7 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
       });
 
       try {
-        const voteCount = (await readContract(config, {
+        const voteCount = (await readContract(getWagmiConfig(), {
           address: contestConfig.address as `0x${string}`,
           abi: DeployedContestContract.abi,
           functionName: "proposalVotes",

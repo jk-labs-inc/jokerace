@@ -1,5 +1,6 @@
 import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
-import { chains, serverConfig } from "@config/wagmi/server";
+import { chains } from "@config/wagmi/chains";
+import { serverConfig } from "@config/wagmi";
 import { getChainId } from "@helpers/getChainId";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContracts } from "@wagmi/core";

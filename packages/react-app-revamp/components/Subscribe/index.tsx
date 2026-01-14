@@ -1,13 +1,13 @@
 import { emailRegex } from "@helpers/regex";
 import useEmailSignup from "@hooks/useEmailSignup";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useModal } from "@getpara/react-sdk";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useConnection } from "wagmi";
 
 const Subscribe = () => {
   const [email, setEmail] = useState("");
-  const { openConnectModal } = useConnectModal();
+  const { openModal } = useModal();
   const [emailError, setEmailError] = useState("");
   const [emailAlreadyExistsMessage, setEmailAlreadyExistsMessage] = useState("");
   const { subscribeUser, checkIfEmailExists, isLoading } = useEmailSignup();
@@ -65,7 +65,7 @@ const Subscribe = () => {
            bg-gradient-purple-white hover:opacity-90 ${
              isLoading ? "opacity-50 pointer-events-none" : ""
            } transition-all duration-300`}
-            onClick={address ? handleSubscribe : openConnectModal}
+            onClick={address ? handleSubscribe : () => openModal()}
           >
             <p className="text-[16px] md:text-[18px] font-bold text-true-black whitespace-nowrap px-2">
               {!address && !isMounted

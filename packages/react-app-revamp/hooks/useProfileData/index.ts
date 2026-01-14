@@ -1,5 +1,5 @@
 import { Clusters, getImageUrl, getProfileUrl } from "@clustersxyz/sdk";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useQuery } from "@tanstack/react-query";
 import { getEnsAvatar, getEnsName } from "@wagmi/core";
@@ -51,7 +51,7 @@ const fetchProfileData = async (
   const clusters = new Clusters();
 
   try {
-    const ensName = await getEnsName(config, {
+    const ensName = await getEnsName(getWagmiConfig(), {
       address: ethereumAddress as `0x${string}`,
       chainId: mainnet.id,
     });
@@ -61,7 +61,7 @@ const fetchProfileData = async (
         setTimeout(() => reject(new Error("timeout: ENS avatar request took too long")), 10000);
       });
 
-      const ensAvatarPromise = getEnsAvatar(config, {
+      const ensAvatarPromise = getEnsAvatar(getWagmiConfig(), {
         name: normalize(ensName),
         chainId: mainnet.id,
       });

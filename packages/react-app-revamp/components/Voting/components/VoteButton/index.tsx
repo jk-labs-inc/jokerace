@@ -1,5 +1,5 @@
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useModal } from "@getpara/react-sdk";
 import { FC } from "react";
 
 interface VoteButtonProps {
@@ -23,7 +23,7 @@ const ButtonText = {
 };
 
 const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConnected, onVote, onAddFunds }) => {
-  const { openConnectModal } = useConnectModal();
+  const { openModal } = useModal();
 
   const getButtonText = () => {
     if (isInvalidBalance) {
@@ -39,7 +39,7 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
     if (isInvalidBalance) {
       onAddFunds?.();
     } else if (!isConnected) {
-      openConnectModal?.();
+      openModal();
     } else {
       onVote?.();
     }

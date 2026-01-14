@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useQuery } from "@tanstack/react-query";
@@ -29,7 +29,7 @@ export const useVoterRewardsStatistics = (
 
   const fetchProposalId = async () => {
     try {
-      const proposalId = await readContract(config, {
+      const proposalId = await readContract(getWagmiConfig(), {
         address: rewardsContractAddress as `0x${string}`,
         abi: rewards?.abi ?? [],
         chainId: contestConfig.chainId,
@@ -48,7 +48,7 @@ export const useVoterRewardsStatistics = (
     if (!address) return BigInt(0);
 
     try {
-      const votes = await readContract(config, {
+      const votes = await readContract(getWagmiConfig(), {
         address: contractAddress as `0x${string}`,
         abi: contestConfig.abi,
         chainId,
@@ -70,7 +70,7 @@ export const useVoterRewardsStatistics = (
 
   const fetchTotalVotes = async (proposalId: bigint) => {
     try {
-      const votes = await readContract(config, {
+      const votes = await readContract(getWagmiConfig(), {
         address: contractAddress as `0x${string}`,
         abi: contestConfig.abi,
         chainId,

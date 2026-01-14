@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { readContract } from "@wagmi/core";
 import { erc20Abi } from "viem";
 
@@ -22,14 +22,14 @@ export const getTokenBalance = async ({
   chainId,
 }: GetTokenBalanceParams): Promise<TokenBalance> => {
   const [value, decimals] = await Promise.all([
-    readContract(config, {
+    readContract(getWagmiConfig(), {
       address: tokenAddress,
       abi: erc20Abi,
       functionName: "balanceOf",
       args: [userAddress],
       chainId,
     }),
-    readContract(config, {
+    readContract(getWagmiConfig(), {
       address: tokenAddress,
       abi: erc20Abi,
       functionName: "decimals",
@@ -52,7 +52,7 @@ export const getTokenBalanceValue = async ({
   userAddress,
   chainId,
 }: GetTokenBalanceParams): Promise<bigint> => {
-  const value = await readContract(config, {
+  const value = await readContract(getWagmiConfig(), {
     address: tokenAddress,
     abi: erc20Abi,
     functionName: "balanceOf",

@@ -1,6 +1,7 @@
 import TokenSearchModalERC20MultiStep from "@components/TokenSearchModal/MultiStep";
 import { toastError } from "@components/UI/Toast";
-import { chains, config } from "@config/wagmi";
+import { chains } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { erc20ChainDropdownOptions } from "@helpers/tokens";
 import { useSendToken } from "@hooks/useSendToken";
 import { FilteredToken } from "@hooks/useTokenList";
@@ -66,7 +67,7 @@ const SendFunds: FC<SendFundsProps> = ({ isOpen, onClose, recipientAddress }) =>
   const handleSelectChain = async (chain: string) => {
     const chainId = chains.find(c => c.name.toLowerCase() === chain.toLowerCase())?.id;
     if (chainId) {
-      await switchChain(config, { chainId });
+      await switchChain(getWagmiConfig(), { chainId });
       setChainId(chainId);
     }
   };

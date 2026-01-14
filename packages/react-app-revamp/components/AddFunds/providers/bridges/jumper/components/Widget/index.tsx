@@ -1,3 +1,4 @@
+import { useModal } from "@getpara/react-sdk";
 import { LiFiWidget } from "@lifi/widget";
 import { FC } from "react";
 import { createJumperWidgetConfig } from "./config";
@@ -8,7 +9,8 @@ interface AddFundsJumperWidgetProps {
 }
 
 const AddFundsJumperWidget: FC<AddFundsJumperWidgetProps> = ({ chainId, asset }) => {
-  const widgetConfig = createJumperWidgetConfig(chainId, asset);
+  const { openModal } = useModal();
+  const widgetConfig = createJumperWidgetConfig(chainId, asset, () => openModal());
 
   return (
     <div className="w-full max-w-full overflow-hidden">

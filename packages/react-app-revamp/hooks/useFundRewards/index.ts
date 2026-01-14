@@ -1,5 +1,6 @@
 import { FundPoolToken } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
-import { chains, config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
+import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
 import useRewardsModule from "@hooks/useRewards";
@@ -88,19 +89,19 @@ export function useFundRewardsModule() {
     if (tokenAddress === "native") {
       const amountBigInt = parseUnits(tokenAmount, tokenDecimals);
 
-      await estimateGas(config, {
+      await estimateGas(getWagmiConfig(), {
         to: rewards?.contractAddress as `0x${string}`,
         chainId: chainId,
         value: amountBigInt,
       });
 
-      const hash = await sendTransaction(config, {
+      const hash = await sendTransaction(getWagmiConfig(), {
         to: rewards?.contractAddress as `0x${string}`,
         chainId: chainId,
         value: amountBigInt,
       });
 
-      receipt = await waitForTransactionReceipt(config, {
+      receipt = await waitForTransactionReceipt(getWagmiConfig(), {
         chainId: chainId,
         hash: hash,
         confirmations: 2,
@@ -108,18 +109,18 @@ export function useFundRewardsModule() {
     } else {
       const amountBigInt = parseUnits(tokenAmount, tokenDecimals);
 
-      const { request } = await simulateContract(config, {
+      const { request } = await simulateContract(getWagmiConfig(), {
         ...contractConfig,
         functionName: "transfer",
         chainId: chainId,
         args: [rewards?.contractAddress as `0x${string}`, amountBigInt],
       });
 
-      hash = await writeContract(config, {
+      hash = await writeContract(getWagmiConfig(), {
         ...request,
       });
 
-      receipt = await waitForTransactionReceipt(config, {
+      receipt = await waitForTransactionReceipt(getWagmiConfig(), {
         chainId: chainId,
         hash: hash,
         confirmations: 2,

@@ -1,6 +1,6 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
@@ -74,7 +74,7 @@ export const ListProposals = () => {
     setDeletingProposalIds(selectedProposalIds);
 
     if (!isUserOnCorrectChain) {
-      await switchChain(config, { chainId: contestConfig.chainId });
+      await switchChain(getWagmiConfig(), { chainId: contestConfig.chainId });
     }
 
     await deleteProposal(selectedProposalIds);

@@ -1,5 +1,6 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { chains, config } from "@config/wagmi";
+import { chains } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
 import { transform } from "@helpers/transform";
@@ -51,7 +52,7 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
     if (!chainId) return;
 
     if (!isConnectedOnCorrectChain) {
-      await switchChain(config, { chainId });
+      await switchChain(getWagmiConfig(), { chainId });
     }
 
     handleWithdraw();

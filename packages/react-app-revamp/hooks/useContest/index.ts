@@ -1,4 +1,5 @@
-import { chains, config } from "@config/wagmi";
+import { chains } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { getChainId } from "@helpers/getChainId";
 import getContestContractVersion from "@helpers/getContestContractVersion";
@@ -110,7 +111,7 @@ export function useContest() {
   async function fetchContestContractData(contractConfig: ContractConfig, version: string) {
     try {
       const contracts = getContracts(contractConfig, version);
-      const results = await readContracts(config, { contracts });
+      const results = await readContracts(getWagmiConfig(), { contracts });
 
       setIsV3(true);
 

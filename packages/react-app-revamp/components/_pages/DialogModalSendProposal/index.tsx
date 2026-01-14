@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Iframe from "@components/tiptap/Iframe";
-import { chains, config } from "@config/wagmi";
+import { chains } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { emailRegex } from "@helpers/regex";
 import {
@@ -113,7 +114,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   });
 
   const onSwitchNetwork = async () => {
-    await switchChain(config, { chainId });
+    await switchChain(getWagmiConfig(), { chainId });
   };
 
   const handleSubscription = async () => {

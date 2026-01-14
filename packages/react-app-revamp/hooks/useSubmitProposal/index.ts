@@ -1,6 +1,6 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { getProposalId } from "@helpers/getProposalId";
 import { generateEntryPreviewHTML, generateFieldInputsHTML, processFieldInputs } from "@helpers/metadata";
@@ -114,14 +114,14 @@ export function useSubmitProposal() {
 
         let hash: `0x${string}`;
 
-        const { request } = await simulateContract(config, {
+        const { request } = await simulateContract(getWagmiConfig(), {
           ...contractConfig,
           functionName: "propose",
           args: [proposalCore],
         });
-        hash = await writeContract(config, request);
+        hash = await writeContract(getWagmiConfig(), request);
 
-        const receipt = await waitForTransactionReceipt(config, {
+        const receipt = await waitForTransactionReceipt(getWagmiConfig(), {
           chainId: contestConfig.chainId,
           hash: hash,
           confirmations: 2,

@@ -1,18 +1,16 @@
-import "./globals.css";
+import "@getpara/react-sdk/styles.css";
 import LayoutBase from "@layouts/LayoutBase";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import "@getpara/react-sdk/styles.css";
-import "@rainbow-me/rainbowkit/styles.css";
 import { polyfill } from "interweave-ssr";
 import { GA_TRACKING_ID } from "lib/gtag";
 import { Metadata, Viewport } from "next";
 import dynamic from "next/dynamic";
 import localFont from "next/font/local";
-import { headers } from "next/headers";
 import NextTopLoader from "nextjs-toploader";
 import "react-loading-skeleton/dist/skeleton.css";
 import "react-tooltip/dist/react-tooltip.css";
 import "simplebar-react/dist/simplebar.min.css";
+import "./globals.css";
 import Providers from "./providers";
 
 const lato = localFont({
@@ -84,15 +82,12 @@ export const viewport: Viewport = {
 const DynamicPortal = dynamic(() => import("./portal"), { ssr: !!false });
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const headersList = await headers();
-  const cookie = headersList.get("cookie") ?? "";
-
   return (
     <html lang="en" className={`${lato.variable} ${saboRegular.variable} ${saboFilled.variable} antialiased`}>
       <body className={lato.className}>
         <div id="__next">
           <NextTopLoader color="#BB65FF" shadow="0 0 10px #BB65FF, 0 0 5px #78FFC6" showSpinner={false} />
-          <Providers cookie={cookie}>
+          <Providers>
             <LayoutBase>{children}</LayoutBase>
             <DynamicPortal />
             <GoogleAnalytics gaId={GA_TRACKING_ID} />

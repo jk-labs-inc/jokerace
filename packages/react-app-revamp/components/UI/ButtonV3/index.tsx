@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useConnection } from "wagmi";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useModal } from "@getpara/react-sdk";
 import { motion } from "motion/react";
 
 export enum ButtonType {
@@ -56,11 +56,11 @@ const Button: React.FC<ButtonProps> = ({
   children,
 }) => {
   const { isConnected } = useConnection();
-  const { openConnectModal } = useConnectModal();
+  const { openModal } = useModal();
 
   const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (type === ButtonType.TX_ACTION && !isConnected) {
-      openConnectModal?.();
+      openModal();
     } else {
       onClick?.(e);
     }

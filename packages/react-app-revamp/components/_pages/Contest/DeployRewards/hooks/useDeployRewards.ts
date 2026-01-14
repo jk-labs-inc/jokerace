@@ -1,5 +1,5 @@
 import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { orchestrateRewardsDeployment } from "@hooks/useDeployContest/deployment/process/orchestrator";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
@@ -52,7 +52,7 @@ export const useDeployRewards = () => {
     }
 
     if (!isConnectedOnCorrectChain) {
-      await switchChain(config, { chainId: contestConfig.chainId });
+      await switchChain(getWagmiConfig(), { chainId: contestConfig.chainId });
     }
 
     setIsDeploying(true);

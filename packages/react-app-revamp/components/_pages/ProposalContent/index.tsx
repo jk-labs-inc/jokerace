@@ -9,7 +9,7 @@ import useDeleteProposal from "@hooks/useDeleteProposal";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import useProfileData from "@hooks/useProfileData";
 import { RawMetadataFields } from "@hooks/useProposal/utils";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useModal } from "@getpara/react-sdk";
 import moment from "moment";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
@@ -60,7 +60,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
     proposal.authorEthereumAddress,
     contestStatus,
   );
-  const { openConnectModal } = useConnectModal();
+  const { openModal } = useModal();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
@@ -103,7 +103,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
     }
 
     if (!isConnected) {
-      openConnectModal?.();
+      openModal();
       return;
     }
 

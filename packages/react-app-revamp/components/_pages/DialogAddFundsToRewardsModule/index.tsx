@@ -1,9 +1,9 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
-import { chains, config } from "@config/wagmi";
+import { chains, ChainWithIcon } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
-import { useContestStore } from "@hooks/useContest/store";
 import useFundRewardsModule from "@hooks/useFundRewards";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { switchChain } from "@wagmi/core";
@@ -13,7 +13,6 @@ import { toast } from "react-toastify";
 import { useConnection } from "wagmi";
 import { useFundPoolStore } from "../Create/pages/ContestRewards/components/FundPool/store";
 import TokenWidgets from "../Create/pages/ContestRewards/components/FundPool/components/TokenWidgets";
-import { RainbowKitChain } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext";
 import useRewardsModule from "@hooks/useRewards";
 interface DialogAddFundsToRewardsModuleProps {
   isOpen: boolean;
@@ -83,7 +82,7 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
   const onFundPool = () => {
     if (!isConnectedOnCorrectChain) {
       if (!selectedChain) return;
-      switchChain(config, { chainId: selectedChain.id });
+      switchChain(getWagmiConfig(), { chainId: selectedChain.id });
     }
 
     fundPool();
@@ -100,7 +99,7 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
       }}
     >
       <div className="flex flex-col gap-12 items-center mt-8 animate-appear">
-        <TokenWidgets chain={selectedChain as RainbowKitChain} />
+        <TokenWidgets chain={selectedChain as ChainWithIcon} />
 
         <ButtonV3
           colorClass="text-[20px] bg-gradient-distribute rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
