@@ -23,9 +23,9 @@ const EXTERNAL_WALLETS: TExternalWallet[] = [
   "WALLETCONNECT",
   "COINBASE",
   "RAINBOW",
+  "PHANTOM",
   "OKX",
   "RABBY",
-  "PHANTOM",
   "ZERION",
   "SAFE",
 ];
