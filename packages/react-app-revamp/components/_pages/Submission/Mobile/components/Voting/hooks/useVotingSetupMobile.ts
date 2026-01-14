@@ -16,6 +16,7 @@ export const useVotingSetupMobile = () => {
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
+    version: contestConfig.version,
   });
 
   const votesClose = new Date(Number(voteTimings?.contestDeadline) * 1000 + 1000);

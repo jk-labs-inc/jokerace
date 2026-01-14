@@ -7,7 +7,7 @@ interface CalculateWinUpToParams {
   costToVoteAtStart: bigint;
   spendingAmount: number;
   multiple: number;
-  percentageToCreator: number;
+  percentageToRewards: number;
   firstPlaceSharePercentage: number;
   submissionsCount: number;
 }
@@ -17,7 +17,7 @@ export const calculateVotingRewardsProjection = ({
   costToVoteAtStart,
   spendingAmount,
   multiple,
-  percentageToCreator,
+  percentageToRewards,
   firstPlaceSharePercentage,
   submissionsCount,
 }: CalculateWinUpToParams): string => {
@@ -33,7 +33,7 @@ export const calculateVotingRewardsProjection = ({
   const finalPricePerVote = Number(formatEther(finalPricePerVoteWei));
 
   // Formula: (1st place %) × (% to pool) × (final price per vote) × (votes) × (total entries)
-  const percentToPool = percentageToCreator / 100;
+  const percentToPool = percentageToRewards / 100;
   const firstPlaceShare = firstPlaceSharePercentage / 100;
 
   const totalPoolProjection = finalPricePerVote * numberOfVotes * submissionsCount * percentToPool * firstPlaceShare;
@@ -42,9 +42,9 @@ export const calculateVotingRewardsProjection = ({
 };
 
 export const validateVotingRewardsProjectionData = (
-  percentageToCreator: number,
+  percentageToRewards: number,
   firstPlaceSharePercentage: number,
   costToVote: bigint,
 ): boolean => {
-  return Boolean(percentageToCreator && firstPlaceSharePercentage && costToVote > 0n);
+  return Boolean(percentageToRewards && firstPlaceSharePercentage && costToVote > 0n);
 };

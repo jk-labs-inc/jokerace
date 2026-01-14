@@ -39,7 +39,7 @@ export const addUserActionAnalytics = async (params: UserAnalyticsParams) => {
       vote_amount: params.amountOfVotes,
       created_at: Math.floor(Date.now() / 1000),
       amount_sent: params.costToVote ? formatChargeAmount(parseFloat(params.costToVote.toString())) : null,
-      percentage_to_creator: params.charge.percentageToCreator,
+      percentage_to_rewards: params.charge.percentageToRewards,
     });
   } catch (error) {
     console.error("Error in addUserActionForAnalytics:", error);
@@ -57,7 +57,7 @@ export const updateRewardAnalyticsIfNeeded = async (
       network_name: params.chainName,
       amount:
         formatChargeAmount(parseFloat(params.costToVote?.toString() ?? "0")) *
-        (params.charge.percentageToCreator / 100),
+        (params.charge.percentageToRewards / 100),
       operation: "deposit",
       token_address: null,
       created_at: Math.floor(Date.now() / 1000),

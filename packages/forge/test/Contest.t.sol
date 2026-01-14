@@ -20,7 +20,8 @@ contract ContestTest is Test {
     uint64 public constant MAX_PROPOSAL_COUNT = 100;
 
     // COST PARAMS
-    uint256 public constant NINETY_PERCENT_TO_CREATOR = 90;
+    uint256 public constant NINETY_PERCENT_TO_REWARDS = 90;
+    uint256 public constant CREATOR_SPLIT_ENABLED = 1;
     uint256 public constant ZERO_COST_TO_VOTE = 0;
     uint256 public constant STANDARD_COST_TO_VOTE = 100000000000000;
     uint256 public constant EXPONENTIAL_PRICE_CURVE_TYPE = 0;
@@ -45,10 +46,11 @@ contract ContestTest is Test {
         MAX_PROPOSAL_COUNT,
         SORTING_ENABLED,
         RANK_LIMIT_250,
-        NINETY_PERCENT_TO_CREATOR,
+        NINETY_PERCENT_TO_REWARDS,
         STANDARD_COST_TO_VOTE,
         EXPONENTIAL_PRICE_CURVE_TYPE,
-        STANDARD_EXPONENT_MULTIPLE
+        STANDARD_EXPONENT_MULTIPLE,
+        CREATOR_SPLIT_ENABLED
     );
 
     Governor.ConstructorArgs public payPerVoteExpCurveParams = Governor.ConstructorArgs(
@@ -253,6 +255,26 @@ contract ContestTest is Test {
         vm.expectRevert(abi.encodeWithSelector(Governor.CanOnlyCancelBeforeFirstVote.selector));
         payPerVoteExpCurveContest.cancel();
         vm.stopPrank();
+    }
+
+    function testCreatorSplit() public {
+        vm.startPrank(TEST_ADDRESS_1);
+        vm.warp(1681650001);
+        uint256 proposalId = payPerVoteExpCurveContest.propose(testAddress1AuthorProposal);
+        vm.warp(1681660001);
+        vm.deal(address(TEST_ADDRESS_1), 10 * payPerVoteExpCurveContest.currentPricePerVote());
+        payPerVoteExpCurveContest.castVote{value: 10 * payPerVoteExpCurveContest.currentPricePerVote()}(
+            proposalId, 10 ether
+        );
+        vm.stopPrank();
+
+        assertEq(
+            CREATOR_ADDRESS.balance,
+            (
+                10 * payPerVoteExpCurveContest.currentPricePerVote()
+                    * (100 - payPerVoteExpCurveContest.percentageToRewards()) / (2 * 100)
+            )
+        ); // the 2 is the denominator is because of split with creator, the 100 is because we're using a percent.
     }
 
     /////////////////////////////

@@ -1,17 +1,18 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useQuery } from "@tanstack/react-query";
-import { PERCENTAGE_TO_CREATOR_DEFAULT } from "constants/monetization";
+import { PERCENTAGE_TO_REWARDS_DEFAULT } from "constants/monetization";
 import { fetchChargeDetails } from "lib/monetization";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 
 const useChargeDetails = (chainName: string) => {
-  const { setCharge, setPrevChainRefInCharge, prevChainRefInCharge, priceCurve } = useDeployContestStore(
+  const { setCharge, setPrevChainRefInCharge, prevChainRefInCharge, priceCurve, charge } = useDeployContestStore(
     useShallow(state => ({
       setCharge: state.setCharge,
       setPrevChainRefInCharge: state.setPrevChainRefInCharge,
       prevChainRefInCharge: state.prevChainRefInCharge,
       priceCurve: state.priceCurve,
+      charge: state.charge,
     })),
   );
   const {
@@ -32,14 +33,16 @@ const useChargeDetails = (chainName: string) => {
 
     if (chargeDetails.isError) {
       setCharge({
-        percentageToCreator: PERCENTAGE_TO_CREATOR_DEFAULT,
+        percentageToRewards: PERCENTAGE_TO_REWARDS_DEFAULT,
+        creatorSplitEnabled: charge.creatorSplitEnabled,
         costToVote: 0,
         costToVoteEndPrice: 0,
         error: true,
       });
     } else {
       setCharge({
-        percentageToCreator: PERCENTAGE_TO_CREATOR_DEFAULT,
+        percentageToRewards: PERCENTAGE_TO_REWARDS_DEFAULT,
+        creatorSplitEnabled: charge.creatorSplitEnabled,
         costToVote: chargeDetails.costToVote,
         costToVoteEndPrice: chargeDetails.costToVote * priceCurve.multipler,
         error: false,

@@ -1,5 +1,5 @@
+import Tooltip from "@components/UI/Tooltip";
 import { FC } from "react";
-import { Tooltip } from "react-tooltip";
 
 interface VotingWidgetRewardsProjectionTooltipProps {
   tooltipId: string;
@@ -9,12 +9,7 @@ const LINK_MATH_DOCS = "https://docs.jokerace.io/calculating-roi";
 
 const VotingWidgetRewardsProjectionTooltip: FC<VotingWidgetRewardsProjectionTooltipProps> = ({ tooltipId }) => {
   return (
-    <Tooltip
-      id={tooltipId}
-      clickable
-      opacity={1}
-      className="py-3 px-2 z-50 bg-neutral-9! border border-transparent rounded-lg focus:outline-none"
-    >
+    <Tooltip id={tooltipId}>
       <p className="text-[12px] text-true-black">
         <b>this is the most you could make</b> in an <br />
         ideal outcome.{" "}

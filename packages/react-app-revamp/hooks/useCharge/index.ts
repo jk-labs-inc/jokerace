@@ -1,5 +1,7 @@
 import { createResultGetter } from "@hooks/useContest/helpers";
+import { CREATOR_SPLIT_VERSION } from "@hooks/useContest/v3v4/contracts";
 import { type Charge } from "@hooks/useDeployContest/types";
+import { compareVersions } from "compare-versions";
 import { Abi } from "viem";
 import { useReadContracts } from "wagmi";
 
@@ -7,6 +9,7 @@ interface UseChargeParams {
   address: `0x${string}`;
   abi: Abi;
   chainId: number;
+  version: string;
 }
 
 interface UseChargeResult {
@@ -16,16 +19,15 @@ interface UseChargeResult {
   refetch: () => void;
 }
 
-const getContracts = (address: `0x${string}`, abi: Abi, chainId: number) => {
+const getContracts = (address: `0x${string}`, abi: Abi, chainId: number, percentageFunctionName: string) => {
   return [
     {
       address,
       abi,
       chainId,
-      functionName: "percentageToCreator",
+      functionName: percentageFunctionName,
       args: [],
     },
-
     {
       address,
       abi,
@@ -51,16 +53,19 @@ const getContracts = (address: `0x${string}`, abi: Abi, chainId: number) => {
 };
 
 const getDefaultCharge = (): Charge => ({
-  percentageToCreator: 0,
+  percentageToRewards: 0,
   costToVote: 0,
   error: false,
 });
 
 /**
  * Pure hook that fetches charge-related contract data and returns it formatted as Charge type
+ * Note: creatorSplitEnabled is fetched separately via useCreatorSplitEnabled hook when needed
  **/
-export const useCharge = ({ address, abi, chainId }: UseChargeParams): UseChargeResult => {
-  const contracts = getContracts(address, abi, chainId);
+export const useCharge = ({ address, abi, chainId, version }: UseChargeParams): UseChargeResult => {
+  const hasCreatorSplit = compareVersions(version, CREATOR_SPLIT_VERSION) >= 0;
+  const percentageFunctionName = hasCreatorSplit ? "percentageToRewards" : "percentageToCreator";
+  const contracts = getContracts(address, abi, chainId, percentageFunctionName);
 
   const {
     data: charge,
@@ -75,12 +80,11 @@ export const useCharge = ({ address, abi, chainId }: UseChargeParams): UseCharge
 
         const getResultByName = createResultGetter(contracts, [...data]);
 
-        const percentageToCreator = Number(getResultByName("percentageToCreator")) || 0;
+        const percentageToRewards = Number(getResultByName(percentageFunctionName)) || 0;
         const costToVote = Number(getResultByName("costToVote")) || 0;
-        const payPerVote = Number(getResultByName("payPerVote")) || 1;
 
         return {
-          percentageToCreator,
+          percentageToRewards,
           costToVote,
           error: false,
         } as Charge;
