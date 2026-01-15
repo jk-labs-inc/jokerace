@@ -1,9 +1,9 @@
 import { useModal } from "@getpara/react-sdk-lite";
-import { useConnection } from "wagmi";
 import VotingQualifierAnyoneCanVoteBalance from "./components/AnyoneCanVoteBalance";
+import { useWallet } from "@hooks/useWallet";
 
 const VotingQualifierBalance = () => {
-  const { address: userAddress } = useConnection();
+  const { userAddress } = useWallet();
   const { openModal } = useModal();
 
   if (!userAddress)

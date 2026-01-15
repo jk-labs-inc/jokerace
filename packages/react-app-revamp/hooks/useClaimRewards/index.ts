@@ -4,12 +4,12 @@ import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { transform } from "@helpers/transform";
 import { useError } from "@hooks/useError";
+import { useWallet } from "@hooks/useWallet";
 import { switchChain, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
-import { useConnection } from "wagmi";
 
 interface UseClaimRewardsProps {
   contractRewardsModuleAddress: `0x${string}`;
@@ -29,7 +29,7 @@ export const useClaimRewards = ({
   tokenDecimals,
   userAddress,
 }: UseClaimRewardsProps) => {
-  const { chainId: userChainId } = useConnection();
+  const { chain: userChain } = useWallet();
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { handleError } = useError();
@@ -60,7 +60,7 @@ export const useClaimRewards = ({
     });
     const amountReleasableFormatted = transform(tokenBalance, tokenAddress, tokenDecimals);
 
-    if (userChainId && userChainId !== chainId) {
+    if (userChain?.id && userChain?.id !== chainId) {
       await switchChain(getWagmiConfig(), { chainId });
     }
 

@@ -1,6 +1,6 @@
-import { useLogout, useModal, useWallet } from "@getpara/react-sdk-lite";
+import { useModal } from "@getpara/react-sdk-lite";
+import { useWallet } from "@hooks/useWallet";
 import { FC } from "react";
-import { useConnection } from "wagmi";
 import AccountDropdown from "./components/AccountDropdown";
 import ChainDropdown from "./components/ChainDropdown";
 
@@ -15,22 +15,10 @@ interface ConnectButtonProps {
 
 export const ConnectButtonCustom: FC<ConnectButtonProps> = ({ displayOptions = {} }) => {
   const { onlyChainSwitcher = false } = displayOptions;
-  const { isConnected } = useConnection();
-  const { data } = useWallet();
-  const { logoutAsync } = useLogout();
+  const { isConnected, userAddress, disconnect } = useWallet();
   const { openModal } = useModal();
 
-  const handleDisconnect = async () => {
-    try {
-      await logoutAsync({
-        clearPregenWallets: false, // Keep pregenerated wallets
-      });
-    } catch (err) {
-      console.error("Logout failed:", err);
-    }
-  };
-
-  if (!isConnected || !data?.address) {
+  if (!isConnected || !userAddress) {
     return (
       <button
         onClick={() => openModal()}
@@ -47,9 +35,9 @@ export const ConnectButtonCustom: FC<ConnectButtonProps> = ({ displayOptions = {
       <ChainDropdown />
       {!onlyChainSwitcher && (
         <AccountDropdown
-          address={data.address}
-          displayName={`${data.address.slice(0, 6)}...${data.address.slice(-4)}`}
-          onDisconnect={handleDisconnect}
+          address={userAddress}
+          displayName={`${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`}
+          onDisconnect={disconnect}
         />
       )}
     </div>

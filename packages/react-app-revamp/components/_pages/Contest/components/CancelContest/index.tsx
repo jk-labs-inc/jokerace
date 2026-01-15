@@ -5,11 +5,9 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useContestState } from "@hooks/useContestState";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
-import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
-import { switchChain } from "@wagmi/core";
+import { useWallet } from "@hooks/useWallet";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import CancelContestModal from "./components/Modal";
 
@@ -17,7 +15,11 @@ const CancelContest = () => {
   const pathname = usePathname();
   const { address: contestAddress, chainName } = extractPathSegments(pathname);
   const contestChainId = getChainId(chainName);
-  const { address, chainId } = useConnection();
+  const {
+    userAddress,
+    chain: { id: chainId },
+    changeNetworks,
+  } = useWallet();
   const contestAuthorEthereumAddress = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
   const { cancelContest, isLoading, isConfirmed } = useContestState();
   const { contestState } = useContestStateStore(state => state);
@@ -28,7 +30,7 @@ const CancelContest = () => {
   } = useTotalVotesCastOnContest(contestAddress, contestChainId);
   const [isCloseContestModalOpen, setIsCloseContestModalOpen] = useState(false);
 
-  if (address !== contestAuthorEthereumAddress) return null;
+  if (userAddress !== contestAuthorEthereumAddress) return null;
   if (contestState === ContestStateEnum.Canceled) return null;
   if (isConfirmed && !isLoading) return null;
 
@@ -42,7 +44,7 @@ const CancelContest = () => {
     if (!contestChainId) return;
 
     if (contestChainId !== chainId) {
-      await switchChain(getWagmiConfig(), { chainId: contestChainId });
+      changeNetworks(contestChainId);
     }
 
     cancelContest();

@@ -1,7 +1,7 @@
-import React, { useMemo } from "react";
-import { useConnection } from "wagmi";
 import { useModal } from "@getpara/react-sdk-lite";
+import { useWallet } from "@hooks/useWallet";
 import { motion } from "motion/react";
+import React, { useMemo } from "react";
 
 export enum ButtonType {
   DEFAULT = "default",
@@ -55,7 +55,7 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   children,
 }) => {
-  const { isConnected } = useConnection();
+  const { isConnected } = useWallet();
   const { openModal } = useModal();
 
   const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {

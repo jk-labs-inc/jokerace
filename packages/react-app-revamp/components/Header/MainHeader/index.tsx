@@ -1,7 +1,7 @@
-import { MediaQuery } from "@helpers/mediaQuery";
 import { useModal } from "@getpara/react-sdk-lite";
+import { MediaQuery } from "@helpers/mediaQuery";
+import { useWallet } from "@hooks/useWallet";
 import { FC } from "react";
-import { useConnection } from "wagmi";
 import MainHeaderDesktopLayout from "./DesktopLayout";
 import MainHeaderMobileLayout from "./MobileLayout";
 
@@ -10,16 +10,20 @@ interface MainHeaderProps {
 }
 
 const MainHeader: FC<MainHeaderProps> = ({ showProfile }) => {
-  const { isConnected, address } = useConnection();
+  const { isConnected, userAddress } = useWallet();
   const { openModal } = useModal();
 
   return (
     <div>
       <MediaQuery maxWidth={1024}>
-        <MainHeaderMobileLayout isConnected={isConnected} address={address ?? ""} openConnectModal={() => openModal()} />
+        <MainHeaderMobileLayout
+          isConnected={isConnected}
+          address={userAddress ?? ""}
+          openConnectModal={() => openModal()}
+        />
       </MediaQuery>
       <MediaQuery minWidth={1025}>
-        <MainHeaderDesktopLayout isConnected={isConnected} address={address ?? ""} />
+        <MainHeaderDesktopLayout isConnected={isConnected} address={userAddress ?? ""} />
       </MediaQuery>
     </div>
   );

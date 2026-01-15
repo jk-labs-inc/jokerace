@@ -1,4 +1,5 @@
 import { toastInfo } from "@components/UI/Toast";
+import { useModal } from "@getpara/react-sdk-lite";
 import { extractPathSegments } from "@helpers/extractPath";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
@@ -9,12 +10,11 @@ import useDeleteProposal from "@hooks/useDeleteProposal";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import useProfileData from "@hooks/useProfileData";
 import { RawMetadataFields } from "@hooks/useProposal/utils";
-import { useModal } from "@getpara/react-sdk-lite";
+import { useWallet } from "@hooks/useWallet";
 import moment from "moment";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import DrawerVoteForProposal from "../DrawerVoteForProposal";
 import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
@@ -51,7 +51,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   toggleProposalSelection,
   enabledPreview,
 }) => {
-  const { isConnected, address: userAddress } = useConnection();
+  const { isConnected, userAddress } = useWallet();
   const { canDeleteProposal } = useDeleteProposal();
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const allowDelete = canDeleteProposal(

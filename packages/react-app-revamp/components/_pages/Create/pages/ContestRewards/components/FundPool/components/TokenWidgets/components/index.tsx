@@ -1,16 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 import TokenSearchModal from "@components/TokenSearchModal";
-import { chains, ChainWithIcon } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
+import { ChainWithIcon } from "@config/wagmi";
 import { formatBalance } from "@helpers/formatBalance";
 import { ArrowPathIcon, ChevronDownIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useTokenOrNativeBalance } from "@hooks/useBalance";
 import { FilteredToken } from "@hooks/useTokenList";
-import { usePathname } from "next/navigation";
 import { FC, useEffect, useMemo, useState } from "react";
-import { useConnection } from "wagmi";
 import { FundPoolToken, useFundPoolStore } from "../../../store";
 import { generateNativeToken } from "../../../utils";
+import { useWallet } from "@hooks/useWallet";
 
 interface TokenWidgetProps {
   tokenWidget: FundPoolToken;
@@ -39,7 +37,7 @@ const getTokenSymbol = (
 };
 
 const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain }) => {
-  const { address: userAddress } = useConnection();
+  const { userAddress } = useWallet();
   const chainLogo = chain?.iconUrl;
   const nativeCurrency = chain?.nativeCurrency;
   const chainNativeCurrencySymbol = nativeCurrency?.symbol;

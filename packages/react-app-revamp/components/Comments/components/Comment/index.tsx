@@ -6,9 +6,9 @@ import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
 import { FC } from "react";
-import { useConnection } from "wagmi";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import useProfileData from "@hooks/useProfileData";
+import { useWallet } from "@hooks/useWallet";
 
 interface CommentProps {
   comment: CommentType;
@@ -45,10 +45,10 @@ const Comment: FC<CommentProps> = ({
   className,
   contestAuthor,
 }) => {
-  const { address } = useConnection();
+  const { userAddress } = useWallet();
   const { profileName, profileAvatar } = useProfileData(comment.author, true, false);
   const timeAgo = getShortTimeAgo(comment.createdAt);
-  const allowDelete = (address === comment.author || address === contestAuthor) && !comment.isDeleted;
+  const allowDelete = (userAddress === comment.author || userAddress === contestAuthor) && !comment.isDeleted;
   const isSelected = selectedCommentIds.includes(comment.id);
 
   const handleToggleSelection = () => {

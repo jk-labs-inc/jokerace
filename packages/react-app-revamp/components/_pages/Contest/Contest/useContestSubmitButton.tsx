@@ -4,11 +4,11 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { AnyoneCanSubmit, useUserStore } from "@hooks/useUserSubmitQualification/store";
 import { useModal } from "@getpara/react-sdk-lite";
 import { useMediaQuery } from "react-responsive";
-import { useConnection } from "wagmi";
+import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
 
 export const useContestSubmitButton = () => {
-  const { isConnected } = useConnection();
+  const { isConnected } = useWallet();
   const { openModal } = useModal();
   const {
     contestMaxNumberSubmissionsPerUser,

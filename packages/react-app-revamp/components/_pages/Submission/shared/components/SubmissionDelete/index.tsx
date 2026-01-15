@@ -5,10 +5,10 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import useProposalIdStore from "@hooks/useProposalId/store";
+import { useWallet } from "@hooks/useWallet";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 const SubmissionDelete = () => {
@@ -22,7 +22,7 @@ const SubmissionDelete = () => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const { deleteProposal, isLoading, isSuccess, canDeleteProposal } = useDeleteProposal();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { address } = useConnection();
+  const { userAddress } = useWallet();
 
   const handleDeleteProposal = async (proposalId: string) => {
     await deleteProposal([proposalId]);
@@ -36,7 +36,7 @@ const SubmissionDelete = () => {
   }, [isSuccess, contestConfig.chainName, contestConfig.address, router]);
 
   if (
-    (address !== contestDetails.author && address !== proposalId) ||
+    (userAddress !== contestDetails.author && userAddress !== proposalId) ||
     votingStatus === VotingStatus.VotingOpen ||
     votingStatus === VotingStatus.VotingClosed
   ) {

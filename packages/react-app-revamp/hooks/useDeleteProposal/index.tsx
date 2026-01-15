@@ -1,18 +1,18 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { getChainFromId } from "@helpers/getChainFromId";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
+import { useWallet } from "@hooks/useWallet";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { saveUpdatedProposalsStatusToAnalyticsV3 } from "lib/analytics/participants";
 import { useEffect } from "react";
 import { Abi } from "viem";
-import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import { useDeleteProposalStore } from "./store";
 
@@ -26,7 +26,7 @@ export function useDeleteProposal() {
       version: state.contestConfig.version,
     })),
   );
-  const { address: userAddress } = useConnection();
+  const { userAddress } = useWallet();
   const chain = getChainFromId(contestConfig.chainId);
   const contestChainBlockExplorer = chain?.blockExplorers?.default?.url;
   const { removeProposal } = useProposal();

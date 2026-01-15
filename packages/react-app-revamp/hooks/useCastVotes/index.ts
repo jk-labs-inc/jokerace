@@ -1,8 +1,8 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 import { useVotingStore } from "@components/Voting/store";
-import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { Charge } from "@hooks/useDeployContest/types";
@@ -16,11 +16,11 @@ import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { useVoteBalance } from "@hooks/useVoteBalance";
+import { useWallet } from "@hooks/useWallet";
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import moment from "moment";
 import { checkAndMarkPriceChangeError } from "utils/error";
 import { formatEther, parseUnits } from "viem";
-import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import { useCastVotesStore } from "./store";
 import { CombinedAnalyticsParams, performAnalytics } from "./utils/analytics";
@@ -50,7 +50,7 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
     setTransactionData,
     resetStore,
   } = useCastVotesStore(state => state);
-  const { address: userAddress } = useConnection();
+  const { userAddress } = useWallet();
   const { error: errorMessage, handleError } = useError();
   const { refetch: refetchTotalVotesCastOnContest } = useTotalVotesCastOnContest(
     contestConfig.address,

@@ -1,11 +1,11 @@
 import GradientText from "@components/UI/GradientText";
 import RefreshButton from "@components/UI/RefreshButton";
 import { useContestStore } from "@hooks/useContest/store";
-import { RewardModuleInfo } from "lib/rewards/types";
 import { useSharesByRankings } from "@hooks/useShares";
 import { useTotalRewards } from "@hooks/useTotalRewards";
+import { useWallet } from "@hooks/useWallet";
+import { RewardModuleInfo } from "lib/rewards/types";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import RewardsError from "../Error";
 import RewardsCreatorOptions from "./CreatorOptions";
@@ -43,7 +43,7 @@ const TotalRewardsTableSkeleton = ({ payeesCount }: { payeesCount: number }) => 
 
 const RewardsCreatorView = ({ rewards, chainId, version }: RewardsCreatorViewProps) => {
   const { contestAuthorEthereumAddress, charge } = useContestStore(useShallow(state => state));
-  const { address: userAddress } = useConnection();
+  const { userAddress } = useWallet();
   const isCreator = contestAuthorEthereumAddress === userAddress;
   const {
     data: totalRewards,

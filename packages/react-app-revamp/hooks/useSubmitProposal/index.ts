@@ -1,7 +1,7 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
-import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { getProposalId } from "@helpers/getProposalId";
 import { generateEntryPreviewHTML, generateFieldInputsHTML, processFieldInputs } from "@helpers/metadata";
 import { useContestStore } from "@hooks/useContest/store";
@@ -14,11 +14,11 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import { useUserStore } from "@hooks/useUserSubmitQualification/store";
+import { useWallet } from "@hooks/useWallet";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useMediaQuery } from "react-responsive";
-import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import { useSubmitProposalStore } from "./store";
 
@@ -52,7 +52,7 @@ interface RewardsAnalyticsParams {
 interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsParams {}
 
 export function useSubmitProposal() {
-  const { address: userAddress, chain } = useConnection();
+  const { userAddress, chain } = useWallet();
   const { contestConfig } = useContestConfigStore(state => state);
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;

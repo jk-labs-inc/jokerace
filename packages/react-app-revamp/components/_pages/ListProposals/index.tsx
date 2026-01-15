@@ -10,7 +10,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { switchChain } from "@wagmi/core";
 import { useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
-import { useConnection } from "wagmi";
+import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
 import { useDescriptionExpansionStore } from "../Contest/components/Prompt/components/Page/components/Layout/V3/store";
 import { verifyEntryPreviewPrompt } from "../DialogModalSendProposal/utils";
@@ -19,7 +19,9 @@ import ListProposalsLoader from "./loader";
 import ListProposalsSkeleton from "./skeleton";
 
 export const ListProposals = () => {
-  const { chainId: userChainId } = useConnection();
+  const {
+    chain: { id: userChainId },
+  } = useWallet();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { fetchProposalsPage } = useProposal();
   const { deleteProposal, isLoading: isDeleteInProcess, isSuccess: isDeleteSuccess } = useDeleteProposal();

@@ -5,9 +5,9 @@ import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { erc20ChainDropdownOptions } from "@helpers/tokens";
 import { useSendToken } from "@hooks/useSendToken";
 import { FilteredToken } from "@hooks/useTokenList";
+import { useWallet } from "@hooks/useWallet";
 import { switchChain } from "@wagmi/core";
 import { FC, useMemo, useState } from "react";
-import { useConnection } from "wagmi";
 
 interface SendFundsProps {
   isOpen: boolean;
@@ -16,8 +16,8 @@ interface SendFundsProps {
 }
 
 const SendFunds: FC<SendFundsProps> = ({ isOpen, onClose, recipientAddress }) => {
-  const { chainId: currentChainId } = useConnection();
-  const [chainId, setChainId] = useState<number>(currentChainId ?? 1);
+  const { chain: currentChain } = useWallet();
+  const [chainId, setChainId] = useState<number>(currentChain?.id ?? 1);
   const { sendToken } = useSendToken({
     onSuccess: () => {
       onClose();

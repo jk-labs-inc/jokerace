@@ -1,11 +1,11 @@
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useRewardsModule from "@hooks/useRewards";
+import { useWallet } from "@hooks/useWallet";
 import { useQuery } from "@tanstack/react-query";
 import { readContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { formatEther } from "viem";
-import { useConnection } from "wagmi";
 
 export interface VoterRewardsStatistics {
   userVotes: bigint;
@@ -21,7 +21,7 @@ export const useVoterRewardsStatistics = (
   ranking: number,
   chainId: number,
 ) => {
-  const { address } = useConnection();
+  const { userAddress } = useWallet();
   const { contestConfig } = useContestConfigStore(state => state);
   const { data: rewards } = useRewardsModule();
 
@@ -45,7 +45,7 @@ export const useVoterRewardsStatistics = (
   };
 
   const fetchUserVotes = async (proposalId: bigint) => {
-    if (!address) return BigInt(0);
+    if (!userAddress) return BigInt(0);
 
     try {
       const votes = await readContract(getWagmiConfig(), {
@@ -53,7 +53,7 @@ export const useVoterRewardsStatistics = (
         abi: contestConfig.abi,
         chainId,
         functionName: "proposalAddressVotes",
-        args: [proposalId, address],
+        args: [proposalId, userAddress],
       });
 
       if (hasDownvotes) {
@@ -128,7 +128,7 @@ export const useVoterRewardsStatistics = (
     error,
     refetch,
   } = useQuery({
-    queryKey: ["voterRewardsStatistics", contractAddress, rewardsContractAddress, ranking, chainId, address],
+    queryKey: ["voterRewardsStatistics", contractAddress, rewardsContractAddress, ranking, chainId, userAddress],
     queryFn: fetchStatistics,
     enabled: !!contractAddress && !!rewardsContractAddress && !!chainId && ranking > 0,
   });

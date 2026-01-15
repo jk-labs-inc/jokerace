@@ -1,9 +1,9 @@
+import { useModal } from "@getpara/react-sdk-lite";
 import { emailRegex } from "@helpers/regex";
 import useEmailSignup from "@hooks/useEmailSignup";
-import { useModal } from "@getpara/react-sdk-lite";
+import { useWallet } from "@hooks/useWallet";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useConnection } from "wagmi";
 
 const Subscribe = () => {
   const [email, setEmail] = useState("");
@@ -11,7 +11,7 @@ const Subscribe = () => {
   const [emailError, setEmailError] = useState("");
   const [emailAlreadyExistsMessage, setEmailAlreadyExistsMessage] = useState("");
   const { subscribeUser, checkIfEmailExists, isLoading } = useEmailSignup();
-  const { address } = useConnection();
+  const { userAddress } = useWallet();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [isMounted, setIsMounted] = useState(false);
 
@@ -20,17 +20,17 @@ const Subscribe = () => {
   }, []);
 
   const handleSubscribe = async () => {
-    if (isLoading || !address) return;
+    if (isLoading || !userAddress) return;
 
     if (!isEmailValid()) {
       setEmailError("Please enter a valid email address.");
       return;
     }
 
-    const emailExists = await checkIfEmailExists({ emailAddress: email, userAddress: address });
+    const emailExists = await checkIfEmailExists({ emailAddress: email, userAddress: userAddress });
 
     if (!emailExists) {
-      await subscribeUser(email, address);
+      await subscribeUser(email, userAddress);
       setEmail("");
       setEmailError("");
     } else {
@@ -65,10 +65,10 @@ const Subscribe = () => {
            bg-gradient-purple-white hover:opacity-90 ${
              isLoading ? "opacity-50 pointer-events-none" : ""
            } transition-all duration-300`}
-            onClick={address ? handleSubscribe : () => openModal()}
+            onClick={userAddress ? handleSubscribe : () => openModal()}
           >
             <p className="text-[16px] md:text-[18px] font-bold text-true-black whitespace-nowrap px-2">
-              {!address && !isMounted
+              {!userAddress && !isMounted
                 ? "connect wallet"
                 : isMounted && isMobile
                 ? "get updates"
@@ -81,7 +81,7 @@ const Subscribe = () => {
         <p className="text-negative-11 text-[16px] font-bold pl-2">{emailError}</p>
       ) : emailAlreadyExistsMessage ? (
         <p className="text-positive-11 text-[16px] font-bold pl-2">{emailAlreadyExistsMessage}</p>
-      ) : !address ? (
+      ) : !userAddress ? (
         <p className="text-neutral-11 text-[14px] font-medium pl-2">connect your wallet to get contest updates</p>
       ) : null}
     </div>

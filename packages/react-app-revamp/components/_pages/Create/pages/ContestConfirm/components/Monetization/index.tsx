@@ -1,9 +1,9 @@
 import { useChainChange } from "@hooks/useChainChange";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { Charge, PriceCurve } from "@hooks/useDeployContest/types";
+import { useWallet } from "@hooks/useWallet";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useConnection } from "wagmi";
 import CreateContestConfirmLayout from "../Layout";
 import CostToVoteMessage from "./components/CostToVote";
 import CreatorChargesMessage from "./components/CreatorCharges";
@@ -21,7 +21,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
   step,
   onClick,
 }) => {
-  const { chain } = useConnection();
+  const { chain } = useWallet();
   const chainChanged = useChainChange();
   const { costToVote, costToVoteEndPrice } = charge;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain?.name.toLowerCase() ?? "");

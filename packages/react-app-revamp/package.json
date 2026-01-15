@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "postinstall": "npx setup-para"
   },
   "dependencies": {
     "@abstract-foundation/agw-client": "1.10.0",

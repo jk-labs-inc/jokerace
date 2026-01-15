@@ -1,12 +1,12 @@
 import CreateSwitch from "@components/_pages/Create/components/Switch";
 import { ChainWithIcon } from "@config/wagmi";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useConnection } from "wagmi";
+import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
 import TokenWidgets from "./components/TokenWidgets";
 
 const CreateRewardsFundPool = () => {
-  const { chain } = useConnection();
+  const { chain } = useWallet();
   const { addFundsToRewards, setAddFundsToRewards } = useDeployContestStore(
     useShallow(state => ({
       addFundsToRewards: state.addFundsToRewards,

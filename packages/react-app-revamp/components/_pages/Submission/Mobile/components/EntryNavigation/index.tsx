@@ -1,18 +1,18 @@
-import { FC } from "react";
 import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
+import CustomLink from "@components/UI/Link";
 import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
 import { useModal } from "@getpara/react-sdk-lite";
-import { useConnection } from "wagmi";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useWallet } from "@hooks/useWallet";
+import { FC } from "react";
 import { useShallow } from "zustand/shallow";
-import CustomLink from "@components/UI/Link";
 
 interface SubmissionPageMobileEntryNavigationProps {
   isInPwaMode: boolean;
 }
 
 const SubmissionPageMobileEntryNavigation: FC<SubmissionPageMobileEntryNavigationProps> = ({ isInPwaMode }) => {
-  const { isConnected } = useConnection();
+  const { isConnected } = useWallet();
   const { openModal } = useModal();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { currentIndex, totalProposals, previousEntryUrl, nextEntryUrl } = useNavigateProposals();

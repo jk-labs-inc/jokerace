@@ -1,10 +1,11 @@
 import { FundPoolToken } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
-import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { chains } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
+import { useWallet } from "@hooks/useWallet";
 import {
   estimateGas,
   sendTransaction,
@@ -17,7 +18,6 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { erc20Abi, parseUnits } from "viem";
-import { useConnection } from "wagmi";
 import { useFundRewardsStore } from "./store";
 
 export interface RewardData {
@@ -34,7 +34,7 @@ export function useFundRewardsModule() {
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
-  const { chain } = useConnection();
+  const { chain } = useWallet();
   const {
     isModalOpen,
     isLoading,

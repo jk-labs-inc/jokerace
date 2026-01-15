@@ -7,11 +7,14 @@ import { useError } from "@hooks/useError";
 import useRewardsModule from "@hooks/useRewards";
 import { switchChain } from "@wagmi/core";
 import { useState } from "react";
-import { useConnection } from "wagmi";
+import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
 
 export const useDeployRewards = () => {
-  const { address: connectedAccountAddress, chainId: connectedAccountChainId } = useConnection();
+  const {
+    userAddress,
+    chain: { id: chainId },
+  } = useWallet();
   const contestConfig = useContestConfigStore(state => state.contestConfig);
   const {
     rewardPoolData,
@@ -43,11 +46,11 @@ export const useDeployRewards = () => {
   );
   const [isDeploying, setIsDeploying] = useState(false);
   const { refetch: refetchRewardsModule } = useRewardsModule();
-  const isConnectedOnCorrectChain = connectedAccountChainId === contestConfig.chainId;
+  const isConnectedOnCorrectChain = chainId === contestConfig.chainId;
   const { handleError } = useError();
 
   const deployRewards = async () => {
-    if (!connectedAccountAddress || !contestConfig.address || !contestConfig.chainId) {
+    if (!userAddress || !contestConfig.address || !contestConfig.chainId) {
       return;
     }
 
@@ -61,7 +64,7 @@ export const useDeployRewards = () => {
       await orchestrateRewardsDeployment({
         contestAddress: contestConfig.address,
         chainId: contestConfig.chainId,
-        userAddress: connectedAccountAddress,
+        userAddress: userAddress,
         rewardPoolData,
         tokenWidgets,
         addFundsToRewards,

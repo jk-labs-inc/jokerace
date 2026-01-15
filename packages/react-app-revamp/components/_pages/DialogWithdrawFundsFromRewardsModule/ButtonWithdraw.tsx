@@ -9,7 +9,7 @@ import { useWithdrawReward } from "@hooks/useWithdrawRewards";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { Abi } from "viem";
-import { useConnection } from "wagmi";
+import { useWallet } from "@hooks/useWallet";
 
 interface ButtonWithdrawErc20RewardProps {
   token: TokenInfo;
@@ -31,7 +31,9 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
   } = props;
 
   const pathname = usePathname();
-  const { chainId: userChainId } = useConnection();
+  const {
+    chain: { id: userChainId },
+  } = useWallet();
   const { chainName } = extractPathSegments(pathname);
   const chainId = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.id;
   const isConnectedOnCorrectChain = chainId === userChainId;

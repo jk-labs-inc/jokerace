@@ -2,8 +2,8 @@ import { toastInfo } from "@components/UI/Toast";
 import { useVotingStore } from "@components/Voting/store";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useWallet } from "@hooks/useWallet";
 import { switchChain } from "@wagmi/core";
-import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 interface UseVoteExecutionProps {
@@ -21,9 +21,9 @@ export const useVoteExecution = ({
   isVotingClosed,
   onVote,
 }: UseVoteExecutionProps): UseVoteExecutionReturn => {
-  const { chainId } = useConnection();
+  const { chain } = useWallet();
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
-  const isCorrectNetwork = chainId === contestConfig.chainId;
+  const isCorrectNetwork = chain?.id === contestConfig.chainId;
   const inputValue = useVotingStore(useShallow(state => state.inputValue));
 
   const onSwitchNetwork = async (chainId: number) => {

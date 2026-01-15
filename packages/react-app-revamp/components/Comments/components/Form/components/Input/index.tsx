@@ -1,15 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
-import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
 import { useModal } from "@getpara/react-sdk-lite";
+import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
+import { useWallet } from "@hooks/useWallet";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { switchChain } from "@wagmi/core";
 import { FC, useEffect, useRef, useState } from "react";
 import { useMedia } from "react-use";
-import { useConnection } from "wagmi";
 import CommentFormInputSubmitButton from "./components/SubmitButton";
 
 interface CommentsFormInputProps {
@@ -54,14 +54,14 @@ const commentEditorConfig = ({ content, placeholderText, onUpdate, isMobile }: C
 
 const CommentsFormInput: FC<CommentsFormInputProps> = ({ onSend, contestChainId, isAddingSuccess, isAdding }) => {
   const { openModal } = useModal();
-  const { address, isConnected, chainId } = useConnection();
+  const { userAddress, isConnected, chain } = useWallet();
   const [commentContent, setCommentContent] = useState("");
   const [allowSend, setAllowSend] = useState(false);
   const [containerHeight, setContainerHeight] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useMedia("(max-width: 768px)");
   const placeholderText = "add a comment...";
-  const isUserOnCorrectNetwork = chainId === contestChainId;
+  const isUserOnCorrectNetwork = chain?.id === contestChainId;
 
   const commentEditor = useEditor(
     commentEditorConfig({
@@ -125,7 +125,7 @@ const CommentsFormInput: FC<CommentsFormInputProps> = ({ onSend, contestChainId,
       } p-2 gap-3 w-full md:w-[544px] rounded-4xl bg-secondary-1 border border-neutral-17`}
     >
       <div>
-        <UserProfileDisplay avatarVersion ethereumAddress={address ?? ""} shortenOnFallback size="compact" />
+        <UserProfileDisplay avatarVersion ethereumAddress={userAddress ?? ""} shortenOnFallback size="compact" />
       </div>
       <EditorContent
         editor={commentEditor}

@@ -25,10 +25,10 @@ import {
 } from "@heroicons/react/24/solid";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { useConnection } from "wagmi";
+import { useWallet } from "@hooks/useWallet";
 
 const LandingHeaderMobileFooter = () => {
-  const { isConnected, address } = useConnection();
+  const { isConnected, userAddress } = useWallet();
   const { logoutAsync } = useLogout();
   const pathname = usePathname();
   const [isInPwaMode, setIsInPwaMode] = useState(false);
@@ -69,7 +69,7 @@ const LandingHeaderMobileFooter = () => {
       <MobileProfileDrawer
         isOpen={showWalletPortal}
         onClose={closeWalletPortal}
-        address={address ?? ""}
+        address={userAddress ?? ""}
         onDisconnect={handleDisconnect}
       />
     );
