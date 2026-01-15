@@ -1,5 +1,6 @@
-import { useAccount, useLogout, useModal, useWallet } from "@getpara/react-sdk";
+import { useLogout, useModal, useWallet } from "@getpara/react-sdk";
 import { FC } from "react";
+import { useConnection } from "wagmi";
 import AccountDropdown from "./components/AccountDropdown";
 import ChainDropdown from "./components/ChainDropdown";
 
@@ -14,7 +15,7 @@ interface ConnectButtonProps {
 
 export const ConnectButtonCustom: FC<ConnectButtonProps> = ({ displayOptions = {} }) => {
   const { onlyChainSwitcher = false } = displayOptions;
-  const { isConnected } = useAccount();
+  const { isConnected } = useConnection();
   const { data } = useWallet();
   const { logoutAsync } = useLogout();
   const { openModal } = useModal();
@@ -24,7 +25,6 @@ export const ConnectButtonCustom: FC<ConnectButtonProps> = ({ displayOptions = {
       await logoutAsync({
         clearPregenWallets: false, // Keep pregenerated wallets
       });
-      console.log("Successfully logged out");
     } catch (err) {
       console.error("Logout failed:", err);
     }

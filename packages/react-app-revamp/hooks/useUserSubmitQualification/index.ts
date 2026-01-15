@@ -1,10 +1,12 @@
 import { useWallet } from "@getpara/react-sdk";
 import { useSubmitQualification } from "./useSubmitQualification";
+import { useConnection } from "wagmi";
 export { EMPTY_ROOT } from "./utils";
 
 export function useUser() {
-  const { data: walletData } = useWallet();
-  const { checkIfCurrentUserQualifyToSubmit } = useSubmitQualification(walletData?.address as `0x${string}`);
+  const { address: userAddress } = useConnection();
+
+  const { checkIfCurrentUserQualifyToSubmit } = useSubmitQualification(userAddress as `0x${string}`);
 
   return {
     checkIfCurrentUserQualifyToSubmit,
