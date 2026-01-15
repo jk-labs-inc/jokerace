@@ -2,7 +2,7 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { AnyoneCanSubmit, useUserStore } from "@hooks/useUserSubmitQualification/store";
-import { useModal } from "@getpara/react-sdk";
+import { useModal } from "@getpara/react-sdk-lite";
 import { useMediaQuery } from "react-responsive";
 import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";

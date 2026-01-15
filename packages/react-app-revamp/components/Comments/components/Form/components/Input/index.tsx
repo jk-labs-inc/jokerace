@@ -2,7 +2,7 @@
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
-import { useModal } from "@getpara/react-sdk";
+import { useModal } from "@getpara/react-sdk-lite";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";

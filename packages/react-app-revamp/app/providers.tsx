@@ -1,10 +1,10 @@
 "use client";
 
 import { chains, transports } from "@config/wagmi";
-import ParaWeb, { Environment, TExternalWallet } from "@getpara/react-sdk";
+import ParaWeb, { Environment, TExternalWallet } from "@getpara/react-sdk-lite";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FC, ReactNode } from "react";
-import { ParaProvider } from "@getpara/react-sdk";
+import { ParaProvider } from "@getpara/react-sdk-lite";
 
 type ProvidersProps = {
   children: ReactNode;

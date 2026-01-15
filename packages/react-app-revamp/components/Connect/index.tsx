@@ -1,4 +1,4 @@
-import { useLogout, useModal, useWallet } from "@getpara/react-sdk";
+import { useLogout, useModal, useWallet } from "@getpara/react-sdk-lite";
 import { FC } from "react";
 import { useConnection } from "wagmi";
 import AccountDropdown from "./components/AccountDropdown";

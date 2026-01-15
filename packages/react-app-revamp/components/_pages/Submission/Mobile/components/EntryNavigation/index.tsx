@@ -1,7 +1,7 @@
 import { FC } from "react";
 import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
 import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
-import { useModal } from "@getpara/react-sdk";
+import { useModal } from "@getpara/react-sdk-lite";
 import { useConnection } from "wagmi";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useShallow } from "zustand/shallow";

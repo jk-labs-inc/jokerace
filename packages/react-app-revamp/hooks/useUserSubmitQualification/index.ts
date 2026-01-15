@@ -1,4 +1,4 @@
-import { useWallet } from "@getpara/react-sdk";
+import { useWallet } from "@getpara/react-sdk-lite";
 import { useSubmitQualification } from "./useSubmitQualification";
 import { useConnection } from "wagmi";
 export { EMPTY_ROOT } from "./utils";

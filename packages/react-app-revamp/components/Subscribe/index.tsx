@@ -1,6 +1,6 @@
 import { emailRegex } from "@helpers/regex";
 import useEmailSignup from "@hooks/useEmailSignup";
-import { useModal } from "@getpara/react-sdk";
+import { useModal } from "@getpara/react-sdk-lite";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useConnection } from "wagmi";

@@ -1,7 +1,7 @@
 import { MediaQuery } from "@helpers/mediaQuery";
 import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useModal } from "@getpara/react-sdk";
+import { useModal } from "@getpara/react-sdk-lite";
 import { useEffect } from "react";
 import { useConnection } from "wagmi";
 import MainHeaderMobileLayout from "../MainHeader/MobileLayout";

@@ -1,4 +1,4 @@
-import "@getpara/react-sdk/styles.css";
+import "@getpara/react-sdk-lite/styles.css";
 import LayoutBase from "@layouts/LayoutBase";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { polyfill } from "interweave-ssr";

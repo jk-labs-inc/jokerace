@@ -1,7 +1,7 @@
 import { ButtonSize } from "@components/UI/ButtonV3";
 import ButtonV3 from "@components/UI/ButtonV3";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useModal } from "@getpara/react-sdk";
+import { useModal } from "@getpara/react-sdk-lite";
 import { useCallback } from "react";
 
 const CreateConnectPrompt = () => {

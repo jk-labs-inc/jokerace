@@ -1,4 +1,4 @@
-import { useModal } from "@getpara/react-sdk";
+import { useModal } from "@getpara/react-sdk-lite";
 import { LiFiWidget } from "@lifi/widget";
 import { FC } from "react";
 import { createJumperWidgetConfig } from "./config";

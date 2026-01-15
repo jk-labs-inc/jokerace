@@ -9,7 +9,7 @@ import useDeleteProposal from "@hooks/useDeleteProposal";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import useProfileData from "@hooks/useProfileData";
 import { RawMetadataFields } from "@hooks/useProposal/utils";
-import { useModal } from "@getpara/react-sdk";
+import { useModal } from "@getpara/react-sdk-lite";
 import moment from "moment";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";

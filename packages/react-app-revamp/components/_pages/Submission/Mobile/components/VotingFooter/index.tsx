@@ -7,7 +7,7 @@ import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { useVoteBalance } from "@hooks/useVoteBalance";
-import { useModal } from "@getpara/react-sdk";
+import { useModal } from "@getpara/react-sdk-lite";
 import { useState } from "react";
 import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";

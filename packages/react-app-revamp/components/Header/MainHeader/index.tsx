@@ -1,5 +1,5 @@
 import { MediaQuery } from "@helpers/mediaQuery";
-import { useModal } from "@getpara/react-sdk";
+import { useModal } from "@getpara/react-sdk-lite";
 import { FC } from "react";
 import { useConnection } from "wagmi";
 import MainHeaderDesktopLayout from "./DesktopLayout";

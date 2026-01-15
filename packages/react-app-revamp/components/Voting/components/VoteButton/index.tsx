@@ -1,5 +1,5 @@
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
-import { useModal } from "@getpara/react-sdk";
+import { useModal } from "@getpara/react-sdk-lite";
 import { FC } from "react";
 
 interface VoteButtonProps {

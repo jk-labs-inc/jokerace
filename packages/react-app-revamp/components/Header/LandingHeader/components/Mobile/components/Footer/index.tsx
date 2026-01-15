@@ -9,7 +9,7 @@ import {
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_LIVE_CONTESTS,
 } from "@config/routes";
-import { useLogout, useModal } from "@getpara/react-sdk";
+import { useLogout, useModal } from "@getpara/react-sdk-lite";
 import {
   HomeIcon,
   MagnifyingGlassIcon,

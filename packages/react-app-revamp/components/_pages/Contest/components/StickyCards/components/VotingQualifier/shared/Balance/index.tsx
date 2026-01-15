@@ -1,4 +1,4 @@
-import { useModal } from "@getpara/react-sdk";
+import { useModal } from "@getpara/react-sdk-lite";
 import { useConnection } from "wagmi";
 import VotingQualifierAnyoneCanVoteBalance from "./components/AnyoneCanVoteBalance";
 
