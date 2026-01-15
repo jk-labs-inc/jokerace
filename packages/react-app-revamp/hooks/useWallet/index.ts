@@ -15,6 +15,7 @@ interface WalletHookReturn {
 /**
  * Hook for wallet connection management supporting both Para embedded wallets
  * and external wallets (MetaMask, etc.) through Para SDK integration.
+ * Copied from Juicebox useWallet hook but adapted to use both wagmi and para (we do not need most of the stuff from the original hook, so removed a bunch of stuff)
  *
  * Para supports two wallet types:
  * - Embedded: User logs in with social accounts (Google, Twitter, etc.) creating a Para account
