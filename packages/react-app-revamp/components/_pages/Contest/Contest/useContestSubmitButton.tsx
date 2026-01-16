@@ -1,30 +1,26 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { AnyoneCanSubmit, useUserStore } from "@hooks/useUserSubmitQualification/store";
+import { useSubmitQualification } from "@hooks/useUserSubmitQualification";
+import { useWallet } from "@hooks/useWallet";
 import { useModal } from "@getpara/react-sdk-lite";
 import { useMediaQuery } from "react-responsive";
-import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
 
 export const useContestSubmitButton = () => {
-  const { isConnected } = useWallet();
+  const { isConnected, userAddress } = useWallet();
   const { openModal } = useModal();
-  const {
-    contestMaxNumberSubmissionsPerUser,
-    currentUserQualifiedToSubmit,
-    currentUserProposalCount,
-    isCurrentUserSubmitQualificationLoading,
-    anyoneCanSubmit,
-  } = useUserStore(
-    useShallow(state => ({
-      contestMaxNumberSubmissionsPerUser: state.contestMaxNumberSubmissionsPerUser,
-      currentUserQualifiedToSubmit: state.currentUserQualifiedToSubmit,
-      currentUserProposalCount: state.currentUserProposalCount,
-      isCurrentUserSubmitQualificationLoading: state.isCurrentUserSubmitQualificationLoading,
-      anyoneCanSubmit: state.anyoneCanSubmit,
-    })),
-  );
+  const { contestConfig } = useContestConfigStore(state => state);
+  const { qualifies, anyoneCanSubmit, isLoading } = useSubmitQualification({
+    address: contestConfig.address,
+    chainId: contestConfig.chainId,
+    abi: contestConfig.abi,
+    userAddress: userAddress as `0x${string}` | undefined,
+    enabled: isConnected,
+  });
+
   const {
     isModalOpen: isSubmitProposalModalOpen,
     setIsModalOpen: setIsSubmitProposalModalOpen,
@@ -40,8 +36,6 @@ export const useContestSubmitButton = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
-  const qualifiedToSubmit =
-    currentUserQualifiedToSubmit && currentUserProposalCount < contestMaxNumberSubmissionsPerUser;
 
   const handleEnterContest = () => {
     setIsSubmitProposalSuccess(false);
@@ -63,9 +57,9 @@ export const useContestSubmitButton = () => {
       );
     }
 
-    if (isCurrentUserSubmitQualificationLoading) return null;
+    if (isLoading) return null;
 
-    if (qualifiedToSubmit) {
+    if (qualifies) {
       return (
         <ButtonV3
           colorClass="bg-gradient-purple rounded-[40px]"
@@ -78,12 +72,8 @@ export const useContestSubmitButton = () => {
       );
     }
 
-    if (anyoneCanSubmit === AnyoneCanSubmit.ONLY_CREATOR) {
+    if (!anyoneCanSubmit) {
       return <p className="text-secondary-11 text-[16px]">only the contest creator can submit entries</p>;
-    }
-
-    if (currentUserProposalCount >= contestMaxNumberSubmissionsPerUser) {
-      return <p className="text-secondary-11 text-[16px]">you have reached the max submissions this contest allows</p>;
     }
 
     return null;

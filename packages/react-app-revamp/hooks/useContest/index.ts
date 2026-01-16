@@ -10,9 +10,6 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import useUser from "@hooks/useUserSubmitQualification";
-import { useUserStore } from "@hooks/useUserSubmitQualification/store";
-import { VOTE_AND_EARN_VERSION } from "@hooks/useUserSubmitQualification/utils";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { checkIfContestExists } from "lib/contests";
@@ -65,13 +62,12 @@ export function useContest() {
     setCharge,
     setSortingEnabled,
     setCanEditTitleAndDescription,
+    setContestMaxNumberSubmissionsPerUser,
   } = useContestStore(state => state);
   const { setContestConfig } = useContestConfigStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
     state => state,
   );
-  const { setContestMaxNumberSubmissionsPerUser } = useUserStore(state => state);
-  const { checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList } = useProposal();
   const { setContestState } = useContestStateStore(state => state);
   const { error: errorMessage, handleError } = useError();
@@ -181,10 +177,7 @@ export function useContest() {
     try {
       setIsListProposalsLoading(false);
 
-      await Promise.all([
-        fetchContestContractData(contractConfig, version),
-        processUserQualifications(contractConfig, version),
-      ]);
+      await fetchContestContractData(contractConfig, version);
     } catch (e) {
       handleError(e, "Something went wrong while fetching the contest data.");
       setError(ErrorType.CONTRACT);
@@ -235,15 +228,6 @@ export function useContest() {
     } catch (error) {
       console.error("An error occurred while fetching data:", error);
     }
-  }
-
-  /**
-   * Fetch user qualifications
-   */
-  async function processUserQualifications(contractConfig: ContractConfig, version: string) {
-    if (compareVersions(version, VOTE_AND_EARN_VERSION) <= 0) return;
-
-    await checkIfCurrentUserQualifyToSubmit(contractConfig);
   }
 
   function setContestConfigData(contestAddress: string, contestChainName: string, abi: Abi, version: string) {

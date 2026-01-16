@@ -1,12 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { useUserStore } from "@hooks/useUserSubmitQualification/store";
+import { useSubmitQualification } from "@hooks/useUserSubmitQualification";
+import { useWallet } from "@hooks/useWallet";
 import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
-import { useWallet } from "@hooks/useWallet";
+import { useShallow } from "zustand/shallow";
 import ContestPromptModal from "./components/Modal";
 import ContestPromptPage from "./components/Page";
-import { useShallow } from "zustand/shallow";
 
 interface ContestPromptProps {
   prompt: string;
@@ -15,19 +16,25 @@ interface ContestPromptProps {
 }
 
 const ContestPrompt: FC<ContestPromptProps> = ({ prompt, type, hidePrompt = false }) => {
-  const { isConnected } = useWallet();
+  const { isConnected, userAddress } = useWallet();
+  const { contestConfig } = useContestConfigStore(state => state);
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const isVotingOpenOrClosed =
     contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
-  const { isCurrentUserSubmitQualificationLoading, isCurrentUserSubmitQualificationError } = useUserStore(
-    state => state,
-  );
+
+  const { isLoading, isError } = useSubmitQualification({
+    address: contestConfig.address,
+    chainId: contestConfig.chainId,
+    abi: contestConfig.abi,
+    userAddress: userAddress,
+    enabled: isConnected,
+  });
 
   const renderQualifierMessage = () => {
     if (isVotingOpenOrClosed) return null;
-    if (isCurrentUserSubmitQualificationLoading) {
+    if (isLoading) {
       return <Skeleton height={16} width={200} baseColor="#706f78" highlightColor="#FFE25B" duration={1} />;
-    } else if (isCurrentUserSubmitQualificationError) {
+    } else if (isError) {
       return (
         <p className="text-[16px] text-negative-11 font-bold">
           ruh roh, we couldn't load your entry qualification state! please reload the page

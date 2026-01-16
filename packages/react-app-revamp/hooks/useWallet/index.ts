@@ -1,7 +1,7 @@
 import { chains, ChainWithIcon } from "@config/wagmi/chains";
 import { useAccount, useLogout, useModal, useWallet as useParaWallet } from "@getpara/react-sdk-lite";
 import { useMemo } from "react";
-import { useChainId, useConnection, useSwitchChain, useWalletClient } from "wagmi";
+import { useChainId, useSwitchChain } from "wagmi";
 
 interface WalletHookReturn {
   userAddress: `0x${string}` | undefined;
@@ -23,8 +23,7 @@ interface WalletHookReturn {
  */
 export function useWallet(): WalletHookReturn {
   // Para SDK hooks for wallet state
-  const { isConnected } = useConnection();
-  const { connectionType, external } = useAccount();
+  const { connectionType, external, isConnected } = useAccount();
   const { data: paraWallet } = useParaWallet(); // Only available for embedded wallets
   const { logout: paraLogout } = useLogout();
   const { openModal } = useModal();

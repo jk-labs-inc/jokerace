@@ -13,7 +13,6 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
-import { useUserStore } from "@hooks/useUserSubmitQualification/store";
 import { useWallet } from "@hooks/useWallet";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
@@ -61,7 +60,6 @@ export function useSubmitProposal() {
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
   const { setSubmissionsCount, submissionsCount } = useProposalStore(state => state);
-  const { increaseCurrentUserProposalCount } = useUserStore(state => state);
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
   const { fields: metadataFields, setFields: setMetadataFields } = useMetadataStore(state => state);
@@ -159,7 +157,6 @@ export function useSubmitProposal() {
           toastSuccess({
             message: "proposal submitted successfully!",
           });
-        increaseCurrentUserProposalCount();
         setSubmissionsCount(submissionsCount + 1);
 
         if (metadataFields.length > 0) {

@@ -1,15 +1,3 @@
-import { useWallet } from "@hooks/useWallet";
-import { useSubmitQualification } from "./useSubmitQualification";
-export { EMPTY_ROOT } from "./utils";
-
-export function useUser() {
-  const { userAddress } = useWallet();
-
-  const { checkIfCurrentUserQualifyToSubmit } = useSubmitQualification(userAddress as `0x${string}`);
-
-  return {
-    checkIfCurrentUserQualifyToSubmit,
-  };
-}
-
-export default useUser;
+export { useSubmitQualification } from "./useSubmitQualification";
+export type { UseSubmitQualificationParams, UseSubmitQualificationResult } from "./useSubmitQualification";
+export { EMPTY_ROOT, VOTE_AND_EARN_VERSION } from "./utils";
