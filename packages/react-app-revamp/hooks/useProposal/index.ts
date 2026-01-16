@@ -231,8 +231,7 @@ export function useProposal() {
         },
       ];
 
-      //@ts-ignore
-      const results = await readContracts(config, { contracts });
+      const results = await readContracts(getWagmiConfig(), { contracts });
 
       // check if this proposal ID is already in our mapped IDs
       const proposalExists = initialMappedProposalIds.some(p => p.id === proposalId);
