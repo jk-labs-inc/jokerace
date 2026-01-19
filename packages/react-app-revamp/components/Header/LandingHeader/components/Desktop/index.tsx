@@ -47,7 +47,7 @@ const LandingHeaderDesktop = () => {
               href={ROUTE_CREATE_CONTEST}
               className="hidden bg-secondary-11 text-base text-true-black font-bold px-4 h-10 xl:flex items-center justify-center rounded-2xl transition-all duration-200 ease-out hover:brightness-110 hover:shadow-[0_0_12px_rgba(255,255,255,0.15)]"
             >
-              create a contest
+              create a contest and earn
             </CustomLink>
             <div className="flex gap-3 items-center ml-auto">
               <ConnectButtonCustom />

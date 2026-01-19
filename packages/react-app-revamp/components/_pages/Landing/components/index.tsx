@@ -11,8 +11,7 @@ import { fetchTotalRewardsForContests } from "lib/contests/contracts";
 import { ProcessedContest } from "lib/contests/types";
 import moment from "moment";
 import { useCallback, useState } from "react";
-import LandingPageExplainer from "./Explainer";
-import LandingPageUsedBy from "./UsedBy";
+import LandingPageHowItWorks from "./HowItWorks";
 
 const sortContests = (contests: ProcessedContest[]): ProcessedContest[] => {
   const now = moment();
@@ -82,9 +81,9 @@ const LandingPage = () => {
   const { status, contestData, rewardsData, isRewardsFetching, isContestDataFetching } = useFeaturedContests();
 
   return (
-    <div className="flex flex-col gap-8 pb-6">
+    <div className="flex flex-col gap-8 pb-12">
       <div className="flex flex-col gap-8">
-        <div className="pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-20 2xl:pr-0 mt-6 lx:mt-12">
+        <div className="flex flex-col gap-12 md:gap-20 pl-4 pr-4 md:pl-16 md:pr-16 3xl:pl-20 2xl:pr-0 mt-6 lx:mt-12">
           {isSupabaseConfigured ? (
             <div className="flex flex-col gap-8 w-full lx:w-fit">
               <FeaturedContests
@@ -117,10 +116,9 @@ const LandingPage = () => {
               for contest chain and address information!
             </div>
           )}
+          <LandingPageHowItWorks />
         </div>
       </div>
-      <LandingPageUsedBy />
-      <LandingPageExplainer />
     </div>
   );
 };
