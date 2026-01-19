@@ -40,16 +40,21 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
         }}
         paraModalConfig={{
           theme: {
-            foregroundColor: "#2D3648",
-            backgroundColor: "#FFFFFF",
-            accentColor: "#0066CC",
-            darkForegroundColor: "#E8EBF2",
-            darkBackgroundColor: "#1A1F2B",
-            darkAccentColor: "#4D9FFF",
+            foregroundColor: "#1a1a1a",
+            backgroundColor: "#ffffff",
+            accentColor: "#bb65ff",
+            darkForegroundColor: "#e5e5e5",
+            darkBackgroundColor: "#000000",
+            darkAccentColor: "#bb65ff",
             mode: "dark",
-            borderRadius: "none",
-            font: "Inter",
+            font: "Lato",
+            customPalette: {
+              modal: {
+                border: "#e5e5e5",
+              },
+            },
           },
+          logo: "/wordmark.png",
           oAuthMethods: ["GOOGLE", "TWITTER", "DISCORD", "TELEGRAM"],
         }}
         externalWalletConfig={{
