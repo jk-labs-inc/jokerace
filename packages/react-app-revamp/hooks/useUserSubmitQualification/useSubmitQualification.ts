@@ -1,102 +1,72 @@
-import { config } from "@config/wagmi";
-import { ContractConfig } from "@hooks/useContest";
-import { readContract, readContracts } from "@wagmi/core";
-import { AnyoneCanSubmit, useUserStore } from "./store";
+import { useMemo } from "react";
+import { Abi } from "viem";
+import { useReadContracts } from "wagmi";
 
-export const useSubmitQualification = (userAddress: `0x${string}` | undefined) => {
-  const {
-    setCurrentUserQualifiedToSubmit,
-    setCurrentUserProposalCount,
-    setIsCurrentUserSubmitQualificationLoading,
-    setIsCurrentUserSubmitQualificationSuccess,
-    setIsCurrentUserSubmitQualificationError,
-    setAnyoneCanSubmit,
-  } = useUserStore(state => state);
+export interface UseSubmitQualificationParams {
+  address: `0x${string}`;
+  chainId: number;
+  abi: Abi;
+  userAddress: `0x${string}` | undefined;
+  enabled?: boolean;
+}
 
-  const setLoadingState = (loading: boolean, success: boolean = false, error: boolean = false) => {
-    setIsCurrentUserSubmitQualificationLoading(loading);
-    setIsCurrentUserSubmitQualificationSuccess(success);
-    setIsCurrentUserSubmitQualificationError(error);
-  };
+export interface UseSubmitQualificationResult {
+  qualifies: boolean;
+  anyoneCanSubmit: boolean;
+  isLoading: boolean;
+  isError: boolean;
+}
 
-  const handleSubmissionCountCheck = async (
-    contractConfig: ContractConfig,
-    contestMaxNumberSubmissionsPerUser: number,
-    canSubmit: boolean,
-  ) => {
-    if (!canSubmit) {
-      setCurrentUserQualifiedToSubmit(false);
-      setLoadingState(false, true);
-      return;
-    }
+export const useSubmitQualification = ({
+  address,
+  chainId,
+  abi,
+  userAddress,
+  enabled = true,
+}: UseSubmitQualificationParams): UseSubmitQualificationResult => {
+  const contracts = useMemo(
+    () => [
+      {
+        address,
+        abi,
+        chainId,
+        functionName: "anyoneCanSubmit",
+      },
+      {
+        address,
+        abi,
+        chainId,
+        functionName: "creator",
+      },
+    ],
+    [address, abi, chainId],
+  );
 
-    try {
-      const numOfSubmittedProposalsRaw = (await readContract(config, {
-        ...contractConfig,
-        functionName: "numSubmissions",
-        args: [userAddress as `0x${string}`],
-      })) as bigint;
+  const { data, isLoading, isError } = useReadContracts({
+    contracts,
+    query: {
+      enabled: enabled && !!address && !!abi,
+      staleTime: Infinity,
+      select: data => {
+        if (data[0]?.result === undefined || !data[1]?.result) {
+          return null;
+        }
 
-      const numOfSubmittedProposals = Number(numOfSubmittedProposalsRaw.toString());
-      setCurrentUserProposalCount(numOfSubmittedProposals);
+        const anyoneCanSubmit = Number(data[0].result) === 1;
+        const creator = data[1].result as `0x${string}`;
 
-      const hasReachedLimit =
-        numOfSubmittedProposals > 0 && numOfSubmittedProposals >= contestMaxNumberSubmissionsPerUser;
+        return { anyoneCanSubmit, creator };
+      },
+    },
+  });
 
-      if (hasReachedLimit) {
-        setLoadingState(false, true);
-        return;
-      }
-
-      setCurrentUserQualifiedToSubmit(true);
-      setLoadingState(false, true);
-    } catch (error) {
-      setCurrentUserQualifiedToSubmit(false);
-      setLoadingState(false, false, true);
-    }
-  };
-
-  const checkIfCurrentUserQualifyToSubmit = async (contractConfig: ContractConfig) => {
-    setLoadingState(true);
-
-    if (!contractConfig.abi) {
-      setLoadingState(false, false, true);
-      return;
-    }
-
-    const results = await readContracts(config, {
-      contracts: [
-        {
-          ...contractConfig,
-          functionName: "anyoneCanSubmit",
-          args: [],
-        },
-        {
-          ...contractConfig,
-          functionName: "numAllowedProposalSubmissions",
-          args: [],
-        },
-        {
-          ...contractConfig,
-          functionName: "creator",
-          args: [],
-        },
-      ],
-    });
-
-    const anyoneCanSubmitResult = Number(results[0].result);
-    const contestMaxNumberSubmissionsPerUser = Number(results[1].result);
-    const contestAuthorEthereumAddress = results[2].result as `0x${string}`;
-    const anyoneCanSubmit = anyoneCanSubmitResult === 1;
-
-    setAnyoneCanSubmit(anyoneCanSubmit ? AnyoneCanSubmit.ANYONE_CAN_SUBMIT : AnyoneCanSubmit.ONLY_CREATOR);
-
-    const canSubmit = anyoneCanSubmit ? true : userAddress === contestAuthorEthereumAddress;
-
-    await handleSubmissionCountCheck(contractConfig, contestMaxNumberSubmissionsPerUser, canSubmit);
-  };
+  const anyoneCanSubmit = data?.anyoneCanSubmit ?? false;
+  const qualifies = userAddress ? anyoneCanSubmit || userAddress === data?.creator : false;
 
   return {
-    checkIfCurrentUserQualifyToSubmit,
+    qualifies,
+    anyoneCanSubmit,
+    isLoading,
+    isError,
   };
 };

@@ -1,14 +1,13 @@
+import { ChainWithIcon } from "@config/wagmi";
 import { FC, useEffect } from "react";
 import { v4 as uuidV4 } from "uuid";
-import { Chain } from "viem";
 import { useShallow } from "zustand/shallow";
 import { useFundPoolStore } from "../../store";
 import { generateNativeToken } from "../../utils";
 import TokenWidget from "./components";
-import { RainbowKitChain } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext";
 
 interface TokenWidgetsProps {
-  chain: RainbowKitChain;
+  chain: ChainWithIcon;
 }
 
 const TokenWidgets: FC<TokenWidgetsProps> = ({ chain }) => {

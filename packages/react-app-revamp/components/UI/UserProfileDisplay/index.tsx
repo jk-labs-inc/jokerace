@@ -1,15 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 import { ROUTE_VIEW_USER } from "@config/routes";
+import { erc20ChainDropdownOptions } from "@helpers/tokens";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import useProfileData from "@hooks/useProfileData";
+import { useWallet } from "@hooks/useWallet";
 import { useMemo, useState } from "react";
-import { useConnection } from "wagmi";
 import { Avatar } from "../Avatar";
-import SendFundsButton from "./components/SendFundsButton";
-import { erc20ChainDropdownOptions } from "@helpers/tokens";
-import { SIZES } from "./constants/sizes";
 import { UserProfileName } from "../UserProfileName";
 import { UserProfileSocials } from "../UserProfileSocials";
+import SendFundsButton from "./components/SendFundsButton";
+import { SIZES } from "./constants/sizes";
 
 interface UserProfileDisplayProps {
   ethereumAddress: string;
@@ -36,7 +36,7 @@ const UserProfileDisplay = ({
   includeSendFunds,
   onSendFundsClick,
 }: UserProfileDisplayProps) => {
-  const { chain, isConnected, address: userConnectedAddress } = useConnection();
+  const { chain, isConnected, userAddress } = useWallet();
   const { profileName, profileAvatar, socials, isLoading } = useProfileData(
     ethereumAddress,
     shortenOnFallback,
@@ -115,10 +115,7 @@ const UserProfileDisplay = ({
           <div className="flex items-center gap-4">
             {includeSocials && socials ? <UserProfileSocials socials={socials} /> : null}
 
-            {includeSendFunds &&
-            isConnected &&
-            isChainSupportedForSendFunds &&
-            userConnectedAddress === ethereumAddress ? (
+            {includeSendFunds && isConnected && isChainSupportedForSendFunds && userAddress === ethereumAddress ? (
               <SendFundsButton onSendFundsClick={onSendFundsClick} />
             ) : null}
           </div>

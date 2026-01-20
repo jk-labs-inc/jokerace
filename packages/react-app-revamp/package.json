@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "postinstall": "npx setup-para"
   },
   "dependencies": {
     "@abstract-foundation/agw-client": "1.10.0",
@@ -21,7 +22,8 @@
     "@coinbase/wallet-sdk": "4.3.7",
     "@gemini-wallet/core": "0.3.2",
     "@getbrevo/brevo": "3.0.1",
-    "@getpara/rainbowkit-wallet": "1.4.0",
+    "@getpara/evm-wallet-connectors": "2.6.0",
+    "@getpara/react-sdk-lite": "2.6.0",
     "@headlessui/react": "2.2.9",
     "@heroicons/react": "2.2.0",
     "@lifi/widget": "3.40.3",

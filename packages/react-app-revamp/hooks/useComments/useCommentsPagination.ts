@@ -81,7 +81,6 @@ export const useCommentsPagination = (address: string, chainId: number, proposal
         },
       ];
 
-      //@ts-ignore
       const [allCommentsIdsRaw, deletedCommentIdsRaw] = await readContracts(config, { contracts });
 
       const allCommentsIdsBigInt = allCommentsIdsRaw.result as bigint[];
@@ -135,7 +134,6 @@ export const useCommentsPagination = (address: string, chainId: number, proposal
         },
       ];
 
-      //@ts-ignore
       const [allCommentsIdsRaw, deletedCommentIdsRaw] = await readContracts(config, { contracts });
 
       const allCommentsIdsBigInt = allCommentsIdsRaw.result as bigint[];

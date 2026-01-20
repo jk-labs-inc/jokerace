@@ -21,6 +21,7 @@ export interface ContestState {
   isSuccess: boolean;
   isV3: boolean;
   contestMaxProposalCount: number;
+  contestMaxNumberSubmissionsPerUser: number;
   sortingEnabled: boolean;
   charge: Charge;
   isReadOnly: boolean;
@@ -28,6 +29,7 @@ export interface ContestState {
   setSortingEnabled: (isAllowed: boolean) => void;
   setContestPrompt: (prompt: string) => void;
   setContestMaxProposalCount: (amount: number) => void;
+  setContestMaxNumberSubmissionsPerUser: (amount: number) => void;
   setContestName: (name: string) => void;
   setContestAuthor: (address: string) => void;
   setSubmissionsOpen: (datetime: Date) => void;
@@ -60,6 +62,7 @@ export const createContestStore = () =>
     },
     isSuccess: false,
     contestMaxProposalCount: 0,
+    contestMaxNumberSubmissionsPerUser: 0,
     sortingEnabled: false,
     isV3: false,
     isReadOnly: false,
@@ -67,6 +70,7 @@ export const createContestStore = () =>
     setSortingEnabled: isAllowed => set({ sortingEnabled: isAllowed }),
     setContestPrompt: prompt => set({ contestPrompt: prompt }),
     setContestMaxProposalCount: amount => set({ contestMaxProposalCount: amount }),
+    setContestMaxNumberSubmissionsPerUser: amount => set({ contestMaxNumberSubmissionsPerUser: amount }),
     setIsV3: value => set({ isV3: value }),
     setIsReadOnly: value => set({ isReadOnly: value }),
     setContestName: name => set({ contestName: name }),

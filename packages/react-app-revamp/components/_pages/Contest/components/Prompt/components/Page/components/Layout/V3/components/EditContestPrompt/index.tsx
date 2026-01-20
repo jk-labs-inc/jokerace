@@ -1,5 +1,5 @@
 import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
@@ -7,7 +7,7 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import useEditContestPrompt from "@hooks/useEditContestPrompt";
 import { switchChain } from "@wagmi/core";
 import { FC, useState } from "react";
-import { useConnection } from "wagmi";
+import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
 import EditContestPromptModal, { EditPrompt } from "./components/Modal";
 
@@ -18,11 +18,14 @@ interface EditContestPromptProps {
 
 const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }) => {
   const { contestSummary, contestEvaluate, contestContactDetails, contestImageUrl } = parsePrompt(prompt);
-  const { address, chain: accountChain } = useConnection();
+  const {
+    userAddress,
+    chain: { name: accountChain },
+  } = useWallet();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
-  const isOnCorrectChain = accountChain?.name.toLowerCase() === contestConfig.chainName.toLowerCase();
+  const isOnCorrectChain = accountChain.toLowerCase() === contestConfig.chainName.toLowerCase();
   const { contestAuthorEthereumAddress } = useContestStore(state => state);
-  const isAuthor = address === contestAuthorEthereumAddress;
+  const isAuthor = userAddress === contestAuthorEthereumAddress;
   const { contestState } = useContestStateStore(state => state);
   const isCompletedOrCanceled =
     contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
@@ -49,7 +52,7 @@ const EditContestPrompt: FC<EditContestPromptProps> = ({ canEditPrompt, prompt }
   const handleSavePrompt = async () => {
     if (!contestConfig.chainId) return;
 
-    if (!isOnCorrectChain) await switchChain(config, { chainId: contestConfig.chainId });
+    if (!isOnCorrectChain) await switchChain(getWagmiConfig(), { chainId: contestConfig.chainId });
 
     const formattedPrompt = new URLSearchParams({
       imageUrl: contestImageUrl ?? "",

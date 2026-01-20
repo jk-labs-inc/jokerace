@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import getVoterRewardsModuleContractVersion from "@helpers/getVoterRewardsModuleContractVersion";
 import { verifyContractBytecode } from "@helpers/verifyContractBytecode";
 import { ContractConfig } from "@hooks/useContest";
@@ -20,7 +20,10 @@ const EMPTY_REWARDS_MODULE_INFO: RewardsModuleInfo = {
  */
 export async function getRewardsModuleInfo(rewardsModuleAddress: string, chainId: number): Promise<RewardsModuleInfo> {
   try {
-    const { abi, version, deployedBytecode } = await getVoterRewardsModuleContractVersion(rewardsModuleAddress, chainId);
+    const { abi, version, deployedBytecode } = await getVoterRewardsModuleContractVersion(
+      rewardsModuleAddress,
+      chainId,
+    );
 
     if (!abi || !deployedBytecode) return EMPTY_REWARDS_MODULE_INFO;
 
@@ -53,7 +56,7 @@ export async function getRewardsModuleAddress(contractConfig: ContractConfig): P
 
     if (!hasRewardsModule) return null;
 
-    const address = (await readContract(config, {
+    const address = (await readContract(getWagmiConfig(), {
       ...contractConfig,
       functionName: "officialRewardsModule",
       args: [],
@@ -75,7 +78,7 @@ export async function getRewardsModuleAddress(contractConfig: ContractConfig): P
  */
 export async function getModuleType(address: string, abi: Abi, chainId: number): Promise<string> {
   try {
-    return (await readContract(config, {
+    return (await readContract(getWagmiConfig(), {
       address: address as `0x${string}`,
       abi,
       functionName: "MODULE_TYPE",

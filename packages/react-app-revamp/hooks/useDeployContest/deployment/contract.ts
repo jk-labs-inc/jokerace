@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { deployContract, waitForTransactionReceipt } from "@wagmi/core";
 import { isSortingEnabled } from "../contracts";
@@ -8,14 +8,14 @@ export const deployContractToChain = async (
   constructorArgs: ReturnType<typeof prepareConstructorArgs>,
   address: `0x${string}`,
 ) => {
-  const contractDeploymentHash = await deployContract(config, {
+  const contractDeploymentHash = await deployContract(getWagmiConfig(), {
     abi: DeployedContestContract.abi,
     bytecode: DeployedContestContract.bytecode.object as `0x${string}`,
     args: [constructorArgs],
     account: address,
   });
 
-  const receipt = await waitForTransactionReceipt(config, {
+  const receipt = await waitForTransactionReceipt(getWagmiConfig(), {
     hash: contractDeploymentHash,
     confirmations: 2,
   });

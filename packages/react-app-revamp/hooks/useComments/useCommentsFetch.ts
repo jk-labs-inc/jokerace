@@ -58,7 +58,6 @@ export const useCommentsFetch = (address: string, chainId: number) => {
         },
       ];
 
-      //@ts-ignore
       const [commentResult, isDeletedResult] = await readContracts(config, { contracts });
 
       const comment = commentResult.result as CommentCore;

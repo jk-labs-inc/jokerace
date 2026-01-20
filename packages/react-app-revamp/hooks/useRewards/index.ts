@@ -1,11 +1,12 @@
-import { chains, config } from "@config/wagmi";
+import { chains } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useQuery } from "@tanstack/react-query";
+import { compareVersions } from "compare-versions";
 import { readContracts } from "@wagmi/core";
 import { getRewardsModuleAddress, getRewardsModuleInfo } from "lib/rewards/contracts";
 import { ModuleType, RewardModuleInfo } from "lib/rewards/types";
 import { Abi } from "viem";
-import { compareVersions } from "compare-versions";
 
 const SELF_FUNDED_VERSION = "6.9";
 
@@ -61,7 +62,7 @@ export function useRewardsModule() {
         : []),
     ];
 
-    const rewardsModule = await readContracts(config, {
+    const rewardsModule = await readContracts(getWagmiConfig(), {
       contracts: contractsRewardsModule,
     });
 
@@ -77,7 +78,7 @@ export function useRewardsModule() {
       args: [ranking],
     }));
 
-    const sharesResults = await readContracts(config, {
+    const sharesResults = await readContracts(getWagmiConfig(), {
       contracts: shareContracts,
     });
 

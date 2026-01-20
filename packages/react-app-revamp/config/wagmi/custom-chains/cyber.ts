@@ -1,6 +1,6 @@
-import { Chain } from "@rainbow-me/rainbowkit";
+import { ChainWithIcon } from "./types";
 
-export const cyber: Chain = {
+export const cyber: ChainWithIcon = {
   id: 7560,
   name: "cyber",
   iconUrl: "/cyber.svg",

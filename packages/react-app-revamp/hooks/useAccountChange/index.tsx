@@ -1,13 +1,13 @@
-import { config } from "@config/wagmi";
-import { watchAccount } from "@wagmi/core";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
+import { watchConnection } from "@wagmi/core";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export const useAccountChange = () => {
   const [accountChanged, setAccountChanged] = useState(false);
   const previousAccountRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const unwatch = watchAccount(config, {
+    const unwatch = watchConnection(getWagmiConfig(), {
       onChange(account) {
         if (!account.address) {
           previousAccountRef.current = null;

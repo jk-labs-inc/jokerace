@@ -1,7 +1,7 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
-import { config } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { getProposalId } from "@helpers/getProposalId";
 import { generateEntryPreviewHTML, generateFieldInputsHTML, processFieldInputs } from "@helpers/metadata";
 import { useContestStore } from "@hooks/useContest/store";
@@ -13,12 +13,11 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
-import { useUserStore } from "@hooks/useUserSubmitQualification/store";
+import { useWallet } from "@hooks/useWallet";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useMediaQuery } from "react-responsive";
-import { useConnection } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import { useSubmitProposalStore } from "./store";
 
@@ -52,7 +51,7 @@ interface RewardsAnalyticsParams {
 interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsParams {}
 
 export function useSubmitProposal() {
-  const { address: userAddress, chain } = useConnection();
+  const { userAddress, chain } = useWallet();
   const { contestConfig } = useContestConfigStore(state => state);
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
@@ -61,7 +60,6 @@ export function useSubmitProposal() {
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
   const { setSubmissionsCount, submissionsCount } = useProposalStore(state => state);
-  const { increaseCurrentUserProposalCount } = useUserStore(state => state);
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
   const { fields: metadataFields, setFields: setMetadataFields } = useMetadataStore(state => state);
@@ -114,14 +112,14 @@ export function useSubmitProposal() {
 
         let hash: `0x${string}`;
 
-        const { request } = await simulateContract(config, {
+        const { request } = await simulateContract(getWagmiConfig(), {
           ...contractConfig,
           functionName: "propose",
           args: [proposalCore],
         });
-        hash = await writeContract(config, request);
+        hash = await writeContract(getWagmiConfig(), request);
 
-        const receipt = await waitForTransactionReceipt(config, {
+        const receipt = await waitForTransactionReceipt(getWagmiConfig(), {
           chainId: contestConfig.chainId,
           hash: hash,
           confirmations: 2,
@@ -159,7 +157,6 @@ export function useSubmitProposal() {
           toastSuccess({
             message: "proposal submitted successfully!",
           });
-        increaseCurrentUserProposalCount();
         setSubmissionsCount(submissionsCount + 1);
 
         if (metadataFields.length > 0) {

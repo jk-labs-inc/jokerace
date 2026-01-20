@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Iframe from "@components/tiptap/Iframe";
-import { chains, config } from "@config/wagmi";
+import { chains } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { emailRegex } from "@helpers/regex";
 import {
@@ -15,6 +16,7 @@ import useEmailSignup from "@hooks/useEmailSignup";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUploadImageStore } from "@hooks/useUploadImage";
+import { useWallet } from "@hooks/useWallet";
 import Document from "@tiptap/extension-document";
 import Heading from "@tiptap/extension-heading";
 import Image from "@tiptap/extension-image";
@@ -28,7 +30,7 @@ import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useConnection, useBalance } from "wagmi";
+import { useBalance } from "wagmi";
 import DialogModalSendProposalDesktopLayout from "./Desktop";
 import DialogModalSendProposalMobileLayout from "./Mobile";
 
@@ -38,7 +40,7 @@ interface DialogModalSendProposalProps {
 }
 
 export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOpen, setIsOpen }) => {
-  const { address, chain } = useConnection();
+  const { userAddress, chain } = useWallet();
   const asPath = usePathname();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { subscribeUser, checkIfEmailExists } = useEmailSignup();
@@ -55,7 +57,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   } = useSubmitProposalStore(state => state);
   const { votesOpen, charge } = useContestStore(state => state);
   const { data: accountData } = useBalance({
-    address: address as `0x${string}`,
+    address: userAddress as `0x${string}`,
   });
   const { setRevertTextOption } = useEditorStore(state => state);
   const chainId = chains.filter(
@@ -113,7 +115,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   });
 
   const onSwitchNetwork = async () => {
-    await switchChain(config, { chainId });
+    await switchChain(getWagmiConfig(), { chainId });
   };
 
   const handleSubscription = async () => {
@@ -122,17 +124,17 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     }
 
     // Check if the email already exists
-    const emailExists = await checkIfEmailExists({ emailAddress: emailForSubscription, userAddress: address });
+    const emailExists = await checkIfEmailExists({ emailAddress: emailForSubscription, userAddress: userAddress });
     if (emailExists) {
       setEmailAlreadyExists(true);
       return null;
     }
 
-    if (!address) {
+    if (!userAddress) {
       return null;
     }
 
-    return subscribeUser(emailForSubscription, address, false);
+    return subscribeUser(emailForSubscription, userAddress, false);
   };
 
   const onSubmitProposal = async () => {
@@ -203,7 +205,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           contestId={contestId}
           proposal={proposal}
           editorProposal={editorProposal}
-          address={address ?? ""}
+          address={userAddress ?? ""}
           charge={charge}
           accountData={accountData}
           isOpen={isOpen}
@@ -218,7 +220,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           chainName={chainName}
           contestId={contestId}
           editorProposal={editorProposal}
-          address={address ?? ""}
+          address={userAddress ?? ""}
           charge={charge}
           accountData={accountData}
           isOpen={isOpen}

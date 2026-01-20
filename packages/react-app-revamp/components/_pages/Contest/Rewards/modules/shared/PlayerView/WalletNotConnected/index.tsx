@@ -1,8 +1,8 @@
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useModal } from "@getpara/react-sdk-lite";
 import InfoPanel from "../../InfoPanel";
 
 const RewardsPlayerViewNotConnected = () => {
-  const { openConnectModal } = useConnectModal();
+  const { openModal } = useModal();
 
   return (
     <InfoPanel
@@ -18,7 +18,7 @@ const RewardsPlayerViewNotConnected = () => {
       }
       actionButton={{
         text: "connect wallet",
-        onClick: () => openConnectModal?.(),
+        onClick: () => openModal(),
       }}
     />
   );

@@ -1,6 +1,5 @@
 import { chains } from "@config/wagmi";
 import { WidgetConfig } from "@lifi/widget";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 const NATIVE_TOKEN_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -48,9 +47,8 @@ const createFilters = (chainId: number) => {
   };
 };
 
-export const createJumperWidgetConfig = (chainId: number, asset: string): WidgetConfig => {
+export const createJumperWidgetConfig = (chainId: number, asset: string, onConnect?: () => void): WidgetConfig => {
   const filters = createFilters(chainId);
-  const { openConnectModal } = useConnectModal();
 
   return {
     integrator: "JokeRace",
@@ -92,7 +90,7 @@ export const createJumperWidgetConfig = (chainId: number, asset: string): Widget
     },
     walletConfig: {
       onConnect() {
-        openConnectModal?.();
+        onConnect?.();
       },
     },
   };

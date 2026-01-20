@@ -1,11 +1,11 @@
 import { ButtonSize } from "@components/UI/ButtonV3";
 import ButtonV3 from "@components/UI/ButtonV3";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useModal } from "@getpara/react-sdk-lite";
 import { useCallback } from "react";
 
 const CreateConnectPrompt = () => {
-  const { openConnectModal } = useConnectModal();
+  const { openModal } = useModal();
   const { step, setStep } = useDeployContestStore(state => state);
 
   const onBackHandler = useCallback(() => {
@@ -25,7 +25,7 @@ const CreateConnectPrompt = () => {
           <ButtonV3
             colorClass={`text-[16px] bg-gradient-create rounded-[10px] font-bold  text-true-black hover:scale-105 transition-transform duration-200 ease-in-out`}
             size={ButtonSize.LARGE}
-            onClick={openConnectModal}
+            onClick={() => openModal()}
             isDisabled={false}
           >
             connect wallet

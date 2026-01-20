@@ -63,7 +63,7 @@ import DeprecateFlatCurvesContract from "@contracts/bytecodeAndAbi/Contest.6.11.
 import AddCreatorSplitContract from "@contracts/bytecodeAndAbi/Contest.6.12.addCreatorSplit.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
-import { createTransport } from "@config/wagmi/transports";
+import { createTransport } from "@config/wagmi/chains";
 import { Chain, createPublicClient, getContract } from "viem";
 import { getChainFromId } from "./getChainFromId";
 
