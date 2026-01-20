@@ -1,15 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
-import { useAccountChange } from "@hooks/useAccountChange";
-import { ContractConfig, useContest } from "@hooks/useContest";
+import { useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useContestStatusTimer } from "@hooks/useContestStatusTimer";
 import useRewardsModule from "@hooks/useRewards";
-import useUser from "@hooks/useUserSubmitQualification";
-import { VOTE_AND_EARN_VERSION } from "@hooks/useUserSubmitQualification/utils";
-import { compareVersions } from "compare-versions";
 import { useEffect } from "react";
 import { useConnectionEffect } from "wagmi";
 
@@ -32,8 +28,6 @@ export const useLayoutViewContest = () => {
     votesClose,
     votesOpen,
   } = useContestStore(state => state);
-  const { accountChanged, resetAccountChanged } = useAccountChange();
-  const { checkIfCurrentUserQualifyToSubmit } = useUser();
   const { setContestStatus } = useContestStatusStore(state => state);
   const {
     data: rewardsModule,
@@ -62,30 +56,6 @@ export const useLayoutViewContest = () => {
   useEffect(() => {
     setContestStatus(contestStatus);
   }, [contestStatus, setContestStatus]);
-
-  // Fetch user qualification when account changes
-  useEffect(() => {
-    if (
-      isLoading ||
-      !isSuccess ||
-      !accountChanged ||
-      compareVersions(contestConfig.version, VOTE_AND_EARN_VERSION) <= 0
-    )
-      return;
-
-    const fetchUserData = async () => {
-      const contractConfig: ContractConfig = {
-        address: contestConfig.address as `0x${string}`,
-        abi: contestConfig.abi,
-        chainId: contestConfig.chainId,
-      };
-      await checkIfCurrentUserQualifyToSubmit(contractConfig);
-
-      resetAccountChanged();
-    };
-
-    fetchUserData();
-  }, [accountChanged, isLoading, isSuccess, contestConfig.version]);
 
   // Fetch contest info when chain or address changes
   useEffect(() => {

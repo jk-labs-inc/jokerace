@@ -1,5 +1,5 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useError } from "@hooks/useError";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
@@ -29,16 +29,16 @@ export function useContestState(): CancelContestResult {
     });
 
     try {
-      const { request } = await simulateContract(config, {
+      const { request } = await simulateContract(getWagmiConfig(), {
         chainId: contestConfig.chainId,
         abi: contestConfig.abi,
         address: contestConfig.address as `0x${string}`,
         functionName: "cancel",
       });
 
-      const txHash = await writeContract(config, request);
+      const txHash = await writeContract(getWagmiConfig(), request);
 
-      const receipt = await waitForTransactionReceipt(config, { hash: txHash, confirmations: 2 });
+      const receipt = await waitForTransactionReceipt(getWagmiConfig(), { hash: txHash, confirmations: 2 });
 
       if (receipt.status === "success") {
         setIsConfirmed(true);

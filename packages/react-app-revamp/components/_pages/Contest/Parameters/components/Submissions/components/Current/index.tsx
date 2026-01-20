@@ -2,41 +2,42 @@ import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { MAX_SUBMISSIONS_LIMIT } from "@hooks/useDeployContest";
-import { AnyoneCanSubmit, useUserStore } from "@hooks/useUserSubmitQualification/store";
-import { formatEther } from "viem";
+import { useSubmitQualification } from "@hooks/useUserSubmitQualification";
+import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
 
-const generateUserQualifiedMessage = (anyoneCanSubmit: AnyoneCanSubmit) => {
-  return anyoneCanSubmit === AnyoneCanSubmit.ANYONE_CAN_SUBMIT ? "anyone can enter" : "only creator can enter";
-};
-
 const ContestParametersSubmissionsCurrent = () => {
-  const { anyoneCanSubmit, contestMaxNumberSubmissionsPerUser } = useUserStore(
+  const { isConnected, userAddress } = useWallet();
+  const { contestConfig } = useContestConfigStore(state => state);
+
+  const { anyoneCanSubmit } = useSubmitQualification({
+    address: contestConfig.address,
+    chainId: contestConfig.chainId,
+    abi: contestConfig.abi,
+    userAddress: userAddress as `0x${string}` | undefined,
+    enabled: isConnected,
+  });
+
+  const { contestMaxProposalCount, contestMaxNumberSubmissionsPerUser } = useContestStore(
     useShallow(state => ({
-      anyoneCanSubmit: state.anyoneCanSubmit,
+      contestMaxProposalCount: state.contestMaxProposalCount,
       contestMaxNumberSubmissionsPerUser: state.contestMaxNumberSubmissionsPerUser,
     })),
   );
 
-  const chainNativeCurrencySymbol = useContestConfigStore(
-    useShallow(state => state.contestConfig.chainNativeCurrencySymbol),
-  );
-  const { charge, contestMaxProposalCount } = useContestStore(
-    useShallow(state => ({
-      charge: state.charge,
-      contestMaxProposalCount: state.contestMaxProposalCount,
-    })),
-  );
+  const maxProposalsPerUserCapped = contestMaxNumberSubmissionsPerUser === MAX_SUBMISSIONS_LIMIT;
 
-  const maxProposalsPerUserCapped = contestMaxNumberSubmissionsPerUser == MAX_SUBMISSIONS_LIMIT;
+  const generateUserQualifiedMessage = () => {
+    return anyoneCanSubmit ? "anyone can enter" : "only creator can enter";
+  };
 
   return (
     <div className="flex flex-col gap-8">
       <p className="text-[24px] text-neutral-11">entering</p>
       <ul className="pl-4 text-[16px] text-neutral-9">
-        <li className="list-disc">{generateUserQualifiedMessage(anyoneCanSubmit)}</li>
+        <li className="list-disc">{generateUserQualifiedMessage()}</li>
         <li className="list-disc">
-          {anyoneCanSubmit === AnyoneCanSubmit.ANYONE_CAN_SUBMIT ? "players" : "creator"} can enter{" "}
+          {anyoneCanSubmit ? "players" : "creator"} can enter{" "}
           <span>
             {maxProposalsPerUserCapped
               ? "as many times as desired"

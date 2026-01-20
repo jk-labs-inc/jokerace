@@ -1,5 +1,5 @@
 import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { useContestStore } from "@hooks/useContest/store";
 import { simulateContract, writeContract } from "@wagmi/core";
 import { useRef } from "react";
@@ -36,7 +36,7 @@ const useEditContestTitleAndImage = ({ contestAbi, contestAddress }: UseEditCont
     ];
 
     const updateTitle = async () => {
-      const { request } = await simulateContract(config, {
+      const { request } = await simulateContract(getWagmiConfig(), {
         abi: contestAbi,
         address: contestAddress as `0x${string}`,
         functionName: "setName",
@@ -44,13 +44,13 @@ const useEditContestTitleAndImage = ({ contestAbi, contestAddress }: UseEditCont
       });
 
       if (!request) throw new Error("failed to update title");
-      await writeContract(config, request);
+      await writeContract(getWagmiConfig(), request);
 
       setContestName(newTitle);
     };
 
     const updatePrompt = async () => {
-      const { request } = await simulateContract(config, {
+      const { request } = await simulateContract(getWagmiConfig(), {
         abi: contestAbi,
         address: contestAddress as `0x${string}`,
         functionName: "setPrompt",
@@ -58,7 +58,7 @@ const useEditContestTitleAndImage = ({ contestAbi, contestAddress }: UseEditCont
       });
 
       if (!request) throw new Error("failed to update image");
-      await writeContract(config, request);
+      await writeContract(getWagmiConfig(), request);
 
       setContestPrompt(newPrompt);
     };

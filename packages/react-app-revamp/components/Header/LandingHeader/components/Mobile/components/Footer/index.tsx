@@ -9,7 +9,7 @@ import {
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_LIVE_CONTESTS,
 } from "@config/routes";
-import { config } from "@config/wagmi";
+import { useLogout, useModal } from "@getpara/react-sdk-lite";
 import {
   HomeIcon,
   MagnifyingGlassIcon,
@@ -23,20 +23,19 @@ import {
   TrophyIcon as TrophyIconSolid,
   UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/24/solid";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { disconnect } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { useConnection } from "wagmi";
+import { useWallet } from "@hooks/useWallet";
 
 const LandingHeaderMobileFooter = () => {
-  const { isConnected, address } = useConnection();
+  const { isConnected, userAddress } = useWallet();
+  const { logoutAsync } = useLogout();
   const pathname = usePathname();
   const [isInPwaMode, setIsInPwaMode] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const isActive = (route: string) => (pathname === route ? "font-bold" : "");
   const isOneOfActive = (routes: string[]) => (routes.includes(pathname ?? "") ? "font-bold" : "");
-  const { openConnectModal } = useConnectModal();
+  const { openModal } = useModal();
   const allowedLinks = ["Github", "Linktree", "Report a bug", "Terms", "Privacy Policy", "Docs", "Media Kit", "FAQ"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const [showWalletPortal, setShowWalletPortal] = useState(false);
@@ -56,7 +55,7 @@ const LandingHeaderMobileFooter = () => {
 
   const handleDisconnect = useCallback(async () => {
     try {
-      await disconnect(config);
+      await logoutAsync({ clearPregenWallets: false });
       closeWalletPortal();
     } catch (error) {
       console.error("Failed to disconnect:", error);
@@ -70,7 +69,7 @@ const LandingHeaderMobileFooter = () => {
       <MobileProfileDrawer
         isOpen={showWalletPortal}
         onClose={closeWalletPortal}
-        address={address ?? ""}
+        address={userAddress ?? ""}
         onDisconnect={handleDisconnect}
       />
     );
@@ -148,7 +147,7 @@ const LandingHeaderMobileFooter = () => {
                 <p className="text-[12px]">profile</p>
               </div>
             ) : (
-              <div className="flex flex-col items-center" onClick={openConnectModal}>
+              <div className="flex flex-col items-center" onClick={() => openModal()}>
                 <img width={24} height={24} src="/header/wallet.svg" alt="wallet" />
                 <p className="text-[12px]">wallet</p>
               </div>

@@ -1,4 +1,5 @@
-import { chains, config } from "@config/wagmi";
+import { chains } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useError } from "@hooks/useError";
 import { Abi } from "viem";
@@ -46,6 +47,6 @@ export const useCommentsContract = (address: string, chainId: number) => {
   return {
     getContractConfig,
     chainName,
-    config,
+    config: getWagmiConfig(),
   };
 };

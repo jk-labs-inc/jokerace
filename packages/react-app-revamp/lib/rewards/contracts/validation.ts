@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { Abi } from "viem";
@@ -21,7 +21,7 @@ export const validateRankings = async (
   if (compareVersions(version, VOTER_REWARDS_VERSION) < 0) {
     try {
       // for older versions, use getAddressToPayOut
-      const addressResults = await readContracts(config, {
+      const addressResults = await readContracts(getWagmiConfig(), {
         contracts: rankings.map(ranking => ({
           address: contractAddress,
           chainId,
@@ -31,19 +31,19 @@ export const validateRankings = async (
         })),
       });
 
-    const validRankings: number[] = [];
-    const tiedRankings: number[] = [];
+      const validRankings: number[] = [];
+      const tiedRankings: number[] = [];
 
-    for (let i = 0; i < rankings.length; i++) {
-      const payoutAddress = addressResults[i]?.result as `0x${string}` | undefined;
-      if (payoutAddress !== undefined) {
-        if (payoutAddress.toLowerCase() === creatorAddress?.toLowerCase()) {
-          tiedRankings.push(rankings[i]);
-        } else {
-          validRankings.push(rankings[i]);
+      for (let i = 0; i < rankings.length; i++) {
+        const payoutAddress = addressResults[i]?.result as `0x${string}` | undefined;
+        if (payoutAddress !== undefined) {
+          if (payoutAddress.toLowerCase() === creatorAddress?.toLowerCase()) {
+            tiedRankings.push(rankings[i]);
+          } else {
+            validRankings.push(rankings[i]);
+          }
         }
       }
-    }
 
       return { validRankings, tiedRankings };
     } catch (error) {
@@ -53,7 +53,7 @@ export const validateRankings = async (
   }
 
   try {
-    const proposalIdResults = await readContracts(config, {
+    const proposalIdResults = await readContracts(getWagmiConfig(), {
       contracts: rankings.map(ranking => ({
         address: contractAddress,
         chainId,
@@ -63,19 +63,19 @@ export const validateRankings = async (
       })),
     });
 
-  const validRankings: number[] = [];
-  const tiedRankings: number[] = [];
+    const validRankings: number[] = [];
+    const tiedRankings: number[] = [];
 
-  for (let i = 0; i < rankings.length; i++) {
-    const proposalId = proposalIdResults[i]?.result as bigint | undefined;
-    if (proposalId !== undefined) {
-      if (proposalId === 0n) {
-        tiedRankings.push(rankings[i]);
-      } else {
-        validRankings.push(rankings[i]);
+    for (let i = 0; i < rankings.length; i++) {
+      const proposalId = proposalIdResults[i]?.result as bigint | undefined;
+      if (proposalId !== undefined) {
+        if (proposalId === 0n) {
+          tiedRankings.push(rankings[i]);
+        } else {
+          validRankings.push(rankings[i]);
+        }
       }
     }
-  }
 
     return { validRankings, tiedRankings };
   } catch (error) {

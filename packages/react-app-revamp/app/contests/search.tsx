@@ -1,7 +1,7 @@
 "use client";
 import ListContests from "@components/_pages/ListContests";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { SearchBar } from "@components/_pages/SearchBar";
-import { config } from "@config/wagmi";
 import { isSupabaseConfigured } from "@helpers/database";
 import useContestSortOptions from "@hooks/useSortOptions";
 import { useQuery } from "@tanstack/react-query";
@@ -89,7 +89,7 @@ const SearchContests = () => {
 
       if (criteria.query.endsWith(".eth")) {
         try {
-          const resolvedAddress = await getEnsAddress(config, { name: criteria.query, chainId: 1 });
+          const resolvedAddress = await getEnsAddress(getWagmiConfig(), { name: criteria.query, chainId: 1 });
           targetAddress = resolvedAddress || criteria.query;
         } catch (error) {
           return;

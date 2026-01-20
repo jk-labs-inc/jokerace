@@ -1,4 +1,5 @@
-import { chains, config } from "@config/wagmi";
+import { chains } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { getTokenBalanceValue } from "@helpers/getTokenBalance";
 import { getBalance, readContract, readContracts } from "@wagmi/core";
 import { Abi, Address, erc20Abi, formatUnits } from "viem";
@@ -22,7 +23,7 @@ export async function fetchTotalRewards({
   rewardsModuleAbi: Abi;
   chainId: number;
 }): Promise<TotalRewardsData> {
-  const nativeBalance = await getBalance(config, {
+  const nativeBalance = await getBalance(getWagmiConfig(), {
     address: rewardsModuleAddress,
     chainId,
   });
@@ -77,7 +78,7 @@ export async function fetchTotalRewards({
         });
       }
 
-      const contractResults = await readContracts(config, {
+      const contractResults = await readContracts(getWagmiConfig(), {
         contracts: contractCalls,
       });
 
@@ -184,14 +185,14 @@ export async function fetchTotalRewardsForRank({
     });
 
     const [rankShareResult, totalSharesResult] = await Promise.all([
-      readContract(config, {
+      readContract(getWagmiConfig(), {
         address: rewardsModuleAddress,
         abi: rewardsModuleAbi,
         functionName: "shares",
         chainId,
         args: [BigInt(ranking)],
       }),
-      readContract(config, {
+      readContract(getWagmiConfig(), {
         address: rewardsModuleAddress,
         abi: rewardsModuleAbi,
         functionName: "totalShares",

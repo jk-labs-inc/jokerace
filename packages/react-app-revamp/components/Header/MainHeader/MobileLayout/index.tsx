@@ -8,7 +8,7 @@ import {
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_LIVE_CONTESTS,
 } from "@config/routes";
-import { config } from "@config/wagmi";
+import { useLogout } from "@getpara/react-sdk-lite";
 import {
   HomeIcon,
   MagnifyingGlassIcon,
@@ -18,12 +18,10 @@ import {
 } from "@heroicons/react/24/outline";
 import {
   HomeIcon as HomeIconSolid,
-  MagnifyingGlassIcon as MagnifyingGlassIconSolid,
   PencilSquareIcon as PencilSquareIconSolid,
   TrophyIcon as TrophyIconSolid,
   UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/24/solid";
-import { disconnect } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { FC, useCallback, useEffect, useState } from "react";
 
@@ -40,6 +38,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
   const [showWalletPortal, setShowWalletPortal] = useState(false);
   const isActive = (route: string) => (pathname === route ? "font-bold" : "");
   const isOneOfActive = (routes: string[]) => (routes.includes(pathname ?? "") ? "font-bold" : "");
+  const { logoutAsync } = useLogout();
 
   useEffect(() => {
     setIsClient(true);
@@ -56,7 +55,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
 
   const handleDisconnect = useCallback(async () => {
     try {
-      await disconnect(config);
+      await logoutAsync({ clearPregenWallets: false });
       closeWalletPortal();
     } catch (error) {
       console.error("Failed to disconnect:", error);

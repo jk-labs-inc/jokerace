@@ -1,6 +1,7 @@
-import { chains, config } from "@config/wagmi";
+import { chains } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { isSupabaseConfigured } from "@helpers/database";
-import { getAccount } from "@wagmi/core";
+import { getConnection } from "@wagmi/core";
 import { ContestValues } from "../types";
 
 export async function getJkLabsSplitDestinationAddress(
@@ -44,7 +45,7 @@ export async function indexContest(contestData: ContestValues) {
     throw new Error("Supabase is not configured");
   }
 
-  const { address } = getAccount(config);
+  const { address } = getConnection(getWagmiConfig());
   const supabaseConfig = await import("@config/supabase");
   const supabase = supabaseConfig.supabase;
 

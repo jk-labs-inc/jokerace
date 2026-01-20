@@ -1,6 +1,6 @@
 import { DeployContestStore, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useCallback } from "react";
-import { useConnection } from "wagmi";
+import { useWallet } from "@hooks/useWallet";
 import { StepTitle, getStepNumber } from "../types";
 
 const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected: boolean) => boolean> = {
@@ -62,7 +62,7 @@ const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected
 };
 
 export const useNextStep = () => {
-  const { isConnected } = useConnection();
+  const { isConnected } = useWallet();
   const { step: currentStep, setStep } = useDeployContestStore(state => state);
 
   const onNextStep = useCallback(

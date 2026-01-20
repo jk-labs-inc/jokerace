@@ -1,4 +1,3 @@
-import { config } from "@config/wagmi";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
@@ -8,10 +7,11 @@ import useEditContestTitle from "@hooks/useEditContestTitle";
 import useEditContestTitleAndImage from "@hooks/useEditContestTitleAndImage";
 import { switchChain } from "@wagmi/core";
 import { FC, useState } from "react";
-import { useConnection } from "wagmi";
+import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
 import { parsePrompt } from "../../../Prompt/utils";
 import EditContestNameModal from "./components/Modal";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 interface EditContestNameProps {
   contestName: string;
   contestPrompt: string;
@@ -19,12 +19,15 @@ interface EditContestNameProps {
 }
 
 const EditContestName: FC<EditContestNameProps> = ({ contestName, contestPrompt, canEditTitle }) => {
-  const { address, chain: accountChain } = useConnection();
+  const {
+    userAddress,
+    chain: { name: accountChain },
+  } = useWallet();
   const { contestSummary, contestEvaluate, contestContactDetails, contestImageUrl } = parsePrompt(contestPrompt);
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
-  const isOnCorrectChain = accountChain?.name.toLowerCase() === contestConfig.chainName.toLowerCase();
+  const isOnCorrectChain = accountChain?.toLowerCase() === contestConfig.chainName.toLowerCase();
   const { contestAuthorEthereumAddress } = useContestStore(state => state);
-  const isAuthor = address === contestAuthorEthereumAddress;
+  const isAuthor = userAddress === contestAuthorEthereumAddress;
   const { contestState } = useContestStateStore(state => state);
   const isCompletedOrCanceled =
     contestState === ContestStateEnum.Completed || contestState === ContestStateEnum.Canceled;
@@ -53,7 +56,7 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, contestPrompt,
 
     // ensure correct chain
     if (!isOnCorrectChain) {
-      await switchChain(config, { chainId: contestConfig.chainId });
+      await switchChain(getWagmiConfig(), { chainId: contestConfig.chainId });
     }
 
     // create formatted prompt if image is being updated

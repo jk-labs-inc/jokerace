@@ -1,8 +1,8 @@
-import { useConnection, useDisconnect } from "wagmi";
+import { useModal } from "@getpara/react-sdk-lite";
+import { useWallet } from "@hooks/useWallet";
 import { FC } from "react";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
-import ChainDropdown from "./components/ChainDropdown";
 import AccountDropdown from "./components/AccountDropdown";
+import ChainDropdown from "./components/ChainDropdown";
 
 interface DisplayOptions {
   showChainName?: boolean;
@@ -15,18 +15,13 @@ interface ConnectButtonProps {
 
 export const ConnectButtonCustom: FC<ConnectButtonProps> = ({ displayOptions = {} }) => {
   const { onlyChainSwitcher = false } = displayOptions;
-  const { address, isConnected } = useConnection();
-  const { disconnect } = useDisconnect();
-  const { openConnectModal } = useConnectModal();
+  const { isConnected, userAddress, disconnect } = useWallet();
+  const { openModal } = useModal();
 
-  const handleDisconnect = () => {
-    disconnect();
-  };
-
-  if (!isConnected || !address) {
+  if (!isConnected || !userAddress) {
     return (
       <button
-        onClick={openConnectModal}
+        onClick={() => openModal()}
         type="button"
         className="w-48 h-10 text-center bg-gradient-create rounded-[40px] text-true-black font-bold text-[16px]"
       >
@@ -40,9 +35,9 @@ export const ConnectButtonCustom: FC<ConnectButtonProps> = ({ displayOptions = {
       <ChainDropdown />
       {!onlyChainSwitcher && (
         <AccountDropdown
-          address={address}
-          displayName={`${address.slice(0, 6)}...${address.slice(-4)}`}
-          onDisconnect={handleDisconnect}
+          address={userAddress}
+          displayName={`${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`}
+          onDisconnect={disconnect}
         />
       )}
     </div>

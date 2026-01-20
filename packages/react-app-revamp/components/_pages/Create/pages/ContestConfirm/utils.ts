@@ -4,7 +4,6 @@ import { mainnet } from "@config/wagmi/custom-chains/mainnet";
 
 const FORBIDDEN_WALLETS: Record<string, string> = {
   coinbase: "Coinbase Wallet",
-  "xyz.abs.privy": "Abstract Global Wallet",
 };
 
 const isWalletForbidden = (wallet: string) => {
