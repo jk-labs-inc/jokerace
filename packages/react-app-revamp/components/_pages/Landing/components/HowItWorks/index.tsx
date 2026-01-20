@@ -7,7 +7,7 @@ const LandingPageHowItWorks = () => {
   return (
     <div className="flex flex-col gap-9" id="how-it-works">
       <motion.p
-        className="text-neutral-11 md:text-neutral-9 font-sabo-filled text-2xl"
+        className="text-neutral-11 lg:text-neutral-9 font-sabo-filled text-2xl"
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
@@ -17,7 +17,7 @@ const LandingPageHowItWorks = () => {
       </motion.p>
       <div className="flex flex-col gap-20 max-w-[1352px]">
         <LandingPageHowItWorksProcessFlow />
-        <div className="flex flex-col gap-8 md:gap-32">
+        <div className="flex flex-col gap-8 lg:gap-20 2xl:gap-32">
           <LandingPageHowItWorksEarningBenefits />
           <LandingPageHowItWorksCreatorRewards />
         </div>

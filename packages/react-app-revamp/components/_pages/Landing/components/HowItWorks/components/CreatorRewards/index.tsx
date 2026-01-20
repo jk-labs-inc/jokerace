@@ -26,18 +26,18 @@ const itemVariants: Variants = {
 const LandingPageHowItWorksCreatorRewards = () => {
   return (
     <motion.div
-      className="flex flex-col gap-8 md:flex-row md:gap-12 md:items-start"
+      className="flex flex-col gap-8 lg:flex-row lg:gap-8 2xl:gap-12 lg:items-start"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={containerVariants}
     >
-      <motion.div variants={itemVariants} className="w-full md:w-1/2" style={{ willChange: "transform" }}>
+      <motion.div variants={itemVariants} className="w-full lg:w-1/2" style={{ willChange: "transform" }}>
         <CreateContests />
       </motion.div>
       <motion.div
         variants={itemVariants}
-        className="hidden md:block md:w-1/2"
+        className="hidden 2xl:block 2xl:w-1/2"
         style={{ willChange: "transform" }}
       >
         <FundsDistribution />

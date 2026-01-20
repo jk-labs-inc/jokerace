@@ -5,14 +5,14 @@ const EarnForBeliefs = () => {
   return (
     <div className="flex w-full justify-between">
       <div className="flex flex-col gap-6 h-full">
-        <p className="text-2xl md:text-3xl font-normal">
+        <p className="text-2xl lg:text-2xl 2xl:text-3xl font-normal">
           earn for <span className="text-secondary-11 font-bold">your beliefs</span>
         </p>
-        <div className="flex flex-col gap-8 md:gap-12">
-          <div className="flex flex-col gap-4 text-base md:text-xl text-neutral-11 max-w-[400px]">
+        <div className="flex flex-col gap-8 lg:gap-8 2xl:gap-12">
+          <div className="flex flex-col gap-4 text-base lg:text-lg 2xl:text-xl text-neutral-11 max-w-[400px]">
             <p>buy votes on whatever you believe.</p>
             <p>
-              90% of what you spend goes into the <br className="hidden md:block" />
+              90% of what you spend goes into the <br className="hidden 2xl:block" />
               rewards pool.
             </p>
             <p>you earn a share of the rewards pool for voting on winners, proportionate to your vote.</p>
@@ -27,7 +27,7 @@ const EarnForBeliefs = () => {
           </a>
         </div>
       </div>
-      <div className="hidden md:block">
+      <div className="hidden 2xl:block">
         <InteractiveEntryCard />
       </div>
     </div>

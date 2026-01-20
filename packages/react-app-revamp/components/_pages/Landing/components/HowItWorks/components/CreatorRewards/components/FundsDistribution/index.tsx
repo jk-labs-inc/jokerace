@@ -28,7 +28,7 @@ type PieChartProps = {
 };
 
 const PieChart = ({ width, height }: PieChartProps) => {
-  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const isMobile = useMediaQuery({ maxWidth: 1024 });
   const pieSize = isMobile ? Math.min(width * 0.45, height * 0.45) : Math.min(width, height) / 2;
   const radius = pieSize;
   const leftGap = isMobile ? 16 : 24;
@@ -94,7 +94,7 @@ const PieChart = ({ width, height }: PieChartProps) => {
                     y1={edgeY}
                     x2={labelX}
                     y2={labelY}
-                    stroke="#e5e5e5"
+                    stroke={arc.data.textColor}
                     strokeWidth={lineWidth}
                   />
 
@@ -104,7 +104,7 @@ const PieChart = ({ width, height }: PieChartProps) => {
                     y={isVoters ? labelY - votersTextOffset : labelY}
                     textAnchor={isVoters ? "middle" : "start"}
                     dominantBaseline="middle"
-                    className="text-base md:text-2xl font-bold"
+                    className="text-base lg:text-xl 2xl:text-2xl font-bold"
                     fill="#e5e5e5"  
                   >
                     <tspan x={isVoters ? 0 : labelX + textGap} dy="-0.6em">
@@ -127,8 +127,8 @@ const PieChart = ({ width, height }: PieChartProps) => {
 
 const FundsDistribution = () => {
   return (
-    <div className="flex w-full pt-12 md:pt-20">
-      <div className="w-full max-w-48 md:max-w-72 aspect-square">
+    <div className="flex w-full pt-12 lg:pt-16 2xl:pt-20">
+      <div className="w-full max-w-48 lg:max-w-60 2xl:max-w-72 aspect-square">
         <ParentSize>
           {({ width, height }) => <PieChart width={width} height={height} />}
         </ParentSize>

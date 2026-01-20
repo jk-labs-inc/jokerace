@@ -37,7 +37,7 @@ const lineVariants: Variants = {
 const LandingPageHowItWorksProcessFlow = () => {
   return (
     <motion.div
-      className="hidden md:flex flex-col gap-6"
+      className="hidden lg:flex flex-col gap-6"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
@@ -47,7 +47,7 @@ const LandingPageHowItWorksProcessFlow = () => {
         <motion.div variants={itemVariants} style={{ willChange: "transform" }}>
           <LandingPageHowItWorksProcessStepContainer>
             <img src="/landing/bubbles-ballot.png" alt="step 1" />
-            <p className="text-neutral-11 font-sabo-filled text-2xl">
+            <p className="text-neutral-11 font-sabo-filled text-xl 2xl:text-2xl">
               buy votes early <br /> for cheap
             </p>
           </LandingPageHowItWorksProcessStepContainer>
@@ -61,7 +61,7 @@ const LandingPageHowItWorksProcessFlow = () => {
         <motion.div variants={itemVariants} style={{ willChange: "transform" }}>
           <LandingPageHowItWorksProcessStepContainer>
             <img src="/landing/money.png" alt="step 2" />
-            <p className="text-neutral-11 font-sabo-filled text-2xl">
+            <p className="text-neutral-11 font-sabo-filled text-xl 2xl:text-2xl">
               this funds the <br />
               rewards
             </p>
@@ -76,7 +76,7 @@ const LandingPageHowItWorksProcessFlow = () => {
         <motion.div variants={itemVariants} style={{ willChange: "transform" }}>
           <LandingPageHowItWorksProcessStepContainer>
             <img src="/landing/bubbles-money.png" alt="step 3" />
-            <p className="text-neutral-11 font-sabo-filled text-2xl">
+            <p className="text-neutral-11 font-sabo-filled text-xl 2xl:text-2xl">
               earn by voting <br />
               up winners
             </p>

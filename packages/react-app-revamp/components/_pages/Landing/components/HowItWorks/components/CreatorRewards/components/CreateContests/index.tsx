@@ -6,24 +6,24 @@ const CreateContests = () => {
   return (
     <div className="flex w-full justify-between">
       <div className="flex flex-col gap-6 h-full">
-        <p className="text-2xl md:text-3xl font-normal">
-          <span className="hidden md:inline">
+        <p className="text-2xl lg:text-2xl 2xl:text-3xl font-normal">
+          <span className="hidden lg:inline">
             and finally... <br />
           </span>
           earn by <span className="text-positive-11 font-bold">creating contests.</span>
         </p>
-        <div className="flex flex-col gap-8 md:gap-12">
-          <div className="flex flex-col gap-4 text-base md:text-xl text-neutral-11 max-w-[400px]">
+        <div className="flex flex-col gap-8 lg:gap-8 2xl:gap-12">
+          <div className="flex flex-col gap-4 text-base lg:text-lg 2xl:text-xl text-neutral-11 max-w-[400px]">
             <p>create a contest on any subjective question you like.</p>
             <p>
-              who was best player in a game? best <br className="hidden md:block" />
+              who was best player in a game? best <br className="hidden 2xl:block" />
               dressed? best personality?
             </p>
             <p>
               opt in to earn 5% of <span className="font-bold text-true-white">all volume</span> on the contest.
             </p>
           </div>          
-          <div className="block md:hidden">
+          <div className="block 2xl:hidden">
             <FundsDistribution />
           </div>
           <CustomLink
