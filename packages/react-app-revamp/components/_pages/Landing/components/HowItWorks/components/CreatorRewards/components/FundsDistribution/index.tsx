@@ -127,7 +127,7 @@ const PieChart = ({ width, height }: PieChartProps) => {
 
 const FundsDistribution = () => {
   return (
-    <div className="flex w-full md:w-1/2 pt-20">
+    <div className="flex w-full pt-12 md:pt-20">
       <div className="w-full max-w-48 md:max-w-72 aspect-square">
         <ParentSize>
           {({ width, height }) => <PieChart width={width} height={height} />}

@@ -1,8 +1,9 @@
 import { LINK_ROI_CALCULATOR } from "@config/links";
+import InteractivePriceCurve from "./components/InteractivePriceCurve";
 
 const EarnForConviction = () => {
   return (
-    <div className="flex w-full md:w-1/2 justify-between">
+    <div className="flex w-full justify-between">
       <div className="flex flex-col gap-6 h-full">
         <p className="text-2xl md:text-3xl font-normal">
           earn more for <span className="text-positive-18 font-bold">your conviction</span>
@@ -13,7 +14,10 @@ const EarnForConviction = () => {
               jokerace's novel mechanism is a <span className="font-bold text-true-white">price curve.</span>
             </p>
             <p>the earlier you vote, the cheaper the votes, and the more you can earn.</p>
-            <p>but be careful. if you wait too long, you <br className="hidden md:block" />might lose money... even if you vote on winners.</p>
+            <p>
+              but be careful. if you wait too long, you <br className="hidden md:block" />
+              might lose money... even if you vote on winners.
+            </p>
           </div>
           <a
             href={LINK_ROI_CALCULATOR}
@@ -25,7 +29,9 @@ const EarnForConviction = () => {
           </a>
         </div>
       </div>
-      <img src="/landing/price-curve.png" alt="Price curve chart" className="hidden md:block h-fit" />
+      <div className="hidden md:block">
+        <InteractivePriceCurve />
+      </div>
     </div>
   );
 };

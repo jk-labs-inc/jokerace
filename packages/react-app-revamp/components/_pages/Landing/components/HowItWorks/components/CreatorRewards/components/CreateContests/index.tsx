@@ -1,9 +1,10 @@
 import { ROUTE_CREATE_CONTEST } from "@config/routes";
 import CustomLink from "@components/UI/Link";
+import FundsDistribution from "../FundsDistribution";
 
 const CreateContests = () => {
   return (
-    <div className="flex w-full md:w-1/2 justify-between">
+    <div className="flex w-full justify-between">
       <div className="flex flex-col gap-6 h-full">
         <p className="text-2xl md:text-3xl font-normal">
           <span className="hidden md:inline">
@@ -21,6 +22,9 @@ const CreateContests = () => {
             <p>
               opt in to earn 5% of <span className="font-bold text-true-white">all volume</span> on the contest.
             </p>
+          </div>          
+          <div className="block md:hidden">
+            <FundsDistribution />
           </div>
           <CustomLink
             href={ROUTE_CREATE_CONTEST}
