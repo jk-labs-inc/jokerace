@@ -29,7 +29,7 @@
     "@mysten/dapp-kit": "0.19.11",
     "@next/third-parties": "15.5.9",
     "@privy-io/cross-app-connect": "0.4.1",
-    "@privy-io/popup": "0.0.1",
+    "@privy-io/popup": "0.0.2",
     "@rainbow-me/rainbowkit": "2.2.10",
     "@safe-global/safe-apps-provider": "0.18.6",
     "@safe-global/safe-apps-sdk": "9.1.0",
