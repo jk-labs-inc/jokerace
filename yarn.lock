@@ -3545,10 +3545,10 @@
   dependencies:
     "@paulmillr/qr" "^0.2.1"
 
-"@metamask/sdk@0.33.1":
-  version "0.33.1"
-  resolved "https://registry.yarnpkg.com/@metamask/sdk/-/sdk-0.33.1.tgz#c3376444b9c5b42fbfd434edf414db613ab68c42"
-  integrity sha512-1mcOQVGr9rSrVcbKPNVzbZ8eCl1K0FATsYH3WJ/MH4WcZDWGECWrXJPNMZoEAkLxWiMe8jOQBumg2pmcDa9zpQ==
+"@metamask/sdk@0.34.0":
+  version "0.34.0"
+  resolved "https://registry.yarnpkg.com/@metamask/sdk/-/sdk-0.34.0.tgz#31d80cd559cd5686ca7c83718b0d32f4650b3813"
+  integrity sha512-8dkJUShZ5zFqYjNmhJaqKgDzZVne+F2rNjMQJ3pxs89n3oOUNuJ8dsTo08Grf9vlQ6Ldpdt2RTwqbrxKWyyqlw==
   dependencies:
     "@babel/runtime" "^7.26.0"
     "@metamask/onboarding" "^1.0.1"
@@ -3725,28 +3725,28 @@
     "@mysten/utils" "0.2.0"
     "@scure/base" "^1.2.6"
 
-"@mysten/dapp-kit@0.19.11":
-  version "0.19.11"
-  resolved "https://registry.yarnpkg.com/@mysten/dapp-kit/-/dapp-kit-0.19.11.tgz#7be9c41d80c3e2396519099305c128540729f65f"
-  integrity sha512-b0poDfJVTzmIYtDRT06KFxzer4xAN+KMvIJuZ8bIMXAOfV7a17fMEJ94HI1nXCflQGGbx+BKsIKcb93ptwPgag==
+"@mysten/dapp-kit@0.20.0":
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/@mysten/dapp-kit/-/dapp-kit-0.20.0.tgz#7d1187fcb23b972eb07d0436bc5cd898e64fceec"
+  integrity sha512-Pho3fda4UvLQJA1Bqbm9iE6zYq4FCUshuacdd4kNO87aFAC7E+n07iRG9RxVSHGAwWeuILKIxRbrwASxPKTA6w==
   dependencies:
-    "@mysten/slush-wallet" "0.2.12"
+    "@mysten/slush-wallet" "0.3.0"
     "@mysten/sui" "1.45.2"
     "@mysten/utils" "0.2.0"
     "@mysten/wallet-standard" "0.19.9"
     "@radix-ui/react-dialog" "^1.1.15"
     "@radix-ui/react-dropdown-menu" "^2.1.16"
-    "@radix-ui/react-slot" "^1.2.3"
-    "@vanilla-extract/css" "^1.17.4"
+    "@radix-ui/react-slot" "^1.2.4"
+    "@vanilla-extract/css" "^1.17.5"
     "@vanilla-extract/dynamic" "^2.1.5"
     "@vanilla-extract/recipes" "^0.5.7"
     clsx "^2.1.1"
     zustand "^4.5.4"
 
-"@mysten/slush-wallet@0.2.12":
-  version "0.2.12"
-  resolved "https://registry.yarnpkg.com/@mysten/slush-wallet/-/slush-wallet-0.2.12.tgz#0ac2c80e2cf95a4314d1a50a826cfdd05c40a6c9"
-  integrity sha512-OVIQbADqUVZCTps3MGvVI90nczTbwepAb75x+jZuH2W2p8lXoYIuvuuP4KlwwalR9QgpqOqptdpYFVAKi8ncLQ==
+"@mysten/slush-wallet@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@mysten/slush-wallet/-/slush-wallet-0.3.0.tgz#1271819d61065d733059aed823a08c5f14e7da3b"
+  integrity sha512-XxEFDpJrrlgEt6cayOtFEEqsbI/2lqMl+QATvsT4TYQJ7B3FkBHPeKsyG+GVuvhVDhqXaVlGXwWrk66ri0uzhQ==
   dependencies:
     "@mysten/sui" "1.45.2"
     "@mysten/utils" "0.2.0"
@@ -4062,20 +4062,20 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
-"@privy-io/cross-app-connect@0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@privy-io/cross-app-connect/-/cross-app-connect-0.4.0.tgz#d4d1310896367d9eb8d7f5c9158f1d45c7965ef8"
-  integrity sha512-cCjmeuudKMCQbBTYOunrdS18rLp6S9pApK8AaocplfvVouEw8mBYNMRrUpXUeI9IO7EEchfg5uHEkkXRBpZJ7A==
+"@privy-io/cross-app-connect@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@privy-io/cross-app-connect/-/cross-app-connect-0.4.1.tgz#012757401cab50f6e843db566fec8b68ce1dfd98"
+  integrity sha512-C+pj+jAnUkc22cuGhC1nkjLGu4ttMoWY/PpoQ6svUsfWXIVL+UZOI7GaLzLWFwdw9vKMKcTz56JG+X57b4mRmw==
   dependencies:
     "@noble/curves" "^1.5.0"
     "@noble/hashes" "1.3.2"
     "@scure/base" "~1.1.2"
     fflate "0.8.2"
 
-"@privy-io/popup@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@privy-io/popup/-/popup-0.0.1.tgz#630e3a1dcb0b0c3cac90845f1d46a183276500d0"
-  integrity sha512-4Z4K5yX9jVzGpx6GgNMlQce35tKfHJwN2A3naTsA82Pff44eVhcQZjaSxj/Y1OKv0hku8WXPwyczhcMfKp1ULg==
+"@privy-io/popup@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@privy-io/popup/-/popup-0.0.2.tgz#f5f6e83bdf9bf4b06a149d54e726de4b1120d5eb"
+  integrity sha512-kkxzZ5TFseqnZRDVhBR1Si9mTHc1jW+hLSbYviauK80enJOGsOGmxeeC/U0t0kLZGLpn0Jj5v5lNS2bmQ4as/Q==
 
 "@protobuf-ts/grpcweb-transport@^2.11.1":
   version "2.11.1"
@@ -4284,7 +4284,7 @@
   dependencies:
     "@radix-ui/react-compose-refs" "1.1.2"
 
-"@radix-ui/react-slot@^1.2.3":
+"@radix-ui/react-slot@^1.2.4":
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-slot/-/react-slot-1.2.4.tgz#63c0ba05fdf90cc49076b94029c852d7bac1fb83"
   integrity sha512-Jl+bCv8HxKnlTLVrcDE8zTMJ09R9/ukw4qBs/oZClOfoQk/cOTbDn+NceXfV7j09YPVQUryJPHurafcSg6EVKA==
@@ -8230,7 +8230,25 @@
   resolved "https://registry.yarnpkg.com/@unrs/resolver-binding-win32-x64-msvc/-/resolver-binding-win32-x64-msvc-1.11.1.tgz#538b1e103bf8d9864e7b85cc96fa8d6fb6c40777"
   integrity sha512-lrW200hZdbfRtztbygyaq/6jP6AKE8qQN2KvPcJ+x7wiD038YtnYtZ82IMNJ69GJibV7bwL3y9FgK+5w/pYt6g==
 
-"@vanilla-extract/css@^1.17.4":
+"@vanilla-extract/css@1.17.3":
+  version "1.17.3"
+  resolved "https://registry.yarnpkg.com/@vanilla-extract/css/-/css-1.17.3.tgz#a73a874a762f4175a5c20ec96665016c17746fee"
+  integrity sha512-jHivr1UPoJTX5Uel4AZSOwrCf4mO42LcdmnhJtUxZaRWhW4FviFbIfs0moAWWld7GOT+2XnuVZjjA/K32uUnMQ==
+  dependencies:
+    "@emotion/hash" "^0.9.0"
+    "@vanilla-extract/private" "^1.0.8"
+    css-what "^6.1.0"
+    cssesc "^3.0.0"
+    csstype "^3.0.7"
+    dedent "^1.5.3"
+    deep-object-diff "^1.1.9"
+    deepmerge "^4.2.2"
+    lru-cache "^10.4.3"
+    media-query-parser "^2.0.2"
+    modern-ahocorasick "^1.0.0"
+    picocolors "^1.0.0"
+
+"@vanilla-extract/css@^1.17.5":
   version "1.18.0"
   resolved "https://registry.yarnpkg.com/@vanilla-extract/css/-/css-1.18.0.tgz#470c81b7df6b9bcdf804897ee0f58c72b5c6d463"
   integrity sha512-/p0dwOjr0o8gE5BRQ5O9P0u/2DjUd6Zfga2JGmE4KaY7ZITWMszTzk4x4CPlM5cKkRr2ZGzbE6XkuPNfp9shSQ==
