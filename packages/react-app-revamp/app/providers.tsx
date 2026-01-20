@@ -40,19 +40,11 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
         }}
         paraModalConfig={{
           theme: {
-            foregroundColor: "#1a1a1a",
-            backgroundColor: "#ffffff",
-            accentColor: "#bb65ff",
             darkForegroundColor: "#e5e5e5",
-            darkBackgroundColor: "#000000",
-            darkAccentColor: "#bb65ff",
+            darkBackgroundColor: "#1A1F2B",
             mode: "dark",
+            borderRadius: "lg",
             font: "Lato",
-            customPalette: {
-              modal: {
-                border: "#e5e5e5",
-              },
-            },
           },
           logo: "/wordmark.png",
           oAuthMethods: ["GOOGLE", "TWITTER", "DISCORD", "TELEGRAM"],
