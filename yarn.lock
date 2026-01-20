@@ -4185,28 +4185,28 @@
     "@mysten/utils" "0.2.0"
     "@scure/base" "^1.2.6"
 
-"@mysten/dapp-kit@0.19.11":
-  version "0.19.11"
-  resolved "https://registry.yarnpkg.com/@mysten/dapp-kit/-/dapp-kit-0.19.11.tgz#7be9c41d80c3e2396519099305c128540729f65f"
-  integrity sha512-b0poDfJVTzmIYtDRT06KFxzer4xAN+KMvIJuZ8bIMXAOfV7a17fMEJ94HI1nXCflQGGbx+BKsIKcb93ptwPgag==
+"@mysten/dapp-kit@0.20.0":
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/@mysten/dapp-kit/-/dapp-kit-0.20.0.tgz#7d1187fcb23b972eb07d0436bc5cd898e64fceec"
+  integrity sha512-Pho3fda4UvLQJA1Bqbm9iE6zYq4FCUshuacdd4kNO87aFAC7E+n07iRG9RxVSHGAwWeuILKIxRbrwASxPKTA6w==
   dependencies:
-    "@mysten/slush-wallet" "0.2.12"
+    "@mysten/slush-wallet" "0.3.0"
     "@mysten/sui" "1.45.2"
     "@mysten/utils" "0.2.0"
     "@mysten/wallet-standard" "0.19.9"
     "@radix-ui/react-dialog" "^1.1.15"
     "@radix-ui/react-dropdown-menu" "^2.1.16"
-    "@radix-ui/react-slot" "^1.2.3"
-    "@vanilla-extract/css" "^1.17.4"
+    "@radix-ui/react-slot" "^1.2.4"
+    "@vanilla-extract/css" "^1.17.5"
     "@vanilla-extract/dynamic" "^2.1.5"
     "@vanilla-extract/recipes" "^0.5.7"
     clsx "^2.1.1"
     zustand "^4.5.4"
 
-"@mysten/slush-wallet@0.2.12":
-  version "0.2.12"
-  resolved "https://registry.yarnpkg.com/@mysten/slush-wallet/-/slush-wallet-0.2.12.tgz#0ac2c80e2cf95a4314d1a50a826cfdd05c40a6c9"
-  integrity sha512-OVIQbADqUVZCTps3MGvVI90nczTbwepAb75x+jZuH2W2p8lXoYIuvuuP4KlwwalR9QgpqOqptdpYFVAKi8ncLQ==
+"@mysten/slush-wallet@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@mysten/slush-wallet/-/slush-wallet-0.3.0.tgz#1271819d61065d733059aed823a08c5f14e7da3b"
+  integrity sha512-XxEFDpJrrlgEt6cayOtFEEqsbI/2lqMl+QATvsT4TYQJ7B3FkBHPeKsyG+GVuvhVDhqXaVlGXwWrk66ri0uzhQ==
   dependencies:
     "@mysten/sui" "1.45.2"
     "@mysten/utils" "0.2.0"
@@ -4744,7 +4744,7 @@
   dependencies:
     "@radix-ui/react-compose-refs" "1.1.2"
 
-"@radix-ui/react-slot@^1.2.3":
+"@radix-ui/react-slot@^1.2.4":
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-slot/-/react-slot-1.2.4.tgz#63c0ba05fdf90cc49076b94029c852d7bac1fb83"
   integrity sha512-Jl+bCv8HxKnlTLVrcDE8zTMJ09R9/ukw4qBs/oZClOfoQk/cOTbDn+NceXfV7j09YPVQUryJPHurafcSg6EVKA==
@@ -8701,7 +8701,7 @@
     modern-ahocorasick "^1.0.0"
     picocolors "^1.0.0"
 
-"@vanilla-extract/css@^1.17.4":
+"@vanilla-extract/css@^1.17.5":
   version "1.18.0"
   resolved "https://registry.yarnpkg.com/@vanilla-extract/css/-/css-1.18.0.tgz#470c81b7df6b9bcdf804897ee0f58c72b5c6d463"
   integrity sha512-/p0dwOjr0o8gE5BRQ5O9P0u/2DjUd6Zfga2JGmE4KaY7ZITWMszTzk4x4CPlM5cKkRr2ZGzbE6XkuPNfp9shSQ==
