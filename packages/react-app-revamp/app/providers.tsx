@@ -46,7 +46,7 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
             borderRadius: "lg",
             font: "Lato",
           },
-          logo: "/wordmark.png",
+          logo: "/wordmark.svg",
           oAuthMethods: ["GOOGLE", "TWITTER", "DISCORD", "TELEGRAM"],
         }}
         externalWalletConfig={{
