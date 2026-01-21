@@ -33,7 +33,7 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
         </p>
         <p className="text-[16px]">
           for more details, visit{" "}
-          <a className="text-positive-11" href="https://github.com/jk-labs-inc/jokerace#readme" target="_blank">
+          <a className="text-positive-11" href="https://github.com/jk-labs-inc/confetti#readme" target="_blank">
             <b>here!</b>
           </a>
         </p>
