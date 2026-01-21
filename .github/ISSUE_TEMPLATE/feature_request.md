@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for JokeRace!
+about: Suggest an idea for Confetti!
 title: "enhancement: "
 labels: enhancement, question, ux
 assignees: ''
