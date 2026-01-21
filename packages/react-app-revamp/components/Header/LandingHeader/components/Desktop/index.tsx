@@ -21,37 +21,14 @@ const LandingHeaderDesktop = () => {
             </h1>
           </CustomLink>
 
-          <div className="flex items-center gap-4 mt-4">
-            {/* TODO: add links to all of these */}
-            <a href="#how-it-works" className="hidden min-[1440px]:block text-2xl text-neutral-11 font-bold">
-              how it works
-            </a>
-            <a
-              href={LINK_DOCS}
-              rel="noopener noreferrer"
-              target="_blank"
-              className="hidden min-[1440px]:block text-2xl text-neutral-11 font-bold"
-            >
-              docs
-            </a>
-            <a
-              href={LINK_LINKTREE}
-              rel="noopener noreferrer"
-              target="_blank"
-              className="hidden min-[1440px]:block text-2xl text-neutral-11 font-bold"
-            >
-              linktree
-            </a>
+          <div className="flex items-center mt-4 ml-auto">
             <CustomLink
               prefetch={true}
               href={ROUTE_CREATE_CONTEST}
-              className="hidden bg-secondary-11 text-base text-true-black font-bold px-4 h-10 xl:flex items-center justify-center rounded-2xl transition-all duration-200 ease-out hover:brightness-110 hover:shadow-[0_0_12px_rgba(255,255,255,0.15)]"
+              className="bg-secondary-11 text-base text-true-black font-bold px-4 h-10 md:flex items-center justify-center rounded-2xl transition-all duration-200 ease-out hover:brightness-110 hover:shadow-[0_0_12px_rgba(255,255,255,0.15)]"
             >
               create a contest and earn
             </CustomLink>
-            <div className="flex gap-3 items-center ml-auto">
-              <ConnectButtonCustom />
-            </div>
           </div>
 
           <p className="text-neutral-11 text-2xl font-sabo-filled">vote. rally. earn.</p>

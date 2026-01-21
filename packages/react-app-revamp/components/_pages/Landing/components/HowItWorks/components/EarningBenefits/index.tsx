@@ -39,13 +39,13 @@ const dividerVariants: Variants = {
 const LandingPageHowItWorksEarningBenefits = () => {
   return (
     <motion.div
-      className="flex flex-col gap-8 lg:flex-row lg:gap-8 2xl:gap-12"
+      className="flex flex-col gap-12 lg:flex-row 2xl:gap-12"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={containerVariants}
     >
-      <motion.div variants={itemVariants} className="w-full lg:w-1/2" style={{ willChange: "transform" }}>
+      <motion.div variants={itemVariants} className="w-full lg:w-1/2 h-full" style={{ willChange: "transform" }}>
         <EarnForBeliefs />
       </motion.div>
       <motion.div
@@ -53,7 +53,7 @@ const LandingPageHowItWorksEarningBenefits = () => {
         variants={dividerVariants}
         style={{ willChange: "transform" }}
       />
-      <motion.div variants={itemVariants} className="w-full lg:w-1/2" style={{ willChange: "transform" }}>
+      <motion.div variants={itemVariants} className="w-full lg:w-1/2 h-full" style={{ willChange: "transform" }}>
         <EarnForConviction />
       </motion.div>
     </motion.div>
