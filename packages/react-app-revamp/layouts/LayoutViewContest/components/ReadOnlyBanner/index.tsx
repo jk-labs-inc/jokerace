@@ -16,7 +16,7 @@ const ReadOnlyBanner: FC<ReadOnlyBannerProps> = ({ isReadOnly, isLoading }) => {
         </p>
         <p>
           for more details, visit{" "}
-          <a className="text-positive-11" href="https://github.com/jk-labs-inc/jokerace#readme" target="_blank">
+          <a className="text-positive-11" href="https://github.com/jk-labs-inc/confetti#readme" target="_blank">
             <b>here!</b>
           </a>
         </p>
