@@ -1,33 +1,33 @@
 import { Option } from "@components/UI/Dropdown";
-import { chains, config } from "@config/wagmi";
-import { Chain } from "@rainbow-me/rainbowkit";
+import { chains } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
+import { useWallet } from "@hooks/useWallet";
 import { switchChain } from "@wagmi/core";
 import { FC, useState } from "react";
-import { useConnection } from "wagmi";
 import ConnectDropdown from "../Dropdown";
 
 const chainOptions: Option[] = chains.map(chain => {
-  const chainWithIcon = chain as Chain & { iconUrl?: string };
   return {
     label: chain.name,
     value: chain.id.toString(),
-    image: chainWithIcon.iconUrl,
+    image: chain.iconUrl,
   };
 });
 
 const ChainDropdown: FC = () => {
-  const { chain: currentChain } = useConnection();
+  const { chain: currentChain } = useWallet();
   const [resetKey, setResetKey] = useState(0);
 
+  //TODO: check if we can do this in useWallet hook
   const handleChainSwitch = async (chainId: string) => {
-    const targetChain = chains.find(chain => chain.id.toString() === chainId) as Chain & { iconUrl?: string };
+    const targetChain = chains.find(chain => chain.id.toString() === chainId);
 
     if (!targetChain) return;
 
     const publicRpcUrls = targetChain.rpcUrls.public.http.filter((url): url is string => typeof url === "string");
 
     try {
-      await switchChain(config, {
+      await switchChain(getWagmiConfig(), {
         chainId: targetChain.id,
         addEthereumChainParameter: {
           ...targetChain,

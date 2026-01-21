@@ -1,9 +1,9 @@
 import { getToken } from "@helpers/getToken";
 import { getTokenBalance } from "@helpers/getTokenBalance";
 import { addressRegex } from "@helpers/regex";
+import { useWallet } from "@hooks/useWallet";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { formatUnits } from "viem";
-import { useConnection } from "wagmi";
 
 export interface FilteredToken {
   address: string;
@@ -168,16 +168,16 @@ async function fetchTokenByAddress({
 }
 
 export function useTokenList(chainId: number, tokenIdentifier: string) {
-  const { address } = useConnection();
+  const { userAddress } = useWallet();
 
   const { data, isLoading, isError, error, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["searchTokens", chainId, tokenIdentifier, address],
+    queryKey: ["searchTokens", chainId, tokenIdentifier, userAddress],
     queryFn: ({ pageParam = 0 }) =>
       fetchTokenListOrMetadata({
         pageParam,
         chainId,
         tokenIdentifier,
-        userAddress: address,
+        userAddress,
       }),
     getNextPageParam: lastPage => {
       return lastPage.pagination.hasMore ? (lastPage.pagination.pageParam ?? 0) + 1 : undefined;

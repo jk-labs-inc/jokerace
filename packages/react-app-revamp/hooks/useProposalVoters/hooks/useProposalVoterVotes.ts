@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { useQuery } from "@tanstack/react-query";
 import { readContracts } from "@wagmi/core";
 import { formatEther } from "viem";
@@ -47,7 +47,7 @@ export const useProposalVoterVotes = ({
         args: [proposalId, address],
       }));
 
-      const results = await readContracts(config, { contracts });
+      const results = await readContracts(getWagmiConfig(), { contracts });
 
       return addressesPage.map((address, index) => {
         const result = results[index];

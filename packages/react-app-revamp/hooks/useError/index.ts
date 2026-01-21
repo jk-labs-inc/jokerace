@@ -1,15 +1,15 @@
 import { toastDismiss, toastError, toastWarning } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { useWallet } from "@hooks/useWallet";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { didUserReject, handleError as handleUtilityError } from "utils/error";
-import { useConnection } from "wagmi";
 
 export function useError() {
   const pathname = usePathname();
   const { chainName: chainNameFromPath } = extractPathSegments(pathname);
-  const { chain: chainFromAccount } = useConnection();
+  const { chain: chainFromAccount } = useWallet();
   const [error, setError] = useState<string>("");
 
   const handleError = (e: any, defaultMessage: string) => {

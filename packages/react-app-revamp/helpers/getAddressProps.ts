@@ -1,5 +1,5 @@
-import { serverConfig } from "@config/wagmi/server";
 import { getEnsAddress, getEnsName } from "@wagmi/core";
+import { serverConfig } from "@config/wagmi";
 import { mainnet } from "wagmi/chains";
 
 export const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;

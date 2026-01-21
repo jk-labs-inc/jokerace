@@ -1,4 +1,5 @@
-import { chains, config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
+import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { ContestStateEnum } from "@hooks/useContestState/store";
 import { readContract, readContracts } from "@wagmi/core";
@@ -50,7 +51,7 @@ export async function getContestContractData(
       return { title: null, isCanceled: false, prompt: null };
     }
 
-    const results = await readContracts(config, {
+    const results = await readContracts(getWagmiConfig(), {
       contracts: [
         {
           ...contractConfig,
@@ -131,7 +132,7 @@ export async function fetchTotalRewardsForContests(contests: ProcessedContest[])
           };
         }
 
-        const rewardsModuleAddress = (await readContract(config, {
+        const rewardsModuleAddress = (await readContract(getWagmiConfig(), {
           ...contractConfig,
           functionName: "officialRewardsModule",
           args: [],

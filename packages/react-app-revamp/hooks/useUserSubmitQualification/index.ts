@@ -1,14 +1,3 @@
-import { useConnection } from "wagmi";
-import { useSubmitQualification } from "./useSubmitQualification";
-export { EMPTY_ROOT } from "./utils";
-
-export function useUser() {
-  const { address: userAddress } = useConnection();
-  const { checkIfCurrentUserQualifyToSubmit } = useSubmitQualification(userAddress);
-
-  return {
-    checkIfCurrentUserQualifyToSubmit,
-  };
-}
-
-export default useUser;
+export { useSubmitQualification } from "./useSubmitQualification";
+export type { UseSubmitQualificationParams, UseSubmitQualificationResult } from "./useSubmitQualification";
+export { EMPTY_ROOT, VOTE_AND_EARN_VERSION } from "./utils";

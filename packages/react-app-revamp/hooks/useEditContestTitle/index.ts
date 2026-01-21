@@ -1,5 +1,5 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { simulateContract, writeContract } from "@wagmi/core";
@@ -20,7 +20,7 @@ const useEditContestTitle = ({ contestAbi, contestAddress }: UseEditContestTitle
     });
 
     try {
-      const { request } = await simulateContract(config, {
+      const { request } = await simulateContract(getWagmiConfig(), {
         abi: contestAbi,
         address: contestAddress as `0x${string}`,
         functionName: "setName",
@@ -34,7 +34,7 @@ const useEditContestTitle = ({ contestAbi, contestAddress }: UseEditContestTitle
         return;
       }
 
-      const hash = await writeContract(config, request);
+      const hash = await writeContract(getWagmiConfig(), request);
 
       if (hash) {
         setContestName(newName);

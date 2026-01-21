@@ -1,5 +1,6 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { chains, config } from "@config/wagmi";
+import { chains } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
 import { transform } from "@helpers/transform";
@@ -8,7 +9,7 @@ import { useWithdrawReward } from "@hooks/useWithdrawRewards";
 import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { Abi } from "viem";
-import { useConnection } from "wagmi";
+import { useWallet } from "@hooks/useWallet";
 
 interface ButtonWithdrawErc20RewardProps {
   token: TokenInfo;
@@ -30,7 +31,9 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
   } = props;
 
   const pathname = usePathname();
-  const { chainId: userChainId } = useConnection();
+  const {
+    chain: { id: userChainId },
+  } = useWallet();
   const { chainName } = extractPathSegments(pathname);
   const chainId = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.id;
   const isConnectedOnCorrectChain = chainId === userChainId;
@@ -51,7 +54,7 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
     if (!chainId) return;
 
     if (!isConnectedOnCorrectChain) {
-      await switchChain(config, { chainId });
+      await switchChain(getWagmiConfig(), { chainId });
     }
 
     handleWithdraw();

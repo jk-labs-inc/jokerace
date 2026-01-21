@@ -1,11 +1,10 @@
 import { populateBugReportLink } from "@helpers/githubIssue";
+import { useWallet } from "@hooks/useWallet";
 import { useUrl } from "nextjs-current-url";
 import { FC, ReactNode, useState } from "react";
-import { useConnection } from "wagmi";
 import ErrorToastClassic from "./components/ErrorClassic";
 import ErrorToastSimple from "./components/ErrorSimple";
 import ErrorToastWithAdditionalMessage from "./components/ErrorWithAdditionalMessage";
-import WarningToast from "../Warning";
 
 export enum ErrorToastType {
   SIMPLE = "simple",
@@ -28,9 +27,9 @@ const ErrorToast: FC<ErrorToastProps> = ({
   codeFound,
 }) => {
   const url = useUrl();
-  const { address } = useConnection();
+  const { userAddress } = useWallet();
   const [copySuccess, setCopySuccess] = useState(false);
-  const bugReportLink = populateBugReportLink(url?.href ?? "", address ?? "", messageToCopy ?? "");
+  const bugReportLink = populateBugReportLink(url?.href ?? "", userAddress ?? "", messageToCopy ?? "");
 
   const copyToClipboard = async (event: React.MouseEvent) => {
     event.stopPropagation();

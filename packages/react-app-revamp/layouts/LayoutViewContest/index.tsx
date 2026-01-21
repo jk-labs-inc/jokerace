@@ -3,10 +3,10 @@ import Loader from "@components/UI/Loader";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { populateBugReportLink } from "@helpers/githubIssue";
+import { useWallet } from "@hooks/useWallet";
 import { usePathname } from "next/navigation";
 import { useUrl } from "nextjs-current-url";
-import { useState, useMemo } from "react";
-import { useConnection } from "wagmi";
+import { useMemo, useState } from "react";
 import ContestHeader from "./components/ContestHeader";
 import ContestTabsContent from "./components/ContestTabsContent";
 import LayoutViewContestError from "./components/Error";
@@ -17,7 +17,7 @@ import { useLayoutViewContest } from "./hooks/useLayoutViewContest";
 const LayoutViewContest = () => {
   const pathname = usePathname();
   const url = useUrl();
-  const { address: accountAddress } = useConnection();
+  const { userAddress } = useWallet();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const {
     contestConfig,
@@ -30,7 +30,7 @@ const LayoutViewContest = () => {
     contestPrompt,
     canEditTitleAndDescription,
   } = useLayoutViewContest();
-  const bugReportLink = populateBugReportLink(url?.href ?? "", accountAddress ?? "", error ?? "");
+  const bugReportLink = populateBugReportLink(url?.href ?? "", userAddress ?? "", error ?? "");
   const contestImageUrl = getContestImageUrl(contestPrompt);
 
   const excludeTabs = useMemo(() => {

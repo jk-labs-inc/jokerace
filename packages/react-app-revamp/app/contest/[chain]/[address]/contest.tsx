@@ -5,7 +5,6 @@ import { ContestWrapper } from "@hooks/useContest/store";
 import { ContestConfigStoreProvider } from "@hooks/useContestConfig/store";
 import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
-import { UserWrapper } from "@hooks/useUserSubmitQualification/store";
 import LayoutViewContest from "@layouts/LayoutViewContest";
 import { FC } from "react";
 import { Abi } from "viem";
@@ -32,13 +31,11 @@ const Contest: FC<ContestProps> = ({ address, chain, chainId, abi, version }) =>
     <ContestWrapper>
       <ProposalWrapper>
         <DeleteProposalWrapper>
-          <UserWrapper>
-            <CastVotesWrapper>
-              <ContestConfigStoreProvider contestConfig={contestConfig}>
-                <LayoutViewContest />
-              </ContestConfigStoreProvider>
-            </CastVotesWrapper>
-          </UserWrapper>
+          <CastVotesWrapper>
+            <ContestConfigStoreProvider contestConfig={contestConfig}>
+              <LayoutViewContest />
+            </ContestConfigStoreProvider>
+          </CastVotesWrapper>
         </DeleteProposalWrapper>
       </ProposalWrapper>
     </ContestWrapper>

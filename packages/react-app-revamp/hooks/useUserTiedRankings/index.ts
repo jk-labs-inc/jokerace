@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { useQuery } from "@tanstack/react-query";
 import { readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
@@ -31,7 +31,7 @@ export const useUserTiedRankings = ({
 
       for (const ranking of tiedRankings) {
         try {
-          const rankIndex = (await readContract(config, {
+          const rankIndex = (await readContract(getWagmiConfig(), {
             address: contestAddress,
             chainId,
             abi: contestAbi,
@@ -39,7 +39,7 @@ export const useUserTiedRankings = ({
             args: [BigInt(ranking)],
           })) as bigint;
 
-          const sortedRanks = (await readContract(config, {
+          const sortedRanks = (await readContract(getWagmiConfig(), {
             address: contestAddress,
             chainId,
             abi: contestAbi,
@@ -47,7 +47,7 @@ export const useUserTiedRankings = ({
             args: [rankIndex],
           })) as bigint;
 
-          const proposalsWithThisManyVotes = (await readContract(config, {
+          const proposalsWithThisManyVotes = (await readContract(getWagmiConfig(), {
             address: contestAddress,
             chainId,
             abi: contestAbi,
@@ -57,7 +57,7 @@ export const useUserTiedRankings = ({
 
           if (proposalsWithThisManyVotes.length > 0) {
             // Check if user voted on any of these proposals
-            const userVoteChecks = await readContracts(config, {
+            const userVoteChecks = await readContracts(getWagmiConfig(), {
               contracts: proposalsWithThisManyVotes.map(proposalId => ({
                 address: contestAddress,
                 chainId,

@@ -1,5 +1,5 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { useError } from "@hooks/useError";
 import { FilteredToken } from "@hooks/useTokenList";
 import { sendTransaction, simulateContract, writeContract } from "@wagmi/core";
@@ -20,7 +20,7 @@ export function useSendToken(options?: UseSendTokenOptions) {
     contractAddress: `0x${string}`,
   ) => {
     try {
-      const { request } = await simulateContract(config, {
+      const { request } = await simulateContract(getWagmiConfig(), {
         abi: erc20Abi,
         chainId,
         address: contractAddress,
@@ -31,7 +31,7 @@ export function useSendToken(options?: UseSendTokenOptions) {
       toastLoading({
         message: "sending transfer transaction...",
       });
-      const hash = await writeContract(config, request);
+      const hash = await writeContract(getWagmiConfig(), request);
 
       toastSuccess({
         message: "transfer transaction sent successfully!",
@@ -66,7 +66,7 @@ export function useSendToken(options?: UseSendTokenOptions) {
           toastLoading({
             message: "sending transfer transaction...",
           });
-          const hash = await sendTransaction(config, {
+          const hash = await sendTransaction(getWagmiConfig(), {
             chainId,
             to: recipientAddress as `0x${string}`,
             value: parsedAmount,

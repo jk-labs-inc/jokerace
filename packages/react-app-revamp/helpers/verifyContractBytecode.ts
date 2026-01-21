@@ -1,4 +1,4 @@
-import { serverConfig } from "@config/wagmi/server";
+import { serverConfig } from "@config/wagmi";
 import { getBytecode } from "@wagmi/core";
 
 /**

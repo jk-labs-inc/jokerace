@@ -1,6 +1,6 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useMemo, useState } from "react";
-import { useConnection } from "wagmi";
+import { useWallet } from "@hooks/useWallet";
 import CreateNextButton from "../../components/Buttons/Next";
 import CreateConnectPrompt from "../../components/ConnectPrompt";
 import MobileStepper from "../../components/MobileStepper";
@@ -12,7 +12,7 @@ import CreateContestPriceCurve from "./components/PriceCurve";
 const CreateContestVoting = () => {
   const { step } = useDeployContestStore(state => state);
   const { steps } = useContestSteps();
-  const { isConnected, chain } = useConnection();
+  const { isConnected, chain } = useWallet();
   const [disableNextStep, setDisableNextStep] = useState(false);
   const onNextStep = useNextStep();
 

@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { readContracts } from "@wagmi/core";
 import { Abi } from "viem";
 
@@ -15,7 +15,7 @@ export const createNativeTokenReadBatch = async (
   isCreator?: boolean,
 ) => {
   try {
-    return await readContracts(config, {
+    return await readContracts(getWagmiConfig(), {
       contracts: validRankings.map(ranking => ({
         address: contractAddress,
         chainId,
@@ -44,7 +44,7 @@ export const createERC20TokenRead = async (
   isCreator?: boolean,
 ) => {
   try {
-    return await readContracts(config, {
+    return await readContracts(getWagmiConfig(), {
       contracts: [
         {
           address: contractAddress,

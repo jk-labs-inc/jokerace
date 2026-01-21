@@ -7,19 +7,20 @@ import useContestConfigStore from "@hooks/useContestConfig/store";
 import useRewardsModule from "@hooks/useRewards";
 import { ModuleType } from "lib/rewards/types";
 import { Abi } from "viem";
-import { useConnection, useConnectionEffect } from "wagmi";
+import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
 import RewardsError from "./modules/shared/Error";
 import RewardsCanceled from "./modules/shared/RewardsCanceled";
 import VotersRewardsPage from "./modules/Voters";
+import { useConnectionEffect } from "wagmi";
 
 const ContestRewards = () => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const chainExplorer = getChainExplorer(contestConfig.chainId);
   const { contestAuthorEthereumAddress } = useContestStore(state => state);
   const { data: rewards, isLoading, isError, refetch, isRefetching } = useRewardsModule();
-  const { address: accountAddress } = useConnection();
-  const creator = contestAuthorEthereumAddress === accountAddress;
+  const { userAddress } = useWallet();
+  const creator = contestAuthorEthereumAddress === userAddress;
   const {
     isCanceled,
     isError: isRewardsCanceledError,

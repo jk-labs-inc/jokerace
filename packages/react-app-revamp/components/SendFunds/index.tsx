@@ -1,12 +1,13 @@
 import TokenSearchModalERC20MultiStep from "@components/TokenSearchModal/MultiStep";
 import { toastError } from "@components/UI/Toast";
-import { chains, config } from "@config/wagmi";
+import { chains } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { erc20ChainDropdownOptions } from "@helpers/tokens";
 import { useSendToken } from "@hooks/useSendToken";
 import { FilteredToken } from "@hooks/useTokenList";
+import { useWallet } from "@hooks/useWallet";
 import { switchChain } from "@wagmi/core";
 import { FC, useMemo, useState } from "react";
-import { useConnection } from "wagmi";
 
 interface SendFundsProps {
   isOpen: boolean;
@@ -15,8 +16,8 @@ interface SendFundsProps {
 }
 
 const SendFunds: FC<SendFundsProps> = ({ isOpen, onClose, recipientAddress }) => {
-  const { chainId: currentChainId } = useConnection();
-  const [chainId, setChainId] = useState<number>(currentChainId ?? 1);
+  const { chain: currentChain } = useWallet();
+  const [chainId, setChainId] = useState<number>(currentChain?.id ?? 1);
   const { sendToken } = useSendToken({
     onSuccess: () => {
       onClose();
@@ -66,7 +67,7 @@ const SendFunds: FC<SendFundsProps> = ({ isOpen, onClose, recipientAddress }) =>
   const handleSelectChain = async (chain: string) => {
     const chainId = chains.find(c => c.name.toLowerCase() === chain.toLowerCase())?.id;
     if (chainId) {
-      await switchChain(config, { chainId });
+      await switchChain(getWagmiConfig(), { chainId });
       setChainId(chainId);
     }
   };

@@ -1,10 +1,10 @@
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { readContract } from "@wagmi/core";
 import { erc20Abi } from "viem";
 
 export const getTokenDecimals = async (tokenAddress: string, chainId: number) => {
   try {
-    const decimals = (await readContract(config, {
+    const decimals = (await readContract(getWagmiConfig(), {
       address: tokenAddress as `0x${string}`,
       abi: erc20Abi,
       chainId: chainId,
@@ -19,7 +19,7 @@ export const getTokenDecimals = async (tokenAddress: string, chainId: number) =>
 
 export const getTokenSymbol = async (tokenAddress: string, chainId: number) => {
   try {
-    const symbol = (await readContract(config, {
+    const symbol = (await readContract(getWagmiConfig(), {
       address: tokenAddress as `0x${string}`,
       abi: erc20Abi,
       chainId: chainId,
@@ -43,15 +43,12 @@ export const getTokenDecimalsBatch = async (
 
   const decimalsArray = await Promise.all(decimalsPromises);
 
-  return decimalsArray.reduce(
-    (acc, { address, decimals }) => {
-      if (decimals !== null) {
-        acc[address] = decimals;
-      }
-      return acc;
-    },
-    {} as { [address: string]: number },
-  );
+  return decimalsArray.reduce((acc, { address, decimals }) => {
+    if (decimals !== null) {
+      acc[address] = decimals;
+    }
+    return acc;
+  }, {} as { [address: string]: number });
 };
 
 export const getTokenSymbolBatch = async (
@@ -65,13 +62,10 @@ export const getTokenSymbolBatch = async (
 
   const symbolArray = await Promise.all(symbolPromises);
 
-  return symbolArray.reduce(
-    (acc, { address, symbol }) => {
-      if (symbol !== null) {
-        acc[address] = symbol;
-      }
-      return acc;
-    },
-    {} as { [address: string]: string },
-  );
+  return symbolArray.reduce((acc, { address, symbol }) => {
+    if (symbol !== null) {
+      acc[address] = symbol;
+    }
+    return acc;
+  }, {} as { [address: string]: string });
 };

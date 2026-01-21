@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { readContracts } from "@wagmi/core";
 import { erc20Abi } from "viem";
 
@@ -15,7 +15,7 @@ export interface GetTokenParams {
 }
 
 export const getToken = async ({ address, chainId }: GetTokenParams): Promise<TokenInfo> => {
-  const [decimals, name, symbol, totalSupply] = await readContracts(config, {
+  const [decimals, name, symbol, totalSupply] = await readContracts(getWagmiConfig(), {
     allowFailure: false,
     contracts: [
       {

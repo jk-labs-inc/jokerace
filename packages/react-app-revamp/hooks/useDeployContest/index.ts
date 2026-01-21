@@ -1,10 +1,10 @@
+import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
 import { toastLoading } from "@components/UI/Toast";
 import { isSupabaseConfigured } from "@helpers/database";
 import useEmailSignup from "@hooks/useEmailSignup";
 import { useError } from "@hooks/useError";
-import { useConnection } from "wagmi";
+import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
-import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
 import {
   deployContractToChain,
   finalizeContractDeployment,
@@ -76,7 +76,7 @@ export function useDeployContest() {
     })),
   );
   const { handleError } = useError();
-  const { address, chain } = useConnection();
+  const { userAddress, chain } = useWallet();
   const { tokenWidgets } = useFundPoolStore(useShallow(state => ({ tokenWidgets: state.tokenWidgets })));
 
   const votingOpen = getVotingOpenDate();
@@ -90,7 +90,7 @@ export function useDeployContest() {
     });
 
     try {
-      const { address: validatedAddress, chain: validatedChain } = validateDeploymentPrerequisites(address, chain);
+      const { address: validatedAddress, chain: validatedChain } = validateDeploymentPrerequisites(userAddress, chain);
 
       const combinedPrompt = preparePromptData(prompt);
 
@@ -192,13 +192,13 @@ export function useDeployContest() {
       return;
     }
 
-    const emailExists = await checkIfEmailExists({ emailAddress, userAddress: address, displayToasts: false });
+    const emailExists = await checkIfEmailExists({ emailAddress, userAddress, displayToasts: false });
 
-    if (emailExists || !address) {
+    if (emailExists || !userAddress) {
       return;
     }
 
-    await subscribeUser(emailAddress, address, false);
+    await subscribeUser(emailAddress, userAddress, false);
   }
 
   return {

@@ -1,6 +1,7 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useWallet } from "@hooks/useWallet";
 import { compareVersions } from "compare-versions";
-import { useConnection, useReadContract } from "wagmi";
+import { useReadContract } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 export const useFetchUserVotesOnProposal = (contestAddress: string, proposalId: string) => {
@@ -10,15 +11,15 @@ export const useFetchUserVotesOnProposal = (contestAddress: string, proposalId: 
       version: state.contestConfig.version,
     })),
   );
-  const { address, chainId } = useConnection();
+  const { userAddress, chain } = useWallet();
   const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
 
   const currentUserVotesOnProposal = useReadContract({
     address: contestAddress as `0x${string}`,
     abi,
-    chainId: chainId,
+    chainId: chain?.id,
     functionName: "proposalAddressVotes",
-    args: [proposalId, address],
+    args: [proposalId, userAddress],
     query: {
       select: (data: unknown) => {
         if (hasDownvotes) {
@@ -31,7 +32,7 @@ export const useFetchUserVotesOnProposal = (contestAddress: string, proposalId: 
           return Number(currentUserVotesOnProposal.toString());
         }
       },
-      enabled: !!abi && !!proposalId && !!address,
+      enabled: !!abi && !!proposalId && !!userAddress,
     },
   });
 
