@@ -1,4 +1,4 @@
-# jokerace • [![Forge Tests](https://github.com/jk-labs-inc/confetti/actions/workflows/forge_tests.yml/badge.svg)](https://github.com/JokeDAO/JokeDaoV2Dev/actions/workflows/forge_tests.yml)
+# confetti • [![Forge Tests](https://github.com/jk-labs-inc/confetti/actions/workflows/forge_tests.yml/badge.svg)](https://github.com/jk-labs-inc/confetti/actions/workflows/forge_tests.yml)
 
 Check out the live site at [jokerace.io](https://jokerace.io/)!
 
