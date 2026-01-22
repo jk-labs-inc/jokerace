@@ -67,7 +67,7 @@
     "interweave": "13.1.1",
     "interweave-autolink": "5.1.2",
     "interweave-ssr": "2.0.0",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "lokijs": "1.5.12",
     "masonic": "4.1.0",
     "minimatch": "10.1.1",
