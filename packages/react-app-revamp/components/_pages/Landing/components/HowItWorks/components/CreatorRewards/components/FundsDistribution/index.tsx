@@ -29,10 +29,8 @@ type PieChartProps = {
 
 const PieChart = ({ width, height }: PieChartProps) => {
   const isMobile = useMediaQuery({ maxWidth: 1024 });
-  const pieSize = isMobile ? Math.min(width * 0.45, height * 0.45) : Math.min(width, height) / 2;
-  const radius = pieSize;
-  const leftGap = isMobile ? 16 : 24;
-  const centerX = leftGap + radius;
+  const radius = Math.min(width, height) / 2;
+  const centerX = radius;
   const centerY = height / 2;
 
   const gap = isMobile ? 4 : 8;
@@ -128,7 +126,7 @@ const PieChart = ({ width, height }: PieChartProps) => {
 const FundsDistribution = () => {
   return (
     <div className="flex w-full pt-12 lg:pt-24 lg:pb-6 2xl:pb-0 2xl:pt-20">
-      <div className="w-full max-w-48 lg:max-w-60 2xl:max-w-72 aspect-square">
+      <div className="w-full max-w-52 lg:max-w-60 2xl:max-w-72 aspect-square">
         <ParentSize>
           {({ width, height }) => <PieChart width={width} height={height} />}
         </ParentSize>

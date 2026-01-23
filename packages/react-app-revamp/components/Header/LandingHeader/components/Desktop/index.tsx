@@ -1,14 +1,12 @@
 import LandingPageTicker from "@components/_pages/Landing/components/Ticker";
-import { ConnectButtonCustom } from "@components/Connect";
 import CustomLink from "@components/UI/Link";
-import { LINK_DOCS, LINK_LINKTREE } from "@config/links";
 import { ROUTE_CREATE_CONTEST } from "@config/routes";
 
 const LandingHeaderDesktop = () => {
   return (
     <>
       <LandingPageTicker />
-      <header className="pl-16 3xl:pl-20 mt-6">
+      <header className="pl-8 3xl:pl-20 mt-6">
         <div className="grid grid-cols-[auto_1fr] items-center gap-x-6 max-w-(--landing-content-max-width)">
           <CustomLink href="/">
             <h1 className="font-sabo-filled text-neutral-11 normal-case text-[60px]">

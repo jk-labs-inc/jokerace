@@ -574,7 +574,7 @@ li {
       --landing-content-max-width: 1008px; /* 3 × 320 + 2 × 24 */
     }
 
-    @media (max-width: 1200px) {
+    @media (max-width: 1100px) {
       --grid-featured-contests: repeat(2, minmax(0, 320px));
       --landing-content-max-width: 664px; /* 2 × 320 + 1 × 24 */
     }
