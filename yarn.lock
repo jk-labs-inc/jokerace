@@ -2355,10 +2355,10 @@
     bluebird "^3.5.0"
     rewire "^7.0.0"
 
-"@getpara/core-components@2.6.0":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-components/-/core-components-2.6.0.tgz#227011f47ea4cc9318b9d75085c915ef58745509"
-  integrity sha512-tiddGZ4AYvZbF51huQzfpfwaWSXHFZIINLEK8ERTJ3BpYe5SbDACG1QVCQafnql7ukSNHAskkcGKVCeY9DNQfQ==
+"@getpara/core-components@2.7.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@getpara/core-components/-/core-components-2.7.0.tgz#51c6d11cab7c7b909e621366ed2fc5cd7901950b"
+  integrity sha512-WjklkBV09FJiHOL1VOLBenjMDMdhWAFHVO5JXaMPOwuq9MMT5FO0Ix04IT69jb3fILVVjFL7ymI85WZXHP9iEg==
   dependencies:
     "@stencil/core" "^4.7.0"
     color-blend "^4.0.0"
@@ -2366,21 +2366,6 @@
     gsap "^3.12.5"
     inputmask "5.0.9"
     qrcode-with-logos "1.1.1"
-
-"@getpara/core-sdk@2.6.0":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-2.6.0.tgz#0d0f463fc891628b59d774e3ef527f75af0d23a4"
-  integrity sha512-/5l5BUtopAoQp4lbLBWMyTPlG+QQ80e3+hmLyf4NTSxjW6JPRXRu8vB8M4+KdtT7NCjgL/mcMaUngKGqZIhkuw==
-  dependencies:
-    "@celo/utils" "^8.0.2"
-    "@cosmjs/encoding" "^0.32.4"
-    "@ethereumjs/util" "^9.1.0"
-    "@getpara/user-management-client" "2.6.0"
-    "@noble/hashes" "^1.5.0"
-    base64url "^3.0.1"
-    libphonenumber-js "^1.11.7"
-    node-forge "^1.3.1"
-    uuid "^11.1.0"
 
 "@getpara/core-sdk@2.7.0":
   version "2.7.0"
@@ -2409,34 +2394,34 @@
     zustand "^4.5.2"
     zustand-sync-tabs "^0.2.2"
 
-"@getpara/react-common@2.6.0":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-2.6.0.tgz#2144e3b19ec8828e146b90233cf679dc6e6982ba"
-  integrity sha512-glDBGmK1jW++thF+hdBUO5DDOQ4j7YEzm6pdktcf26j9inmEZ3AEcfn7xo0hVJ+r8ph0TeYfAh1RmGDuEOIaRQ==
+"@getpara/react-common@2.7.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-2.7.0.tgz#211ce32f2c1035d3298a3a3f8dbc0796511d2f5c"
+  integrity sha512-/LB/r/ZIgXvQ4X+l4Zgqk7pX5anqfFoEkTMPOdJ4X2wwfSOAgmRi90kTXyoZ4vtYj/oiBKaMWtpLoflVBqF1ZQ==
   dependencies:
-    "@getpara/react-components" "2.6.0"
-    "@getpara/web-sdk" "2.6.0"
+    "@getpara/react-components" "2.7.0"
+    "@getpara/web-sdk" "2.7.0"
     "@moonpay/moonpay-react" "^1.10.6"
     "@ramp-network/ramp-instant-sdk" "^4.0.5"
     libphonenumber-js "^1.11.7"
     styled-components "^6.1.8"
     ua-parser-js "^2.0.2"
 
-"@getpara/react-components@2.6.0":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-components/-/react-components-2.6.0.tgz#057c36df79437e104990241de414bc5ccbc2297e"
-  integrity sha512-RfEDJZa9Dd7o3BwixjpWu39SanKXQEi671HtY1i3V9BFTHuf0HbESFU3qKLjxehLWlWR86ghxKRdR42DuORKYg==
+"@getpara/react-components@2.7.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-components/-/react-components-2.7.0.tgz#0097db6be06513bf82603bebbfcce175a38b619b"
+  integrity sha512-2+/j5TROWmeBXsPMn/WKBjgZS/Pn7Rr972tD4w+J/SEf5axZVy5zdnvUaqFDGsqBu63fT15M2Sx94h/cSRomUA==
   dependencies:
-    "@getpara/core-components" "2.6.0"
+    "@getpara/core-components" "2.7.0"
 
-"@getpara/react-sdk-lite@2.6.0":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-sdk-lite/-/react-sdk-lite-2.6.0.tgz#b96cba0107d4660f2cceda0cdee3ac9f0536f40b"
-  integrity sha512-jpEhgiE+7vRqxXzp8bR3n8CpvBS5FpCn+Fe5lYNQ+fWn6v/xAiNwA5s35DyWbIPmr4uCmaV2IWwTRbJj9tY4Ug==
+"@getpara/react-sdk-lite@2.7.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-sdk-lite/-/react-sdk-lite-2.7.0.tgz#b2f58f0e01898375f8f22c99bd6752e667d9b267"
+  integrity sha512-VmLFTBQqLqgwkxK1NRfcXpaA8ypZu7ES3dgpNNhpn3Az0+pfwa2DMR3+ra3s0TA/ozgkKpVLpAlCELlYF+DtOA==
   dependencies:
-    "@getpara/react-common" "2.6.0"
-    "@getpara/react-components" "2.6.0"
-    "@getpara/web-sdk" "2.6.0"
+    "@getpara/react-common" "2.7.0"
+    "@getpara/react-components" "2.7.0"
+    "@getpara/web-sdk" "2.7.0"
     date-fns "^3.6.0"
     framer-motion "^11.3.31"
     libphonenumber-js "^1.11.7"
@@ -2448,15 +2433,6 @@
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@getpara/shared/-/shared-1.9.0.tgz#a3e8bb65b682013e154b933b1ed1207396934e8a"
   integrity sha512-HiW+4tpACqhZeg2VjR428uGm9YMV1/CBh+NFemabKj+3B+fdOcI3y+7/MAhZMT7sa/7PemBdUNOJnc+Tbcxifg==
-
-"@getpara/user-management-client@2.6.0":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-2.6.0.tgz#5e2fdbb550814f5fba10f1e3787438674d603a02"
-  integrity sha512-JNfFVcQR7q/4331FhsWYX5kO150bac1xIAibY8lzlVfMa7gh7+hprnd3vypBi0sXEtMMOo7zsvIbgZFnAEHcbA==
-  dependencies:
-    "@getpara/shared" "1.9.0"
-    axios "^1.8.4"
-    libphonenumber-js "^1.11.7"
 
 "@getpara/user-management-client@2.7.0":
   version "2.7.0"
@@ -2481,19 +2457,6 @@
   dependencies:
     "@getpara/viem-v2-integration" "2.7.0"
     "@getpara/web-sdk" "2.7.0"
-
-"@getpara/web-sdk@2.6.0":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-2.6.0.tgz#0a3a890980552f5db507f93f4896e044709494ef"
-  integrity sha512-BBb/jO92I0QTG+TeUhzCSfHcWdFa3tHchuy9+JHLS79HfGsX5GjNuVjaNdphbOSNLvMjuaNUMzSJVbMKHavAcw==
-  dependencies:
-    "@getpara/core-sdk" "2.6.0"
-    "@getpara/user-management-client" "2.6.0"
-    base64url "^3.0.1"
-    buffer "6.0.3"
-    cbor-web "^9.0.2"
-    node-forge "1.3.1"
-    ua-parser-js "^2.0.2"
 
 "@getpara/web-sdk@2.7.0":
   version "2.7.0"
