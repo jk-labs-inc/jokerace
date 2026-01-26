@@ -1,6 +1,6 @@
 ---
 name: Chain request
-about: Add a EVM-compatible chain integration to JokeRace!
+about: Add a EVM-compatible chain integration to Confetti!
 title: "chain: "
 labels: chain
 assignees: ''
@@ -20,5 +20,4 @@ Please include the following:
 
 And lastly, please @divine-economy somewhere in your ticket so that he can be notified when it's closed. 
 
-Please use [this issue](https://github.com/jk-labs-inc/jokerace/issues/2047) as a template for formatting!
-
+Please use [this issue](https://github.com/jk-labs-inc/confetti/issues/2047) as a template for formatting!

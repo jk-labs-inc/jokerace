@@ -77,7 +77,7 @@ const LiveContests = () => {
           but you can check out our Supabase backups{" "}
           <a
             className="link px-1ex"
-            href="https://github.com/jk-labs-inc/jokerace/tree/staging/packages/supabase"
+            href="https://github.com/jk-labs-inc/confetti/tree/staging/packages/supabase"
             target="_blank"
             rel="noreferrer"
           >

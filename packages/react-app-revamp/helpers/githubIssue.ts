@@ -3,7 +3,7 @@ import { browserName, browserVersion, deviceType } from "react-device-detect";
 export const populateBugReportLink = (contestLink: string, walletAddress: string, errorDetails: string) => {
   const browserInfo = `${browserName} ${browserVersion}` || "Unknown Browser";
   const bugReportLinkBase =
-    "https://github.com/jk-labs-inc/jokerace/issues/new?assignees=&labels=bug&template=bug_report.md&title=bug:";
+    "https://github.com/jk-labs-inc/confetti/issues/new?assignees=&labels=bug&template=bug_report.md&title=bug:";
 
   return `${bugReportLinkBase}&body=Contest+Link%3A+${encodeURIComponent(
     contestLink,

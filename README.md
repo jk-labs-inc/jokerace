@@ -1,4 +1,4 @@
-# jokerace • [![Forge Tests](https://github.com/jk-labs-inc/jokerace/actions/workflows/forge_tests.yml/badge.svg)](https://github.com/JokeDAO/JokeDaoV2Dev/actions/workflows/forge_tests.yml)
+# confetti • [![Forge Tests](https://github.com/jk-labs-inc/confetti/actions/workflows/forge_tests.yml/badge.svg)](https://github.com/jk-labs-inc/confetti/actions/workflows/forge_tests.yml)
 
 Check out the live site at [jokerace.io](https://jokerace.io/)!
 
@@ -50,7 +50,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see the r
 
 ### Updating bytecode
 
-Whenever you make a change to smart contracts or really whenever the bytecode files change (could be that [the compiler version got changed and so no bytecode changed, but remappings were reformatted](https://github.com/jk-labs-inc/jokerace/pull/509)), increment the version in `Governor.sol` and `VoterRewardsModule.sol` by `x.1`. Then generate the bytecode and version it as described below.
+Whenever you make a change to smart contracts or really whenever the bytecode files change (could be that [the compiler version got changed and so no bytecode changed, but remappings were reformatted](https://github.com/jk-labs-inc/confetti/pull/509)), increment the version in `Governor.sol` and `VoterRewardsModule.sol` by `x.1`. Then generate the bytecode and version it as described below.
 
 The purpose of this is so that we have a way to tell exactly what bytecode a contract that we read from a chain has and exactly how it was deployed given its version number.
 
@@ -67,13 +67,13 @@ You will then need to do two more things for each of the 3 files whose bytecodes
 - Make a copy of the bytecode and abi in the versioning folder `packages/react-app-revamp/contracts/bytecodeAndAbi` by copying the content in the `Contest.sol` (or respectively named folder), which is the latest version of bytecode, into a new folder in `contracts/bytecodeAndAbi` and renaming that folder with the incremented version following the convention.
 - Update ABI parser code in `packages/react-app-revamp/helpers/getContestContractVersion.ts` (or the respective get version file) to ensure the frontend is using the new version of contract.
 
-[Here](https://github.com/jk-labs-inc/jokerace/pull/111/commits/79072b212e603bcca0418dd5057557379444194f) is an example PR that does all of these steps.
+[Here](https://github.com/jk-labs-inc/confetti/pull/111/commits/79072b212e603bcca0418dd5057557379444194f) is an example PR that does all of these steps.
 
 _Make sure to do all of these steps before committing any changes to the contract code to make sure that the bytecode that the site is deploying is the same as what you have written in the `forge` package! And also so that the site is able to correctly version a given deployed contract's ABI when reading from it._
 
 ## Audits
 
-Our smart contracts were audited by Certik in September 2023, the audit report is available [here](https://github.com/jk-labs-inc/jokerace-audits/blob/main/audit-reports/Sept23_Certik_Final_Report.pdf).
+Our smart contracts were audited by Certik in September 2023, the audit report is available [here](https://github.com/jk-labs-inc/confetti-audits/blob/main/audit-reports/Sept23_Certik_Final_Report.pdf).
 
 ## Built with
 

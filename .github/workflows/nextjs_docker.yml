@@ -35,8 +35,8 @@ jobs:
         with:
           context: .
           tags: |
-            ghcr.io/jk-labs-inc/jokerace:main
-            registry.digitalocean.com/jk-labs-inc/jokerace:main
+            ghcr.io/jk-labs-inc/confetti:main
+            registry.digitalocean.com/jk-labs-inc/confetti:main
           outputs: type=docker,dest=/tmp/nextjs_docker_image.tar
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.PROD_NEXT_PUBLIC_SUPABASE_URL }}
@@ -82,4 +82,4 @@ jobs:
           docker image ls -a
 
       - name: Push image to Github Container Registry
-        run: docker push ghcr.io/jk-labs-inc/jokerace:main
+        run: docker push ghcr.io/jk-labs-inc/confetti:main
