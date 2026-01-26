@@ -2,6 +2,7 @@ interface UrlParams {
   [key: string]: string;
 }
 
+//TODO: update all of these to the actual links
 const BASE_LENSTER_URL = "https://hey.xyz/?";
 const BASE_JOKERACE_URL = "https://jokerace.io/contest/";
 const BASE_TWITTER_URL = "https://twitter.com/intent/tweet?";

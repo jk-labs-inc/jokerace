@@ -1,3 +1,4 @@
+//TODO: update all of these to the actual links
 const LINK_GITHUB = "https://github.com/jk-labs-inc/confetti";
 const LINK_V1 = "https://jokedao.jokedao.io/";
 const LINK_BUG_REPORT =
