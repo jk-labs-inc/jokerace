@@ -37,8 +37,7 @@ const BuildProtocolSection = () => {
           )}
         </ListItem>
       </ul>
-      {/* //TODO: update this to the actual docs link? */}
-      <ActionButton href="https://docs.jokerace.io/" external>
+      <ActionButton href="https://docs.confetti.win/" external>
         Read Our Docs
       </ActionButton>
     </AnimatedSection>

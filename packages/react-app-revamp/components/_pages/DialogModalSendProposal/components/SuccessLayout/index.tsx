@@ -31,8 +31,7 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(
-        //TODO: update this to the actual domain
-        `https://jokerace.io/contest/${chainName}/${contestId}/submission/${proposalId}`,
+        `https://confetti.win/contest/${chainName}/${contestId}/submission/${proposalId}`,
       );
       setCopyText("copied!");
       setTimeout(() => setCopyText("copy"), 2000);
@@ -86,8 +85,7 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
         className="flex items-center w-full md:w-[320px] justify-between px-4 border-neutral-10 border h-8 rounded-[40px] cursor-pointer"
         onClick={handleCopy}
       >
-        {/* //TODO: update this to the actual domain */}
-        <p className="text-[16px] text-neutral-11 font-bold">https://jokerace.io...{proposalId.slice(0, 6)}</p>
+        <p className="text-[16px] text-neutral-11 font-bold">https://confetti.win...{proposalId.slice(0, 6)}</p>
         <p className="text-positive-11 font-bold text-[16px]">{copyText}</p>
       </div>
       <CustomLink

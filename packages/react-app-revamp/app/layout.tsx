@@ -54,16 +54,14 @@ const saboFilled = localFont({
 polyfill();
 
 export const metadata: Metadata = {
-  //TODO: update this to the actual domain
-  metadataBase: new URL("https://jokerace.io"),
+  metadataBase: new URL("https://confetti.win"),
   title: "Confetti",
   description: "Confetti - vote. rally. earn.",
   openGraph: {
     title: "Confetti",
     description: "Confetti - vote. rally. earn.",
     type: "website",
-    //TODO: update this to the actual domain
-    url: "https://jokerace.io",
+    url: "https://confetti.win",
     locale: "en_US",
   },
   twitter: {
