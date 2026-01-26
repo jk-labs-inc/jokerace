@@ -1,4 +1,3 @@
-
 import { Group } from "@visx/group";
 import { Pie } from "@visx/shape";
 import { ParentSize } from "@visx/responsive";
@@ -13,7 +12,7 @@ type FundData = {
 
 const data: FundData[] = [
   { label: "voters", value: 90, color: "#bb65ff", textColor: "#bb65ff" },
-  { label: "JokeRace", value: 5, color: "#78ffc6", textColor: "#78ffc6" },
+  { label: "confetti", value: 5, color: "#78ffc6", textColor: "#78ffc6" },
   { label: "contest creators", value: 5, color: "#66DEFF", textColor: "#66DEFF" },
 ];
 
@@ -38,7 +37,6 @@ const PieChart = ({ width, height }: PieChartProps) => {
   const lineWidth = isMobile ? 2 : 4;
   const textGap = isMobile ? 4 : 8;
   const votersTextOffset = isMobile ? 20 : 35;
-
 
   return (
     <svg
@@ -103,14 +101,16 @@ const PieChart = ({ width, height }: PieChartProps) => {
                     textAnchor={isVoters ? "middle" : "start"}
                     dominantBaseline="middle"
                     className="text-base lg:text-xl 2xl:text-2xl font-bold"
-                    fill="#e5e5e5"  
+                    fill="#e5e5e5"
                   >
                     <tspan x={isVoters ? 0 : labelX + textGap} dy="-0.6em" className="normal-case">
                       {arc.data.value}% of funds
                     </tspan>
                     <tspan x={isVoters ? 0 : labelX + textGap} dy="1.2em" className="normal-case">
                       to{" "}
-                      <tspan fill={arc.data.textColor} className="normal-case">{arc.data.label}</tspan>
+                      <tspan fill={arc.data.textColor} className="normal-case">
+                        {arc.data.label}
+                      </tspan>
                     </tspan>
                   </text>
                 </g>
@@ -127,9 +127,7 @@ const FundsDistribution = () => {
   return (
     <div className="flex w-full pt-12 lg:pt-24 lg:pb-6 2xl:pb-0 2xl:pt-20">
       <div className="w-full max-w-52 lg:max-w-60 2xl:max-w-72 aspect-square">
-        <ParentSize>
-          {({ width, height }) => <PieChart width={width} height={height} />}
-        </ParentSize>
+        <ParentSize>{({ width, height }) => <PieChart width={width} height={height} />}</ParentSize>
       </div>
     </div>
   );
