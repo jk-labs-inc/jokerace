@@ -46,8 +46,7 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
             borderRadius: "lg",
             font: "Lato",
           },
-          //TODO: update this to the confetti or C?
-          logo: "/confetti/confetti-logo.svg",
+          logo: "/confetti/loader/frame-1.svg",
           oAuthMethods: ["GOOGLE", "TWITTER", "DISCORD", "TELEGRAM"],
         }}
         externalWalletConfig={{
