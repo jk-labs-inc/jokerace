@@ -88,8 +88,8 @@ const CreateRewardsPool = () => {
 
     validateRecipients(newRecipients);
   };
-  const handleInput: React.ChangeEventHandler<HTMLInputElement> = event => {
-    event.target.value = event.target.value.replace(/[^0-9]*/g, "");
+  const handleInput: React.InputEventHandler<HTMLInputElement> = event => {
+    event.currentTarget.value = event.currentTarget.value.replace(/[^0-9]*/g, "");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

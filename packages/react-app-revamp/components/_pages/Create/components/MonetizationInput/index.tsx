@@ -21,7 +21,7 @@ const CreateFlowMonetizationInput: FC<CreateFlowMonetizationInputProps> = ({ val
     setWidth(adjustedWidth || 2);
   }, [inputValue]);
 
-  const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
+  const handleInput = (e: React.InputEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
     const cleanedValue = target.value.replace(/[^0-9.]/g, "").replace(/(\..*?)\..*/g, "$1");
 
