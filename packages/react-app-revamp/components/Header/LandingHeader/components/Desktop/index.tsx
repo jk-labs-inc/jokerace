@@ -23,7 +23,7 @@ const LandingHeaderDesktop = () => {
             </CustomLink>
           </div>
 
-          <p className="text-secondary-11 text-xl font-sabo-filled">vote. rally. earn.</p>
+          <p className="text-secondary-11 text-[18.8px] font-sabo-filled">vote. rally. earn.</p>
         </div>
       </header>
     </>

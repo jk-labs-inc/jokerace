@@ -12,8 +12,8 @@ type FundData = {
 
 const data: FundData[] = [
   { label: "voters", value: 90, color: "#bb65ff", textColor: "#bb65ff" },
-  { label: "confetti", value: 5, color: "#78ffc6", textColor: "#78ffc6" },
-  { label: "contest creators", value: 5, color: "#66DEFF", textColor: "#66DEFF" },
+  { label: "confetti", value: 5, color: "#66DEFF", textColor: "#66DEFF" },
+  { label: "contest creators", value: 5, color: "#78ffc6", textColor: "#78ffc6" },
 ];
 
 const getValue = (d: FundData) => d.value;
@@ -125,8 +125,8 @@ const PieChart = ({ width, height }: PieChartProps) => {
 
 const FundsDistribution = () => {
   return (
-    <div className="flex w-full pt-12 lg:pt-24 lg:pb-6 2xl:pb-0 2xl:pt-20">
-      <div className="w-full max-w-52 lg:max-w-60 2xl:max-w-72 aspect-square">
+    <div className="flex w-full pt-12 lg:pt-24 lg:pb-6 2xl:pb-0 2xl:pt-[105px]">
+      <div className="w-full max-w-52 lg:max-w-60 2xl:max-w-[270px] aspect-square">
         <ParentSize>{({ width, height }) => <PieChart width={width} height={height} />}</ParentSize>
       </div>
     </div>

@@ -13,7 +13,7 @@ const LandingHeaderMobile = () => {
             <CustomLink href="/">
               <Logo />
             </CustomLink>
-            <p className="text-secondary-11 text-base font-sabo-filled">vote. rally. earn.</p>
+            <p className="text-secondary-11 text-[18.8px] font-sabo-filled">vote. rally. earn.</p>
           </div>
 
           <div className="flex flex-col gap-8">
