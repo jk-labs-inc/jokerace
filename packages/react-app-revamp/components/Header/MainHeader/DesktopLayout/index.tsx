@@ -5,15 +5,12 @@ import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { FC } from "react";
 
 const MainHeaderDesktopLayout: FC = () => {
-  // TODO: issue with absolute is when we resize
   return (
-    <header className="relative flex items-center justify-between px-12 mt-8">
+    <header className="grid grid-cols-[1fr_auto_1fr] items-center px-12 mt-8">
       <CustomLink href="/">
         <Logo />
       </CustomLink>
-      <div
-        className={`absolute left-1/2 -translate-x-1/2 bg-true-black flex items-center gap-5 text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-neutral-10 shadow-create-header`}
-      >
+      <div className="bg-true-black flex items-center gap-5 text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-neutral-10 shadow-create-header">
         <CustomLink href={ROUTE_VIEW_LIVE_CONTESTS} className="text-neutral-11">
           play
         </CustomLink>
@@ -21,7 +18,9 @@ const MainHeaderDesktopLayout: FC = () => {
           create
         </CustomLink>
       </div>
-      <ConnectButtonCustom />
+      <div className="justify-self-end">
+        <ConnectButtonCustom />
+      </div>
     </header>
   );
 };
