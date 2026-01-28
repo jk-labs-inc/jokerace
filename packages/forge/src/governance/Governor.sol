@@ -43,7 +43,6 @@ abstract contract Governor is GovernorSorting {
         uint256 votingPeriod;
         uint256 numAllowedProposalSubmissions;
         uint256 maxProposalCount;
-        uint256 sortingEnabled;
         uint256 rankLimit;
         uint256 percentageToRewards;
         uint256 costToVote;
