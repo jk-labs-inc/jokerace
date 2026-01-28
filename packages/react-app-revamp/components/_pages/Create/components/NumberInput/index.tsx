@@ -54,9 +54,9 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
     }
   };
 
-  const handleInput: React.ChangeEventHandler<HTMLInputElement> = event => {
+  const handleInput: React.InputEventHandler<HTMLInputElement> = event => {
     if (disableDecimals) {
-      event.target.value = event.target.value.replace(/[^0-9]*/g, "");
+      event.currentTarget.value = event.currentTarget.value.replace(/[^0-9]*/g, "");
     }
   };
 
